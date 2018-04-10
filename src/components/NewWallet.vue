@@ -12,6 +12,14 @@
 export default {
   data () {
     return {
+      // Mnemonic to generate HD wallet
+      mnemonic: {
+        phrase: '', //BIP39 mnemonic
+        seed: '', //Derived from mnemonic phrase
+        path: `m/44'/60'/0'/0` //Derivation path
+      },
+      // root hd wallet object from which accounts are derived
+      hdWallet: null,
     }
   }
 }

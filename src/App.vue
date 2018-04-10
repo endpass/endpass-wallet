@@ -1,14 +1,58 @@
 <template>
-  <div id="app">
+  <div id="app"><div class="navbar">
+      <div class="navbar-brand">
+        <router-link class="navbar-item" to="/">Endpass Wallet</router-link>
+      </div>
+      <div class="navbar-menu">
+
+        <div class="navbar-start">
+          <router-link class="navbar-item" :to="{name: 'SendPage'}">Send</router-link>
+          <router-link class="navbar-item" :to="{name:
+            'ReceivePage'}">Receive</router-link>
+        </div>
+
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <span>Current Account</span>
+          </div>
+          <div class="navbar-item">
+            <span>Current Network</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <keep-alive>
-      <router-view/>
+      <router-view :accounts="accounts"
+               @add-account="addAccount"
+        />
     </keep-alive>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data () {
+    return {
+      // List of available Ethereum accounts
+      accounts: [],
+      // ID of the current selected account
+      selectedAccountId: 0,
+    }
+  },
+  methods: {
+    // Add a new account to the accounts list
+    addAccount(account) {
+      this.accounts.push(account)
+      this.selectedAccountId = this.accounts.length - 1
+    },
+    // Switch to the specific account
+    selectAccount(id) {
+      this.selectedAccountId = id
+    }
+  }
 }
 </script>
 
