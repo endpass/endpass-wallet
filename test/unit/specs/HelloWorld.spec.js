@@ -1,11 +1,11 @@
-import Vue from 'vue'
-import HelloWorld from '@/components/HelloWorld'
+import Home from '@/components/Home'
 
-describe('HelloWorld.vue', () => {
-  it('should render correct contents', () => {
-    const Constructor = Vue.extend(HelloWorld)
-    const vm = new Constructor().$mount()
-    expect(vm.$el.querySelector('.hello h1').textContent)
-      .toEqual('Welcome to Your Vue.js App')
+import { mount } from '@vue/test-utils'
+
+describe('Home.vue', () => {
+  it('should show page title', () => {
+    const wrapper = mount(Home)
+    let titleMsg = wrapper.find('.title')
+    expect(titleMsg.text()).toEqual('Endpass Wallet')
   })
 })
