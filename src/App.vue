@@ -13,7 +13,10 @@
 
         <div class="navbar-end">
           <div class="navbar-item">
-            <span>Current Account</span>
+            <span>Current Account: </span>
+            <span v-if="accounts.length">{{
+              accounts[selectedAccountId].getAddressString() }}</span>
+            <router-link :to="{name: 'NewWallet'}" class="button is-primary" v-else>Create</router-link>
           </div>
           <div class="navbar-item">
             <span>Current Network</span>
