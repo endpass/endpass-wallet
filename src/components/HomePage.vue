@@ -9,7 +9,8 @@
         <div v-else>
           <p>Get started by generating or importing an Ethereum Wallet</p>
           <router-link :to="{name: 'NewWallet'}" class="button is-primary">Create Wallet</router-link>
-          <p>Or <router-link :to="{name: 'ImportWallet'}">import an existing wallet</router-link></p>
+          <p>Or</p>
+          <router-link :to="{name: 'ImportWallet'}" class="button is-primary">Import an existing wallet</router-link>
         </div>
 
       </div>
