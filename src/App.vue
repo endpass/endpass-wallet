@@ -4,7 +4,12 @@
         <router-link class="navbar-item" to="/">Endpass Wallet</router-link>
       </div>
       <div class="navbar-menu">
-
+        <div class="select">
+        <select>
+          <option>Select dropdown</option>
+          <option>With options</option>
+        </select>
+      </div>
         <div class="navbar-start">
           <router-link class="navbar-item" :to="{name: 'SendPage'}">Send</router-link>
           <router-link class="navbar-item" :to="{name:
@@ -35,11 +40,20 @@
 </template>
 
 <script>
+
+import Web3 from 'web3';
+
 export default {
   name: 'App',
   data () {
+    let web3
+    if (typeof web3 !== 'undefined') {
+      web3 = new Web3(Web3.givenProvider);
+    } else {
+      web3 = new Web3('http://localhost:8545');
+    };
     return {
-      // List of available Ethereum accounts
+      web3,
       accounts: [],
       // ID of the current selected account
       selectedAccountId: 0,
