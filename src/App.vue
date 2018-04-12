@@ -30,9 +30,7 @@
     </div>
 
     <keep-alive>
-      <router-view :accounts="accounts"
-               @add-account="addAccount"
-        />
+      <router-view/>
     </keep-alive>
   </div>
 </template>
@@ -42,9 +40,13 @@
 export default {
   name: 'App',
   data () {
+    return {};
   },
   computed: {
-    activeAccount: this.$store.state.activeAccount
+    activeAccount() {
+      console.log(this.$store);
+      return this.$store.state.activeAccount;
+    }
   }
 }
 </script>

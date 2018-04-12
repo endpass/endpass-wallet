@@ -24,7 +24,11 @@ export default {
     return {
     }
   },
-  props: ['accounts'],
+  computed: {
+    accounts() {
+      return this.$store.state.accounts;
+    }
+  }
 }
 </script>
 
