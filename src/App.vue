@@ -18,7 +18,7 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <span>Current Account: </span>
-            <span v-if="accounts.length">{{ accounts[selectedAccountId].getAddressString() }}</span>
+            <span v-if="activeAccount">{{ activeAccount.getAddressString() }}</span>
             <router-link :to="{name: 'NewWallet'}" class="button is-primary" v-else>Create</router-link>
           </div>
           <div class="navbar-item">
@@ -39,31 +39,12 @@
 
 <script>
 
-import Web3 from 'web3';
-
 export default {
   name: 'App',
   data () {
-    let web3
-    if (typeof web3 !== 'undefined') {
-      web3 = new Web3(Web3.givenProvider);
-    } else {
-      web3 = new Web3('http://localhost:8545');
-    };
-    return {
-      web3
-    }
   },
-  methods: {
-    // Add a new account to the accounts list
-    addAccount(account) {
-      this.accounts.push(account)
-      this.selectedAccountId = this.accounts.length - 1
-    },
-    // Switch to the specific account
-    selectAccount(id) {
-      this.selectedAccountId = id
-    }
+  computed: {
+    activeAccount: this.$store.state.activeAccount
   }
 }
 </script>
