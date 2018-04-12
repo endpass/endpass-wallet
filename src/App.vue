@@ -6,21 +6,19 @@
       <div class="navbar-menu">
         <div class="select">
         <select>
-          <option>Select dropdown</option>
-          <option>With options</option>
+          <option>Main</option>
+          <option>Ropsten</option>
         </select>
       </div>
         <div class="navbar-start">
           <router-link class="navbar-item" :to="{name: 'SendPage'}">Send</router-link>
-          <router-link class="navbar-item" :to="{name:
-            'ReceivePage'}">Receive</router-link>
+          <router-link class="navbar-item" :to="{name: 'ReceivePage'}">Receive</router-link>
         </div>
 
         <div class="navbar-end">
           <div class="navbar-item">
             <span>Current Account: </span>
-            <span v-if="accounts.length">{{
-              accounts[selectedAccountId].getAddressString() }}</span>
+            <span v-if="accounts.length">{{ accounts[selectedAccountId].getAddressString() }}</span>
             <router-link :to="{name: 'NewWallet'}" class="button is-primary" v-else>Create</router-link>
           </div>
           <div class="navbar-item">
@@ -53,10 +51,7 @@ export default {
       web3 = new Web3('http://localhost:8545');
     };
     return {
-      web3,
-      accounts: [],
-      // ID of the current selected account
-      selectedAccountId: 0,
+      web3
     }
   },
   methods: {
@@ -81,9 +76,8 @@ a {
   }
 }
 
-h1,h2,h3,h4,h5,h6
-{
-        font-family: $heading-font-family;
+h1,h2,h3,h4,h5,h6 {
+    font-family: $heading-font-family;
 }
 
 </style>
