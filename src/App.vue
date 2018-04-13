@@ -41,8 +41,12 @@
 export default {
   name: 'App',
   data () {
+    let cachedNet = localStorage.getItem('net');
+    if(!cachedNet) {
+      cachedNet = 'Main';
+    }
     return {
-      selectedNet: 'Main'
+      selectedNet: cachedNet
     };
   },
   computed: {
@@ -59,6 +63,7 @@ export default {
   methods: {
     selectNet() {
       this.$store.commit('web3/changeNetwork', this.selectedNet);
+      localStorage.setItem('net', this.selectedNet);
     }
   },
   created() {
