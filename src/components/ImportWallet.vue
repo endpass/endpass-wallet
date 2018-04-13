@@ -47,30 +47,35 @@ export default {
         phrase: '', //BIP39 mnemonic
         seed: '', //Derived from mnemonic phrase
         path: `m/44'/60'/0'/0` //Derivation path
-      },
-      hdWallet:null
+      }
     }
   },
   methods: {
+    addAccount(account) {
+      this.$store.commit('accounts/addAccount', account);
+    },
     addWalletWithKey() {
       try {
-        const account = EthWallet.fromPrivateKey(new Buffer(this.privateKey, 'hex'));
-        this.$store.commit('addAccount', account);
+        this.addAccount(this.createWalletWithKey());
       } catch (e) {
         this.privateKeyError = true;
       }
     },
+    createWalletWithKey() {
+      return EthWallet.fromPrivateKey(new Buffer(this.privateKey, 'hex'));
+    },
     addWalletWithPrase() {
       try {
-        const hdKey = HDKey.fromMasterSeed(this.hdkeyPrase);
-        this.hdWallet = hdKey.derivePath(this.mnemonic.path);
-        let account = this.hdWallet.deriveChild(0).getWallet();
-        this.$store.commit('addAccount', account)
+        this.addAccount(this.createWalletWithPrase());
       } catch (e) {
         this.hdkeyPraseError = true;
       }
     },
-
+    createWalletWithPrase() {
+      const hdKey = HDKey.fromMasterSeed(this.hdkeyPrase);
+      const hdWallet = hdKey.derivePath(this.mnemonic.path);
+      return hdWallet.deriveChild(0).getWallet();
+    }
   }
 }
 </script>

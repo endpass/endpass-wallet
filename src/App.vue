@@ -44,8 +44,7 @@ export default {
   },
   computed: {
     activeAccount() {
-      console.log(this.$store);
-      return this.$store.state.activeAccount;
+      return this.$store.state.accounts.activeAccount;
     }
   }
 }
