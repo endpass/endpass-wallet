@@ -4,18 +4,21 @@
         <router-link class="navbar-item" to="/">Endpass Wallet</router-link>
       </div>
       <div class="navbar-menu">
-
+        <div class="select">
+        <select>
+          <option>Main</option>
+          <option>Ropsten</option>
+        </select>
+      </div>
         <div class="navbar-start">
           <router-link class="navbar-item" :to="{name: 'SendPage'}">Send</router-link>
-          <router-link class="navbar-item" :to="{name:
-            'ReceivePage'}">Receive</router-link>
+          <router-link class="navbar-item" :to="{name: 'ReceivePage'}">Receive</router-link>
         </div>
 
         <div class="navbar-end">
           <div class="navbar-item">
             <span>Current Account: </span>
-            <span v-if="accounts.length">{{
-              accounts[selectedAccountId].getAddressString() }}</span>
+            <span v-if="activeAccount">{{ activeAccount.getAddressString() }}</span>
             <router-link :to="{name: 'NewWallet'}" class="button is-primary" v-else>Create</router-link>
           </div>
           <div class="navbar-item">
@@ -27,33 +30,21 @@
     </div>
 
     <keep-alive>
-      <router-view :accounts="accounts"
-               @add-account="addAccount"
-        />
+      <router-view/>
     </keep-alive>
   </div>
 </template>
 
 <script>
+
 export default {
   name: 'App',
   data () {
-    return {
-      // List of available Ethereum accounts
-      accounts: [],
-      // ID of the current selected account
-      selectedAccountId: 0,
-    }
+    return {};
   },
-  methods: {
-    // Add a new account to the accounts list
-    addAccount(account) {
-      this.accounts.push(account)
-      this.selectedAccountId = this.accounts.length - 1
-    },
-    // Switch to the specific account
-    selectAccount(id) {
-      this.selectedAccountId = id
+  computed: {
+    activeAccount() {
+      return this.$store.state.accounts.activeAccount;
     }
   }
 }
@@ -67,9 +58,8 @@ a {
   }
 }
 
-h1,h2,h3,h4,h5,h6
-{
-        font-family: $heading-font-family;
+h1,h2,h3,h4,h5,h6 {
+    font-family: $heading-font-family;
 }
 
 </style>
