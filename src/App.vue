@@ -32,12 +32,12 @@
     </div>
 
      <flash-message inline-template>
-       <div class="notifications">
-         <div v-for="(message, index) in storage" :key="index" >
-           <div class="notification">
-             <button class="delete"></button>
-             {{ message.content }}
-           </div>
+       <div class="notifications container">
+         <div v-for="(message, index) in storage" :key="index"
+         class="notification" :class="'is-' + message.type" >
+           <button class="delete"
+           @click.stop.prevent="destroyFlash(index)"></button>
+           {{ message.content }}
          </div>
        </div>
      </flash-message>
