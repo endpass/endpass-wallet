@@ -4,12 +4,6 @@
         <router-link class="navbar-item" to="/">Endpass Wallet</router-link>
       </div>
       <div class="navbar-menu">
-        <div class="select">
-        <select>
-          <option>Main</option>
-          <option>Ropsten</option>
-        </select>
-      </div>
         <div class="navbar-start">
           <router-link class="navbar-item" :to="{name: 'SendPage'}">Send</router-link>
           <router-link class="navbar-item" :to="{name: 'ReceivePage'}">Receive</router-link>
@@ -23,6 +17,13 @@
           </div>
           <div class="navbar-item">
             <span>Current Network</span>
+            <div class="select">
+              <select @change="selectNet" v-model="selectedNet">
+                <option v-for="net in networks" :value="net.name">
+                  {{net.name}}
+                </option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -40,12 +41,33 @@
 export default {
   name: 'App',
   data () {
-    return {};
+    let cachedNet = localStorage.getItem('net');
+    if(!cachedNet) {
+      cachedNet = 'Main';
+    }
+    return {
+      selectedNet: cachedNet
+    };
   },
   computed: {
     activeAccount() {
       return this.$store.state.accounts.activeAccount;
+    },
+    networks() {
+      return this.$store.state.web3.networks;
+    },
+    activeNet() {
+      return this.$store.state.web3.activeNet;
     }
+  },
+  methods: {
+    selectNet() {
+      this.$store.commit('web3/changeNetwork', this.selectedNet);
+      localStorage.setItem('net', this.selectedNet);
+    }
+  },
+  created() {
+    this.$store.commit('web3/changeNetwork', 'Main');
   }
 }
 </script>
