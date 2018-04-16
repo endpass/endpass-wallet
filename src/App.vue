@@ -1,5 +1,6 @@
 <template>
-  <div id="app"><div class="navbar">
+  <div id="app">
+    <div class="navbar">
       <div class="navbar-brand">
         <router-link class="navbar-item" to="/">Endpass Wallet</router-link>
       </div>
@@ -29,6 +30,19 @@
 
       </div>
     </div>
+
+     <flash-message inline-template>
+       <div class="notifications is-overlay">
+         <transition-group name="fade" tag="div" class="container">
+           <div v-for="(message, index) in storage" :key="index"
+                class="notification" :class="'is-' + message.type" >
+                <button class="delete"
+                        @click.stop.prevent="destroyFlash(index)"></button>
+                {{ message.content }}
+           </div>
+         </transition-group>
+       </div>
+     </flash-message>
 
     <keep-alive>
       <router-view/>
@@ -82,6 +96,28 @@ a {
 
 h1,h2,h3,h4,h5,h6 {
     font-family: $heading-font-family;
+}
+
+.notifications {
+  z-index: 1000;
+}
+.notification {
+  &.is-error {
+    background-color: #ff3860;
+    color: #fff;
+  }
+}
+
+// Transitions
+%transition {
+  transition: all 0.5s ease-in-out;
+}
+
+.fade-enter-active, .fade-leave-active {
+  @extend %transition;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 
 </style>
