@@ -33,12 +33,14 @@
 
      <flash-message inline-template>
        <div class="notifications container">
-         <div v-for="(message, index) in storage" :key="index"
-         class="notification" :class="'is-' + message.type" >
-           <button class="delete"
-           @click.stop.prevent="destroyFlash(index)"></button>
-           {{ message.content }}
-         </div>
+         <transition name="fade">
+           <div v-for="(message, index) in storage" :key="index"
+           class="notification" :class="'is-' + message.type" >
+             <button class="delete"
+             @click.stop.prevent="destroyFlash(index)"></button>
+             {{ message.content }}
+           </div>
+         </transition>
        </div>
      </flash-message>
 
@@ -101,6 +103,18 @@ h1,h2,h3,h4,h5,h6 {
     background-color: #ff3860;
     color: #fff;
   }
+}
+
+// Transitions
+%transition {
+  transition: all 0.5s ease-in-out;
+}
+
+.fade-enter-active, .fade-leave-active {
+  @extend %transition;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 
 </style>
