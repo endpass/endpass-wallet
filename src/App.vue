@@ -1,5 +1,6 @@
 <template>
-  <div id="app"><div class="navbar">
+  <div id="app">
+    <div class="navbar">
       <div class="navbar-brand">
         <router-link class="navbar-item" to="/">Endpass Wallet</router-link>
       </div>
@@ -29,6 +30,17 @@
 
       </div>
     </div>
+
+     <flash-message inline-template>
+       <div class="notifications">
+         <div v-for="(message, index) in storage" :key="index" >
+           <div class="notification">
+             <button class="delete"></button>
+             {{ message.content }}
+           </div>
+         </div>
+       </div>
+     </flash-message>
 
     <keep-alive>
       <router-view/>

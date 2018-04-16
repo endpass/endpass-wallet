@@ -7502,7 +7502,7 @@ uuid@^2.0.1:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-2.0.3.tgz#67e2e863797215530dff318e5bf9dcebfd47b21a"
 
-uuid@^3.0.0, uuid@^3.0.1, uuid@^3.1.0:
+uuid@^3.0.0, uuid@^3.0.1, uuid@^3.1.0, uuid@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.2.1.tgz#12c528bb9d58d0b9265d9a2f6f0fe8be17ff1f14"
 
@@ -7534,6 +7534,12 @@ vm-browserify@0.0.4:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-0.0.4.tgz#5d7ea45bbef9e4a6ff65f95438e0a87c357d5a73"
   dependencies:
     indexof "0.0.1"
+
+vue-flash-message@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/vue-flash-message/-/vue-flash-message-0.6.0.tgz#a32c4ef842e32d4acefd89c6b9b606021c928543"
+  dependencies:
+    uuid "^3.2.1"
 
 vue-hot-reload-api@^2.2.0:
   version "2.3.0"
