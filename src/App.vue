@@ -32,15 +32,15 @@
     </div>
 
      <flash-message inline-template>
-       <div class="notifications container">
-         <transition name="fade">
+       <div class="notifications is-overlay">
+         <transition-group name="fade" tag="div" class="container">
            <div v-for="(message, index) in storage" :key="index"
-           class="notification" :class="'is-' + message.type" >
-             <button class="delete"
-             @click.stop.prevent="destroyFlash(index)"></button>
-             {{ message.content }}
+                class="notification" :class="'is-' + message.type" >
+                <button class="delete"
+                        @click.stop.prevent="destroyFlash(index)"></button>
+                {{ message.content }}
            </div>
-         </transition>
+         </transition-group>
        </div>
      </flash-message>
 
@@ -98,6 +98,9 @@ h1,h2,h3,h4,h5,h6 {
     font-family: $heading-font-family;
 }
 
+.notifications {
+  z-index: 1000;
+}
 .notification {
   &.is-error {
     background-color: #ff3860;
