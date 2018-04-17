@@ -14,6 +14,7 @@
           <div class="navbar-item">
             <span>Current Account: </span>
             <span v-if="activeAccount">{{ activeAccount.getAddressString() }}</span>
+            <span v-if="balance!== null">{{ balance }} ETH</span>
             <router-link :to="{name: 'NewWallet'}" class="button is-primary" v-else>Create</router-link>
           </div>
           <div class="navbar-item">
@@ -31,7 +32,7 @@
       </div>
     </div>
 
-     <flash-message inline-template>
+     <!-- <flash-message inline-template>
        <div class="notifications is-overlay">
          <transition-group name="fade" tag="div" class="container">
            <div v-for="(message, index) in storage" :key="index"
@@ -42,7 +43,7 @@
            </div>
          </transition-group>
        </div>
-     </flash-message>
+     </flash-message> -->
 
     <keep-alive>
       <router-view/>
@@ -72,16 +73,20 @@ export default {
     },
     activeNet() {
       return this.$store.state.web3.activeNet;
+    },
+    balance() {
+      return this.$store.state.accounts.balance / Math.pow(10, 18);
     }
   },
   methods: {
     selectNet() {
       this.$store.commit('web3/changeNetwork', this.selectedNet);
       localStorage.setItem('net', this.selectedNet);
+      this.$store.dispatch('accounts/updateBalance');
     }
   },
   created() {
-    this.$store.commit('web3/changeNetwork', 'Main');
+    this.$store.commit('web3/changeNetwork', this.selectedNet);
   }
 }
 </script>
