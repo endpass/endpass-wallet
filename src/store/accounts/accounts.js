@@ -2,7 +2,8 @@ export default {
   namespaced: true,
   state: {
     accounts: [],
-    activeAccount: null
+    activeAccount: null,
+    balance: null
   },
   mutations: {
     addAccount(state, account) {
@@ -17,6 +18,20 @@ export default {
     },
     selectAccount(state, index) {
       state.activeAccount = state.accounts[index];
+    },
+    setBalance(state, balance) {
+      state.balance = balance;
+    }
+  },
+  actions: {
+    updateBalance(context) {
+      if(context.rootState.accounts.activeAccount) {
+        let errs
+        let address = context.rootState.accounts.activeAccount.getAddressString();
+        let balance = context.rootState.web3.web3.eth.getBalance(address).then((balance) => {
+          context.commit('setBalance', balance);
+        }).catch(e => {console.log(e);});
+      }
     }
   }
 }
