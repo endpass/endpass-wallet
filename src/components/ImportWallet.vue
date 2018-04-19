@@ -53,6 +53,7 @@ export default {
   methods: {
     addAccount(account) {
       this.$store.commit('accounts/addAccount', account);
+      this.$store.dispatch('accounts/updateBalance');
     },
     addWalletWithKey() {
       try {
@@ -68,6 +69,7 @@ export default {
       try {
         this.addAccount(this.createWalletWithPrase());
       } catch (e) {
+        console.log(e)
         this.hdkeyPraseError = true;
       }
     },
