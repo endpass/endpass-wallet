@@ -14,7 +14,7 @@
           <div class="navbar-item">
             <span>Current Account: </span>
             <span v-if="activeAccount">{{ activeAccount.getAddressString() }}</span>
-            <span v-if="balance!== null">{{ balance }} ETH</span>
+            <span v-if="balance !== null">{{ balance }} ETH</span>
             <router-link :to="{name: 'NewWallet'}" class="button is-primary" v-else>Create</router-link>
           </div>
           <div class="navbar-item">
@@ -75,7 +75,7 @@ export default {
       return this.$store.state.web3.activeNet;
     },
     balance() {
-      return this.$store.state.accounts.balance / Math.pow(10, 18);
+      return this.$store.state.accounts.balance === null ? null : this.$store.state.accounts.balance / Math.pow(10, 18);
     }
   },
   methods: {
@@ -83,6 +83,7 @@ export default {
       this.$store.commit('web3/changeNetwork', this.selectedNet);
       localStorage.setItem('net', this.selectedNet);
       this.$store.dispatch('accounts/updateBalance');
+      this.$store.dispatch('accounts/subscribeOnBalanceUpdates');
     }
   },
   created() {

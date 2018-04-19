@@ -54,6 +54,7 @@ export default {
     addAccount(account) {
       this.$store.commit('accounts/addAccount', account);
       this.$store.dispatch('accounts/updateBalance');
+      this.$store.dispatch('accounts/subscribeOnBalanceUpdates');
     },
     addWalletWithKey() {
       try {

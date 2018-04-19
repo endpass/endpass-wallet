@@ -3,7 +3,8 @@ export default {
   state: {
     accounts: [],
     activeAccount: null,
-    balance: null
+    balance: null,
+    balaneSubscribtion: false
   },
   mutations: {
     addAccount(state, account) {
@@ -24,9 +25,22 @@ export default {
     }
   },
   actions: {
+    subscribeOnBalanceUpdates(context) {
+      if(context.rootState.accounts.activeAccount) {
+        if (context.rootState.accounts.balaneSubscribtion) {
+          web3.eth.clearSubscriptions();
+        }
+        context.rootState.accounts.balaneSubscribtion = context.rootState.web3.web3.eth.subscribe('newBlockHeaders', (err, ret) => {
+            if (err){
+                console.log(err);
+            } else {
+              context.dispatch('updateBalance');
+            }
+        });
+      }
+    },
     updateBalance(context) {
       if(context.rootState.accounts.activeAccount) {
-        let errs
         let address = context.rootState.accounts.activeAccount.getAddressString();
         let balance = context.rootState.web3.web3.eth.getBalance(address).then((balance) => {
           context.commit('setBalance', balance);
