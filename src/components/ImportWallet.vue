@@ -70,7 +70,6 @@ export default {
       try {
         this.addAccount(this.createWalletWithPrase());
       } catch (e) {
-        console.log(e)
         this.hdkeyPraseError = true;
       }
     },

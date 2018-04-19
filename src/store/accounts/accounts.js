@@ -27,12 +27,14 @@ export default {
   actions: {
     subscribeOnBalanceUpdates(context) {
       if(context.rootState.accounts.activeAccount) {
-        if (context.rootState.accounts.balaneSubscribtion) {
-          web3.eth.clearSubscriptions();
+        if (context.rootState.web3.web3.eth.subsciptions) {
+          console.log('unsub')
+          context.rootState.web3.web3.eth.clearSubscriptions();
         }
-        context.rootState.accounts.balaneSubscribtion = context.rootState.web3.web3.eth.subscribe('newBlockHeaders', (err, ret) => {
-            if (err){
-                console.log(err);
+        context.rootState.accounts.balaneSubscribtion = context.rootState.web3.web3.eth.subscribe('newBlockHeaders', (e, ret) => {
+            if (e){
+              console.log(e, 'sub');
+              // context.dispatch('subscribeOnBalanceUpdates');
             } else {
               context.dispatch('updateBalance');
             }
@@ -43,8 +45,12 @@ export default {
       if(context.rootState.accounts.activeAccount) {
         let address = context.rootState.accounts.activeAccount.getAddressString();
         let balance = context.rootState.web3.web3.eth.getBalance(address).then((balance) => {
+          console.log(balance);
           context.commit('setBalance', balance);
-        }).catch(e => {console.log(e);});
+        }).catch(e => {
+          console.log(e, 'bal');
+          // context.dispatch('updateBalance');
+        });
       }
     }
   }
