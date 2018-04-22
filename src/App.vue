@@ -53,6 +53,8 @@
 
 <script>
 
+import web3 from 'web3';
+
 export default {
   name: 'App',
   data () {
@@ -75,7 +77,7 @@ export default {
       return this.$store.state.web3.activeNet;
     },
     balance() {
-      return this.$store.state.accounts.balance === null ? null : this.$store.state.accounts.balance / Math.pow(10, 18);
+      return this.$store.state.accounts.balance === null ? null : web3.utils.fromWei(this.$store.state.accounts.balance);
     }
   },
   methods: {
