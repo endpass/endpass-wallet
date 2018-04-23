@@ -9,7 +9,7 @@ export default {
       url: 'wss://mainnet.infura.io/ws'
     },{
       name: 'Ropsten',
-      url: 'wss://ropsten.infura.io/ws'
+      url: 'ws://127.0.0.1:8584'
     },{
       name: 'Rinkeby',
       url: 'wss://rinkeby.infura.io/ws'

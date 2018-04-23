@@ -102,8 +102,6 @@ export default {
         var serializedTx = tx.serialize();
         this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
         .on('receipt', (resp) => {
-          console.log('kek')
-          console.log(resp);
         });
       });
     }
