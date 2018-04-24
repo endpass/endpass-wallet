@@ -7,32 +7,36 @@
     </div>
 
     <div class="section">
-      <form>
+      <form id="sendEther" @submit="sendTransaction">
         <div class="field">
           <label class="label" for="privateKey">To</label>
           <div class="control">
-            <input v-model="transaction.to" type="text" class="input" id="privateKey" aria-describedby="privateKey" placeholder="Receiver address">
+            <input v-model="transaction.to" @blur="validateTo(); dirty.to = true;" type="text" class="input" id="privateKey" aria-describedby="privateKey" placeholder="Receiver address" required>
           </div>
+          <p class="help is-danger" v-show="dirty.to" v-for="err in activeErrors.to">{{err.message}}</p>
         </div>
         <div class="field">
           <label class="label" for="privateKey">Amount</label>
           <div class="control">
-            <input v-model="value" type="text" class="input" id="privateKey" aria-describedby="privateKey" placeholder="Amount">
+            <input v-model="value" @blur="validateValue(); dirty.value = true;" type="text" class="input" id="privateKey" aria-describedby="privateKey" placeholder="Amount" required>
           </div>
+          <p class="help is-danger" v-show="dirty.value" v-for="err in activeErrors.value">{{err.message}}</p>
         </div>
         <div class="field">
           <label class="label" for="privateKey">Gas price</label>
           <div class="control">
-            <input v-model="gasPrice" type="text" class="input" id="privateKey" aria-describedby="privateKey" placeholder="Gas price">
+            <input v-model="gasPrice" @blur="validateGasPrice(); dirty.gasPrice = true;" type="text" class="input" id="privateKey" aria-describedby="privateKey" placeholder="Gas price" required>
           </div>
+          <p class="help is-danger" v-show="dirty.gasPrice" v-for="err in activeErrors.gasPrice">{{err.message}}</p>
         </div>
         <div class="field">
           <label class="label" for="privateKey">Gas limit</label>
           <div class="control">
-            <input v-model="gasLimit" type="text" class="input" id="privateKey" aria-describedby="privateKey" placeholder="Gas limit">
+            <input v-model="gasLimit" @blur="validateGasLimit(); dirty.gasLimit = true;" type="text" class="input" id="privateKey" aria-describedby="privateKey" placeholder="Gas limit" required>
           </div>
+          <p class="help is-danger" v-show="dirty.gasLimit" v-for="err in activeErrors.gasLimit">{{err.message}}</p>
         </div>
-        <button class="button is-primary" @click="sendTransaction">Add</button>
+        <button :disabled="!validForm" class="button is-primary" @click="sendTransaction">Add</button>
       </form>
     </div>
   </div>
@@ -46,8 +50,6 @@ import Tx from 'ethereumjs-tx';
 export default {
 
   data () {
-
-      window.web3 = web3;
     return {
       transaction: {
         gasPrice: '0x14f46b0400',
@@ -55,6 +57,18 @@ export default {
         to: '',
         value: '0x0',
         data: '0x0'
+      },
+      activeErrors: {
+        gasPrice: [],
+        gasLimit: [],
+        to: [],
+        value: []
+      },
+      dirty: {
+        gasPrice: false,
+        gasLimit: false,
+        to: false,
+        value: false
       }
     }
   },
@@ -92,14 +106,78 @@ export default {
       }
     }
   },
+  watch: {
+    activeErrors: {
+      handler() {
+        this.validForm = !this.activeErrors.value.length &&
+        !this.activeErrors.to.length &&
+        !this.activeErrors.gasLimit.length &&
+        !this.activeErrors.gasPrice.length;
+      },
+      deep: true
+    }
+  },
   methods: {
-    sendTransaction() {
+    validateTo() {
+      const newErrArray = [];
+      if(this.transaction.to === '') {
+        newErrArray.push({
+          message: 'This field is required',
+          type: 'required'
+        });
+      }
+      if(!web3.utils.isAddress(this.transaction.to)) {
+        newErrArray.push({
+          message: 'This is not a valid address',
+          type: 'invalid'
+        });
+      }
+      let zeroAddressRegex = /^0x0+$/;
+      if(web3.utils.isAddress(this.transaction.to) && this.transaction.to.match(zeroAddressRegex)) {
+        newErrArray.push({
+          message: 'You cant sent ether to zero address',
+          type: 'invalid'
+        });
+      }
+      this.$set(this.activeErrors, 'to', newErrArray);
+    },
+    validateGasLimit() {
+      const newErrArray = [];
+      this.activeErrors.gasLimit = newErrArray;
+      if(this.transaction.gasLimit === '') {
+        newErrArray.push({
+          message: 'This field is required',
+          type: 'required'
+        });
+      }
+      this.$set(this.activeErrors, 'gasLimit', newErrArray);
+    },
+    validateGasPrice() {
+      const newErrArray = [];
+      this.activeErrors.gasPrice = newErrArray;
+      if(this.transaction.gasPrice === '') {
+        newErrArray.push({
+          message: 'This field is required',
+          type: 'required'
+        });
+      }
+      this.$set(this.activeErrors, 'gasPrice', newErrArray);
+    },
+    validateValue() {
+      const newErrArray = [];
+      if(this.transaction.value === '') {
+        newErrArray.push({
+          message: 'This field is required',
+          type: 'required'
+        });
+      }
+      this.$set(this.activeErrors, 'value', newErrArray);
+    },
+    sendTransaction(e) {
       let keyHex = this.$store.state.accounts.activeAccount.getAddressString();
       this.$store.state.web3.web3.eth.getTransactionCount(keyHex).then((nonce) => {
         this.transaction.nonce = web3.utils.numberToHex(nonce);
-        console.log(this.transaction);
         let tx = new Tx(this.transaction);
-        console.log(tx, 'signed');
         tx.sign(this.$store.state.accounts.activeAccount.getPrivateKey());
         var serializedTx = tx.serialize();
         this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
@@ -116,7 +194,14 @@ export default {
           console.log(err)
         })
       });
+      e.preventDefault();
     }
+  },
+  created() {
+    this.validateTo();
+    this.validateGasLimit();
+    this.validateGasPrice();
+    this.validateValue();
   }
 }
 </script>
