@@ -1,3 +1,5 @@
+import EthBlockTracker from 'eth-block-tracker';
+
 export default {
   namespaced: true,
   state: {
@@ -27,18 +29,14 @@ export default {
   actions: {
     subscribeOnBalanceUpdates(context) {
       if(context.rootState.accounts.activeAccount) {
-        if (context.rootState.web3.web3.eth.subsciptions) {
-          console.log('unsub')
-          context.rootState.web3.web3.eth.clearSubscriptions();
+        if(this.balaneSubscribtion) {
+          this.balaneSubscribtion.stop();
         }
-        context.rootState.accounts.balaneSubscribtion = context.rootState.web3.web3.eth.subscribe('newBlockHeaders', (e, ret) => {
-            if (e){
-              console.log(e, 'sub');
-              // context.dispatch('subscribeOnBalanceUpdates');
-            } else {
-              context.dispatch('updateBalance');
-            }
+        this.balaneSubscribtion = new EthBlockTracker({provider: context.rootState.web3.web3.currentProvider});
+        this.balaneSubscribtion.on('latest', () => {
+          context.dispatch('updateBalance');
         });
+        this.balaneSubscribtion.start();
       }
     },
     updateBalance(context) {
