@@ -96,13 +96,25 @@ export default {
     sendTransaction() {
       let keyHex = this.$store.state.accounts.activeAccount.getAddressString();
       this.$store.state.web3.web3.eth.getTransactionCount(keyHex).then((nonce) => {
-        this.transaction.nonce = nonce + 1;
+        this.transaction.nonce = web3.utils.numberToHex(nonce);
+        console.log(this.transaction);
         let tx = new Tx(this.transaction);
+        console.log(tx, 'signed');
         tx.sign(this.$store.state.accounts.activeAccount.getPrivateKey());
         var serializedTx = tx.serialize();
         this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
         .on('receipt', (resp) => {
-        });
+          console.log(resp);
+        })
+        .on('error', (err) => {
+          console.log(err)
+        })
+        .on('transactionHash', (err) => {
+          console.log(err)
+        })
+        .on('confirmation', (err) => {
+          console.log(err)
+        })
       });
     }
   }
