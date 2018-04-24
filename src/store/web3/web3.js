@@ -1,18 +1,18 @@
 import Web3 from 'web3';
-
+Web3.providers.HttpProvider.prototype.sendAsync = Web3.providers.HttpProvider.prototype.send;
 export default {
   namespaced: true,
   state: {
     web3: null,
     networks: [{
       name: 'Main',
-      url: 'wss://mainnet.infura.io/ws'
+      url: 'https://mainnet.infura.io/zU4GTAQ0LjJNKddbyztc '
     },{
       name: 'Ropsten',
-      url: 'ws://127.0.0.1:8584'
+      url: 'https://ropsten.infura.io/zU4GTAQ0LjJNKddbyztc '
     },{
       name: 'Rinkeby',
-      url: 'wss://rinkeby.infura.io/ws'
+      url: 'https://rinkeby.infura.io/zU4GTAQ0LjJNKddbyztc '
     }],
     activeNet: null
   },
