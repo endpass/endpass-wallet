@@ -6,12 +6,22 @@ export default {
     accounts: [],
     activeAccount: null,
     balance: null,
-    balaneSubscribtion: false
+    balaneSubscribtion: false,
+    pendingTransactions: []
   },
   mutations: {
     addAccount(state, account) {
       state.accounts.push(account);
       state.activeAccount = state.accounts[state.accounts.length - 1];
+    },
+    addTransaction(state, transaction) {
+      state.pendingTransactions.push(transaction);
+    },
+    removeTransaction(state, trxHash) {
+      let trxIndex = state.accounts.findIndex((trx) => {
+        trx.hash === trxHash;
+      });
+      state.pendingTransactions.splice(trxIndex,1);
     },
     removeAccount(state, index) {
       if(state.activeAccount === state.accounts[index]) {

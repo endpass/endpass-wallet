@@ -8,7 +8,8 @@
             <div class="columns">
               <div class="column is-10">
                 <h2 class="subtitle">
-                  {{transaction.timestamp}}
+                  <span v-if="transaction.timestamp">{{transaction.timestamp}}</span>
+                  <span v-else>Pending transaction</span>
                 </h2>
                 <p>
                   <span v-if="transaction.recieve">From: </span>
@@ -39,17 +40,24 @@ export default {
   },
   computed: {
     processedTransactions() {
+      const fullTransactions = this.transactions.concat(this.$store.state.accounts.pendingTransactions);
       const sortedTransactions = this.transactions.sort((trx1, trx2) => {
+        if(typeof trx2.timestamp === 'undefined')
+          return 1
+        if(typeof trx1.timestamp === 'undefined')
+          return -1
         return trx2.timestamp - trx1.timestamp;
       });
       return sortedTransactions.map(trx => {
         let processedTrs = {};
-        const date = new Date(trx.timestamp*1000);
-        let day = (date.getDay() < 10 ? '0' : '' ) + date.getDay();
-        let month = (date.getMonth() < 10 ? '0' : '' ) + date.getMonth();
-        let hours = (date.getHours() < 10 ? '0' : '' ) + date.getHours();
-        let minutes = (date.getMinutes() < 10 ? '0' : '' ) + date.getMinutes();
-        processedTrs.timestamp = `${day}/${month}/${date.getFullYear()} ${hours}:${minutes}`;
+        if(trx.timestamp) {
+          const date = new Date(trx.timestamp*1000);
+          let day = (date.getDay() < 10 ? '0' : '' ) + date.getDay();
+          let month = (date.getMonth() < 10 ? '0' : '' ) + date.getMonth();
+          let hours = (date.getHours() < 10 ? '0' : '' ) + date.getHours();
+          let minutes = (date.getMinutes() < 10 ? '0' : '' ) + date.getMinutes();
+          processedTrs.timestamp = `${day}/${month}/${date.getFullYear()} ${hours}:${minutes}`;
+        }
         processedTrs.recieve = trx.to === this.$store.state.accounts.activeAccount.getAddressString();
         processedTrs.address = processedTrs.recieve ? trx.from : trx.to;
         processedTrs.value = trx.value;

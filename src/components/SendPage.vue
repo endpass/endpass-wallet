@@ -51,6 +51,7 @@ export default {
 
   data () {
     return {
+      validForm:false,
       transaction: {
         gasPrice: '0x14f46b0400',
         gasLimit: '0x55f0',
@@ -173,26 +174,32 @@ export default {
       }
       this.$set(this.activeErrors, 'value', newErrArray);
     },
+    chreateTransactionHistory(trx) {
+      let historyItem = {};
+      historyItem.to = trx.to;
+      historyItem.value = trx.value;
+      return historyItem;
+    },
     sendTransaction(e) {
       let keyHex = this.$store.state.accounts.activeAccount.getAddressString();
       this.$store.state.web3.web3.eth.getTransactionCount(keyHex).then((nonce) => {
-        this.transaction.nonce = web3.utils.numberToHex(nonce);
+        let nonceWithPending = nonce + this.$store.state.accounts.pendingTransactions.length;
+        this.transaction.nonce = web3.utils.numberToHex(nonceWithPending);
         let tx = new Tx(this.transaction);
         tx.sign(this.$store.state.accounts.activeAccount.getPrivateKey());
         var serializedTx = tx.serialize();
+        let transactionForHistory = this.chreateTransactionHistory(this.transaction);
         this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
         .on('receipt', (resp) => {
-          console.log(resp);
+          this.$store.commit('accounts/removeTransaction', resp.transactionHash);
         })
         .on('error', (err) => {
           console.log(err)
         })
-        .on('transactionHash', (err) => {
-          console.log(err)
-        })
-        .on('confirmation', (err) => {
-          console.log(err)
-        })
+        .on('transactionHash', (hash) => {
+          transactionForHistory.hash = hash;
+          this.$store.commit('accounts/addTransaction', transactionForHistory);
+        });
       });
       e.preventDefault();
     }
