@@ -6,7 +6,7 @@ export default {
     accounts: [],
     activeAccount: null,
     balance: null,
-    balaneSubscribtion: false
+    balaneceSubscribtion: false
   },
   mutations: {
     addAccount(state, account) {
@@ -29,14 +29,14 @@ export default {
   actions: {
     subscribeOnBalanceUpdates(context) {
       if(context.rootState.accounts.activeAccount) {
-        if(this.balaneSubscribtion) {
-          this.balaneSubscribtion.stop();
+        if(this.balaneceSubscribtion) {
+          this.balaneceSubscribtion.stop();
         }
-        this.balaneSubscribtion = new EthBlockTracker({provider: context.rootState.web3.web3.currentProvider});
-        this.balaneSubscribtion.on('latest', () => {
+        this.balaneceSubscribtion = new EthBlockTracker({provider: context.rootState.web3.web3.currentProvider});
+        this.balaneceSubscribtion.on('latest', () => {
           context.dispatch('updateBalance');
         });
-        this.balaneSubscribtion.start();
+        this.balaneceSubscribtion.start();
       }
     },
     updateBalance(context) {
