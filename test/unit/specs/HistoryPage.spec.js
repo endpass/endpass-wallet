@@ -40,17 +40,17 @@ describe('HistoryPage', () => {
     wrapper = shallow(HistoryPage, { store, localVue })
   })
   it('downloads data', () => {
-    wrapper.vm.$nextTick(()=>{
+    setTimeout(()=>{
       let elems = wrapper.vm.transactions.length;
-      expect(elems).toBe(0);
+      expect(elems).toBe(2);
       done()
-    })
+    },500);
   })
   it('concats data', () => {
-    wrapper.vm.$nextTick(()=>{
+    setTimeout(()=>{
       let elems = wrapper.vm.processedTransactions.length;
-      expect(elems).toBe(0);
+      expect(elems).toBe(3);
       done()
-    })
+    },500);
   })
 })

@@ -42,8 +42,9 @@ export default {
   },
   computed: {
     processedTransactions() {
-      const fullTransactions = this.transactions.concat(this.$store.state.accounts.pendingTransactions);
-      const sortedTransactions = this.transactions.sort((trx1, trx2) => {
+      let arr = []
+      const fullTransactions = arr.concat(this.transactions, this.$store.state.accounts.pendingTransactions);
+      const sortedTransactions = fullTransactions.sort((trx1, trx2) => {
         if(typeof trx2.timestamp === 'undefined')
           return 1
         if(typeof trx1.timestamp === 'undefined')
