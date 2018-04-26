@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import { infuraConf } from '@/config.js'
 Web3.providers.HttpProvider.prototype.sendAsync = Web3.providers.HttpProvider.prototype.send;
 export default {
   namespaced: true,
@@ -6,13 +7,13 @@ export default {
     web3: null,
     networks: [{
       name: 'Main',
-      url: 'https://mainnet.infura.io/zU4GTAQ0LjJNKddbyztc '
+      url: `https://mainnet.infura.io/${infuraConf.key}`
     },{
       name: 'Ropsten',
-      url: 'https://ropsten.infura.io/zU4GTAQ0LjJNKddbyztc '
+      url: `https://ropsten.infura.io/${infuraConf.key}`
     },{
       name: 'Rinkeby',
-      url: 'https://rinkeby.infura.io/zU4GTAQ0LjJNKddbyztc '
+      url: `https://rinkeby.infura.io/${infuraConf.key}`
     }],
     activeNet: null
   },
