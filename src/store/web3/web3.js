@@ -1,18 +1,19 @@
 import Web3 from 'web3';
-
+import { infuraConf } from '@/config.js'
+Web3.providers.HttpProvider.prototype.sendAsync = Web3.providers.HttpProvider.prototype.send;
 export default {
   namespaced: true,
   state: {
     web3: null,
     networks: [{
       name: 'Main',
-      url: 'wss://mainnet.infura.io/ws'
+      url: `https://mainnet.infura.io/${infuraConf.key}`
     },{
       name: 'Ropsten',
-      url: 'wss://ropsten.infura.io/ws'
+      url: `https://ropsten.infura.io/${infuraConf.key}`
     },{
       name: 'Rinkeby',
-      url: 'wss://rinkeby.infura.io/ws'
+      url: `https://rinkeby.infura.io/${infuraConf.key}`
     }],
     activeNet: null
   },
@@ -25,6 +26,7 @@ export default {
       } else {
         state.web3 = new Web3(state.activeNet.url);
       }
+      console.log(state.web3.currentProvider);
     }
   }
 }

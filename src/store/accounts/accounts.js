@@ -1,9 +1,12 @@
+import EthBlockTracker from 'eth-block-tracker';
+
 export default {
   namespaced: true,
   state: {
     accounts: [],
     activeAccount: null,
-    balance: null
+    balance: null,
+    balaneceSubscribtion: false
   },
   mutations: {
     addAccount(state, account) {
@@ -24,13 +27,28 @@ export default {
     }
   },
   actions: {
+    subscribeOnBalanceUpdates(context) {
+      if(context.rootState.accounts.activeAccount) {
+        if(this.balaneceSubscribtion) {
+          this.balaneceSubscribtion.stop();
+        }
+        this.balaneceSubscribtion = new EthBlockTracker({provider: context.rootState.web3.web3.currentProvider});
+        this.balaneceSubscribtion.on('latest', () => {
+          context.dispatch('updateBalance');
+        });
+        this.balaneceSubscribtion.start();
+      }
+    },
     updateBalance(context) {
       if(context.rootState.accounts.activeAccount) {
-        let errs
         let address = context.rootState.accounts.activeAccount.getAddressString();
         let balance = context.rootState.web3.web3.eth.getBalance(address).then((balance) => {
+          console.log(balance);
           context.commit('setBalance', balance);
-        }).catch(e => {console.log(e);});
+        }).catch(e => {
+          console.log(e, 'bal');
+          // context.dispatch('updateBalance');
+        });
       }
     }
   }
