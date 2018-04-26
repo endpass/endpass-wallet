@@ -51,11 +51,7 @@ export default {
 
   data () {
     return {
-<<<<<<< HEAD
       validForm:false,
-=======
-      validForm: false,
->>>>>>> master
       transaction: {
         gasPrice: '0x14f46b0400',
         gasLimit: '0x55f0',

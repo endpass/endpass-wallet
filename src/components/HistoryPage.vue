@@ -6,7 +6,7 @@
         <ul class="transactions">
           <li class="box" v-for="transaction in processedTransactions">
             <div class="columns">
-              <div class="column is-10">
+              <div class="column is-9">
                 <h2 class="subtitle">
                   <span v-if="transaction.timestamp">{{transaction.timestamp}}</span>
                   <span v-else>Pending transaction</span>
@@ -17,8 +17,10 @@
                   {{transaction.address}}
                 </p>
               </div>
-              <div class="column is-2">
-                <p>{{transaction.value}} ETH</p>
+              <div class="column is-3">
+                <p class="has-text-right">{{transaction.value}} ETH</p>
+                <p class="has-text-right" v-if="transaction.timestamp && transaction.success">Succeeded</p>
+                <p class="has-text-right" v-if="transaction.timestamp && !transaction.success">Failed</p>
               </div>
             </div>
             <div class="columns">
@@ -52,16 +54,14 @@ export default {
         let processedTrs = {};
         if(trx.timestamp) {
           const date = new Date(trx.timestamp*1000);
-          let day = (date.getDay() < 10 ? '0' : '' ) + date.getDay();
-          let month = (date.getMonth() < 10 ? '0' : '' ) + date.getMonth();
-          let hours = (date.getHours() < 10 ? '0' : '' ) + date.getHours();
-          let minutes = (date.getMinutes() < 10 ? '0' : '' ) + date.getMinutes();
-          processedTrs.timestamp = `${day}/${month}/${date.getFullYear()} ${hours}:${minutes}`;
+          processedTrs.timestamp = date.toLocaleString();
         }
         processedTrs.recieve = trx.to === this.$store.state.accounts.activeAccount.getAddressString();
         processedTrs.address = processedTrs.recieve ? trx.from : trx.to;
         processedTrs.value = trx.value;
         processedTrs.hash = trx.hash;
+        if(trx.success)
+          processedTrs.success = trx.success;
         return processedTrs;
       })
     }
@@ -70,6 +70,7 @@ export default {
     const address = this.$store.state.accounts.activeAccount.getAddressString();
     this.$http.get(`https://api.ethplorer.io/getAddressTransactions/${address}`, {
       params: {
+        limit: 50,
         apiKey: 'freekey'
       }
     }).then((resp) => {
