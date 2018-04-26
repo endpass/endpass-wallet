@@ -183,7 +183,7 @@ export default {
     chreateTransactionHistory(trx) {
       let historyItem = {};
       historyItem.to = trx.to;
-      historyItem.value = trx.value;
+      historyItem.value = web3.utils.fromWei(web3.utils.hexToNumberString(trx.value));
       return historyItem;
     },
     sendTransaction(e) {
