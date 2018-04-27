@@ -95,6 +95,7 @@ export default {
 </script>
 
 <style lang="scss">
+// Buttons and Links
 a {
   color: $purple;
   &:hover {
@@ -102,9 +103,26 @@ a {
   }
 }
 
+.button {
+
+  &.is-primary {
+    background-color: $purple;
+
+    &.is-hovered, &:hover {
+      background-color: lighten($purple, 5%);
+    }
+    &.is-active, &:active {
+      background-color: $purple;
+    }
+  }
+}
+
+// Headers
 h1,h2,h3,h4,h5,h6 {
     font-family: $heading-font-family;
 }
+
+// Notifications
 
 .notifications {
   z-index: 1000;
