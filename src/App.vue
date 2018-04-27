@@ -122,6 +122,13 @@ h1,h2,h3,h4,h5,h6 {
     font-family: $heading-font-family;
 }
 
+// Navbar
+a.navbar-item.is-active, a.navbar-item:hover, a.navbar-link.is-active,
+a.navbar-link:hover, .router-link-exact-active {
+  background-color: initial;
+  color: $purple;
+}
+
 // Notifications
 
 .notifications {
