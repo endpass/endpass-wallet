@@ -6,6 +6,7 @@
       </div>
       <div class="navbar-menu">
         <div class="navbar-start">
+          <router-link class="navbar-item" :to="{name: 'HistoryPage'}">History</router-link>
           <router-link class="navbar-item" :to="{name: 'SendPage'}">Send</router-link>
           <router-link class="navbar-item" :to="{name: 'ReceivePage'}">Receive</router-link>
         </div>
@@ -44,10 +45,7 @@
          </transition-group>
        </div>
      </flash-message> -->
-
-    <keep-alive>
-      <router-view/>
-    </keep-alive>
+    <router-view/>
   </div>
 </template>
 

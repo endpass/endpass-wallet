@@ -6,12 +6,22 @@ export default {
     accounts: [],
     activeAccount: null,
     balance: null,
-    balaneceSubscribtion: false
+    balanceSubscribtion: false,
+    pendingTransactions: []
   },
   mutations: {
     addAccount(state, account) {
       state.accounts.push(account);
       state.activeAccount = state.accounts[state.accounts.length - 1];
+    },
+    addTransaction(state, transaction) {
+      state.pendingTransactions.push(transaction);
+    },
+    removeTransaction(state, trxHash) {
+      let trxIndex = state.accounts.findIndex((trx) => {
+        trx.hash === trxHash;
+      });
+      state.pendingTransactions.splice(trxIndex,1);
     },
     removeAccount(state, index) {
       if(state.activeAccount === state.accounts[index]) {
@@ -29,14 +39,14 @@ export default {
   actions: {
     subscribeOnBalanceUpdates(context) {
       if(context.rootState.accounts.activeAccount) {
-        if(this.balaneceSubscribtion) {
-          this.balaneceSubscribtion.stop();
+        if(this.balanceSubscribtion) {
+          this.balanceSubscribtion.stop();
         }
-        this.balaneceSubscribtion = new EthBlockTracker({provider: context.rootState.web3.web3.currentProvider});
-        this.balaneceSubscribtion.on('latest', () => {
+        this.balanceSubscribtion = new EthBlockTracker({provider: context.rootState.web3.web3.currentProvider});
+        this.balanceSubscribtion.on('latest', () => {
           context.dispatch('updateBalance');
         });
-        this.balaneceSubscribtion.start();
+        this.balanceSubscribtion.start();
       }
     },
     updateBalance(context) {
