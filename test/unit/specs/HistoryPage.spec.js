@@ -3,7 +3,7 @@ import VueResource from 'vue-resource';
 import { mount, shallow, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import HistoryPage from '../../../src/components/HistoryPage.vue';
-import web3 from 'Web3'
+import web3 from 'web3'
 import EthWallet from 'ethereumjs-wallet'
 
 const wallet = EthWallet.generate()
