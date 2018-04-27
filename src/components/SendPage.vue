@@ -8,7 +8,9 @@
           <div class="field">
             <label class="label" for="address">To</label>
             <div class="control">
-              <input v-model="transaction.to" @change="validateTo(); dirty.to = true;" type="text" class="input" id="address" aria-describedby="privateKey" placeholder="Receiver address" required>
+              <input v-model="transaction.to" @change="validateTo();
+              dirty.to = true;" type="text" class="input"
+                                            :class="{'is-danger':dirty.to}" id="address" aria-describedby="privateKey" placeholder="Receiver address" required>
             </div>
             <p class="help is-danger" v-show="dirty.to" v-for="err in activeErrors.to">{{err.message}}</p>
           </div>
@@ -18,7 +20,9 @@
           </div>
           <div class="field has-addons">
             <div class="control is-expanded">
-              <input v-model="value" @change="validateValue(); dirty.value = true;" type="text" class="input" id="value" aria-describedby="privateKey" placeholder="Amount" required>
+              <input v-model="value" @change="validateValue(); dirty.value =
+              true;" type="text" class="input"
+              :class="{'is-danger':dirty.value}" id="value" aria-describedby="privateKey" placeholder="Amount" required>
             </div>
             <div class="control">
               <span class="select">
@@ -35,7 +39,9 @@
           </div>
           <div class="field has-addons">
             <div class="control is-expanded">
-              <input v-model="gasPrice" @change="validateGasPrice(); dirty.gasPrice = true;" type="text" class="input" id="gasPrice" aria-describedby="privateKey" placeholder="Gas price" required>
+              <input v-model="gasPrice" @change="validateGasPrice();
+              dirty.gasPrice = true;" type="text" class="input"
+              :class="{'is-danger':dirty.gasPrice}" id="gasPrice" aria-describedby="privateKey" placeholder="Gas price" required>
             </div>
             <div class="control">
               <a class="button is-static">Gwei</a>
@@ -46,7 +52,9 @@
           <div class="field">
             <label class="label" for="gasLimit">Gas limit</label>
             <div class="control">
-              <input v-model="gasLimit" @change="validateGasLimit(); dirty.gasLimit = true;" type="text" class="input" id="gasLimit" aria-describedby="privateKey" placeholder="Gas limit" required>
+              <input v-model="gasLimit" @change="validateGasLimit();
+              dirty.gasLimit = true;" type="text" class="input"
+              :class="{'is-danger':dirty.gasLimit}" id="gasLimit" aria-describedby="privateKey" placeholder="Gas limit" required>
             </div>
             <p class="help is-danger" v-show="dirty.gasLimit" v-for="err in activeErrors.gasLimit">{{err.message}}</p>
           </div>

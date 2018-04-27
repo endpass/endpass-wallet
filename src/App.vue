@@ -114,6 +114,9 @@ a {
     &.is-active, &:active {
       background-color: $purple;
     }
+    &[disabled] {
+      background-color: $purple;
+    }
   }
 }
 
