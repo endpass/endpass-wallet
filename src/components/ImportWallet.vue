@@ -5,6 +5,23 @@
         <h1 class="title">Import Existing Wallet</h1>
         <div class="columns">
 
+          <div class="column is-one-third">
+            <div class="menu">
+              <p class="menu-label">Import Type</p>
+              <ul class="menu-list">
+                <li>
+                  <a @click="importType = 'seedPhrase'"
+                    :class="{'is-active':importType==='seedPhrase'}">Seed Phrase</a>
+                </li>
+                <li>
+                  <a @click="importType = 'privateKey'"
+                    :class="{'is-active':importType==='privateKey'}">Private
+                  Key</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
           <div class="column">
 
             <div class="import-private-key" v-if="importType === 'privateKey'">
@@ -99,3 +116,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.menu-list {
+  a.is-active {
+    background-color: $purple;
+  }
+}
+</style>

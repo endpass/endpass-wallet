@@ -56,4 +56,10 @@ describe('ImportWallet', () => {
     expect(wrapper.contains('.import-seed-phrase')).toBe(true)
     expect(wrapper.contains('.import-private-key')).toBe(false)
   })
+
+  it('shows import by private key', () => {
+    wrapper.setData({importType: 'privateKey'})
+    expect(wrapper.contains('.import-seed-phrase')).toBe(false)
+    expect(wrapper.contains('.import-private-key')).toBe(true)
+  })
 })
