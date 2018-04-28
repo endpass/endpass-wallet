@@ -52,7 +52,7 @@ export default {
           } catch (e) {
             reject(e);
           }
-        },10)
+        },20)
       });
       return promise
     },
