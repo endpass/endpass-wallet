@@ -2,7 +2,9 @@
   <div id="app">
     <div class="navbar">
       <div class="navbar-brand">
-        <router-link class="navbar-item" to="/">Endpass Wallet</router-link>
+        <router-link class="navbar-item logo-icon" to="/">
+          <img src="@/img/logo-icon-dark.png" alt="Endpass Wallet">
+        </router-link>
       </div>
       <div class="navbar-menu">
         <div class="navbar-start">
@@ -144,6 +146,17 @@ a.navbar-item.is-active, a.navbar-item:hover, a.navbar-link.is-active,
 a.navbar-link:hover, .router-link-exact-active {
   background-color: initial;
   color: $purple;
+}
+
+.logo-icon {
+  padding-top: 0;
+  padding-bottom: 0;
+  flex: 1 0 auto;
+  img {
+    max-height: 3.25rem;
+    width: auto;
+    margin: auto;
+  }
 }
 
 // Notifications
