@@ -6,16 +6,18 @@
       </div>
       <div class="navbar-menu">
         <div class="navbar-start">
-          <router-link class="navbar-item" :to="{name: 'HistoryPage'}">History</router-link>
-          <router-link class="navbar-item" :to="{name: 'SendPage'}">Send</router-link>
-          <router-link class="navbar-item" :to="{name: 'ReceivePage'}">Receive</router-link>
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}">History</router-link>
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}">Send</router-link>
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'ReceivePage'}">Receive</router-link>
         </div>
 
         <div class="navbar-end">
           <div class="navbar-item">
-            <span>Current Account: </span>
-            <span v-if="activeAccount">{{ activeAccount.getAddressString() }}</span>
-            <span v-if="balance !== null">{{ balance }} ETH</span>
+            <span  v-if="activeAccount">
+              <span>Current Account: </span>
+              <span>{{ activeAccount.getAddressString() }}</span>
+              <span v-if="balance !== null">{{ balance }} ETH</span>
+            </span>
             <router-link :to="{name: 'NewWallet'}" class="button is-primary" v-else>Create</router-link>
           </div>
           <div class="navbar-item">
