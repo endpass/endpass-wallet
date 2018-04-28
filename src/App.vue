@@ -14,7 +14,8 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <span>Current Account: </span>
-            <span v-if="activeAccount">{{ activeAccount.getAddressString() }}</span>
+            <span v-if="activeAccount">{{ activeAccount.getAddressString()
+              | truncateAddr}}</span>
             <span v-if="balance !== null">{{ balance }} ETH</span>
             <router-link :to="{name: 'NewWallet'}" class="button is-primary" v-else>Create</router-link>
           </div>
@@ -84,6 +85,14 @@ export default {
       localStorage.setItem('net', this.selectedNet);
       this.$store.dispatch('accounts/updateBalance');
       this.$store.dispatch('accounts/subscribeOnBalanceUpdates');
+    }
+  },
+  filters: {
+    // Truncate an address to the first 4 and last 4 characters
+    truncateAddr(value) {
+      if (!value) return ''
+      value = value.toString()
+    return `${value.substr(0,4)}...${value.substr(value.length-4)}`
     }
   },
   created() {
