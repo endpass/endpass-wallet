@@ -10,10 +10,21 @@
         <div class="navbar-start">
           <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}">History</router-link>
           <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}">
-            <img src="@/img/arrow-thick-left.svg">Send
+            <span class="icon is-small"
+              v-html="require('@/img/arrow-thick-left.svg')"></span>Send
           </router-link>
           <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'ReceivePage'}">
             <img src="@/img/arrow-thick-right.svg">Receive
+=======
+          <router-link class="navbar-item" :to="{name: 'HistoryPage'}">History</router-link>
+          <router-link class="navbar-item" :to="{name: 'SendPage'}">
+            <span class="icon is-small"
+              v-html="require('@/img/arrow-thick-left.svg')"></span>Send
+          </router-link>
+          <router-link class="navbar-item" :to="{name: 'ReceivePage'}">
+            <span class="icon is-small"
+              v-html="require('@/img/arrow-thick-right.svg')"></span>Receive
+>>>>>>> Inline svg icons
           </router-link>
         </div>
 
@@ -160,6 +171,13 @@ a.navbar-link:hover, .router-link-exact-active {
     max-height: 3.25rem;
     width: auto;
     margin: auto;
+  }
+}
+
+.icon {
+  svg {
+    width: 100%;
+    height: auto;
   }
 }
 
