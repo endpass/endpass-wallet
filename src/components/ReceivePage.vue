@@ -3,7 +3,10 @@
     <div class="section">
       <div class="container">
         <h1 class="title">Receive ETH</h1>
-        <p>{{address}}</p>
+        <div class="box">
+          <p>Your Wallet Address:</p>
+          <p class="is-size-4">{{address}}</p>
+        </div>
       </div>
     </div>
 
