@@ -9,8 +9,12 @@
       <div class="navbar-menu">
         <div class="navbar-start">
           <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}">History</router-link>
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}">Send</router-link>
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'ReceivePage'}">Receive</router-link>
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}">
+            <img src="@/img/arrow-thick-left.svg">Send
+          </router-link>
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'ReceivePage'}">
+            <img src="@/img/arrow-thick-right.svg">Receive
+          </router-link>
         </div>
 
         <div class="navbar-end">
