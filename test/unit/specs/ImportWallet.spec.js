@@ -1,10 +1,28 @@
 import Vue from 'vue'
+import { shallow, createLocalVue } from '@vue/test-utils'
+import Vuex from 'vuex'
 import ImportWallet from '../../../src/components/ImportWallet.vue'
 import EthWallet from 'ethereumjs-wallet'
 import HDKey from 'ethereumjs-wallet/hdkey'
 
+const localVue = createLocalVue()
+
+localVue.use(Vuex)
 
 describe('ImportWallet', () => {
+  let actions
+  let store
+  let wrapper
+  beforeEach(() => {
+    store = new Vuex.Store({
+      state: {
+        accounts: {},
+      },
+      actions
+    })
+    wrapper = shallow(ImportWallet, { store, localVue })
+  })
+
   it('sets the correct default data', () => {
     expect(typeof ImportWallet.data).toBe('function')
     const defaultData = ImportWallet.data()
@@ -31,5 +49,11 @@ describe('ImportWallet', () => {
     vm.addWalletWithPrase();
     expect(vm.privateKeyError).toBe(true);
     expect(vm.hdkeyPraseError).toBe(true);
+  })
+
+  it('defaults to import by seed phrase', () => {
+    expect(wrapper.vm.importType).toBe('seedPhrase');
+    expect(wrapper.contains('.import-seed-phrase')).toBe(true)
+    expect(wrapper.contains('.import-private-key')).toBe(false)
   })
 })
