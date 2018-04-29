@@ -7,7 +7,7 @@ import HistoryPage from '@/components/HistoryPage'
 import ReceivePage from '@/components/ReceivePage'
 import NewWallet from '@/components/NewWallet'
 import ImportWallet from '@/components/ImportWallet'
-
+import store from '../store'
 Vue.use(Router)
 
 export default new Router({
@@ -20,27 +20,47 @@ export default new Router({
     {
       path: '/send',
       name: 'SendPage',
-      component: SendPage
+      component: SendPage,
+      beforeEnter: hasWalletGuard
     },
     {
       path: '/history',
       name: 'HistoryPage',
-      component: HistoryPage
+      component: HistoryPage,
+      beforeEnter: hasWalletGuard
     },
     {
       path: '/receive',
       name: 'ReceivePage',
-      component: ReceivePage
+      component: ReceivePage,
+      beforeEnter: hasWalletGuard
     },
     {
       path: '/new',
       name: 'NewWallet',
-      component: NewWallet
+      component: NewWallet,
+      beforeEnter: noWalletGuard
     },
     {
       path: '/import',
       name: 'ImportWallet',
-      component: ImportWallet
+      component: ImportWallet,
+      beforeEnter: noWalletGuard
     }
   ]
 })
+function hasWalletGuard (to, from, next) {
+  if(store.state.accounts.activeAccount) {
+    next();
+  } else {
+    next(from.fullPath);
+  }
+}
+
+function noWalletGuard(to, from, next) {
+  if(!store.state.accounts.activeAccount) {
+    next();
+  } else {
+    next(from.fullPath);
+  }
+}

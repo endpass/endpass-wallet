@@ -8,6 +8,14 @@
       </div>
       <div class="navbar-menu">
         <div class="navbar-start">
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}">History</router-link>
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}">
+            <span class="icon is-small"
+              v-html="require('@/img/arrow-thick-left.svg')"></span>Send
+          </router-link>
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'ReceivePage'}">
+            <img src="@/img/arrow-thick-right.svg">Receive
+=======
           <router-link class="navbar-item" :to="{name: 'HistoryPage'}">History</router-link>
           <router-link class="navbar-item" :to="{name: 'SendPage'}">
             <span class="icon is-small"
@@ -16,15 +24,17 @@
           <router-link class="navbar-item" :to="{name: 'ReceivePage'}">
             <span class="icon is-small"
               v-html="require('@/img/arrow-thick-right.svg')"></span>Receive
+>>>>>>> Inline svg icons
           </router-link>
         </div>
 
         <div class="navbar-end">
           <div class="navbar-item">
-            <span>Current Account: </span>
-            <span v-if="activeAccount">{{ activeAccount.getAddressString()
-              | truncateAddr}}</span>
-            <span v-if="balance !== null">{{ balance }} ETH</span>
+            <span  v-if="activeAccount">
+              <span>Current Account: </span>
+              <span>{{ activeAccount.getAddressString() ! truncateAddr }}</span>
+              <span v-if="balance !== null">{{ balance }} ETH</span>
+            </span>
             <router-link :to="{name: 'NewWallet'}" class="button is-primary" v-else>Create</router-link>
           </div>
           <div class="navbar-item">

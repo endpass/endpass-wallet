@@ -3,7 +3,6 @@ import EthBlockTracker from 'eth-block-tracker';
 export default {
   namespaced: true,
   state: {
-    accounts: [],
     activeAccount: null,
     balance: null,
     balanceSubscribtion: false,
@@ -11,8 +10,10 @@ export default {
   },
   mutations: {
     addAccount(state, account) {
-      state.accounts.push(account);
-      state.activeAccount = state.accounts[state.accounts.length - 1];
+      if (state.activeAccount) {
+        return
+      }
+      state.activeAccount = account;
     },
     addTransaction(state, transaction) {
       state.pendingTransactions.push(transaction);
@@ -22,15 +23,6 @@ export default {
         trx.hash === trxHash;
       });
       state.pendingTransactions.splice(trxIndex,1);
-    },
-    removeAccount(state, index) {
-      if(state.activeAccount === state.accounts[index]) {
-        state.activeAccount = state.accounts.length ? state.accounts[0] : null;
-      }
-      state.accounts.splice(index,1);
-    },
-    selectAccount(state, index) {
-      state.activeAccount = state.accounts[index];
     },
     setBalance(state, balance) {
       state.balance = balance;

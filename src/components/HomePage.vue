@@ -4,7 +4,7 @@
       <h1 class="title">Endpass Wallet</h1>
       <div class="accounts">
 
-        <div v-if="accounts.length">
+        <div v-if="activeAccount">
         </div>
         <div v-else>
           <p>Get started by generating or importing an Ethereum Wallet</p>
@@ -25,8 +25,8 @@ export default {
     }
   },
   computed: {
-    accounts() {
-      return this.$store.state.accounts;
+    activeAccount() {
+      return this.$store.state.accounts.activeAccount;
     }
   }
 }
