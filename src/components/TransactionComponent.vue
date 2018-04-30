@@ -5,7 +5,7 @@
         <h2 class="subtitle">
           <span v-if="date">{{date}}</span>
           <span v-if="transaction.canseled">Canseled</span>
-          <span v-else>Pending transaction</span>
+          <span v-if="!date && !transaction.canseled">Pending transaction</span>
         </h2>
         <p>
           <span v-if="recieve">From: </span>
@@ -44,6 +44,7 @@ import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import resendModal from './ResendModal';
 
+window.web3 = web3
 export default {
   props: ['transaction'],
   computed: {
@@ -61,45 +62,32 @@ export default {
   },
   methods: {
     resend() {
-      this.$on('resend', (newTrx) => {
-        Object.assign({}, this.transaction, newTrx);
-        canselTransaction.value = web3.utils.hexToNumberString('0');
-        canselTransaction.to = this.$store.state.accounts.activeAccount.getAddressString();
-        let tx = new Tx(canselTransaction);
-        tx.sign(this.$store.state.accounts.activeAccount.getPrivateKey());
-        var serializedTx = tx.serialize();
-        this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
-        .on('receipt', (resp) => {
-          this.$store.commit('accounts/removeTransaction', resp.transactionHash);
-        })
-        .on('error', (err) => {
-        })
-        .on('transactionHash', (hash) => {
-          transactionForHistory.hash = hash;
-          this.$store.commit('accounts/addTransaction', transactionForHistory);
-        });
-      });
       this.$modal.show(resendModal, {
-        transaction: this.transaction
+        transaction: this.transaction,
       })
     },
     cansel() {
       if(this.transaction.date)
-        return
+        return;
       const canselTransaction = {};
       Object.assign(canselTransaction, this.transaction);
-      canselTransaction.value = web3.utils.hexToNumberString('0');
+      canselTransaction.value = web3.utils.numberToHex('0');
       canselTransaction.to = this.$store.state.accounts.activeAccount.getAddressString();
-      canselTransaction.gasPrice = web3.utils.numberToHex((web3.utils.hexToNumber(canselTransaction.gasPrice) + web3.utils.toWei(1, 'Gwei')).toString());
-      canselTransaction.gasLimit = web3.utils.numberToHex(canselTransaction.gasLimit);
+      let initialGwei = parseInt(web3.utils.fromWei(web3.utils.hexToNumberString(canselTransaction.gasPrice), 'Gwei'), 10);
+      canselTransaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei((initialGwei + 10).toString(),'Gwei'));
+      canselTransaction.gasLimit = canselTransaction.gasLimit;
+      delete canselTransaction.hash
       let tx = new Tx(canselTransaction);
       tx.sign(this.$store.state.accounts.activeAccount.getPrivateKey());
       var serializedTx = tx.serialize();
       this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
       .on('transactionHash', (hash) => {
-        this.$store.commit('accounts/canselTransaction', hash);
+        this.$store.commit('accounts/canselTransaction', this.transaction.hash);
       });
     }
+  },
+  updated () {
+    console.log(this.transition)
   }
 }
 </script>

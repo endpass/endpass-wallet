@@ -1,5 +1,10 @@
 <template lang="html">
   <div class="section">
+    <button class="button is-small is-danger close" @click="cansel" type="button" name="button">
+      <span class="icon is-medium">
+        <i class="fa fa-times"></i>
+      </span>
+    </button>
     <div class="field">
       <label class="label" for="gasPrice">Gas price</label>
       <div class="control">
@@ -14,11 +19,13 @@
       </div>
       <p class="help is-danger" v-show="dirty.gasLimit" v-for="err in activeErrors.gasLimit">{{err.message}}</p>
     </div>
+    <button class="button is-primary" @click="submit">Add</button>
   </div>
 </template>
 
 <script>
-import web3 from 'web3'
+import web3 from 'web3';
+import Tx from 'ethereumjs-tx';
 
 export default {
   props: ['transaction'],
@@ -27,15 +34,15 @@ export default {
       validForm: false,
       newTransaction: {
         gasPrice: null,
-        gasLimit: null
+        gasLimit: null,
       },
       activeErrors: {
         gasPrice: [],
-        gasLimit: []
+        gasLimit: [],
       },
       dirty: {
         gasPrice: false,
-        gasLimit: false
+        gasLimit: false,
       }
     }
   },
@@ -54,7 +61,6 @@ export default {
     },
     gasLimit: {
       get: function () {
-        console.log(this.newTransaction.gasLimit,'lim')
         return web3.utils.hexToNumberString(this.newTransaction.gasLimit || this.transaction.gasLimit);
       },
       set: function (newValue) {
@@ -62,7 +68,7 @@ export default {
           return
         this.newTransaction.gasLimit = web3.utils.numberToHex(newValue);
       }
-    }
+    },
   },
   methods: {
     validateGasLimit() {
@@ -88,7 +94,30 @@ export default {
       this.$set(this.activeErrors, 'gasPrice', newErrArray);
     },
     submit() {
-
+      let sendTrx = Object.assign({}, this.transaction, this.newTransaction);
+      let tx = new Tx(sendTrx);
+      tx.sign(this.$store.state.accounts.activeAccount.getPrivateKey());
+      var serializedTx = tx.serialize();
+      this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
+      .on('receipt', (resp) => {
+        this.$store.commit('accounts/removeTransaction', resp.transactionHash);
+      })
+      .on('error', (err) => {
+      })
+      .on('transactionHash', (hash) => {
+        let storeTrx = {};
+        storeTrx.hash = hash;
+        storeTrx.gasLimit = web3.utils.hexToNumberString(this.newTransaction.gasLimit);
+        storeTrx.gasPrice = web3.utils.hexToNumberString(this.newTransaction.gasPrice);
+        this.$store.commit('accounts/updateTransaction', {
+          oldHash: this.transaction.hash,
+          newTrx: storeTrx
+        });
+      });
+      this.$emit('close');
+    },
+    cansel() {
+      this.$emit('close');
     }
   },
   created() {

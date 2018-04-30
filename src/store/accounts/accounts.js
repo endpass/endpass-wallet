@@ -19,18 +19,24 @@ export default {
       state.pendingTransactions.push(transaction);
     },
     removeTransaction(state, trxHash) {
-      let trxIndex = state.accounts.findIndex((trx) => {
-        trx.hash === trxHash;
+      let trxIndex = state.pendingTransactions.findIndex((trx) => {
+        return trx.hash === trxHash;
       });
       if(state.pendingTransactions[trxIndex].canseled)
         return
       state.pendingTransactions.splice(trxIndex,1);
     },
     canselTransaction(state, trxHash) {
-      let trxIndex = state.accounts.findIndex((trx) => {
-        trx.hash === trxHash;
+      let trxIndex = state.pendingTransactions.findIndex((trx) => {
+        return trx.hash === trxHash;
       });
       state.pendingTransactions[trxIndex].canseled = true;
+    },
+    updateTransaction(state, updates) {
+      let trxIndex = state.pendingTransactions.findIndex((trx) => {
+        return trx.hash === updates.oldHash;
+      });
+      Object.assign(state.pendingTransactions[trxIndex], updates.newTrx);
     },
     setBalance(state, balance) {
       state.balance = balance;
@@ -57,7 +63,6 @@ export default {
           context.commit('setBalance', balance);
         }).catch(e => {
           console.log(e, 'bal');
-          // context.dispatch('updateBalance');
         });
       }
     }

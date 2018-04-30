@@ -186,6 +186,8 @@ export default {
       historyItem.value = web3.utils.fromWei(web3.utils.hexToNumberString(trx.value));
       historyItem.gasLimit = trx.gasLimit;
       historyItem.gasPrice = trx.gasPrice;
+      historyItem.nonce = trx.nonce;
+      historyItem.canseled = false;
       return historyItem;
     },
     sendTransaction(e) {
