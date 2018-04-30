@@ -184,6 +184,8 @@ export default {
       let historyItem = {};
       historyItem.to = trx.to;
       historyItem.value = web3.utils.fromWei(web3.utils.hexToNumberString(trx.value));
+      historyItem.gasLimit = trx.gasLimit;
+      historyItem.gasPrice = trx.gasPrice;
       return historyItem;
     },
     sendTransaction(e) {
@@ -200,7 +202,6 @@ export default {
           this.$store.commit('accounts/removeTransaction', resp.transactionHash);
         })
         .on('error', (err) => {
-          console.log(err)
         })
         .on('transactionHash', (hash) => {
           transactionForHistory.hash = hash;

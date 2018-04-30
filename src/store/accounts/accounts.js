@@ -22,7 +22,15 @@ export default {
       let trxIndex = state.accounts.findIndex((trx) => {
         trx.hash === trxHash;
       });
+      if(state.pendingTransactions[trxIndex].canseled)
+        return
       state.pendingTransactions.splice(trxIndex,1);
+    },
+    canselTransaction(state, trxHash) {
+      let trxIndex = state.accounts.findIndex((trx) => {
+        trx.hash === trxHash;
+      });
+      state.pendingTransactions[trxIndex].canseled = true;
     },
     setBalance(state, balance) {
       state.balance = balance;
