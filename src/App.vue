@@ -8,7 +8,10 @@
       </div>
       <div class="navbar-menu">
         <div class="navbar-start">
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}">History</router-link>
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}">
+            <span class="icon is-small"
+              v-html="require('@/img/clock.svg')"></span>History
+          </router-link>
           <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}">
             <span class="icon is-small"
               v-html="require('@/img/arrow-thick-left.svg')"></span>Send
