@@ -8,6 +8,10 @@
       </div>
       <div class="navbar-menu">
         <div class="navbar-start">
+          <router-link class="navbar-item" to="/">
+            <span class="icon is-small"
+              v-html="require('@/img/home.svg')"></span>Dashboard
+          </router-link>
           <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}">
             <span class="icon is-small"
               v-html="require('@/img/clock.svg')"></span>History
@@ -155,6 +159,10 @@ a.navbar-item.is-active, a.navbar-item:hover, a.navbar-link.is-active,
 a.navbar-link:hover, .router-link-exact-active {
   background-color: initial;
   color: $purple;
+
+  .icon svg {
+    fill: $purple;
+  }
 }
 
 .logo-icon {
@@ -173,6 +181,7 @@ a.navbar-link:hover, .router-link-exact-active {
     width: 100%;
     height: auto;
   }
+  margin-right: 0.2em;
 }
 
 // Notifications
