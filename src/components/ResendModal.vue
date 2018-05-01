@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="section">
-    <button class="button is-small is-danger close" @click="cansel" type="button" name="button">
+    <button class="button is-small is-danger is-pulled-right" @click="cansel" type="button" name="button">
       <span class="icon is-medium">
         <i class="fa fa-times"></i>
       </span>
