@@ -63,6 +63,7 @@
        </div>
      </flash-message> -->
     <router-view/>
+    <modals-container/>
   </div>
 </template>
 
@@ -119,6 +120,8 @@ export default {
 
 <style lang="scss">
 // Buttons and Links
+@import '../node_modules/font-awesome/css/font-awesome.min.css';
+
 a {
   color: $purple;
   &:hover {

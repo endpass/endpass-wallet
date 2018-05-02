@@ -20,7 +20,7 @@
           </div>
           <div class="field has-addons">
             <div class="control is-expanded">
-              <input v-model="value" @change="validateValue(); dirty.value =
+              <input v-model.number="value" @change="validateValue(); dirty.value =
               true;" type="text" class="input"
               :class="{'is-danger':dirty.value}" id="value" aria-describedby="privateKey" placeholder="Amount" required>
             </div>
@@ -39,7 +39,7 @@
           </div>
           <div class="field has-addons">
             <div class="control is-expanded">
-              <input v-model="gasPrice" @change="validateGasPrice();
+              <input v-model.number="gasPrice" @change="validateGasPrice();
               dirty.gasPrice = true;" type="text" class="input"
               :class="{'is-danger':dirty.gasPrice}" id="gasPrice" aria-describedby="privateKey" placeholder="Gas price" required>
             </div>
@@ -52,7 +52,7 @@
           <div class="field">
             <label class="label" for="gasLimit">Gas limit</label>
             <div class="control">
-              <input v-model="gasLimit" @change="validateGasLimit();
+              <input v-model.number="gasLimit" @change="validateGasLimit();
               dirty.gasLimit = true;" type="text" class="input"
               :class="{'is-danger':dirty.gasLimit}" id="gasLimit" aria-describedby="privateKey" placeholder="Gas limit" required>
             </div>
@@ -109,9 +109,7 @@ export default {
         return web3.utils.fromWei(web3.utils.hexToNumberString(this.transaction.gasPrice), 'Gwei');
       },
       set: function (newValue) {
-        if(isNaN(parseFloat(newValue,10)))
-          return
-        this.transaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei(newValue, 'Gwei'));
+        this.transaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei(newValue.toString(), 'Gwei'));
       }
     },
     gasLimit: {
@@ -119,9 +117,7 @@ export default {
         return web3.utils.hexToNumberString(this.transaction.gasLimit);
       },
       set: function (newValue) {
-        if(isNaN(parseFloat(newValue,10)))
-          return
-        this.transaction.gasLimit = web3.utils.numberToHex(newValue);
+        this.transaction.gasLimit = web3.utils.numberToHex(newValue.toString());
       }
     },
     value: {
@@ -129,9 +125,7 @@ export default {
         return web3.utils.fromWei(web3.utils.hexToNumberString(this.transaction.value));
       },
       set: function (newValue) {
-        if(isNaN(parseFloat(newValue,10)))
-          return
-        this.transaction.value = web3.utils.numberToHex(web3.utils.toWei(newValue, 'ether'));
+        this.transaction.value = web3.utils.numberToHex(web3.utils.toWei(newValue.toString(), 'ether'));
       }
     },
     message: {
@@ -214,6 +208,10 @@ export default {
       let historyItem = {};
       historyItem.to = trx.to;
       historyItem.value = web3.utils.fromWei(web3.utils.hexToNumberString(trx.value));
+      historyItem.gasLimit = trx.gasLimit;
+      historyItem.gasPrice = trx.gasPrice;
+      historyItem.nonce = trx.nonce;
+      historyItem.canseled = false;
       return historyItem;
     },
     sendTransaction(e) {
@@ -230,7 +228,6 @@ export default {
           this.$store.commit('accounts/removeTransaction', resp.transactionHash);
         })
         .on('error', (err) => {
-          console.log(err)
         })
         .on('transactionHash', (hash) => {
           transactionForHistory.hash = hash;
