@@ -18,21 +18,21 @@
         <div class="field">
           <label class="label" for="value">Amount</label>
           <div class="control">
-            <input v-model="value" @change="validateValue(); dirty.value = true;" type="text" class="input" id="value" aria-describedby="privateKey" placeholder="Amount" required>
+            <input v-model.number="value" @change="validateValue(); dirty.value = true;" type="text" class="input" id="value" aria-describedby="privateKey" placeholder="Amount" required>
           </div>
           <p class="help is-danger" v-show="dirty.value" v-for="err in activeErrors.value">{{err.message}}</p>
         </div>
         <div class="field">
           <label class="label" for="gasPrice">Gas price</label>
           <div class="control">
-            <input v-model="gasPrice" @change="validateGasPrice(); dirty.gasPrice = true;" type="text" class="input" id="gasPrice" aria-describedby="privateKey" placeholder="Gas price" required>
+            <input v-model.number="gasPrice" @change="validateGasPrice(); dirty.gasPrice = true;" type="text" class="input" id="gasPrice" aria-describedby="privateKey" placeholder="Gas price" required>
           </div>
           <p class="help is-danger" v-show="dirty.gasPrice" v-for="err in activeErrors.gasPrice">{{err.message}}</p>
         </div>
         <div class="field">
           <label class="label" for="gasLimit">Gas limit</label>
           <div class="control">
-            <input v-model="gasLimit" @change="validateGasLimit(); dirty.gasLimit = true;" type="text" class="input" id="gasLimit" aria-describedby="privateKey" placeholder="Gas limit" required>
+            <input v-model.number="gasLimit" @change="validateGasLimit(); dirty.gasLimit = true;" type="text" class="input" id="gasLimit" aria-describedby="privateKey" placeholder="Gas limit" required>
           </div>
           <p class="help is-danger" v-show="dirty.gasLimit" v-for="err in activeErrors.gasLimit">{{err.message}}</p>
         </div>
@@ -79,9 +79,7 @@ export default {
         return web3.utils.fromWei(web3.utils.hexToNumberString(this.transaction.gasPrice), 'Gwei');
       },
       set: function (newValue) {
-        if(isNaN(parseFloat(newValue,10)))
-          return
-        this.transaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei(newValue, 'Gwei'));
+        this.transaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei(newValue.toString(), 'Gwei'));
       }
     },
     gasLimit: {
@@ -89,9 +87,7 @@ export default {
         return web3.utils.hexToNumberString(this.transaction.gasLimit);
       },
       set: function (newValue) {
-        if(isNaN(parseFloat(newValue,10)))
-          return
-        this.transaction.gasLimit = web3.utils.numberToHex(newValue);
+        this.transaction.gasLimit = web3.utils.numberToHex(newValue.toString());
       }
     },
     value: {
@@ -99,9 +95,7 @@ export default {
         return web3.utils.fromWei(web3.utils.hexToNumberString(this.transaction.value));
       },
       set: function (newValue) {
-        if(isNaN(parseFloat(newValue,10)))
-          return
-        this.transaction.value = web3.utils.numberToHex(web3.utils.toWei(newValue, 'ether'));
+        this.transaction.value = web3.utils.numberToHex(web3.utils.toWei(newValue.toString(), 'ether'));
       }
     },
     message: {

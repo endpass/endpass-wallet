@@ -74,7 +74,7 @@ export default {
       canselTransaction.value = web3.utils.numberToHex('0');
       canselTransaction.to = this.$store.state.accounts.activeAccount.getAddressString();
       let initialGwei = parseInt(web3.utils.fromWei(web3.utils.hexToNumberString(canselTransaction.gasPrice), 'Gwei'), 10);
-      canselTransaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei((initialGwei + 10).toString(),'Gwei'));
+      canselTransaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei((initialGwei + 1).toString(),'Gwei'));
       canselTransaction.gasLimit = canselTransaction.gasLimit;
       delete canselTransaction.hash
       let tx = new Tx(canselTransaction);
