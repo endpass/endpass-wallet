@@ -5,22 +5,28 @@
         <router-link class="navbar-item logo-icon" to="/">
           <img src="@/img/logo-light.png" alt="Endpass Wallet">
         </router-link>
+        <a class="navbar-burger" @click="toggleNavMenu" :class="{'is-active':navMenuActive}">
+          <span></span>
+          <span></span>
+          <span></span>
+        </a>
       </div>
-      <div class="navbar-menu">
+      <div class="navbar-menu" :class="{'is-active':navMenuActive}">
         <div class="navbar-start">
-          <router-link class="navbar-item" to="/">
+          <router-link class="navbar-item" to="/" @click.native="toggleNavMenu">
             <span class="icon is-small"
               v-html="require('@/img/home.svg')"></span>Dashboard
           </router-link>
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}">
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}" @click.native="toggleNavMenu">
             <span class="icon is-small"
               v-html="require('@/img/clock.svg')"></span>History
           </router-link>
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}">
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}" @click.native="toggleNavMenu">
             <span class="icon is-small"
               v-html="require('@/img/arrow-thick-left.svg')"></span>Send
           </router-link>
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'ReceivePage'}">
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name:
+            'ReceivePage'}" @click.native="toggleNavMenu">
             <span class="icon is-small"
               v-html="require('@/img/arrow-thick-right.svg')"></span>Receive
           </router-link>
@@ -62,7 +68,9 @@
          </transition-group>
        </div>
      </flash-message> -->
-    <router-view/>
+    <div class="main" @click="navMenuActive=false">
+      <router-view/>
+    </div>
   </div>
 </template>
 
@@ -77,8 +85,10 @@ export default {
     if(!cachedNet) {
       cachedNet = 'Main';
     }
+
     return {
-      selectedNet: cachedNet
+      selectedNet: cachedNet,
+      navMenuActive: false
     };
   },
   computed: {
@@ -101,6 +111,9 @@ export default {
       localStorage.setItem('net', this.selectedNet);
       this.$store.dispatch('accounts/updateBalance');
       this.$store.dispatch('accounts/subscribeOnBalanceUpdates');
+    },
+    toggleNavMenu () {
+      this.navMenuActive = !this.navMenuActive
     }
   },
   filters: {
