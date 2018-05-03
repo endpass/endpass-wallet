@@ -25,11 +25,20 @@
         </div>
 
         <div class="section" v-else>
-          <div class="container">
-            <p>Get started by generating or importing an Ethereum Wallet</p>
-            <router-link :to="{name: 'NewWallet'}" class="button is-primary">Create Wallet</router-link>
-            <p>Or</p>
-            <router-link :to="{name: 'ImportWallet'}" class="button is-primary">Import an existing wallet</router-link>
+          <div class="container has-text-centered">
+            <h1 class="title">Welcome</h1>
+            <p class="subtitle">Get started by generating or importing an
+            Ethereum wallet.</p>
+            <div class="field is-grouped is-grouped-centered has-text-centered">
+              <p class="control">
+                <router-link :to="{name: 'NewWallet'}" class="button
+                  is-primary">Create New Wallet</router-link>
+              </p>
+              <p class="control">
+                <router-link :to="{name: 'ImportWallet'}" class="button
+                  is-light">Import an existing wallet</router-link>
+              </p>
+            </div>
           </div>
         </div>
 

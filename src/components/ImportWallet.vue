@@ -2,6 +2,7 @@
   <div class="new-wallet">
     <div class="section">
       <div class="container">
+        <a @click="$router.go(-1)">&lt; Back</a>
         <h1 class="title">Import Existing Wallet</h1>
         <div class="columns">
 

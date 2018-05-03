@@ -2,6 +2,7 @@
   <div class="new-wallet">
     <div class="section">
       <div class="container">
+        <a @click="$router.go(-1)">&lt; Back</a>
         <h1 class="title">Create Wallet</h1>
         <p>Just click the button below to create a new, secure Ethereum
         Wallet</p>
