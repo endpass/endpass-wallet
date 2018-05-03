@@ -34,21 +34,26 @@
 
         <div class="navbar-end">
           <div class="navbar-item">
-            <span  v-if="activeAccount">
-              <span>Current Account: </span>
-              <span>{{ activeAccount.getAddressString() | truncateAddr }}</span>
-              <span v-if="balance !== null">{{ balance }} ETH</span>
-            </span>
-            <router-link :to="{name: 'NewWallet'}" class="button is-primary" v-else>Create</router-link>
+            <div class="navbar-control">
+              <span  v-if="activeAccount">
+                <p class="heading">Current Account </p>
+                <span>{{ activeAccount.getAddressString() | truncateAddr }}</span>
+                <span v-if="balance !== null"><strong>{{ balance }}</strong> ETH</span>
+              </span>
+              <router-link :to="{name: 'NewWallet'}" class="button
+                is-primary" v-else>Create Wallet</router-link>
+            </div>
           </div>
           <div class="navbar-item">
-            <span>Current Network</span>
-            <div class="select">
-              <select @change="selectNet" v-model="selectedNet">
-                <option v-for="net in networks" :value="net.name">
-                  {{net.name}}
-                </option>
-              </select>
+            <div class="navbar-control">
+              <p class="heading">Current Network</p>
+              <div class="select">
+                <select @change="selectNet" v-model="selectedNet">
+                  <option v-for="net in networks" :value="net.name">
+                    {{net.name}}
+                  </option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -169,6 +174,20 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 // Navbar
+.navbar-menu {
+  a.navbar-item {
+    font-family: $heading-font-family;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+  }
+}
+
+.navbar-burger {
+  span {
+    height: 3px;
+  }
+}
+
 a.navbar-item.is-active, a.navbar-item:hover, a.navbar-link.is-active,
 a.navbar-link:hover, .router-link-exact-active {
   background-color: initial;
