@@ -3,7 +3,7 @@
     <div class="navbar">
       <div class="navbar-brand">
         <router-link class="navbar-item logo-icon" to="/">
-          <img src="@/img/logo-icon-dark.png" alt="Endpass Wallet">
+          <img src="@/img/logo-light.png" alt="Endpass Wallet">
         </router-link>
       </div>
       <div class="navbar-menu">
