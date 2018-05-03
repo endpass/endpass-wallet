@@ -63,7 +63,6 @@
        </div>
      </flash-message> -->
     <router-view/>
-    <modals-container/>
   </div>
 </template>
 

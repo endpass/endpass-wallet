@@ -35,17 +35,23 @@
     <div class="columns">
       <p class="column is-12">{{transaction.hash}}</p>
     </div>
+    <resend-modal :transaction="transaction" v-if="resendModalOpen" @close="closeResendModal"/>
   </div>
 </template>
 
 <script>
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
-import resendModal from './ResendModal';
+import ResendModal from './ResendModal';
 
 window.web3 = web3
 export default {
   props: ['transaction'],
+  data () {
+    return {
+      resendModalOpen: false
+    }
+  },
   computed: {
     recieve() {
       return this.transaction.to === this.$store.state.accounts.activeAccount.getAddressString();
@@ -61,9 +67,10 @@ export default {
   },
   methods: {
     resend() {
-      this.$modal.show(resendModal, {
-        transaction: this.transaction,
-      })
+      this.resendModalOpen = true
+    },
+    closeResendModal() {
+      this.resendModalOpen = false
     },
     cansel() {
       if(this.transaction.date)
