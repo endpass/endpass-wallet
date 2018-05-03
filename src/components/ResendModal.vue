@@ -1,10 +1,6 @@
 <template lang="html">
   <div class="section">
-    <button class="button is-small is-danger is-pulled-right" @click="cansel" type="button" name="button">
-      <span class="icon is-medium">
-        <i class="fa fa-times"></i>
-      </span>
-    </button>
+    <button class="modal-close is-large" @click="cansel" type="button" name="button"></button>
     <div class="field">
       <label class="label" for="gasPrice">Gas price</label>
       <div class="control">

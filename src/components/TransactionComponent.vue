@@ -18,13 +18,12 @@
       <div class="column is-3">
         <p v-if="!date && !transaction.canseled" class="has-text-right">
           <button class="button is-small is-warning" @click="resend" type="button" name="button">
-            <span class="icon is-medium">
-              <i class="fa fa-edit"></i>
-            </span>
+            <span class="icon is-medium"
+              v-html="require('@/img/loop.svg')"></span>
           </button>
           <button class="button is-small is-danger" @click="cansel" type="button" name="button">
-            <span class="icon is-medium">
-              <i class="fa fa-ban"></i>
+            <span class="icon is-medium"
+                  v-html="require('@/img/ban.svg')"></span>
             </span>
           </button>
         </p>
