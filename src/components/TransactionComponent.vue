@@ -93,7 +93,10 @@ export default {
     }
   },
   updated () {
-    console.log(this.transition)
+    console.log(this.transaction)
+  },
+  components: {
+    ResendModal
   }
 }
 </script>
