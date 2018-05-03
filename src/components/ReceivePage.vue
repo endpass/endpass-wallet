@@ -15,7 +15,8 @@
         <div class="">
           <h2 class="subtitle">Incoming Payment History</h2>
           <ul class="transactions">
-            <li v-for="transaction in processedTransactions">
+            <li v-for="transaction in processedTransactions"
+              :key="transaction.hash">
               <app-transaction :transaction="transaction"></app-transaction>
             </li>
           </ul>

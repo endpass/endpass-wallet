@@ -4,7 +4,8 @@
       <div class="container">
         <h1 class="title">Transaction history</h1>
         <ul class="transactions">
-          <li v-for="transaction in processedTransactions">
+          <li v-for="transaction in processedTransactions"
+          :key="transaction.hash">
             <app-transaction :transaction="transaction"></app-transaction>
           </li>
         </ul>
