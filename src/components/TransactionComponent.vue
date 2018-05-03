@@ -2,11 +2,20 @@
   <div class="transaction" :class="'is-'+statusText">
     <div class="card">
       <div class="card-header">
-        <p class="card-header-title">{{transaction.hash}}</p>
+        <p class="card-header-title">{{transaction.hash}}
+        {{transaction.value}}</p>
+        <div class="card-header-icon" :title="statusText">
+          <span v-if="transaction.success" class="icon has-text-success is-medium"
+                v-html="require('@/img/circle-check.svg')"></span>
+          <span v-else-if="transaction.canseled" class="icon
+                                                 has-text-danger is-medium"
+                v-html="require('@/img/ban.svg')"></span>
+          <span v-else-if="transaction.isPending" class="icon is-medium"
+                v-html="require('@/img/ellipses.svg')"></span>
+        </div>
       </div>
       <div class="card-content">
         <p v-if="date" class="date">{{date}}</p>
-        <p class="status">{{statusText}}</p>
         <p>
           <span v-if="recieve">From:</span>
           <span v-else>To: </span>

@@ -183,6 +183,15 @@ a.navbar-link:hover, .router-link-exact-active {
     height: auto;
   }
   margin-right: 0.2em;
+  &.has-text-danger svg {
+      fill: hsl(348, 100%, 61%);
+  }
+  &.has-text-warning svg {
+      fill: hsl(48, 100%, 67%);
+  }
+  &.has-text-success svg {
+      fill: hsl(141, 71%, 48%);
+  }
 }
 
 // Notifications
