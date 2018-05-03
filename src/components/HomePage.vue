@@ -32,11 +32,11 @@
             <div class="field is-grouped is-grouped-centered has-text-centered">
               <p class="control">
                 <router-link :to="{name: 'NewWallet'}" class="button
-                  is-primary">Create New Wallet</router-link>
+                  is-primary is-medium">Create New Wallet</router-link>
               </p>
               <p class="control">
                 <router-link :to="{name: 'ImportWallet'}" class="button
-                  is-light">Import an existing wallet</router-link>
+                  is-light is-medium">Import an existing wallet</router-link>
               </p>
             </div>
           </div>

@@ -4,9 +4,9 @@
       <div class="container">
         <a @click="$router.go(-1)">&lt; Back</a>
         <h1 class="title">Create Wallet</h1>
-        <p>Just click the button below to create a new, secure Ethereum
-        Wallet</p>
-        <button id="newWalletButon" class="button is-primary" :class="{'is-loading' : creatingWallet }" @click="clickNewWalletButton">Generate New Wallet</button>
+        <p class="subtitle">Just click the button below to create a new,
+        secure Ethereum Wallet.</p>
+        <button id="newWalletButon" class="button is-primary is-medium" :class="{'is-loading' : creatingWallet }" @click="clickNewWalletButton">Generate New Wallet</button>
       </div>
     </div>
   </div>

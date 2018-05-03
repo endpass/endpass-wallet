@@ -4,6 +4,8 @@
       <div class="container">
         <a @click="$router.go(-1)">&lt; Back</a>
         <h1 class="title">Import Existing Wallet</h1>
+        <p class="subtitle">Select the type of wallet you would like to
+        import on the left.</p>
         <div class="columns">
 
           <div class="column is-one-third">
@@ -26,7 +28,6 @@
           <div class="column">
 
             <div class="import-private-key" v-if="importType === 'privateKey'">
-              <h2 class="subtitle">Import Private Key</h2>
               <form>
                 <div class="field">
                   <label class="label" for="privateKey">Private key</label>
@@ -35,14 +36,13 @@
                     <p v-show="privateKeyError" class="help is-danger">Private key is invalid</p>
                   </div>
                 </div>
-                <button class="button is-primary" @click="addWalletWithKey"
+                <button class="button is-primary is-medium" @click="addWalletWithKey"
                   :disabled="!privateKey || privateKeyError">Import</button>
               </form>
             </div>
 
             <div class="import-seed-phrase" v-if="importType ===
               'seedPhrase'">
-              <h2 class="subtitle">Import Seed Phrase</h2>
               <form>
                 <div class="field">
                   <label class="label" for="hdkeySeed">Seed phrase</label>
@@ -53,7 +53,7 @@
                     <p v-show="hdkeyPraseError" class="help is-danger">Seed phrase is invalid</p>
                   </div>
                 </div>
-                <button class="button is-primary"
+                <button class="button is-primary is-medium"
                   @click="addWalletWithPrase" :disabled="!hdkeyPrase ||
                   hdkeyPraseError">Import</button>
               </form>
