@@ -3,12 +3,15 @@
     <div class="section">
       <div class="container">
         <h1 class="title">Transaction history</h1>
-        <ul class="transactions">
+        <ul v-if="processedTransactions.length" class="transactions">
           <li v-for="transaction in processedTransactions"
           :key="transaction.hash">
             <app-transaction :transaction="transaction"></app-transaction>
           </li>
         </ul>
+        <p v-else-if="!historyAvailable">Transaction history is only
+        supported on the main network.</p>
+        <p v-else>This account has no transactions.</p>
       </div>
     </div>
   </div>
@@ -32,6 +35,11 @@ export default {
           return -1
         return trx2.timestamp - trx1.timestamp;
       });
+    },
+    // Whether history is supported on this network
+    historyAvailable () {
+      let activeNet = this.$store.state.web3.activeNet.name
+      return activeNet === 'Main'
     }
   },
   created() {
