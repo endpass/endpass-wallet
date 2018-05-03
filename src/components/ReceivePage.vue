@@ -3,7 +3,10 @@
     <div class="section">
       <div class="container">
         <h1 class="title">Receive ETH</h1>
-        <p>{{address}}</p>
+        <div class="box">
+          <p>Your Wallet Address:</p>
+          <p class="is-size-4">{{address}}</p>
+        </div>
       </div>
     </div>
 
@@ -12,7 +15,8 @@
         <div class="">
           <h2 class="subtitle">Incoming Payment History</h2>
           <ul class="transactions">
-            <li v-for="transaction in processedTransactions">
+            <li v-for="transaction in processedTransactions"
+              :key="transaction.hash">
               <app-transaction :transaction="transaction"></app-transaction>
             </li>
           </ul>

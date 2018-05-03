@@ -1,25 +1,34 @@
 <template lang="html">
-  <div class="section">
-    <button class="button is-small is-danger is-pulled-right" @click="cansel" type="button" name="button">
-      <span class="icon is-medium">
-        <i class="fa fa-times"></i>
-      </span>
-    </button>
-    <div class="field">
-      <label class="label" for="gasPrice">Gas price</label>
-      <div class="control">
-        <input v-model.number="gasPrice" @change="validateGasPrice(); dirty.gasPrice = true;" type="text" class="input" id="gasPrice" aria-describedby="privateKey" placeholder="Gas price" required>
+  <div class="resend-modal modal is-active">
+    <div class="modal-background" @click="cancel"></div>
+    <div class="modal-card">
+      <div class="modal-card-head">
+        <h3 class="modal-card-title">Resend Transaction</h3>
+        <button class="delete is-large" @click="cancel"></button>
       </div>
-      <p class="help is-danger" v-show="dirty.gasPrice" v-for="err in activeErrors.gasPrice">{{err.message}}</p>
-    </div>
-    <div class="field">
-      <label class="label" for="gasLimit">Gas limit</label>
-      <div class="control">
-        <input v-model.number="gasLimit" @change="validateGasLimit(); dirty.gasLimit = true;" type="text" class="input" id="gasLimit" aria-describedby="privateKey" placeholder="Gas limit" required>
+      <div class="modal-card-body">
+        <p>If your transaction is "stuck" due to a fee that is too low, use
+        this form to resend it with an increased fee.</p>
+        <div class="field">
+          <label class="label" for="gasPrice">Gas price</label>
+          <div class="control">
+            <input v-model.number="gasPrice" @change="validateGasPrice(); dirty.gasPrice = true;" type="text" class="input" id="gasPrice" aria-describedby="privateKey" placeholder="Gas price" required>
+          </div>
+          <p class="help is-danger" v-show="dirty.gasPrice" v-for="err in activeErrors.gasPrice">{{err.message}}</p>
+        </div>
+        <div class="field">
+          <label class="label" for="gasLimit">Gas limit</label>
+          <div class="control">
+            <input v-model.number="gasLimit" @change="validateGasLimit(); dirty.gasLimit = true;" type="text" class="input" id="gasLimit" aria-describedby="privateKey" placeholder="Gas limit" required>
+          </div>
+          <p class="help is-danger" v-show="dirty.gasLimit" v-for="err in activeErrors.gasLimit">{{err.message}}</p>
+        </div>
       </div>
-      <p class="help is-danger" v-show="dirty.gasLimit" v-for="err in activeErrors.gasLimit">{{err.message}}</p>
+      <div class="modal-card-foot">
+        <button class="button is-primary" @click="submit">Resend</button>
+        <button class="button" @click="cancel">Cancel</button>
+      </div>
     </div>
-    <button class="button is-primary" @click="submit">Add</button>
   </div>
 </template>
 
@@ -112,7 +121,7 @@ export default {
       });
       this.$emit('close');
     },
-    cansel() {
+    cancel() {
       this.$emit('close');
     }
   },

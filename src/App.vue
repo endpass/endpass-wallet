@@ -2,32 +2,58 @@
   <div id="app">
     <div class="navbar">
       <div class="navbar-brand">
-        <router-link class="navbar-item" to="/">Endpass Wallet</router-link>
+        <router-link class="navbar-item logo-icon" to="/">
+          <img src="@/img/logo-light.png" alt="Endpass Wallet">
+        </router-link>
+        <a class="navbar-burger" @click="toggleNavMenu" :class="{'is-active':navMenuActive}">
+          <span></span>
+          <span></span>
+          <span></span>
+        </a>
       </div>
-      <div class="navbar-menu">
+      <div class="navbar-menu" :class="{'is-active':navMenuActive}">
         <div class="navbar-start">
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}">History</router-link>
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}">Send</router-link>
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'ReceivePage'}">Receive</router-link>
+          <router-link class="navbar-item" to="/" @click.native="toggleNavMenu">
+            <span class="icon is-small"
+              v-html="require('@/img/home.svg')"></span>Dashboard
+          </router-link>
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}" @click.native="toggleNavMenu">
+            <span class="icon is-small"
+              v-html="require('@/img/clock.svg')"></span>History
+          </router-link>
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}" @click.native="toggleNavMenu">
+            <span class="icon is-small"
+              v-html="require('@/img/arrow-thick-left.svg')"></span>Send
+          </router-link>
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name:
+            'ReceivePage'}" @click.native="toggleNavMenu">
+            <span class="icon is-small"
+              v-html="require('@/img/arrow-thick-right.svg')"></span>Receive
+          </router-link>
         </div>
 
         <div class="navbar-end">
           <div class="navbar-item">
-            <span  v-if="activeAccount">
-              <span>Current Account: </span>
-              <span>{{ activeAccount.getAddressString() }}</span>
-              <span v-if="balance !== null">{{ balance }} ETH</span>
-            </span>
-            <router-link :to="{name: 'NewWallet'}" class="button is-primary" v-else>Create</router-link>
+            <div class="navbar-control">
+              <span  v-if="activeAccount">
+                <p class="heading">Current Account </p>
+                <span>{{ activeAccount.getAddressString() | truncateAddr }}</span>
+                <span v-if="balance !== null"><strong>{{ balance }}</strong> ETH</span>
+              </span>
+              <router-link :to="{name: 'NewWallet'}" class="button
+                is-primary" v-else>Create Wallet</router-link>
+            </div>
           </div>
           <div class="navbar-item">
-            <span>Current Network</span>
-            <div class="select">
-              <select @change="selectNet" v-model="selectedNet">
-                <option v-for="net in networks" :value="net.name">
-                  {{net.name}}
-                </option>
-              </select>
+            <div class="navbar-control">
+              <p class="heading">Current Network</p>
+              <div class="select">
+                <select @change="selectNet" v-model="selectedNet">
+                  <option v-for="net in networks" :value="net.name">
+                    {{net.name}}
+                  </option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -47,8 +73,9 @@
          </transition-group>
        </div>
      </flash-message> -->
-    <router-view/>
-    <modals-container/>
+    <div class="main" @click="navMenuActive=false">
+      <router-view/>
+    </div>
   </div>
 </template>
 
@@ -63,8 +90,10 @@ export default {
     if(!cachedNet) {
       cachedNet = 'Main';
     }
+
     return {
-      selectedNet: cachedNet
+      selectedNet: cachedNet,
+      navMenuActive: false
     };
   },
   computed: {
@@ -87,6 +116,17 @@ export default {
       localStorage.setItem('net', this.selectedNet);
       this.$store.dispatch('accounts/updateBalance');
       this.$store.dispatch('accounts/subscribeOnBalanceUpdates');
+    },
+    toggleNavMenu () {
+      this.navMenuActive = !this.navMenuActive
+    }
+  },
+  filters: {
+    // Truncate an address to the first 4 and last 4 characters
+    truncateAddr(value) {
+      if (!value) return ''
+      value = value.toString()
+    return `${value.substr(0,4)}...${value.substr(value.length-4)}`
     }
   },
   created() {
@@ -96,7 +136,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../node_modules/font-awesome/css/font-awesome.min.css';
+// Buttons and Links
 
 a {
   color: $purple;
@@ -105,9 +145,88 @@ a {
   }
 }
 
+.button {
+
+  &.is-primary {
+    background-color: $purple;
+
+    &.is-hovered, &:hover {
+      background-color: lighten($purple, 5%);
+    }
+    &.is-active, &:active {
+      background-color: $purple;
+    }
+    &[disabled] {
+      background-color: $purple;
+    }
+  }
+}
+
+// Headers
 h1,h2,h3,h4,h5,h6 {
     font-family: $heading-font-family;
 }
+
+.title {
+  font-weight: 300;
+  font-size: 2.6rem;
+  color: $dark-grey;
+}
+
+// Navbar
+.navbar-menu {
+  a.navbar-item {
+    font-family: $heading-font-family;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+  }
+}
+
+.navbar-burger {
+  span {
+    height: 3px;
+  }
+}
+
+a.navbar-item.is-active, a.navbar-item:hover, a.navbar-link.is-active,
+a.navbar-link:hover, .router-link-exact-active {
+  background-color: initial;
+  color: $purple;
+
+  .icon svg {
+    fill: $purple;
+  }
+}
+
+.logo-icon {
+  padding-top: 0;
+  padding-bottom: 0;
+  flex: 1 0 auto;
+  img {
+    max-height: 3.25rem;
+    width: auto;
+    margin: auto;
+  }
+}
+
+.icon {
+  svg {
+    width: 100%;
+    height: auto;
+  }
+  margin-right: 0.2em;
+  &.has-text-danger svg {
+      fill: hsl(348, 100%, 61%);
+  }
+  &.has-text-warning svg {
+      fill: hsl(48, 100%, 67%);
+  }
+  &.has-text-success svg {
+      fill: hsl(141, 71%, 48%);
+  }
+}
+
+// Notifications
 
 .notifications {
   z-index: 1000;

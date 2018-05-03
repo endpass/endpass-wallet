@@ -3,41 +3,71 @@
     <div class="section">
       <div class="container">
         <h1 class="title">Send ETH</h1>
-      </div>
-    </div>
+        <form id="sendEther" @submit="sendTransaction">
 
-    <div class="section">
-      <form id="sendEther" @submit="sendTransaction">
-        <div class="field">
-          <label class="label" for="address">To</label>
-          <div class="control">
-            <input v-model="transaction.to" @change="validateTo(); dirty.to = true;" type="text" class="input" id="address" aria-describedby="privateKey" placeholder="Receiver address" required>
+          <div class="field">
+            <label class="label" for="address">To</label>
+            <div class="control">
+              <input v-model="transaction.to" @change="validateTo();
+              dirty.to = true;" type="text" class="input"
+                                            :class="{'is-danger':dirty.to}" id="address" aria-describedby="privateKey" placeholder="Receiver address" required>
+            </div>
+            <p class="help is-danger" v-show="dirty.to" v-for="err in activeErrors.to">{{err.message}}</p>
           </div>
-          <p class="help is-danger" v-show="dirty.to" v-for="err in activeErrors.to">{{err.message}}</p>
-        </div>
-        <div class="field">
-          <label class="label" for="value">Amount</label>
-          <div class="control">
-            <input v-model.number="value" @change="validateValue(); dirty.value = true;" type="text" class="input" id="value" aria-describedby="privateKey" placeholder="Amount" required>
+
+          <div class="field">
+            <label class="label" for="value">Amount</label>
           </div>
-          <p class="help is-danger" v-show="dirty.value" v-for="err in activeErrors.value">{{err.message}}</p>
-        </div>
-        <div class="field">
-          <label class="label" for="gasPrice">Gas price</label>
-          <div class="control">
-            <input v-model.number="gasPrice" @change="validateGasPrice(); dirty.gasPrice = true;" type="text" class="input" id="gasPrice" aria-describedby="privateKey" placeholder="Gas price" required>
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <input v-model.number="value" @change="validateValue(); dirty.value =
+              true;" type="text" class="input"
+              :class="{'is-danger':dirty.value}" id="value" aria-describedby="privateKey" placeholder="Amount" required>
+            </div>
+            <div class="control">
+              <span class="select">
+                <select>
+                  <option>ETH</option>
+                </select>
+              </span>
+            </div>
+            <p class="help is-danger" v-show="dirty.value" v-for="err in activeErrors.value">{{err.message}}</p>
           </div>
-          <p class="help is-danger" v-show="dirty.gasPrice" v-for="err in activeErrors.gasPrice">{{err.message}}</p>
-        </div>
-        <div class="field">
-          <label class="label" for="gasLimit">Gas limit</label>
-          <div class="control">
-            <input v-model.number="gasLimit" @change="validateGasLimit(); dirty.gasLimit = true;" type="text" class="input" id="gasLimit" aria-describedby="privateKey" placeholder="Gas limit" required>
+
+          <div class="field">
+            <label class="label" for="gasPrice">Gas price</label>
           </div>
-          <p class="help is-danger" v-show="dirty.gasLimit" v-for="err in activeErrors.gasLimit">{{err.message}}</p>
-        </div>
-        <button :disabled="!validForm" class="button is-primary" @click="sendTransaction">Add</button>
-      </form>
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <input v-model.number="gasPrice" @change="validateGasPrice();
+              dirty.gasPrice = true;" type="text" class="input"
+              :class="{'is-danger':dirty.gasPrice}" id="gasPrice" aria-describedby="privateKey" placeholder="Gas price" required>
+            </div>
+            <div class="control">
+              <a class="button is-static">Gwei</a>
+            </div>
+            <p class="help is-danger" v-show="dirty.gasPrice" v-for="err in activeErrors.gasPrice">{{err.message}}</p>
+          </div>
+
+          <div class="field">
+            <label class="label" for="gasLimit">Gas limit</label>
+            <div class="control">
+              <input v-model.number="gasLimit" @change="validateGasLimit();
+              dirty.gasLimit = true;" type="text" class="input"
+              :class="{'is-danger':dirty.gasLimit}" id="gasLimit" aria-describedby="privateKey" placeholder="Gas limit" required>
+            </div>
+            <p class="help is-danger" v-show="dirty.gasLimit" v-for="err in activeErrors.gasLimit">{{err.message}}</p>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <button :disabled="!validForm" class="button is-primary
+                                             is-medium"
+                @click="sendTransaction">Send</button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
