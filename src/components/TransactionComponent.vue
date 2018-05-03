@@ -2,8 +2,9 @@
   <div class="transaction" :class="'is-'+statusText">
     <div class="card">
       <div class="card-header">
-        <p class="card-header-title">{{transaction.hash}}
-        {{transaction.value}}</p>
+        <p class="card-header-title">
+        {{transaction.hash}}
+        </p>
         <div class="card-header-icon" :title="statusText">
           <span v-if="transaction.success" class="icon has-text-success is-medium"
                 v-html="require('@/img/circle-check.svg')"></span>
@@ -15,14 +16,36 @@
         </div>
       </div>
       <div class="card-content">
-        <p v-if="date" class="date">{{date}}</p>
-        <p>
-          <span v-if="recieve">From:</span>
-          <span v-else>To: </span>
+        <div class="columns">
+          <div class="column">
+            <p v-if="date">
+              <span class="text-label">Date</span>
+              <span class="date">{{date}}</span>
+            </p>
 
-          <span v-if="recieve">{{transaction.from}}</span>
-          <span v-else>To: {{transaction.to}}</span>
-        </p>
+            <p v-if="recieve">
+              <span class="text-label">From</span>
+              <span class="address">{{transaction.from}}</span>
+            </p>
+            <p v-else>
+              <span class="text-label">To</span>
+              <span class="address">{{transaction.to}}</span>
+            </p>
+          </div>
+          <div class="column is-one-quarter">
+            <p><span class="title amount">
+          <span v-if="recieve">
+            <span class="icon is-medium"
+                  v-html="require('@/img/arrow-thick-right.svg')"></span>
+          </span>
+          <span v-else>
+            <span class="icon is-medium"
+                  v-html="require('@/img/arrow-thick-left.svg')"></span>
+          </span>
+              {{transaction.value}}
+            </span><span class="status-text">ETH</span></p>
+          </div>
+        </div>
       </div>
       <div v-if="isPending" class="card-footer">
         <a class="card-footer-item" @click="resend">
@@ -114,5 +137,44 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style lang="scss">
+.transaction {
+  .card {
+    border-top: 5px solid $white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  &.is-cancelled .card {
+    border-top-color: $danger;
+    .icon svg {
+      fill: $danger;
+    }
+    .status-text {
+      color: $danger;
+    }
+  }
+  &.is-pending .card {
+    border-top-color: $warning;
+    .icon svg {
+      fill: $warning;
+    }
+    .status-text {
+      color: $warning;
+    }
+  }
+  &.is-confirmed .card {
+    border-top-color: $success;
+    .icon svg {
+      fill: $success;
+    }
+    .status-text {
+      color: $success;
+    }
+  }
+
+  .text-label {
+    color: lighten($dark-grey, 20%);
+    margin-right: 0.2em;
+  }
+}
 </style>
