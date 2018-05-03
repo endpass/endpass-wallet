@@ -1,40 +1,32 @@
 <template lang="html">
-  <div class="box">
-    <div class="columns">
-      <div class="column is-9">
-        <h2 class="subtitle">
-          <span v-if="date">{{date}}</span>
-          <span v-if="transaction.canseled">Canseled</span>
-          <span v-if="!date && !transaction.canseled">Pending transaction</span>
-        </h2>
+  <div class="transaction" :class="'is-'+statusText">
+    <div class="card">
+      <div class="card-header">
+        <p class="card-header-title">{{transaction.hash}}</p>
+      </div>
+      <div class="card-content">
+        <p v-if="date" class="date">{{date}}</p>
+        <p class="status">{{statusText}}</p>
         <p>
-          <span v-if="recieve">From: </span>
-          <span v-if="!recieve">To: </span>
-          <span v-if="recieve">{{transaction.from}}</span>
-          <span v-if="!recieve">To{{transaction.to}}</span>
+          <span v-if="recieve">From:</span>
+          <span v-else>To: </span>
 
+          <span v-if="recieve">{{transaction.from}}</span>
+          <span v-else>To: {{transaction.to}}</span>
         </p>
       </div>
-      <div class="column is-3">
-        <p v-if="!date && !transaction.canseled" class="has-text-right">
-          <button class="button is-small is-warning" @click="resend" type="button" name="button">
-            <span class="icon is-medium"
-              v-html="require('@/img/loop.svg')"></span>
-          </button>
-          <button class="button is-small is-danger" @click="cansel" type="button" name="button">
-            <span class="icon is-medium"
-                  v-html="require('@/img/ban.svg')"></span>
-            </span>
-          </button>
-        </p>
-        <p class="has-text-right">{{transaction.value}} ETH</p>
-        <p class="has-text-right" v-if="transaction.success">Succeeded</p>
-        <p class="has-text-right" v-if="transaction.success">Failed</p>
+      <div v-if="isPending" class="card-footer">
+        <a class="card-footer-item" @click="resend">
+          <span class="icon is-medium"
+                v-html="require('@/img/loop.svg')"></span>Resend
+        </a>
+        <a class="card-footer-item has-text-danger" @click="cansel" type="button" name="button">
+          <span class="icon is-medium"
+                v-html="require('@/img/ban.svg')"></span>Cancel
+        </a>
       </div>
     </div>
-    <div class="columns">
-      <p class="column is-12">{{transaction.hash}}</p>
-    </div>
+
     <resend-modal :transaction="transaction" v-if="resendModalOpen" @close="closeResendModal"/>
   </div>
 </template>
@@ -62,6 +54,18 @@ export default {
         return date.toLocaleString();
       } else {
         return false;
+      }
+    },
+    isPending () {
+      return !this.date && !this.transaction.canseled
+    },
+    statusText () {
+      if (this.transaction.canseled) {
+        return 'cancelled'
+      } else if (this.isPending) {
+        return 'pending'
+      } else {
+        return 'confirmed'
       }
     }
   },
