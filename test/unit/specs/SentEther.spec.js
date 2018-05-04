@@ -15,31 +15,4 @@ describe('SendEther', () => {
     expect(vm.transaction.gasLimit).toBe('0xa');
     expect(vm.transaction.value).toBe('0x8ac7230489e80000');
   })
-
-  it('correctly sets required errors', () => {
-    const vm = new Vue(SendEther).$mount();
-    vm.validateTo();
-    let errFound = vm.activeErrors.to.find(err => {
-      return err.type === 'required';
-    })
-    expect(typeof errFound).toBe('object');
-  })
-  it('correctly sets invalid address', () => {
-    const vm = new Vue(SendEther).$mount();
-    vm.transaction.to = '0x12345'
-    vm.validateTo();
-    let errFound = vm.activeErrors.to.find(err => {
-      return err.type === 'invalid';
-    })
-    expect(typeof errFound).toBe('object');
-  })
-  it('correctly sets zero address', () => {
-    const vm = new Vue(SendEther).$mount();
-    vm.transaction.to = '0x0000000000000000000000000000000000000000'
-    vm.validateTo();
-    let errFound = vm.activeErrors.to.find(err => {
-      return err.type === 'zeroAdress';
-    })
-    expect(typeof errFound).toBe('object');
-  })
 })
