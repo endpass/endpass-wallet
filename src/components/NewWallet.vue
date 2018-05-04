@@ -48,8 +48,7 @@ export default {
             this.mnemonic.seed = Bip39.mnemonicToSeed(this.mnemonic.phrase);
             const hdWalletPreDrive = HDKey.fromMasterSeed(this.mnemonic.seed);
             const hdWallet = hdWalletPreDrive.derivePath(this.mnemonic.path);
-            let account = hdWallet.deriveChild(0).getWallet();
-            resolve(account)
+            resolve(hdWallet)
           } catch (e) {
             reject(e);
           }
@@ -57,7 +56,9 @@ export default {
       });
       return promise
     },
-    commitWalletCreationChanges(account){
+    commitWalletCreationChanges(hdWallet){
+      this.$store.commit('accounts/setWallet', hdWallet);
+      let account = hdWallet.deriveChild(0).getWallet();
       this.$store.commit('accounts/addAccount', account);
       this.$store.dispatch('accounts/updateBalance');
       this.$store.dispatch('accounts/subscribeOnBalanceUpdates');

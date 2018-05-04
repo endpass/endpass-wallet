@@ -3,17 +3,36 @@ import EthBlockTracker from 'eth-block-tracker';
 export default {
   namespaced: true,
   state: {
+    hdWallet: null,
+    accounts: [],
     activeAccount: null,
     balance: null,
     balanceSubscribtion: false,
     pendingTransactions: []
   },
   mutations: {
-    addAccount(state, account) {
-      if (state.activeAccount) {
+    // Set HD wallet that generates accounts
+    setWallet(state, wallet) {
+      // Do not set wallet if already exists
+      if (state.hdWallet) {
         return
       }
+      state.hdWallet = wallet
+    },
+    newAccount(state) {
+      if (!state.hdWallet) {
+        return
+      }
+      let account = state.hdWallet.deriveChild(state.accounts.length).getWallet()
       state.activeAccount = account;
+    },
+    // Add a new account to the list
+    addAccount(state, account) {
+      state.accounts.push(account)
+      state.activeAccount = account
+    },
+    setActiveAccount(state, account) {
+      state.activeAccount = account
     },
     addTransaction(state, transaction) {
       state.pendingTransactions.push(transaction);
