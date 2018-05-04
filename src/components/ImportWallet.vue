@@ -36,7 +36,7 @@
                     <p v-show="privateKeyError" class="help is-danger">Private key is invalid</p>
                   </div>
                 </div>
-                <button class="button is-primary is-medium" @click="addWalletWithKey"
+                <button class="button is-primary is-medium" @click.prevent="addWalletWithKey"
                   :disabled="!privateKey || privateKeyError">Import</button>
               </form>
             </div>
@@ -54,7 +54,7 @@
                   </div>
                 </div>
                 <button class="button is-primary is-medium"
-                  @click="addWalletWithPrase" :disabled="!hdkeyPrase ||
+                  @click.prevent="addWalletWithPrase" :disabled="!hdkeyPrase ||
                   hdkeyPraseError">Import</button>
               </form>
             </div>

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import router from './router'
 import store from './store'
+import validation from './validation';
 import App from './App'
 import VueResource from 'vue-resource';
 import VueFlashMessage from 'vue-flash-message'

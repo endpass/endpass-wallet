@@ -1,34 +1,24 @@
 <template lang="html">
-  <div class="resend-modal modal is-active">
-    <div class="modal-background" @click="cancel"></div>
-    <div class="modal-card">
-      <div class="modal-card-head">
-        <h3 class="modal-card-title">Resend Transaction</h3>
-        <button class="delete is-large" @click="cancel"></button>
+  <div class="section">
+    <button class="button is-small is-danger is-pulled-right" @click="cansel" type="button" name="button">
+      <span class="icon is-medium">
+        <i class="fa fa-times"></i>
+      </span>
+    </button>
+    <div class="field">
+      <label class="label" for="gasPrice">Gas price</label>
+      <div class="control">
+        <input v-model.number="gasPrice" type="text" class="input" id="gasPrice" aria-describedby="gasPrice" placeholder="Gas price" required>
       </div>
-      <div class="modal-card-body">
-        <p>If your transaction is "stuck" due to a fee that is too low, use
-        this form to resend it with an increased fee.</p>
-        <div class="field">
-          <label class="label" for="gasPrice">Gas price</label>
-          <div class="control">
-            <input v-model.number="gasPrice" @change="validateGasPrice(); dirty.gasPrice = true;" type="text" class="input" id="gasPrice" aria-describedby="privateKey" placeholder="Gas price" required>
-          </div>
-          <p class="help is-danger" v-show="dirty.gasPrice" v-for="err in activeErrors.gasPrice">{{err.message}}</p>
-        </div>
-        <div class="field">
-          <label class="label" for="gasLimit">Gas limit</label>
-          <div class="control">
-            <input v-model.number="gasLimit" @change="validateGasLimit(); dirty.gasLimit = true;" type="text" class="input" id="gasLimit" aria-describedby="privateKey" placeholder="Gas limit" required>
-          </div>
-          <p class="help is-danger" v-show="dirty.gasLimit" v-for="err in activeErrors.gasLimit">{{err.message}}</p>
-        </div>
-      </div>
-      <div class="modal-card-foot">
-        <button class="button is-primary" @click="submit">Resend</button>
-        <button class="button" @click="cancel">Cancel</button>
+      <p class="help is-danger" v-show="dirty.gasPrice" v-for="err in activeErrors.gasPrice">{{err.message}}</p>
+    </div>
+    <div class="field">
+      <label class="label" for="gasLimit">Gas limit</label>
+      <div class="control">
+        <input v-model.number="gasLimit" type="text" class="input" id="gasLimit" aria-describedby="gasLimit" placeholder="Gas limit" required>
       </div>
     </div>
+    <button class="button is-primary" @click="submit">Add</button>
   </div>
 </template>
 
@@ -61,6 +51,8 @@ export default {
         return web3.utils.fromWei(web3.utils.hexToNumberString(this.newTransaction.gasPrice || this.transaction.gasPrice), 'Gwei');
       },
       set: function (newValue) {
+        if(typeof newValue !== 'number')
+          return
         if(this.gasPrice > newValue)
           return
         this.newTransaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei(newValue.toString(), 'Gwei'));
@@ -71,6 +63,8 @@ export default {
         return web3.utils.hexToNumberString(this.newTransaction.gasLimit || this.transaction.gasLimit);
       },
       set: function (newValue) {
+        if(typeof newValue !== 'number')
+          return
         this.newTransaction.gasLimit = web3.utils.numberToHex(newValue.toString());
       }
     },
@@ -121,7 +115,7 @@ export default {
       });
       this.$emit('close');
     },
-    cancel() {
+    cansel() {
       this.$emit('close');
     }
   },
