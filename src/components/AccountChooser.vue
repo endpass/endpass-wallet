@@ -11,21 +11,29 @@
       </div>
     </div>
     <div :disabled="!hdWallet" class="new-account control">
-      <a class="button is-primary" @click="createNewAccount">&plus;</a>
+      <a class="button is-primary" @click="openNewAccountModal">&plus;</a>
     </div>
+    <new-account-modal @close="closeNewAccountModal"
+      v-if="newAccountModalOpen"/>
   </div>
 </template>
 
 <script>
+import NewAccountModal from '@/components/NewAccountModal'
+
 export default {
   data () {
     return {
-      selectedAccountId: 0
+      selectedAccountId: 0,
+      newAccountModalOpen: false
     }
   },
   computed: {
     activeAccount () {
       return this.$store.state.accounts.activeAccount
+    },
+    hdWallet () {
+      return this.$store.state.accounts.hdWallet
     },
     selectedAccount () {
       if (!this.accounts.length) {
@@ -37,9 +45,6 @@ export default {
     accounts () {
       return this.$store.state.accounts.accounts
     },
-    hdWallet () {
-      return this.$store.state.accounts.hdWallet
-    }
   },
   methods: {
     setActiveAccount() {
@@ -51,17 +56,11 @@ export default {
       this.$store.dispatch('accounts/updateBalance')
       this.$store.dispatch('accounts/subscribeOnBalanceUpdates')
     },
-    // Create the next account derived from the HD wallet seed
-    // TODO consider gap limit if multiple hd accounts are already used
-    createNewAccount() {
-      if (!this.hdWallet) {
-        return
-      }
-      let i = this.accounts.length
-      let account = this.hdWallet.deriveChild(i).getWallet()
-      this.$store.commit('accounts/addAccount', account);
-      this.selectedAccountId = i
-      this.setActiveAccount()
+    openNewAccountModal() {
+      this.newAccountModalOpen = true
+    },
+    closeNewAccountModal() {
+      this.newAccountModalOpen = false
     }
   },
   filters: {
@@ -71,6 +70,9 @@ export default {
       value = value.toString()
     return `${value.substr(0,4)}...${value.substr(value.length-4)}`
     }
+  },
+  components: {
+    NewAccountModal
   }
 }
 </script>
