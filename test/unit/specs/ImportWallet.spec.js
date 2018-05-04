@@ -30,7 +30,6 @@ describe('ImportWallet', () => {
     const defaultData = ImportWallet.data()
     expect(defaultData.privateKey).toBe('')
     expect(defaultData.hdkeyPrase).toBe('')
-    expect(defaultData.privateKeyError).toBe(false)
     expect(defaultData.hdkeyPraseError).toBe(false)
   })
 
@@ -49,7 +48,6 @@ describe('ImportWallet', () => {
     const vm = new Vue(ImportWallet).$mount();
     vm.addWalletWithKey();
     vm.addWalletWithPrase();
-    expect(vm.privateKeyError).toBe(true);
     expect(vm.hdkeyPraseError).toBe(true);
   })
 

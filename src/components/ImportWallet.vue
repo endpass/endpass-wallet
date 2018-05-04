@@ -27,16 +27,17 @@
 
           <div class="column">
 
-            <div class="import-private-key" v-if="importType === 'privateKey'" >
+            <div class="import-private-key" v-if="importType === 'privateKey'">
               <form>
                 <div class="field">
-                  <label class="label" for="key">Private key</label>
+                  <label class="label" for="privateKey">Private key</label>
                   <div class="control">
-                    <input v-model="privateKey" :class="{'is-danger' : fields.key && fields.key.touched && fields.key.invalid}" type="text" name="key" class="input" v-validate="'required|private_key'" id="key" aria-describedby="privateKey" placeholder="Private key">
-                    <p class="help is-danger">{{errors.first('key')}}</p>
+                    <input v-model="privateKey" @change="(privateKeyError = false)" type="text" class="input" id="privateKey" aria-describedby="privateKey" placeholder="Private key">
+                    <p v-show="privateKeyError" class="help is-danger">Private key is invalid</p>
                   </div>
                 </div>
-                <button class="button is-primary is-medium" :disabled="fields.key && fields.key.invalid" @click.prevent="addWalletWithKey">Import</button>
+                <button class="button is-primary is-medium" @click.prevent="addWalletWithKey"
+                  :disabled="!privateKey || privateKeyError">Import</button>
               </form>
             </div>
 
@@ -69,7 +70,6 @@
 
 import EthWallet from 'ethereumjs-wallet'
 import HDKey from 'ethereumjs-wallet/hdkey'
-import router from '../router'
 
 export default {
   data () {
