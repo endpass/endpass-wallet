@@ -125,14 +125,6 @@ export default {
       this.navMenuActive = !this.navMenuActive
     }
   },
-  filters: {
-    // Truncate an address to the first 4 and last 4 characters
-    truncateAddr(value) {
-      if (!value) return ''
-      value = value.toString()
-    return `${value.substr(0,4)}...${value.substr(value.length-4)}`
-    }
-  },
   created() {
     this.$store.commit('web3/changeNetwork', this.selectedNet);
   }
