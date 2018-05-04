@@ -8,11 +8,10 @@
           <div class="field">
             <label class="label" for="address">To</label>
             <div class="control">
-              <input v-model="transaction.to" @change="validateTo();
-              dirty.to = true;" type="text" class="input"
-                                            :class="{'is-danger':dirty.to}" id="address" aria-describedby="privateKey" placeholder="Receiver address" required>
+              <input v-model="transaction.to" name="address" v-validate="'required|address'" type="text" class="input"
+                :class="{'is-danger': fields.address && fields.address.touched && fields.address.invalid }" id="address" aria-describedby="address" placeholder="Receiver address" required>
             </div>
-            <p class="help is-danger" v-show="dirty.to" v-for="err in activeErrors.to">{{err.message}}</p>
+            <p class="help is-danger">{{errors.first('address')}}</p>
           </div>
 
           <div class="field">
@@ -20,9 +19,7 @@
           </div>
           <div class="field has-addons">
             <div class="control is-expanded">
-              <input v-model.number="value" @change="validateValue(); dirty.value =
-              true;" type="text" class="input"
-              :class="{'is-danger':dirty.value}" id="value" aria-describedby="privateKey" placeholder="Amount" required>
+              <input v-model.number="value" name="value" type="text" class="input" id="value" aria-describedby="value" placeholder="Amount" required>
             </div>
             <div class="control">
               <span class="select">
@@ -31,39 +28,37 @@
                 </select>
               </span>
             </div>
-            <p class="help is-danger" v-show="dirty.value" v-for="err in activeErrors.value">{{err.message}}</p>
           </div>
 
           <div class="field">
-            <label class="label" for="gasPrice">Gas price</label>
+            <label class="label" for="price">Gas price</label>
           </div>
           <div class="field has-addons">
             <div class="control is-expanded">
-              <input v-model.number="gasPrice" @change="validateGasPrice();
-              dirty.gasPrice = true;" type="text" class="input"
-              :class="{'is-danger':dirty.gasPrice}" id="gasPrice" aria-describedby="privateKey" placeholder="Gas price" required>
+              <input v-model.number="gasPrice" name="price" type="text" class="input"
+               id="price" aria-describedby="price" placeholder="Gas price" required>
             </div>
             <div class="control">
               <a class="button is-static">Gwei</a>
             </div>
-            <p class="help is-danger" v-show="dirty.gasPrice" v-for="err in activeErrors.gasPrice">{{err.message}}</p>
           </div>
 
           <div class="field">
-            <label class="label" for="gasLimit">Gas limit</label>
+            <label class="label" for="limit">Gas limit</label>
             <div class="control">
-              <input v-model.number="gasLimit" @change="validateGasLimit();
-              dirty.gasLimit = true;" type="text" class="input"
-              :class="{'is-danger':dirty.gasLimit}" id="gasLimit" aria-describedby="privateKey" placeholder="Gas limit" required>
+              <input v-model.number="gasLimit" type="text" class="input"
+              id="limit" aria-describedby="limit" placeholder="Gas limit" required>
             </div>
-            <p class="help is-danger" v-show="dirty.gasLimit" v-for="err in activeErrors.gasLimit">{{err.message}}</p>
           </div>
 
           <div class="field">
             <div class="control">
-              <button :disabled="!validForm" class="button is-primary
+              <button :disabled="fields.address && fields.address.invalid ||
+              fields.limit && fields.limit.invalid ||
+              fields.value && fields.value.invalid ||
+              fields.price && fields.price.invalid" class="button is-primary
                                              is-medium"
-                @click="sendTransaction">Send</button>
+                @click.prevent="sendTransaction">Send</button>
             </div>
           </div>
         </form>
@@ -76,6 +71,8 @@
 
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
+import { mapFields } from 'vee-validate'
+
 
 export default {
 
@@ -109,6 +106,8 @@ export default {
         return web3.utils.fromWei(web3.utils.hexToNumberString(this.transaction.gasPrice), 'Gwei');
       },
       set: function (newValue) {
+        if( typeof newValue !== 'number')
+          return
         this.transaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei(newValue.toString(), 'Gwei'));
       }
     },
@@ -117,6 +116,8 @@ export default {
         return web3.utils.hexToNumberString(this.transaction.gasLimit);
       },
       set: function (newValue) {
+        if( typeof newValue !== 'number')
+          return
         this.transaction.gasLimit = web3.utils.numberToHex(newValue.toString());
       }
     },
@@ -125,6 +126,8 @@ export default {
         return web3.utils.fromWei(web3.utils.hexToNumberString(this.transaction.value));
       },
       set: function (newValue) {
+        if( typeof newValue !== 'number')
+          return
         this.transaction.value = web3.utils.numberToHex(web3.utils.toWei(newValue.toString(), 'ether'));
       }
     },
@@ -149,61 +152,6 @@ export default {
     }
   },
   methods: {
-    validateTo() {
-      const newErrArray = [];
-      if(this.transaction.to === '') {
-        newErrArray.push({
-          message: 'This field is required',
-          type: 'required'
-        });
-      }
-      if(!web3.utils.isAddress(this.transaction.to)) {
-        newErrArray.push({
-          message: 'This is not a valid address',
-          type: 'invalid'
-        });
-      }
-      let zeroAddressRegex = /^0x0+$/;
-      if(web3.utils.isAddress(this.transaction.to) && this.transaction.to.match(zeroAddressRegex)) {
-        newErrArray.push({
-          message: 'You cant sent ether to zero address',
-          type: 'zeroAdress'
-        });
-      }
-      this.$set(this.activeErrors, 'to', newErrArray);
-    },
-    validateGasLimit() {
-      const newErrArray = [];
-      this.activeErrors.gasLimit = newErrArray;
-      if(this.transaction.gasLimit === '') {
-        newErrArray.push({
-          message: 'This field is required',
-          type: 'required'
-        });
-      }
-      this.$set(this.activeErrors, 'gasLimit', newErrArray);
-    },
-    validateGasPrice() {
-      const newErrArray = [];
-      this.activeErrors.gasPrice = newErrArray;
-      if(this.transaction.gasPrice === '') {
-        newErrArray.push({
-          message: 'This field is required',
-          type: 'required'
-        });
-      }
-      this.$set(this.activeErrors, 'gasPrice', newErrArray);
-    },
-    validateValue() {
-      const newErrArray = [];
-      if(this.transaction.value === '') {
-        newErrArray.push({
-          message: 'This field is required',
-          type: 'required'
-        });
-      }
-      this.$set(this.activeErrors, 'value', newErrArray);
-    },
     chreateTransactionHistory(trx) {
       let historyItem = {};
       historyItem.to = trx.to;
@@ -236,12 +184,6 @@ export default {
       });
       e.preventDefault();
     }
-  },
-  created() {
-    this.validateTo();
-    this.validateGasLimit();
-    this.validateGasPrice();
-    this.validateValue();
   }
 }
 </script>
