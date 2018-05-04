@@ -1,12 +1,17 @@
 <template lang="html">
-  <div class="account-chooser">
-    <div class="select">
-      <select @change="setActiveAccount" v-model="selectedAccountId">
-        <option v-for="(account, i in accounts"
-        :value="i">
-        {{i}}. {{account.getAddressString() |truncateAddr}}
-        </option>
-      </select>
+  <div class="account-chooser field has-addons">
+    <div class="control">
+      <div class="select">
+        <select @change="setActiveAccount" v-model="selectedAccountId">
+          <option v-for="(account, i in accounts"
+                  :value="i">
+          {{i}}. {{account.getAddressString() |truncateAddr}}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div :disabled="!hdWallet" class="new-account control">
+      <a class="button is-primary" @click="createNewAccount">&plus;</a>
     </div>
   </div>
 </template>
@@ -44,7 +49,6 @@ export default {
       }
       this.$store.commit('accounts/setActiveAccount', account)
       this.$store.dispatch('accounts/updateBalance')
-      // TODO unsubscribe updates for old account?
       this.$store.dispatch('accounts/subscribeOnBalanceUpdates')
     },
     // Create the next account derived from the HD wallet seed
@@ -53,9 +57,10 @@ export default {
       if (!this.hdWallet) {
         return
       }
-      let account = this.hdWallet.deriveChild(this.accounts.length).getWallet()
+      let i = this.accounts.length
+      let account = this.hdWallet.deriveChild(i).getWallet()
       this.$store.commit('accounts/addAccount', account);
-      this.selectedAccount = account
+      this.selectedAccountId = i
       this.setActiveAccount()
     }
   },

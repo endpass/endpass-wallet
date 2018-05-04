@@ -19,13 +19,6 @@ export default {
       }
       state.hdWallet = wallet
     },
-    newAccount(state) {
-      if (!state.hdWallet) {
-        return
-      }
-      let account = state.hdWallet.deriveChild(state.accounts.length).getWallet()
-      state.activeAccount = account;
-    },
     // Add a new account to the list
     addAccount(state, account) {
       state.accounts.push(account)
