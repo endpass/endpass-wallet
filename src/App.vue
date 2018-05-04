@@ -37,7 +37,7 @@
             <div class="navbar-control">
               <span  v-if="activeAccount">
                 <p class="heading">Current Account </p>
-                <span>{{ activeAccount.getAddressString() | truncateAddr }}</span>
+                <account-chooser/>
                 <span v-if="balance !== null"><strong>{{ balance }}</strong> ETH</span>
               </span>
               <router-link :to="{name: 'NewWallet'}" class="button
@@ -82,9 +82,13 @@
 <script>
 
 import web3 from 'web3';
+import AccountChooser from '@/components/AccountChooser.vue'
 
 export default {
   name: 'App',
+  components: {
+    AccountChooser
+  },
   data () {
     let cachedNet = localStorage.getItem('net');
     if(!cachedNet) {
