@@ -5,9 +5,9 @@ import SendEther from '../../../src/components/SendPage.vue'
 describe('SendEther', () => {
   it('sets correct data', () => {
     const vm = new Vue(SendEther).$mount();
-    vm.gasPrice = '10';
-    vm.gasLimit = '10';
-    vm.value = '10';
+    vm.gasPrice = 10;
+    vm.gasLimit = 10;
+    vm.value = 10;
     expect(vm.gasPrice).toBe('10');
     expect(vm.gasLimit).toBe('10');
     expect(vm.value).toBe('10');

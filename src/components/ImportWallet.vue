@@ -27,8 +27,7 @@
 
           <div class="column">
 
-            <div class="import-private-key" v-if="importType ===
-              'privateKey'" >
+            <div class="import-private-key" v-if="importType === 'privateKey'" >
               <form>
                 <div class="field">
                   <label class="label" for="key">Private key</label>
