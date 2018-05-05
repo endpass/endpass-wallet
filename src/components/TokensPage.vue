@@ -5,7 +5,7 @@
   </p>
   <div class="panel-block">
     <p class="control has-icons-left">
-      <input class="input is-small" type="text" placeholder="search">
+      <input v-model="search" class="input is-small" type="text" placeholder="search">
       <span class="icon is-small is-left">
         <i class="fas fa-search" aria-hidden="true"></i>
       </span>
@@ -19,7 +19,7 @@
     <a>forks</a>
   </p> -->
   <div class="scroller">
-    <a v-for="token in tokens" class="panel-block is-clearfix is-block">
+    <a v-for="token in filteredTokens" class="panel-block is-clearfix is-block">
       <span class="panel-icon">
         <i class="fas fa-book" aria-hidden="true"></i>
       </span>
@@ -40,11 +40,21 @@
 export default {
   data() {
     return {
-      tokens: []
+      tokens: [],
+      search: ''
+    }
+  },
+  computed: {
+    filteredTokens() {
+      if(this.search === '')
+        return this.tokens
+      else
+        return this.tokens.filter((token) => {
+          return token.symbol.includes(this.search) || token.name.includes(this.search)
+        });
     }
   },
   created() {
-
     this.$store.dispatch('tokens/createSubscribtion');
     this.$http.get(`https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/tokens/tokens-eth.json`)
       .then(response => {
