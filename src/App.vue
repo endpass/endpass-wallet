@@ -37,7 +37,7 @@
             <div class="navbar-control">
               <span  v-if="activeAccount">
                 <p class="heading">Current Account </p>
-                <span>{{ activeAccount.getAddressString() | truncateAddr }}</span>
+                <account-chooser/>
                 <span v-if="balance !== null"><strong>{{ balance }}</strong> ETH</span>
               </span>
               <router-link :to="{name: 'NewWallet'}" class="button
@@ -82,9 +82,13 @@
 <script>
 
 import web3 from 'web3';
+import AccountChooser from '@/components/AccountChooser.vue'
 
 export default {
   name: 'App',
+  components: {
+    AccountChooser
+  },
   data () {
     let cachedNet = localStorage.getItem('net');
     if(!cachedNet) {
@@ -119,14 +123,6 @@ export default {
     },
     toggleNavMenu () {
       this.navMenuActive = !this.navMenuActive
-    }
-  },
-  filters: {
-    // Truncate an address to the first 4 and last 4 characters
-    truncateAddr(value) {
-      if (!value) return ''
-      value = value.toString()
-    return `${value.substr(0,4)}...${value.substr(value.length-4)}`
     }
   },
   created() {

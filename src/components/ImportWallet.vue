@@ -87,33 +87,40 @@ export default {
     }
   },
   methods: {
+    commitWallet(hdWallet) {
+      this.$store.commit('accounts/setWallet', hdWallet);
+    },
     addAccount(account) {
       this.$store.commit('accounts/addAccount', account);
       this.$store.dispatch('accounts/updateBalance');
       this.$store.dispatch('accounts/subscribeOnBalanceUpdates');
-      router.push('/');
     },
     addWalletWithKey() {
       try {
         this.addAccount(this.createWalletWithKey());
+        router.push('/')
       } catch (e) {
         this.privateKeyError = true;
+      }
+    },
+    addWalletWithPrase() {
+      try {
+        let hdWallet = this.createWalletWithPrase()
+        this.commitWallet(hdWallet)
+        let account = hdWallet.deriveChild(0).getWallet()
+        this.addAccount(account)
+        router.push('/')
+      } catch (e) {
+        this.hdkeyPraseError = true;
       }
     },
     createWalletWithKey() {
       return EthWallet.fromPrivateKey(new Buffer(this.privateKey, 'hex'));
     },
-    addWalletWithPrase() {
-      try {
-        this.addAccount(this.createWalletWithPrase());
-      } catch (e) {
-        this.hdkeyPraseError = true;
-      }
-    },
     createWalletWithPrase() {
       const hdKey = HDKey.fromMasterSeed(this.hdkeyPrase);
       const hdWallet = hdKey.derivePath(this.mnemonic.path);
-      return hdWallet.deriveChild(0).getWallet();
+      return hdWallet;
     }
   }
 }
