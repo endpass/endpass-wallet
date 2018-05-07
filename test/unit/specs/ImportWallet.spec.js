@@ -1,11 +1,13 @@
 import Vue from 'vue'
 import { shallow, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
+import VeeValidate from 'vee-validate'
 import ImportWallet from '../../../src/components/ImportWallet.vue'
 import EthWallet from 'ethereumjs-wallet'
 import HDKey from 'ethereumjs-wallet/hdkey'
 
 const localVue = createLocalVue()
+localVue.use(VeeValidate)
 
 localVue.use(Vuex)
 
@@ -28,7 +30,6 @@ describe('ImportWallet', () => {
     const defaultData = ImportWallet.data()
     expect(defaultData.privateKey).toBe('')
     expect(defaultData.hdkeyPrase).toBe('')
-    expect(defaultData.privateKeyError).toBe(false)
     expect(defaultData.hdkeyPraseError).toBe(false)
   })
 
@@ -47,7 +48,6 @@ describe('ImportWallet', () => {
     const vm = new Vue(ImportWallet).$mount();
     vm.addWalletWithKey();
     vm.addWalletWithPrase();
-    expect(vm.privateKeyError).toBe(true);
     expect(vm.hdkeyPraseError).toBe(true);
   })
 
