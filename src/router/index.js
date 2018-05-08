@@ -5,6 +5,7 @@ import HomePage from '@/components/HomePage'
 import SendPage from '@/components/SendPage'
 import HistoryPage from '@/components/HistoryPage'
 import ReceivePage from '@/components/ReceivePage'
+import TokensPage from '@/components/TokensPage'
 import NewWallet from '@/components/NewWallet'
 import ImportWallet from '@/components/ImportWallet'
 import store from '../store'
@@ -21,6 +22,12 @@ export default new Router({
       path: '/send',
       name: 'SendPage',
       component: SendPage,
+      beforeEnter: hasWalletGuard
+    },
+    {
+      path: '/tokens',
+      name: 'TokensPage',
+      component: TokensPage,
       beforeEnter: hasWalletGuard
     },
     {

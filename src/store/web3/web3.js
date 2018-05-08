@@ -26,7 +26,6 @@ export default {
       } else {
         state.web3 = new Web3(state.activeNet.url);
       }
-      console.log(state.web3.currentProvider);
     }
   }
 }
