@@ -5,7 +5,7 @@
         <h1 class="title">Receive ETH</h1>
         <div class="box">
           <p>Your Wallet Address:</p>
-          <p class="is-size-4">{{address}}</p>
+          <p class="code address is-size-5">{{address}}</p>
         </div>
       </div>
     </div>
