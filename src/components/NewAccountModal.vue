@@ -91,18 +91,4 @@ export default {
 </script>
 
 <style lang="scss">
-.new-account-modal {
-  .bold {
-    font-weight: 700;
-    font-size: 1.1em;
-  }
-
-  .code {
-    background: $light-grey;
-    color: $dark-grey;
-    padding: 1em;
-    word-wrap: break-word;
-    font-family: "Lucida Console","Courier New",monospace;
-  }
-}
 </style>

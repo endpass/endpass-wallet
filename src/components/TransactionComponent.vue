@@ -18,6 +18,7 @@
       <div class="card-content">
         <div class="columns">
           <div class="column">
+            <span class="heading">{{statusText}}</span>
             <p v-if="date">
               <span class="text-label">Date</span>
               <span class="date">{{date}}</span>
@@ -32,18 +33,22 @@
               <span class="address">{{transaction.to}}</span>
             </p>
           </div>
-          <div class="column is-one-quarter">
-            <p><span class="title amount">
-          <span v-if="recieve">
-            <span class="icon is-medium"
-                  v-html="require('@/img/arrow-thick-right.svg')"></span>
-          </span>
-          <span v-else>
-            <span class="icon is-medium"
-                  v-html="require('@/img/arrow-thick-left.svg')"></span>
-          </span>
-              {{transaction.value}}
-            </span><span class="status-text">ETH</span></p>
+
+          <div class="column is-one-third">
+            <p>
+              <span class="title amount">{{transaction.value}}</span>
+              <span >ETH</span>
+            </p>
+            <p class="received" v-if="recieve">
+              <span class="icon is-medium"
+                    v-html="require('@/img/arrow-thick-right.svg')"></span>
+              <span class="heading">Received</span>
+            </p>
+            <p class="sent" v-else>
+              <span class="icon is-medium"
+                    v-html="require('@/img/arrow-thick-left.svg')"></span>
+              <span class="heading">Sent</span>
+            </p>
           </div>
         </div>
       </div>
@@ -139,6 +144,7 @@ export default {
 
 <style lang="scss">
 .transaction {
+  margin-bottom: 2rem;
   .card {
     border-top: 5px solid $white;
     overflow: hidden;
@@ -146,7 +152,7 @@ export default {
   }
   &.is-cancelled .card {
     border-top-color: $danger;
-    .icon svg {
+    .card-header-icon .icon svg {
       fill: $danger;
     }
     .status-text {
@@ -155,7 +161,7 @@ export default {
   }
   &.is-pending .card {
     border-top-color: $warning;
-    .icon svg {
+    .card-header-icon .icon svg {
       fill: $warning;
     }
     .status-text {
@@ -164,11 +170,22 @@ export default {
   }
   &.is-confirmed .card {
     border-top-color: $success;
-    .icon svg {
+    .card-header-icon .icon svg {
       fill: $success;
     }
     .status-text {
       color: $success;
+    }
+  }
+
+  .received {
+    .icon svg {
+      fill: $success;
+    }
+  }
+  .sent {
+    .icon svg {
+      fill: $danger;
     }
   }
 
