@@ -1,7 +1,7 @@
 <template>
   <div class="new-wallet">
     <div class="section" v-if="walletCreated">
-      <div class="container has-text-centered">
+      <div class="container has-text-centered is-narrow">
         <h1 class="title">Wallet Created</h1>
         <p class="subtitle">Your wallet has been created successfully.
         Please <strong>write down the 12 word recovery phrase below</strong>

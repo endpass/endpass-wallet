@@ -132,6 +132,11 @@ export default {
 </script>
 
 <style lang="scss">
+// Layout
+.container.is-narrow {
+  max-width: 600px;
+}
+
 // Buttons and Links
 
 a {
