@@ -1,4 +1,5 @@
 import  TokenTracker from 'eth-token-tracker'
+import Vue from '../../main'
 
 export default {
   namespaced: true,
@@ -12,12 +13,8 @@ export default {
     }
   },
   mutations: {
-    storeToken(state, tokenAddres) {
-      state.savedTokens.push({address: tokenAddres});
-      localStorage.setItem('tokens', JSON.stringify(state.savedTokens));
-    },
     saveTokens(state, tokens) {
-      state.activeTokens = tokens;
+      state.activeTokens = state.activeTokens.concat(tokens);
     },
     saveSubscription(state, subscription) {
       state.subscription = subscription;
@@ -26,29 +23,40 @@ export default {
   actions: {
     subscribeOnTokenUpdates(context, address) {
       context.state.subscription.add({address});
-      context.commit('storeToken', address);
       let balances = context.state.subscription.serialize();
       context.commit('saveTokens', balances);
     },
-    createSubscribtion(context) {
+    getNonZeroTokens(context) {
       let address = context.rootState.accounts.activeAccount.getAddressString();
-      let subscription = new TokenTracker({
-        userAddress: address,
-        provider: context.rootState.web3.web3.currentProvider,
-        pollingInterval: 40,
-        tokens: context.state.savedTokens,
-      })
-      let balances = subscription.serialize();
+      return Vue.$http.get(`https://api.ethplorer.io/getAddressInfo/${address}?apiKey=freekey`);
+    },
+    getTokens(context) {
+      return Vue.$http.get(`https://tokeninfo.endpass.com/api/v1/tokens`);
+    },
+    createSubscribtion(context) {
+      return new Promise((res, rej) => {
+        context.dispatch('getNonZeroTokens').then((resp) => {
+          let address = context.rootState.accounts.activeAccount.getAddressString();
+          let subscription = new TokenTracker({
+            userAddress: address,
+            provider: context.rootState.web3.web3.currentProvider,
+            pollingInterval: 40,
+            tokens: resp.tokens,
+          })
+          let balances = subscription.serialize();
 
-      context.commit('saveTokens', balances);
-      subscription.on('update', function (balances) {
-        context.commit('saveTokens', balances);
-      })
-      subscription.on('error', function (reason) {
-          console.log('there was a problem!', reason)
-          console.trace(reason)
+          context.commit('saveTokens', balances);
+          subscription.on('update', function (balances) {
+            context.commit('saveTokens', balances);
+          })
+          subscription.on('error', function (reason) {
+              console.log('there was a problem!', reason)
+              console.trace(reason)
+            })
+          context.commit('saveSubscription', subscription);
+          res();
         })
-      context.commit('saveSubscription', subscription);
+      });
     },
     stopSubscription() {
 

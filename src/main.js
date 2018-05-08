@@ -16,7 +16,7 @@ Vue.use(VueFlashMessage, {
 })
 
 /* eslint-disable no-new */
-new Vue({
+export default new Vue({
   el: '#app',
   router,
   store,

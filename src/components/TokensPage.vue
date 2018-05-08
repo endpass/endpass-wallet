@@ -55,17 +55,17 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('tokens/createSubscribtion');
-    this.$http.get(`https://raw.githubusercontent.com/MyEtherWallet/ethereum-lists/master/tokens/tokens-eth.json`)
+    this.$store.dispatch('tokens/createSubscribtion').then(()=> {
+      this.$store.state.tokens.subscription.on('update', this.setBalances)
+    });
+    this.$store.dispatch('tokens/getTokens')
       .then(response => {
       this.tokens = response.body.map((token)=> {
         token.balance = null;
         return token
       });
       this.setBalances();
-    }, response => {
     });
-    this.$store.state.tokens.subscription.on('update', this.setBalances)
   },
   methods: {
     saveToken(token) {
