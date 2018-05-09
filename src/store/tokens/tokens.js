@@ -13,6 +13,12 @@ export default {
     }
   },
   mutations: {
+    saveTokenToWatchStorage(state, address) {
+      state.savedTokens.push({
+        address
+      });
+      localStorage.setItem('tokens', JSON.stringify(state.savedTokens));
+    },
     saveTokens(state, tokens) {
       state.activeTokens = tokens;
     },
@@ -25,6 +31,7 @@ export default {
       context.state.subscription.add({
         address
       })
+      context.commit('saveTokenToWatchStorage', address);
     },
     getNonZeroTokens(context) {
       let address = context.rootState.accounts.activeAccount.getAddressString();
@@ -42,11 +49,12 @@ export default {
               address : token.tokenInfo.address
             }
           });
+          let tokensToWatch = nonZeroTokens.concat(context.state.savedTokens);
           let subscription = new TokenTracker({
             userAddress: address,
             provider: context.rootState.web3.web3.currentProvider,
             pollingInterval: 4000,
-            tokens: nonZeroTokens
+            tokens: tokensToWatch
           })
           setInterval(()=> {
             let balances = subscription.serialize();
