@@ -41,6 +41,8 @@ export default {
       return Vue.$http.get(`https://tokeninfo.endpass.com/api/v1/tokens`);
     },
     createSubscribtion(context) {
+      if(context.state.subscription)
+        context.state.subscription.stop();
       return new Promise((res, rej) => {
         context.dispatch('getNonZeroTokens').then((resp) => {
           let address = context.rootState.accounts.activeAccount.getAddressString();
