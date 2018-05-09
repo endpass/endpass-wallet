@@ -13,8 +13,14 @@ export default {
     }
   },
   mutations: {
+    saveTokenToWatchStorage(state, address) {
+      state.savedTokens.push({
+        address
+      });
+      localStorage.setItem('tokens', JSON.stringify(state.savedTokens));
+    },
     saveTokens(state, tokens) {
-      state.activeTokens = state.activeTokens.concat(tokens);
+      state.activeTokens = tokens;
     },
     saveSubscription(state, subscription) {
       state.subscription = subscription;
@@ -22,9 +28,10 @@ export default {
   },
   actions: {
     subscribeOnTokenUpdates(context, address) {
-      context.state.subscription.add({address});
-      let balances = context.state.subscription.serialize();
-      context.commit('saveTokens', balances);
+      context.state.subscription.add({
+        address
+      })
+      context.commit('saveTokenToWatchStorage', address);
     },
     getNonZeroTokens(context) {
       let address = context.rootState.accounts.activeAccount.getAddressString();
@@ -34,18 +41,28 @@ export default {
       return Vue.$http.get(`https://tokeninfo.endpass.com/api/v1/tokens`);
     },
     createSubscribtion(context) {
+      if(context.state.subscription)
+        context.state.subscription.stop();
       return new Promise((res, rej) => {
         context.dispatch('getNonZeroTokens').then((resp) => {
           let address = context.rootState.accounts.activeAccount.getAddressString();
+          let nonZeroTokens = resp.body.tokens.map((token)=>{
+            return {
+              address : token.tokenInfo.address
+            }
+          });
+          let tokensToWatch = nonZeroTokens.concat(context.state.savedTokens);
           let subscription = new TokenTracker({
             userAddress: address,
             provider: context.rootState.web3.web3.currentProvider,
-            pollingInterval: 40,
-            tokens: resp.tokens,
+            pollingInterval: 4000,
+            tokens: tokensToWatch
           })
-          let balances = subscription.serialize();
-
-          context.commit('saveTokens', balances);
+          setInterval(()=> {
+            let balances = subscription.serialize();
+            if (typeof balances[0].symbol !== 'undefined')
+              context.commit('saveTokens', balances);
+          }, 4000)
           subscription.on('update', function (balances) {
             context.commit('saveTokens', balances);
           })
