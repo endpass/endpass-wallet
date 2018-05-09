@@ -61,6 +61,7 @@ export default {
       this.$store.commit('accounts/addAccount', account);
       this.$store.dispatch('accounts/updateBalance');
       this.$store.dispatch('accounts/subscribeOnBalanceUpdates');
+      this.$store.dispatch('tokens/createSubscribtion');
       router.push('/');
       this.creatingWallet = false;
     },

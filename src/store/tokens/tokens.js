@@ -14,7 +14,7 @@ export default {
   },
   mutations: {
     saveTokens(state, tokens) {
-      state.activeTokens = state.activeTokens.concat(tokens);
+      state.activeTokens = tokens;
     },
     saveSubscription(state, subscription) {
       state.subscription = subscription;
@@ -22,9 +22,9 @@ export default {
   },
   actions: {
     subscribeOnTokenUpdates(context, address) {
-      context.state.subscription.add({address});
-      let balances = context.state.subscription.serialize();
-      context.commit('saveTokens', balances);
+      context.state.subscription.add({
+        address
+      })
     },
     getNonZeroTokens(context) {
       let address = context.rootState.accounts.activeAccount.getAddressString();
@@ -37,15 +37,22 @@ export default {
       return new Promise((res, rej) => {
         context.dispatch('getNonZeroTokens').then((resp) => {
           let address = context.rootState.accounts.activeAccount.getAddressString();
+          let nonZeroTokens = resp.body.tokens.map((token)=>{
+            return {
+              address : token.tokenInfo.address
+            }
+          });
           let subscription = new TokenTracker({
             userAddress: address,
             provider: context.rootState.web3.web3.currentProvider,
-            pollingInterval: 40,
-            tokens: resp.tokens,
+            pollingInterval: 4000,
+            tokens: nonZeroTokens
           })
-          let balances = subscription.serialize();
-
-          context.commit('saveTokens', balances);
+          setInterval(()=> {
+            let balances = subscription.serialize();
+            if (typeof balances[0].symbol !== 'undefined')
+              context.commit('saveTokens', balances);
+          }, 4000)
           subscription.on('update', function (balances) {
             context.commit('saveTokens', balances);
           })
