@@ -37,7 +37,7 @@
             <div class="navbar-control">
               <span  v-if="activeAccount">
                 <p class="heading">Current Account </p>
-                <span>{{ activeAccount.getAddressString() | truncateAddr }}</span>
+                <account-chooser/>
                 <span v-if="balance !== null"><strong>{{ balance }}</strong> ETH</span>
               </span>
               <router-link :to="{name: 'NewWallet'}" class="button
@@ -82,9 +82,13 @@
 <script>
 
 import web3 from 'web3';
+import AccountChooser from '@/components/AccountChooser.vue'
 
 export default {
   name: 'App',
+  components: {
+    AccountChooser
+  },
   data () {
     let cachedNet = localStorage.getItem('net');
     if(!cachedNet) {
@@ -121,14 +125,6 @@ export default {
       this.navMenuActive = !this.navMenuActive
     }
   },
-  filters: {
-    // Truncate an address to the first 4 and last 4 characters
-    truncateAddr(value) {
-      if (!value) return ''
-      value = value.toString()
-    return `${value.substr(0,4)}...${value.substr(value.length-4)}`
-    }
-  },
   created() {
     this.$store.commit('web3/changeNetwork', this.selectedNet);
   }
@@ -136,6 +132,11 @@ export default {
 </script>
 
 <style lang="scss">
+// Layout
+.container.is-narrow {
+  max-width: 600px;
+}
+
 // Buttons and Links
 
 a {
@@ -248,6 +249,20 @@ a.navbar-link:hover, .router-link-exact-active {
 }
 .fade-enter, .fade-leave-to {
   opacity: 0;
+}
+
+// Global styles
+.bold {
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+.code {
+  background: $light-grey;
+  color: $dark-grey;
+  padding: 1em;
+  word-wrap: break-word;
+  font-family: "Lucida Console","Courier New",monospace;
 }
 
 </style>

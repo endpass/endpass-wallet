@@ -41,7 +41,7 @@ describe('ImportWallet', () => {
   it('correctly creates wallet with prase', () => {
     const vm = new Vue(ImportWallet).$mount()
     vm.hdkeyPrase = 'salt suit force stomach lounge endless soul junk join leg sort aware';
-    expect(vm.createWalletWithPrase() instanceof EthWallet).toBe(true);
+    expect(vm.createWalletWithPrase() instanceof HDKey).toBe(true);
   })
 
   it('correctly sets error with bad data', () => {
