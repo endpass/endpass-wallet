@@ -64,11 +64,15 @@
 </template>
 
 <script>
+import EthplorerService from '@/services/ethplorer'
+import EndpassService from '@/services/endpass'
+
 export default {
   data() {
     return {
-      tokens: [],
-      search: ''
+      search: '',
+      serializeInterval: null,
+      subscription: null
     }
   },
   computed: {
@@ -89,18 +93,56 @@ export default {
         });
     }
   },
-  created() {
-    this.$store.dispatch('tokens/getTokens')
-      .then(response => {
-      this.tokens = response.body.map((token)=> {
-        return token
-      });
-    });
-  },
   methods: {
-    saveToken(token) {
-      this.$store.dispatch('tokens/subscribeOnTokenUpdates', token.address, token);
+    saveToken(address) {
+      this.subscription.add({
+        address
+      })
+      this.$store.commit('tokens/saveTokenToWatchStorage', token.address);
+    },
+    createSubscribtion() {
+      let address = this.$store.state.accounts.activeAccount.getAddressString();
+      let tokensToWatch = this.$store.state.tokens.getters.tokensToWatch;
+      this.subscription = new TokenTracker({
+        userAddress: address,
+        provider: this.$store.state.web3.web3.currentProvider,
+        pollingInterval: 4000,
+        tokens: tokensToWatch
+      });
+      this.serializeInterval = setInterval(()=> {
+        let balances = this.subscription.serialize();
+        if (typeof balances[0].symbol !== 'undefined')
+          this.$store.state.commit('tokens/saveTokens', balances);
+      }, 4000);
+    },
+    destroySubscription() {
+      this.subscription.stop();
+      clearInterval(this.serializeInterval);
+    },
+    getNonZeroTokens(context) {
+      return new Promise((res, rej) => {
+        let address = this.$store.state.accounts.activeAccount.getAddressString();
+        EthplorerService.getTransactions().then((resp)=> {
+          this.$store.state.commit('tokens/saveTokens', resp.body.tokens);
+          res()
+        });
+      });
+    },
+    getAllTokens(context) {
+      return new Promise((res, rej) => {
+        EndpassService.getTokensList().then((tokens) => {
+          this.tokens = tokens;
+          res();
+        });
+      });
     }
+  },
+  created() {
+    this.getAllTokens();
+    this.getNonZeroTokens().then(this.createSubscribtion);
+  },
+  destroyed() {
+    this.destroySubscription();
   }
 }
 </script>
