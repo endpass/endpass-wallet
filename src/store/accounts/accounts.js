@@ -60,17 +60,18 @@ export default {
     setActiveAccount(context, account) {
       context.commit('setActiveAccount', account);
       context.dispatch('subscribeOnBalanceUpdates');
+      context.dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
     },
     subscribeOnBalanceUpdates(context) {
       if(context.rootState.accounts.activeAccount) {
-        if(this.balanceSubscribtion) {
-          this.balanceSubscribtion.stop();
+        if(context.state.balanceSubscribtion) {
+          context.state.balanceSubscribtion.stop();
         }
-        this.balanceSubscribtion = new EthBlockTracker({provider: context.rootState.web3.web3.currentProvider});
-        this.balanceSubscribtion.on('latest', () => {
+        context.state.balanceSubscribtion = new EthBlockTracker({provider: context.rootState.web3.web3.currentProvider});
+        context.state.balanceSubscribtion.on('latest', () => {
           context.dispatch('updateBalance');
         });
-        this.balanceSubscribtion.start();
+        context.state.balanceSubscribtion.start();
       }
     },
     updateBalance(context) {
