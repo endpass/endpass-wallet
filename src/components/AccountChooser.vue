@@ -3,9 +3,9 @@
     <div class="control">
       <div class="select">
         <select @change="setActiveAccount" v-model="selectedAccountId">
-          <!-- <option v-for="(account, i in accounts"
+          <option v-for="(account, i) in accounts"
                   :value="i">
-          {{i}}. {{account.getAddressString() |truncateAddr}} -->
+          {{i}}. {{account.getAddressString() |truncateAddr}}
           </option>
         </select>
       </div>
@@ -41,7 +41,6 @@ export default {
       }
       return this.accounts[this.selectedAccountId]
     },
-    // All accounts that have been created
     accounts () {
       return this.$store.state.accounts.accounts
     },
@@ -52,10 +51,7 @@ export default {
       if (!account) {
         return
       }
-      this.$store.commit('accounts/setActiveAccount', account);
-      this.$store.dispatch('accounts/updateBalance');
-      this.$store.dispatch('accounts/subscribeOnBalanceUpdates');
-      this.$store.dispatch('tokens/createSubscribtion');
+      this.$store.dispatch('accounts/setActiveAccount', account);
     },
     openNewAccountModal() {
       this.newAccountModalOpen = true

@@ -18,14 +18,21 @@ export default {
     activeNet: null
   },
   mutations: {
-    changeNetwork(state, networkName) {
-      let netIndex = state.networks.findIndex(net => net.name === networkName);
-      state.activeNet = state.networks[netIndex];
+    changeNetwork(state, network) {
+      state.activeNet = network;
       if(state.web3) {
         state.web3.setProvider(state.activeNet.url);
       } else {
         state.web3 = new Web3(state.activeNet.url);
       }
+    }
+  },
+  actions: {
+    changeNetwork(context, networkName) {
+      let netIndex = context.state.networks.findIndex(net => net.name === networkName);
+      let network = context.state.networks[netIndex];
+      context.commit('changeNetwork', network);
+      context.dispatch('accounts/subscribeOnBalanceUpdates',{}, {root: true});
     }
   }
 }

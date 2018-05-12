@@ -97,10 +97,23 @@ export default {
 
     return {
       selectedNet: cachedNet,
+      balanceSubscribtionInstance: null,
       navMenuActive: false
     };
   },
   computed: {
+    balanceSubscribtion() {
+      console.log(update)
+      let provider = this.$store.state.web3.web3.currentProvider;
+      if(this.balanceSubscribtionInstance) {
+        this.balanceSubscribtionInstance.stop();
+      }
+      this.balanceSubscribtionInstance = new EthBlockTracker({ provider });
+      this.balanceSubscribtionInstance.on('latest', () => {
+        this.updateBalance();
+      });
+      this.balanceSubscribtionInstance.start();
+    },
     activeAccount() {
       return this.$store.state.accounts.activeAccount;
     },
@@ -116,17 +129,15 @@ export default {
   },
   methods: {
     selectNet() {
-      this.$store.commit('web3/changeNetwork', this.selectedNet);
+      this.$store.dispatch('web3/changeNetwork', this.selectedNet);
       localStorage.setItem('net', this.selectedNet);
-      this.$store.dispatch('accounts/updateBalance');
-      this.$store.dispatch('accounts/subscribeOnBalanceUpdates');
     },
     toggleNavMenu () {
       this.navMenuActive = !this.navMenuActive
     }
   },
   created() {
-    this.$store.commit('web3/changeNetwork', this.selectedNet);
+    this.$store.dispatch('web3/changeNetwork', this.selectedNet);
   }
 }
 </script>

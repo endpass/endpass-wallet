@@ -11,6 +11,12 @@ export default {
     pendingTransactions: []
   },
   mutations: {
+    addAccount(state, account) {
+      state.accounts.push(account)
+    },
+    setActiveAccount(state, account) {
+      state.activeAccount = account;
+    },
     // Set HD wallet that generates accounts
     setWallet(state, wallet) {
       // Do not set wallet if already exists
@@ -18,14 +24,6 @@ export default {
         return
       }
       state.hdWallet = wallet
-    },
-    // Add a new account to the list
-    addAccount(state, account) {
-      state.accounts.push(account)
-      state.activeAccount = account
-    },
-    setActiveAccount(state, account) {
-      state.activeAccount = account
     },
     addTransaction(state, transaction) {
       state.pendingTransactions.push(transaction);
@@ -55,6 +53,14 @@ export default {
     }
   },
   actions: {
+    addAccount(context, account) {
+      context.commit('addAccount', account);
+      context.dispatch('setActiveAccount', account);
+    },
+    setActiveAccount(context, account) {
+      context.commit('setActiveAccount', account);
+      context.dispatch('subscribeOnBalanceUpdates');
+    },
     subscribeOnBalanceUpdates(context) {
       if(context.rootState.accounts.activeAccount) {
         if(this.balanceSubscribtion) {
