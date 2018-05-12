@@ -79,12 +79,15 @@ export default {
           return activeToken.address === token.address;
         })
       });
-      if(this.search === '')
+      let search = this.search.toLowerCase()
+      if(search === '') {
         return unwatchedTokens
-      else
+      } else {
         return unwatchedTokens.filter((token) => {
-          return token.symbol.includes(this.search) || token.name.includes(this.search)
+          return token.symbol.toLowerCase().includes(search) ||
+            token.name.toLowerCase().includes(this.search)
         });
+      }
     }
   },
   methods: {
