@@ -254,15 +254,30 @@ a.navbar-link:hover, .router-link-exact-active {
   }
 }
 
-.button .icon {
-  margin-left: 0;
-  margin-right: 0.2em;
-  svg {
-    display: inline-block;
+// Buttons
+
+.button {
+  .icon {
+    margin-left: 0;
+    margin-right: 0.2em;
+    svg {
+      display: inline-block;
+    }
+    &.is-small svg {
+      height: 1em;
+      width: 1em;
+    }
   }
-  &.is-small svg {
-    height: 1em;
-    width: 1em;
+
+  &.is-primary,
+  &.is-link,
+  &.is-info,
+  &.is-success,
+  &.is-warning,
+  &.is-danger {
+    .icon svg {
+      fill: $white;
+    }
   }
 }
 

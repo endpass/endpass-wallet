@@ -48,7 +48,7 @@
                   {{token.symbol}}
                   <span class="is-pulled-right" v-if="token.balance">{{token.balance}}</span>
                   <a v-else @click="saveToken(token)" class="button
-                    is-pulled-right">
+                    is-primary is-pulled-right">
                     <span class="icon is-small"
                           v-html="require('@/img/plus.svg')">
                     </span>
