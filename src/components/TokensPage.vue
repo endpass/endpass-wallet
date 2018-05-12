@@ -1,66 +1,68 @@
 <template lang="html">
-  <div class="columns">
-    <div class="column is-half">
-      <nav class="panel">
-        <p class="panel-heading">
-          Tokens
-        </p>
-        <div class="panel-block">
-          <p class="control has-icons-left">
-            <input v-model="search" class="input is-small" type="text" placeholder="search">
-            <span class="icon is-small is-left">
-              <i class="fas fa-search" aria-hidden="true"></i>
-            </span>
-          </p>
+  <div class="tokens-page">
+    <div class="section">
+      <div class="container">
+        <div class="columns">
+          <div class="column is-half">
+            <nav class="panel">
+              <p class="panel-heading">
+              Watched tokens
+              </p>
+              <div class="panel-block">
+                <p class="control has-icons-left">
+                <input v-model="search" class="input is-small" type="text" placeholder="search">
+                <span class="icon is-small is-left"
+                      v-html="require('@/img/magnifying-glass.svg')">
+                </span>
+                </p>
+              </div>
+              <div class="scroller">
+                <a v-for="token in activeTokens" class="panel-block is-clearfix is-block">
+                  <span class="panel-icon">
+                    <i class="fas fa-book" aria-hidden="true"></i>
+                  </span>
+                  {{token.symbol}}
+                  <span class="is-pulled-right">{{token.string}}</span>
+                </a>
+              </div>
+            </nav>
+          </div>
+          <div class="column is-half">
+            <nav class="panel">
+              <p class="panel-heading">
+              Add Token
+              </p>
+              <div class="panel-block">
+                <p class="control has-icons-left">
+                <input v-model="search" class="input is-small" type="text" placeholder="search">
+                <span class="icon is-small is-left"
+                  v-html="require('@/img/magnifying-glass.svg')">
+                </span>
+                </p>
+              </div>
+              <div class="scroller">
+                <a v-for="token in filteredTokens" class="panel-block is-clearfix is-block">
+                  <span class="panel-icon">
+                    <i class="fas fa-book" aria-hidden="true"></i>
+                  </span>
+                  {{token.symbol}}
+                  <span class="is-pulled-right" v-if="token.balance">{{token.balance}}</span>
+                  <a v-else @click="saveToken(token)" class="button
+                    is-pulled-right">
+                    <span class="icon is-small"
+                          v-html="require('@/img/plus.svg')">
+                    </span>
+                    Add
+                  </a>
+                </a>
+              </div>
+            </nav>
+          </div>
+
         </div>
-        <div class="scroller">
-          <a v-for="token in filteredTokens" class="panel-block is-clearfix is-block">
-            <span class="panel-icon">
-              <i class="fas fa-book" aria-hidden="true"></i>
-            </span>
-            {{token.symbol}}
-            <span class="is-pulled-right" v-if="token.balance">{{token.balance}}</span>
-            <a v-else @click="saveToken(token)" class="button is-pulled-right" type="button" name="button">Show</a>
-          </a>
-        </div>
-        <div class="panel-block">
-          <a class="button is-link is-outlined is-fullwidth">
-            reset all filters
-          </a>
-        </div>
-      </nav>
-    </div>
-    <div class="column is-half">
-      <nav class="panel">
-        <p class="panel-heading">
-          Watched tokens
-        </p>
-        <div class="panel-block">
-          <p class="control has-icons-left">
-            <input v-model="search" class="input is-small" type="text" placeholder="search">
-            <span class="icon is-small is-left">
-              <i class="fas fa-search" aria-hidden="true"></i>
-            </span>
-          </p>
-        </div>
-        <div class="scroller">
-          <a v-for="token in activeTokens" class="panel-block is-clearfix is-block">
-            <span class="panel-icon">
-              <i class="fas fa-book" aria-hidden="true"></i>
-            </span>
-            {{token.symbol}}
-            <span class="is-pulled-right">{{token.string}}</span>
-          </a>
-        </div>
-        <div class="panel-block">
-          <a class="button is-link is-outlined is-fullwidth">
-            reset all filters
-          </a>
-        </div>
-      </nav>
+      </div>
     </div>
   </div>
-
 </template>
 
 <script>

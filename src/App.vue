@@ -209,6 +209,8 @@ a.navbar-link:hover, .router-link-exact-active {
   }
 }
 
+// Icons
+
 .logo-icon {
   padding-top: 0;
   padding-bottom: 0;
@@ -234,6 +236,33 @@ a.navbar-link:hover, .router-link-exact-active {
   }
   &.has-text-success svg {
       fill: hsl(141, 71%, 48%);
+  }
+}
+
+.control.has-icons-left,
+.control.has-icons-right {
+  .icon svg {
+    fill: #dbdbdb;
+    display: inline-block;
+    width: 1em;
+  }
+
+  .input:focus, &.select:focus {
+    &~.icon svg {
+      fill: $dark-grey;
+    }
+  }
+}
+
+.button .icon {
+  margin-left: 0;
+  margin-right: 0.2em;
+  svg {
+    display: inline-block;
+  }
+  &.is-small svg {
+    height: 1em;
+    width: 1em;
   }
 }
 
