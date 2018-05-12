@@ -252,6 +252,17 @@ a.navbar-link:hover, .router-link-exact-active {
       fill: $dark-grey;
     }
   }
+
+  a.icon {
+      svg {
+        fill: $dark-grey;
+      }
+    &:hover {
+      svg {
+        fill: $primary;
+      }
+    }
+  }
 }
 
 // Buttons

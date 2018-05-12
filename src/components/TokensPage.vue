@@ -9,12 +9,7 @@
               Watched tokens
               </p>
               <div class="panel-block">
-                <p class="control has-icons-left">
-                <input v-model="search" class="input is-small" type="text" placeholder="search">
-                <span class="icon is-small is-left"
-                      v-html="require('@/img/magnifying-glass.svg')">
-                </span>
-                </p>
+                <search-input v-model="search"></search-input>
               </div>
               <div class="scroller">
                 <a v-for="token in activeTokens" class="panel-block is-clearfix is-block">
@@ -33,12 +28,7 @@
               Add Token
               </p>
               <div class="panel-block">
-                <p class="control has-icons-left">
-                <input v-model="search" class="input is-small" type="text" placeholder="search">
-                <span class="icon is-small is-left"
-                  v-html="require('@/img/magnifying-glass.svg')">
-                </span>
-                </p>
+                <search-input v-model="search"></search-input>
               </div>
               <div class="scroller">
                 <a v-for="token in filteredTokens" class="panel-block is-clearfix is-block">
@@ -68,6 +58,7 @@
 <script>
 import EthplorerService from '@/services/ethplorer'
 import EndpassService from '@/services/endpass'
+import SearchInput from '@/components/SearchInput.vue'
 
 export default {
   data() {
@@ -108,6 +99,9 @@ export default {
   },
   created() {
     this.getAllTokens();
+  },
+  components: {
+    SearchInput
   }
 }
 </script>
