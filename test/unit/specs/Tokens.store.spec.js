@@ -7,6 +7,38 @@ localStorage.setItem('tokens', JSON.stringify([{
 
 let stateInstance = tokens.state();
 
+const testAction = (action, payload, state, expectedMutations, done) => {
+  let count = 0
+
+  // mock commit
+  const commit = (type, payload) => {
+    const mutation = expectedMutations[count]
+
+    try {
+      expect(type).to.equal(mutation.type)
+      if (payload) {
+        expect(payload).to.deep.equal(mutation.payload)
+      }
+    } catch (error) {
+      done(error)
+    }
+
+    count++
+    if (count >= expectedMutations.length) {
+      done()
+    }
+  }
+
+  // call the action with mocked store and arguments
+  action({ commit, state }, payload)
+
+  // check if no mutations should have been dispatched
+  if (expectedMutations.length === 0) {
+    expect(count).to.equal(0)
+    done()
+  }
+}
+
 describe('tokens', () => {
   it('it should get tokens from localStorage', () => {
     expect(stateInstance.savedTokens.length).toBe(1);
@@ -23,16 +55,22 @@ describe('tokens', () => {
     expect(stateInstance.savedTokens.length).toBe(2);
     expect(JSON.parse(localStorage.getItem('tokens')).length).toBe(2);
   })
-  it ('saves Tokens' () => {
+  it ('saves Tokens', () => {
     tokens.mutations.saveTokens(stateInstance, [1,2,3]);
     expect(stateInstance.activeTokens.length).toBe(3);
   })
   it ('saves Interval' , () => {
     tokens.mutations.saveInterval(stateInstance, 1);
-    expect(stateInstance.interval).toBe(1);
+    expect(stateInstance.tokensSubscription).toBe(1);
   });
   it ('saves Subscription' , () => {
     tokens.mutations.saveSubscription(stateInstance, 1);
-    expect(stateInstance.subscription).toBe(1);
+    expect(stateInstance.tokensSerializeInterval).toBe(1);
   });
+  // it('createTokenSubscribtion', done => {
+  //   testAction(tokens.actions.createTokenSubscribtion, null, stateInstance, [
+  //     { type: 'saveInterval' },
+  //     { type: 'saveSubscription' }
+  //   ], done)
+  // })
 })
