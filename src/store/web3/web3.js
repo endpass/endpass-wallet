@@ -33,7 +33,7 @@ export default {
       let network = context.state.networks[netIndex];
       context.commit('changeNetwork', network);
       context.dispatch('accounts/subscribeOnBalanceUpdates',{}, {root: true});
-      // context.dispatch('tokens/subscribeOnBalanceUpdates',{}, {root: true});
+      context.dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
     }
   }
 }

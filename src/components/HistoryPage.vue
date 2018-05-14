@@ -19,6 +19,7 @@
 
 <script>
 import appTransaction from './TransactionComponent'
+import EthplorerService from '../services/ethplorer'
 export default {
   data () {
     return {
@@ -44,12 +45,7 @@ export default {
   },
   created() {
     const address = this.$store.state.accounts.activeAccount.getAddressString();
-    this.$http.get(`https://api.ethplorer.io/getAddressTransactions/${address}`, {
-      params: {
-        limit: 50,
-        apiKey: 'freekey'
-      }
-    }).then((resp) => {
+    EthplorerService.getInfo(address).then((resp) => {
       this.transactions = resp.body;
     })
   },

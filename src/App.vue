@@ -103,7 +103,6 @@ export default {
   },
   computed: {
     balanceSubscribtion() {
-      console.log(update)
       let provider = this.$store.state.web3.web3.currentProvider;
       if(this.balanceSubscribtionInstance) {
         this.balanceSubscribtionInstance.stop();

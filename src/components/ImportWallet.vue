@@ -99,7 +99,7 @@ export default {
         this.addAccount(this.createWalletWithKey());
         router.push('/')
       } catch (e) {
-        console.log(e)
+        console.log(e);
         this.privateKeyError = true;
       }
     },
