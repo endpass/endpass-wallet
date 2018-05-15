@@ -1,43 +1,17 @@
 import Vue from 'vue'
+import testAction from './ActionTestingHelper'
 import tokens from '../../../src/store/tokens/tokens'
+import axios from 'axios'
+import moxios from 'moxios'
+import Web3 from 'web3'
+import TokenTracker from 'eth-token-tracker'
+
 
 localStorage.setItem('tokens', JSON.stringify([{
       address: '0x0'
 }]));
 
 let stateInstance = tokens.state();
-
-const testAction = (action, payload, state, expectedMutations, done) => {
-  let count = 0
-
-  // mock commit
-  const commit = (type, payload) => {
-    const mutation = expectedMutations[count]
-
-    try {
-      expect(type).to.equal(mutation.type)
-      if (payload) {
-        expect(payload).to.deep.equal(mutation.payload)
-      }
-    } catch (error) {
-      done(error)
-    }
-
-    count++
-    if (count >= expectedMutations.length) {
-      done()
-    }
-  }
-
-  // call the action with mocked store and arguments
-  action({ commit, state }, payload)
-
-  // check if no mutations should have been dispatched
-  if (expectedMutations.length === 0) {
-    expect(count).to.equal(0)
-    done()
-  }
-}
 
 describe('tokens', () => {
   it('it should get tokens from localStorage', () => {
@@ -67,10 +41,87 @@ describe('tokens', () => {
     tokens.mutations.saveSubscription(stateInstance, 1);
     expect(stateInstance.tokensSerializeInterval).toBe(1);
   });
-  // it('createTokenSubscribtion', done => {
-  //   testAction(tokens.actions.createTokenSubscribtion, null, stateInstance, [
-  //     { type: 'saveInterval' },
-  //     { type: 'saveSubscription' }
-  //   ], done)
-  // })
+  it('adds Token To Subscribtion', () => {
+    testAction(tokens.actions.addTokenToSubscribtion, null, {
+      rootState: {
+        accounts: {
+          activeAccount : {
+            getAddressString() {
+              return '0x0'
+            }
+          }
+        }
+      },
+      state : {
+        savedTokens : stateInstance.savedTokens,
+        tokensSubscription: {
+          count: 0,
+          add () {
+            this.count +1;
+          }
+        }
+      }
+    }, [
+      { type: 'saveTokenToWatchStorage' }
+    ],[]);
+  })
+  it('gets non zero tokens', () => {
+    testAction(tokens.actions.getNonZeroTokens, null, {
+      rootState: {
+        accounts: {
+          activeAccount : {
+            getAddressString() {
+              return '0x0'
+            }
+          }
+        }
+      }
+    }, [
+      { type: 'saveTokens' }
+    ],[]);
+    moxios.wait(() => {
+      let request = moxios.requests.mostRecent()
+      request.respondWith({
+        status: 200,
+        response: [{
+          id: '1'
+        }, {
+          id: '2'
+        }]
+      })
+    })
+  })
+  it('creates Token Subscribtion', () => {
+    const Timeout = setTimeout(function(){}, 0).constructor;
+    testAction(tokens.actions.createTokenSubscribtion, null, {
+      rootState: {
+        accounts: {
+          activeAccount : {
+            getAddressString() {
+              return '0x0'
+            }
+          }
+        },
+        web3: {
+          web3: new Web3 ('https://mainnet.infura.io/')
+        }
+      },
+      getters: {
+        tokensToWatch: []
+      },
+      state : {
+        savedTokens : stateInstance.savedTokens,
+        activeTokens : stateInstance.activeTokens,
+        tokensSubscription: {
+          count: 0,
+          add () {
+            this.count +1;
+          }
+        }
+      }
+    }, [
+      { type: 'saveInterval' },
+      { type: 'saveSubscription' }
+    ],[]);
+  })
 })

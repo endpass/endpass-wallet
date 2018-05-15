@@ -64,7 +64,7 @@ export default {
       const interval = setInterval(()=> {
         let balances = this.subscription.serialize();
         if (typeof balances[0].symbol !== 'undefined')
-          context.commit('tokens/saveTokens', balances);
+          context.commit('saveTokens', balances);
       }, 4000);
       context.commit('saveInterval', interval);
       context.commit('saveSubscription', subscription);
