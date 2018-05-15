@@ -6,6 +6,31 @@ import ImportWallet from '../../../src/components/ImportWallet.vue'
 import EthWallet from 'ethereumjs-wallet'
 import HDKey from 'ethereumjs-wallet/hdkey'
 
+class LocalStorageMock {
+  constructor() {
+    this.store = {};
+  }
+
+  clear() {
+    this.store = {};
+  }
+
+  getItem(key) {
+    return this.store[key] || null;
+  }
+
+  setItem(key, value) {
+    this.store[key] = value.toString();
+  }
+
+  removeItem(key) {
+    delete this.store[key];
+  }
+};
+
+
+global.localStorage = new LocalStorageMock;
+
 const localVue = createLocalVue()
 localVue.use(VeeValidate)
 

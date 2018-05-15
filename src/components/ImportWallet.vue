@@ -70,6 +70,7 @@
 
 import EthWallet from 'ethereumjs-wallet'
 import HDKey from 'ethereumjs-wallet/hdkey'
+import router from '@/router'
 
 export default {
   data () {
@@ -91,16 +92,14 @@ export default {
       this.$store.commit('accounts/setWallet', hdWallet);
     },
     addAccount(account) {
-      this.$store.commit('accounts/addAccount', account);
-      this.$store.dispatch('accounts/updateBalance');
-      this.$store.dispatch('accounts/subscribeOnBalanceUpdates');
-      this.$store.dispatch('tokens/createSubscribtion');
+      this.$store.dispatch('accounts/addAccount', account);
     },
     addWalletWithKey() {
       try {
         this.addAccount(this.createWalletWithKey());
         router.push('/')
       } catch (e) {
+        console.log(e);
         this.privateKeyError = true;
       }
     },

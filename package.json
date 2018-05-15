@@ -12,6 +12,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "bip39": "^2.5.0",
     "eth-block-tracker": "^3.0.0",
     "eth-token-tracker": "^1.1.4",
@@ -20,7 +21,6 @@
     "vee-validate": "^2.0.9",
     "vue": "^2.5.2",
     "vue-flash-message": "^0.6.0",
-    "vue-resource": "^1.5.0",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
     "web3": "^1.0.0-beta.33"
@@ -47,7 +47,9 @@
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^2.30.1",
     "jest": "^22.0.4",
+    "jest-localstorage-mock": "^2.2.0",
     "jest-serializer-vue": "^0.3.0",
+    "moxios": "^0.4.0",
     "node-notifier": "^5.1.2",
     "node-sass": "^4.8.3",
     "optimize-css-assets-webpack-plugin": "^3.2.0",

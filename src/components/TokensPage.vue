@@ -64,11 +64,16 @@
 </template>
 
 <script>
+import EthplorerService from '@/services/ethplorer'
+import EndpassService from '@/services/endpass'
+
 export default {
   data() {
     return {
+      search: '',
       tokens: [],
-      search: ''
+      serializeInterval: null,
+      subscription: null
     }
   },
   computed: {
@@ -89,18 +94,18 @@ export default {
         });
     }
   },
-  created() {
-    this.$store.dispatch('tokens/getTokens')
-      .then(response => {
-      this.tokens = response.body.map((token)=> {
-        return token
-      });
-    });
-  },
   methods: {
-    saveToken(token) {
-      this.$store.dispatch('tokens/subscribeOnTokenUpdates', token.address, token);
+    saveToken(address) {
+      this.$store.dispatch('tokens/saveTokenToWatchStorage', token.address);
+    },
+    getAllTokens(context) {
+      EndpassService.getTokensList().then((resp) => {
+        this.tokens = resp.data;
+      });
     }
+  },
+  created() {
+    this.getAllTokens();
   }
 }
 </script>

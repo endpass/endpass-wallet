@@ -1,5 +1,5 @@
-import  TokenTracker from 'eth-token-tracker'
-import Vue from '../../main'
+import TokenTracker from 'eth-token-tracker'
+import EthplorerService from '@/services/ethplorer'
 
 export default {
   namespaced: true,
@@ -7,9 +7,14 @@ export default {
     let savedTokens = JSON.parse(localStorage.getItem('tokens') || '[]');
     return {
       activeTokens: [],
-      subscription: null,
-      tokens: [],
-      savedTokens
+      savedTokens,
+      tokensSubscription: null,
+      tokensSerializeInterval: null
+    }
+  },
+  getters: {
+    tokensToWatch(state) {
+      return state.activeTokens.concat(state.savedTokens)
     }
   },
   mutations: {
@@ -22,64 +27,56 @@ export default {
     saveTokens(state, tokens) {
       state.activeTokens = tokens;
     },
+    saveInterval(state, interval) {
+      state.tokensSubscription = interval;
+    },
     saveSubscription(state, subscription) {
-      state.subscription = subscription;
+      state.tokensSerializeInterval = subscription;
     }
   },
   actions: {
-    subscribeOnTokenUpdates(context, address) {
-      context.state.subscription.add({
-        address
-      })
+    addTokenToSubscribtion(context, address) {
       context.commit('saveTokenToWatchStorage', address);
-    },
-    getNonZeroTokens(context) {
-      let address = context.rootState.accounts.activeAccount.getAddressString();
-      return Vue.$http.get(`https://api.ethplorer.io/getAddressInfo/${address}?apiKey=freekey`);
-    },
-    getTokens(context) {
-      return Vue.$http.get(`https://tokeninfo.endpass.com/api/v1/tokens`);
-    },
-    createSubscribtion(context) {
-      if(context.state.subscription)
-        context.state.subscription.stop();
-      return new Promise((res, rej) => {
-        context.dispatch('getNonZeroTokens').then((resp) => {
-          let address = context.rootState.accounts.activeAccount.getAddressString();
-          let nonZeroTokens = resp.body.tokens.map((token)=>{
-            return {
-              address : token.tokenInfo.address
-            }
-          });
-          let tokensToWatch = nonZeroTokens.concat(context.state.savedTokens);
-          let subscription = new TokenTracker({
-            userAddress: address,
-            provider: context.rootState.web3.web3.currentProvider,
-            pollingInterval: 4000,
-            tokens: tokensToWatch
-          })
-          setInterval(()=> {
-            let balances = subscription.serialize();
-            if (typeof balances[0].symbol !== 'undefined')
-              context.commit('saveTokens', balances);
-          }, 4000)
-          subscription.on('update', function (balances) {
-            context.commit('saveTokens', balances);
-          })
-          subscription.on('error', function (reason) {
-              console.log('there was a problem!', reason)
-              console.trace(reason)
-            })
-          context.commit('saveSubscription', subscription);
-          res();
-        })
+      context.state.tokensSubscription.add({
+        address
       });
     },
-    stopSubscription() {
-
+    subscribeOnTokenUpdates(context) {
+      if(context.rootState.accounts.activeAccount) {
+        if(context.state.tokensSerializeInterval) {
+          clearInterval(context.state.tokensSerializeInterval);
+          context.state.tokensSubscription.stop();
+        }
+        context.dispatch('getNonZeroTokens').then(()=> {
+          context.dispatch('createTokenSubscribtion');
+        });
+      }
     },
-    addTokenToSubscription() {
-
+    createTokenSubscribtion(context) {
+      const address = context.rootState.accounts.activeAccount.getAddressString();
+      const tokensToWatch = context.getters.tokensToWatch;
+      const subscription = new TokenTracker({
+        userAddress: address,
+        provider: context.rootState.web3.web3.currentProvider,
+        pollingInterval: 4000,
+        tokens: tokensToWatch
+      });
+      const interval = setInterval(()=> {
+        let balances = this.subscription.serialize();
+        if (typeof balances[0].symbol !== 'undefined')
+          context.commit('saveTokens', balances);
+      }, 4000);
+      context.commit('saveInterval', interval);
+      context.commit('saveSubscription', subscription);
+    },
+    getNonZeroTokens(context) {
+      return new Promise((res, rej) => {
+        let address = context.rootState.accounts.activeAccount.getAddressString();
+        EthplorerService.getTransactions().then((resp)=> {
+          context.commit('saveTokens', resp.body.tokens);
+          res();
+        });
+      });
     }
   }
 }
