@@ -200,6 +200,7 @@ export default {
       let tokenAddress = this.selectedToken.address;
       let address = this.$store.state.accounts.activeAccount.getAddressString();
       var contract = new this.$store.state.web3.web3.eth.Contract(erc20ABI, tokenAddress, { from: address });
+      this.transaction.to = tokenAddress;
       this.transaction.data = contract.methods.transfer(this.transaction.to, this.transaction.value).encodeABI();
     }
   }
