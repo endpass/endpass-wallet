@@ -166,6 +166,9 @@ export default {
       historyItem.gasPrice = trx.gasPrice;
       historyItem.nonce = trx.nonce;
       historyItem.canseled = false;
+      if(this.selectedToken !== 'ETH') {
+        historyItem.tokenInfo = this.selectedToken;
+      }
       return historyItem;
     },
     sendTransaction(e) {

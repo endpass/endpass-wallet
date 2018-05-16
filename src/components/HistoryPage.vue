@@ -45,9 +45,11 @@ export default {
   },
   created() {
     const address = this.$store.state.accounts.activeAccount.getAddressString();
-    EthplorerService.getInfo(address).then((resp) => {
-      this.transactions = resp.data;
-    })
+    let historyPromise = EthplorerService.getHistory(address);
+    let transactionsPromise = EthplorerService.getInfo(address);
+    Promise.all([transactionsPromise, historyPromise]).then((values) => {
+      this.transactions = values[0].data.concat(values[1].data.operations);
+    });
   },
   components: {
     appTransaction

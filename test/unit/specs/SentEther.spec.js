@@ -54,7 +54,6 @@ describe('SendEther', () => {
   })
   it('sets contract data', () => {
     wrapper.vm.createTokenTransaction();
-    console.log(wrapper.vm.transaction.data);
     expect(wrapper.vm.transaction.data).toBe('0xa9059cbb00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000');
   });
 })

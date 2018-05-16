@@ -36,8 +36,10 @@
 
           <div class="column is-one-third">
             <p>
-              <span class="title amount">{{transaction.value}}</span>
-              <span >ETH</span>
+              <span class="title amount" v-if="transaction.tokenInfo">{{parseTokenAmount()}}</span>
+              <span class="title amount" v-else>{{transaction.value}}</span>
+              <span v-if="transaction.tokenInfo">{{transaction.tokenInfo.symbol}}</span>
+              <span v-else>ETH</span>
             </p>
             <p class="received" v-if="recieve">
               <span class="icon is-medium"
@@ -131,6 +133,15 @@ export default {
       .on('transactionHash', (hash) => {
         this.$store.commit('accounts/canselTransaction', this.transaction.hash);
       });
+    },
+    parseTokenAmount() {
+      let BN = web3.utils.BN;
+      let divider = new BN('10');
+      divider = divider.pow(new BN(this.transaction.tokenInfo.decimals));
+      let result = new BN (this.transaction.value);
+      let beforeDecimal = result.div(divider);
+      let afterDecimal  = result.mod(divider);
+      return beforeDecimal.toString() + '.' + afterDecimal.toString();
     }
   },
   updated () {
