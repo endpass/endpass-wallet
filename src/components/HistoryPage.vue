@@ -46,7 +46,7 @@ export default {
   created() {
     const address = this.$store.state.accounts.activeAccount.getAddressString();
     EthplorerService.getInfo(address).then((resp) => {
-      this.transactions = resp.body;
+      this.transactions = resp.data;
     })
   },
   components: {

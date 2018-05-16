@@ -14,7 +14,11 @@ export default {
   },
   getters: {
     tokensToWatch(state) {
-      return state.activeTokens.concat(state.savedTokens)
+      return state.activeTokens.map((token) => {
+        return {
+          address: token.tokenInfo.address
+        }
+      }).concat(state.savedTokens)
     }
   },
   mutations: {
@@ -28,10 +32,10 @@ export default {
       state.activeTokens = tokens;
     },
     saveInterval(state, interval) {
-      state.tokensSubscription = interval;
+      state.tokensSerializeInterval = interval;
     },
     saveSubscription(state, subscription) {
-      state.tokensSerializeInterval = subscription;
+      state.tokensSubscription = subscription;
     }
   },
   actions: {
@@ -62,7 +66,7 @@ export default {
         tokens: tokensToWatch
       });
       const interval = setInterval(()=> {
-        let balances = this.subscription.serialize();
+        let balances = context.state.tokensSubscription.serialize();
         if (typeof balances[0].symbol !== 'undefined')
           context.commit('saveTokens', balances);
       }, 4000);
@@ -72,8 +76,8 @@ export default {
     getNonZeroTokens(context) {
       return new Promise((res, rej) => {
         let address = context.rootState.accounts.activeAccount.getAddressString();
-        EthplorerService.getTransactions().then((resp)=> {
-          context.commit('saveTokens', resp.body.tokens);
+        EthplorerService.getTransactions(address).then((resp)=> {
+          context.commit('saveTokens', resp.data.tokens);
           res();
         });
       });
