@@ -12,12 +12,12 @@
                 <search-input v-model="search"></search-input>
               </div>
               <div class="scroller">
-                <a v-for="token in activeTokens" class="panel-block is-clearfix is-block">
+                <a v-for="token in watchedTokens" :key="token.address" class="panel-block is-clearfix is-block">
                   <span class="panel-icon">
                     <i class="fas fa-book" aria-hidden="true"></i>
                   </span>
                   {{token.symbol}}
-                  <span class="is-pulled-right">{{token.balance}}</span>
+                  <span class="is-pulled-right">{{token.balance || 0}}</span>
                 </a>
               </div>
             </nav>
@@ -36,8 +36,7 @@
                     <i class="fas fa-book" aria-hidden="true"></i>
                   </span>
                   {{token.symbol}}
-                  <span class="is-pulled-right" v-if="token.balance">{{token.balance}}</span>
-                  <a v-else @click="saveToken(token)" class="button
+                  <a @click="saveToken(token)" class="button
                     is-primary is-pulled-right">
                     <span class="icon is-small"
                           v-html="require('@/img/plus.svg')">
@@ -71,7 +70,16 @@ export default {
   },
   computed: {
     activeTokens() {
-      return this.$store.state.tokens.activeTokens
+      // TODO figure out what activeTokens in
+      // return this.$store.state.tokens.activeTokens
+      return this.$store.state.tokens.savedTokens
+    },
+    watchedTokens() {
+      return this.tokens.filter((token) => {
+        return this.activeTokens.some((activeToken) => {
+          return activeToken.address === token.address;
+        })
+      })
     },
     filteredTokens() {
       let unwatchedTokens = this.tokens.filter((token) => {
