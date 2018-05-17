@@ -47,7 +47,7 @@ export default {
         }
         // get tokens with balances
         context.dispatch('getNonZeroTokens').then((resp)=> {
-          context.dispatch('createTokenSubscribtion', resp.data.tokens);
+          context.dispatch('createTokenSubscribtion', resp.data.tokens || []);
         });
       }
     },
