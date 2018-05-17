@@ -50,6 +50,7 @@ describe('tokens', () => {
         savedTokens : stateInstance.savedTokens,
         tokensSubscription: {
           count: 0,
+          tokens: [],
           add () {
             this.count +1;
           }
