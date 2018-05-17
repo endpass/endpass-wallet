@@ -12,7 +12,7 @@
                 <search-input v-model="search"></search-input>
               </div>
               <div class="scroller">
-                <a v-for="token in watchedTokens" :key="token.address" class="panel-block is-clearfix is-block">
+                <a v-for="token in activeTokens" :key="token.address + 'sub'" class="panel-block is-clearfix is-block">
                   <span class="panel-icon">
                     <i class="fas fa-book" aria-hidden="true"></i>
                   </span>
@@ -31,12 +31,12 @@
                 <search-input v-model="search"></search-input>
               </div>
               <div class="scroller">
-                <a v-for="token in filteredTokens" class="panel-block is-clearfix is-block">
+                <a v-for="token in filteredTokens" :key="token.address" class="panel-block is-clearfix is-block">
                   <span class="panel-icon">
                     <i class="fas fa-book" aria-hidden="true"></i>
                   </span>
                   {{token.symbol}}
-                  <a @click="saveToken(token)" class="button
+                  <a @click="saveToken(token)" :disabled="token.manuallyAdded" class="button
                     is-primary is-pulled-right">
                     <span class="icon is-small"
                           v-html="require('@/img/plus.svg')">
@@ -92,6 +92,7 @@ export default {
   methods: {
     saveToken(token) {
       // Add token to subscription
+      this.$set(token, 'manuallyAdded', true);
       this.$store.dispatch('tokens/addTokenToSubscribtion', token);
     },
     getAllTokens(context) {

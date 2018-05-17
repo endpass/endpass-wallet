@@ -30,7 +30,8 @@
             </p>
             <p v-else>
               <span class="text-label">To</span>
-              <span class="address">{{transaction.to}}</span>
+              <span class="address"  v-if="transaction.tokenInfo">{{transaction.reciverAddress}}</span>
+              <span class="address" v-els>{{transaction.to}}</span>
             </p>
           </div>
 
