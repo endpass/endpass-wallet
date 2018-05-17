@@ -80,11 +80,13 @@ export default {
     commitWalletCreationChanges(hdWallet){
       this.$store.commit('accounts/setWallet', hdWallet);
       let account = hdWallet.deriveChild(0).getWallet();
-      this.$store.commit('accounts/addAccount', account);
-      this.$store.dispatch('accounts/updateBalance');
-      this.$store.dispatch('accounts/subscribeOnBalanceUpdates');
-      this.$store.dispatch('tokens/createSubscribtion');
-      this.creatingWallet = false;
+      this.$store.dispatch('accounts/addAccount', account);
+      this.$store.dispatch('accounts/updateBalance').then(() => {
+        this.$store.dispatch('accounts/subscribeOnBalanceUpdates');
+      }).then(() => {
+        this.$store.dispatch('tokens/createTokenSubscribtion');
+        this.creatingWallet = false;
+      })
     },
     throwCreationError(error) {
       console.log(error);
