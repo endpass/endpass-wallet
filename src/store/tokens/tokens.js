@@ -6,26 +6,17 @@ export default {
   state() {
     let savedTokens = JSON.parse(localStorage.getItem('tokens') || '[]');
     return {
+      // tokens from subscribtipn
       activeTokens: [],
+      //tokens from localStorage
       savedTokens,
       tokensSubscription: null,
       tokensSerializeInterval: null
     }
   },
-  getters: {
-    tokensToWatch(state) {
-      return state.activeTokens.map((token) => {
-        return {
-          address: token.tokenInfo.address
-        }
-      }).concat(state.savedTokens)
-    }
-  },
   mutations: {
-    saveTokenToWatchStorage(state, address) {
-      state.savedTokens.push({
-        address
-      });
+    saveTokenToWatchStorage(state, token) {
+      state.savedTokens.push(token);
       localStorage.setItem('tokens', JSON.stringify(state.savedTokens));
     },
     saveTokens(state, tokens) {
@@ -40,26 +31,39 @@ export default {
     }
   },
   actions: {
-    addTokenToSubscribtion(context, address) {
-      context.commit('saveTokenToWatchStorage', address);
+    addTokenToSubscribtion(context, token) {
+      // Save token without blance for furer seances
+      context.commit('saveTokenToWatchStorage', token);
       context.state.tokensSubscription.add({
-        address
+        address: token.address
       });
     },
     subscribeOnTokenUpdates(context) {
+      //destroy old subscription and recreate new one (in case of addres/provider change)
       if(context.rootState.accounts.activeAccount) {
         if(context.state.tokensSerializeInterval) {
           clearInterval(context.state.tokensSerializeInterval);
           context.state.tokensSubscription.stop();
         }
-        context.dispatch('getNonZeroTokens').then(()=> {
-          context.dispatch('createTokenSubscribtion');
+        // get tokens with balances
+        context.dispatch('getNonZeroTokens').then((resp)=> {
+          context.dispatch('createTokenSubscribtion', resp.data.tokens);
         });
       }
     },
-    createTokenSubscribtion(context) {
+    createTokenSubscribtion(context, nonZerotokens) {
       const address = context.rootState.accounts.activeAccount.getAddressString();
-      const tokensToWatch = context.getters.tokensToWatch;
+      //remove repetitive tokens
+      const filteredSavedTokensTokens = context.state.savedTokens.filter((savedToken) => {
+        return !nonZerotokens.find((nonZeroToken) => {
+          return nonZeroToken.tokenInfo.address === savedToken.address;
+        });
+      });
+      const tokensToWatch = filteredSavedTokensTokens.concat(nonZerotokens.map((nonZeroToken) => {
+        return {
+          address: nonZeroToken.tokenInfo.address
+        }
+      }));
       const subscription = new TokenTracker({
         userAddress: address,
         provider: context.rootState.web3.web3.currentProvider,
@@ -78,13 +82,8 @@ export default {
       context.commit('saveSubscription', subscription);
     },
     getNonZeroTokens(context) {
-      return new Promise((res, rej) => {
-        let address = context.rootState.accounts.activeAccount.getAddressString();
-        EthplorerService.getTransactions(address).then((resp)=> {
-          context.commit('saveTokens', resp.data.tokens);
-          res();
-        });
-      });
+      let address = context.rootState.accounts.activeAccount.getAddressString();
+      return EthplorerService.getTransactions(address);
     }
   }
 }
