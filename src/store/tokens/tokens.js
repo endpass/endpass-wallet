@@ -82,8 +82,8 @@ export default {
       context.commit('saveSubscription', subscription);
     },
     getNonZeroTokens(context) {
-        let address = context.rootState.accounts.activeAccount.getAddressString();
-        return EthplorerService.getTransactions(address);
+      let address = context.rootState.accounts.activeAccount.getAddressString();
+      return EthplorerService.getTransactions(address);
     }
   }
 }

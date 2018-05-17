@@ -72,7 +72,6 @@ export default {
           context.dispatch('updateBalance');
         });
         context.state.balanceSubscribtion.start();
-        resolve()
       }
     },
     updateBalance(context) {
