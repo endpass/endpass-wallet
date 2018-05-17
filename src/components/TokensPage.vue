@@ -17,7 +17,7 @@
                     <i class="fas fa-book" aria-hidden="true"></i>
                   </span>
                   {{token.symbol}}
-                  <span class="is-pulled-right">{{token.string}}</span>
+                  <span class="is-pulled-right">{{token.balance}}</span>
                 </a>
               </div>
             </nav>
@@ -91,8 +91,8 @@ export default {
     }
   },
   methods: {
-    saveToken(address) {
-      this.$store.dispatch('tokens/saveTokenToWatchStorage', token.address);
+    saveToken(token) {
+      this.$store.commit('tokens/saveTokenToWatchStorage', token.address);
     },
     getAllTokens(context) {
       EndpassService.getTokensList().then((resp) => {
