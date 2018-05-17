@@ -59,7 +59,7 @@ export default {
     },
     setActiveAccount(context, account) {
       context.commit('setActiveAccount', account);
-      context.dispatch('subscribeOnBalanceUpdates').then(() => {
+      return context.dispatch('subscribeOnBalanceUpdates').then(() => {
         context.dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
       })
     },
