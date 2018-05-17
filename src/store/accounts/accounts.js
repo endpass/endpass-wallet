@@ -59,31 +59,43 @@ export default {
     },
     setActiveAccount(context, account) {
       context.commit('setActiveAccount', account);
-      context.dispatch('subscribeOnBalanceUpdates');
-      context.dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
+      context.dispatch('subscribeOnBalanceUpdates').then(() => {
+        context.dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
+      })
     },
     subscribeOnBalanceUpdates(context) {
-      if(context.rootState.accounts.activeAccount) {
-        if(context.state.balanceSubscribtion) {
-          context.state.balanceSubscribtion.stop();
+      return new Promise((resolve, reject) => {
+        if(context.rootState.accounts.activeAccount) {
+          if(context.state.balanceSubscribtion) {
+            context.state.balanceSubscribtion.stop();
+          }
+          context.state.balanceSubscribtion = new EthBlockTracker({provider: context.rootState.web3.web3.currentProvider});
+          context.state.balanceSubscribtion.on('latest', () => {
+            context.dispatch('updateBalance');
+          });
+          context.state.balanceSubscribtion.start();
+          resolve()
+        } else {
+          reject(new Error('No active account'));
         }
-        context.state.balanceSubscribtion = new EthBlockTracker({provider: context.rootState.web3.web3.currentProvider});
-        context.state.balanceSubscribtion.on('latest', () => {
-          context.dispatch('updateBalance');
-        });
-        context.state.balanceSubscribtion.start();
-      }
+      })
     },
     updateBalance(context) {
-      if(context.rootState.accounts.activeAccount) {
-        let address = context.rootState.accounts.activeAccount.getAddressString();
-        let balance = context.rootState.web3.web3.eth.getBalance(address).then((balance) => {
-          console.log(balance);
-          context.commit('setBalance', balance);
-        }).catch(e => {
-          console.log(e, 'bal');
-        });
-      }
+      return new Promise((resolve, reject) => {
+        if(context.rootState.accounts.activeAccount) {
+          let address = context.rootState.accounts.activeAccount.getAddressString();
+          let balance = context.rootState.web3.web3.eth.getBalance(address).then((balance) => {
+            console.log(balance);
+            context.commit('setBalance', balance);
+            resolve();
+          }).catch(e => {
+            console.log(e, 'bal');
+            reject(e);
+          });
+        } else {
+          reject(new Error('No active account'));
+        }
+      })
     }
   }
 }
