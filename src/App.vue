@@ -1,68 +1,85 @@
 <template>
   <div id="app">
-    <div class="navbar">
-      <div class="navbar-brand">
-        <router-link class="navbar-item logo-icon" to="/">
-          <img src="@/img/logo-light.png" alt="Endpass Wallet">
-        </router-link>
-        <a class="navbar-burger" @click="toggleNavMenu" :class="{'is-active':navMenuActive}">
-          <span></span>
-          <span></span>
-          <span></span>
-        </a>
-      </div>
-      <div class="navbar-menu" :class="{'is-active':navMenuActive}">
-        <div class="navbar-start">
-          <router-link class="navbar-item" to="/" @click.native="toggleNavMenu">
-            <span class="icon is-small"
-              v-html="require('@/img/home.svg')"></span>Dashboard
+    <div class="app-top">
+      <div class="navbar">
+        <div class="navbar-brand">
+          <router-link class="navbar-item logo-icon" to="/">
+            <img src="@/img/logo-light.png" alt="Endpass Wallet">
           </router-link>
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}" @click.native="toggleNavMenu">
-            <span class="icon is-small"
-              v-html="require('@/img/clock.svg')"></span>History
-          </router-link>
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}" @click.native="toggleNavMenu">
-            <span class="icon is-small"
-              v-html="require('@/img/arrow-thick-left.svg')"></span>Send
-          </router-link>
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name:
-            'ReceivePage'}" @click.native="toggleNavMenu">
-            <span class="icon is-small"
-              v-html="require('@/img/arrow-thick-right.svg')"></span>Receive
-          </router-link>
-          <router-link v-if="activeAccount" class="navbar-item" :to="{name:
-            'TokensPage'}" @click.native="toggleNavMenu">
-            <span class="icon is-small"
-              v-html="require('@/img/compass.svg')"></span>Tokens
-          </router-link>
+          <a class="navbar-burger" @click="toggleNavMenu" :class="{'is-active':navMenuActive}">
+            <span></span>
+            <span></span>
+            <span></span>
+          </a>
         </div>
-
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <div class="navbar-control">
-              <span  v-if="activeAccount">
-                <p class="heading">Current Account </p>
-                <account-chooser/>
-                <span v-if="balance !== null"><strong>{{ balance }}</strong> ETH</span>
-              </span>
-              <router-link :to="{name: 'NewWallet'}" class="button
-                is-primary" v-else>Create Wallet</router-link>
-            </div>
+        <div class="navbar-menu" :class="{'is-active':navMenuActive}">
+          <div class="navbar-start">
+            <router-link class="navbar-item" to="/" @click.native="toggleNavMenu">
+              <span class="icon is-small"
+                v-html="require('@/img/home.svg')"></span>Dashboard
+            </router-link>
+            <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}" @click.native="toggleNavMenu">
+              <span class="icon is-small"
+                v-html="require('@/img/clock.svg')"></span>History
+            </router-link>
+            <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}" @click.native="toggleNavMenu">
+              <span class="icon is-small"
+                v-html="require('@/img/arrow-thick-left.svg')"></span>Send
+            </router-link>
+            <router-link v-if="activeAccount" class="navbar-item" :to="{name:
+              'ReceivePage'}" @click.native="toggleNavMenu">
+              <span class="icon is-small"
+                v-html="require('@/img/arrow-thick-right.svg')"></span>Receive
+            </router-link>
+            <router-link v-if="activeAccount" class="navbar-item" :to="{name:
+              'TokensPage'}" @click.native="toggleNavMenu">
+              <span class="icon is-small"
+                v-html="require('@/img/compass.svg')"></span>Tokens
+            </router-link>
           </div>
-          <div class="navbar-item">
-            <div class="navbar-control">
-              <p class="heading">Current Network</p>
-              <div class="select">
-                <select @change="selectNet" v-model="selectedNet">
-                  <option v-for="net in networks" :value="net.name">
-                    {{net.name}}
-                  </option>
-                </select>
+
+        </div>
+      </div>
+
+      <div class="top-info has-background-light">
+        <div class="container">
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <div class="level-control">
+                  <p class="heading">Current Network</p>
+                  <div class="select">
+                    <select @change="selectNet" v-model="selectedNet">
+                      <option v-for="net in networks" :value="net.name">
+                      {{net.name}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
+
+            <div class="level-right">
+              <div class="level-item">
+                <div class="level-control">
+                  <span  v-if="activeAccount">
+                    <p class="heading">Current Account</p>
+                    <account-chooser/>
+                  </span>
+                  <router-link :to="{name: 'NewWallet'}" class="button
+                  is-primary" v-else>Create Wallet</router-link>
+                </div>
+              </div>
+              <div class="level-item" v-if="balance !== null">
+                <div class="level-stat">
+                  <p class="heading">Balance</p>
+                  <span class="title">{{ balance }}</span> ETH
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
-
       </div>
     </div>
 
