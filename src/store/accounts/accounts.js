@@ -75,8 +75,6 @@ export default {
           });
           context.state.balanceSubscribtion.start();
           resolve()
-        } else {
-          reject(new Error('No active account'));
         }
       })
     },
@@ -92,8 +90,6 @@ export default {
             console.log(e, 'bal');
             reject(e);
           });
-        } else {
-          reject(new Error('No active account'));
         }
       })
     }
