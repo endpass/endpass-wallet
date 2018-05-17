@@ -190,6 +190,7 @@ export default {
       historyItem.nonce = trx.nonce;
       historyItem.canseled = false;
       if(this.selectedToken !== 'ETH') {
+        historyItem.reciverAddress = this.toCache;
         historyItem.tokenInfo = this.selectedToken;
       }
       return historyItem;
