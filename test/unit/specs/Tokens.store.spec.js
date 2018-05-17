@@ -18,12 +18,6 @@ describe('tokens', () => {
     expect(stateInstance.savedTokens.length).toBe(1);
     expect(stateInstance.savedTokens[0].address).toBe('0x0');
   })
-  it('correctly gets tokens to watch', () => {
-    stateInstance.activeTokens = [{
-      tokenInfo: {address: '0x1'}
-    }];
-    expect(tokens.getters.tokensToWatch(stateInstance).length).toBe(2);
-  })
   it ('saves token to watch storage', () => {
     tokens.mutations.saveTokenToWatchStorage(stateInstance, { address : '0x2'})
     expect(stateInstance.savedTokens.length).toBe(2);
@@ -42,7 +36,7 @@ describe('tokens', () => {
     expect(stateInstance.tokensSubscription).toBe(1);
   });
   it('adds Token To Subscribtion', () => {
-    testAction(tokens.actions.addTokenToSubscribtion, null, {
+    testAction(tokens.actions.addTokenToSubscribtion, {address : '0x0'}, {
       rootState: {
         accounts: {
           activeAccount : {
@@ -93,7 +87,7 @@ describe('tokens', () => {
   })
   it('creates Token Subscribtion', () => {
     const Timeout = setTimeout(function(){}, 0).constructor;
-    testAction(tokens.actions.createTokenSubscribtion, null, {
+    testAction(tokens.actions.createTokenSubscribtion, [], {
       rootState: {
         accounts: {
           activeAccount : {
@@ -105,9 +99,6 @@ describe('tokens', () => {
         web3: {
           web3: new Web3 ('https://mainnet.infura.io/')
         }
-      },
-      getters: {
-        tokensToWatch: []
       },
       state : {
         savedTokens : stateInstance.savedTokens,

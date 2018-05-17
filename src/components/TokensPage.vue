@@ -70,16 +70,7 @@ export default {
   },
   computed: {
     activeTokens() {
-      // TODO figure out what activeTokens in
-      // return this.$store.state.tokens.activeTokens
-      return this.$store.state.tokens.savedTokens
-    },
-    watchedTokens() {
-      return this.tokens.filter((token) => {
-        return this.activeTokens.some((activeToken) => {
-          return activeToken.address === token.address;
-        })
-      })
+      return this.$store.state.tokens.activeTokens
     },
     filteredTokens() {
       let unwatchedTokens = this.tokens.filter((token) => {
@@ -100,7 +91,8 @@ export default {
   },
   methods: {
     saveToken(token) {
-      this.$store.commit('tokens/saveTokenToWatchStorage', token.address);
+      // Add token to subscription
+      this.$store.dispatch('tokens/addTokenToSubscribtion', token);
     },
     getAllTokens(context) {
       EndpassService.getTokensList().then((resp) => {
