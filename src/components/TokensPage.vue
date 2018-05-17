@@ -14,13 +14,13 @@
           </p>
         </div>
         <div class="scroller">
-          <a v-for="token in filteredTokens" class="panel-block is-clearfix is-block">
+          <a v-for="token in filteredTokens" :key="token.address" class="panel-block is-clearfix is-block">
             <span class="panel-icon">
               <i class="fas fa-book" aria-hidden="true"></i>
             </span>
             {{token.symbol}}
             <span class="is-pulled-right" v-if="token.balance">{{token.balance}}</span>
-            <a v-else @click="saveToken(token)" class="button is-pulled-right" type="button" name="button">Show</a>
+            <a v-else @click="saveToken(token)" class="button is-pulled-right" :disabled="token.manuallyAdded" type="button" name="button">Show</a>
           </a>
         </div>
         <div class="panel-block">
@@ -44,7 +44,7 @@
           </p>
         </div>
         <div class="scroller">
-          <a v-for="token in activeTokens" class="panel-block is-clearfix is-block">
+          <a v-for="token in activeTokens" :key="token.address + 'sub'" class="panel-block is-clearfix is-block">
             <span class="panel-icon">
               <i class="fas fa-book" aria-hidden="true"></i>
             </span>
@@ -97,6 +97,7 @@ export default {
   methods: {
     saveToken(token) {
       // Add token to subscription
+      this.$set(token, 'manuallyAdded', true);
       this.$store.dispatch('tokens/addTokenToSubscribtion', token);
     },
     getAllTokens(context) {

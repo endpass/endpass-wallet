@@ -33,10 +33,15 @@ export default {
   actions: {
     addTokenToSubscribtion(context, token) {
       // Save token without blance for furer seances
-      context.commit('saveTokenToWatchStorage', token);
-      context.state.tokensSubscription.add({
-        address: token.address
-      });
+      let tokenExist = context.state.tokensSubscription.tokens.find((subscribtionToken) => {
+        return subscribtionToken.address === token.address;
+      })
+      if(!tokenExist) {
+        context.commit('saveTokenToWatchStorage', token);
+        context.state.tokensSubscription.add({
+          address: token.address
+        });
+      }
     },
     subscribeOnTokenUpdates(context) {
       //destroy old subscription and recreate new one (in case of addres/provider change)
