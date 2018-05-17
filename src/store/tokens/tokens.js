@@ -14,7 +14,9 @@ export default {
   },
   getters: {
     tokensToWatch(state) {
-      return state.activeTokens.map((token) => {
+      // TODO check for errors here, activeTokens is undefined
+      const tokens = state.activeTokens || []
+      return tokens.map((token) => {
         return {
           address: token.tokenInfo.address
         }
@@ -66,9 +68,12 @@ export default {
         tokens: tokensToWatch
       });
       const interval = setInterval(()=> {
-        let balances = context.state.tokensSubscription.serialize();
-        if (typeof balances[0].symbol !== 'undefined')
-          context.commit('saveTokens', balances);
+        if (context.state.tokensSubscription) {
+          let balances = context.state.tokensSubscription.serialize();
+          // TODO check for errors here
+          if (balances.length && typeof balances[0].symbol !== 'undefined')
+            context.commit('saveTokens', balances);
+        }
       }, 4000);
       context.commit('saveInterval', interval);
       context.commit('saveSubscription', subscription);
