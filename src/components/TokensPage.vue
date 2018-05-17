@@ -96,7 +96,7 @@ export default {
   },
   methods: {
     saveToken(address) {
-      this.$store.dispatch('tokens/saveTokenToWatchStorage', token.address);
+      this.$store.dispatch('tokens/saveTokenToWatchStorage', address);
     },
     getAllTokens(context) {
       EndpassService.getTokensList().then((resp) => {
