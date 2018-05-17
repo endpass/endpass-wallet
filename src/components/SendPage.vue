@@ -82,6 +82,7 @@ export default {
     return {
       selectedToken: 'ETH',
       validForm:false,
+      toCache: '',
       transaction: {
         gasPrice: '0x14f46b0400',
         gasLimit: '0x55f0',
@@ -129,12 +130,34 @@ export default {
     },
     value: {
       get: function () {
-        return web3.utils.fromWei(web3.utils.hexToNumberString(this.transaction.value));
+        if( this.selectedToken === 'ETH') {
+          return web3.utils.fromWei(web3.utils.hexToNumberString(this.transaction.value));
+        }
+        else {
+          let value = web3.utils.hexToNumberString(this.transaction.value);
+          let BN = web3.utils.BN;
+          let divider = new BN('10');
+          divider = divider.pow(new BN(this.selectedToken.decimals));
+          let result = new BN (value);
+          let beforeDecimal = result.div(divider);
+          let afterDecimal  = result.mod(divider);
+          return beforeDecimal.toString() + '.' + afterDecimal.toString();
+        }
       },
       set: function (newValue) {
         if( typeof newValue !== 'number')
           return
-        this.transaction.value = web3.utils.numberToHex(web3.utils.toWei(newValue.toString(), 'ether'));
+        if(this.selectedToken === "ETH")
+          this.transaction.value = web3.utils.numberToHex(web3.utils.toWei(newValue.toString(), 'ether'));
+        else {
+          let BN = web3.utils.BN;
+          let value = new BN(newValue);
+          let divider = new BN('10');
+          divider = divider.pow(new BN(this.selectedToken.decimals));
+          value = value.mul(divider);
+          this.transaction.value = web3.utils.numberToHex(value.toString());
+        }
+
       }
     },
     message: {
@@ -183,6 +206,7 @@ export default {
         tx.sign(this.$store.state.accounts.activeAccount.getPrivateKey());
         var serializedTx = tx.serialize();
         let transactionForHistory = this.chreateTransactionHistory(this.transaction);
+
         this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
         .on('receipt', (resp) => {
           this.$store.commit('accounts/removeTransaction', resp.transactionHash);
@@ -193,6 +217,7 @@ export default {
           transactionForHistory.hash = hash;
           this.$store.commit('accounts/addTransaction', transactionForHistory);
         });
+        this.transaction.to = this.toCache;
       });
       e.preventDefault();
     },
@@ -200,6 +225,7 @@ export default {
       let tokenAddress = this.selectedToken.address;
       let address = this.$store.state.accounts.activeAccount.getAddressString();
       var contract = new this.$store.state.web3.web3.eth.Contract(erc20ABI, tokenAddress, { from: address });
+      this.toCache = this.transaction.to;
       this.transaction.to = tokenAddress;
       this.transaction.data = contract.methods.transfer(this.transaction.to, this.transaction.value).encodeABI();
     }
