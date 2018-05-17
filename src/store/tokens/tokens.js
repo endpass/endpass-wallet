@@ -29,7 +29,8 @@ export default {
       localStorage.setItem('tokens', JSON.stringify(state.savedTokens));
     },
     saveTokens(state, tokens) {
-      state.activeTokens = tokens;
+      // TODO check for errors here, activeTokens is undefined
+      state.activeTokens = tokens || []
     },
     saveInterval(state, interval) {
       state.tokensSerializeInterval = interval;
@@ -66,9 +67,12 @@ export default {
         tokens: tokensToWatch
       });
       const interval = setInterval(()=> {
-        let balances = context.state.tokensSubscription.serialize();
-        if (typeof balances[0].symbol !== 'undefined')
-          context.commit('saveTokens', balances);
+        if (context.state.tokensSubscription) {
+          let balances = context.state.tokensSubscription.serialize();
+          // TODO check for errors here
+          if (balances.length && typeof balances[0].symbol !== 'undefined')
+            context.commit('saveTokens', balances);
+        }
       }, 4000);
       context.commit('saveInterval', interval);
       context.commit('saveSubscription', subscription);
