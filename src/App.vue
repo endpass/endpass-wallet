@@ -30,6 +30,11 @@
             <span class="icon is-small"
               v-html="require('@/img/arrow-thick-right.svg')"></span>Receive
           </router-link>
+          <router-link v-if="activeAccount" class="navbar-item" :to="{name:
+            'TokensPage'}" @click.native="toggleNavMenu">
+            <span class="icon is-small"
+              v-html="require('@/img/compass.svg')"></span>Tokens
+          </router-link>
         </div>
 
         <div class="navbar-end">
