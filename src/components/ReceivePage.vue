@@ -48,7 +48,7 @@ export default {
   created() {
     const address = this.$store.state.accounts.activeAccount.getAddressString();
     EthplorerService.getInfo(address).then((resp) => {
-      this.transactions = resp.body.filter((trx) => {
+      this.transactions = resp.data.filter((trx) => {
         return trx.to === this.address;
       });
     })

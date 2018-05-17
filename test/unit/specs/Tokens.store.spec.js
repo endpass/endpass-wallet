@@ -20,7 +20,7 @@ describe('tokens', () => {
   })
   it('correctly gets tokens to watch', () => {
     stateInstance.activeTokens = [{
-      address: '0x1'
+      tokenInfo: {address: '0x1'}
     }];
     expect(tokens.getters.tokensToWatch(stateInstance).length).toBe(2);
   })
@@ -35,11 +35,11 @@ describe('tokens', () => {
   })
   it ('saves Interval' , () => {
     tokens.mutations.saveInterval(stateInstance, 1);
-    expect(stateInstance.tokensSubscription).toBe(1);
+    expect(stateInstance.tokensSerializeInterval).toBe(1);
   });
   it ('saves Subscription' , () => {
     tokens.mutations.saveSubscription(stateInstance, 1);
-    expect(stateInstance.tokensSerializeInterval).toBe(1);
+    expect(stateInstance.tokensSubscription).toBe(1);
   });
   it('adds Token To Subscribtion', () => {
     testAction(tokens.actions.addTokenToSubscribtion, null, {

@@ -23,8 +23,9 @@
             </div>
             <div class="control">
               <span class="select">
-                <select>
-                  <option>ETH</option>
+                <select v-model="selectedToken">
+                  <option value="ETH">ETH</option>
+                  <option :value="token" v-for="token in tokens" :key="token.address">{{token.symbol}}</option>
                 </select>
               </span>
             </div>
@@ -69,6 +70,7 @@
 
 <script>
 
+import erc20ABI from '@/erc20.json'
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import { mapFields } from 'vee-validate'
@@ -78,6 +80,7 @@ export default {
 
   data () {
     return {
+      selectedToken: 'ETH',
       validForm:false,
       transaction: {
         gasPrice: '0x14f46b0400',
@@ -110,6 +113,9 @@ export default {
           return
         this.transaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei(newValue.toString(), 'Gwei'));
       }
+    },
+    tokens() {
+      return this.$store.state.tokens.activeTokens;
     },
     gasLimit: {
       get: function () {
@@ -160,6 +166,9 @@ export default {
       historyItem.gasPrice = trx.gasPrice;
       historyItem.nonce = trx.nonce;
       historyItem.canseled = false;
+      if(this.selectedToken !== 'ETH') {
+        historyItem.tokenInfo = this.selectedToken;
+      }
       return historyItem;
     },
     sendTransaction(e) {
@@ -167,6 +176,9 @@ export default {
       this.$store.state.web3.web3.eth.getTransactionCount(keyHex).then((nonce) => {
         let nonceWithPending = nonce + this.$store.state.accounts.pendingTransactions.length;
         this.transaction.nonce = web3.utils.numberToHex(nonceWithPending);
+        if(this.selectedToken !== 'ETH') {
+          this.createTokenTransaction()
+        }
         let tx = new Tx(this.transaction);
         tx.sign(this.$store.state.accounts.activeAccount.getPrivateKey());
         var serializedTx = tx.serialize();
@@ -183,6 +195,13 @@ export default {
         });
       });
       e.preventDefault();
+    },
+    createTokenTransaction() {
+      let tokenAddress = this.selectedToken.address;
+      let address = this.$store.state.accounts.activeAccount.getAddressString();
+      var contract = new this.$store.state.web3.web3.eth.Contract(erc20ABI, tokenAddress, { from: address });
+      this.transaction.to = tokenAddress;
+      this.transaction.data = contract.methods.transfer(this.transaction.to, this.transaction.value).encodeABI();
     }
   }
 }
