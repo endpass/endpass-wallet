@@ -14,9 +14,7 @@ export default {
   },
   getters: {
     tokensToWatch(state) {
-      // TODO check for errors here, activeTokens is undefined
-      const tokens = state.activeTokens || []
-      return tokens.map((token) => {
+      return state.activeTokens.map((token) => {
         return {
           address: token.tokenInfo.address
         }
@@ -31,7 +29,8 @@ export default {
       localStorage.setItem('tokens', JSON.stringify(state.savedTokens));
     },
     saveTokens(state, tokens) {
-      state.activeTokens = tokens;
+      // TODO check for errors here, activeTokens is undefined
+      state.activeTokens = tokens || []
     },
     saveInterval(state, interval) {
       state.tokensSerializeInterval = interval;
