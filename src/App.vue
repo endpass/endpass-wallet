@@ -41,7 +41,7 @@
         </div>
       </div>
 
-      <div class="top-info has-background-light">
+      <div class="section is-narrow top-info has-background-light">
         <div class="container">
           <div class="level">
             <div class="level-left">
@@ -169,6 +169,10 @@ export default {
   max-width: 600px;
 }
 
+.section.is-narrow {
+  padding: 1rem 1.5rem;
+}
+
 // Buttons and Links
 
 a {
@@ -229,6 +233,11 @@ a.navbar-link:hover, .router-link-exact-active {
   .icon svg {
     fill: $purple;
   }
+}
+
+.navbar-item .icon:only-child, .navbar-link .icon:only-child {
+  margin-left: 0;
+  margin-right: 0.25em;
 }
 
 // Icons
