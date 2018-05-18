@@ -30,8 +30,11 @@
             </p>
             <p v-else>
               <span class="text-label">To</span>
-              <span class="address"  v-if="transaction.tokenInfo">{{transaction.reciverAddress}}</span>
-              <span class="address" v-els>{{transaction.to}}</span>
+              <span class="address"  v-if="transaction.reciverAddress">{{transaction.reciverAddress}}</span>
+              <span class="address" v-else>{{transaction.to}}</span>
+            </p>
+            <p v-if="transaction.data || transaction.iput">
+              {{parsePata(data)}}
             </p>
           </div>
 
@@ -143,6 +146,10 @@ export default {
       let beforeDecimal = result.div(divider);
       let afterDecimal  = result.mod(divider);
       return beforeDecimal.toString() + '.' + afterDecimal.toString();
+    },
+    parsePata() {
+      let dataString = this.transaction.data || this.transaction.input || '0x';
+      return web3.utils.hexToString(dataString);
     }
   },
   updated () {
