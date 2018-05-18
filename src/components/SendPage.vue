@@ -81,6 +81,7 @@ import erc20ABI from '@/erc20.json'
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import { mapFields } from 'vee-validate'
+import accounts from '@/mixins/accounts'
 
 export default {
   data () {
@@ -209,7 +210,7 @@ export default {
       return historyItem;
     },
     sendTransaction(e) {
-      let keyHex = this.$store.state.accounts.activeAccount.getAddressString();
+      let keyHex = this.address;
       this.$store.state.web3.web3.eth.getTransactionCount(keyHex).then((nonce) => {
         let nonceWithPending = nonce + this.$store.state.accounts.pendingTransactions.length;
         this.transaction.nonce = web3.utils.numberToHex(nonceWithPending);
@@ -217,7 +218,7 @@ export default {
           this.createTokenTransaction()
         }
         let tx = new Tx(this.transaction);
-        tx.sign(this.$store.state.accounts.activeAccount.getPrivateKey());
+        tx.sign(this.activeAccount.getPrivateKey());
         var serializedTx = tx.serialize();
         let transactionForHistory = this.chreateTransactionHistory(this.transaction);
 
@@ -237,13 +238,14 @@ export default {
     },
     createTokenTransaction() {
       let tokenAddress = this.selectedToken.address;
-      let address = this.$store.state.accounts.activeAccount.getAddressString();
-      var contract = new this.$store.state.web3.web3.eth.Contract(erc20ABI, tokenAddress, { from: address });
+      var contract = new this.$store.state.web3.web3.eth.Contract(erc20ABI,
+        tokenAddress, { from: this.address });
       this.toCache = this.transaction.to;
       this.transaction.to = tokenAddress;
       this.transaction.data = contract.methods.transfer(this.transaction.to, this.transaction.value).encodeABI();
     }
-  }
+  },
+  mixins: [accounts]
 }
 </script>
 

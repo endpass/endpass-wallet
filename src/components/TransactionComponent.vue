@@ -78,6 +78,7 @@
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import ResendModal from './ResendModal';
+import accounts from '@/mixins/accounts'
 
 window.web3 = web3
 export default {
@@ -89,7 +90,7 @@ export default {
   },
   computed: {
     recieve() {
-      return this.transaction.to === this.$store.state.accounts.activeAccount.getAddressString();
+      return this.transaction.to === this.address;
     },
     date() {
       if(this.transaction.timestamp) {
@@ -125,13 +126,13 @@ export default {
       const canselTransaction = {};
       Object.assign(canselTransaction, this.transaction);
       canselTransaction.value = web3.utils.numberToHex('0');
-      canselTransaction.to = this.$store.state.accounts.activeAccount.getAddressString();
+      canselTransaction.to = this.address()
       let initialGwei = parseInt(web3.utils.fromWei(web3.utils.hexToNumberString(canselTransaction.gasPrice), 'Gwei'), 10);
       canselTransaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei((initialGwei + 1).toString(),'Gwei'));
       canselTransaction.gasLimit = canselTransaction.gasLimit;
       delete canselTransaction.hash
       let tx = new Tx(canselTransaction);
-      tx.sign(this.$store.state.accounts.activeAccount.getPrivateKey());
+      tx.sign(this.activeAccount.getPrivateKey());
       var serializedTx = tx.serialize();
       this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
       .on('transactionHash', (hash) => {
@@ -157,7 +158,8 @@ export default {
   },
   components: {
     ResendModal
-  }
+  },
+  mixins: [accounts]
 }
 </script>
 

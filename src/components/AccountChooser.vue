@@ -20,6 +20,7 @@
 
 <script>
 import NewAccountModal from '@/components/NewAccountModal'
+import accounts from '@/mixins/accounts'
 
 export default {
   data () {
@@ -29,9 +30,6 @@ export default {
     }
   },
   computed: {
-    activeAccount () {
-      return this.$store.state.accounts.activeAccount
-    },
     hdWallet () {
       return this.$store.state.accounts.hdWallet
     },
@@ -70,6 +68,7 @@ export default {
   },
   components: {
     NewAccountModal
-  }
+  },
+  mixins: [accounts]
 }
 </script>

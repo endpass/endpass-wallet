@@ -3,7 +3,7 @@
     <div class="field">
       <label class="label" for="jsonKeystorePassword">V3 JSON keystore password</label>
       <div class="control">
-        <input v-model="password" type="text" class="input" id="jsonKeystorePassword"
+        <input v-model="password" type="password" class="input" id="jsonKeystorePassword"
         aria-describedby="jsonKeystorePassword" placeholder="V3 JSON keystore password">
       </div>
     </div>
@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import accounts from '@/mixins/accounts'
 
 export default {
   data() {
@@ -21,13 +22,13 @@ export default {
   },
   methods: {
     exportJSON() {
-      if(this.$store.state.accounts.activeAccount) {
-        let jsonString = this.$store.state.accounts.activeAccount.toV3String(this.password);
+      if(this.activeAccount) {
+        let jsonString = this.activeAccount.toV3String(this.password);
         this.saveJSON(jsonString);
       }
     },
     saveJSON(data){
-      let filename = 'V3.json'
+      let filename = `${this.address}.json`
       let blob = new Blob([data], {type: 'text/json'}),
           e    = document.createEvent('MouseEvents'),
           a    = document.createElement('a');
@@ -39,7 +40,8 @@ export default {
       a.dispatchEvent(e)
       a.remove();
     }
-  }
+  },
+  mixins: [accounts]
 }
 </script>
 

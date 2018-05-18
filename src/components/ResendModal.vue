@@ -25,6 +25,7 @@
 <script>
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
+import accounts from '@/mixins/accounts'
 
 export default {
   props: ['transaction'],
@@ -95,7 +96,7 @@ export default {
     submit() {
       let sendTrx = Object.assign({}, this.transaction, this.newTransaction);
       let tx = new Tx(sendTrx);
-      tx.sign(this.$store.state.accounts.activeAccount.getPrivateKey());
+      tx.sign(this.activeAccount.getPrivateKey());
       var serializedTx = tx.serialize();
       this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
       .on('receipt', (resp) => {
@@ -122,7 +123,8 @@ export default {
   created() {
     this.newTransaction.gasLimit = this.transaction.gasLimit;
     this.newTransaction.gasPrice = this.transaction.gasPrice;
-  }
+  },
+  mixins: [accounts]
 }
 </script>
 

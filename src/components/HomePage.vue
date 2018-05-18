@@ -8,7 +8,7 @@
                 <div class="column">
                   <p class="heading">Ethereum Address</p>
                   <p
-                     class="code address">{{activeAccount.getAddressString()}}</p>
+                     class="code address">{{address}}</p>
                 </div>
                 <div class="column">
                   <p class="heading">Balance</p>
@@ -43,22 +43,17 @@
 
 <script>
 import ExportToJson from '@/components/ExportToJson.vue'
+import accounts from '@/mixins/accounts'
+
 export default {
   data () {
     return {
     }
   },
-  computed: {
-    activeAccount() {
-      return this.$store.state.accounts.activeAccount;
-    },
-    balance() {
-      return this.$store.state.accounts.balance === null ? null : web3.utils.fromWei(this.$store.state.accounts.balance);
-    }
-  },
   components: {
     ExportToJson
-  }
+  },
+  mixins: [accounts]
 }
 </script>
 
