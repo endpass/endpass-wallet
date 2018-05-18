@@ -1,71 +1,60 @@
 <template lang="html">
-  <div class="columns">
-    <div class="column is-half">
-      <nav class="panel">
-        <p class="panel-heading">
-          Tokens
-        </p>
-        <div class="panel-block">
-          <p class="control has-icons-left">
-            <input v-model="search" class="input is-small" type="text" placeholder="search">
-            <span class="icon is-small is-left">
-              <i class="fas fa-search" aria-hidden="true"></i>
-            </span>
-          </p>
+  <div class="tokens-page">
+    <div class="section">
+      <div class="container">
+        <div class="columns">
+          <div class="column is-half">
+            <nav class="panel">
+              <p class="panel-heading">
+              Your Tokens
+              </p>
+              <div class="panel-block">
+                <search-input v-model="search"></search-input>
+              </div>
+              <div class="scroller">
+                <a v-for="token in activeTokens" :key="token.address + 'sub'" class="panel-block is-clearfix is-block">
+                  <span class="token-symbol">{{token.symbol}}</span>
+                  <span class="token-name">{{token.name}}</span>
+                  <span class="token-balance is-pulled-right">{{token.balance || 0}}</span>
+                </a>
+              </div>
+            </nav>
+          </div>
+          <div class="column is-half">
+            <nav class="panel">
+              <p class="panel-heading">
+              Add Token
+              </p>
+              <div class="panel-block">
+                <search-input v-model="search"></search-input>
+              </div>
+              <div class="scroller">
+                <a v-for="token in filteredTokens"
+                   :key="token.address"
+                   @click="saveToken(token)"
+                   :disabled="token.manuallyAdded"
+                   class="panel-block is-clearfix is-block">
+
+                  <span class="icon panel-icon is-small"
+                        v-html="require('@/img/plus.svg')">
+                  </span>
+                  <span class="token-symbol">{{token.symbol}}</span>
+                  <span class="token-name">{{token.name}}</span>
+                </a>
+              </div>
+            </nav>
+          </div>
+
         </div>
-        <div class="scroller">
-          <a v-for="token in filteredTokens" :key="token.address" class="panel-block is-clearfix is-block">
-            <span class="panel-icon">
-              <i class="fas fa-book" aria-hidden="true"></i>
-            </span>
-            {{token.symbol}}
-            <span class="is-pulled-right" v-if="token.balance">{{token.balance}}</span>
-            <a v-else @click="saveToken(token)" class="button is-pulled-right" :disabled="token.manuallyAdded" type="button" name="button">Show</a>
-          </a>
-        </div>
-        <div class="panel-block">
-          <a class="button is-link is-outlined is-fullwidth">
-            reset all filters
-          </a>
-        </div>
-      </nav>
-    </div>
-    <div class="column is-half">
-      <nav class="panel">
-        <p class="panel-heading">
-          Watched tokens
-        </p>
-        <div class="panel-block">
-          <p class="control has-icons-left">
-            <input v-model="search" class="input is-small" type="text" placeholder="search">
-            <span class="icon is-small is-left">
-              <i class="fas fa-search" aria-hidden="true"></i>
-            </span>
-          </p>
-        </div>
-        <div class="scroller">
-          <a v-for="token in activeTokens" :key="token.address + 'sub'" class="panel-block is-clearfix is-block">
-            <span class="panel-icon">
-              <i class="fas fa-book" aria-hidden="true"></i>
-            </span>
-            {{token.symbol}}
-            <span class="is-pulled-right">{{token.string}}</span>
-          </a>
-        </div>
-        <div class="panel-block">
-          <a class="button is-link is-outlined is-fullwidth">
-            reset all filters
-          </a>
-        </div>
-      </nav>
+      </div>
     </div>
   </div>
-
 </template>
 
 <script>
 import EthplorerService from '@/services/ethplorer'
 import EndpassService from '@/services/endpass'
+import SearchInput from '@/components/SearchInput.vue'
 
 export default {
   data() {
@@ -86,12 +75,15 @@ export default {
           return activeToken.address === token.address;
         })
       });
-      if(this.search === '')
+      let search = this.search.toLowerCase()
+      if(search === '') {
         return unwatchedTokens
-      else
+      } else {
         return unwatchedTokens.filter((token) => {
-          return token.symbol.includes(this.search) || token.name.includes(this.search)
+          return token.symbol.toLowerCase().includes(search) ||
+            token.name.toLowerCase().includes(this.search)
         });
+      }
     }
   },
   methods: {
@@ -108,13 +100,47 @@ export default {
   },
   created() {
     this.getAllTokens();
+  },
+  components: {
+    SearchInput
   }
 }
 </script>
 
-<style lang="css">
+<style lang="scss">
 .scroller {
   max-height: 500px;
-  overflow: scroll;
+  overflow-y: scroll;
+}
+
+.panel {
+  .panel-heading {
+    background-color: $primary;
+    &:first-child {
+      border-top: none;
+    }
+    border: none;
+    border-radius: 0;
+
+    color: $white;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .panel-block {
+    &:first-child {
+      border-top: none;
+    }
+
+    .field {
+      &.is-expanded {
+        flex-grow: 1;
+      }
+    }
+  }
+}
+
+.token-symbol {
+  font-weight: 600;
 }
 </style>
