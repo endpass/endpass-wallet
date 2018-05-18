@@ -33,6 +33,9 @@
               <span class="address"  v-if="transaction.tokenInfo">{{transaction.reciverAddress}}</span>
               <span class="address" v-els>{{transaction.to}}</span>
             </p>
+            <p v-if="transaction.data || transaction.iput">
+              {{parsePata(data)}}
+            </p>
           </div>
 
           <div class="column is-one-third">
@@ -143,6 +146,10 @@ export default {
       let beforeDecimal = result.div(divider);
       let afterDecimal  = result.mod(divider);
       return beforeDecimal.toString() + '.' + afterDecimal.toString();
+    },
+    parsePata() {
+      let dataString = this.transaction.data || this.transaction.input || '0x';
+      return web3.utils.hexToString(dataString);
     }
   },
   updated () {
