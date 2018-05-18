@@ -35,11 +35,14 @@
             </div>
           </div>
         </div>
-
+        <div class="section" v-if="activeAccount">
+          <export-to-json></export-to-json>
+        </div>
       </div>
 </template>
 
 <script>
+import ExportToJson from '@/components/ExportToJson.vue'
 export default {
   data () {
     return {
@@ -52,6 +55,9 @@ export default {
     balance() {
       return this.$store.state.accounts.balance === null ? null : web3.utils.fromWei(this.$store.state.accounts.balance);
     }
+  },
+  components: {
+    ExportToJson
   }
 }
 </script>
