@@ -29,6 +29,8 @@
 <script>
 import appTransaction from './TransactionComponent'
 import EthplorerService from '../services/ethplorer'
+import accounts from '@/mixins/accounts'
+
 export default {
   data () {
     return {
@@ -36,9 +38,6 @@ export default {
     }
   },
   computed: {
-    address() {
-      return this.$store.state.accounts.activeAccount.getAddressString()
-    },
     processedTransactions() {
       return this.transactions.sort((trx1, trx2) => {
         return trx2.timestamp - trx1.timestamp;
@@ -46,8 +45,7 @@ export default {
     }
   },
   created() {
-    const address = this.$store.state.accounts.activeAccount.getAddressString();
-    EthplorerService.getInfo(address).then((resp) => {
+    EthplorerService.getInfo(this.address).then((resp) => {
       this.transactions = resp.data.filter((trx) => {
         return trx.to === this.address;
       });
@@ -55,7 +53,8 @@ export default {
   },
   components: {
     appTransaction
-  }
+  },
+  mixins: [accounts]
 }
 </script>
 

@@ -105,6 +105,7 @@
 
 import web3 from 'web3';
 import AccountChooser from '@/components/AccountChooser.vue'
+import accounts from '@/mixins/accounts'
 
 export default {
   name: 'App',
@@ -135,17 +136,11 @@ export default {
       });
       this.balanceSubscribtionInstance.start();
     },
-    activeAccount() {
-      return this.$store.state.accounts.activeAccount;
-    },
     networks() {
       return this.$store.state.web3.networks;
     },
     activeNet() {
       return this.$store.state.web3.activeNet;
-    },
-    balance() {
-      return this.$store.state.accounts.balance === null ? null : web3.utils.fromWei(this.$store.state.accounts.balance);
     }
   },
   methods: {
@@ -159,7 +154,8 @@ export default {
   },
   created() {
     this.$store.dispatch('web3/changeNetwork', this.selectedNet);
-  }
+  },
+  mixins: [accounts]
 }
 </script>
 
