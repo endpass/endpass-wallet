@@ -81,7 +81,7 @@
                       </span>
                     </label>
                   </div>
-                  <p v-show="jsonKeystoreError" class="help is-danger">File if invalid</p>
+                  <p v-show="jsonKeystoreError" class="help is-danger">File is invalid</p>
                 </div>
                 <div class="field">
                   <label class="label" for="jsonKeystorePassword">V3 JSON keystore password</label>
@@ -172,7 +172,7 @@ export default {
     },
     addWalletWithJson(e) {
       try {
-        let account = EthWallet.fromV3(e.target.result, this.jsonKeystorePassword);
+        let account = this.createWalletWithJson(e);
         this.addAccount(account);
         router.push('/')
       } catch (e) {
@@ -182,7 +182,9 @@ export default {
           this.jsonKeystorePasswordError = true;
         }
       }
-
+    },
+    createWalletWithJson(e) {
+      return EthWallet.fromV3(e.target.result, this.jsonKeystorePassword);
     },
     setFile(e) {
       this.jsonKeystoreError = false;
