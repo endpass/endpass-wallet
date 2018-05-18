@@ -21,6 +21,10 @@
                     :class="{'is-active':importType==='privateKey'}">Private
                   Key</a>
                 </li>
+                <li>
+                  <a @click="importType = 'json'"
+                    :class="{'is-active':importType==='json'}">V3 JSON keystore</a>
+                </li>
               </ul>
             </div>
           </div>
@@ -58,6 +62,39 @@
                   hdkeyPraseError">Import</button>
               </form>
             </div>
+            <div class="import-json" v-if="importType ===
+              'json'">
+              <form>
+                <div class="field">
+
+                  <div class="file">
+                    <label class="file-label">
+                      <input class="file-input" type="file" name="resume" @change="setFile">
+                      <span class="file-cta">
+                        <span class="file-icon">
+                          <span class="icon is-small"
+                            v-html="require('@/img/arrow-thick-top.svg')"></span>
+                        </span>
+                        <span class="file-label">
+                          {{ fileName || 'V3 JSON keystore file'}}
+                        </span>
+                      </span>
+                    </label>
+                  </div>
+                  <p v-show="jsonKeystoreError" class="help is-danger">File is invalid</p>
+                </div>
+                <div class="field">
+                  <label class="label" for="jsonKeystorePassword">V3 JSON keystore password</label>
+                  <div class="control">
+                    <input v-model="jsonKeystorePassword" @change="(jsonKeystorePasswordError = false)" type="text" class="input" id="jsonKeystorePassword"
+                    aria-describedby="jsonKeystorePassword" placeholder="V3 JSON keystore password">
+                    <p v-show="jsonKeystorePasswordError" class="help is-danger">JSON password is invalid</p>
+                  </div>
+                </div>
+                <button class="button is-primary is-medium"
+                  @click.prevent="parseJson" :disabled="!jsonKeystorePassword">Import</button>
+              </form>
+            </div>
           </div>
 
         </div>
@@ -77,8 +114,14 @@ export default {
     return {
       privateKey: '',
       hdkeyPrase: '',
+      jsonPassword: '',
+      fileName: '',
+      file: null,
       privateKeyError: false,
       hdkeyPraseError: false,
+      jsonKeystoreError: false,
+      jsonKeystorePassword: '',
+      jsonKeystorePasswordError: false,
       importType: 'seedPhrase',
       mnemonic: {
         phrase: '', //BIP39 mnemonic
@@ -121,6 +164,37 @@ export default {
       const hdKey = HDKey.fromMasterSeed(this.hdkeyPrase);
       const hdWallet = hdKey.derivePath(this.mnemonic.path);
       return hdWallet;
+    },
+    parseJson() {
+      var reader = new FileReader();
+      reader.onload = this.addWalletWithJson.bind(this);
+      reader.readAsText(this.file);
+    },
+    addWalletWithJson(e) {
+      try {
+        let account = this.createWalletWithJson(e);
+        this.addAccount(account);
+        router.push('/')
+      } catch (e) {
+        if(e.message === 'Not a V3 wallet') {
+          this.jsonKeystoreError = true;
+        } else {
+          this.jsonKeystorePasswordError = true;
+        }
+      }
+    },
+    createWalletWithJson(e) {
+      return EthWallet.fromV3(e.target.result, this.jsonKeystorePassword);
+    },
+    setFile(e) {
+      this.jsonKeystoreError = false;
+      if(e.target.files[0]) {
+        this.fileName = e.target.files[0].name;
+        this.file = e.target.files[0];
+      } else {
+        this.fileName = '';
+        this.file = null;
+      }
     }
   }
 }
