@@ -51,6 +51,13 @@
               id="limit" aria-describedby="limit" placeholder="Gas limit" required>
             </div>
           </div>
+          <div class="field" v-show="selectedToken === 'ETH'">
+            <label class="label" for="data">Data</label>
+            <div class="control">
+              <input v-model="treansactionData" class="input"
+              id="limit" aria-describedby="data" placeholder="Data" required>
+            </div>
+          </div>
 
           <div class="field">
             <div class="control">
@@ -75,9 +82,7 @@ import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import { mapFields } from 'vee-validate'
 
-
 export default {
-
   data () {
     return {
       selectedToken: 'ETH',
@@ -88,7 +93,7 @@ export default {
         gasLimit: '0x55f0',
         to: '',
         value: '0x0',
-        data: '0x0'
+        data: '0x'
       },
       activeErrors: {
         gasPrice: [],
@@ -126,6 +131,14 @@ export default {
         if( typeof newValue !== 'number')
           return
         this.transaction.gasLimit = web3.utils.numberToHex(newValue.toString());
+      }
+    },
+    treansactionData: {
+      get: function () {
+        return web3.utils.hexToString(this.transaction.data);
+      },
+      set: function (newValue) {
+        this.transaction.data = web3.utils.stringToHex(newValue);
       }
     },
     value: {
