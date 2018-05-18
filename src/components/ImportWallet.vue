@@ -69,7 +69,8 @@
 
                   <div class="file">
                     <label class="file-label">
-                      <input class="file-input" type="file" name="resume" @change="setFile">
+                      <input class="file-input" type="file"
+                      name="jsonWallet" @change="setFile">
                       <span class="file-cta">
                         <span class="file-icon">
                           <span class="icon is-small"
@@ -86,7 +87,9 @@
                 <div class="field">
                   <label class="label" for="jsonKeystorePassword">V3 JSON keystore password</label>
                   <div class="control">
-                    <input v-model="jsonKeystorePassword" @change="(jsonKeystorePasswordError = false)" type="text" class="input" id="jsonKeystorePassword"
+                    <input v-model="jsonKeystorePassword"
+                           @change="(jsonKeystorePasswordError = false)"
+                           type="password" class="input" id="jsonKeystorePassword"
                     aria-describedby="jsonKeystorePassword" placeholder="V3 JSON keystore password">
                     <p v-show="jsonKeystorePasswordError" class="help is-danger">JSON password is invalid</p>
                   </div>
