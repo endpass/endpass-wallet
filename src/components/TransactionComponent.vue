@@ -30,8 +30,8 @@
             </p>
             <p v-else>
               <span class="text-label">To</span>
-              <span class="address"  v-if="transaction.tokenInfo">{{transaction.reciverAddress}}</span>
-              <span class="address" v-els>{{transaction.to}}</span>
+              <span class="address"  v-if="transaction.reciverAddress">{{transaction.reciverAddress}}</span>
+              <span class="address" v-else>{{transaction.to}}</span>
             </p>
             <p v-if="transaction.data || transaction.iput">
               {{parsePata(data)}}
