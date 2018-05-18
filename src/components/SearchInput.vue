@@ -1,6 +1,6 @@
 <template>
-  <div class="search-control field has-addons">
-    <div class="control has-icons-left">
+  <div class="search-control field is-expanded has-addons">
+    <div class="control is-expanded has-icons-left">
       <input :value="value" @input="$emit('input', $event.target.value)" class="input is-small" type="text" placeholder="search">
       <span class="icon is-small is-left"
             v-html="require('@/img/magnifying-glass.svg')">

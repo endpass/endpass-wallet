@@ -6,18 +6,16 @@
           <div class="column is-half">
             <nav class="panel">
               <p class="panel-heading">
-              Watched tokens
+              Your Tokens
               </p>
               <div class="panel-block">
                 <search-input v-model="search"></search-input>
               </div>
               <div class="scroller">
                 <a v-for="token in activeTokens" :key="token.address + 'sub'" class="panel-block is-clearfix is-block">
-                  <span class="panel-icon">
-                    <i class="fas fa-book" aria-hidden="true"></i>
-                  </span>
-                  {{token.symbol}}
-                  <span class="is-pulled-right">{{token.balance || 0}}</span>
+                  <span class="token-symbol">{{token.symbol}}</span>
+                  <span class="token-name">{{token.name}}</span>
+                  <span class="token-balance is-pulled-right">{{token.balance || 0}}</span>
                 </a>
               </div>
             </nav>
@@ -31,18 +29,17 @@
                 <search-input v-model="search"></search-input>
               </div>
               <div class="scroller">
-                <a v-for="token in filteredTokens" :key="token.address" class="panel-block is-clearfix is-block">
-                  <span class="panel-icon">
-                    <i class="fas fa-book" aria-hidden="true"></i>
+                <a v-for="token in filteredTokens"
+                   :key="token.address"
+                   @click="saveToken(token)"
+                   :disabled="token.manuallyAdded"
+                   class="panel-block is-clearfix is-block">
+
+                  <span class="icon panel-icon is-small"
+                        v-html="require('@/img/plus.svg')">
                   </span>
-                  {{token.symbol}}
-                  <a @click="saveToken(token)" :disabled="token.manuallyAdded" class="button
-                    is-primary is-pulled-right">
-                    <span class="icon is-small"
-                          v-html="require('@/img/plus.svg')">
-                    </span>
-                    Add
-                  </a>
+                  <span class="token-symbol">{{token.symbol}}</span>
+                  <span class="token-name">{{token.name}}</span>
                 </a>
               </div>
             </nav>
@@ -110,9 +107,40 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style lang="scss">
 .scroller {
   max-height: 500px;
-  overflow: scroll;
+  overflow-y: scroll;
+}
+
+.panel {
+  .panel-heading {
+    background-color: $primary;
+    &:first-child {
+      border-top: none;
+    }
+    border: none;
+    border-radius: 0;
+
+    color: $white;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .panel-block {
+    &:first-child {
+      border-top: none;
+    }
+
+    .field {
+      &.is-expanded {
+        flex-grow: 1;
+      }
+    }
+  }
+}
+
+.token-symbol {
+  font-weight: 600;
 }
 </style>

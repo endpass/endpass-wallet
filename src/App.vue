@@ -309,6 +309,10 @@ a.navbar-link:hover, .router-link-exact-active {
       height: 1em;
       width: 1em;
     }
+    &:first-child:last-child {
+      margin-left: 0;
+      margin-right: 0.2em;
+    }
   }
 
   &.is-primary,
