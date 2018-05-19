@@ -1,9 +1,8 @@
 import Vue from 'vue'
 import { mount, shallow, createLocalVue } from '@vue/test-utils'
-import axios from 'axios'
 import moxios from 'moxios'
 import Vuex from 'vuex'
-import ReceivePage from '../../../src/components/ReceivePage.vue';
+import ReceivePage from '@/components/ReceivePage.vue';
 import web3 from 'web3'
 import EthWallet from 'ethereumjs-wallet'
 
@@ -17,7 +16,7 @@ localVue.use(Vuex)
 describe('ReceivePage', () => {
   let actions
   let store
-  let wrapper
+
   beforeEach(() => {
     moxios.install()
     store = new Vuex.Store({
@@ -31,23 +30,30 @@ describe('ReceivePage', () => {
       },
       actions
     })
-    wrapper = shallow(ReceivePage, { store, localVue })
   })
-  it('downloads data', () => {
+
+  afterEach(() => {
+    moxios.uninstall()
+  })
+
+  // done callback is required for async tests
+  it('downloads transaction history', (done) => {
+    moxios.stubRequest(/api\.ethplorer\.io\/getAddressTransactions/, {
+      status: 200,
+      response: [{
+        id: '1',
+        to: wallet.getAddressString()
+      }]
+    })
+
+    // new wrapper must be initialized in each test AFTER moxios.stubRequest
+    const wrapper = shallow(ReceivePage, { store, localVue })
+
     moxios.wait(() => {
-      let request = moxios.requests.mostRecent()
-      request.respondWith({
-        status: 200,
-        response: [{
-          id: '1'
-        }]
-      }).then(function () {
-        wrapper.vm.$nextTick(() => {
-          let elems = wrapper.vm.transactions.length;
-          expect(elems).toBe(1);
-          done();
-        })
-      })
+      let elems = wrapper.vm.transactions;
+      expect(elems.length).toBe(1);
+      expect(elems[0].to).toBe(wrapper.vm.address)
+      done();
     })
   })
 })
