@@ -3,8 +3,9 @@ import Vuex from 'vuex'
 import web3 from 'web3'
 import { shallow, createLocalVue } from '@vue/test-utils'
 import VeeValidate from 'vee-validate'
+import validation from '@/validation'
 
-import SendEther from '../../../src/components/SendPage.vue'
+import SendEther from '@/components/SendPage.vue'
 
 const localVue = createLocalVue()
 
