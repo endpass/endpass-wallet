@@ -54,8 +54,8 @@
           <div class="field" v-show="selectedToken === 'ETH'">
             <label class="label" for="data">Data</label>
             <div class="control">
-              <input v-model="treansactionData" class="input"
-              id="limit" aria-describedby="data" placeholder="Data" required>
+              <input v-model="transaction.data" type="text" class="input"
+              aria-describedby="data" placeholder="Data" required>
             </div>
           </div>
 
@@ -136,14 +136,6 @@ export default {
         if( typeof newValue !== 'number')
           return
         this.transaction.gasLimit = web3.utils.numberToHex(newValue.toString());
-      }
-    },
-    treansactionData: {
-      get: function () {
-        return web3.utils.hexToString(this.transaction.data);
-      },
-      set: function (newValue) {
-        this.transaction.data = web3.utils.stringToHex(newValue);
       }
     },
     value: {
