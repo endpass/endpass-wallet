@@ -33,7 +33,8 @@ describe('SendEther', () => {
       },
       tokens: {
         activeTokens: [{
-          address: '0x0'
+          symbol: 'AAA',
+          address: '0x7c59542b20002ed255598172cab48b86d865dfbb'
         }]
       }
     },
@@ -53,7 +54,13 @@ describe('SendEther', () => {
     expect(wrapper.vm.transaction.value).toBe('0x8ac7230489e80000');
   })
   it('sets contract data', () => {
+    wrapper.setData({selectedToken: 'AAA'});
+    wrapper.vm.value = 10;
+    expect(wrapper.vm.selectedTokenInfo).toBeTruthy();
+    expect(wrapper.vm.selectedTokenInfo.address).toBe('0x7c59542b20002ed255598172cab48b86d865dfbb')
+
+
     wrapper.vm.createTokenTransaction();
-    expect(wrapper.vm.transaction.data).toBe('0xa9059cbb00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000');
+    expect(wrapper.vm.transaction.data).toBe('0xa9059cbb0000000000000000000000007c59542b20002ed255598172cab48b86d865dfbb000000000000000000000000000000000000000000000000000000000000000a');
   });
 })
