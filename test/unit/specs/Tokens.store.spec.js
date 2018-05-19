@@ -1,10 +1,13 @@
 import Vue from 'vue'
 import testAction from './ActionTestingHelper'
 import tokens from '../../../src/store/tokens/tokens'
-import axios from 'axios'
 import moxios from 'moxios'
 import Web3 from 'web3'
-import TokenTracker from 'eth-token-tracker'
+
+jest.mock('eth-token-tracker')
+jest.mock('@/services/ethplorer')
+
+Web3.providers.HttpProvider.prototype.sendAsync = Web3.providers.HttpProvider.prototype.send;
 
 
 localStorage.setItem('tokens', JSON.stringify([{
