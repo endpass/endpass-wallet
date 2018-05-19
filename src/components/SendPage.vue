@@ -25,7 +25,7 @@
               <span class="select">
                 <select v-model="selectedToken">
                   <option value="ETH">ETH</option>
-                  <option :value="token" v-for="token in tokens" :key="token.address">{{token.symbol}}</option>
+                  <option :value="token.symbol" v-for="token in tokens" :key="token.address">{{token.symbol}}</option>
                 </select>
               </span>
             </div>
@@ -124,6 +124,10 @@ export default {
     tokens() {
       return this.$store.state.tokens.activeTokens;
     },
+    // token object based on the selectedToken symbol string
+    selectedTokenInfo() {
+      return this.tokens.find(t => t.symbol === this.selectedToken);
+    },
     gasLimit: {
       get: function () {
         return web3.utils.hexToNumberString(this.transaction.gasLimit);
@@ -151,7 +155,7 @@ export default {
           let value = web3.utils.hexToNumberString(this.transaction.value);
           let BN = web3.utils.BN;
           let divider = new BN('10');
-          divider = divider.pow(new BN(this.selectedToken.decimals));
+          divider = divider.pow(new BN(this.selectedTokenInfo.decimals));
           let result = new BN (value);
           let beforeDecimal = result.div(divider);
           let afterDecimal  = result.mod(divider);
@@ -167,7 +171,7 @@ export default {
           let BN = web3.utils.BN;
           let value = new BN(newValue);
           let divider = new BN('10');
-          divider = divider.pow(new BN(this.selectedToken.decimals));
+          divider = divider.pow(new BN(this.selectedTokenInfo.decimals));
           value = value.mul(divider);
           this.transaction.value = web3.utils.numberToHex(value.toString());
         }
@@ -205,7 +209,7 @@ export default {
       historyItem.canseled = false;
       if(this.selectedToken !== 'ETH') {
         historyItem.reciverAddress = this.toCache;
-        historyItem.tokenInfo = this.selectedToken;
+        historyItem.tokenInfo = this.selectedTokenInfo;
       }
       return historyItem;
     },
@@ -237,7 +241,10 @@ export default {
       e.preventDefault();
     },
     createTokenTransaction() {
-      let tokenAddress = this.selectedToken.address;
+      if (!this.selectedTokenInfo || !this.selectedTokenInfo.address) {
+        throw 'Invalid token address'
+      }
+      let tokenAddress = this.selectedTokenInfo.address;
       var contract = new this.$store.state.web3.web3.eth.Contract(erc20ABI,
         tokenAddress, { from: this.address });
       this.toCache = this.transaction.to;
