@@ -8,18 +8,6 @@
 
     </div>
 
-     <!-- <flash-message inline-template>
-       <div class="notifications is-overlay">
-         <transition-group name="fade" tag="div" class="container">
-           <div v-for="(message, index) in storage" :key="index"
-                class="notification" :class="'is-' + message.type" >
-                <button class="delete"
-                        @click.stop.prevent="destroyFlash(index)"></button>
-                {{ message.content }}
-           </div>
-         </transition-group>
-       </div>
-     </flash-message> -->
     <div class="main">
       <router-view/>
     </div>
