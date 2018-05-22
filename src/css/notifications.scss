@@ -1,0 +1,27 @@
+// Flash notifications
+
+.app-notification {
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+  max-width: 600px;
+  margin: auto;
+
+  .notification-title {
+    font-size: 1.3rem;
+
+    &:after{
+      display: inline-block;
+      position: absolute;
+      font-size: 1.5rem;
+      top: 0;
+      right: 0.25rem;
+      margin-left: auto;
+      content: "\00d7";
+    }
+  }
+
+  .notification-content {
+    font-size: 1rem;
+  }
+}
