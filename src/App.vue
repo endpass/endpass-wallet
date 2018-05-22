@@ -1,45 +1,9 @@
 <template>
   <div id="app">
     <div class="app-top">
-      <div class="navbar">
-        <div class="navbar-brand">
-          <router-link class="navbar-item logo-icon" to="/">
-            <img src="@/img/logo-light.png" alt="Endpass Wallet">
-          </router-link>
-          <a class="navbar-burger" @click="toggleNavMenu" :class="{'is-active':navMenuActive}">
-            <span></span>
-            <span></span>
-            <span></span>
-          </a>
-        </div>
-        <div class="navbar-menu" :class="{'is-active':navMenuActive}">
-          <div class="navbar-start">
-            <router-link class="navbar-item" to="/" @click.native="toggleNavMenu">
-              <span class="icon is-small"
-                v-html="require('@/img/home.svg')"></span>Dashboard
-            </router-link>
-            <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}" @click.native="toggleNavMenu">
-              <span class="icon is-small"
-                v-html="require('@/img/clock.svg')"></span>History
-            </router-link>
-            <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}" @click.native="toggleNavMenu">
-              <span class="icon is-small"
-                v-html="require('@/img/arrow-thick-left.svg')"></span>Send
-            </router-link>
-            <router-link v-if="activeAccount" class="navbar-item" :to="{name:
-              'ReceivePage'}" @click.native="toggleNavMenu">
-              <span class="icon is-small"
-                v-html="require('@/img/arrow-thick-right.svg')"></span>Receive
-            </router-link>
-            <router-link v-if="activeAccount" class="navbar-item" :to="{name:
-              'TokensPage'}" @click.native="toggleNavMenu">
-              <span class="icon is-small"
-                v-html="require('@/img/compass.svg')"></span>Tokens
-            </router-link>
-          </div>
 
-        </div>
-      </div>
+      <app-nav :active-account="!!activeAccount"></app-nav>
+
 
       <div class="section top-info"
            :class="{mainnet: isMainNet, testnet: !isMainNet}">
@@ -96,7 +60,7 @@
          </transition-group>
        </div>
      </flash-message> -->
-    <div class="main" @click="navMenuActive=false">
+    <div class="main">
       <router-view/>
     </div>
   </div>
@@ -106,11 +70,13 @@
 
 import web3 from 'web3';
 import AccountChooser from '@/components/AccountChooser.vue'
+import AppNav from '@/components/AppNav.vue'
 import accounts from '@/mixins/accounts'
 
 export default {
   name: 'App',
   components: {
+    AppNav,
     AccountChooser
   },
   data () {
@@ -122,7 +88,6 @@ export default {
     return {
       selectedNet: cachedNet,
       balanceSubscribtionInstance: null,
-      navMenuActive: false
     };
   },
   computed: {
@@ -152,9 +117,6 @@ export default {
       this.$store.dispatch('web3/changeNetwork', this.selectedNet);
       localStorage.setItem('net', this.selectedNet);
     },
-    toggleNavMenu () {
-      this.navMenuActive = !this.navMenuActive
-    }
   },
   created() {
     this.$store.dispatch('web3/changeNetwork', this.selectedNet);
@@ -169,35 +131,6 @@ export default {
 @import './css/layout.scss';
 @import './css/typography.scss';
 
-// Navbar
-.navbar-menu {
-  a.navbar-item {
-    font-family: $heading-font-family;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-  }
-}
-
-.navbar-burger {
-  span {
-    height: 3px;
-  }
-}
-
-a.navbar-item.is-active, a.navbar-item:hover, a.navbar-link.is-active,
-a.navbar-link:hover, .router-link-exact-active {
-  background-color: initial;
-  color: $purple;
-
-  .icon svg {
-    fill: $purple;
-  }
-}
-
-.navbar-item .icon:only-child, .navbar-link .icon:only-child {
-  margin-left: 0;
-  margin-right: 0.25em;
-}
 
 .top-info {
   padding: 0.25rem 1rem;
