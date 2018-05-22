@@ -4,7 +4,8 @@
 
       <app-nav :active-account="!!activeAccount"></app-nav>
       <info-bar></info-bar>
-      <notifications position="top center" width="100%" :duration="-1"/>
+      <notifications position="top center" width="100%" :speed="500"
+      :duration="-1" classes="app-notification"/>
     </div>
 
     <div class="main">
@@ -36,6 +37,7 @@ export default {
 @import './css/buttons.scss';
 @import './css/icons.scss';
 @import './css/layout.scss';
+@import './css/notifications.scss';
 @import './css/typography.scss';
 
 </style>
