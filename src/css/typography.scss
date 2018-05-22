@@ -1,0 +1,26 @@
+// Typography
+
+// Headers
+h1,h2,h3,h4,h5,h6 {
+    font-family: $heading-font-family;
+}
+
+.title {
+  font-weight: 300;
+  font-size: 2.6rem;
+  color: $dark-grey;
+}
+
+.bold {
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+// Global styles
+code, .code {
+  background: $light-grey;
+  color: $dark-grey;
+  padding: 1em;
+  word-wrap: break-word;
+  font-family: "Lucida Console","Courier New",monospace;
+}
