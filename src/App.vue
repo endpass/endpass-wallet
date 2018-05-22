@@ -41,7 +41,8 @@
         </div>
       </div>
 
-      <div class="section is-narrow top-info has-background-light">
+      <div class="section top-info"
+           :class="{mainnet: isMainNet, testnet: !isMainNet}">
         <div class="container">
           <div class="level">
             <div class="level-left">
@@ -141,6 +142,9 @@ export default {
     },
     activeNet() {
       return this.$store.state.web3.activeNet;
+    },
+    isMainNet() {
+      return this.activeNet.name === 'Main'
     }
   },
   methods: {
@@ -234,6 +238,21 @@ a.navbar-link:hover, .router-link-exact-active {
 .navbar-item .icon:only-child, .navbar-link .icon:only-child {
   margin-left: 0;
   margin-right: 0.25em;
+}
+
+.top-info {
+  padding: 0.25rem 1rem;
+  color: $white;
+  &.mainnet {
+    background-color: $dark-blue;
+  }
+  &.testnet {
+    background-color: darken($warning, 35%);
+  }
+
+  .title {
+    color: $white;
+  }
 }
 
 // Icons
