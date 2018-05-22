@@ -20,6 +20,8 @@
 <script>
 import appTransaction from './TransactionComponent'
 import EthplorerService from '../services/ethplorer'
+import accounts from '@/mixins/accounts'
+
 export default {
   data () {
     return {
@@ -44,16 +46,16 @@ export default {
     }
   },
   created() {
-    const address = this.$store.state.accounts.activeAccount.getAddressString();
-    let historyPromise = EthplorerService.getHistory(address);
-    let transactionsPromise = EthplorerService.getInfo(address);
+    let historyPromise = EthplorerService.getHistory(this.address);
+    let transactionsPromise = EthplorerService.getInfo(this.address);
     Promise.all([transactionsPromise, historyPromise]).then((values) => {
       this.transactions = values[0].data.concat(values[1].data.operations);
     });
   },
   components: {
     appTransaction
-  }
+  },
+  mixins: [accounts]
 }
 </script>
 

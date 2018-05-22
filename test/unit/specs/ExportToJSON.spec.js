@@ -3,7 +3,7 @@ import axios from 'axios'
 import moxios from 'moxios'
 import { mount, shallow, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
-import ExportToJson from '../../../src/components/ExportToJson.vue';
+import ExportToJson from '@/components/ExportToJson.vue';
 import Web3 from 'web3'
 import EthWallet from 'ethereumjs-wallet'
 import { infuraConf } from '@/config.js'

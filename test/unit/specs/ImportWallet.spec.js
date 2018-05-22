@@ -2,7 +2,8 @@ import Vue from 'vue'
 import { shallow, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import VeeValidate from 'vee-validate'
-import ImportWallet from '../../../src/components/ImportWallet.vue'
+import validation from '@/validation'
+import ImportWallet from '@/components/ImportWallet.vue'
 import EthWallet from 'ethereumjs-wallet'
 import HDKey from 'ethereumjs-wallet/hdkey'
 
@@ -75,11 +76,20 @@ describe('ImportWallet', () => {
     expect(vm.createWalletWithPrase() instanceof HDKey).toBe(true);
   })
 
-  it('correctly sets error with bad data', () => {
+  it('correctly sets error with bad phrase', () => {
     const vm = new Vue(ImportWallet).$mount();
-    vm.addWalletWithKey();
-    vm.addWalletWithPrase();
+    expect(() => {
+      vm.addWalletWithPrase();
+    }).toThrow();
     expect(vm.hdkeyPraseError).toBe(true);
+  })
+
+  it('correctly sets error with bad key', () => {
+    const vm = new Vue(ImportWallet).$mount();
+    expect(() => {
+      vm.addWalletWithKey();
+    }).toThrow();
+    expect(vm.privateKeyError).toBe(true);
   })
 
   it('defaults to import by seed phrase', () => {

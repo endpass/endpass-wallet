@@ -25,7 +25,7 @@
               <span class="select">
                 <select v-model="selectedToken">
                   <option value="ETH">ETH</option>
-                  <option :value="token" v-for="token in tokens" :key="token.address">{{token.symbol}}</option>
+                  <option :value="token.symbol" v-for="token in tokens" :key="token.address">{{token.symbol}}</option>
                 </select>
               </span>
             </div>
@@ -54,8 +54,8 @@
           <div class="field" v-show="selectedToken === 'ETH'">
             <label class="label" for="data">Data</label>
             <div class="control">
-              <input v-model="treansactionData" class="input"
-              id="limit" aria-describedby="data" placeholder="Data" required>
+              <input v-model="transaction.data" type="text" class="input"
+              aria-describedby="data" placeholder="Data" required>
             </div>
           </div>
 
@@ -81,6 +81,7 @@ import erc20ABI from '@/erc20.json'
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import { mapFields } from 'vee-validate'
+import accounts from '@/mixins/accounts'
 
 export default {
   data () {
@@ -123,6 +124,10 @@ export default {
     tokens() {
       return this.$store.state.tokens.activeTokens;
     },
+    // token object based on the selectedToken symbol string
+    selectedTokenInfo() {
+      return this.tokens.find(t => t.symbol === this.selectedToken);
+    },
     gasLimit: {
       get: function () {
         return web3.utils.hexToNumberString(this.transaction.gasLimit);
@@ -131,14 +136,6 @@ export default {
         if( typeof newValue !== 'number')
           return
         this.transaction.gasLimit = web3.utils.numberToHex(newValue.toString());
-      }
-    },
-    treansactionData: {
-      get: function () {
-        return web3.utils.hexToString(this.transaction.data);
-      },
-      set: function (newValue) {
-        this.transaction.data = web3.utils.stringToHex(newValue);
       }
     },
     value: {
@@ -150,7 +147,7 @@ export default {
           let value = web3.utils.hexToNumberString(this.transaction.value);
           let BN = web3.utils.BN;
           let divider = new BN('10');
-          divider = divider.pow(new BN(this.selectedToken.decimals));
+          divider = divider.pow(new BN(this.selectedTokenInfo.decimals));
           let result = new BN (value);
           let beforeDecimal = result.div(divider);
           let afterDecimal  = result.mod(divider);
@@ -166,7 +163,7 @@ export default {
           let BN = web3.utils.BN;
           let value = new BN(newValue);
           let divider = new BN('10');
-          divider = divider.pow(new BN(this.selectedToken.decimals));
+          divider = divider.pow(new BN(this.selectedTokenInfo.decimals));
           value = value.mul(divider);
           this.transaction.value = web3.utils.numberToHex(value.toString());
         }
@@ -204,12 +201,12 @@ export default {
       historyItem.canseled = false;
       if(this.selectedToken !== 'ETH') {
         historyItem.reciverAddress = this.toCache;
-        historyItem.tokenInfo = this.selectedToken;
+        historyItem.tokenInfo = this.selectedTokenInfo;
       }
       return historyItem;
     },
     sendTransaction(e) {
-      let keyHex = this.$store.state.accounts.activeAccount.getAddressString();
+      let keyHex = this.address;
       this.$store.state.web3.web3.eth.getTransactionCount(keyHex).then((nonce) => {
         let nonceWithPending = nonce + this.$store.state.accounts.pendingTransactions.length;
         this.transaction.nonce = web3.utils.numberToHex(nonceWithPending);
@@ -217,7 +214,7 @@ export default {
           this.createTokenTransaction()
         }
         let tx = new Tx(this.transaction);
-        tx.sign(this.$store.state.accounts.activeAccount.getPrivateKey());
+        tx.sign(this.activeAccount.getPrivateKey());
         var serializedTx = tx.serialize();
         let transactionForHistory = this.chreateTransactionHistory(this.transaction);
 
@@ -236,14 +233,18 @@ export default {
       e.preventDefault();
     },
     createTokenTransaction() {
-      let tokenAddress = this.selectedToken.address;
-      let address = this.$store.state.accounts.activeAccount.getAddressString();
-      var contract = new this.$store.state.web3.web3.eth.Contract(erc20ABI, tokenAddress, { from: address });
+      if (!this.selectedTokenInfo || !this.selectedTokenInfo.address) {
+        throw 'Invalid token address'
+      }
+      let tokenAddress = this.selectedTokenInfo.address;
+      var contract = new this.$store.state.web3.web3.eth.Contract(erc20ABI,
+        tokenAddress, { from: this.address });
       this.toCache = this.transaction.to;
       this.transaction.to = tokenAddress;
       this.transaction.data = contract.methods.transfer(this.transaction.to, this.transaction.value).encodeABI();
     }
-  }
+  },
+  mixins: [accounts]
 }
 </script>
 
