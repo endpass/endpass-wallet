@@ -1,4 +1,4 @@
-import state from '../../../src/store/accounts/accounts'
+import state from '@/store/accounts/accounts'
 
 describe('accounts store', () => {
   it('should set wallet value', () => {
