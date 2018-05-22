@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import ImportWallet from '../../../src/App.vue'
+import ImportWallet from '@/App.vue'
 
 class LocalStorageMock {
   constructor() {
