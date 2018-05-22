@@ -76,11 +76,20 @@ describe('ImportWallet', () => {
     expect(vm.createWalletWithPrase() instanceof HDKey).toBe(true);
   })
 
-  it('correctly sets error with bad data', () => {
+  it('correctly sets error with bad phrase', () => {
     const vm = new Vue(ImportWallet).$mount();
-    vm.addWalletWithKey();
-    vm.addWalletWithPrase();
+    expect(() => {
+      vm.addWalletWithPrase();
+    }).toThrow();
     expect(vm.hdkeyPraseError).toBe(true);
+  })
+
+  it('correctly sets error with bad key', () => {
+    const vm = new Vue(ImportWallet).$mount();
+    expect(() => {
+      vm.addWalletWithKey();
+    }).toThrow();
+    expect(vm.privateKeyError).toBe(true);
   })
 
   it('defaults to import by seed phrase', () => {
