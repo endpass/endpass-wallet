@@ -1,0 +1,59 @@
+// Buttons and Links
+
+a {
+  color: $purple;
+  &:hover {
+    color: darken($purple, 15%);
+  }
+}
+
+.button {
+  font-family: $heading-font-family;
+  text-transform: uppercase;
+  font-weight: 600;
+
+  border-radius: 0;
+
+  &.is-primary {
+    background-color: $purple;
+
+    &.is-hovered, &:hover {
+      background-color: lighten($purple, 5%);
+      transition: background-color .2s ease-in-out;
+    }
+    &.is-active, &:active {
+      background-color: $purple;
+    }
+    &[disabled] {
+      background-color: $purple;
+    }
+  }
+
+  // Button Icons
+  .icon {
+    margin-left: 0;
+    margin-right: 0.2em;
+    svg {
+      display: inline-block;
+    }
+    &.is-small svg {
+      height: 1em;
+      width: 1em;
+    }
+    &:first-child:last-child {
+      margin-left: 0;
+      margin-right: 0.2em;
+    }
+  }
+
+  &.is-primary,
+  &.is-link,
+  &.is-info,
+  &.is-success,
+  &.is-warning,
+  &.is-danger {
+    .icon svg {
+      fill: $white;
+    }
+  }
+}

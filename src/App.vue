@@ -164,53 +164,10 @@ export default {
 </script>
 
 <style lang="scss">
-// Layout
-.container.is-narrow {
-  max-width: 600px;
-}
-
-.section.is-narrow {
-  padding: 1rem 1.5rem;
-}
-
-// Buttons and Links
-
-a {
-  color: $purple;
-  &:hover {
-    color: darken($purple, 15%);
-  }
-}
-
-.button {
-  border-radius: 0;
-
-  &.is-primary {
-    background-color: $purple;
-
-    &.is-hovered, &:hover {
-      background-color: lighten($purple, 5%);
-      transition: background-color .2s ease-in-out;
-    }
-    &.is-active, &:active {
-      background-color: $purple;
-    }
-    &[disabled] {
-      background-color: $purple;
-    }
-  }
-}
-
-// Headers
-h1,h2,h3,h4,h5,h6 {
-    font-family: $heading-font-family;
-}
-
-.title {
-  font-weight: 300;
-  font-size: 2.6rem;
-  color: $dark-grey;
-}
+@import './css/buttons.scss';
+@import './css/icons.scss';
+@import './css/layout.scss';
+@import './css/typography.scss';
 
 // Navbar
 .navbar-menu {
@@ -257,97 +214,6 @@ a.navbar-link:hover, .router-link-exact-active {
   }
 }
 
-// Icons
-
-.logo-icon {
-  padding-top: 0;
-  padding-bottom: 0;
-  flex: 1 0 auto;
-  img {
-    max-height: 3.25rem;
-    width: auto;
-    margin: auto;
-  }
-}
-
-.icon {
-  svg {
-    width: 100%;
-    height: auto;
-  }
-  margin-right: 0.2em;
-  &.has-text-danger svg {
-      fill: hsl(348, 100%, 61%);
-  }
-  &.has-text-warning svg {
-      fill: hsl(48, 100%, 67%);
-  }
-  &.has-text-success svg {
-      fill: hsl(141, 71%, 48%);
-  }
-}
-
-.control.has-icons-left,
-.control.has-icons-right {
-  .icon svg {
-    fill: #dbdbdb;
-    display: inline-block;
-    width: 1em;
-  }
-
-  .input:focus, &.select:focus {
-    &~.icon svg {
-      fill: $dark-grey;
-    }
-  }
-
-  a.icon {
-      svg {
-        fill: $dark-grey;
-      }
-    &:hover {
-      svg {
-        fill: $primary;
-      }
-    }
-  }
-}
-
-// Buttons
-
-.button {
-  font-family: $heading-font-family;
-  font-weight: 600;
-  text-transform: uppercase;
-
-  .icon {
-    margin-left: 0;
-    margin-right: 0.2em;
-    svg {
-      display: inline-block;
-    }
-    &.is-small svg {
-      height: 1em;
-      width: 1em;
-    }
-    &:first-child:last-child {
-      margin-left: 0;
-      margin-right: 0.2em;
-    }
-  }
-
-  &.is-primary,
-  &.is-link,
-  &.is-info,
-  &.is-success,
-  &.is-warning,
-  &.is-danger {
-    .icon svg {
-      fill: $white;
-    }
-  }
-}
-
 // Notifications
 
 .notifications {
@@ -358,32 +224,6 @@ a.navbar-link:hover, .router-link-exact-active {
     background-color: #ff3860;
     color: #fff;
   }
-}
-
-// Transitions
-%transition {
-  transition: all 0.5s ease-in-out;
-}
-
-.fade-enter-active, .fade-leave-active {
-  @extend %transition;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-
-// Global styles
-.bold {
-  font-weight: 700;
-  font-size: 1.1em;
-}
-
-.code {
-  background: $light-grey;
-  color: $dark-grey;
-  padding: 1em;
-  word-wrap: break-word;
-  font-family: "Lucida Console","Courier New",monospace;
 }
 
 </style>

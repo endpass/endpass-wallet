@@ -1,0 +1,55 @@
+// Icons
+
+.logo-icon {
+  padding-top: 0;
+  padding-bottom: 0;
+  flex: 1 0 auto;
+  img {
+    max-height: 3.25rem;
+    width: auto;
+    margin: auto;
+  }
+}
+
+.icon {
+  svg {
+    width: 100%;
+    height: auto;
+  }
+  margin-right: 0.2em;
+  &.has-text-danger svg {
+      fill: hsl(348, 100%, 61%);
+  }
+  &.has-text-warning svg {
+      fill: hsl(48, 100%, 67%);
+  }
+  &.has-text-success svg {
+      fill: hsl(141, 71%, 48%);
+  }
+}
+
+.control.has-icons-left,
+.control.has-icons-right {
+  .icon svg {
+    fill: #dbdbdb;
+    display: inline-block;
+    width: 1em;
+  }
+
+  .input:focus, &.select:focus {
+    &~.icon svg {
+      fill: $dark-grey;
+    }
+  }
+
+  a.icon {
+      svg {
+        fill: $dark-grey;
+      }
+    &:hover {
+      svg {
+        fill: $primary;
+      }
+    }
+  }
+}
