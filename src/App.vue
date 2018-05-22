@@ -183,12 +183,14 @@ a {
 }
 
 .button {
+  border-radius: 0;
 
   &.is-primary {
     background-color: $purple;
 
     &.is-hovered, &:hover {
       background-color: lighten($purple, 5%);
+      transition: background-color .2s ease-in-out;
     }
     &.is-active, &:active {
       background-color: $purple;
@@ -314,6 +316,10 @@ a.navbar-link:hover, .router-link-exact-active {
 // Buttons
 
 .button {
+  font-family: $heading-font-family;
+  font-weight: 600;
+  text-transform: uppercase;
+
   .icon {
     margin-left: 0;
     margin-right: 0.2em;
