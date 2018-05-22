@@ -111,16 +111,4 @@ export default {
     color: $white;
   }
 }
-
-// Notifications
-
-.notifications {
-  z-index: 1000;
-}
-.notification {
-  &.is-error {
-    background-color: #ff3860;
-    color: #fff;
-  }
-}
 </style>

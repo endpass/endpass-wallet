@@ -4,8 +4,7 @@
 
       <app-nav :active-account="!!activeAccount"></app-nav>
       <info-bar></info-bar>
-
-
+      <notifications position="top center" width="100%" :duration="-1"/>
     </div>
 
     <div class="main">
