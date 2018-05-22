@@ -145,8 +145,8 @@ export default {
         this.addAccount(this.createWalletWithKey());
         router.push('/')
       } catch (e) {
-        console.log(e);
         this.privateKeyError = true;
+        console.error(e);
       }
     },
     addWalletWithPrase() {
@@ -158,6 +158,7 @@ export default {
         router.push('/')
       } catch (e) {
         this.hdkeyPraseError = true;
+        console.error(e);
       }
     },
     createWalletWithKey() {
