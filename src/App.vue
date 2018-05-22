@@ -5,7 +5,7 @@
       <app-nav :active-account="!!activeAccount"></app-nav>
       <info-bar></info-bar>
       <notifications position="top center" width="100%" :speed="500"
-      :duration="-1" classes="app-notification"/>
+      :duration="5000" classes="app-notification"/>
     </div>
 
     <div class="main">
