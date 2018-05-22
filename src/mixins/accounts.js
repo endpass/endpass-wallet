@@ -1,4 +1,5 @@
 // Mixin for common methods for Ethereum accounts
+import web3 from 'web3'
 
 export default {
   computed: {
