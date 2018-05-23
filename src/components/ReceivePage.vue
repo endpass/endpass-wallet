@@ -1,25 +1,34 @@
 <template>
-  <div class="receive-page">
+  <div class="app-page receive-page">
     <div class="section">
       <div class="container">
-        <h1 class="title">Receive ETH</h1>
-        <div class="box">
-          <p>Your Wallet Address:</p>
-          <p class="code address is-size-5">{{address}}</p>
+        <div class="card app-card">
+          <div class="card-header">
+            <h2 class="card-header-title">Receive ETH</h2>
+          </div>
+          <div class="card-content">
+            <p>Your Wallet Address:</p>
+            <p class="code address is-size-5">{{address}}</p>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="section">
       <div class="container">
-        <div class="">
-          <h2 class="subtitle">Incoming Payment History</h2>
-          <ul class="transactions">
-            <li v-for="transaction in processedTransactions"
-              :key="transaction.hash">
-              <app-transaction :transaction="transaction"></app-transaction>
-            </li>
-          </ul>
+        <div class="card app-card">
+          <div class="card-header">
+            <h2 class="card-header-title">Incoming Payment History</h2>
+          </div>
+          <div class="card-content">
+            <ul class="transactions" v-if="processedTransactions.length">
+              <li v-for="transaction in processedTransactions"
+                :key="transaction.hash">
+                <app-transaction :transaction="transaction"></app-transaction>
+              </li>
+            </ul>
+            <p v-else>This account has no transactions.</p>
+          </div>
         </div>
       </div>
     </div>

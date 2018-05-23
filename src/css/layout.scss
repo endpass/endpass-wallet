@@ -24,6 +24,25 @@ html,body {
   }
 }
 
+// Container for a single page in the app
+.app-page {
+  // Card container inside the app
+  .app-card {
+    // Main card component in the app
+    &.main-app-card {
+      padding-bottom: 4rem;
+      min-height: 60vh;
+    }
+
+    .card-header-title {
+      font-size: 1.2em;
+      font-family: $heading-font-family;
+      color: $purple;
+    }
+  }
+}
+
+// Narrower containers
 .container.is-narrow {
   max-width: 600px;
 }
