@@ -1,14 +1,12 @@
 <template>
-  <div id="app">
-    <div class="app-top">
+  <div id="app" class="app-container">
 
-      <app-nav :active-account="!!activeAccount"></app-nav>
-      <info-bar></info-bar>
-      <notifications position="top center" width="100%" :speed="500"
-      :duration="5000" classes="app-notification"/>
-    </div>
+    <app-nav class="app-section" :active-account="!!activeAccount"></app-nav>
+    <info-bar class="app-section"></info-bar>
+    <notifications position="top center" width="100%" :speed="500"
+                                         :duration="5000" classes="app-notification"/>
 
-    <div class="main">
+    <div class="main app-section">
       <router-view/>
     </div>
   </div>
@@ -39,5 +37,11 @@ export default {
 @import './css/layout.scss';
 @import './css/notifications.scss';
 @import './css/typography.scss';
+
+.main {
+  background: $light-grey;
+  height: 100%;
+  flex: 0 1 auto;
+}
 
 </style>

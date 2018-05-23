@@ -1,5 +1,29 @@
 // Layout
 
+// Full height app with flex
+html,body {
+  height: 100%;
+}
+.app-container {
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  // Direct child of app container, a major element
+  &>.app-section {
+    flex: 0 1 auto;
+  }
+
+  // Stick info bar to bottom on mobile
+  @media screen and (max-width: 1023px) {
+    .info-bar {
+      order:2;
+      margin-top: auto;
+    }
+  }
+}
+
 .container.is-narrow {
   max-width: 600px;
 }
