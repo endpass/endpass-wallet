@@ -3,8 +3,10 @@
         <div class="section" v-if="activeAccount">
           <div class="container">
             <div class="card app-card">
+              <div class="card-header">
+              </div>
               <div class="card-content">
-                <h1 class="title">Your Endpass Wallet</h1>
+                <h1 class="card-header-title">Your Endpass Wallet</h1>
                 <div class="address box">
                   <div class="columns">
                     <div class="column">
@@ -18,6 +20,13 @@
                       <span class="stat title">{{balance}}</span>
                       <span class="has-text-centered">ETH</span>
                       </p>
+                    </div>
+                    <div class="column">
+                      <p class="heading">Actions</p>
+                      <router-link :to="{name: 'ExportWallet'}">
+                        <span class="icon is-small"
+                              v-html="require('@/img/arrow-thick-bottom.svg')"></span>Export
+                      </router-link>
                     </div>
                   </div>
                 </div>
@@ -44,29 +53,16 @@
           </div>
         </div>
 
-        <div class="section" v-if="activeAccount">
-          <div class="container">
-            <div class="card app-card">
-              <div class="card-content">
-                <export-to-json></export-to-json>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 </template>
 
 <script>
-import ExportToJson from '@/components/ExportToJson.vue'
 import accounts from '@/mixins/accounts'
 
 export default {
   data () {
     return {
     }
-  },
-  components: {
-    ExportToJson
   },
   mixins: [accounts]
 }
