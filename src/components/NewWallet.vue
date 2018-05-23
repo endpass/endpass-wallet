@@ -1,27 +1,37 @@
 <template>
-  <div class="new-wallet">
+  <div class="new-wallet app-page">
     <div class="section" v-if="walletCreated">
       <div class="container has-text-centered is-narrow">
-        <h1 class="title">Wallet Created</h1>
-        <p class="subtitle">Your wallet has been created successfully.
-        Please <strong>write down the 12 word recovery phrase below</strong>
-        and store it in a safe place. You will not be able to recover your
-        wallet without it.</p>
-        <div class="box">
-          <p>Your wallet recovery phrase</p>
-          <p class="code">{{mnemonic.phrase}}</p>
+        <div class="card app-card">
+          <div class="card-content">
+            <h1 class="title">Wallet Created</h1>
+            <p class="subtitle">Your wallet has been created successfully.
+            Please <strong>write down the 12 word recovery phrase below</strong>
+            and store it in a safe place. You will not be able to recover your
+            wallet without it.</p>
+            <div class="box">
+              <p>Your wallet recovery phrase</p>
+              <p class="code">{{mnemonic.phrase}}</p>
+            </div>
+            <router-link to="/" class="button is-primary">I have written down my seed phrase</router-link>
+          </div>
         </div>
-        <router-link to="/" class="button is-primary">I have written down my seed phrase</router-link>
       </div>
     </div>
     <div class="section" v-else>
-      <div class="container has-text-centered">
-        <a @click="$router.go(-1)">&lt; Back</a>
-        <h1 class="title">Create Wallet</h1>
-        <p class="subtitle">Just click the button below to create a new,
-        secure Ethereum Wallet. Your wallet can contain multiple addresses
-        for storing Ethereum and ERC20 compatible tokens.</p>
-        <button id="newWalletButon" class="button is-primary is-medium" :class="{'is-loading' : creatingWallet }" @click="clickNewWalletButton">Generate New Wallet</button>
+      <div class="container has-text-centered is-narrow">
+        <div class="card app-card">
+          <div class="card-header">
+            <h1 class="card-header-title">Create Wallet</h1>
+          </div>
+          <div class="card-content">
+            <a @click="$router.go(-1)">&lt; Back</a>
+            <p class="subtitle">Just click the button below to create a new,
+            secure Ethereum Wallet. Your wallet can contain multiple addresses
+            for storing Ethereum and ERC20 compatible tokens.</p>
+            <button id="newWalletButon" class="button is-primary is-medium" :class="{'is-loading' : creatingWallet }" @click="clickNewWalletButton">Generate New Wallet</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
