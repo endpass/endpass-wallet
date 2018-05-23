@@ -4,45 +4,53 @@
       <div class="container">
         <div class="columns">
           <div class="column is-half">
-            <nav class="panel">
-              <p class="panel-heading">
-              Your Tokens
-              </p>
-              <div class="panel-block">
-                <search-input v-model="search"></search-input>
+            <div class="card app-card">
+              <div class="card-content">
+                <nav class="panel">
+                  <p class="panel-heading">
+                  Your Tokens
+                  </p>
+                  <div class="panel-block">
+                    <search-input v-model="search"></search-input>
+                  </div>
+                  <div class="scroller">
+                    <a v-for="token in activeTokens" :key="token.address + 'sub'" class="panel-block is-clearfix is-block">
+                      <span class="token-symbol">{{token.symbol}}</span>
+                      <span class="token-name">{{token.name}}</span>
+                      <span class="token-balance is-pulled-right">{{token.balance || 0}}</span>
+                    </a>
+                  </div>
+                </nav>
               </div>
-              <div class="scroller">
-                <a v-for="token in activeTokens" :key="token.address + 'sub'" class="panel-block is-clearfix is-block">
-                  <span class="token-symbol">{{token.symbol}}</span>
-                  <span class="token-name">{{token.name}}</span>
-                  <span class="token-balance is-pulled-right">{{token.balance || 0}}</span>
-                </a>
-              </div>
-            </nav>
+            </div>
           </div>
           <div class="column is-half">
-            <nav class="panel">
-              <p class="panel-heading">
-              Add Token
-              </p>
-              <div class="panel-block">
-                <search-input v-model="search"></search-input>
-              </div>
-              <div class="scroller">
-                <a v-for="token in filteredTokens"
-                   :key="token.address"
-                   @click="saveToken(token)"
-                   :disabled="token.manuallyAdded"
-                   class="panel-block is-clearfix is-block">
+            <div class="card app-card">
+              <div class="card-content">
+                <nav class="panel">
+                  <p class="panel-heading">
+                  Add Token
+                  </p>
+                  <div class="panel-block">
+                    <search-input v-model="search"></search-input>
+                  </div>
+                  <div class="scroller">
+                    <a v-for="token in filteredTokens"
+                       :key="token.address"
+                       @click="saveToken(token)"
+                       :disabled="token.manuallyAdded"
+                       class="panel-block is-clearfix is-block">
 
-                  <span class="icon panel-icon is-small"
-                        v-html="require('@/img/plus.svg')">
-                  </span>
-                  <span class="token-symbol">{{token.symbol}}</span>
-                  <span class="token-name">{{token.name}}</span>
-                </a>
+                      <span class="icon panel-icon is-small"
+                            v-html="require('@/img/plus.svg')">
+                      </span>
+                      <span class="token-symbol">{{token.symbol}}</span>
+                      <span class="token-name">{{token.name}}</span>
+                    </a>
+                  </div>
+                </nav>
               </div>
-            </nav>
+            </div>
           </div>
 
         </div>

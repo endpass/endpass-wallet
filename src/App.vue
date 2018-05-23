@@ -1,364 +1,46 @@
 <template>
-  <div id="app">
-    <div class="app-top">
-      <div class="navbar">
-        <div class="navbar-brand">
-          <router-link class="navbar-item logo-icon" to="/">
-            <img src="@/img/logo-light.png" alt="Endpass Wallet">
-          </router-link>
-          <a class="navbar-burger" @click="toggleNavMenu" :class="{'is-active':navMenuActive}">
-            <span></span>
-            <span></span>
-            <span></span>
-          </a>
-        </div>
-        <div class="navbar-menu" :class="{'is-active':navMenuActive}">
-          <div class="navbar-start">
-            <router-link class="navbar-item" to="/" @click.native="toggleNavMenu">
-              <span class="icon is-small"
-                v-html="require('@/img/home.svg')"></span>Dashboard
-            </router-link>
-            <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'HistoryPage'}" @click.native="toggleNavMenu">
-              <span class="icon is-small"
-                v-html="require('@/img/clock.svg')"></span>History
-            </router-link>
-            <router-link v-if="activeAccount" class="navbar-item" :to="{name: 'SendPage'}" @click.native="toggleNavMenu">
-              <span class="icon is-small"
-                v-html="require('@/img/arrow-thick-left.svg')"></span>Send
-            </router-link>
-            <router-link v-if="activeAccount" class="navbar-item" :to="{name:
-              'ReceivePage'}" @click.native="toggleNavMenu">
-              <span class="icon is-small"
-                v-html="require('@/img/arrow-thick-right.svg')"></span>Receive
-            </router-link>
-            <router-link v-if="activeAccount" class="navbar-item" :to="{name:
-              'TokensPage'}" @click.native="toggleNavMenu">
-              <span class="icon is-small"
-                v-html="require('@/img/compass.svg')"></span>Tokens
-            </router-link>
-          </div>
+  <div id="app" class="app-container">
 
-        </div>
-      </div>
+    <app-nav class="app-section" :active-account="!!activeAccount"></app-nav>
+    <info-bar class="app-section"></info-bar>
+    <notifications position="top center" width="100%" :speed="500"
+                                         :duration="5000" classes="app-notification"/>
 
-      <div class="section is-narrow top-info has-background-light">
-        <div class="container">
-          <div class="level">
-            <div class="level-left">
-              <div class="level-item">
-                <div class="level-control">
-                  <p class="heading">Current Network</p>
-                  <div class="select">
-                    <select @change="selectNet" v-model="selectedNet">
-                      <option v-for="net in networks" :value="net.name">
-                      {{net.name}}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="level-right">
-              <div class="level-item">
-                <div class="level-control">
-                  <span  v-if="activeAccount">
-                    <p class="heading">Current Account</p>
-                    <account-chooser/>
-                  </span>
-                  <router-link :to="{name: 'NewWallet'}" class="button
-                  is-primary" v-else>Create Wallet</router-link>
-                </div>
-              </div>
-              <div class="level-item" v-if="balance !== null">
-                <div class="level-stat">
-                  <p class="heading">Balance</p>
-                  <span class="title">{{ balance }}</span> ETH
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-
-     <!-- <flash-message inline-template>
-       <div class="notifications is-overlay">
-         <transition-group name="fade" tag="div" class="container">
-           <div v-for="(message, index) in storage" :key="index"
-                class="notification" :class="'is-' + message.type" >
-                <button class="delete"
-                        @click.stop.prevent="destroyFlash(index)"></button>
-                {{ message.content }}
-           </div>
-         </transition-group>
-       </div>
-     </flash-message> -->
-    <div class="main" @click="navMenuActive=false">
+    <div class="main app-section">
       <router-view/>
     </div>
   </div>
 </template>
 
 <script>
-
-import web3 from 'web3';
-import AccountChooser from '@/components/AccountChooser.vue'
+import AppNav from '@/components/AppNav.vue'
+import InfoBar from '@/components/InfoBar.vue'
 import accounts from '@/mixins/accounts'
 
 export default {
   name: 'App',
-  components: {
-    AccountChooser
-  },
   data () {
-    let cachedNet = localStorage.getItem('net');
-    if(!cachedNet) {
-      cachedNet = 'Main';
-    }
-
     return {
-      selectedNet: cachedNet,
-      balanceSubscribtionInstance: null,
-      navMenuActive: false
-    };
-  },
-  computed: {
-    balanceSubscribtion() {
-      let provider = this.$store.state.web3.web3.currentProvider;
-      if(this.balanceSubscribtionInstance) {
-        this.balanceSubscribtionInstance.stop();
-      }
-      this.balanceSubscribtionInstance = new EthBlockTracker({ provider });
-      this.balanceSubscribtionInstance.on('latest', () => {
-        this.updateBalance();
-      });
-      this.balanceSubscribtionInstance.start();
-    },
-    networks() {
-      return this.$store.state.web3.networks;
-    },
-    activeNet() {
-      return this.$store.state.web3.activeNet;
     }
   },
-  methods: {
-    selectNet() {
-      this.$store.dispatch('web3/changeNetwork', this.selectedNet);
-      localStorage.setItem('net', this.selectedNet);
-    },
-    toggleNavMenu () {
-      this.navMenuActive = !this.navMenuActive
-    }
-  },
-  created() {
-    this.$store.dispatch('web3/changeNetwork', this.selectedNet);
+  components: {
+    AppNav,
+    InfoBar
   },
   mixins: [accounts]
 }
 </script>
 
 <style lang="scss">
-// Layout
-.container.is-narrow {
-  max-width: 600px;
-}
+@import './css/buttons.scss';
+@import './css/icons.scss';
+@import './css/layout.scss';
+@import './css/notifications.scss';
+@import './css/typography.scss';
 
-.section.is-narrow {
-  padding: 1rem 1.5rem;
-}
-
-// Buttons and Links
-
-a {
-  color: $purple;
-  &:hover {
-    color: darken($purple, 15%);
-  }
-}
-
-.button {
-
-  &.is-primary {
-    background-color: $purple;
-
-    &.is-hovered, &:hover {
-      background-color: lighten($purple, 5%);
-    }
-    &.is-active, &:active {
-      background-color: $purple;
-    }
-    &[disabled] {
-      background-color: $purple;
-    }
-  }
-}
-
-// Headers
-h1,h2,h3,h4,h5,h6 {
-    font-family: $heading-font-family;
-}
-
-.title {
-  font-weight: 300;
-  font-size: 2.6rem;
-  color: $dark-grey;
-}
-
-// Navbar
-.navbar-menu {
-  a.navbar-item {
-    font-family: $heading-font-family;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-  }
-}
-
-.navbar-burger {
-  span {
-    height: 3px;
-  }
-}
-
-a.navbar-item.is-active, a.navbar-item:hover, a.navbar-link.is-active,
-a.navbar-link:hover, .router-link-exact-active {
-  background-color: initial;
-  color: $purple;
-
-  .icon svg {
-    fill: $purple;
-  }
-}
-
-.navbar-item .icon:only-child, .navbar-link .icon:only-child {
-  margin-left: 0;
-  margin-right: 0.25em;
-}
-
-// Icons
-
-.logo-icon {
-  padding-top: 0;
-  padding-bottom: 0;
-  flex: 1 0 auto;
-  img {
-    max-height: 3.25rem;
-    width: auto;
-    margin: auto;
-  }
-}
-
-.icon {
-  svg {
-    width: 100%;
-    height: auto;
-  }
-  margin-right: 0.2em;
-  &.has-text-danger svg {
-      fill: hsl(348, 100%, 61%);
-  }
-  &.has-text-warning svg {
-      fill: hsl(48, 100%, 67%);
-  }
-  &.has-text-success svg {
-      fill: hsl(141, 71%, 48%);
-  }
-}
-
-.control.has-icons-left,
-.control.has-icons-right {
-  .icon svg {
-    fill: #dbdbdb;
-    display: inline-block;
-    width: 1em;
-  }
-
-  .input:focus, &.select:focus {
-    &~.icon svg {
-      fill: $dark-grey;
-    }
-  }
-
-  a.icon {
-      svg {
-        fill: $dark-grey;
-      }
-    &:hover {
-      svg {
-        fill: $primary;
-      }
-    }
-  }
-}
-
-// Buttons
-
-.button {
-  .icon {
-    margin-left: 0;
-    margin-right: 0.2em;
-    svg {
-      display: inline-block;
-    }
-    &.is-small svg {
-      height: 1em;
-      width: 1em;
-    }
-    &:first-child:last-child {
-      margin-left: 0;
-      margin-right: 0.2em;
-    }
-  }
-
-  &.is-primary,
-  &.is-link,
-  &.is-info,
-  &.is-success,
-  &.is-warning,
-  &.is-danger {
-    .icon svg {
-      fill: $white;
-    }
-  }
-}
-
-// Notifications
-
-.notifications {
-  z-index: 1000;
-}
-.notification {
-  &.is-error {
-    background-color: #ff3860;
-    color: #fff;
-  }
-}
-
-// Transitions
-%transition {
-  transition: all 0.5s ease-in-out;
-}
-
-.fade-enter-active, .fade-leave-active {
-  @extend %transition;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-
-// Global styles
-.bold {
-  font-weight: 700;
-  font-size: 1.1em;
-}
-
-.code {
+.main {
   background: $light-grey;
-  color: $dark-grey;
-  padding: 1em;
-  word-wrap: break-word;
-  font-family: "Lucida Console","Courier New",monospace;
+  height: 100%;
 }
 
 </style>

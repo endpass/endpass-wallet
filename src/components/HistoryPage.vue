@@ -2,16 +2,22 @@
   <div class="receive-page">
     <div class="section">
       <div class="container">
-        <h1 class="title">Transaction history</h1>
-        <ul v-if="processedTransactions.length" class="transactions">
-          <li v-for="transaction in processedTransactions"
-          :key="transaction.hash">
-            <app-transaction :transaction="transaction"></app-transaction>
-          </li>
-        </ul>
-        <p v-else-if="!historyAvailable">Transaction history is only
-        supported on the main network.</p>
-        <p v-else>This account has no transactions.</p>
+        <div class="card app-card">
+          <div class="card-header">
+            <h1 class="card-header-title">Transaction history</h1>
+          </div>
+          <div class="card-content">
+            <ul v-if="processedTransactions.length" class="transactions">
+              <li v-for="transaction in processedTransactions"
+              :key="transaction.hash">
+                <app-transaction :transaction="transaction"></app-transaction>
+              </li>
+            </ul>
+            <p v-else-if="!historyAvailable">Transaction history is only
+            supported on the main network.</p>
+            <p v-else>This account has no transactions.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
