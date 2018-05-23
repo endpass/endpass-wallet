@@ -8,6 +8,8 @@ import ReceivePage from '@/components/ReceivePage'
 import TokensPage from '@/components/TokensPage'
 import NewWallet from '@/components/NewWallet'
 import ImportWallet from '@/components/ImportWallet'
+import ExportWallet from '@/components/ExportWallet'
+
 import store from '../store'
 Vue.use(Router)
 
@@ -53,6 +55,12 @@ export default new Router({
       name: 'ImportWallet',
       component: ImportWallet,
       beforeEnter: noWalletGuard
+    },
+    {
+      path: '/export',
+      name: 'ExportWallet',
+      component: ExportWallet,
+      beforeEnter: hasWalletGuard
     }
   ]
 })
