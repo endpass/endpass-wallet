@@ -1,75 +1,81 @@
 <template>
-  <div class="send-page">
+  <div class="app-page send-page">
     <div class="section">
-      <div class="container">
-        <h1 class="title">Send ETH</h1>
-        <form id="sendEther" @submit="sendTransaction">
+      <div class="container is-narrow">
+        <div class="card app-card main-app-card">
+          <div class="card-header">
+            <h1 class="card-header-title">Send ETH</h1>
+          </div>
+          <div class="card-content">
+            <form id="sendEther" @submit="sendTransaction">
 
-          <div class="field">
-            <label class="label" for="address">To</label>
-            <div class="control">
-              <input v-model="transaction.to" name="address" v-validate="'required|address'" type="text" class="input"
-                :class="{'is-danger': fields.address && fields.address.touched && fields.address.invalid }" id="address" aria-describedby="address" placeholder="Receiver address" required>
-            </div>
-            <p class="help is-danger">{{errors.first('address')}}</p>
-          </div>
+              <div class="field">
+                <label class="label" for="address">To</label>
+                <div class="control">
+                  <input v-model="transaction.to" name="address" v-validate="'required|address'" type="text" class="input"
+                                                                                                             :class="{'is-danger': fields.address && fields.address.touched && fields.address.invalid }" id="address" aria-describedby="address" placeholder="Receiver address" required>
+                </div>
+                <p class="help is-danger">{{errors.first('address')}}</p>
+              </div>
 
-          <div class="field">
-            <label class="label" for="value">Amount</label>
-          </div>
-          <div class="field has-addons">
-            <div class="control is-expanded">
-              <input v-model.number="value" name="value" type="text" class="input" id="value" aria-describedby="value" placeholder="Amount" required>
-            </div>
-            <div class="control">
-              <span class="select">
-                <select v-model="selectedToken">
-                  <option value="ETH">ETH</option>
-                  <option :value="token.symbol" v-for="token in tokens" :key="token.address">{{token.symbol}}</option>
-                </select>
-              </span>
-            </div>
-          </div>
+              <div class="field">
+                <label class="label" for="value">Amount</label>
+              </div>
+              <div class="field has-addons">
+                <div class="control is-expanded">
+                  <input v-model.number="value" name="value" type="text" class="input" id="value" aria-describedby="value" placeholder="Amount" required>
+                </div>
+                <div class="control">
+                  <span class="select">
+                    <select v-model="selectedToken">
+                      <option value="ETH">ETH</option>
+                      <option :value="token.symbol" v-for="token in tokens" :key="token.address">{{token.symbol}}</option>
+                    </select>
+                  </span>
+                </div>
+              </div>
 
-          <div class="field">
-            <label class="label" for="price">Gas price</label>
-          </div>
-          <div class="field has-addons">
-            <div class="control is-expanded">
-              <input v-model.number="gasPrice" name="price" type="text" class="input"
-               id="price" aria-describedby="price" placeholder="Gas price" required>
-            </div>
-            <div class="control">
-              <a class="button is-static">Gwei</a>
-            </div>
-          </div>
+              <div class="field">
+                <label class="label" for="price">Gas price</label>
+              </div>
+              <div class="field has-addons">
+                <div class="control is-expanded">
+                  <input v-model.number="gasPrice" name="price" type="text" class="input"
+                                                                            id="price" aria-describedby="price" placeholder="Gas price" required>
+                </div>
+                <div class="control">
+                  <a class="button is-static">Gwei</a>
+                </div>
+              </div>
 
-          <div class="field">
-            <label class="label" for="limit">Gas limit</label>
-            <div class="control">
-              <input v-model.number="gasLimit" type="text" class="input"
-              id="limit" aria-describedby="limit" placeholder="Gas limit" required>
-            </div>
-          </div>
-          <div class="field" v-show="selectedToken === 'ETH'">
-            <label class="label" for="data">Data</label>
-            <div class="control">
-              <input v-model="transaction.data" type="text" class="input"
-              aria-describedby="data" placeholder="Data" required>
-            </div>
-          </div>
+              <div class="field">
+                <label class="label" for="limit">Gas limit</label>
+                <div class="control">
+                  <input v-model.number="gasLimit" type="text" class="input"
+                                                               id="limit" aria-describedby="limit" placeholder="Gas limit" required>
+                </div>
+              </div>
+              <div class="field" v-show="selectedToken === 'ETH'">
+                <label class="label" for="data">Data</label>
+                <div class="control">
+                  <input v-model="transaction.data" type="text" class="input"
+                                                                aria-describedby="data" placeholder="Data" required>
+                </div>
+              </div>
 
-          <div class="field">
-            <div class="control">
-              <button :disabled="fields.address && fields.address.invalid ||
-              fields.limit && fields.limit.invalid ||
-              fields.value && fields.value.invalid ||
-              fields.price && fields.price.invalid" class="button is-primary
-                                             is-medium"
-                @click.prevent="sendTransaction">Send</button>
-            </div>
+              <div class="field">
+                <div class="control">
+                  <button :disabled="fields.address && fields.address.invalid ||
+                  fields.limit && fields.limit.invalid ||
+                  fields.value && fields.value.invalid ||
+                  fields.price && fields.price.invalid" class="button is-primary
+                  is-medium"
+                                                        @click.prevent="sendTransaction">Send</button>
+                </div>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>
