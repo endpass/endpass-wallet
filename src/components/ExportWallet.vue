@@ -1,10 +1,10 @@
 <template>
-  <div class="import-wallet app-page">
+  <div class="export-wallet app-page">
     <div class="section">
       <div class="container">
         <div class="card app-card">
           <div class="card-header">
-            <h1 class="card-header-title">Export Your Wallet</h1>
+            <h1 class="card-header-title">Export Wallet</h1>
           </div>
           <div class="card-content">
             <a @click="$router.go(-1)">&lt; Back</a>
@@ -27,7 +27,8 @@
                     </li>
                     <li>
                       <a @click="exportType = 'json'"
-                      :class="{'is-active':exportType==='json'}">V3 JSON keystore</a>
+                      :class="{'is-active':exportType==='json'}">JSON
+                      Keystore</a>
                     </li>
                   </ul>
                 </div>
