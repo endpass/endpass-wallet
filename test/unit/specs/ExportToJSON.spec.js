@@ -1,6 +1,3 @@
-import Vue from 'vue'
-import axios from 'axios'
-import moxios from 'moxios'
 import { mount, shallow, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import ExportToJson from '@/components/ExportToJson.vue';
@@ -27,10 +24,13 @@ describe('ExportToJson', () => {
     })
     wrapper = shallow(ExportToJson, { store, localVue })
   })
-  it('creates json and calls file saver ', () => {
-    let spy = jest.fn();
-    wrapper.vm.saveJSON = spy;
-    wrapper.vm.exportJSON();
-    expect(spy).toBeCalled();
+  it('creates json from wallet', done => {
+    wrapper.vm.runExportJsonWorker().then(jsonData => {
+      expect(jsonData).toBeTruthy();
+      let walletData = JSON.parse(jsonData)
+      expect(walletData.version).toBe(3)
+      expect('0x'+walletData.address).toBe(wallet.getAddressString())
+      done()
+    })
   })
 })
