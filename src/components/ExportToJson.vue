@@ -1,14 +1,18 @@
 <template lang="html">
-  <form>
-    <div class="field">
-      <label class="label" for="jsonKeystorePassword">V3 JSON keystore password</label>
-      <div class="control">
-        <input v-model="password" type="password" class="input" id="jsonKeystorePassword"
-        aria-describedby="jsonKeystorePassword" placeholder="V3 JSON keystore password">
+  <div class="export-json">
+    <form>
+      <div class="field">
+        <label class="label" for="jsonKeystorePassword">Choose a password
+          to encrypt your wallet file</label>
+        <div class="control">
+          <input v-model="password" type="password" class="input"
+          placeholder="JSON keystore password" autocomplete="new-password">
+        </div>
       </div>
-    </div>
-    <button class="button is-primary is-medium" @click.prevent="exportJSON" :disabled="!password">Export</button>
-  </form>
+      <a :class="{'is-loading' : exportingJson }" class="button is-primary is-medium" @click.prevent="exportJSON"
+        :disabled="!password">Export</a>
+    </form>
+  </div>
 </template>
 
 <script>
@@ -17,18 +21,33 @@ import accounts from '@/mixins/accounts'
 export default {
   data() {
     return {
-      password: ''
+      password: '',
+      exportingJson: false
     }
   },
   methods: {
     exportJSON() {
       if(this.activeAccount) {
-        let jsonString = this.activeAccount.toV3String(this.password);
-        this.saveJSON(jsonString);
+        this.exportingJson = true;
+        this.runExportJsonWorker()
+        .then(this.saveJSON)
+        .catch(this.exportError)
       }
     },
+    runExportJsonWorker() {
+      return new Promise((resolve, reject) => {
+        setTimeout(()=>{
+          try {
+            let jsonString = this.activeAccount.toV3String(this.password);
+            resolve(jsonString)
+          } catch (e) {
+            reject(e);
+          }
+        },20)
+      })
+    },
     saveJSON(data){
-      let filename = `${this.address}.json`
+      let filename = `endpass_wallet_${this.address}.json`
       let blob = new Blob([data], {type: 'text/json'}),
           e    = document.createEvent('MouseEvents'),
           a    = document.createElement('a');
@@ -39,11 +58,16 @@ export default {
       e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
       a.dispatchEvent(e)
       a.remove();
+      this.exportingJson = false;
+    },
+    exportError(e) {
+      this.exportingJson = false;
+      console.error(e)
     }
   },
   mixins: [accounts]
 }
 </script>
 
-<style lang="css">
+<style lang="scss">
 </style>
