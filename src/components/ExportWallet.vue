@@ -8,13 +8,12 @@
           </div>
           <div class="card-content">
             <a @click="$router.go(-1)">&lt; Back</a>
-            <p class="subtitle">Select the format you would like your
-            wallet exported in.</p>
+            <p class="subtitle">Exporting account <strong>{{address}}</strong></p>
             <div class="columns">
 
               <div class="column is-one-third">
                 <div class="menu">
-                  <p class="menu-label">Import Type</p>
+                  <p class="menu-label">Export Type</p>
                   <ul class="menu-list">
                     <li>
                       <a @click="exportType = 'seedPhrase'"
@@ -58,17 +57,19 @@
 <script>
 import ExportToJson from '@/components/ExportToJson.vue'
 import ExportToPrivateKey from '@/components/ExportToPrivateKey.vue'
+import accounts from '@/mixins/accounts'
 
 export default {
   data () {
     return {
-      exportType: 'seedPhrase',
+      exportType: 'privateKey',
     }
   },
   components: {
     ExportToJson,
     ExportToPrivateKey
-  }
+  },
+  mixins: [accounts]
 }
 </script>
 
