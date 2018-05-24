@@ -1,6 +1,5 @@
 <template>
   <div class="export-private-key">
-    <h1 class="title">Export Private Key</h1>
     <div v-if="!showPrivateKey">
       <p class="subtitle">Click the button below to display your private key</p>
       <a class="button is-primary" @click="showPrivateKey=true">Show Private
