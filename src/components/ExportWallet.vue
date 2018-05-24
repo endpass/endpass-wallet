@@ -16,13 +16,13 @@
                   <p class="menu-label">Export Type</p>
                   <ul class="menu-list">
                     <li>
-                      <a @click="exportType = 'seedPhrase'"
-                      :class="{'is-active':exportType==='seedPhrase'}">Seed Phrase</a>
-                    </li>
-                    <li>
                       <a @click="exportType = 'privateKey'"
                       :class="{'is-active':exportType==='privateKey'}">Private
                       Key</a>
+                    </li>
+                    <li>
+                      <a @click="exportType = 'seedPhrase'"
+                      :class="{'is-active':exportType==='seedPhrase'}">Seed Phrase</a>
                     </li>
                     <li>
                       <a @click="exportType = 'json'"
