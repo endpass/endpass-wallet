@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { shallow, createLocalVue } from '@vue/test-utils'
+import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import VeeValidate from 'vee-validate'
 import validation from '@/validation'
@@ -26,7 +26,7 @@ describe('ImportWallet', () => {
       },
       actions
     })
-    wrapper = shallow(ImportWallet, { store, localVue })
+    wrapper = shallowMount(ImportWallet, { store, localVue })
   })
 
   it('sets the correct default data', () => {

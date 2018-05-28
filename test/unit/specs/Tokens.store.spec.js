@@ -17,6 +17,15 @@ localStorage.setItem('tokens', JSON.stringify([{
 let stateInstance = tokens.state();
 
 describe('tokens', () => {
+
+  beforeEach(() => {
+    moxios.install()
+  })
+
+  afterEach(() => {
+    moxios.uninstall()
+  })
+
   it('it should get tokens from localStorage', () => {
     expect(stateInstance.savedTokens.length).toBe(1);
     expect(stateInstance.savedTokens[0].address).toBe('0x0');
@@ -38,7 +47,7 @@ describe('tokens', () => {
     tokens.mutations.saveSubscription(stateInstance, 1);
     expect(stateInstance.tokensSubscription).toBe(1);
   });
-  it('adds Token To Subscribtion', () => {
+  it('adds Token To Subscribtion', (done) => {
     testAction(tokens.actions.addTokenToSubscribtion, {address : '0x0'}, {
       rootState: {
         accounts: {
@@ -61,9 +70,16 @@ describe('tokens', () => {
       }
     }, [
       { type: 'saveTokenToWatchStorage' }
-    ],[]);
+    ],[],  done);
   })
-  it('gets non zero tokens', () => {
+  it('gets non zero tokens', (done) => {
+    moxios.stubRequest(/api\.ethplorer\.io\/getAddressInfo/, {
+      status: 200,
+      response: [{
+        id: '1',
+        to: '0x0'
+      }]
+    })
     testAction(tokens.actions.getNonZeroTokens, null, {
       rootState: {
         accounts: {
@@ -75,21 +91,9 @@ describe('tokens', () => {
         }
       }
     }, [
-      { type: 'saveTokens' }
-    ],[]);
-    moxios.wait(() => {
-      let request = moxios.requests.mostRecent()
-      request.respondWith({
-        status: 200,
-        response: [{
-          id: '1'
-        }, {
-          id: '2'
-        }]
-      })
-    })
+    ],[], done);
   })
-  it('creates Token Subscribtion', () => {
+  it('creates Token Subscribtion', (done) => {
     const Timeout = setTimeout(function(){}, 0).constructor;
     testAction(tokens.actions.createTokenSubscribtion, [], {
       rootState: {
@@ -117,6 +121,6 @@ describe('tokens', () => {
     }, [
       { type: 'saveInterval' },
       { type: 'saveSubscription' }
-    ],[]);
+    ],[], done);
   })
 })
