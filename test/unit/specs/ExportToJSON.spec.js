@@ -1,4 +1,4 @@
-import { mount, shallowMount, createLocalVue } from '@vue/test-utils'
+import { mount, shallow, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import ExportToJson from '@/components/ExportToJson.vue';
 import Web3 from 'web3'
@@ -22,7 +22,7 @@ describe('ExportToJson', () => {
         }
       }
     })
-    wrapper = shallowMount(ExportToJson, { store, localVue })
+    wrapper = shallow(ExportToJson, { store, localVue })
   })
   it('creates json from wallet', done => {
     wrapper.vm.runExportJsonWorker().then(jsonData => {
