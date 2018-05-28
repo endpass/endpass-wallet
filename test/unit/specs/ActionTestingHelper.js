@@ -1,4 +1,4 @@
-export default (action, payload, context, expectedMutations, expectedActions) => {
+export default (action, payload, context, expectedMutations, expectedActions, done) => {
   let musationsCount = 0
   let actionsCount = 0
 
@@ -27,10 +27,12 @@ export default (action, payload, context, expectedMutations, expectedActions) =>
       setTimeout(() => {
         expect(musationsCount).toBe(expectedMutations.length)
         expect(actionsCount).toBe(expectedActions.length)
+        done()
       }, 500);
     });
   } else {
     expect(musationsCount).toBe(expectedMutations.length)
     expect(actionsCount).toBe(expectedActions.length)
+    done()
   }
 }
