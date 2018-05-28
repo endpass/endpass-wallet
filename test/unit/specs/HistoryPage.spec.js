@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import moxios from 'moxios'
-import { mount, shallow, createLocalVue } from '@vue/test-utils'
+import { mount, shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import HistoryPage from '@/components/HistoryPage.vue';
 import Web3 from 'web3'
@@ -62,7 +62,11 @@ describe('HistoryPage', () => {
     })
 
     // new wrapper must be initialized in each test AFTER moxios.stubRequest
+<<<<<<< HEAD
     const wrapper = shallow(HistoryPage, { store, localVue })
+=======
+    const wrapper = shallowMount(HistoryPage, { store, localVue })
+>>>>>>> a779fa5... tests refactored
 
     moxios.wait(() => {
       let elems = wrapper.vm.transactions;
@@ -94,7 +98,11 @@ describe('HistoryPage', () => {
     })
 
     // new wrapper must be initialized in each test AFTER moxios.stubRequest
+<<<<<<< HEAD
     const wrapper = shallow(HistoryPage, { store, localVue })
+=======
+    const wrapper = shallowMount(HistoryPage, { store, localVue })
+>>>>>>> a779fa5... tests refactored
 
     moxios.wait(() => {
       wrapper.vm.$nextTick(() => {

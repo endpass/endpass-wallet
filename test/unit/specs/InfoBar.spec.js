@@ -1,5 +1,5 @@
 import InfoBar from '@/components/InfoBar.vue'
-import { shallow, createLocalVue } from '@vue/test-utils'
+import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import Router from 'vue-router'
 import LocalStorageMock from '../localStorageMock.js'
@@ -33,8 +33,15 @@ describe('InfoBar', () => {
     wrapper = shallow(InfoBar, { store, localVue })
   })
 
+<<<<<<< HEAD
   it('toogle modal state', () => {
     wrapper.vm.openCustomProviderModal();
     expect(wrapper.vm.customProviderModalOpen).toBe(true);
+=======
+  it('should load network from local storage', () => {
+    localStorage.setItem('net', 'Chpok');
+    wrapper = shallowMount(InfoBar, { store, localVue })
+    expect(wrapper.vm.selectedNet).toBe('Chpok')
+>>>>>>> a779fa5... tests refactored
   })
 })
