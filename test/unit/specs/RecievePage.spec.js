@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { mount, shallow, createLocalVue } from '@vue/test-utils'
+import { mount, shallowMount, createLocalVue } from '@vue/test-utils'
 import moxios from 'moxios'
 import Vuex from 'vuex'
 import ReceivePage from '@/components/ReceivePage.vue';
@@ -47,7 +47,7 @@ describe('ReceivePage', () => {
     })
 
     // new wrapper must be initialized in each test AFTER moxios.stubRequest
-    const wrapper = shallow(ReceivePage, { store, localVue })
+    const wrapper = shallowMount(ReceivePage, { store, localVue })
 
     moxios.wait(() => {
       let elems = wrapper.vm.transactions;

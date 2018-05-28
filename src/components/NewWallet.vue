@@ -94,7 +94,7 @@ export default {
       this.creatingWallet = false;
     },
     throwCreationError(error) {
-      console.log(error);
+      console.error(error);
       this.creatingWallet = false;
     }
   }

@@ -81,7 +81,7 @@ export default {
           console.log(balance);
           context.commit('setBalance', balance);
         }).catch(e => {
-          console.log(e, 'bal');
+          console.error(e, 'bal');
         });
       }
     }

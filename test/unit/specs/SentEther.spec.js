@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import web3 from 'web3'
-import { shallow, createLocalVue } from '@vue/test-utils'
+import { shallowMount, createLocalVue } from '@vue/test-utils'
 import VeeValidate from 'vee-validate'
 import validation from '@/validation'
 
@@ -41,7 +41,7 @@ describe('SendEther', () => {
     },
     actions
   })
-  wrapper = shallow(SendEther, { store, localVue })
+  wrapper = shallowMount(SendEther, { store, localVue })
   })
   it('sets correct data', () => {
     wrapper.vm.gasPrice = 10;

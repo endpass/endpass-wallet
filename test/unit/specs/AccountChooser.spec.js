@@ -1,4 +1,4 @@
-import { shallow, createLocalVue } from '@vue/test-utils'
+import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import AccountChooser from '@/components/AccountChooser.vue'
 
@@ -31,7 +31,7 @@ describe('AccountChooser', () => {
       },
       actions
     })
-    wrapper = shallow(AccountChooser, { store, localVue })
+    wrapper = shallowMount(AccountChooser, { store, localVue })
   })
 
   it('starts with no accounts', () => {
