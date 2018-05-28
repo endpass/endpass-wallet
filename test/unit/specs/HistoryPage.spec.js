@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import moxios from 'moxios'
-import { mount, shallow, createLocalVue } from '@vue/test-utils'
+import { mount, shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import HistoryPage from '@/components/HistoryPage.vue';
 import Web3 from 'web3'
@@ -19,6 +19,7 @@ describe('HistoryPage', () => {
   let store
   let wrapper
   beforeEach(() => {
+    moxios.install()
     store = new Vuex.Store({
       state: {
         accounts: {
@@ -33,43 +34,75 @@ describe('HistoryPage', () => {
       },
       actions
     })
-    wrapper = shallow(HistoryPage, { store, localVue })
   })
-  it('downloads data', () => {
+
+  afterEach(() => {
+    moxios.uninstall()
+  })
+
+  it('downloads transaction history', (done) => {
+    moxios.stubRequest(/api\.ethplorer\.io\/getAddressTransactions/, {
+      status: 200,
+      response: [{
+        id: '1',
+        to: wallet.getAddressString()
+      }]
+    })
+
+    moxios.stubRequest(/api\.ethplorer\.io\/getAddressHistory/, {
+      status: 200,
+      response: {
+        operations: [
+          {
+            id: '2',
+            from: wallet.getAddressString()
+          }
+        ] 
+      }
+    })
+
+    // new wrapper must be initialized in each test AFTER moxios.stubRequest
+    const wrapper = shallowMount(HistoryPage, { store, localVue })
+
     moxios.wait(() => {
-      let request = moxios.requests.mostRecent()
-      request.respondWith({
-        status: 200,
-        response: [{
-          id: '1'
-        }, {
-          id: '2'
-        }]
-      }).then(function () {
-        wrapper.vm.$nextTick(() => {
-          let elems = wrapper.vm.transactions.length;
-          expect(elems).toBe(2);
-          done();
-        })
-      })
+      let elems = wrapper.vm.transactions;
+      expect(elems.length).toBe(2);
+      expect(elems[0].to).toBe(wrapper.vm.address)
+      done();
     })
   })
-  it('concats data', () => {
+
+  it('concats transactions', (done) => {
+    moxios.stubRequest(/api\.ethplorer\.io\/getAddressTransactions/, {
+      status: 200,
+      response: [{
+        id: '1',
+        to: wallet.getAddressString()
+      }]
+    })
+
+    moxios.stubRequest(/api\.ethplorer\.io\/getAddressHistory/, {
+      status: 200,
+      response: {
+        operations: [
+          {
+            id: '2',
+            from: wallet.getAddressString()
+          }
+        ] 
+      }
+    })
+
+    // new wrapper must be initialized in each test AFTER moxios.stubRequest
+    const wrapper = shallowMount(HistoryPage, { store, localVue })
+
     moxios.wait(() => {
-      let request = moxios.requests.mostRecent()
-      request.respondWith({
-        status: 200,
-        response: [{
-          id: '1'
-        }, {
-          id: '2'
-        }]
-      }).then(function () {
-        wrapper.vm.$nextTick(() => {
-          let elems = wrapper.vm.processedTransactions.length;
-          expect(elems).toBe(3);
-          done();
-        })
+      wrapper.vm.$nextTick(() => {
+        let elems = wrapper.vm.processedTransactions;
+        expect(elems.length).toBe(3);
+        expect(elems[1].to).toBe(wrapper.vm.address)
+        expect(elems[2].timestamp).toBe(store.state.accounts.pendingTransactions[0].timestamp);
+        done();
       })
     })
   })
