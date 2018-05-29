@@ -1,0 +1,52 @@
+// Layout
+
+// Full height app with flex
+html,body {
+  height: 100%;
+}
+.app-container {
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  // Direct child of app container, a major element
+  &>.app-section {
+    flex: 0 1 auto;
+  }
+
+  // Stick info bar to bottom on mobile
+  @media screen and (max-width: 1023px) {
+    .info-bar {
+      order:2;
+      margin-top: auto;
+    }
+  }
+}
+
+// Container for a single page in the app
+.app-page {
+  // Card container inside the app
+  .app-card {
+    // Main card component in the app
+    &.main-app-card {
+      padding-bottom: 4rem;
+      min-height: 60vh;
+    }
+
+    .card-header-title {
+      font-size: 1.2em;
+      font-family: $heading-font-family;
+      color: $purple;
+    }
+  }
+}
+
+// Narrower containers
+.container.is-narrow {
+  max-width: 600px;
+}
+
+.section.is-narrow {
+  padding: 1rem 1.5rem;
+}
