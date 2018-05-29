@@ -45,11 +45,19 @@
                     <div class="field">
                       <label class="label" for="privateKey">Private key</label>
                       <div class="control">
+<<<<<<< HEAD
                         <input v-model="privateKey" name="privateKey" v-validate="'required|private_key'" type="text" class="input" id="privateKey" :class="{'is-danger': fields.privateKey && fields.privateKey.touched && fields.privateKey.invalid }" data-vv-as="private key" aria-describedby="privateKey" placeholder="Private key">
                         <p class="help is-danger">{{errors.first('privateKey')}}</p>
                       </div>
                     </div>
                     <button class="button is-primary is-medium" @click.prevent="addWalletWithPrivateKey"
+=======
+                        <input v-model="privateKey" name="privateKey" v-validate="'required|address'" type="text" class="input" id="privateKey" :class="{'is-danger': fields.privateKey && fields.privateKey.touched && fields.privateKey.invalid }" data-vv-as="private key" aria-describedby="privateKey" placeholder="Private key">
+                        <p class="help is-danger">{{errors.first('privateKey')}}</p>
+                      </div>
+                    </div>
+                    <button class="button is-primary is-medium" @click.prevent="addWalletWithKey"
+>>>>>>> 36603b3... validator for pivate & public key
                             :disabled="fields.privateKey && fields.privateKey.invalid">Import</button>
                   </form>
                 </div>
@@ -57,6 +65,7 @@
                 <div class="import-private-key" v-if="importType === 'publicKey'">
                   <form>
                     <div class="field">
+<<<<<<< HEAD
                       <label class="label" for="publicKey">Public key</label>
                       <div class="control">
                         <input v-model="publicKey" name="publicKey" v-validate="'required|public_key'" type="text" class="input" id="publicKey" :class="{'is-danger': fields.publicKey && fields.publicKey.touched && fields.publicKey.invalid }" data-vv-as="public key" aria-describedby="publicKey" placeholder="Public key">
@@ -64,6 +73,15 @@
                       </div>
                     </div>
                     <button class="button is-primary is-medium" @click.prevent="addWalletWithPublicKey"
+=======
+                      <label class="label" for="privateKey">Public key</label>
+                      <div class="control">
+                        <input v-model="privateKey" name="privateKey" v-validate="'required|address'" type="text" class="input" id="privateKey" :class="{'is-danger': fields.privateKey && fields.privateKey.touched && fields.privateKey.invalid }" data-vv-as="private key" aria-describedby="privateKey" placeholder="Private key">
+                        <p class="help is-danger">{{errors.first('privateKey')}}</p>
+                      </div>
+                    </div>
+                    <button class="button is-primary is-medium" @click.prevent="addWalletWithKey"
+>>>>>>> 36603b3... validator for pivate & public key
                             :disabled="fields.privateKey && fields.privateKey.invalid">Import</button>
                   </form>
                 </div>
