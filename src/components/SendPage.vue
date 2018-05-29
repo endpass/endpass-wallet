@@ -12,8 +12,7 @@
               <div class="field">
                 <label class="label" for="address">To</label>
                 <div class="control">
-                  <input v-model="transaction.to" name="address" v-validate="'required|address'" type="text" class="input"
-                                                                                                             :class="{'is-danger': fields.address && fields.address.touched && fields.address.invalid }" id="address" aria-describedby="address" placeholder="Receiver address" required>
+                  <input v-model="transaction.to" name="address" v-validate="'required|address'" type="text" class="input" :class="{'is-danger': fields.address && fields.address.touched && fields.address.invalid }" id="address" aria-describedby="address" placeholder="Receiver address" required>
                 </div>
                 <p class="help is-danger">{{errors.first('address')}}</p>
               </div>
