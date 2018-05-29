@@ -31,6 +31,14 @@ describe('InfoBar', () => {
       actions
     })
     wrapper = shallow(InfoBar, { store, localVue })
+<<<<<<< HEAD
+=======
+  })
+
+  it('toogle modal state', () => {
+    wrapper.vm.openCustomProviderModal();
+    expect(wrapper.vm.customProviderModalOpen).toBe(true);
+>>>>>>> 228d677... web3 tests'
   })
 <<<<<<< HEAD
 
