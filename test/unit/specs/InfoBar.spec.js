@@ -31,10 +31,4 @@ describe('InfoBar', () => {
       actions
     })
   })
-
-  it('should load network from local storage', () => {
-    localStorage.setItem('net', 'Chpok');
-    wrapper = shallow(InfoBar, { store, localVue })
-    expect(wrapper.vm.selectedNet).toBe('Chpok')
-  })
 })
