@@ -16,7 +16,11 @@
                   </select>
                 </div>    
                 <a class="button is-small is-white" @click="openCustomProviderModal()">
+<<<<<<< HEAD
                   <span class="icon is-small"> +
+=======
+                  <span class="icon is-small" v-html="require('@/img/plus.svg')">
+>>>>>>> ff22437... custom net provider & web3 sore update
                   </span>
                 </a>
               </div>

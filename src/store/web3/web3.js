@@ -57,7 +57,11 @@ export default {
       context.commit('changeNetwork', network);
       context.dispatch('accounts/subscribeOnBalanceUpdates',{}, {root: true});
       context.dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
+<<<<<<< HEAD
       localStorage.setItem('net', network.id);
+=======
+      localStorage.setItem('setItem', network.id);
+>>>>>>> ff22437... custom net provider & web3 sore update
     },
     addNewProvider(context, network) {
       network.id = context.getters.networks.length + 1;

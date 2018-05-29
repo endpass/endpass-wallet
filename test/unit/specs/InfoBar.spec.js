@@ -32,6 +32,7 @@ describe('InfoBar', () => {
     })
     wrapper = shallow(InfoBar, { store, localVue })
   })
+<<<<<<< HEAD
 
 <<<<<<< HEAD
   it('toogle modal state', () => {
@@ -44,4 +45,6 @@ describe('InfoBar', () => {
     expect(wrapper.vm.selectedNet).toBe('Chpok')
 >>>>>>> a779fa5... tests refactored
   })
+=======
+>>>>>>> ff22437... custom net provider & web3 sore update
 })
