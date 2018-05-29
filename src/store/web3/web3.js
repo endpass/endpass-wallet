@@ -57,7 +57,7 @@ export default {
       context.commit('changeNetwork', network);
       context.dispatch('accounts/subscribeOnBalanceUpdates',{}, {root: true});
       context.dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
-      localStorage.setItem('setItem', network.id);
+      localStorage.setItem('net', network.id);
     },
     addNewProvider(context, network) {
       network.id = context.getters.networks.length + 1;
