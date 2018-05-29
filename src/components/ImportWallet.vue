@@ -40,12 +40,26 @@
                     <div class="field">
                       <label class="label" for="privateKey">Private key</label>
                       <div class="control">
-                        <input v-model="privateKey" @change="(privateKeyError = false)" type="text" class="input" id="privateKey" aria-describedby="privateKey" placeholder="Private key">
-                        <p v-show="privateKeyError" class="help is-danger">Private key is invalid</p>
+                        <input v-model="privateKey" name="privateKey" v-validate="'required|address'" type="text" class="input" id="privateKey" :class="{'is-danger': fields.privateKey && fields.privateKey.touched && fields.privateKey.invalid }" data-vv-as="private key" aria-describedby="privateKey" placeholder="Private key">
+                        <p class="help is-danger">{{errors.first('privateKey')}}</p>
                       </div>
                     </div>
                     <button class="button is-primary is-medium" @click.prevent="addWalletWithKey"
-                            :disabled="!privateKey || privateKeyError">Import</button>
+                            :disabled="fields.privateKey && fields.privateKey.invalid">Import</button>
+                  </form>
+                </div>
+
+                <div class="import-private-key" v-if="importType === 'publicKey'">
+                  <form>
+                    <div class="field">
+                      <label class="label" for="privateKey">Public key</label>
+                      <div class="control">
+                        <input v-model="privateKey" name="privateKey" v-validate="'required|address'" type="text" class="input" id="privateKey" :class="{'is-danger': fields.privateKey && fields.privateKey.touched && fields.privateKey.invalid }" data-vv-as="private key" aria-describedby="privateKey" placeholder="Private key">
+                        <p class="help is-danger">{{errors.first('privateKey')}}</p>
+                      </div>
+                    </div>
+                    <button class="button is-primary is-medium" @click.prevent="addWalletWithKey"
+                            :disabled="fields.privateKey && fields.privateKey.invalid">Import</button>
                   </form>
                 </div>
 
