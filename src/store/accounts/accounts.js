@@ -68,7 +68,8 @@ export default {
           context.state.balanceSubscribtion.stop();
         }
         context.state.balanceSubscribtion = new EthBlockTracker({provider: context.rootState.web3.web3.currentProvider});
-        context.state.balanceSubscribtion.on('latest', () => {
+        context.state.balanceSubscribtion.on('latest', (block) => {
+          console.log(block);
           context.dispatch('updateBalance');
         });
         context.state.balanceSubscribtion.start();

@@ -16,7 +16,7 @@ describe('InfoBar', () => {
   let wrapper
   beforeEach(() => {
     actions = {
-      'web3/changeNetwork': jest.fn()
+      // 'web3/changeNetwork': jest.fn()
     }
     store = new Vuex.Store({
       state: {
@@ -30,11 +30,11 @@ describe('InfoBar', () => {
       },
       actions
     })
+    wrapper = shallow(InfoBar, { store, localVue })
   })
 
-  it('should load network from local storage', () => {
-    localStorage.setItem('net', 'Chpok');
-    wrapper = shallow(InfoBar, { store, localVue })
-    expect(wrapper.vm.selectedNet).toBe('Chpok')
+  it('toogle modal state', () => {
+    wrapper.vm.openCustomProviderModal();
+    expect(wrapper.vm.customProviderModalOpen).toBe(true);
   })
 })

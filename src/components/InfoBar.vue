@@ -7,12 +7,18 @@
           <div class="level-item">
             <div class="level-control">
               <p class="heading">Current Network</p>
-              <div class="select">
-                <select @change="selectNet" v-model="selectedNet">
-                  <option v-for="net in networks" :value="net.name">
-                  {{net.name}}
-                  </option>
-                </select>
+              <div class="flex">
+                <div class="select">
+                  <select v-model="selectedNet">
+                    <option v-for="net in networks" :value="net.id">
+                    {{net.name}}
+                    </option>
+                  </select>
+                </div>    
+                <a class="button is-small is-white" @click="openCustomProviderModal()">
+                  <span class="icon is-small"> +
+                  </span>
+                </a>
               </div>
             </div>
           </div>
@@ -36,21 +42,23 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
+    <custom-provider-modal @close="closeCustomProviderModal"
+      v-if="customProviderModalOpen"/>
   </div>
 </template>
 
 <script>
 import AccountChooser from '@/components/AccountChooser.vue'
+import CustomProviderModal from '@/components/CustomProviderModal.vue'
 import accounts from '@/mixins/accounts'
 
 export default {
   data () {
     return {
-      selectedNet: null,
       balanceSubscribtionInstance: null,
+      customProviderModalOpen: false
     }
   },
   computed: {
@@ -66,31 +74,35 @@ export default {
       this.balanceSubscribtionInstance.start();
     },
     networks() {
-      return this.$store.state.web3.networks;
+      return this.$store.getters['web3/networks'];
     },
     activeNet() {
       return this.$store.state.web3.activeNet;
     },
     isMainNet() {
-      return this.activeNet.name === 'Main'
-    }
-  },
-  methods: {
-    selectNet() {
-      this.$store.dispatch('web3/changeNetwork', this.selectedNet);
-      localStorage.setItem('net', this.selectedNet);
+      return this.activeNet.id === 1
+    },
+    selectedNet: {
+      get() {
+        return this.$store.state.web3.activeNet.id;
+      }, 
+      set(newValue) {
+        this.$store.dispatch('web3/changeNetwork', newValue);
+        localStorage.setItem('net', newValue);
+      }
     },
   },
-  created() {
-    let cachedNet = localStorage.getItem('net');
-    if(!cachedNet) {
-      cachedNet = 'Main';
+  methods: {
+    openCustomProviderModal() {
+      this.customProviderModalOpen = true
+    },
+    closeCustomProviderModal() {
+      this.customProviderModalOpen = false
     }
-    this.selectedNet = cachedNet
-    this.$store.dispatch('web3/changeNetwork', this.selectedNet);
   },
   components: {
-    AccountChooser
+    AccountChooser,
+    CustomProviderModal
   },
   mixins: [accounts]
 }
