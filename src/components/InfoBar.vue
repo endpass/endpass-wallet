@@ -16,7 +16,7 @@
                   </select>
                 </div>    
                 <a class="button is-small is-white" @click="openCustomProviderModal()">
-                  <span class="icon is-small" v-html="require('@/img/plus.svg')">
+                  <span class="icon is-small"> +
                   </span>
                 </a>
               </div>
