@@ -6,7 +6,7 @@ export default {
   validate(value, args) {
     let isKey
     try {
-      isKey = ethUtils.isValidPrivate(new Buffer(value, 'hex'));
+      isKey = ethUtils.isValidPublic(new Buffer(value, 'hex'));
     } catch (e) {
       return {
         valid: false,
@@ -15,7 +15,7 @@ export default {
     }
     return {
       valid: isKey,
-      data: !isKey  ? { message: 'This is not a valid private key' } : undefined
+      data: !isKey  ? { message: 'This is not a valid public key' } : undefined
     }
   }
 }
