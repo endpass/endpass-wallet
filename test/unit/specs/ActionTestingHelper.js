@@ -11,12 +11,12 @@ export default (action, payload, context, expectedMutations, expectedActions, do
   const dispatch = (type, payload) => {
     const action = expectedActions[actionsCount]
     expect(type).toBe(action.type)
-    actionsCount++
     if(expectedActions[actionsCount].async) {
       return new Promise ((res,rej) => {
         res();
       })
     }
+    actionsCount++
   }
 
   context.commit = commit
