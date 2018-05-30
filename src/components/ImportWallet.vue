@@ -18,34 +18,47 @@
                   <ul class="menu-list">
                     <li>
                       <a @click="importType = 'seedPhrase'"
-                      :class="{'is-active':importType==='seedPhrase'}">Seed Phrase</a>
+                      :class="{'is-active':importType === 'seedPhrase'}">Seed Phrase</a>
                     </li>
                     <li>
                       <a @click="importType = 'privateKey'"
-                      :class="{'is-active':importType==='privateKey'}">Private
+                      :class="{'is-active':importType === 'privateKey'}">Private
                       Key</a>
                     </li>
                     <li>
                       <a @click="importType = 'json'"
-                      :class="{'is-active':importType==='json'}">V3 JSON keystore</a>
+                      :class="{'is-active':importType === 'json'}">V3 JSON keystore</a>
                     </li>
                   </ul>
                 </div>
               </div>
 
               <div class="column">
-
                 <div class="import-private-key" v-if="importType === 'privateKey'">
                   <form>
                     <div class="field">
-                      <label class="label" for="privateKey">Private key</label>
+                      <label class="label" for="private-key">Private key</label>
                       <div class="control">
-                        <input v-model="privateKey" @change="(privateKeyError = false)" type="text" class="input" id="privateKey" aria-describedby="privateKey" placeholder="Private key">
-                        <p v-show="privateKeyError" class="help is-danger">Private key is invalid</p>
+                        <input
+                          v-model="privateKey"
+                          type="text"
+                          class="input"
+                          :class="{'is-danger': errors.has('privateKey') }"
+                          v-validate="'required|private_key'"
+                          data-vv-as="private key"
+                          key="privateKeyUnique"
+                          name="privateKey"
+                          id="privateKey"
+                          aria-describedby="privateKey"
+                          placeholder="Private key">
+                        <p v-show="errors.has('privateKey')"
+                          class="help is-danger">{{ errors.first('privateKey') }}</p>
                       </div>
                     </div>
-                    <button class="button is-primary is-medium" @click.prevent="addWalletWithKey"
-                            :disabled="!privateKey || privateKeyError">Import</button>
+                    <button
+                      class="button is-primary is-medium"
+                      @click.prevent="addWalletWithKey"
+                      >Import</button>
                   </form>
                 </div>
 
@@ -55,22 +68,32 @@
                     <div class="field">
                       <label class="label" for="hdkeySeed">Seed phrase</label>
                       <div class="control">
-                        <input v-model="hdkeyPrase" @change="(hdkeyPraseError =
-                        false)" type="text" class="input" id="hdkeySeed"
-                                                          aria-describedby="privateKey" placeholder="Seed phrase">
-                        <p v-show="hdkeyPraseError" class="help is-danger">Seed phrase is invalid</p>
+                        <input
+                          v-model="hdkeyPhrase"
+                          type="text"
+                          class="input"
+                          :class="{'is-danger': errors.has('hdkeyPhrase') }"
+                          v-validate="'required'"
+                          data-vv-as="seed phrase"
+                          key="hdkeyPhraseUnique"
+                          name="hdkeyPhrase"
+                          id="hdkeySeed"
+                          aria-describedby="hdkeyPhrase"
+                          placeholder="Seed phrase">
+                        <p v-show="errors.has('hdkeyPhrase')"
+                          class="help is-danger">{{ errors.first('hdkeyPhrase') }}</p>
                       </div>
                     </div>
-                    <button class="button is-primary is-medium"
-                            @click.prevent="addWalletWithPrase" :disabled="!hdkeyPrase ||
-                            hdkeyPraseError">Import</button>
+                    <button
+                      class="button is-primary is-medium"
+                      @click.prevent="addWalletWithPhrase"
+                      :disabled="!isFormValid">Import</button>
                   </form>
                 </div>
                 <div class="import-json" v-if="importType ===
                 'json'">
                   <form>
                     <div class="field">
-
                       <div class="file">
                         <label class="file-label">
                           <input class="file-input" type="file"
@@ -86,20 +109,33 @@
                           </span>
                         </label>
                       </div>
-                      <p v-show="jsonKeystoreError" class="help is-danger">File is invalid</p>
+                      <p v-show="errors.has('fileName')"
+                        class="help is-danger">{{ errors.first('fileName') }}</p>
                     </div>
                     <div class="field">
                       <label class="label" for="jsonKeystorePassword">V3 JSON keystore password</label>
                       <div class="control">
-                        <input v-model="jsonKeystorePassword"
-                               @change="(jsonKeystorePasswordError = false)"
-                               type="password" class="input" id="jsonKeystorePassword"
-                                                             aria-describedby="jsonKeystorePassword" placeholder="V3 JSON keystore password">
-                        <p v-show="jsonKeystorePasswordError" class="help is-danger">JSON password is invalid</p>
+                        <input
+                          v-model="jsonKeystorePassword"
+                          @input="errors.removeById('wrongPass')"
+                          type="password"
+                          class="input"
+                          :class="{'is-danger': errors.has('jsonKeystorePassword') }"
+                          v-validate="'required|min:8'"
+                          data-vv-as="password"
+                          key="jsonKeystorePasswordUnique"
+                          name="jsonKeystorePassword"
+                          id="jsonKeystorePassword"
+                          aria-describedby="jsonKeystorePassword"
+                          placeholder="V3 JSON keystore password">
+                        <p v-show="errors.has('jsonKeystorePassword')"
+                          class="help is-danger">{{ errors.first('jsonKeystorePassword') }}</p>
                       </div>
                     </div>
-                    <button class="button is-primary is-medium"
-                            @click.prevent="parseJson" :disabled="!jsonKeystorePassword">Import</button>
+                    <button
+                      class="button is-primary is-medium"
+                      @click.prevent="parseJson"
+                      :disabled="!isFormValid">Import</button>
                   </form>
                 </div>
               </div>
@@ -113,57 +149,66 @@
 </template>
 
 <script>
-
-import EthWallet from 'ethereumjs-wallet'
-import HDKey from 'ethereumjs-wallet/hdkey'
-import router from '@/router'
+import EthWallet from 'ethereumjs-wallet';
+import HDKey from 'ethereumjs-wallet/hdkey';
+import router from '@/router';
+import { mapMutations, mapActions } from 'vuex';
 
 export default {
-  data () {
-    return {
-      privateKey: '',
-      hdkeyPrase: '',
-      jsonPassword: '',
-      fileName: '',
-      file: null,
-      privateKeyError: false,
-      hdkeyPraseError: false,
-      jsonKeystoreError: false,
-      jsonKeystorePassword: '',
-      jsonKeystorePasswordError: false,
-      importType: 'seedPhrase',
-      mnemonic: {
-        phrase: '', //BIP39 mnemonic
-        seed: '', //Derived from mnemonic phrase
-        path: `m/44'/60'/0'/0` //Derivation path
-      }
-    }
+  data: () => ({
+    privateKey: '',
+    hdkeyPhrase: '',
+    jsonPassword: '',
+    fileName: '',
+    file: null,
+    jsonKeystorePassword: '',
+    importType: 'seedPhrase',
+    mnemonic: {
+      phrase: '', //BIP39 mnemonic
+      seed: '', //Derived from mnemonic phrase
+      path: `m/44'/60'/0'/0`, //Derivation path
+    },
+  }),
+  computed: {
+    isFormValid() {
+      const hasInvalidField = Object.keys(this.fields).some(
+        field => this.fields[field] && this.fields[field].invalid
+      );
+
+      return !(hasInvalidField || this.errors.count());
+    },
   },
   methods: {
-    commitWallet(hdWallet) {
-      this.$store.commit('accounts/setWallet', hdWallet);
-    },
-    addAccount(account) {
-      this.$store.dispatch('accounts/addAccount', account);
-    },
+    ...mapMutations('accounts', {
+      commitWallet: 'setWallet',
+    }),
+    ...mapActions('accounts', ['addAccount']),
     addWalletWithKey() {
       try {
         this.addAccount(this.createWalletWithKey());
-        router.push('/')
+        router.push('/');
       } catch (e) {
-        this.privateKeyError = true;
+        this.errors.add({
+          field: 'privateKey',
+          msg: 'Private key is invalid',
+          id: 'wrongKey',
+        });
         console.error(e);
       }
     },
-    addWalletWithPrase() {
+    addWalletWithPhrase() {
       try {
-        let hdWallet = this.createWalletWithPrase()
-        this.commitWallet(hdWallet)
-        let account = hdWallet.deriveChild(0).getWallet()
-        this.addAccount(account)
-        router.push('/')
+        const hdWallet = this.createWalletWithPrase();
+        this.commitWallet(hdWallet);
+        const account = hdWallet.deriveChild(0).getWallet();
+        this.addAccount(account);
+        router.push('/');
       } catch (e) {
-        this.hdkeyPraseError = true;
+        this.errors.add({
+          field: 'hdkeyPhrase',
+          msg: 'Seed phrase is invalid',
+          id: 'wrongPhrase',
+        });
         console.error(e);
       }
     },
@@ -171,43 +216,73 @@ export default {
       return EthWallet.fromPrivateKey(new Buffer(this.privateKey, 'hex'));
     },
     createWalletWithPrase() {
-      const hdKey = HDKey.fromMasterSeed(this.hdkeyPrase);
+      const hdKey = HDKey.fromMasterSeed(this.hdkeyPhrase);
       const hdWallet = hdKey.derivePath(this.mnemonic.path);
       return hdWallet;
     },
     parseJson() {
-      var reader = new FileReader();
+      const reader = new FileReader();
       reader.onload = this.addWalletWithJson.bind(this);
       reader.readAsText(this.file);
     },
     addWalletWithJson(e) {
       try {
-        let account = this.createWalletWithJson(e);
+        const account = this.createWalletWithJson(e);
         this.addAccount(account);
-        router.push('/')
+        router.push('/');
       } catch (e) {
-        if(e.message === 'Not a V3 wallet') {
-          this.jsonKeystoreError = true;
-        } else {
-          this.jsonKeystorePasswordError = true;
+        let error = {
+          field: 'jsonKeystorePassword',
+          msg: 'JSON password is invalid',
+          id: 'wrongPass',
+        };
+
+        if (
+          e.message === 'Not a V3 wallet' ||
+          e.message.includes('Unexpected token')
+        ) {
+          error = {
+            field: 'fileName',
+            msg: 'File is invalid',
+            id: 'wrongFile',
+          };
         }
+
+        this.errors.add(error);
       }
     },
     createWalletWithJson(e) {
       return EthWallet.fromV3(e.target.result, this.jsonKeystorePassword);
     },
     setFile(e) {
-      this.jsonKeystoreError = false;
-      if(e.target.files[0]) {
+      this.errors.removeById('wrongFile');
+
+      if (e.target.files[0]) {
         this.fileName = e.target.files[0].name;
         this.file = e.target.files[0];
       } else {
         this.fileName = '';
         this.file = null;
       }
-    }
-  }
-}
+    },
+  },
+  watch: {
+    importType() {
+      this.errors.removeById('wrongFile');
+      this.errors.removeById('wrongPass');
+      this.errors.removeById('wrongPhrase');
+      this.errors.removeById('wrongKey');
+
+      this.$nextTick().then(() => {
+        const activeField = Object.keys(this.fields).find(v => !!v);
+
+        if (activeField && this.$data[activeField]) {
+          this.$validator.validate();
+        }
+      });
+    },
+  },
+};
 </script>
 
 <style lang="scss">
