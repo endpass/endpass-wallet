@@ -21,7 +21,7 @@
                       <span class="has-text-centered">ETH</span>
                       </p>
                     </div>
-                    <div class="column">
+                    <div class="column" v-if="isPrivateKey">
                       <p class="heading">Actions</p>
                       <router-link :to="{name: 'ExportWallet'}">
                         <span class="icon is-small"
@@ -62,6 +62,11 @@ import accounts from '@/mixins/accounts'
 export default {
   data () {
     return {
+    }
+  },
+  computed: {
+    isPrivateKey() {
+      return this.$store.state.accounts.activeAccount && this.$store.state.accounts.activeAccount._privKey !== null
     }
   },
   mixins: [accounts]

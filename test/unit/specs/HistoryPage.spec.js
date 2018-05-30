@@ -62,7 +62,15 @@ describe('HistoryPage', () => {
     })
 
     // new wrapper must be initialized in each test AFTER moxios.stubRequest
+<<<<<<< HEAD
+<<<<<<< HEAD
     const wrapper = shallow(HistoryPage, { store, localVue })
+=======
+    const wrapper = shallowMount(HistoryPage, { store, localVue })
+>>>>>>> a779fa5... tests refactored
+=======
+    const wrapper = shallow(HistoryPage, { store, localVue })
+>>>>>>> 4fc6595... fixed with yarn versions
 
     moxios.wait(() => {
       let elems = wrapper.vm.transactions;
@@ -94,7 +102,15 @@ describe('HistoryPage', () => {
     })
 
     // new wrapper must be initialized in each test AFTER moxios.stubRequest
+<<<<<<< HEAD
+<<<<<<< HEAD
     const wrapper = shallow(HistoryPage, { store, localVue })
+=======
+    const wrapper = shallowMount(HistoryPage, { store, localVue })
+>>>>>>> a779fa5... tests refactored
+=======
+    const wrapper = shallow(HistoryPage, { store, localVue })
+>>>>>>> 4fc6595... fixed with yarn versions
 
     moxios.wait(() => {
       wrapper.vm.$nextTick(() => {

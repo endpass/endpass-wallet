@@ -29,6 +29,11 @@
                       <a @click="importType = 'json'"
                       :class="{'is-active':importType==='json'}">V3 JSON keystore</a>
                     </li>
+                    <li>
+                      <a @click="importType = 'publicKey'"
+                      :class="{'is-active':importType==='publicKey'}">Public
+                      Key</a>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -40,12 +45,26 @@
                     <div class="field">
                       <label class="label" for="privateKey">Private key</label>
                       <div class="control">
-                        <input v-model="privateKey" @change="(privateKeyError = false)" type="text" class="input" id="privateKey" aria-describedby="privateKey" placeholder="Private key">
-                        <p v-show="privateKeyError" class="help is-danger">Private key is invalid</p>
+                        <input v-model="privateKey" name="privateKey" v-validate="'required|address'" type="text" class="input" id="privateKey" :class="{'is-danger': fields.privateKey && fields.privateKey.touched && fields.privateKey.invalid }" data-vv-as="private key" aria-describedby="privateKey" placeholder="Private key">
+                        <p class="help is-danger">{{errors.first('privateKey')}}</p>
                       </div>
                     </div>
-                    <button class="button is-primary is-medium" @click.prevent="addWalletWithKey"
-                            :disabled="!privateKey || privateKeyError">Import</button>
+                    <button class="button is-primary is-medium" @click.prevent="addWalletWithPrivateKey"
+                            :disabled="fields.privateKey && fields.privateKey.invalid">Import</button>
+                  </form>
+                </div>
+
+                <div class="import-private-key" v-if="importType === 'publicKey'">
+                  <form>
+                    <div class="field">
+                      <label class="label" for="publicKey">Public key</label>
+                      <div class="control">
+                        <input v-model="publicKey" name="publicKey" v-validate="'required|public_key'" type="text" class="input" id="publicKey" :class="{'is-danger': fields.publicKey && fields.publicKey.touched && fields.publicKey.invalid }" data-vv-as="public key" aria-describedby="publicKey" placeholder="Public key">
+                        <p class="help is-danger">{{errors.first('publicKey')}}</p>
+                      </div>
+                    </div>
+                    <button class="button is-primary is-medium" @click.prevent="addWalletWithPublicKey"
+                            :disabled="fields.privateKey && fields.privateKey.invalid">Import</button>
                   </form>
                 </div>
 
@@ -122,11 +141,11 @@ export default {
   data () {
     return {
       privateKey: '',
+      publicKey: '',
       hdkeyPrase: '',
       jsonPassword: '',
       fileName: '',
       file: null,
-      privateKeyError: false,
       hdkeyPraseError: false,
       jsonKeystoreError: false,
       jsonKeystorePassword: '',
@@ -146,14 +165,13 @@ export default {
     addAccount(account) {
       this.$store.dispatch('accounts/addAccount', account);
     },
-    addWalletWithKey() {
-      try {
-        this.addAccount(this.createWalletWithKey());
-        router.push('/')
-      } catch (e) {
-        this.privateKeyError = true;
-        console.error(e);
-      }
+    addWalletWithPrivateKey() {
+      this.addAccount(this.createWalletWithPrivateKey());
+      router.push('/');
+    },
+    addWalletWithPublicKey() {
+      this.addAccount(this.createWalletWithPublicKey());
+      router.push('/');
     },
     addWalletWithPrase() {
       try {
@@ -167,8 +185,12 @@ export default {
         console.error(e);
       }
     },
-    createWalletWithKey() {
+    createWalletWithPrivateKey() {
       return EthWallet.fromPrivateKey(new Buffer(this.privateKey, 'hex'));
+    },
+
+    createWalletWithPublicKey() {
+      return EthWallet.fromPublicKey(new Buffer(this.publicKey, 'hex'));
     },
     createWalletWithPrase() {
       const hdKey = HDKey.fromMasterSeed(this.hdkeyPrase);

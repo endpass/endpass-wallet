@@ -31,10 +31,28 @@ describe('InfoBar', () => {
       actions
     })
     wrapper = shallow(InfoBar, { store, localVue })
+<<<<<<< HEAD
+=======
   })
 
   it('toogle modal state', () => {
     wrapper.vm.openCustomProviderModal();
     expect(wrapper.vm.customProviderModalOpen).toBe(true);
+>>>>>>> 228d677... web3 tests'
   })
+<<<<<<< HEAD
+
+<<<<<<< HEAD
+  it('toogle modal state', () => {
+    wrapper.vm.openCustomProviderModal();
+    expect(wrapper.vm.customProviderModalOpen).toBe(true);
+=======
+  it('should load network from local storage', () => {
+    localStorage.setItem('net', 'Chpok');
+    wrapper = shallow(InfoBar, { store, localVue })
+    expect(wrapper.vm.selectedNet).toBe('Chpok')
+>>>>>>> a779fa5... tests refactored
+  })
+=======
+>>>>>>> ff22437... custom net provider & web3 sore update
 })
