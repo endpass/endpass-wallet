@@ -40,7 +40,7 @@ describe('ImportWallet', () => {
     const vm = new Vue(ImportWallet).$mount();
     vm.privateKey =
       '4daf66f4ffed6d47e75d22e2c962d1f9a36550dc2cfda4bfb5da741bdc97d6ba';
-    expect(vm.createWalletWithKey() instanceof EthWallet).toBe(true);
+    expect(vm.createWalletWithPrivateKey() instanceof EthWallet).toBe(true);
   });
   it('correctly creates wallet with JSON key', () => {
     const vm = new Vue(ImportWallet).$mount();
@@ -58,7 +58,11 @@ describe('ImportWallet', () => {
       'salt suit force stomach lounge endless soul junk join leg sort aware';
     expect(vm.createWalletWithPrase() instanceof HDKey).toBe(true);
   });
-
+  it('correctly creates wallet with public key', () => {
+    const vm = new Vue(ImportWallet).$mount()
+    vm.publicKey = '0935f10939786f4d95e2c3d3a615b334ea35ad6b9cab87ac50c7410c819d191e36e7307e180c3f95c4080f957298b3a8bc13f562fa5087076da534feb5b52552';
+    expect(vm.createWalletWithPublicKey() instanceof EthWallet).toBe(true);
+  });
   it('correctly sets error with bad phrase', () => {
     const vm = new Vue(ImportWallet).$mount();
     expect(() => {
@@ -67,13 +71,22 @@ describe('ImportWallet', () => {
     expect(vm.errors.has('hdkeyPhrase')).toBe(true);
   });
 
-  it('correctly sets error with bad key', () => {
+  it('correctly sets error with private bad key', () => {
     const vm = new Vue(ImportWallet).$mount();
     expect(() => {
-      vm.addWalletWithKey();
+      vm.addWalletWithPrivateKey();
     }).toThrow();
     expect(vm.errors.has('privateKey')).toBe(true);
   });
+
+  it('correctly sets error with public bad key', () => {
+    const vm = new Vue(ImportWallet).$mount();
+    expect(() => {
+      vm.addWalletWithPublicKey();
+    }).toThrow();
+    expect(vm.errors.has('publicKey')).toBe(true);
+  });
+
 
   it('defaults to import by seed phrase', () => {
     expect(wrapper.vm.importType).toBe('seedPhrase');
