@@ -20,7 +20,7 @@
           <span class="icon is-small"
                 v-html="require('@/img/clock.svg')"></span>History
         </router-link>
-        <router-link v-if="activeAccount && isPrivateKey" class="navbar-item" :to="{name: 'SendPage'}" @click.native="toggleNavMenu">
+        <router-link v-if="activeAccount && !isPublicAccount" class="navbar-item" :to="{name: 'SendPage'}" @click.native="toggleNavMenu">
           <span class="icon is-small"
                 v-html="require('@/img/arrow-thick-left.svg')"></span>Send
         </router-link>
@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data () {
     return {
@@ -47,9 +49,7 @@ export default {
     }
   },
   computed: {
-    isPrivateKey() {
-      return this.$store.state.accounts.activeAccount && this.$store.state.accounts.activeAccount._privKey !== null
-    }
+    ...mapGetters('accounts', ['isPublicAccount'])
   },
   methods: {
     toggleNavMenu () {

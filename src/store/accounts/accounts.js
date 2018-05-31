@@ -10,6 +10,11 @@ export default {
     balanceSubscribtion: false,
     pendingTransactions: []
   },
+  getters: {
+    isPublicAccount(state) {
+      return state.activeAccount && state.activeAccount._privKey === null;
+    }
+  },
   mutations: {
     addAccount(state, account) {
       state.accounts.push(account)
