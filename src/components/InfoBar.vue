@@ -50,21 +50,20 @@
 </template>
 
 <script>
-import AccountChooser from '@/components/AccountChooser.vue'
-import CustomProviderModal from '@/components/CustomProviderModal.vue'
-import accounts from '@/mixins/accounts'
+import AccountChooser from '@/components/AccountChooser.vue';
+import CustomProviderModal from '@/components/CustomProviderModal.vue';
+import accounts from '@/mixins/accounts';
+import { saveToStorage } from '@/services/storage';
 
 export default {
-  data () {
-    return {
-      balanceSubscribtionInstance: null,
-      customProviderModalOpen: false
-    }
-  },
+  data: () => ({
+    balanceSubscribtionInstance: null,
+    customProviderModalOpen: false,
+  }),
   computed: {
     balanceSubscribtion() {
       let provider = this.$store.state.web3.web3.currentProvider;
-      if(this.balanceSubscribtionInstance) {
+      if (this.balanceSubscribtionInstance) {
         this.balanceSubscribtionInstance.stop();
       }
       this.balanceSubscribtionInstance = new EthBlockTracker({ provider });
@@ -80,32 +79,38 @@ export default {
       return this.$store.state.web3.activeNet;
     },
     isMainNet() {
-      return this.activeNet.id === 1
+      return this.activeNet.id === 1;
     },
     selectedNet: {
       get() {
         return this.$store.state.web3.activeNet.id;
-      }, 
+      },
       set(newValue) {
         this.$store.dispatch('web3/changeNetwork', newValue);
-        localStorage.setItem('net', newValue);
-      }
+        saveToStorage('net', newValue).catch(() => {
+          this.$notify({
+            title: 'Sorry',
+            text: 'Can`t save data for you',
+            type: 'warn',
+          });
+        });
+      },
     },
   },
   methods: {
     openCustomProviderModal() {
-      this.customProviderModalOpen = true
+      this.customProviderModalOpen = true;
     },
     closeCustomProviderModal() {
-      this.customProviderModalOpen = false
-    }
+      this.customProviderModalOpen = false;
+    },
   },
   components: {
     AccountChooser,
-    CustomProviderModal
+    CustomProviderModal,
   },
-  mixins: [accounts]
-}
+  mixins: [accounts],
+};
 </script>
 
 <style lang="scss">
