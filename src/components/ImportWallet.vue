@@ -61,7 +61,7 @@
                     <button 
                         class="button is-primary is-medium"
                         @click.prevent="addWalletWithPublicKey"
-                        :disabled="errors.has('publicKey')"
+                        :disabled="!isFormValid"
                         >Import</button>
                   </form>
                 </div>
@@ -90,7 +90,7 @@
                     <button
                       class="button is-primary is-medium"
                       @click.prevent="addWalletWithPrivateKey"
-                      :disabled="errors.has('privateKey')"
+                      :disabled="!isFormValid"
                       >Import</button>
                   </form>
                 </div>
