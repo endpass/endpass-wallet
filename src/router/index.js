@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import multiguard from 'vue-router-multiguard';
 
 import HomePage from '@/components/HomePage'
 import SendPage from '@/components/SendPage'
@@ -24,7 +25,7 @@ export default new Router({
       path: '/send',
       name: 'SendPage',
       component: SendPage,
-      beforeEnter: hasWalletGuard
+      beforeEnter: multiguard([hasWalletGuard, privateWalletGuard])
     },
     {
       path: '/tokens',
@@ -60,7 +61,7 @@ export default new Router({
       path: '/export',
       name: 'ExportWallet',
       component: ExportWallet,
-      beforeEnter: hasWalletGuard
+      beforeEnter: multiguard([hasWalletGuard, privateWalletGuard])
     }
   ]
 })
@@ -74,6 +75,14 @@ function hasWalletGuard (to, from, next) {
 
 function noWalletGuard(to, from, next) {
   if(!store.state.accounts.activeAccount) {
+    next();
+  } else {
+    next(from.fullPath);
+  }
+}
+
+function privateWalletGuard(to, from, next) {
+  if(!store.state.accounts.activeAccount._privKey !== null) {
     next();
   } else {
     next(from.fullPath);

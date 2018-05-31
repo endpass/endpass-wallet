@@ -58,7 +58,7 @@
           </div>
         </div>
       </div>
-      <div v-if="isPending" class="card-footer">
+      <div v-if="isPending && !isPublicAccount" class="card-footer">
         <a class="card-footer-item" @click="resend">
           <span class="icon is-medium"
                 v-html="require('@/img/loop.svg')"></span>Resend
@@ -79,6 +79,8 @@ import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import ResendModal from './ResendModal';
 import accounts from '@/mixins/accounts'
+import { mapGetters } from 'vuex'
+
 
 window.web3 = web3
 export default {
@@ -89,6 +91,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('accounts', ['isPublicAccount']),
     recieve() {
       return this.transaction.to === this.address;
     },
