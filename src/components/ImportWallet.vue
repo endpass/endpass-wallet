@@ -73,7 +73,7 @@
                           type="text"
                           class="input"
                           :class="{'is-danger': errors.has('hdkeyPhrase') }"
-                          v-validate="'required'"
+                          v-validate="'required|seed_phrase'"
                           data-vv-as="seed phrase"
                           key="hdkeyPhraseUnique"
                           name="hdkeyPhrase"
