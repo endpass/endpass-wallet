@@ -21,7 +21,7 @@
                       <span class="has-text-centered">ETH</span>
                       </p>
                     </div>
-                    <div class="column">
+                    <div class="column" v-if="!isPublicAccount">
                       <p class="heading">Actions</p>
                       <router-link :to="{name: 'ExportWallet'}">
                         <span class="icon is-small"
@@ -58,11 +58,15 @@
 
 <script>
 import accounts from '@/mixins/accounts'
+import { mapGetters } from 'vuex'
 
 export default {
   data () {
     return {
     }
+  },
+  computed: {
+    ...mapGetters('accounts', ['isPublicAccount'])
   },
   mixins: [accounts]
 }
