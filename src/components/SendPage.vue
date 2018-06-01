@@ -102,7 +102,7 @@
 
               <div class="field">
                 <div class="control">
-                  <button :disabled="!isFormValid"
+                  <button :disabled="!isFormValid || isSyncing"
                     class="button is-primary is-medium"
                     @click.prevent="sendTransaction">Send</button>
                 </div>
@@ -142,6 +142,7 @@ export default {
       pendingTransactions: state => state.accounts.pendingTransactions,
       tokens: state => state.tokens.activeTokens,
       web3: state => state.web3.web3,
+      isSyncing: state => state.web3.isSyncing,
     }),
     gasPrice: {
       get() {

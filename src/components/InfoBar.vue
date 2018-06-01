@@ -22,6 +22,11 @@
               </div>
             </div>
           </div>
+          <div class="level-item">
+            <div class="level-control">
+              <sync-status/>
+            </div>
+          </div>
         </div>
 
         <div class="level-right">
@@ -52,6 +57,7 @@
 <script>
 import AccountChooser from '@/components/AccountChooser.vue'
 import CustomProviderModal from '@/components/CustomProviderModal.vue'
+import SyncStatus from '@/components/SyncStatus.vue'
 import accounts from '@/mixins/accounts'
 
 export default {
@@ -102,7 +108,8 @@ export default {
   },
   components: {
     AccountChooser,
-    CustomProviderModal
+    CustomProviderModal,
+    SyncStatus
   },
   mixins: [accounts]
 }

@@ -1,5 +1,3 @@
-import EthBlockTracker from 'eth-block-tracker';
-
 export default {
   namespaced: true,
   state: {
@@ -7,7 +5,6 @@ export default {
     accounts: [],
     activeAccount: null,
     balance: null,
-    balanceSubscribtion: false,
     pendingTransactions: []
   },
   mutations: {
@@ -59,21 +56,7 @@ export default {
     },
     setActiveAccount(context, account) {
       context.commit('setActiveAccount', account);
-      context.dispatch('subscribeOnBalanceUpdates')
       context.dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
-    },
-    subscribeOnBalanceUpdates(context) {
-      if(context.rootState.accounts.activeAccount) {
-        if(context.state.balanceSubscribtion) {
-          context.state.balanceSubscribtion.stop();
-        }
-        context.state.balanceSubscribtion = new EthBlockTracker({provider: context.rootState.web3.web3.currentProvider});
-        context.state.balanceSubscribtion.on('latest', (block) => {
-          console.log(block);
-          context.dispatch('updateBalance');
-        });
-        context.state.balanceSubscribtion.start();
-      }
     },
     updateBalance(context) {
       if(context.rootState.accounts.activeAccount) {

@@ -54,7 +54,8 @@ describe('web3 store', () => {
     }, [
 			{ type : 'changeNetwork' }
     ],[
-			{ type : 'accounts/subscribeOnBalanceUpdates' },
+      { type: 'subscribeOnSyncStatus'},
+			{ type: 'subscribeOnBlockUpdates' },
 			{ type: 'tokens/subscribeOnTokenUpdates'}
     ], done);
   })
