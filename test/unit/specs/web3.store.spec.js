@@ -63,20 +63,24 @@ describe('web3 store', () => {
     let eth = {
       isSyncing :() => {
         return new Promise((res, rej) => {
-          res();
+          res(1);
         })
       }
     }
     let contextMock = {
       state: {
         web3 : {
+          currentProvider: 0,
           eth
         }
-      }
+      },
+      commit: () => {},
+      dispatch: () => {}
     }
-    const spy = jest.spyOn(eth, 'isSyncing')
+    const spyIsSyncing = jest.spyOn(eth, 'isSyncing')
     state.actions.subscribeOnSyncStatus(contextMock);
-    expect(spy).toHaveBeenCalled();
+    expect(spyIsSyncing).toHaveBeenCalled();
+    done()
   })
   it('should add provider network', (done) => {
   	testAction(state.actions.addNewProvider, {
