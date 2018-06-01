@@ -63,22 +63,10 @@ import accounts from '@/mixins/accounts'
 export default {
   data () {
     return {
-      balanceSubscribtionInstance: null,
       customProviderModalOpen: false
     }
   },
   computed: {
-    balanceSubscribtion() {
-      let provider = this.$store.state.web3.web3.currentProvider;
-      if(this.balanceSubscribtionInstance) {
-        this.balanceSubscribtionInstance.stop();
-      }
-      this.balanceSubscribtionInstance = new EthBlockTracker({ provider });
-      this.balanceSubscribtionInstance.on('latest', () => {
-        this.updateBalance();
-      });
-      this.balanceSubscribtionInstance.start();
-    },
     networks() {
       return this.$store.getters['web3/networks'];
     },
