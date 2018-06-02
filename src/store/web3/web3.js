@@ -24,12 +24,12 @@ export default {
         },
         {
           name: 'Ropsten',
-          id: 2,
+          id: 3,
           url: `https://ropsten.infura.io/${infuraConf.key}`,
         },
         {
           name: 'Rinkeby',
-          id: 3,
+          id: 4,
           url: `https://rinkeby.infura.io/${infuraConf.key}`,
         },
       ],

@@ -104,7 +104,7 @@ export default {
     init({ commit }) {
       return storage
         .read('tokens')
-        .then(tokens => commit('saveTokensFromStorage', tokens))
+        .then(tokens => commit('saveTokensFromStorage', tokens || []))
         .catch(e => console.error(e));
     },
   },
