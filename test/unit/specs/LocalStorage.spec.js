@@ -1,12 +1,9 @@
 import LocalStorageMock from '../localStorageMock';
-import {
-  clearStorage,
-  readFromStorage,
-  removeFromStorage,
-  saveToStorage,
-} from '@/services/storage';
+import LocalStorage from '@/services/storage/LocalStorage';
 
 global.localStorage = LocalStorageMock;
+
+const localStore = new LocalStorage();
 
 describe('Storage', () => {
   const mockObject = {
@@ -25,10 +22,10 @@ describe('Storage', () => {
   });
 
   it('should save value', async () => {
-    await saveToStorage('someString', str);
-    await saveToStorage('someNumber', num);
-    await saveToStorage('someArray', arr);
-    await saveToStorage('someObject', mockObject);
+    await localStore.write('someString', str);
+    await localStore.write('someNumber', num);
+    await localStore.write('someArray', arr);
+    await localStore.write('someObject', mockObject);
 
     const {
       someString,
@@ -44,9 +41,9 @@ describe('Storage', () => {
   });
 
   it('should get right value', async () => {
-    await saveToStorage('someObject', mockObject);
+    await localStore.write('someObject', mockObject);
 
-    const objFromStorage = await readFromStorage('someObject');
+    const objFromStorage = await localStore.read('someObject');
     const {
       num: numFromStorage,
       str: strFromStorage,
@@ -60,19 +57,19 @@ describe('Storage', () => {
   });
 
   it('should remove value', async () => {
-    await saveToStorage('someObject', mockObject);
-    await removeFromStorage('someObject', mockObject);
-    const valFromStorage = await readFromStorage('someObject');
+    await localStore.write('someObject', mockObject);
+    await localStore.remove('someObject', mockObject);
+    const valFromStorage = await localStore.read('someObject');
 
     expect(valFromStorage).toBe(null);
   });
 
   it('should clear all values', async () => {
-    await saveToStorage('someObject', mockObject);
-    await saveToStorage('someNumber', num);
-    await clearStorage();
-    const objFromStorage = await readFromStorage('someObject');
-    const numFromStorage = await readFromStorage('someNumber');
+    await localStore.write('someObject', mockObject);
+    await localStore.write('someNumber', num);
+    await localStore.clear();
+    const objFromStorage = await localStore.read('someObject');
+    const numFromStorage = await localStore.read('someNumber');
 
     expect(objFromStorage).toBe(null);
     expect(numFromStorage).toBe(null);
@@ -87,10 +84,10 @@ describe('Storage', () => {
       global.localStorage[key] = throwingFunc;
     });
 
-    await expect(readFromStorage('someObject')).rejects.toThrow('Wrong data');
-    await expect(removeFromStorage('someObject')).rejects.toThrow('Wrong data');
-    await expect(clearStorage()).rejects.toThrow('Wrong data');
-    await expect(saveToStorage('someObject', mockObject)).rejects.toThrow(
+    await expect(localStore.read('someObject')).rejects.toThrow('Wrong data');
+    await expect(localStore.remove('someObject')).rejects.toThrow('Wrong data');
+    await expect(localStore.clear()).rejects.toThrow('Wrong data');
+    await expect(localStore.write('someObject', mockObject)).rejects.toThrow(
       'Wrong data'
     );
 

@@ -1,6 +1,6 @@
 import TokenTracker from 'eth-token-tracker';
 import EthplorerService from '@/services/ethplorer';
-import { readFromStorage, saveToStorage } from '@/services/storage';
+import storage from '@/services/storage';
 
 export default {
   namespaced: true,
@@ -42,9 +42,9 @@ export default {
       );
       if (!tokenExist) {
         commit('saveTokenToWatchStorage', token);
-        saveToStorage('tokens', [...state.savedTokens, token]).catch(e =>
-          console.error(e)
-        );
+        storage
+          .write('tokens', [...state.savedTokens, token])
+          .catch(e => console.error(e));
         state.tokensSubscription.add({
           address: token.address,
         });
@@ -102,7 +102,8 @@ export default {
       return EthplorerService.getTransactions(address);
     },
     init({ commit }) {
-      return readFromStorage('tokens')
+      return storage
+        .read('tokens')
         .then(tokens => commit('saveTokensFromStorage', tokens))
         .catch(e => console.error(e));
     },

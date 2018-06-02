@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import { infuraConf } from '@/config.js';
 import EthBlockTracker from 'eth-block-tracker';
-import { readFromStorage, saveToStorage } from '@/services/storage';
+import storage from '@/services/storage';
 
 Web3.providers.HttpProvider.prototype.sendAsync =
   Web3.providers.HttpProvider.prototype.send;
@@ -55,7 +55,7 @@ export default {
     },
     addNewProvider(state, network) {
       state.storedNetworks.push(network);
-      saveToStorage('networks', state.storedNetworks);
+      storage.write('networks', state.storedNetworks);
     },
     setProviders(state, networks) {
       state.storedNetworks = networks;
@@ -77,7 +77,7 @@ export default {
       context.dispatch('subscribeOnSyncStatus');
       context.dispatch('subscribeOnBlockUpdates');
       context.dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true });
-      saveToStorage('net', network.id);
+      storage.write('net', network.id);
     },
     addNewProvider(context, network) {
       network.id = context.getters.networks.length + 1;
@@ -112,11 +112,12 @@ export default {
       context.state.blockSubscribtion.start();
     },
     init({ commit, state }) {
-      return readFromStorage('net')
+      return storage
+        .read('net')
         .then(cachedNet => parseInt(cachedNet))
         .then(cachedNet =>
           Promise.all([
-            readFromStorage('networks').then(net => (net ? net : [])),
+            storage.read('networks').then(net => (net ? net : [])),
             cachedNet ? cachedNet : 1,
           ])
         )

@@ -59,7 +59,7 @@ import AccountChooser from '@/components/AccountChooser.vue';
 import CustomProviderModal from '@/components/CustomProviderModal.vue';
 import SyncStatus from '@/components/SyncStatus.vue'
 import accounts from '@/mixins/accounts';
-import { saveToStorage } from '@/services/storage';
+import storage from '@/mixins/storage';
 
 export default {
   data: () => ({
@@ -81,11 +81,11 @@ export default {
       },
       set(newValue) {
         this.$store.dispatch('web3/changeNetwork', newValue);
-        saveToStorage('net', newValue).catch(() => {
+        this.storage.write('net', newValue).catch(e => {
           this.$notify({
-            title: 'Sorry',
-            text: 'Can`t save data for you',
-            type: 'warn',
+            title: e.title,
+            text: e.text,
+            type: 'is-warning',
           });
         });
       },
@@ -104,7 +104,7 @@ export default {
     CustomProviderModal,
     SyncStatus
   },
-  mixins: [accounts],
+  mixins: [accounts, storage],
 };
 </script>
 
