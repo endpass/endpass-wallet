@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 import { infuraConf } from '@/config.js';
+import EthBlockTracker from 'eth-block-tracker';
 import { readFromStorage, saveToStorage } from '@/services/storage';
 
 Web3.providers.HttpProvider.prototype.sendAsync =
@@ -17,8 +18,8 @@ export default {
       web3: new Web3(activeNet.url),
       defaultNetworks: [
         {
-          name: 'Main',
           id: 1,
+          name: 'Main',
           url: `https://mainnet.infura.io/${infuraConf.key}`,
         },
         {
@@ -33,6 +34,8 @@ export default {
         },
       ],
       storedNetworks: [],
+      isSyncing: false,
+      blockNumber: 0,
       activeNet,
     };
   },
@@ -57,6 +60,12 @@ export default {
     setProviders(state, networks) {
       state.storedNetworks = networks;
     },
+    setSyncStatus(state, syncObject) {
+      state.isSyncing = syncObject;
+    },
+    setBlockNumber(state, number) {
+      state.blockNumber = number;
+    },
   },
   actions: {
     changeNetwork(context, networkId) {
@@ -65,11 +74,8 @@ export default {
       );
       let network = context.getters.networks[netIndex];
       context.commit('changeNetwork', network);
-      context.dispatch(
-        'accounts/subscribeOnBalanceUpdates',
-        {},
-        { root: true }
-      );
+      context.dispatch('subscribeOnSyncStatus');
+      context.dispatch('subscribeOnBlockUpdates');
       context.dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true });
       saveToStorage('net', network.id);
     },
@@ -77,6 +83,33 @@ export default {
       network.id = context.getters.networks.length + 1;
       context.commit('addNewProvider', network);
       context.dispatch('changeNetwork', network.id);
+    },
+    subscribeOnSyncStatus(context) {
+      let providerCache = context.state.web3.currentProvider;
+      context.state.web3.eth.isSyncing().then(resp => {
+        if (providerCache === context.state.web3.currentProvider) {
+          context.commit('setSyncStatus', resp);
+          context.dispatch('subscribeOnSyncStatus');
+        }
+      });
+    },
+    subscribeOnBlockUpdates(context) {
+      if (context.state.blockSubscribtion) {
+        context.state.blockSubscribtion.stop();
+      }
+      context.state.blockSubscribtion = new EthBlockTracker({
+        provider: context.rootState.web3.web3.currentProvider,
+      });
+      context.state.blockSubscribtion.on('latest', block => {
+        if (context.rootState.accounts.activeAccount) {
+          context.dispatch('accounts/updateBalance', {}, { root: true });
+        }
+        context.commit(
+          'setBlockNumber',
+          web3.utils.hexToNumberString(block.number)
+        );
+      });
+      context.state.blockSubscribtion.start();
     },
     init({ commit, state }) {
       return readFromStorage('net')

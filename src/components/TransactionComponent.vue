@@ -58,12 +58,13 @@
           </div>
         </div>
       </div>
-      <div v-if="isPending && !isPublicAccount" class="card-footer">
-        <a class="card-footer-item" @click="resend">
+      <div v-if="isPending  && !isPublicAccount" class="card-footer">
+        <a class="card-footer-item" @click="resend" :disabled="isSyncing">
           <span class="icon is-medium"
                 v-html="require('@/img/loop.svg')"></span>Resend
         </a>
-        <a class="card-footer-item has-text-danger" @click="cansel" type="button" name="button">
+        <a class="card-footer-item has-text-danger" @click="cansel" :disabled="isSyncing"
+         type="button" name="button">
           <span class="icon is-medium"
                 v-html="require('@/img/ban.svg')"></span>Cancel
         </a>
@@ -79,6 +80,7 @@ import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import ResendModal from './ResendModal';
 import accounts from '@/mixins/accounts'
+import { mapState } from 'vuex';
 import { mapGetters } from 'vuex'
 
 
@@ -91,6 +93,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      isSyncing: state => state.web3.isSyncing,
+    }),
     ...mapGetters('accounts', ['isPublicAccount']),
     recieve() {
       return this.transaction.to === this.address;

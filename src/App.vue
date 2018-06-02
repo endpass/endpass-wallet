@@ -16,12 +16,20 @@
 import AppNav from '@/components/AppNav.vue'
 import InfoBar from '@/components/InfoBar.vue'
 import accounts from '@/mixins/accounts'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'App',
   data () {
     return {
     }
+  },
+  methods: {
+    ...mapActions('web3', ['subscribeOnSyncStatus', 'subscribeOnBlockUpdates'])
+  },
+  created() {
+    this.subscribeOnSyncStatus();
+    this.subscribeOnBlockUpdates();
   },
   components: {
     AppNav,
