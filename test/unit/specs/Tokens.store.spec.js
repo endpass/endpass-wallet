@@ -11,7 +11,7 @@ Web3.providers.HttpProvider.prototype.sendAsync =
   Web3.providers.HttpProvider.prototype.send;
 
 localStorage.setItem(
-  'tokens',
+  'eth.mainnet.tokens.saved',
   JSON.stringify([
     {
       address: '0x0',

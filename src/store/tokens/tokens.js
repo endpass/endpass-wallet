@@ -43,7 +43,7 @@ export default {
       if (!tokenExist) {
         commit('saveTokenToWatchStorage', token);
         storage
-          .write('tokens', [...state.savedTokens, token])
+          .write('eth.mainnet.tokens.saved', [...state.savedTokens, token])
           .catch(e => console.error(e));
         state.tokensSubscription.add({
           address: token.address,
@@ -103,7 +103,7 @@ export default {
     },
     init({ commit }) {
       return storage
-        .read('tokens')
+        .read('eth.mainnet.tokens.saved')
         .then(tokens => commit('saveTokensFromStorage', tokens || []))
         .catch(e => console.error(e));
     },
