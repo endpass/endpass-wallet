@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import router from '../router'
+import router from '@/router'
 import Bip39 from 'bip39'
 import EthWallet from 'ethereumjs-wallet'
 import HDKey from 'ethereumjs-wallet/hdkey'

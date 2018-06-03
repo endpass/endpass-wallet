@@ -1,6 +1,6 @@
 import state from '@/store/web3/web3'
-import LocalStorageMock from '../localStorageMock.js'
-import testAction from './ActionTestingHelper'
+import LocalStorageMock from '../../localStorageMock.js'
+import testAction from '../ActionTestingHelper'
 
 global.localStorage = LocalStorageMock;
 

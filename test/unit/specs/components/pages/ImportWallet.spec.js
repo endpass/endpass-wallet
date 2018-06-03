@@ -3,10 +3,10 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import validation from '@/validation';
-import ImportWallet from '@/components/ImportWallet.vue';
+import ImportWallet from '@/components/pages/ImportWallet.vue';
 import EthWallet from 'ethereumjs-wallet';
 import HDKey from 'ethereumjs-wallet/hdkey';
-import LocalStorageMock from '../localStorageMock.js';
+import LocalStorageMock from '../../../localStorageMock.js';
 
 global.localStorage = LocalStorageMock;
 

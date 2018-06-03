@@ -55,9 +55,9 @@
 </template>
 
 <script>
-import AccountChooser from '@/components/AccountChooser.vue'
-import CustomProviderModal from '@/components/CustomProviderModal.vue'
-import SyncStatus from '@/components/SyncStatus.vue'
+import AccountChooser from '@/components/bar/AccountChooser.vue'
+import CustomProviderModal from '@/components/bar/CustomProviderModal.vue'
+import SyncStatus from '@/components/bar/SyncStatus.vue'
 import accounts from '@/mixins/accounts'
 
 export default {
