@@ -2,14 +2,14 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import multiguard from 'vue-router-multiguard';
 
-import HomePage from '@/components/HomePage'
-import SendPage from '@/components/SendPage'
-import HistoryPage from '@/components/HistoryPage'
-import ReceivePage from '@/components/ReceivePage'
-import TokensPage from '@/components/TokensPage'
-import NewWallet from '@/components/NewWallet'
-import ImportWallet from '@/components/ImportWallet'
-import ExportWallet from '@/components/ExportWallet'
+import HomePage from '@/components/pages/Home'
+import SendPage from '@/components/pages/Send'
+import HistoryPage from '@/components/pages/History'
+import ReceivePage from '@/components/pages/Receive'
+import TokensPage from '@/components/pages/Tokens'
+import NewWallet from '@/components/pages/NewWallet'
+import ImportWallet from '@/components/pages/ImportWallet'
+import ExportWallet from '@/components/pages/ExportWallet'
 
 import store from '../store'
 Vue.use(Router)

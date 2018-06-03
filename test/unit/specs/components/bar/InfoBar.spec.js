@@ -1,8 +1,8 @@
-import InfoBar from '@/components/InfoBar.vue'
+import InfoBar from '@/components/bar/InfoBar.vue'
 import { shallow, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import Router from 'vue-router'
-import LocalStorageMock from '../localStorageMock.js'
+import LocalStorageMock from '../../../localStorageMock.js'
 
 const localVue = createLocalVue()
 localVue.use(Vuex)

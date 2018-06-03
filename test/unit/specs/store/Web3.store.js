@@ -1,6 +1,12 @@
+<<<<<<< HEAD:test/unit/specs/web3.store.spec.js
 import store from '@/store/web3/web3';
 import LocalStorageMock from '../localStorageMock.js';
 import testAction from './ActionTestingHelper';
+=======
+import state from '@/store/web3/web3'
+import LocalStorageMock from '../../localStorageMock.js'
+import testAction from '../ActionTestingHelper'
+>>>>>>> files moved:test/unit/specs/store/Web3.store.js
 
 global.localStorage = LocalStorageMock;
 
