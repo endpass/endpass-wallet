@@ -14,7 +14,7 @@
 
 <script>
 import AppNav from '@/components/AppNav.vue'
-import InfoBar from '@/components/InfoBar.vue'
+import InfoBar from '@/components/bar/InfoBar.vue'
 import accounts from '@/mixins/accounts'
 import { mapActions } from 'vuex'
 

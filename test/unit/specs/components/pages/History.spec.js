@@ -3,7 +3,7 @@ import axios from 'axios'
 import moxios from 'moxios'
 import { mount, shallow, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
-import HistoryPage from '@/components/HistoryPage.vue';
+import HistoryPage from '@/components/pages/History.vue';
 import Web3 from 'web3'
 import { infuraConf } from '@/config.js'
 import ethereumWalletMock from '../ethereumWalletMock.js';
