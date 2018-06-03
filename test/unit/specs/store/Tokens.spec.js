@@ -1,16 +1,8 @@
-<<<<<<< HEAD:test/unit/specs/Tokens.store.spec.js
-import Vue from 'vue';
-import testAction from './ActionTestingHelper';
-import tokens from '@/store/tokens/tokens';
-import moxios from 'moxios';
-import Web3 from 'web3';
-=======
 import Vue from 'vue'
 import testAction from '../ActionTestingHelper'
 import tokens from '@/store/tokens/tokens'
 import moxios from 'moxios'
 import Web3 from 'web3'
->>>>>>> files moved:test/unit/specs/store/Tokens.spec.js
 
 jest.mock('eth-token-tracker');
 jest.mock('@/services/ethplorer');
