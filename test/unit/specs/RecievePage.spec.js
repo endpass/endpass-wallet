@@ -4,9 +4,9 @@ import moxios from 'moxios'
 import Vuex from 'vuex'
 import ReceivePage from '@/components/ReceivePage.vue';
 import web3 from 'web3'
-import EthWallet from 'ethereumjs-wallet'
+import ethereumWalletMock from '../ethereumWalletMock.js';
 
-const wallet = EthWallet.generate()
+const wallet = ethereumWalletMock;
 
 
 const localVue = createLocalVue()
