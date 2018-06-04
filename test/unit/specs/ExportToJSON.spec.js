@@ -3,10 +3,10 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import ExportToJson from '@/components/ExportToJson.vue';
 import web3 from 'web3';
-import EthWallet from 'ethereumjs-wallet';
 import { infuraConf } from '@/config.js';
+import ethereumWalletMock from '../ethereumWalletMock.js';
 
-const wallet = EthWallet.generate();
+const wallet = ethereumWalletMock;
 
 const localVue = createLocalVue();
 

@@ -5,10 +5,10 @@ import { mount, shallow, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import HistoryPage from '@/components/HistoryPage.vue';
 import Web3 from 'web3'
-import EthWallet from 'ethereumjs-wallet'
 import { infuraConf } from '@/config.js'
+import ethereumWalletMock from '../ethereumWalletMock.js';
 
-const wallet = EthWallet.generate()
+const wallet = ethereumWalletMock;
 
 
 const localVue = createLocalVue()
