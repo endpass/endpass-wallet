@@ -25,7 +25,7 @@
 
 <script>
 import appTransaction from './TransactionComponent'
-import EthplorerService from '../services/ethplorer'
+import EthplorerService from '@/services/ethplorer'
 import accounts from '@/mixins/accounts'
 
 export default {
@@ -52,11 +52,22 @@ export default {
     }
   },
   created() {
-    let historyPromise = EthplorerService.getHistory(this.address);
-    let transactionsPromise = EthplorerService.getInfo(this.address);
-    Promise.all([transactionsPromise, historyPromise]).then((values) => {
-      this.transactions = values[0].data.concat(values[1].data.operations);
-    });
+    const historyPromise = EthplorerService.getHistory(this.address);
+    const transactionsPromise = EthplorerService.getInfo(this.address);
+  
+    Promise.all([transactionsPromise, historyPromise])
+      .then(values => {
+        this.transactions = values[0].data.concat(values[1].data.operations);
+      })
+      .catch(e => {
+        this.$notify({
+          title: 'Failed to get transaction information',
+          text:
+            'An error occurred while retrieving transaction information. Please try again.',
+          type: 'is-warning',
+        });
+        console.error(e);
+      });
   },
   components: {
     appTransaction

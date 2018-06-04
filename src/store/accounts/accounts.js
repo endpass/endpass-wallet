@@ -55,13 +55,13 @@ export default {
     }
   },
   actions: {
-    addAccount(context, account) {
-      context.commit('addAccount', account);
-      context.dispatch('setActiveAccount', account);
+    addAccount({ commit, dispatch }, account) {
+      commit('addAccount', account);
+      return dispatch('setActiveAccount', account);
     },
-    setActiveAccount(context, account) {
-      context.commit('setActiveAccount', account);
-      context.dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
+    setActiveAccount({ commit, dispatch }, account) {
+      commit('setActiveAccount', account);
+      return dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
     },
     updateBalance(context) {
       if(context.rootState.accounts.activeAccount) {

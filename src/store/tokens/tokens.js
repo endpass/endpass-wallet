@@ -33,7 +33,7 @@ export default {
     },
   },
   actions: {
-    addTokenToSubscribtion({ state, commit }, token) {
+    addTokenToSubscription({ state, commit }, token) {
       // Save token without blance for furer seances
       let tokenExist = state.tokensSubscription.tokens.find(
         subscribtionToken => {
@@ -50,20 +50,28 @@ export default {
         });
       }
     },
-    subscribeOnTokenUpdates(context) {
+    subscribeOnTokenUpdates({ dispatch, state, rootState }) {
       //destroy old subscription and recreate new one (in case of addres/provider change)
-      if (context.rootState.accounts.activeAccount) {
-        if (context.state.tokensSerializeInterval) {
-          clearInterval(context.state.tokensSerializeInterval);
-          context.state.tokensSubscription.stop();
+      if (rootState.accounts.activeAccount) {
+        if (state.tokensSerializeInterval) {
+          clearInterval(state.tokensSerializeInterval);
+          state.tokensSubscription.stop();
         }
         // get tokens with balances
-        context.dispatch('getNonZeroTokens').then(resp => {
-          context.dispatch('createTokenSubscribtion', resp.data.tokens || []);
-        });
+        return dispatch('getNonZeroTokens')
+          .then(resp => {
+            return dispatch('createTokenSubscription', resp.data.tokens || []);
+          })
+          .catch(e => {
+            console.error(e);
+            const title = 'Failed token subscription';
+            const text = 'Token information won\'t be updated. Please reload page.';
+            const error = Object.assign(e, { title, text });
+            throw error;
+          });
       }
     },
-    createTokenSubscribtion(context, nonZerotokens) {
+    createTokenSubscription(context, nonZerotokens) {
       const address = context.rootState.accounts.activeAccount.getAddressString();
       //remove repetitive tokens
       const filteredSavedTokensTokens = context.state.savedTokens.filter(

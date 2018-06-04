@@ -94,8 +94,13 @@ export default {
       this.creatingWallet = false;
     },
     throwCreationError(error) {
-      console.error(error);
       this.creatingWallet = false;
+      this.$notify({
+        title: 'Error creating wallet',
+        text: 'Could not create wallet. Please try again.',
+        type: 'is-danger',
+      });
+      console.error(error);
     }
   }
 }

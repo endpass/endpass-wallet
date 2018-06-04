@@ -50,6 +50,7 @@
   </div>
 </template>
 <script>
+import { mapActions } from 'vuex';
 import ModalComponent from '@/components/ModalComponent'
 export default {
 	data() {
@@ -68,8 +69,18 @@ export default {
     }
   },
 	methods: {
+    ...mapActions('web3', {
+      addNewProviderToStore: 'addNewProvider',
+    }),
 		addNewProvider() {
-      this.$store.dispatch('web3/addNewProvider', this.provider);
+      this.addNewProviderToStore(this.provider).catch(e => {
+        this.$notify({
+          title: e.title,
+          text: e.text,
+          type: 'is-warning',
+        });
+        console.error(e);
+      });
       this.providerAdded = true;
 		},
     close() {

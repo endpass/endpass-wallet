@@ -55,8 +55,9 @@
 </template>
 
 <script>
-import AccountChooser from '@/components/AccountChooser.vue';
-import CustomProviderModal from '@/components/CustomProviderModal.vue';
+import { mapActions } from 'vuex';
+import AccountChooser from '@/components/AccountChooser.vue'
+import CustomProviderModal from '@/components/CustomProviderModal.vue'
 import SyncStatus from '@/components/SyncStatus.vue'
 import accounts from '@/mixins/accounts';
 import storage from '@/mixins/storage';
@@ -80,7 +81,14 @@ export default {
         return this.$store.state.web3.activeNet.id;
       },
       set(newValue) {
-        this.$store.dispatch('web3/changeNetwork', newValue);
+        this.changeNetwork(newValue).catch(e => {
+          this.$notify({
+            title: e.title,
+            text: e.text,
+            type: 'is-warning',
+          });
+          console.error(e);
+        });
         this.storage.write('net', newValue).catch(e => {
           this.$notify({
             title: e.title,
@@ -88,10 +96,11 @@ export default {
             type: 'is-warning',
           });
         });
-      },
+      }
     },
   },
   methods: {
+    ...mapActions('web3', ['changeNetwork']),
     openCustomProviderModal() {
       this.customProviderModalOpen = true;
     },

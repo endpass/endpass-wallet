@@ -76,6 +76,11 @@ export default {
     },
     exportError(e) {
       this.exportingJson = false;
+      this.$notify({
+        title: 'Error exporting to JSON',
+        text: 'Could not create file with your wallet. Please try again.',
+        type: 'is-danger',
+      });
       console.error(e);
     },
   },

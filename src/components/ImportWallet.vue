@@ -217,11 +217,11 @@ export default {
       commitWallet: 'setWallet',
     }),
     ...mapActions('accounts', ['addAccount']),
-    addWalletWithPublicKey() {
+    async addWalletWithPublicKey() {
+      let wallet;
+
       try {
-        this.addAccount(this.createWalletWithPublicKey());
-        router.push('/');
-        router.push('/');
+        wallet = this.createWalletWithPublicKey();
       } catch (e) {
         this.errors.add({
           field: 'publicKey',
@@ -230,11 +230,26 @@ export default {
         });
         console.error(e);
       }
+
+      if (wallet) {
+        try {
+          await this.addAccount(wallet);
+          router.push('/');
+        } catch (e) {
+          this.$notify({
+            title: e.title,
+            text: e.text,
+            type: 'is-warning',
+          });
+          console.error(e);
+        }
+      }
     },
-    addWalletWithPrivateKey() {
+    async addWalletWithPrivateKey() {
+      let wallet;
+
       try {
-        this.addAccount(this.createWalletWithPrivateKey());
-        router.push('/');
+        wallet = this.createWalletWithPrivateKey();
       } catch (e) {
         this.errors.add({
           field: 'privateKey',
@@ -243,14 +258,27 @@ export default {
         });
         console.error(e);
       }
+
+      if (wallet) {
+        try {
+          await this.addAccount(wallet);
+          router.push('/');
+        } catch (e) {
+          this.$notify({
+            title: e.title,
+            text: e.text,
+            type: 'is-warning',
+          });
+          console.error(e);
+        }
+      }
     },
-    addWalletWithPhrase() {
+    async addWalletWithPhrase() {
+      let hdWallet;
+      
       try {
-        const hdWallet = this.createWalletWithPrase();
+        hdWallet = this.createWalletWithPrase();
         this.commitWallet(hdWallet);
-        const account = hdWallet.deriveChild(0).getWallet();
-        this.addAccount(account);
-        router.push('/');
       } catch (e) {
         this.errors.add({
           field: 'hdkeyPhrase',
@@ -258,6 +286,21 @@ export default {
           id: 'wrongPhrase',
         });
         console.error(e);
+      }
+
+      if (hdWallet) {
+        try {
+          const account = hdWallet.deriveChild(0).getWallet();
+          await this.addAccount(account);
+          router.push('/');
+        } catch (e) {
+          this.$notify({
+            title: e.title,
+            text: e.text,
+            type: 'is-warning',
+          });
+          console.error(e);
+        }
       }
     },
     createWalletWithPrivateKey() {
@@ -277,11 +320,11 @@ export default {
       reader.onload = this.addWalletWithJson.bind(this);
       reader.readAsText(this.file);
     },
-    addWalletWithJson(e) {
+    async addWalletWithJson(e) {
+      let wallet;
+
       try {
-        const account = this.createWalletWithJson(e);
-        this.addAccount(account);
-        router.push('/');
+        wallet = this.createWalletWithJson(e);
       } catch (e) {
         let error = {
           field: 'jsonKeystorePassword',
@@ -301,6 +344,21 @@ export default {
         }
 
         this.errors.add(error);
+        console.error(e);
+      }
+
+      if (wallet) {
+        try {
+          await this.addAccount(account);
+          router.push('/');
+        } catch (e) {
+          this.$notify({
+            title: e.title,
+            text: e.text,
+            type: 'is-warning',
+          });
+          console.error(e);
+        }
       }
     },
     createWalletWithJson(e) {
