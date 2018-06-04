@@ -60,7 +60,6 @@
 </template>
 
 <script>
-import EthplorerService from '@/services/ethplorer'
 import EndpassService from '@/services/endpass'
 import SearchInput from '@/components/SearchInput.vue'
 
@@ -98,13 +97,23 @@ export default {
     saveToken(token) {
       // Add token to subscription
       this.$set(token, 'manuallyAdded', true);
-      this.$store.dispatch('tokens/addTokenToSubscribtion', token);
+      this.$store.dispatch('tokens/addTokenToSubscription', token);
     },
     getAllTokens(context) {
-      EndpassService.getTokensList().then((resp) => {
-        this.tokens = resp.data;
-      });
-    }
+      EndpassService.getTokensList()
+        .then(resp => {
+          this.tokens = resp.data;
+        })
+        .catch(e => {
+          this.$notify({
+            title: 'Failed to get list of tokens',
+            text:
+              'An error occurred while retrieving the list of tokens. Please try again.',
+            type: 'is-warning',
+          });
+          console.error(e);
+        });
+    },
   },
   created() {
     this.getAllTokens();

@@ -68,22 +68,20 @@ export default {
     },
   },
   actions: {
-    changeNetwork(context, networkId) {
-      let netIndex = context.getters.networks.findIndex(
-        net => net.id === networkId
-      );
-      let network = context.getters.networks[netIndex];
-      context.commit('changeNetwork', network);
-      context.dispatch('subscribeOnSyncStatus');
-      context.dispatch('subscribeOnBlockUpdates');
-      context.dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true });
+    changeNetwork({ commit, dispatch, getters }, networkId) {
+      const netIndex = getters.networks.findIndex(net => net.id === networkId);
+      const network = getters.networks[netIndex];
+      commit('changeNetwork', network);
+      dispatch('subscribeOnSyncStatus');
+      dispatch('subscribeOnBlockUpdates');
       storage.write('net', network.id);
+      return dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
     },
-    addNewProvider(context, network) {
-      network.id = context.getters.networks.length + 1;
-      context.commit('addNewProvider', network);
-      context.dispatch('changeNetwork', network.id);
-    },
+    addNewProvider({ commit, dispatch, getters }, network) {
+      network.id = getters.networks.length + 1;
+      commit('addNewProvider', network);
+      return dispatch('changeNetwork', network.id);
+    }, 
     subscribeOnSyncStatus(context) {
       let providerCache = context.state.web3.currentProvider;
       context.state.web3.eth.isSyncing().then(resp => {

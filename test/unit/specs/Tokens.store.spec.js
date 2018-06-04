@@ -54,9 +54,9 @@ describe('tokens', () => {
     tokens.mutations.saveSubscription(stateInstance, 1);
     expect(stateInstance.tokensSubscription).toBe(1);
   });
-  it('adds Token To Subscribtion', done => {
+  it('adds Token To Subscription', (done) => {
     testAction(
-      tokens.actions.addTokenToSubscribtion,
+      tokens.actions.addTokenToSubscription,
       { address: '0x0' },
       {
         rootState: {
@@ -113,10 +113,10 @@ describe('tokens', () => {
       done
     );
   });
-  it('creates Token Subscribtion', done => {
+  it('creates Token Subscription', done => {
     const Timeout = setTimeout(function() {}, 0).constructor;
     testAction(
-      tokens.actions.createTokenSubscribtion,
+      tokens.actions.createTokenSubscription,
       [],
       {
         rootState: {

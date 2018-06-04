@@ -51,6 +51,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import ModalComponent from '@/components/ModalComponent'
 
 export default {
@@ -69,6 +70,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('accounts', ['addAccount']),
     // Create the next account derived from the HD wallet seed
     // TODO consider gap limit if multiple hd accounts are already used
     createNewAccount() {
@@ -77,7 +79,14 @@ export default {
       }
       let i = this.accounts.length
       let account = this.hdWallet.deriveChild(i).getWallet()
-      this.$store.commit('accounts/addAccount', account)
+      this.addAccount(account).catch(e => {
+        this.$notify({
+          title: e.title,
+          text: e.text,
+          type: 'is-warning',
+        });
+        console.error(e);
+      })
       this.createdAccount = account
     },
     close() {

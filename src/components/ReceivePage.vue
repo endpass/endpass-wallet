@@ -54,11 +54,21 @@ export default {
     }
   },
   created() {
-    EthplorerService.getInfo(this.address).then((resp) => {
-      this.transactions = resp.data.filter((trx) => {
-        return trx.to === this.address;
+    EthplorerService.getInfo(this.address)
+      .then(resp => {
+        this.transactions = resp.data.filter(trx => {
+          return trx.to === this.address;
+        });
+      })
+      .catch(e => {
+        this.$notify({
+          title: 'Failed to get transaction information',
+          text:
+            'An error occurred while retrieving transaction information. Please try again.',
+          type: 'is-warning',
+        });
+        console.error(e);
       });
-    })
   },
   components: {
     appTransaction

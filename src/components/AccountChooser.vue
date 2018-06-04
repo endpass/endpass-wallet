@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import NewAccountModal from '@/components/NewAccountModal'
 import accounts from '@/mixins/accounts'
 
@@ -44,12 +45,22 @@ export default {
     },
   },
   methods: {
+    ...mapActions('accounts', {
+      setActiveAccountToStore:'setActiveAccount',
+    }),
     setActiveAccount() {
       let account = this.selectedAccount
       if (!account) {
         return
       }
-      this.$store.dispatch('accounts/setActiveAccount', account);
+      this.setActiveAccountToStore(account).catch(e => {
+        this.$notify({
+          title: e.title,
+          text: e.text,
+          type: 'is-warning',
+        });
+        console.error(e);
+      });
     },
     openNewAccountModal() {
       this.newAccountModalOpen = true
