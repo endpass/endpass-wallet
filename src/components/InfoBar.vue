@@ -55,17 +55,16 @@
 </template>
 
 <script>
-import AccountChooser from '@/components/AccountChooser.vue'
-import CustomProviderModal from '@/components/CustomProviderModal.vue'
+import AccountChooser from '@/components/AccountChooser.vue';
+import CustomProviderModal from '@/components/CustomProviderModal.vue';
 import SyncStatus from '@/components/SyncStatus.vue'
-import accounts from '@/mixins/accounts'
+import accounts from '@/mixins/accounts';
+import storage from '@/mixins/storage';
 
 export default {
-  data () {
-    return {
-      customProviderModalOpen: false
-    }
-  },
+  data: () => ({
+    customProviderModalOpen: false,
+  }),
   computed: {
     networks() {
       return this.$store.getters['web3/networks'];
@@ -74,33 +73,39 @@ export default {
       return this.$store.state.web3.activeNet;
     },
     isMainNet() {
-      return this.activeNet.id === 1
+      return this.activeNet.id === 1;
     },
     selectedNet: {
       get() {
         return this.$store.state.web3.activeNet.id;
-      }, 
+      },
       set(newValue) {
         this.$store.dispatch('web3/changeNetwork', newValue);
-        localStorage.setItem('net', newValue);
-      }
+        this.storage.write('net', newValue).catch(e => {
+          this.$notify({
+            title: e.title,
+            text: e.text,
+            type: 'is-warning',
+          });
+        });
+      },
     },
   },
   methods: {
     openCustomProviderModal() {
-      this.customProviderModalOpen = true
+      this.customProviderModalOpen = true;
     },
     closeCustomProviderModal() {
-      this.customProviderModalOpen = false
-    }
+      this.customProviderModalOpen = false;
+    },
   },
   components: {
     AccountChooser,
     CustomProviderModal,
     SyncStatus
   },
-  mixins: [accounts]
-}
+  mixins: [accounts, storage],
+};
 </script>
 
 <style lang="scss">
