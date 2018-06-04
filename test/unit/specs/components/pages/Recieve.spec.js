@@ -4,7 +4,7 @@ import moxios from 'moxios'
 import Vuex from 'vuex'
 import ReceivePage from '@/components/pages/Receive.vue';
 import web3 from 'web3'
-import ethereumWalletMock from '../ethereumWalletMock.js';
+import ethereumWalletMock from '../../../ethereumWalletMock.js';
 
 const wallet = ethereumWalletMock;
 
