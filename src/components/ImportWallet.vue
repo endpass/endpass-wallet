@@ -44,7 +44,7 @@
                     <div class="field">
                       <label class="label" for="publicKey">Public key</label>
                       <div class="control">
-                        <input 
+                        <input
                           v-model="publicKey"
                           name="publicKey" v-validate="'required|public_key'"
                           type="text"
@@ -54,11 +54,11 @@
                           data-vv-as="public key"
                           aria-describedby="publicKey"
                           placeholder="Public key">
-                        <p v-show="errors.has('privateKey')" 
+                        <p v-show="errors.has('privateKey')"
                           class="help is-danger">{{errors.first('publicKey')}}</p>
                       </div>
                     </div>
-                    <button 
+                    <button
                         class="button is-primary is-medium"
                         @click.prevent="addWalletWithPublicKey"
                         :disabled="!isFormValid"
@@ -275,7 +275,7 @@ export default {
     },
     async addWalletWithPhrase() {
       let hdWallet;
-      
+
       try {
         hdWallet = this.createWalletWithPrase();
         this.commitWallet(hdWallet);
@@ -304,11 +304,11 @@ export default {
       }
     },
     createWalletWithPrivateKey() {
-      return EthWallet.fromPrivateKey(new Buffer(this.privateKey, 'hex'));
+      return EthWallet.fromPrivateKey(Buffer.from(this.privateKey, 'hex'));
     },
 
     createWalletWithPublicKey() {
-      return EthWallet.fromPublicKey(new Buffer(this.publicKey, 'hex'));
+      return EthWallet.fromPublicKey(Buffer.from(this.publicKey, 'hex'));
     },
     createWalletWithPrase() {
       const hdKey = HDKey.fromMasterSeed(this.hdkeyPhrase);

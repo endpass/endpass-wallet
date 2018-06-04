@@ -6,7 +6,7 @@ export default {
   validate(value, args) {
     let isKey
     try {
-      isKey = ethUtils.isValidPublic(new Buffer(value, 'hex'));
+      isKey = ethUtils.isValidPublic(Buffer.from(value, 'hex'));
     } catch (e) {
       return {
         valid: false,
