@@ -4,7 +4,7 @@ import VeeValidate from 'vee-validate';
 import ExportToJson from '@/components/ExportToJson.vue';
 import web3 from 'web3';
 import { infuraConf } from '@/config.js';
-import ethereumWalletMock from '../ethereumWalletMock.js';
+import ethereumWalletMock from '../../ethereumWalletMock.js';
 
 const wallet = ethereumWalletMock;
 

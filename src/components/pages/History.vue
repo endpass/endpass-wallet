@@ -24,7 +24,6 @@
 </template>
 
 <script>
-import appTransaction from './TransactionComponent'
 import appTransaction from '@/components/TransactionComponent'
 import EthplorerService from '@/services/ethplorer'
 import accounts from '@/mixins/accounts'
