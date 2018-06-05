@@ -71,13 +71,13 @@ export default {
     },
     setActiveAccount({ commit, dispatch }, account) {
       commit('setActiveAccount', account);
-      return dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
+      dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
+      return dispatch('updateBalance');
     },
     updateBalance(context) {
       if(context.rootState.accounts.activeAccount) {
         let address = context.rootState.accounts.activeAccount.getAddressString();
         let balance = context.rootState.web3.web3.eth.getBalance(address).then((balance) => {
-          console.log(balance);
           context.commit('setBalance', balance);
         }).catch(e => {
           console.error(e, 'bal');
