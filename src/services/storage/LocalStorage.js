@@ -8,14 +8,14 @@ export default class LocalStorage {
         if (val !== null) {
           return JSON.parse(val);
         }
-
+        
         return val;
       })
       .catch(e => {
         console.error(e);
         const title = 'Error in local storage';
         const text =
-          "Can't save data to local storage, maybe it is not available";
+          "Can't read data from local storage, maybe it is not available";
         const error = Object.assign(e, { title, text });
 
         throw error;
@@ -28,7 +28,12 @@ export default class LocalStorage {
       .then(strData => this.Global.localStorage.setItem(prop, strData))
       .catch(e => {
         console.error(e);
-        throw e;
+        const title = 'Error in local storage';
+        const text =
+          "Can't save data to local storage, maybe it is not available";
+        const error = Object.assign(e, { title, text });
+
+        throw error;
       });
   }
 
@@ -37,7 +42,12 @@ export default class LocalStorage {
       .then(() => this.Global.localStorage.removeItem(prop))
       .catch(e => {
         console.error(e);
-        throw e;
+        const title = 'Error in local storage';
+        const text =
+          "Can't remove data from local storage, maybe it is not available";
+        const error = Object.assign(e, { title, text });
+
+        throw error;
       });
   }
 
@@ -46,7 +56,12 @@ export default class LocalStorage {
       .then(() => this.Global.localStorage.clear())
       .catch(e => {
         console.error(e);
-        throw e;
+        const title = 'Error in local storage';
+        const text =
+          "Can't clear local storage, maybe it is not available";
+        const error = Object.assign(e, { title, text });
+
+        throw error;
       });
   }
 }
