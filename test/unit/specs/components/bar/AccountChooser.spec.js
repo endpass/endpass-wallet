@@ -1,6 +1,6 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
-import AccountChooser from '@/components/AccountChooser.vue';
+import AccountChooser from '@/components/bar/AccountChooser.vue';
 
 const localVue = createLocalVue();
 

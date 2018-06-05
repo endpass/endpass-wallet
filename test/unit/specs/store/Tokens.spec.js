@@ -1,8 +1,8 @@
-import Vue from 'vue';
-import testAction from './ActionTestingHelper';
-import tokens from '@/store/tokens/tokens';
-import moxios from 'moxios';
-import Web3 from 'web3';
+import Vue from 'vue'
+import testAction from '../ActionTestingHelper'
+import tokens from '@/store/tokens/tokens'
+import moxios from 'moxios'
+import Web3 from 'web3'
 
 jest.mock('eth-token-tracker');
 jest.mock('@/services/ethplorer');

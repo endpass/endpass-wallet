@@ -5,7 +5,7 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import VeeValidate from 'vee-validate';
 import validation from '@/validation';
 
-import SendEther from '@/components/SendPage.vue';
+import SendEther from '@/components/pages/Send.vue';
 
 const localVue = createLocalVue();
 
