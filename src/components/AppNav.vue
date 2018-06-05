@@ -34,6 +34,11 @@
           <span class="icon is-small"
                 v-html="require('@/img/compass.svg')"></span>Tokens
         </router-link>
+        <router-link v-if="activeAccount" class="navbar-item" :to="{name:
+        'SettingsPage'}" @click.native="toggleNavMenu">
+          <span class="icon is-small"
+                v-html="require('@/img/cog.svg')"></span>Settings
+        </router-link>
       </div>
     </div>
   </div>
