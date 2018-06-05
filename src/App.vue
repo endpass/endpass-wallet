@@ -24,13 +24,6 @@ export default {
     return {
     }
   },
-  methods: {
-    ...mapActions('web3', ['subscribeOnSyncStatus', 'subscribeOnBlockUpdates'])
-  },
-  created() {
-    this.subscribeOnSyncStatus();
-    this.subscribeOnBlockUpdates();
-  },
   components: {
     AppNav,
     InfoBar
