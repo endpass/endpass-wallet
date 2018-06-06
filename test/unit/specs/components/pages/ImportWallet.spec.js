@@ -56,7 +56,10 @@ describe('ImportWallet', () => {
     const vm = new Vue(ImportWallet).$mount();
     vm.hdkeyPhrase =
       'salt suit force stomach lounge endless soul junk join leg sort aware';
-    expect(vm.createWalletWithPrase() instanceof HDKey).toBe(true);
+    let key = vm.createWalletWithPrase();
+    expect(key instanceof HDKey).toBe(true);
+    let wallet = key.deriveChild(0).getWallet()
+    expect(wallet.getAddressString()).toBe('0x4ce2109f8db1190cd44bc6554e35642214fbe144');
   });
   it('correctly creates wallet with public key', () => {
     const vm = new Vue(ImportWallet).$mount()
