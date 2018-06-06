@@ -7,6 +7,10 @@ global.localStorage = LocalStorageMock;
 const commit = state => (type, payload) =>
   store.mutations[type](state, payload);
 
+const dispatch = context => (type) => {
+  store.actions[type](context);
+}
+
 describe('web3 store', async () => {
   let stateInstance;
   beforeEach(async () => {
@@ -22,6 +26,7 @@ describe('web3 store', async () => {
 
     await store.actions.init({
       commit: commit(stateInstance),
+      dispatch: dispatch({state: stateInstance, commit, dispatch}),
       state: stateInstance,
     });
   });
@@ -77,7 +82,6 @@ describe('web3 store', async () => {
       },
       [{ type: 'changeNetwork' }],
       [
-        { type: 'subscribeOnSyncStatus' },
         { type: 'subscribeOnBlockUpdates' },
         { type: 'tokens/subscribeOnTokenUpdates' },
       ],
