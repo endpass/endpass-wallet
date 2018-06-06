@@ -72,7 +72,6 @@ export default {
       const netIndex = getters.networks.findIndex(net => net.id === networkId);
       const network = getters.networks[netIndex];
       commit('changeNetwork', network);
-      dispatch('subscribeOnBlockUpdates');
       storage.write('net', network.id);
       return Promise.all([
         dispatch('subscribeOnBlockUpdates'),
