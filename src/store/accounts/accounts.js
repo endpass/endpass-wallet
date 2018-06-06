@@ -71,8 +71,10 @@ export default {
     },
     setActiveAccount({ commit, dispatch }, account) {
       commit('setActiveAccount', account);
-      dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
-      return dispatch('updateBalance');
+      return Promise.all([
+        dispatch('updateBalance'),
+        dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true})
+      ]);
     },
     updateBalance(context) {
       if(context.rootState.accounts.activeAccount) {

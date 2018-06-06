@@ -349,7 +349,7 @@ export default {
 
       if (wallet) {
         try {
-          await this.addAccount(account);
+          await this.addAccount(wallet);
           router.push('/');
         } catch (e) {
           this.$notify({
