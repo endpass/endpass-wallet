@@ -9,6 +9,10 @@ export default class AddressWallet {
       throw new Error("Not a valid Ethereum address");
     }
     this.address = ethUtil.toBuffer(addressString);
+    this._privKey = null;
+    this._pubKey = null;
+    this.privKey = null;
+    this.pubKey = null;
   }
 
   getAddress() {
