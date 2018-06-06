@@ -54,7 +54,7 @@
                           data-vv-as="public key"
                           aria-describedby="publicKey"
                           placeholder="Public key">
-                        <p v-show="errors.has('privateKey')"
+                        <p v-show="errors.has('publicKey')"
                           class="help is-danger">{{errors.first('publicKey')}}</p>
                       </div>
                     </div>
@@ -305,11 +305,11 @@ export default {
       }
     },
     createWalletWithPrivateKey() {
-      return EthWallet.fromPrivateKey(Buffer.from(this.privateKey, 'hex'));
+      return EthWallet.fromPrivateKey(Buffer.from(this.privateKey.replace(/^0x/,''), 'hex'));
     },
 
     createWalletWithPublicKey() {
-      return EthWallet.fromPublicKey(Buffer.from(this.publicKey, 'hex'));
+      return EthWallet.fromPublicKey(Buffer.from(this.publicKey.replace(/^0x/,''), 'hex'));
     },
     createWalletWithPrase() {
       const seed = Bip39.mnemonicToSeed(this.hdkeyPhrase)
