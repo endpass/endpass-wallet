@@ -78,7 +78,7 @@ export default {
       return dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
     },
     addNewProvider({ commit, dispatch, getters }, network) {
-      network.id = getters.networks.length + 1;
+      network.id = getters.networks.length + 2;
       commit('addNewProvider', network);
       return dispatch('changeNetwork', network.id);
     }, 
