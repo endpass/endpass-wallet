@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="account-chooser field has-addons">
-    <div class="control">
+    <div v-if="hdWallet" class="control">
       <div class="select">
         <select @change="setActiveAccount" v-model="selectedAccountId">
           <option v-for="(account, i) in accounts"
@@ -9,8 +9,11 @@
           </option>
         </select>
       </div>
+    </div> 
+    <div v-else class="control">
+        {{account.getAddressString() |truncateAddr}}
     </div>
-    <div :disabled="!hdWallet" class="new-account control">
+    <div v-if="hdWallet" class="new-account control">
       <a class="button is-primary" @click="openNewAccountModal">&plus;</a>
     </div>
     <new-account-modal @close="closeNewAccountModal"
@@ -19,7 +22,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import NewAccountModal from '@/components/NewAccountModal'
 import accounts from '@/mixins/accounts'
 
@@ -31,18 +34,17 @@ export default {
     }
   },
   computed: {
-    hdWallet () {
-      return this.$store.state.accounts.hdWallet
-    },
+    ...mapState({
+      hdWallet: state => state.accounts.hdWallet,
+      accounts: state => state.accounts.accounts,
+      account: state => state.accounts.activeAccount,
+    }),
     selectedAccount () {
       if (!this.accounts.length) {
         return
       }
       return this.accounts[this.selectedAccountId]
-    },
-    accounts () {
-      return this.$store.state.accounts.accounts
-    },
+    }
   },
   methods: {
     ...mapActions('accounts', {
