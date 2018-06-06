@@ -184,6 +184,7 @@
 <script>
 import EthWallet from 'ethereumjs-wallet';
 import HDKey from 'ethereumjs-wallet/hdkey';
+import Bip39 from 'bip39';
 import router from '@/router';
 import { mapMutations, mapActions } from 'vuex';
 
@@ -311,7 +312,8 @@ export default {
       return EthWallet.fromPublicKey(Buffer.from(this.publicKey, 'hex'));
     },
     createWalletWithPrase() {
-      const hdKey = HDKey.fromMasterSeed(this.hdkeyPhrase);
+      const seed = Bip39.mnemonicToSeed(this.hdkeyPhrase)
+      const hdKey = HDKey.fromMasterSeed(seed);
       const hdWallet = hdKey.derivePath(this.mnemonic.path);
       return hdWallet;
     },
