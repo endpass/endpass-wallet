@@ -72,33 +72,42 @@ export default {
       const netIndex = getters.networks.findIndex(net => net.id === networkId);
       const network = getters.networks[netIndex];
       commit('changeNetwork', network);
+      dispatch('subscribeOnBlockUpdates');
       storage.write('net', network.id);
       return Promise.all([
-        dispatch('subscribeOnSyncStatus'),
         dispatch('subscribeOnBlockUpdates'),
         dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true})
       ]);
     },
     addNewProvider({ commit, dispatch, getters }, network) {
-      network.id = getters.networks.length + 1;
+      network.id = getters.networks.reduce((max, next) => {
+        return max.id > next.id ? max : next;
+      }).id + 1;
       commit('addNewProvider', network);
       return dispatch('changeNetwork', network.id);
     }, 
     subscribeOnSyncStatus(context) {
       let providerCache = context.state.web3.currentProvider;
-      context.state.web3.eth.isSyncing().then(resp => {
+      let promise = context.state.web3.eth.isSyncing();
+      promise.then(resp => {
         if (providerCache === context.state.web3.currentProvider) {
           context.commit('setSyncStatus', resp);
-          context.dispatch('subscribeOnSyncStatus');
+          setTimeout(()=> {
+            context.dispatch('subscribeOnSyncStatus')
+          }, 3000);
+        } else {
+          context.dispatch('subscribeOnSyncStatus')
         }
       });
+      return promise;
     },
     subscribeOnBlockUpdates(context) {
       if (context.state.blockSubscribtion) {
         context.state.blockSubscribtion.stop();
       }
       context.state.blockSubscribtion = new EthBlockTracker({
-        provider: context.rootState.web3.web3.currentProvider,
+        provider: context.state.web3.currentProvider,
+        pollingInterval:3000
       });
       context.state.blockSubscribtion.on('latest', block => {
         if (context.rootState.accounts.activeAccount) {
@@ -111,7 +120,7 @@ export default {
       });
       context.state.blockSubscribtion.start();
     },
-    init({ commit, state }) {
+    init({ commit, dispatch, state }) {
       return storage
         .read('net')
         .then(cachedNet => parseInt(cachedNet))
@@ -128,6 +137,8 @@ export default {
 
           commit('setProviders', storedNetworks || []);
           commit('changeNetwork', activeNet);
+          dispatch('subscribeOnSyncStatus');
+          dispatch('subscribeOnBlockUpdates');
         })
         .catch(e => console.error(e));
     },

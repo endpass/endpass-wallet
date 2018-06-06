@@ -10,7 +10,7 @@ import TokensPage from '@/components/pages/Tokens'
 import NewWallet from '@/components/pages/NewWallet'
 import ImportWallet from '@/components/pages/ImportWallet'
 import ExportWallet from '@/components/pages/ExportWallet'
-import SettingsPage from '@/components/pages/SettingsPage';
+import SettingsPage from '@/components/pages/Settings';
 
 import store from '../store'
 Vue.use(Router)

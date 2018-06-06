@@ -1,7 +1,7 @@
 import Vuex from 'vuex';
 import { shallow, createLocalVue, mount } from '@vue/test-utils';
 
-import SettingsPage from '@/components/pages/SettingsPage.vue';
+import SettingsPage from '@/components/pages/Settings.vue';
 
 const localVue = createLocalVue();
 
