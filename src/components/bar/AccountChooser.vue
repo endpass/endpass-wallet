@@ -10,7 +10,7 @@
         </select>
       </div>
     </div> 
-    <div v-else class="control">
+    <div v-else-if="account" class="control">
         {{account.getAddressString() |truncateAddr}}
     </div>
     <div v-if="hdWallet" class="new-account control">
