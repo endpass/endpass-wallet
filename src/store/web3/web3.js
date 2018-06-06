@@ -72,9 +72,11 @@ export default {
       const netIndex = getters.networks.findIndex(net => net.id === networkId);
       const network = getters.networks[netIndex];
       commit('changeNetwork', network);
-      dispatch('subscribeOnBlockUpdates');
       storage.write('net', network.id);
-      return dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
+      return Promise.all([
+        dispatch('subscribeOnBlockUpdates'),
+        dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true})
+      ]);
     },
     addNewProvider({ commit, dispatch, getters }, network) {
       network.id = getters.networks.reduce((max, next) => {
