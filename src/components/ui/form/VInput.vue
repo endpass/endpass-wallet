@@ -3,7 +3,7 @@
     <label class="label"
            v-if="label"
            :for="id">{{ label }}</label>
-    <div class="field has-addons"
+    <div class="field"
          :class="{'has-addons': $slots.addon }">
       <div class="control"
            :class="{'is-expanded': $slots.addon }">

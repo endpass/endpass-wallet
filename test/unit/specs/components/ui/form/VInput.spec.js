@@ -8,11 +8,16 @@ describe('VInput', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(VInput, { localVue });
+    wrapper = shallow(VInput, {
+      localVue,
+      slots: {
+        addon: '<span>My Addon</span>',
+      },
+    });
   });
 
   it('should render props', async () => {
-    const input = wrapper.find('input')
+    const input = wrapper.find('input');
 
     expect(wrapper.contains('label')).toBeFalsy();
     expect(input.attributes().value).toBeFalsy();
@@ -48,5 +53,9 @@ describe('VInput', () => {
 
     expect(wrapper.emitted().input).toBeTruthy();
     expect(wrapper.emitted().blur).toBeTruthy();
+  });
+
+  it('should render slot', async () => {
+    expect(wrapper.vm.$slots.addon).toBeTruthy();
   });
 });
