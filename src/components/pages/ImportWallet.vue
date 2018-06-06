@@ -351,7 +351,7 @@ export default {
 
       if (wallet) {
         try {
-          await this.addAccount(account);
+          await this.addAccount(wallet);
           router.push('/');
         } catch (e) {
           this.$notify({
@@ -364,7 +364,7 @@ export default {
       }
     },
     createWalletWithJson(e) {
-      return EthWallet.fromV3(e.target.result, this.jsonKeystorePassword);
+      return EthWallet.fromV3(e.target.result, this.jsonKeystorePassword, true);
     },
     setFile(e) {
       this.errors.removeById('wrongFile');
