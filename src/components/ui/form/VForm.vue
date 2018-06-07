@@ -7,6 +7,7 @@
 <script>
 export default {
   name: 'v-form',
+  inject: ['$validator'],
   props: {
     id: {
       type: String,
@@ -15,15 +16,14 @@ export default {
   },
   computed: {
     isFormValid() {
-      const { fields, errors } = this.$parent;
+      const { fields, errors } = this;
 
       if (!(fields || errors)) {
         return true;
       }
 
       const hasInvalidField = Object.keys(fields).some(
-        field =>
-          fields[field] && fields[field].invalid
+        field => fields[field] && fields[field].invalid
       );
 
       return !(hasInvalidField || errors.count());
