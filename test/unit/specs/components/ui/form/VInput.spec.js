@@ -1,4 +1,5 @@
-import { shallow, createLocalVue, mount } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
+import VeeValidate from 'vee-validate';
 
 import VInput from '@/components/ui/form/VInput.vue';
 
@@ -8,15 +9,20 @@ describe('VInput', () => {
   let wrapper;
 
   beforeEach(() => {
+    const v = new VeeValidate.Validator();
+
     wrapper = shallow(VInput, {
       localVue,
       slots: {
         addon: '<span>My Addon</span>',
       },
+      provide: () => ({
+        $validator: v,
+      })
     });
   });
 
-  it('should render props', async () => {
+  it('should render props', () => {
     const input = wrapper.find('input');
 
     expect(wrapper.contains('label')).toBeFalsy();
@@ -58,7 +64,7 @@ describe('VInput', () => {
     expect(wrapper.emitted().blur).toBeTruthy();
   });
 
-  it('should render slot', async () => {
+  it('should render slot', () => {
     expect(wrapper.vm.$slots.addon).toBeTruthy();
   });
 });

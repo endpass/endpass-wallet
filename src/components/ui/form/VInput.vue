@@ -12,7 +12,7 @@
                :name="name"
                :type="type"
                class="input"
-               :class="{'is-danger': error }"
+               :class="{'is-danger': errors && errors.has(name) || error }"
                :id="id"
                :aria-describedby="describe"
                :placeholder="placeholder"
@@ -25,13 +25,14 @@
       </div>
     </div>
     <p class="help is-danger"
-       v-if="error">{{ error }}</p>
+       v-if="errors && errors.has(name) || error">{{ errors && errors.first(name) || error }}</p>
   </div>
 </template>
 
 <script>
 export default {
   name: 'v-input',
+  inject: ['$validator'],
   props: {
     value: {
       type: [String, Number],

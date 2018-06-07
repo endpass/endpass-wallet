@@ -7,14 +7,12 @@
             <h1 class="card-header-title">Send ETH</h1>
           </div>
           <div class="card-content">
-            <v-form id="sendEther"
-                    v-model="isFormValid">
+            <v-form id="sendEther">
 
               <v-input v-model="transaction.to"
                        label="To"
                        name="address"
                        v-validate="'required|address'"
-                       :error="errors.first('address')"
                        id="address"
                        describe="address"
                        placeholder="Receiver address"
@@ -25,7 +23,6 @@
                        label="Amount"
                        name="value"
                        v-validate="`required|decimal|max_value:${maxAmount}`"
-                       :error="errors.first('value')"
                        id="value"
                        describe="value"
                        placeholder="Amount"
@@ -46,7 +43,6 @@
                        label="Gas price"
                        name="price"
                        v-validate="'required|integer|min_value:0|max_value:100'"
-                       :error="errors.first('price')"
                        id="price"
                        describe="price"
                        placeholder="Gas price"
@@ -61,7 +57,6 @@
                        label="Gas limit"
                        name="limit"
                        v-validate="'required|numeric|integer|min_value:21000|max_value:4000000'"
-                       :error="errors.first('limit')"
                        id="limit"
                        describe="limit"
                        placeholder="Gas limit"
@@ -79,7 +74,7 @@
 
               <v-button @click.prevent="sendTransaction"
                         :loading="isSending"
-                        :disabled="!isFormValid || isSyncing">Send</v-button>
+                        :disabled="isSyncing">Send</v-button>
 
               <div v-if="transactionHash">{{ transactionHash }}</div>
             </v-form>

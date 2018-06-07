@@ -8,6 +8,14 @@
 export default {
   name: 'v-form',
   inject: ['$validator'],
+  provide() {
+    const form = {};
+    Object.defineProperty(form, 'isFormValid', {
+      enumerable: true,
+      get: () => this.isFormValid,
+    });
+    return { form };
+  },
   props: {
     id: {
       type: String,
