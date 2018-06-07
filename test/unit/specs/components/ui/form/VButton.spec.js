@@ -13,12 +13,15 @@ describe('VButton', () => {
 
   it('should render props', () => {
     expect(wrapper.find('a').attributes().id).toBe('');
+    expect(wrapper.contains('a.is-loading')).toBeFalsy();
 
     wrapper.setProps({
       id: 'some-id',
+      loading: true,
     });
 
     expect(wrapper.find('a').attributes().id).toBe('some-id');
+    expect(wrapper.contains('a.is-loading')).toBeTruthy();
   });
 
   it('should emit event if not disabled', () => {

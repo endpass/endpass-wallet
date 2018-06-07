@@ -16,6 +16,7 @@
                :id="id"
                :aria-describedby="describe"
                :placeholder="placeholder"
+               :disabled="disabled"
                :required="required">
       </div>
       <div class="control"
@@ -60,6 +61,10 @@ export default {
       type: String,
       default: null,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     required: {
       type: Boolean,
       default: false,
@@ -88,6 +93,10 @@ export default {
 
 <style lang="scss">
 .field.has-addons {
+  margin-bottom: 0;
+}
+
+.field > .field {
   margin-bottom: 0;
 }
 </style>

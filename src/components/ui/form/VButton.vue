@@ -4,6 +4,7 @@
       <a :id="id"
          :disabled="disabled"
          class="button is-primary is-medium"
+         :class="{'is-loading' : loading }"
          @click.prevent="$emit('click', $event)">
         <slot />
       </a>
@@ -20,6 +21,10 @@ export default {
       default: '',
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    loading: {
       type: Boolean,
       default: false,
     },

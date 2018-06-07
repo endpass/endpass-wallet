@@ -70,7 +70,6 @@ export default {
     VButton,
   },
   mounted() {
-    // this.newSettings = this.settings;
     try {
       this.newSettings = JSON.parse(JSON.stringify(this.settings));
     } catch (e) {
