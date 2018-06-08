@@ -3,10 +3,11 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import validation from '@/validation';
-import ImportWallet from '@/components/ImportWallet.vue';
+import ImportWallet from '@/components/pages/ImportWallet.vue';
 import EthWallet from 'ethereumjs-wallet';
 import HDKey from 'ethereumjs-wallet/hdkey';
-import LocalStorageMock from '../localStorageMock.js';
+import LocalStorageMock from '../../../localStorageMock.js';
+import AddressWallet from '@/services/addressWallet.js'
 
 global.localStorage = LocalStorageMock;
 
@@ -56,12 +57,17 @@ describe('ImportWallet', () => {
     const vm = new Vue(ImportWallet).$mount();
     vm.hdkeyPhrase =
       'salt suit force stomach lounge endless soul junk join leg sort aware';
-    expect(vm.createWalletWithPrase() instanceof HDKey).toBe(true);
+    let key = vm.createWalletWithPrase();
+    expect(key instanceof HDKey).toBe(true);
+    let wallet = key.deriveChild(0).getWallet()
+    expect(wallet.getAddressString()).toBe('0x4ce2109f8db1190cd44bc6554e35642214fbe144');
   });
-  it('correctly creates wallet with public key', () => {
+  it('correctly creates wallet with address', () => {
     const vm = new Vue(ImportWallet).$mount()
-    vm.publicKey = '0935f10939786f4d95e2c3d3a615b334ea35ad6b9cab87ac50c7410c819d191e36e7307e180c3f95c4080f957298b3a8bc13f562fa5087076da534feb5b52552';
-    expect(vm.createWalletWithPublicKey() instanceof EthWallet).toBe(true);
+    vm.address = '0x2f015c60e0be116b1f0cd534704db9c92118fb6a';
+    let wallet = vm.createWalletWithAddress();
+    expect(wallet instanceof AddressWallet).toBe(true);
+    expect(wallet.getAddressString()).toEqual(vm.address);
   });
   it('correctly sets error with bad phrase', async () => {
     const vm = new Vue(ImportWallet).$mount();
@@ -75,10 +81,10 @@ describe('ImportWallet', () => {
     expect(vm.errors.has('privateKey')).toBe(true);
   });
 
-  it('correctly sets error with public bad key', async () => {
+  it('correctly sets error with bad address', async () => {
     const vm = new Vue(ImportWallet).$mount();
-    await expect(vm.addWalletWithPublicKey()).rejects.toThrow();
-    expect(vm.errors.has('publicKey')).toBe(true);
+    await expect(vm.addWalletWithAddress()).rejects.toThrow();
+    expect(vm.errors.has('address')).toBe(true);
   });
 
 

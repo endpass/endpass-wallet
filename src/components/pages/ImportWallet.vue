@@ -30,37 +30,37 @@
                       :class="{'is-active':importType === 'json'}">V3 JSON keystore</a>
                     </li>
                     <li>
-                      <a @click="importType = 'publicKey'"
-                      :class="{'is-active':importType==='publicKey'}">Public
-                      Key</a>
+                      <a @click="importType = 'address'"
+                      :class="{'is-active':importType==='address'}">Address
+                      (view only)</a>
                     </li>
                   </ul>
                 </div>
               </div>
 
               <div class="column">
-                <div class="import-publc-key" v-if="importType === 'publicKey'">
+                <div class="import-publc-key" v-if="importType === 'address'">
                   <form>
                     <div class="field">
-                      <label class="label" for="publicKey">Public key</label>
+                      <label class="label" for="address">Address</label>
                       <div class="control">
-                        <input 
-                          v-model="publicKey"
-                          name="publicKey" v-validate="'required|public_key'"
+                        <input
+                          v-model="address"
+                          name="address" v-validate="'required|address'"
                           type="text"
                           class="input"
-                          id="publicKey"
-                          :class="{'is-danger': errors.has('privateKey') }"
-                          data-vv-as="public key"
-                          aria-describedby="publicKey"
-                          placeholder="Public key">
-                        <p v-show="errors.has('privateKey')" 
-                          class="help is-danger">{{errors.first('publicKey')}}</p>
+                          id="address"
+                          :class="{'is-danger': errors.has('address') }"
+                          data-vv-as="address"
+                          aria-describedby="address"
+                          placeholder="0x....">
+                        <p v-show="errors.has('address')"
+                          class="help is-danger">{{errors.first('address')}}</p>
                       </div>
                     </div>
-                    <button 
+                    <button
                         class="button is-primary is-medium"
-                        @click.prevent="addWalletWithPublicKey"
+                        @click.prevent="addWalletWithAddress"
                         :disabled="!isFormValid"
                         >Import</button>
                   </form>
@@ -184,13 +184,15 @@
 <script>
 import EthWallet from 'ethereumjs-wallet';
 import HDKey from 'ethereumjs-wallet/hdkey';
+import AddressWallet from '@/services/addressWallet.js'
+import Bip39 from 'bip39';
 import router from '@/router';
 import { mapMutations, mapActions } from 'vuex';
 
 export default {
   data: () => ({
     privateKey: '',
-    publicKey: '',
+    address: '',
     hdkeyPhrase: '',
     jsonPassword: '',
     fileName: '',
@@ -217,16 +219,16 @@ export default {
       commitWallet: 'setWallet',
     }),
     ...mapActions('accounts', ['addAccount']),
-    async addWalletWithPublicKey() {
+    async addWalletWithAddress() {
       let wallet;
 
       try {
-        wallet = this.createWalletWithPublicKey();
+        wallet = this.createWalletWithAddress();
       } catch (e) {
         this.errors.add({
-          field: 'publicKey',
-          msg: 'Public key is invalid',
-          id: 'wrongPublicKey',
+          field: 'address',
+          msg: 'Address is invalid',
+          id: 'wrongAddress',
         });
         console.error(e);
       }
@@ -275,7 +277,7 @@ export default {
     },
     async addWalletWithPhrase() {
       let hdWallet;
-      
+
       try {
         hdWallet = this.createWalletWithPrase();
         this.commitWallet(hdWallet);
@@ -304,14 +306,15 @@ export default {
       }
     },
     createWalletWithPrivateKey() {
-      return EthWallet.fromPrivateKey(new Buffer(this.privateKey, 'hex'));
+      return EthWallet.fromPrivateKey(Buffer.from(this.privateKey.replace(/^0x/,''), 'hex'));
     },
 
-    createWalletWithPublicKey() {
-      return EthWallet.fromPublicKey(new Buffer(this.publicKey, 'hex'));
+    createWalletWithAddress() {
+      return new AddressWallet(this.address);
     },
     createWalletWithPrase() {
-      const hdKey = HDKey.fromMasterSeed(this.hdkeyPhrase);
+      const seed = Bip39.mnemonicToSeed(this.hdkeyPhrase)
+      const hdKey = HDKey.fromMasterSeed(seed);
       const hdWallet = hdKey.derivePath(this.mnemonic.path);
       return hdWallet;
     },
@@ -349,7 +352,7 @@ export default {
 
       if (wallet) {
         try {
-          await this.addAccount(account);
+          await this.addAccount(wallet);
           router.push('/');
         } catch (e) {
           this.$notify({
@@ -362,7 +365,7 @@ export default {
       }
     },
     createWalletWithJson(e) {
-      return EthWallet.fromV3(e.target.result, this.jsonKeystorePassword);
+      return EthWallet.fromV3(e.target.result, this.jsonKeystorePassword, true);
     },
     setFile(e) {
       this.errors.removeById('wrongFile');

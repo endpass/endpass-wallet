@@ -1,0 +1,46 @@
+<template>
+  <div class="field">
+    <label class="label"
+           v-if="label">{{ label }}</label>
+    <div class="control select">
+      <select v-model="selected">
+        <option v-for="item in options"
+                :key="item.val || item"
+                :value="item.val || item">{{ item.text || item }}</option>
+      </select>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'v-select',
+  props: {
+    value: {
+      type: String,
+      default: null,
+    },
+    options: {
+      type: Array,
+      default: () => [],
+    },
+    label: {
+      type: String,
+      default: null,
+    },
+  },
+  computed: {
+    selected: {
+      get() {
+        return this.value;
+      },
+      set(newVal) {
+        this.$emit('input', newVal);
+      },
+    },
+  },
+};
+</script>
+
+<style lang="scss">
+</style>

@@ -1,3 +1,5 @@
+import storage from '@/services/storage';
+
 export default {
   namespaced: true,
   state: {
@@ -5,7 +7,12 @@ export default {
     accounts: [],
     activeAccount: null,
     balance: null,
-    pendingTransactions: []
+    pendingTransactions: [],
+    // prettier-ignore
+    availableCurrencies: ['USD', 'AUD', 'BRL', 'CAD', 'CHF', 'CLP', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PKR', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'ZAR'],
+    settings: {
+      fiatCurrency: 'USD',
+    },
   },
   getters: {
     isPublicAccount(state) {
@@ -52,7 +59,10 @@ export default {
     },
     setBalance(state, balance) {
       state.balance = balance;
-    }
+    },
+    setSettings(state, settings) {
+      state.settings = JSON.parse(JSON.stringify(settings));
+    },
   },
   actions: {
     addAccount({ commit, dispatch }, account) {
@@ -61,18 +71,34 @@ export default {
     },
     setActiveAccount({ commit, dispatch }, account) {
       commit('setActiveAccount', account);
-      return dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true});
+      return Promise.all([
+        dispatch('updateBalance'),
+        dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true})
+      ]);
     },
     updateBalance(context) {
       if(context.rootState.accounts.activeAccount) {
         let address = context.rootState.accounts.activeAccount.getAddressString();
         let balance = context.rootState.web3.web3.eth.getBalance(address).then((balance) => {
-          console.log(balance);
           context.commit('setBalance', balance);
         }).catch(e => {
           console.error(e, 'bal');
         });
       }
-    }
+    },
+    updateSettings({ commit }, settings) {
+      commit('setSettings', settings);
+      return storage.write('settings', settings);
+    },
+    init({ commit }) {
+      return storage
+        .read('settings')
+        .then(settings => {
+          if (settings) {
+            commit('setSettings', settings);
+          }
+        })
+        .catch(e => console.error(e));
+    },
   }
 }

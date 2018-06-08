@@ -1,4 +1,4 @@
-import LocalStorageMock from '../localStorageMock';
+import LocalStorageMock from '../../../localStorageMock';
 import LocalStorage from '@/services/storage/LocalStorage';
 
 global.localStorage = LocalStorageMock;
