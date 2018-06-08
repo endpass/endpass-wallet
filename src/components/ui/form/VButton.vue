@@ -3,8 +3,8 @@
     <div class="control">
       <a :id="id"
          :disabled="!form.isFormValid || disabled"
-         class="button is-primary is-medium"
-         :class="{'is-loading' : loading }"
+         class="button"
+         :class="[...classes, {'is-loading' : loading }]"
          @click.prevent="$emit('click', $event)">
         <slot />
       </a>
@@ -27,6 +27,10 @@ export default {
       type: String,
       default: '',
     },
+    className: {
+      type: String,
+      default: '',
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -34,6 +38,11 @@ export default {
     loading: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    classes() {
+      return this.className.split(' ');
     },
   },
 };

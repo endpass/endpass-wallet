@@ -14,6 +14,7 @@
                         :options="availableCurrencies" />
 
               <v-button id="save-button"
+                        className="is-primary is-medium"
                         :disabled="!isFormValid"
                         @click.prevent="updateSettings(newSettings)">Save</v-button>
 

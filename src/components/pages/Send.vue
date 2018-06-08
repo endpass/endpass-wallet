@@ -73,6 +73,7 @@
                        required />
 
               <v-button @click.prevent="sendTransaction"
+                        className="is-primary is-medium"
                         :loading="isSending"
                         :disabled="isSyncing">Send</v-button>
 

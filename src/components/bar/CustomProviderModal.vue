@@ -4,22 +4,27 @@
       <template slot="header">Add New Provider</template>
 
       <div v-if="!providerAdded">
-	      <form>
-          <div class="field">
-            <label class="label" for="name">Network name</label>
-            <div class="control">
-              <input v-model="provider.name" name="name" v-validate="'required'" type="text" class="input" :class="{'is-danger': fields.name && fields.name.touched && fields.name.invalid }" id="name" aria-describedby="name" placeholder="Network name" required>
-            </div>
-            <p class="help is-danger">{{errors.first('name')}}</p>
-          </div>
-          <div class="field">
-            <label class="label" for="name">Provider url</label>
-            <div class="control">
-              <input v-model="provider.url" name="url" v-validate="'required|url:require_protocol:true|not_in:' + providersLinks" type="text" class="input" :class="{'is-danger': fields.url && fields.url.touched && fields.url.invalid }" id="name" aria-describedby="url" placeholder="Provider url" required>
-            </div>
-            <p class="help is-danger">{{errors.first('url')}}</p>
-          </div>
-	      </form>
+	      <v-form v-model="isFormValid">
+
+          <v-input v-model="provider.name"
+                   v-validate="'required'"
+                   name="name"
+                   label="Network name"
+                   id="name"
+                   describe="name"
+                   placeholder="Network name"
+                   required />
+
+          <v-input v-model="provider.url"
+                   v-validate="`required|url:require_protocol:true|not_in:${providersLinks}`"
+                   name="url"
+                   label="Provider url"
+                   id="url"
+                   describe="url"
+                   placeholder="Provider url"
+                   required />
+
+	      </v-form>
       </div>
       <div v-else>
         <p class="subtitle">New Provider Added</p>
@@ -37,8 +42,9 @@
 
       <div slot="footer">
         <div v-if="!providerAdded">
-          <a class="button is-primary" @click="addNewProvider">Create
-            New Provider</a>
+          <a class="button is-primary"
+             :disabled="!isFormValid"
+             @click="addNewProvider">Create New Provider</a>
           <a class="button" @click="close">Cancel</a>
         </div>
         <div v-else>
@@ -51,11 +57,15 @@
 </template>
 <script>
 import { mapActions } from 'vuex';
-import ModalComponent from '@/components/ModalComponent'
+import ModalComponent from '@/components/ui/ModalComponent'
+import VForm from '@/components/ui/form/VForm';
+import VInput from '@/components/ui/form/VInput';
+
 export default {
 	data() {
 		return {
-			providerAdded:false,
+      isFormValid: false,
+			providerAdded: false,
 			provider: {
 				name: '',
 				url: ''
@@ -88,7 +98,9 @@ export default {
     }
 	},
   components: {
-    ModalComponent
+    ModalComponent,
+    VInput,
+    VForm,
   }
 }
 </script>
