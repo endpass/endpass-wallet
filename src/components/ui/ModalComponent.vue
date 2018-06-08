@@ -21,6 +21,7 @@
 <script>
 // Generic modal component to be used with slots
 export default {
+  inject: ['$validator'],
   methods: {
     close () {
       this.$emit('close')

@@ -52,7 +52,7 @@
 
 <script>
 import { mapActions } from 'vuex';
-import ModalComponent from '@/components/ModalComponent'
+import ModalComponent from '@/components/ui/ModalComponent'
 
 export default {
   data () {

@@ -1,4 +1,5 @@
-import { shallow, createLocalVue, mount } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
+import VeeValidate from 'vee-validate';
 
 import VInput from '@/components/ui/form/VInput.vue';
 
@@ -8,54 +9,70 @@ describe('VInput', () => {
   let wrapper;
 
   beforeEach(() => {
+    const v = new VeeValidate.Validator();
+
     wrapper = shallow(VInput, {
       localVue,
       slots: {
         addon: '<span>My Addon</span>',
       },
+      provide: () => ({
+        $validator: v,
+      })
     });
   });
 
-  it('should render props', async () => {
+  it('should render props', () => {
     const input = wrapper.find('input');
 
+    const options = {
+      name: 'someName',
+      disabled: 'disabled',
+      required: 'required',
+      placeholder: 'Some placeholder',
+      autocomplete: 'new-password',
+    }
+
     expect(wrapper.contains('label')).toBeFalsy();
-    expect(input.attributes().value).toBeFalsy();
     expect(input.attributes().type).toBe('text');
-    expect(input.attributes().name).toBeFalsy();
-    expect(input.attributes().placeholder).toBeFalsy();
-    expect(input.attributes().required).toBeFalsy();
+    expect(input.attributes().value).toBeFalsy();
     expect(input.attributes()['aria-describedby']).toBeFalsy();
+
+    Object.keys(options).forEach(prop => {
+      expect(input.attributes()[prop]).toBeFalsy();
+    })
+
     expect(wrapper.contains('p')).toBeFalsy();
 
     wrapper.setProps({
       type: 'email',
       value: 'some value',
-      name: 'someName',
       label: 'Some Label',
-      required: true,
-      placeholder: 'Some placeholder',
-      describe: 'describe',
       error: 'Some error',
+      ariaDescribedby: 'describe',
+      ...options,
     });
 
     expect(wrapper.find('label').text()).toBe('Some Label');
-    expect(input.element.value).toBe('some value');
-    expect(input.attributes().type).toBe('email');
-    expect(input.attributes().name).toBe('someName');
-    expect(input.attributes().placeholder).toBe('Some placeholder');
-    expect(input.attributes().required).toBeTruthy();
-    expect(input.attributes()['aria-describedby']).toBe('describe');
     expect(wrapper.find('p').text()).toBe('Some error');
+    expect(input.element.value).toBe('some value');    
+    expect(input.attributes().type).toBe('email');
+    expect(input.attributes()['aria-describedby']).toBe('describe');
 
-    input.trigger('input');
-    input.trigger('blur');
+    Object.keys(options).forEach(prop => {
+      expect(input.attributes()[prop]).toBe(options[prop]);
+    })
+  });
+
+  it('should emit event', () => {
+    wrapper.find('input').trigger('input');
+    wrapper.find('input').trigger('blur');
 
     expect(wrapper.emitted().input).toBeTruthy();
     expect(wrapper.emitted().blur).toBeTruthy();
   });
 
-  it('should render slot', async () => {
+  it('should render slot', () => {
     expect(wrapper.vm.$slots.addon).toBeTruthy();
   });
 });

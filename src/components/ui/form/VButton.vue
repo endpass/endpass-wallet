@@ -2,8 +2,9 @@
   <div class="field">
     <div class="control">
       <a :id="id"
-         :disabled="disabled"
-         class="button is-primary is-medium"
+         :disabled="!form.isFormValid || disabled"
+         class="button"
+         :class="[...classes, {'is-loading' : loading }]"
          @click.prevent="$emit('click', $event)">
         <slot />
       </a>
@@ -14,14 +15,34 @@
 <script>
 export default {
   name: 'v-button',
+  inject: {
+    form: {
+      default: () => ({
+        isFormValid: true,
+      }),
+    },
+  },
   props: {
     id: {
+      type: String,
+      default: '',
+    },
+    className: {
       type: String,
       default: '',
     },
     disabled: {
       type: Boolean,
       default: false,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    classes() {
+      return this.className.split(' ');
     },
   },
 };

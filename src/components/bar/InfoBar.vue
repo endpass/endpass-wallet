@@ -10,7 +10,7 @@
               <div class="flex">
                 <div class="select">
                   <select v-model="selectedNet">
-                    <option v-for="net in networks" :value="net.id">
+                    <option v-for="net in networks" :value="net.id" :key="net.id">
                     {{net.name}}
                     </option>
                   </select>

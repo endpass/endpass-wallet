@@ -12,11 +12,13 @@
                :name="name"
                :type="type"
                class="input"
-               :class="{'is-danger': error }"
+               :class="{'is-danger': errors && errors.has(name) || error }"
                :id="id"
-               :aria-describedby="describe"
+               :aria-describedby="ariaDescribedby"
                :placeholder="placeholder"
-               :required="required">
+               :disabled="disabled"
+               :required="required"
+               :autocomplete="autocomplete" >
       </div>
       <div class="control"
            v-if="$slots.addon">
@@ -24,13 +26,14 @@
       </div>
     </div>
     <p class="help is-danger"
-       v-if="error">{{ error }}</p>
+       v-if="errors && errors.has(name) || error">{{ errors && errors.first(name) || error }}</p>
   </div>
 </template>
 
 <script>
 export default {
   name: 'v-input',
+  inject: ['$validator'],
   props: {
     value: {
       type: [String, Number],
@@ -56,9 +59,13 @@ export default {
       type: String,
       default: null,
     },
-    describe: {
+    ariaDescribedby: {
       type: String,
       default: null,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     required: {
       type: Boolean,
@@ -68,7 +75,7 @@ export default {
       type: String,
       default: null,
     },
-    rules: {
+    autocomplete: {
       type: String,
       default: null,
     },
@@ -88,6 +95,10 @@ export default {
 
 <style lang="scss">
 .field.has-addons {
+  margin-bottom: 0;
+}
+
+.field > .field {
   margin-bottom: 0;
 }
 </style>

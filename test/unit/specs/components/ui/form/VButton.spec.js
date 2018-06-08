@@ -12,13 +12,21 @@ describe('VButton', () => {
   });
 
   it('should render props', () => {
-    expect(wrapper.find('a').attributes().id).toBe('');
+    const button = wrapper.find('a');
+
+    expect(button.attributes().id).toBe('');
+    expect(button.classes()).not.toContain('is-loading');
+    expect(wrapper.contains('a.some-class.some-class-1')).toBeFalsy();
 
     wrapper.setProps({
       id: 'some-id',
+      loading: true,
+      className: 'some-class some-class-1',
     });
 
-    expect(wrapper.find('a').attributes().id).toBe('some-id');
+    expect(button.attributes().id).toBe('some-id');
+    expect(button.classes()).toContain('is-loading');
+    expect(wrapper.contains('a.some-class.some-class-1')).toBeTruthy();
   });
 
   it('should emit event if not disabled', () => {
