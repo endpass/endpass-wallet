@@ -11,7 +11,7 @@
                    name="name"
                    label="Network name"
                    id="name"
-                   describe="name"
+                   aria-describedby="name"
                    placeholder="Network name"
                    required />
 
@@ -20,7 +20,7 @@
                    name="url"
                    label="Provider url"
                    id="url"
-                   describe="url"
+                   aria-describedby="url"
                    placeholder="Provider url"
                    required />
 

@@ -14,10 +14,11 @@
                class="input"
                :class="{'is-danger': errors && errors.has(name) || error }"
                :id="id"
-               :aria-describedby="describe"
+               :aria-describedby="ariaDescribedby"
                :placeholder="placeholder"
                :disabled="disabled"
-               :required="required">
+               :required="required"
+               :autocomplete="autocomplete" >
       </div>
       <div class="control"
            v-if="$slots.addon">
@@ -58,7 +59,7 @@ export default {
       type: String,
       default: null,
     },
-    describe: {
+    ariaDescribedby: {
       type: String,
       default: null,
     },
@@ -74,7 +75,7 @@ export default {
       type: String,
       default: null,
     },
-    rules: {
+    autocomplete: {
       type: String,
       default: null,
     },

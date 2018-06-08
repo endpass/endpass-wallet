@@ -14,7 +14,7 @@
                        name="address"
                        v-validate="'required|address'"
                        id="address"
-                       describe="address"
+                       aria-describedby="address"
                        placeholder="Receiver address"
                        :disabled="isSending"
                        required />
@@ -24,7 +24,7 @@
                        name="value"
                        v-validate="`required|decimal|max_value:${maxAmount}`"
                        id="value"
-                       describe="value"
+                       aria-describedby="value"
                        placeholder="Amount"
                        :disabled="isSending"
                        required>
@@ -44,7 +44,7 @@
                        name="price"
                        v-validate="'required|integer|min_value:0|max_value:100'"
                        id="price"
-                       describe="price"
+                       aria-describedby="price"
                        placeholder="Gas price"
                        :disabled="isSending"
                        required>
@@ -58,7 +58,7 @@
                        name="limit"
                        v-validate="'required|numeric|integer|min_value:21000|max_value:4000000'"
                        id="limit"
-                       describe="limit"
+                       aria-describedby="limit"
                        placeholder="Gas limit"
                        :disabled="isSending"
                        required />
@@ -67,7 +67,7 @@
                        v-model="transaction.data"
                        label="Data"
                        id="data"
-                       describe="data"
+                       aria-describedby="data"
                        placeholder="Data"
                        :disabled="isSending"
                        required />

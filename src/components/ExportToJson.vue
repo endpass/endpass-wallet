@@ -1,44 +1,36 @@
 <template lang="html">
   <div class="export-json">
-    <form>
-      <div class="field">
-        <label class="label" for="jsonKeystorePassword">Choose a password
-          to encrypt your wallet file</label>
-        <div class="control">
-          <input
-            v-model="password"
-            type="password"
-            name="password"
-            v-validate="'required|min:8'"
-            class="input"
-            aria-describedby="password"
-            placeholder="JSON keystore password"
-            autocomplete="new-password">
-        </div>
-        <p class="help is-danger"
-          v-if="errors.has('password')">{{errors.first('password')}}</p>
-      </div>
-      <a :class="{'is-loading' : exportingJson }" class="button is-primary is-medium" @click.prevent="exportJSON"
-        :disabled="!isFormValid">Export</a>
-    </form>
+    <v-form>
+
+      <v-input label="Choose a password to encrypt your wallet file"
+               v-model="password"
+               type="password"
+               name="password"
+               id="keystore-pass"
+               v-validate="'required|min:8'"
+               aria-describedby="password"
+               placeholder="JSON keystore password"
+               autocomplete="new-password" />
+
+      <v-button :loading="exportingJson"
+                className="is-primary is-medium"
+                @click.prevent="exportJSON">Export</v-button>
+
+    </v-form>
   </div>
 </template>
 
 <script>
 import accounts from '@/mixins/accounts';
+import VForm from '@/components/ui/form/VForm';
+import VInput from '@/components/ui/form/VInput';
+import VButton from '@/components/ui/form/VButton';
 
 export default {
   data: () => ({
     password: '',
     exportingJson: false,
   }),
-  computed: {
-    isFormValid() {
-      return !Object.keys(this.fields).some(
-        field => this.fields[field] && this.fields[field].invalid
-      );
-    },
-  },
   methods: {
     exportJSON() {
       if (this.activeAccount) {
@@ -83,6 +75,11 @@ export default {
       });
       console.error(e);
     },
+  },
+  components: {
+    VForm,
+    VInput,
+    VButton,
   },
   mixins: [accounts],
 };
