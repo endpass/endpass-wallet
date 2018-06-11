@@ -5,24 +5,26 @@ import VInput from '@/components/ui/form/VInput.vue';
 
 const localVue = createLocalVue();
 
+localVue.use(VeeValidate);
+
 describe('VInput', () => {
   let wrapper;
 
   beforeEach(() => {
-    const v = new VeeValidate.Validator();
-
     wrapper = shallow(VInput, {
       localVue,
       slots: {
         addon: '<span>My Addon</span>',
       },
       provide: () => ({
-        $validator: v,
+        $validator: new VeeValidate.Validator(),
       })
     });
   });
 
   it('should render props', () => {
+    const camelToKebab = str => str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`)
+
     const input = wrapper.find('input');
 
     const options = {
@@ -31,25 +33,25 @@ describe('VInput', () => {
       required: 'required',
       placeholder: 'Some placeholder',
       autocomplete: 'new-password',
+      ariaDescribedby: 'describe',
+      autocomplete: 'new-password',
+      testACamelCase: 'test camel case',
     }
 
     expect(wrapper.contains('label')).toBeFalsy();
     expect(input.attributes().type).toBe('text');
-    expect(input.attributes().value).toBeFalsy();
-    expect(input.attributes()['aria-describedby']).toBeFalsy();
+    expect(input.element.value).toBeFalsy();
+    expect(wrapper.contains('p')).toBeFalsy();
 
     Object.keys(options).forEach(prop => {
-      expect(input.attributes()[prop]).toBeFalsy();
+      expect(input.attributes()[camelToKebab(prop)]).toBeFalsy();
     })
-
-    expect(wrapper.contains('p')).toBeFalsy();
 
     wrapper.setProps({
       type: 'email',
       value: 'some value',
       label: 'Some Label',
       error: 'Some error',
-      ariaDescribedby: 'describe',
       ...options,
     });
 
@@ -57,10 +59,9 @@ describe('VInput', () => {
     expect(wrapper.find('p').text()).toBe('Some error');
     expect(input.element.value).toBe('some value');    
     expect(input.attributes().type).toBe('email');
-    expect(input.attributes()['aria-describedby']).toBe('describe');
-
+    
     Object.keys(options).forEach(prop => {
-      expect(input.attributes()[prop]).toBe(options[prop]);
+      expect(input.attributes()[camelToKebab(prop)]).toBe(options[prop]);
     })
   });
 
