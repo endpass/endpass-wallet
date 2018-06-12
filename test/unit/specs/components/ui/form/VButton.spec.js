@@ -14,7 +14,7 @@ describe('VButton', () => {
   it('should render props', () => {
     const button = wrapper.find('a');
 
-    expect(button.attributes().id).toBe('');
+    expect(button.attributes().id).toBeFalsy();
     expect(button.classes()).not.toContain('is-loading');
     expect(wrapper.contains('a.some-class.some-class-1')).toBeFalsy();
 
@@ -35,7 +35,8 @@ describe('VButton', () => {
     expect(button.attributes().disabled).toBeFalsy();
 
     button.trigger('click');
-    expect(wrapper.emitted().click).toBeTruthy();
+    
+    expect(wrapper.emitted().click.length).toBe(1);
 
     wrapper.setProps({ disabled: true });
     // FIXME when update test-utils
@@ -47,7 +48,6 @@ describe('VButton', () => {
     expect(button.attributes().disabled).toBeFalsy();
 
     button.trigger('click');
-    expect(wrapper.emitted().click).toBeTruthy();
 
     expect(wrapper.emitted().click.length).toBe(2);
   });

@@ -9,16 +9,9 @@
            :class="{'is-expanded': $slots.addon }">
         <input v-model="innerValue"
                @blur="$emit('blur', $event.target.value)"
-               :name="name"
-               :type="type"
                class="input"
-               :class="{'is-danger': errors && errors.has(name) || error }"
-               :id="id"
-               :aria-describedby="ariaDescribedby"
-               :placeholder="placeholder"
-               :disabled="disabled"
-               :required="required"
-               :autocomplete="autocomplete" >
+               :class="{'is-danger': error || errors.has(name) }"
+               v-bind="props">
       </div>
       <div class="control"
            v-if="$slots.addon">
@@ -26,7 +19,7 @@
       </div>
     </div>
     <p class="help is-danger"
-       v-if="errors && errors.has(name) || error">{{ errors && errors.first(name) || error }}</p>
+       v-if="error || errors.has(name) ">{{ error || errors.first(name) }}</p>
   </div>
 </template>
 
@@ -80,6 +73,9 @@ export default {
       default: null,
     },
   },
+  methods: {
+    camelToKebab: str => str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`),
+  },
   computed: {
     innerValue: {
       get() {
@@ -88,6 +84,15 @@ export default {
       set(newVal) {
         this.$emit('input', newVal);
       },
+    },
+    props() {
+      return Object.keys(this.$props).reduce(
+        (res, prop) => ({
+          ...res,
+          [this.camelToKebab(prop)]: this.$props[prop],
+        }),
+        {}
+      );
     },
   },
 };

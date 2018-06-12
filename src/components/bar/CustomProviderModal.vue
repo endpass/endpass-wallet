@@ -1,6 +1,6 @@
 <template>
   <div class="new-account-modal">
-    <modal-component @close="close">
+    <v-modal @close="close">
       <template slot="header">Add New Provider</template>
 
       <div v-if="!providerAdded">
@@ -52,12 +52,12 @@
         </div>
       </div>
 
-    </modal-component>
+    </v-modal>
   </div>
 </template>
 <script>
 import { mapActions } from 'vuex';
-import ModalComponent from '@/components/ui/ModalComponent'
+import VModal from '@/components/ui/VModal'
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 
@@ -98,7 +98,7 @@ export default {
     }
 	},
   components: {
-    ModalComponent,
+    VModal,
     VInput,
     VForm,
   }

@@ -271,13 +271,17 @@ export default {
       async handler() {
         await this.$nextTick();
 
-        if (!this.errors.has('address')) {
+        if (
+          !this.errors.has('address') &&
+          this.fields.address &&
+          this.fields.address.valid
+        ) {
           const gas = await this.web3.eth.estimateGas({
             to: this.transaction.to || undefined,
             amount: hexToNumberString(this.transaction.value),
           })
           
-          const amountWei = toWei(this.balance, 'ether') - gas;
+          const amountWei = toWei(this.balance.toString(), 'ether') - gas;
           this.maxAmount = fromWei(amountWei.toString());
         }
       },
