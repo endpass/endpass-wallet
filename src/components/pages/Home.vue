@@ -15,11 +15,7 @@
                          class="code address">{{address}}</p>
                     </div>
                     <div class="column">
-                      <p class="heading">Balance</p>
-                      <p>
-                      <span class="stat title">{{balance}}</span>
-                      <span class="has-text-centered">ETH</span>
-                      </p>
+                      <balance :amount="balance" />
                     </div>
                     <div class="column" v-if="!isPublicAccount">
                       <p class="heading">Actions</p>
@@ -57,6 +53,8 @@
 </template>
 
 <script>
+
+import Balance from '@/components/Balance'
 import accounts from '@/mixins/accounts'
 import { mapGetters } from 'vuex'
 
@@ -68,7 +66,10 @@ export default {
   computed: {
     ...mapGetters('accounts', ['isPublicAccount'])
   },
-  mixins: [accounts]
+  mixins: [accounts],
+  components: {
+    Balance
+  }
 }
 </script>
 

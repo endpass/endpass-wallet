@@ -4,6 +4,7 @@ import Vuex from 'vuex';
 import accounts from './accounts/accounts';
 import tokens from './tokens/tokens';
 import web3 from './web3/web3';
+import price from './price/price';
 
 Vue.use(Vuex);
 const store = new Vuex.Store({
@@ -20,6 +21,7 @@ const store = new Vuex.Store({
     accounts,
     web3,
     tokens,
+    price
   },
 });
 
