@@ -1,5 +1,17 @@
 language: node_js
 node_js:
   - '10'
+env:
+  - TEST_SUITE=unit
+  - TEST_SUITE=e2e
 cache:
-  yarn: true
+  directories:
+    - ~/.cache
+install:
+  yarn install --frozen-lockfile
+before_script:
+  # start dev server for e2e tests
+  - yarn run dev &
+script:
+  # test suite in env var for parallel build matrix
+  - yarn run $TEST_SUITE
