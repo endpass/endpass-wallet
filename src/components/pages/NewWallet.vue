@@ -11,7 +11,7 @@
             wallet without it.</p>
             <div class="box">
               <p>Your wallet recovery phrase</p>
-              <p class="code">{{mnemonic.phrase}}</p>
+              <p class="code" data-test="seed-phrase">{{mnemonic.phrase}}</p>
             </div>
             <router-link to="/" class="button is-primary">I have written down my seed phrase</router-link>
           </div>
