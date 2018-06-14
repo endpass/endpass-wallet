@@ -21,6 +21,7 @@
 
               <v-input v-model.number="value"
                        label="Amount"
+                       type="number"
                        name="value"
                        v-validate="`required|decimal|max_value:${maxAmount}`"
                        id="value"
@@ -42,6 +43,7 @@
               <v-input v-model.number="gasPrice"
                        label="Gas price"
                        name="price"
+                       type="number"
                        v-validate="'required|integer|min_value:0|max_value:100'"
                        id="price"
                        aria-describedby="price"
@@ -56,6 +58,7 @@
               <v-input v-model.number="gasLimit"
                        label="Gas limit"
                        name="limit"
+                       type="number"
                        v-validate="'required|numeric|integer|min_value:21000|max_value:4000000'"
                        id="limit"
                        aria-describedby="limit"
@@ -66,6 +69,8 @@
               <v-input v-show="selectedToken === 'ETH'"
                        v-model="transaction.data"
                        label="Data"
+                       name="data"
+                       v-validate="'required|hex'"
                        id="data"
                        aria-describedby="data"
                        placeholder="Data"
@@ -120,14 +125,21 @@ export default {
       pendingTransactions: state => state.accounts.pendingTransactions,
       tokens: state => state.tokens.activeTokens,
       web3: state => state.web3.web3,
-      isSyncing: state => state.web3.isSyncing,
+      isSyncing: state => !!state.web3.isSyncing,
     }),
     gasPrice: {
       get() {
+        if (this.transaction.gasPrice === '') {
+          return '';
+        }
+
         return fromWei(hexToNumberString(this.transaction.gasPrice), 'Gwei');
       },
       set(newValue) {
-        if (typeof newValue !== 'number') return;
+        if (newValue === '') {
+          this.transaction.gasPrice = '';
+          return;
+        }
 
         this.transaction.gasPrice = numberToHex(
           toWei(newValue.toString(), 'Gwei')
@@ -140,10 +152,17 @@ export default {
     },
     gasLimit: {
       get() {
+        if (this.transaction.gasLimit === '') {
+          return '';
+        }
+
         return hexToNumberString(this.transaction.gasLimit);
       },
       set(newValue) {
-        if (typeof newValue !== 'number') return;
+        if (newValue === '') {
+          this.transaction.gasLimit = '';
+          return;
+        }
 
         this.transaction.gasLimit = numberToHex(newValue.toString());
       },
@@ -151,6 +170,10 @@ export default {
     value: {
       get() {
         const { value: transValue } = this.transaction;
+
+        if (transValue === '') {
+          return '';
+        }
 
         if (this.selectedToken === 'ETH') {
           return fromWei(hexToNumberString(transValue));
@@ -166,7 +189,10 @@ export default {
         }
       },
       set(newValue) {
-        if (typeof newValue !== 'number') return;
+        if (newValue === '') {
+          this.transaction.value = '';
+          return;
+        }
 
         if (this.selectedToken === 'ETH') {
           this.transaction.value = numberToHex(
@@ -226,7 +252,7 @@ export default {
           .on('error', (err, receipt) => {
             this.isSending = false;
 
-            const cause = receipt ? ', because out of gas' : null;
+            const cause = receipt ? ', because out of gas' : '';
 
             this.$notify({
               title: 'Error sending transaction',
@@ -271,11 +297,7 @@ export default {
       async handler() {
         await this.$nextTick();
 
-        if (
-          !this.errors.has('address') &&
-          this.fields.address &&
-          this.fields.address.valid
-        ) {
+        if (!this.errors.has('address')) {
           const gas = await this.web3.eth.estimateGas({
             to: this.transaction.to || undefined,
             amount: hexToNumberString(this.transaction.value),
