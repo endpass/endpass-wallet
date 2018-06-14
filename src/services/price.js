@@ -5,8 +5,8 @@ let throttle = throttledQueue(1, 2000);
 
 export default {
 	getPrice(symbol, currencys) {
-		let throttlePromice = new Promice((res, rej) => {
-			throttle(
+		let throttlePromice = new Promise((res, rej) => {
+			throttle(() => {
 				axios.get(`https://min-api.cryptocompare.com/data/price`, {
 					params: {
 						fsym: symbol,
@@ -14,7 +14,7 @@ export default {
 					}
 				}).then(data => res(data))
 				.catch(e => rej(e))
-			)
+			})
 		});
 		return throttlePromice 
 	},
@@ -22,8 +22,8 @@ export default {
 		return this.getPrice('ETH', currencys);
 	},
 	getPrices(symbols, currencys) {
-		let throttlePromice = new Promice((res, rej) => {
-			throttle(
+		let throttlePromice = new Promise((res, rej) => {
+			throttle(() => {
 				axios.get(`https://min-api.cryptocompare.com/data/pricemulti`, {
 					params: {
 						fsyms: symbols,
@@ -31,7 +31,7 @@ export default {
 					}
 				}).then(data => res(data))
 				.catch(e => rej(e))
-			)
+			})
 		});
 		return throttlePromice
 	}
