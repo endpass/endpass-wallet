@@ -108,7 +108,6 @@ export default {
   data: () => ({
     selectedToken: 'ETH',
     toCache: '',
-    maxAmount: 0,
     isSending: false,
     isFormValid: false,
     transactionHash: null,
@@ -119,6 +118,7 @@ export default {
       value: '0x0',
       data: '0x',
     },
+    estimateGas: 0,
   }),
   computed: {
     ...mapState({
@@ -207,6 +207,14 @@ export default {
         }
       },
     },
+    maxAmount() {
+      const { balance } = this;
+      const weiBalance = toWei(balance && balance.toString() || '0', 'ether');
+      const amountWei = weiBalance - this.estimateGas * this.gasPrice;
+      const amount = fromWei(amountWei.toString());
+      
+      return amount > 0 ? amount : 0;
+    }
   },
   methods: {
     ...mapMutations('accounts', ['addTransaction', 'removeTransaction']),
@@ -298,13 +306,10 @@ export default {
         await this.$nextTick();
 
         if (!this.errors.has('address')) {
-          const gas = await this.web3.eth.estimateGas({
+          this.estimateGas = await this.web3.eth.estimateGas({
             to: this.transaction.to || undefined,
             amount: hexToNumberString(this.transaction.value),
-          })
-          
-          const amountWei = toWei(this.balance.toString(), 'ether') - gas;
-          this.maxAmount = fromWei(amountWei.toString());
+          })          
         }
       },
       immediate: true
