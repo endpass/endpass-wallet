@@ -303,7 +303,9 @@ export default {
             amount: hexToNumberString(this.transaction.value),
           })
           
-          const amountWei = toWei(this.balance.toString(), 'ether') - gas;
+          const estimateGasCost = gas * this.gasPrice;
+          const balance = toWei(this.balance.toString(), 'ether');
+          const amountWei = balance - estimateGasCost;
           this.maxAmount = fromWei(amountWei.toString());
         }
       },
