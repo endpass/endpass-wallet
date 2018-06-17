@@ -102,7 +102,7 @@ import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
-const { BN, fromWei, hexToNumberString, numberToHex, toWei } = web3.utils;
+const { BN, toBN, fromWei, hexToNumberString, numberToHex, toWei } = web3.utils;
 
 export default {
   data: () => ({
@@ -208,16 +208,17 @@ export default {
       },
     },
     maxAmount() {
-      const { balance } = this;
-      const weiBalance = toWei(balance && balance.toString() || '0', 'ether');
-      const amountWei = weiBalance - this.estimateGas * this.gasPrice;
-      const amount = fromWei(amountWei.toString());
-      
+      const balanceBN = toBN(toWei(this.balance || '0'));
+      const gasPriceBN = toBN(toWei(this.gasPrice || '0', 'Gwei'));
+      const estimateGasBN = toBN(this.estimateGas);
+      const amountBN = balanceBN.sub(gasPriceBN.mul(estimateGasBN));
+      const amount = fromWei(amountBN.toString());
+
       return amount > 0 ? amount : 0;
     }
   },
   methods: {
-    ...mapMutations('accounts', ['addTransaction', 'removeTransaction']),
+    ...mapMutations('accounts', ['addTransaction', 'updateTransaction']),
     createTransactionHistory(trx) {
       const historyItem = {};
 
@@ -227,6 +228,8 @@ export default {
       historyItem.gasPrice = trx.gasPrice;
       historyItem.nonce = trx.nonce;
       historyItem.canseled = false;
+      historyItem.token = this.selectedToken;
+      historyItem.status = 'pending';
 
       if (this.selectedToken !== 'ETH') {
         historyItem.reciverAddress = this.toCache;
@@ -255,7 +258,10 @@ export default {
         this.web3.eth
           .sendSignedTransaction('0x' + serializedTx.toString('hex'))
           .on('receipt', resp => {
-            this.removeTransaction(resp.transactionHash);
+            this.updateTransaction({
+              oldHash: resp.transactionHash,
+              newTrx: { status: 'success' },
+            });
           })
           .on('error', (err, receipt) => {
             this.isSending = false;
@@ -304,12 +310,13 @@ export default {
     'transaction.to': {
       async handler() {
         await this.$nextTick();
+        await this.$nextTick();
 
         if (!this.errors.has('address')) {
           this.estimateGas = await this.web3.eth.estimateGas({
             to: this.transaction.to || undefined,
             amount: hexToNumberString(this.transaction.value),
-          })          
+          })
         }
       },
       immediate: true

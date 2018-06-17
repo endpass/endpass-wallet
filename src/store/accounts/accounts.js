@@ -1,4 +1,6 @@
 import storage from '@/services/storage';
+import web3 from 'web3';
+const { toBN, hexToNumberString, toWei, fromWei } = web3.utils;
 
 export default {
   namespaced: true,
@@ -17,7 +19,23 @@ export default {
   getters: {
     isPublicAccount(state) {
       return state.activeAccount && state.activeAccount._privKey === null;
-    }
+    },
+    balance(state) {
+      const totalAmountActiveTnx = state.pendingTransactions
+        .filter(tnx => tnx.canseled === false)
+        .map(tnx => {
+          const { value, gasLimit, gasPrice } = tnx;
+          const limit = hexToNumberString(gasLimit);
+          const price = hexToNumberString(gasPrice);
+          const gasCost = toBN(limit).mul(toBN(price));
+          const tnxValue = tnx.token === 'ETH' ? toWei(value) : 0;
+
+          return gasCost.add(toBN(tnxValue));
+        })
+        .reduce((total, item) =>  total.add(item), toBN(0));
+
+      return toBN(state.balance || 0).sub(totalAmountActiveTnx).toString();
+    },
   },
   mutations: {
     addAccount(state, account) {
@@ -76,14 +94,23 @@ export default {
         dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true})
       ]);
     },
-    updateBalance(context) {
-      if(context.rootState.accounts.activeAccount) {
-        let address = context.rootState.accounts.activeAccount.getAddressString();
-        let balance = context.rootState.web3.web3.eth.getBalance(address).then((balance) => {
-          context.commit('setBalance', balance);
-        }).catch(e => {
-          console.error(e, 'bal');
-        });
+    updateBalance({ state, commit, rootState }) {
+      if (rootState.accounts.activeAccount) {
+        const address = rootState.accounts.activeAccount.getAddressString();
+        rootState.web3.web3.eth
+          .getBalance(address)
+          .then(balance => {
+            state.pendingTransactions
+              .filter(tnx => !tnx.canseled && tnx.status === 'success')
+              .forEach(tnx => {
+                commit('removeTransaction', tnx.hash);
+              });
+
+            commit('setBalance', balance);
+          })
+          .catch(e => {
+            console.error(e, 'bal');
+          });
       }
     },
     updateSettings({ commit }, settings) {
