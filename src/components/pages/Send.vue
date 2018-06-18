@@ -19,11 +19,12 @@
                        :disabled="isSending"
                        required />
 
-              <v-input v-model.number="value"
+              <v-input v-model="value"
                        label="Amount"
                        type="number"
                        name="value"
                        v-validate="`required|decimal|max_value:${maxAmount}`"
+                       data-vv-as="amount"
                        id="value"
                        aria-describedby="value"
                        placeholder="Amount"
@@ -40,7 +41,7 @@
                 </span>
               </v-input>
 
-              <v-input v-model.number="gasPrice"
+              <v-input v-model="gasPrice"
                        label="Gas price"
                        name="price"
                        type="number"
@@ -55,7 +56,7 @@
                 </div>
               </v-input>
 
-              <v-input v-model.number="gasLimit"
+              <v-input v-model="gasLimit"
                        label="Gas limit"
                        name="limit"
                        type="number"
@@ -109,7 +110,6 @@ export default {
     selectedToken: 'ETH',
     toCache: '',
     isSending: false,
-    isFormValid: false,
     transactionHash: null,
     transaction: {
       gasPrice: '0x14f46b0400',
@@ -118,6 +118,9 @@ export default {
       value: '0x0',
       data: '0x',
     },
+    gasPrice: '90',
+    gasLimit: '22000',
+    value: '0',
     estimateGas: 0,
   }),
   computed: {
@@ -127,94 +130,24 @@ export default {
       web3: state => state.web3.web3,
       isSyncing: state => !!state.web3.isSyncing,
     }),
-    gasPrice: {
-      get() {
-        if (this.transaction.gasPrice === '') {
-          return '';
-        }
-
-        return fromWei(hexToNumberString(this.transaction.gasPrice), 'Gwei');
-      },
-      set(newValue) {
-        if (newValue === '') {
-          this.transaction.gasPrice = '';
-          return;
-        }
-
-        this.transaction.gasPrice = numberToHex(
-          toWei(newValue.toString(), 'Gwei')
-        );
-      },
-    },
     // token object based on the selectedToken symbol string
     selectedTokenInfo() {
       return this.tokens.find(t => t.symbol === this.selectedToken);
     },
-    gasLimit: {
-      get() {
-        if (this.transaction.gasLimit === '') {
-          return '';
-        }
-
-        return hexToNumberString(this.transaction.gasLimit);
-      },
-      set(newValue) {
-        if (newValue === '') {
-          this.transaction.gasLimit = '';
-          return;
-        }
-
-        this.transaction.gasLimit = numberToHex(newValue.toString());
-      },
-    },
-    value: {
-      get() {
-        const { value: transValue } = this.transaction;
-
-        if (transValue === '') {
-          return '';
-        }
-
-        if (this.selectedToken === 'ETH') {
-          return fromWei(hexToNumberString(transValue));
-        } else {
-          const divider = new BN('10').pow(
-            new BN(this.selectedTokenInfo.decimals)
-          );
-          const result = new BN(hexToNumberString(transValue));
-          const beforeDecimal = result.div(divider).toString();
-          const afterDecimal = result.mod(divider).toString();
-
-          return `${beforeDecimal}.${afterDecimal}`;
-        }
-      },
-      set(newValue) {
-        if (newValue === '') {
-          this.transaction.value = '';
-          return;
-        }
-
-        if (this.selectedToken === 'ETH') {
-          this.transaction.value = numberToHex(
-            toWei(newValue.toString(), 'ether')
-          );
-        } else {
-          const divider = new BN('10').pow(
-            new BN(this.selectedTokenInfo.decimals)
-          );
-          const value = new BN(newValue).mul(divider).toString();
-          this.transaction.value = numberToHex(value);
-        }
-      },
-    },
     maxAmount() {
-      const balanceBN = toBN(toWei(this.balance || '0'));
-      const gasPriceBN = toBN(toWei(this.gasPrice || '0', 'Gwei'));
-      const estimateGasBN = toBN(this.estimateGas);
-      const amountBN = balanceBN.sub(gasPriceBN.mul(estimateGasBN));
-      const amount = fromWei(amountBN.toString());
-
-      return amount > 0 ? amount : 0;
+      if (this.selectedToken === 'ETH') {
+        const balanceBN = toBN(toWei(this.balance || '0'));
+        const gasPriceBN = toBN(toWei(this.gasPrice || '0', 'Gwei'));
+        const estimateGasBN = toBN(this.estimateGas);
+        const amountBN = balanceBN.sub(gasPriceBN.mul(estimateGasBN));
+        const amount = fromWei(amountBN.toString());
+        return amount > 0 ? amount : 0;
+      } else {
+        return this.selectedTokenInfo.balance;
+      }
+    },
+    divider() {
+      return toBN('10').pow(toBN(this.selectedTokenInfo.decimals || '0'));
     }
   },
   methods: {
@@ -234,6 +167,9 @@ export default {
       if (this.selectedToken !== 'ETH') {
         historyItem.reciverAddress = this.toCache;
         historyItem.tokenInfo = this.selectedTokenInfo;
+        historyItem.value = toBN(hexToNumberString(trx.value))
+          .div(this.divider)
+          .toString();
       }
 
       return historyItem;
@@ -241,6 +177,17 @@ export default {
     sendTransaction() {
       const keyHex = this.address;
       this.isSending = true;
+
+      this.transaction.gasPrice = numberToHex(
+        toWei(this.gasPrice, 'Gwei')
+      );
+      this.transaction.gasLimit = numberToHex(this.gasLimit);
+      this.transaction.value = numberToHex(
+        toWei(this.value)
+      );
+      if (this.transaction.to.toUpperCase().indexOf('0X') !== 0) {
+        this.transaction.to = `0x${this.transaction.to}`; 
+      }
 
       this.web3.eth.getTransactionCount(keyHex).then(nonce => {
         const nonceWithPending = nonce + this.pendingTransactions.length;
@@ -275,6 +222,9 @@ export default {
             })
           })
           .on('transactionHash', hash => {
+            this.$validator.flag('address', {
+              valid: false,
+            });
             this.isSending = false;
             this.transactionHash = hash;
             this.$notify({
@@ -286,7 +236,6 @@ export default {
             transactionForHistory.hash = hash;
             this.addTransaction(transactionForHistory);
           });
-
         this.transaction.to = this.toCache;
       });
     },
@@ -294,6 +243,9 @@ export default {
       if (!this.selectedTokenInfo || !this.selectedTokenInfo.address) {
         throw 'Invalid token address';
       }
+
+      const value = toBN(this.value).mul(this.divider).toString();
+      this.transaction.value = numberToHex(value);
 
       const tokenAddress = this.selectedTokenInfo.address;
       const contract = new this.web3.eth.Contract(erc20ABI, tokenAddress, {
@@ -305,6 +257,34 @@ export default {
         .transfer(this.transaction.to, this.transaction.value)
         .encodeABI();
     },
+    async updateEstimateGas() {
+      let { data = '0x', to } = this.transaction;
+      let { value: amount = '0' } = this;
+
+      if (this.selectedToken !== 'ETH') {
+        const { address } = this.selectedTokenInfo;
+        to = address;
+        const contract = new this.web3.eth.Contract(erc20ABI, address, {
+          from: this.address,
+        });
+        amount = numberToHex(toBN(this.value || '0').mul(this.divider).toString());
+        data = contract.methods
+          .transfer(to, amount)
+          .encodeABI();
+      } else {
+        amount = numberToHex(toWei(amount || '0'));
+
+        if (to && to.toUpperCase().indexOf('0X') !== 0) {
+          to = `0x${to}`; 
+        }
+      }
+
+      this.estimateGas = await this.web3.eth.estimateGas({
+        to: to || undefined,
+        amount,
+        data,
+      })
+    }
   },
   watch: {
     'transaction.to': {
@@ -313,13 +293,23 @@ export default {
         await this.$nextTick();
 
         if (!this.errors.has('address')) {
-          this.estimateGas = await this.web3.eth.estimateGas({
-            to: this.transaction.to || undefined,
-            amount: hexToNumberString(this.transaction.value),
-          })
+          this.updateEstimateGas();
         }
       },
-      immediate: true
+      immediate: true,
+    },
+    'transaction.data': {
+      async handler() {
+        await this.$nextTick();
+        await this.$nextTick();
+
+        if (!this.errors.has('data')) {
+          this.updateEstimateGas();
+        }
+      },
+    },
+    selectedToken() {
+      this.updateEstimateGas();
     }
   },
   components: {
