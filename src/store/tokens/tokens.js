@@ -44,7 +44,7 @@ export default {
     },
   },
   actions: {
-    addTokenToSubscription({ state, commit }, token) {
+    addTokenToSubscription({ state, commit, dispatch }, token) {
       // Save token without blance for furer seances
       let tokenExist = state.tokensSubscription.tokens.find(
         subscribtionToken => {
@@ -54,10 +54,10 @@ export default {
       if (!tokenExist) {
         commit('saveTokenToWatchStorage', token);
         storage
-          .write('eth.mainnet.tokens.saved', [...state.savedTokens, token])
+          .write('eth.mainnet.tokens.saved', state.savedTokens)
           .catch(e => console.error(e));
         state.tokensSubscription.add({
-          address: token.address,
+          ...token,
         });
       }
     },

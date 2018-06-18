@@ -23,8 +23,9 @@ describe('VSelect', () => {
 
     expect(wrapper.find('label').text()).toBe('Some Label');
     expect(wrapper.findAll('option').length).toBe(2);
+  });
 
-    wrapper.findAll('option').at(1).element.selected = true;
+  it('should emit event', () => {
     wrapper.find('select').trigger('change');
     expect(wrapper.emitted().input).toBeTruthy();
   });

@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="new-account-modal">
-    <modal-component @close="close">
+    <v-modal @close="close">
       <template slot="header">Create New Address</template>
 
       <div v-if="!createdAccount">
@@ -46,13 +46,13 @@
         </div>
       </div>
 
-    </modal-component>
+    </v-modal>
   </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex';
-import ModalComponent from '@/components/ModalComponent'
+import VModal from '@/components/ui/VModal'
 
 export default {
   data () {
@@ -94,7 +94,7 @@ export default {
     }
   },
   components: {
-    ModalComponent
+    VModal,
   }
 }
 </script>

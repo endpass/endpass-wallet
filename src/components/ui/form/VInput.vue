@@ -9,14 +9,9 @@
            :class="{'is-expanded': $slots.addon }">
         <input v-model="innerValue"
                @blur="$emit('blur', $event.target.value)"
-               :name="name"
-               :type="type"
                class="input"
-               :class="{'is-danger': error }"
-               :id="id"
-               :aria-describedby="describe"
-               :placeholder="placeholder"
-               :required="required">
+               :class="{'is-danger': error || errors.has(name) }"
+               v-bind="props">
       </div>
       <div class="control"
            v-if="$slots.addon">
@@ -24,13 +19,14 @@
       </div>
     </div>
     <p class="help is-danger"
-       v-if="error">{{ error }}</p>
+       v-if="error || errors.has(name) ">{{ error || errors.first(name) }}</p>
   </div>
 </template>
 
 <script>
 export default {
   name: 'v-input',
+  inject: ['$validator'],
   props: {
     value: {
       type: [String, Number],
@@ -56,9 +52,13 @@ export default {
       type: String,
       default: null,
     },
-    describe: {
+    ariaDescribedby: {
       type: String,
       default: null,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     required: {
       type: Boolean,
@@ -68,10 +68,13 @@ export default {
       type: String,
       default: null,
     },
-    rules: {
+    autocomplete: {
       type: String,
       default: null,
     },
+  },
+  methods: {
+    camelToKebab: str => str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`),
   },
   computed: {
     innerValue: {
@@ -82,12 +85,25 @@ export default {
         this.$emit('input', newVal);
       },
     },
+    props() {
+      return Object.keys(this.$props).reduce(
+        (res, prop) => ({
+          ...res,
+          [this.camelToKebab(prop)]: this.$props[prop],
+        }),
+        {}
+      );
+    },
   },
 };
 </script>
 
 <style lang="scss">
 .field.has-addons {
+  margin-bottom: 0;
+}
+
+.field > .field {
   margin-bottom: 0;
 }
 </style>

@@ -7,131 +7,101 @@
             <h1 class="card-header-title">Send ETH</h1>
           </div>
           <div class="card-content">
-            <form id="sendEther" @submit="sendTransaction">
+            <v-form id="sendEther">
 
-              <div class="field">
-                <label class="label" for="address">To</label>
-                <div class="control">
-                  <input
-                    v-model="transaction.to"
-                    name="address"
-                    v-validate="'required|address'"
-                    class="input"
-                    :class="{'is-danger': errors.has('address') }"
-                    id="address"
-                    type="text"
-                    aria-describedby="address"
-                    placeholder="Receiver address"
-                    required>
-                </div>
-                <p class="help is-danger"
-                  v-if="errors.has('address')">{{errors.first('address')}}</p>
-              </div>
+              <v-input v-model="transaction.to"
+                       label="To"
+                       name="address"
+                       v-validate="'required|address'"
+                       id="address"
+                       aria-describedby="address"
+                       placeholder="Receiver address"
+                       :disabled="isSending"
+                       required />
               <div class="columns">
                 <div class="column is-half is-full-mobile">
-                  <div class="field">
-                    <label class="label" for="value">Amount</label>
-                  </div>
-                  <div class="field has-addons">
-                    <div class="control is-expanded">
-                      <input
-                        v-model.number="value"
-                        name="value"
-                        type="text"
-                        class="input"
-                        id="value"
-                        aria-describedby="value"
-                        placeholder="Amount"
-                        required>
-                    </div>
-                    <div class="control">
-                      <span class="select">
-                        <select v-model="selectedToken">
-                          <option value="ETH">ETH</option>
-                          <option
-                            :value="token.symbol"
-                            v-for="token in tokens"
-                            :key="token.address">{{token.symbol}}</option>
-                        </select>
-                      </span>
-                    </div>
-                  </div>
+                  <v-input v-model.number="value"
+                           label="Amount"
+                           type="number"
+                           name="value"
+                           v-validate="`required|decimal|max_value:${maxAmount}`"
+                           id="value"
+                           aria-describedby="value"
+                           placeholder="Amount"
+                           :disabled="isSending"
+                           required>
+                    <span class="select" slot="addon">
+                      <select v-model="selectedToken">
+                        <option value="ETH">ETH</option>
+                        <option
+                          :value="token.symbol"
+                          v-for="token in tokens"
+                          :key="token.address">{{token.symbol}}</option>
+                      </select>
+                    </span>
+                  </v-input>
                 </div>
                 <div class="column is-half is-full-mobile">
-                  <div class="field">
-                    <label class="label" for="value">Price</label>
-                  </div>
-                  <div class="field has-addons">
-                    <div class="control is-expanded">
-                      <input
-                        v-model.number="price"
-                        name="price"
-                        type="text"
-                        class="input"
-                        id="price"
-                        aria-describedby="price"
-                        placeholder="Price"
-                        required>
-                    </div>
-                    <div class="control">
+                  <v-input v-model.number="price"
+                           label="Price"
+                           type="number"
+                           name="price"
+                           v-validate="`required|decimal|max_value:${maxPrice}`"
+                           id="price"
+                           aria-describedby="price"
+                           placeholder="Price"
+                           :disabled="isSending"
+                           required>
+                    <div class="control" slot="addon">
                       <a class="button is-static">{{fiatCurrency}}</a>
                     </div>
-                  </div>
+                  </v-input>
                 </div>
               </div>
-
-              <div class="field">
-                <label class="label" for="price">Gas price</label>
-              </div>
-              <div class="field has-addons">
-                <div class="control is-expanded">
-                  <input
-                    v-model.number="gasPrice"
-                    name="price"
-                    type="text"
-                    class="input"
-                    id="price"
-                    aria-describedby="price"
-                    placeholder="Gas price"
-                    required>
-                </div>
-                <div class="control">
+              <v-input v-model.number="gasPrice"
+                       label="Gas price"
+                       name="gasPrice"
+                       type="number"
+                       v-validate="'required|integer|min_value:0|max_value:100'"
+                       id="gasPrice"
+                       aria-describedby="gasPrice"
+                       placeholder="Gas price"
+                       :disabled="isSending"
+                       required>
+                <div class="control" slot="addon">
                   <a class="button is-static">Gwei</a>
                 </div>
-              </div>
+              </v-input>
 
-              <div class="field">
-                <label class="label" for="limit">Gas limit</label>
-                <div class="control">
-                  <input
-                    v-model.number="gasLimit"
-                    type="text" class="input"
-                    id="limit"
-                    aria-describedby="limit"
-                    placeholder="Gas limit"
-                    required>
-                </div>
-              </div>
-              <div class="field" v-show="selectedToken === 'ETH'">
-                <label class="label" for="data">Data</label>
-                <div class="control">
-                  <input
-                    v-model="transaction.data"
-                    type="text" class="input"
-                    aria-describedby="data"
-                    placeholder="Data"
-                    required>
-                </div>
-              </div>
+              <v-input v-model.number="gasLimit"
+                       label="Gas limit"
+                       name="limit"
+                       type="number"
+                       v-validate="'required|numeric|integer|min_value:21000|max_value:4000000'"
+                       id="limit"
+                       aria-describedby="limit"
+                       placeholder="Gas limit"
+                       :disabled="isSending"
+                       required />
 
-              <div class="field">
-                <div class="control">
-                  <button :disabled="!isFormValid || isSyncing"
-                    class="button is-primary is-medium"
-                    @click.prevent="sendTransaction">Send</button>
-                </div>
-              </div>
-            </form>
+              <v-input v-show="selectedToken === 'ETH'"
+                       v-model="transaction.data"
+                       label="Data"
+                       name="data"
+                       v-validate="'required|hex'"
+                       id="data"
+                       aria-describedby="data"
+                       placeholder="Data"
+                       :disabled="isSending"
+                       required />
+
+              <v-button @click.prevent="sendTransaction"
+                        className="is-primary is-medium"
+                        :loading="isSending"
+                        :disabled="isSyncing">Send</v-button>
+
+              <div v-if="transactionHash">{{ transactionHash }}</div>
+            </v-form>
           </div>
         </div>
       </div>
@@ -147,12 +117,18 @@ import { mapFields } from 'vee-validate';
 import { mapState, mapMutations } from 'vuex';
 import accounts from '@/mixins/accounts';
 import { BigNumber } from 'bignumber.js';
+import VForm from '@/components/ui/form/VForm.vue';
+import VInput from '@/components/ui/form/VInput.vue';
+import VButton from '@/components/ui/form/VButton.vue';
 const { BN, fromWei, hexToNumberString, numberToHex, toWei } = web3.utils;
 
 export default {
   data: () => ({
     selectedToken: 'ETH',
     toCache: '',
+    isSending: false,
+    isFormValid: false,
+    transactionHash: null,
     transaction: {
       gasPrice: '0x14f46b0400',
       gasLimit: '0x55f0',
@@ -160,13 +136,14 @@ export default {
       value: '0x0',
       data: '0x',
     },
+    estimateGas: 0,
   }),
   computed: {
     ...mapState({
       pendingTransactions: state => state.accounts.pendingTransactions,
       tokens: state => state.tokens.activeTokens,
       web3: state => state.web3.web3,
-      isSyncing: state => state.web3.isSyncing,
+      isSyncing: state => !!state.web3.isSyncing,
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
       ethPrice: state => state.price.price,
     }),
@@ -175,7 +152,8 @@ export default {
         if(!this.ethPrice)
           return
         let price = new BigNumber(this.ethPrice);
-        return new BigNumber(fromWei(hexToNumberString(this.transaction.value))).times(price).toFixed(2);
+        let number = new BigNumber(fromWei(hexToNumberString(this.transaction.value))).times(price).toFixed(2);
+        return +number
       },
       set(newValue) {
         if (typeof newValue !== 'number') return;
@@ -187,10 +165,17 @@ export default {
     },
     gasPrice: {
       get() {
+        if (this.transaction.gasPrice === '') {
+          return '';
+        }
+
         return fromWei(hexToNumberString(this.transaction.gasPrice), 'Gwei');
       },
       set(newValue) {
-        if (typeof newValue !== 'number') return;
+        if (newValue === '') {
+          this.transaction.gasPrice = '';
+          return;
+        }
 
         this.transaction.gasPrice = numberToHex(
           toWei(newValue.toString(), 'Gwei')
@@ -203,10 +188,17 @@ export default {
     },
     gasLimit: {
       get() {
+        if (this.transaction.gasLimit === '') {
+          return '';
+        }
+
         return hexToNumberString(this.transaction.gasLimit);
       },
       set(newValue) {
-        if (typeof newValue !== 'number') return;
+        if (newValue === '') {
+          this.transaction.gasLimit = '';
+          return;
+        }
 
         this.transaction.gasLimit = numberToHex(newValue.toString());
       },
@@ -214,6 +206,10 @@ export default {
     value: {
       get() {
         const { value: transValue } = this.transaction;
+
+        if (transValue === '') {
+          return '';
+        }
 
         if (this.selectedToken === 'ETH') {
           return fromWei(hexToNumberString(transValue));
@@ -229,7 +225,10 @@ export default {
         }
       },
       set(newValue) {
-        if (typeof newValue !== 'number') return;
+        if (newValue === '') {
+          this.transaction.value = '';
+          return;
+        }
 
         if (this.selectedToken === 'ETH') {
           this.transaction.value = numberToHex(
@@ -244,11 +243,20 @@ export default {
         }
       },
     },
-    isFormValid() {
-      return !Object.keys(this.fields).some(
-        field => this.fields[field] && this.fields[field].invalid
-      );
+    maxAmount() {
+      const { balance } = this;
+      const weiBalance = toWei(balance && balance.toString() || '0', 'ether');
+      const amountWei = weiBalance - this.estimateGas * this.gasPrice;
+      const amount = fromWei(amountWei.toString());
+
+      return amount > 0 ? amount : 0;
     },
+    maxPrice() {
+      const balance = new BigNumber(this.balance);
+      const price = new BigNumber(this.ethPrice);
+      const amount = balance.times(price).toNumber();
+      return amount > 0 ? amount : 0;
+    }
   },
   methods: {
     ...mapMutations('accounts', ['addTransaction', 'removeTransaction']),
@@ -271,6 +279,7 @@ export default {
     },
     sendTransaction() {
       const keyHex = this.address;
+      this.isSending = true;
 
       this.web3.eth.getTransactionCount(keyHex).then(nonce => {
         const nonceWithPending = nonce + this.pendingTransactions.length;
@@ -290,8 +299,26 @@ export default {
           .on('receipt', resp => {
             this.removeTransaction(resp.transactionHash);
           })
-          .on('error', err => {})
+          .on('error', (err, receipt) => {
+            this.isSending = false;
+
+            const cause = receipt ? ', because out of gas' : '';
+
+            this.$notify({
+              title: 'Error sending transaction',
+              text: `Transaction was not sent${cause}`,
+              type: 'is-danger',
+            })
+          })
           .on('transactionHash', hash => {
+            this.isSending = false;
+            this.transactionHash = hash;
+            this.$notify({
+              title: 'Successful',
+              text: 'Transaction was sent',
+              type: 'is-info',
+            })
+
             transactionForHistory.hash = hash;
             this.addTransaction(transactionForHistory);
           });
@@ -314,6 +341,26 @@ export default {
         .transfer(this.transaction.to, this.transaction.value)
         .encodeABI();
     },
+  },
+  watch: {
+    'transaction.to': {
+      async handler() {
+        await this.$nextTick();
+
+        if (!this.errors.has('address')) {
+          this.estimateGas = await this.web3.eth.estimateGas({
+            to: this.transaction.to || undefined,
+            amount: hexToNumberString(this.transaction.value),
+          })
+        }
+      },
+      immediate: true
+    }
+  },
+  components: {
+    VForm,
+    VButton,
+    VInput,
   },
   mixins: [accounts],
 };

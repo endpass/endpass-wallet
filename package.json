@@ -9,6 +9,8 @@
     "start": "npm run dev",
     "unit": "jest --config test/unit/jest.conf.js",
     "test": "npm run unit",
+    "e2e": "cypress run",
+    "e2e:open": "cypress open",
     "build": "node build/build.js"
   },
   "dependencies": {
@@ -45,6 +47,7 @@
     "chalk": "^2.0.1",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.0",
+    "cypress": "^3.0.1",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
@@ -52,6 +55,7 @@
     "jest": "^22.0.4",
     "jest-localstorage-mock": "^2.2.0",
     "jest-serializer-vue": "^0.3.0",
+    "jest-transform-stub": "^1.0.0",
     "moxios": "^0.4.0",
     "node-notifier": "^5.1.2",
     "node-sass": "^4.8.3",
