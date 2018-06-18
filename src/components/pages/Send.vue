@@ -19,7 +19,7 @@
                        :disabled="isSending"
                        required />
 
-              <v-input v-model="value"
+              <v-input v-model="transaction.value"
                        label="Amount"
                        type="number"
                        name="value"
@@ -41,7 +41,7 @@
                 </span>
               </v-input>
 
-              <v-input v-model="gasPrice"
+              <v-input v-model="transaction.gasPrice"
                        label="Gas price"
                        name="price"
                        type="number"
@@ -56,7 +56,7 @@
                 </div>
               </v-input>
 
-              <v-input v-model="gasLimit"
+              <v-input v-model="transaction.gasLimit"
                        label="Gas limit"
                        name="limit"
                        type="number"
@@ -112,15 +112,13 @@ export default {
     isSending: false,
     transactionHash: null,
     transaction: {
-      gasPrice: '0x14f46b0400',
-      gasLimit: '0x55f0',
+      gasPrice: '90',
+      gasLimit: '22000',
+      value: '0',
       to: '',
-      value: '0x0',
       data: '0x',
+      nonce: '',
     },
-    gasPrice: '90',
-    gasLimit: '22000',
-    value: '0',
     estimateGas: 0,
   }),
   computed: {
@@ -136,8 +134,9 @@ export default {
     },
     maxAmount() {
       if (this.selectedToken === 'ETH') {
+        const { gasPrice } = this.transaction;
         const balanceBN = toBN(toWei(this.balance || '0'));
-        const gasPriceBN = toBN(toWei(this.gasPrice || '0', 'Gwei'));
+        const gasPriceBN = toBN(toWei(gasPrice || '0', 'Gwei'));
         const estimateGasBN = toBN(this.estimateGas);
         const amountBN = balanceBN.sub(gasPriceBN.mul(estimateGasBN));
         const amount = fromWei(amountBN.toString());
@@ -148,7 +147,51 @@ export default {
     },
     divider() {
       return toBN('10').pow(toBN(this.selectedTokenInfo.decimals || '0'));
-    }
+    },
+    transactionData() {
+      let {
+        to,
+        data,
+        nonce,
+        value: tnxValue,
+        gasPrice,
+        gasLimit,
+      } = this.transaction;
+      let value = numberToHex(toWei(tnxValue || '0'));
+
+      if (to && to.toUpperCase().indexOf('0X') !== 0) {
+        to = `0x${to}`;
+      }
+
+      if (this.selectedToken !== 'ETH') {
+        if (!this.selectedTokenInfo || !this.selectedTokenInfo.address) {
+          throw 'Invalid token address';
+        }
+
+        this.toCache = to;
+        const { address } = this.selectedTokenInfo;
+        to = address;
+        const contract = new this.web3.eth.Contract(erc20ABI, address, {
+          from: this.address,
+        });
+        const beforeDec = tnxValue.split('.')[0] || '';
+        const afterDec = tnxValue.split('.')[1] || '';
+        const afterNew =
+          afterDec + this.divider.toString().slice(afterDec.length + 1);
+        value = numberToHex(Number(beforeDec + afterNew));
+        data = contract.methods.transfer(to, value).encodeABI();
+      }
+
+      return {
+        from: this.address,
+        to: to || undefined,
+        value,
+        gasPrice: numberToHex(toWei(gasPrice || '0', 'Gwei')),
+        gasLimit: numberToHex(gasLimit || '0'),
+        data: data || '0x',
+        nonce: numberToHex(nonce || 0),
+      };
+    },
   },
   methods: {
     ...mapMutations('accounts', ['addTransaction', 'updateTransaction']),
@@ -178,28 +221,15 @@ export default {
       const keyHex = this.address;
       this.isSending = true;
 
-      this.transaction.gasPrice = numberToHex(
-        toWei(this.gasPrice, 'Gwei')
-      );
-      this.transaction.gasLimit = numberToHex(this.gasLimit);
-      this.transaction.value = numberToHex(
-        toWei(this.value)
-      );
-      if (this.transaction.to.toUpperCase().indexOf('0X') !== 0) {
-        this.transaction.to = `0x${this.transaction.to}`; 
-      }
-
       this.web3.eth.getTransactionCount(keyHex).then(nonce => {
         const nonceWithPending = nonce + this.pendingTransactions.length;
         this.transaction.nonce = numberToHex(nonceWithPending);
-        if (this.selectedToken !== 'ETH') {
-          this.createTokenTransaction();
-        }
-        const tx = new Tx(this.transaction);
+
+        const tx = new Tx(this.transactionData);
         tx.sign(this.activeAccount.getPrivateKey());
         const serializedTx = tx.serialize();
         const transactionForHistory = this.createTransactionHistory(
-          this.transaction
+          this.transactionData
         );
 
         this.web3.eth
@@ -211,6 +241,9 @@ export default {
             });
           })
           .on('error', (err, receipt) => {
+            this.$validator.flag('address', {
+              valid: false,
+            });
             this.isSending = false;
 
             const cause = receipt ? ', because out of gas' : '';
@@ -219,7 +252,9 @@ export default {
               title: 'Error sending transaction',
               text: `Transaction was not sent${cause}`,
               type: 'is-danger',
-            })
+            });
+
+            console.error(err)
           })
           .on('transactionHash', hash => {
             this.$validator.flag('address', {
@@ -239,49 +274,12 @@ export default {
         this.transaction.to = this.toCache;
       });
     },
-    createTokenTransaction() {
-      if (!this.selectedTokenInfo || !this.selectedTokenInfo.address) {
-        throw 'Invalid token address';
-      }
-
-      const value = toBN(this.value).mul(this.divider).toString();
-      this.transaction.value = numberToHex(value);
-
-      const tokenAddress = this.selectedTokenInfo.address;
-      const contract = new this.web3.eth.Contract(erc20ABI, tokenAddress, {
-        from: this.address,
-      });
-      this.toCache = this.transaction.to;
-      this.transaction.to = tokenAddress;
-      this.transaction.data = contract.methods
-        .transfer(this.transaction.to, this.transaction.value)
-        .encodeABI();
-    },
     async updateEstimateGas() {
-      let { data = '0x', to } = this.transaction;
-      let { value: amount = '0' } = this;
-
-      if (this.selectedToken !== 'ETH') {
-        const { address } = this.selectedTokenInfo;
-        to = address;
-        const contract = new this.web3.eth.Contract(erc20ABI, address, {
-          from: this.address,
-        });
-        amount = numberToHex(toBN(this.value || '0').mul(this.divider).toString());
-        data = contract.methods
-          .transfer(to, amount)
-          .encodeABI();
-      } else {
-        amount = numberToHex(toWei(amount || '0'));
-
-        if (to && to.toUpperCase().indexOf('0X') !== 0) {
-          to = `0x${to}`; 
-        }
-      }
+      let { data, to, value, gasLimit, gasPrice } = this.transactionData;
 
       this.estimateGas = await this.web3.eth.estimateGas({
-        to: to || undefined,
-        amount,
+        to,
+        value: hexToNumberString(value),
         data,
       })
     }

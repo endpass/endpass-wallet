@@ -58,23 +58,22 @@ describe('SendEther', () => {
     wrapper = shallow(SendEther, { store, localVue });
   });
   it('sets correct data', () => {
-    wrapper.vm.gasPrice = '10';
-    wrapper.vm.gasLimit = '10';
-    wrapper.vm.value = '10';
-    expect(wrapper.vm.gasPrice).toBe('10');
-    expect(wrapper.vm.gasLimit).toBe('10');
-    expect(wrapper.vm.value).toBe('10');
+    wrapper.vm.transaction.gasPrice = '10';
+    wrapper.vm.transaction.gasLimit = '10';
+    wrapper.vm.transaction.value = '10';
+    expect(wrapper.vm.transaction.gasPrice).toBe('10');
+    expect(wrapper.vm.transaction.gasLimit).toBe('10');
+    expect(wrapper.vm.transaction.value).toBe('10');
   });
   it('sets contract data', () => {
     wrapper.setData({ selectedToken: 'AAA' });
-    wrapper.vm.value = '10';
+    wrapper.vm.transaction.value = '10';
     expect(wrapper.vm.selectedTokenInfo).toBeTruthy();
     expect(wrapper.vm.selectedTokenInfo.address).toBe(
       '0xB6eD7644C69416d67B522e20bC294A9a9B405B31'
     );
 
-    wrapper.vm.createTokenTransaction();
-    expect(wrapper.vm.transaction.data).toBe(
+    expect(wrapper.vm.transactionData.data).toBe(
       '0xa9059cbb000000000000000000000000b6ed7644c69416d67b522e20bc294a9a9b405b31000000000000000000000000000000000000000000000000000000003b9aca00'
     );
   });
