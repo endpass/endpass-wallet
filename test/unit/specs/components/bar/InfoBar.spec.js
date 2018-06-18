@@ -23,6 +23,9 @@ describe('InfoBar', () => {
         accounts: {
           balance: null
         },
+        price: {
+          price: 10
+        },
         web3: {
           networks: [],
           activeNet: {}

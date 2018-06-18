@@ -3,7 +3,7 @@
     <p class="heading">Balance</p>
     <span class="title">{{ balance }}</span>
     {{currency}}
-    <a v-if="hasUpload" @click.prevent="update()">
+    <a v-if="hasUpdate" @click.prevent="update()">
     	<span class="icon is-small"
                 v-html="require('@/img/reload.svg')"></span>
     </a>
@@ -48,7 +48,7 @@
 					return balance.toFixed()
 				}
 			},
-			hasUpload() {
+			hasUpdate() {
 				return this.$listeners.update
 			}
 		},
@@ -60,5 +60,5 @@
 	}
 </script>
 <style>
-	
+
 </style>

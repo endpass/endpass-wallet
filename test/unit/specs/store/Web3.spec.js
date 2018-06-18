@@ -1,4 +1,4 @@
-import state from '@/store/web3/web3'
+import store from '@/store/web3/web3'
 import LocalStorageMock from '../../localStorageMock.js'
 import testAction from '../ActionTestingHelper'
 
@@ -11,8 +11,9 @@ const dispatch = context => (type) => {
   store.actions[type](context);
 }
 
+const stateInstance = store.state();
+
 describe('web3 store', async () => {
-  let stateInstance;
   beforeEach(async () => {
     localStorage.setItem('net', 1);
     localStorage.setItem(
@@ -22,8 +23,7 @@ describe('web3 store', async () => {
       ])
     );
 
-    stateInstance = store.state();
-
+    store.state = stateInstance;
     await store.actions.init({
       commit: commit(stateInstance),
       dispatch: dispatch({state: stateInstance, commit, dispatch}),

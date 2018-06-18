@@ -20,6 +20,9 @@ describe('SendEther', () => {
   beforeEach(() => {
     store = new Vuex.Store({
       state: {
+        price: {
+          price: 400
+        },
         accounts: {
           activeAccount: {
             getAddressString() {
@@ -39,6 +42,9 @@ describe('SendEther', () => {
               success: true,
             },
           ],
+          settings: {
+            fiatCurrency: 'USD'
+          }
         },
         web3: {
           web3: web3Instance,

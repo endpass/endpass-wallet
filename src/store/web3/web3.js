@@ -84,7 +84,7 @@ export default {
       }).id + 1;
       commit('addNewProvider', network);
       return dispatch('changeNetwork', network.id);
-    }, 
+    },
     subscribeOnSyncStatus(context) {
       let providerCache = context.state.web3.currentProvider;
       let promise = context.state.web3.eth.isSyncing();
