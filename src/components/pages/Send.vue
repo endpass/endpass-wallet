@@ -27,32 +27,56 @@
                 <p class="help is-danger"
                   v-if="errors.has('address')">{{errors.first('address')}}</p>
               </div>
-
-              <div class="field">
-                <label class="label" for="value">Amount</label>
-              </div>
-              <div class="field has-addons">
-                <div class="control is-expanded">
-                  <input
-                    v-model.number="value"
-                    name="value"
-                    type="text"
-                    class="input"
-                    id="value"
-                    aria-describedby="value"
-                    placeholder="Amount"
-                    required>
+              <div class="columns">
+                <div class="column is-half is-full-mobile">
+                  <div class="field">
+                    <label class="label" for="value">Amount</label>
+                  </div>
+                  <div class="field has-addons">
+                    <div class="control is-expanded">
+                      <input
+                        v-model.number="value"
+                        name="value"
+                        type="text"
+                        class="input"
+                        id="value"
+                        aria-describedby="value"
+                        placeholder="Amount"
+                        required>
+                    </div>
+                    <div class="control">
+                      <span class="select">
+                        <select v-model="selectedToken">
+                          <option value="ETH">ETH</option>
+                          <option
+                            :value="token.symbol"
+                            v-for="token in tokens"
+                            :key="token.address">{{token.symbol}}</option>
+                        </select>
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div class="control">
-                  <span class="select">
-                    <select v-model="selectedToken">
-                      <option value="ETH">ETH</option>
-                      <option
-                        :value="token.symbol"
-                        v-for="token in tokens"
-                        :key="token.address">{{token.symbol}}</option>
-                    </select>
-                  </span>
+                <div class="column is-half is-full-mobile">
+                  <div class="field">
+                    <label class="label" for="value">Price</label>
+                  </div>
+                  <div class="field has-addons">
+                    <div class="control is-expanded">
+                      <input
+                        v-model.number="price"
+                        name="price"
+                        type="text"
+                        class="input"
+                        id="price"
+                        aria-describedby="price"
+                        placeholder="Price"
+                        required>
+                    </div>
+                    <div class="control">
+                      <a class="button is-static">{{fiatCurrency}}</a>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -122,7 +146,7 @@ import Tx from 'ethereumjs-tx';
 import { mapFields } from 'vee-validate';
 import { mapState, mapMutations } from 'vuex';
 import accounts from '@/mixins/accounts';
-
+import { BigNumber } from 'bignumber.js';
 const { BN, fromWei, hexToNumberString, numberToHex, toWei } = web3.utils;
 
 export default {
@@ -143,7 +167,24 @@ export default {
       tokens: state => state.tokens.activeTokens,
       web3: state => state.web3.web3,
       isSyncing: state => state.web3.isSyncing,
+      fiatCurrency: state => state.accounts.settings.fiatCurrency,
+      ethPrice: state => state.price.price,
     }),
+    price: {
+      get() {
+        if(!this.ethPrice)
+          return
+        let price = new BigNumber(this.ethPrice);
+        return new BigNumber(fromWei(hexToNumberString(this.transaction.value))).times(price).toFixed(2);
+      },
+      set(newValue) {
+        if (typeof newValue !== 'number') return;
+        let ethPrice = new BigNumber(this.ethPrice);
+        let value = new BigNumber(newValue);
+        let price = value.div(ethPrice);
+        this.transaction.value = numberToHex(toWei(price.toFixed(18)));
+      }
+    },
     gasPrice: {
       get() {
         return fromWei(hexToNumberString(this.transaction.gasPrice), 'Gwei');
