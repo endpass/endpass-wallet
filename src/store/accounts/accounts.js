@@ -27,9 +27,10 @@ export default {
           const { value, gasLimit, gasPrice } = tnx;
           const limit = hexToNumberString(gasLimit);
           const price = hexToNumberString(gasPrice);
+          const gasCost = toBN(limit).mul(toBN(price));
           const tnxValue = tnx.token === 'ETH' ? toWei(value) : 0;
 
-          return toBN(limit * price).add(toBN(tnxValue));
+          return gasCost.add(toBN(tnxValue));
         })
         .reduce((total, item) =>  total.add(item), toBN(0))
         .toString();

@@ -136,8 +136,9 @@ export default {
       if (this.selectedToken === 'ETH') {
         const { gasPrice } = this.transaction;
         const balanceBN = toBN(toWei(this.balance || '0'));
-        const gasPriceWei = toWei(gasPrice || '0', 'Gwei');
-        const amountBN = balanceBN.sub(toBN(gasPriceWei * this.estimateGas));
+        const gasPriceBN = toBN(toWei(gasPrice || '0', 'Gwei')); 
+        const estimateGasBN = toBN(this.estimateGas); 
+        const amountBN = balanceBN.sub(gasPriceBN.mul(estimateGasBN)); 
         const amount = fromWei(amountBN.toString());
         return amount > 0 ? amount : 0;
       } else {
@@ -251,7 +252,6 @@ export default {
         const sendEvent = this.web3.eth
           .sendSignedTransaction('0x' + serializedTx.toString('hex'))
           .on('confirmation', (confNumber, { transactionHash }) => {
-            console.log(confNumber, transactionHash)
             if (confNumber > 0) {
               sendEvent.off('confirmation')
               this.updateTransaction({
