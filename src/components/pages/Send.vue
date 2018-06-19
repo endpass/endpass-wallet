@@ -250,11 +250,12 @@ export default {
 
         const sendEvent = this.web3.eth
           .sendSignedTransaction('0x' + serializedTx.toString('hex'))
-          .on('confirmation', (confNumber, receipt) => {
+          .on('confirmation', (confNumber, { transactionHash }) => {
+            console.log(confNumber, transactionHash)
             if (confNumber > 0) {
               sendEvent.off('confirmation')
               this.updateTransaction({
-                oldHash: resp.transactionHash,
+                oldHash: transactionHash,
                 newTrx: { status: 'success' },
               });
             }
