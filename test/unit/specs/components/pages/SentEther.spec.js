@@ -1,18 +1,18 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import web3 from 'web3';
-import { shallow, createLocalVue } from '@vue/test-utils';
-import VeeValidate from 'vee-validate';
+import { shallow, createLocalVue, mount } from '@vue/test-utils';
+import Notifications from 'vue-notification'
 import validation from '@/validation';
 
-import SendEther from '@/components/pages/Send.vue';
+import Send from '@/components/pages/Send.vue';
 
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
-localVue.use(VeeValidate);
+localVue.use(Notifications);
 
-describe('SendEther', () => {
+describe('Send', () => {
   let actions;
   let store;
   let wrapper;
@@ -55,7 +55,7 @@ describe('SendEther', () => {
       },
       actions,
     });
-    wrapper = shallow(SendEther, { store, localVue });
+    wrapper = shallow(Send, { store, localVue });
   });
   it('sets correct data', () => {
     wrapper.vm.transaction.gasPrice = '10';
@@ -76,5 +76,74 @@ describe('SendEther', () => {
     expect(wrapper.vm.transactionData.data).toBe(
       '0xa9059cbb000000000000000000000000b6ed7644c69416d67b522e20bc294a9a9b405b31000000000000000000000000000000000000000000000000000000003b9aca00'
     );
+  });
+
+  it('should validate data', async () => {
+    wrapper = mount(Send, {
+      store,
+      localVue,
+      computed: {
+        transactionData: () => null,
+        maxAmount: () => 2,
+      },
+    });
+
+    const { errors, $nextTick } = wrapper.vm;
+    
+    wrapper.setData({
+      transaction: {
+        to: '',
+        gasPrice: '900',
+        gasLimit: '2200000000',
+        value: '2.222222222222222222222222',
+        data: 'asdfas',
+      }
+    })
+    wrapper.find('input#address').trigger('blur');
+
+    await $nextTick();
+
+    expect(errors.first('address').includes('required')).toBeTruthy();
+    expect(errors.first('price').includes('between')).toBeTruthy();
+    expect(errors.first('limit').includes('between')).toBeTruthy();
+    expect(errors.first('value').includes('decimal')).toBeTruthy();
+    expect(errors.first('data').includes('hex')).toBeTruthy();
+
+    wrapper.setData({
+      transaction: {
+        to: '123',
+        gasPrice: '-90',
+        gasLimit: '-22000',
+        value: '-2.22222',
+        data: '0x',
+      }
+    })
+
+    await $nextTick();
+
+    expect(errors.first('address').includes('not a valid')).toBeTruthy();
+    expect(errors.first('price').includes('numeric')).toBeTruthy();
+    expect(errors.first('limit').includes('numeric')).toBeTruthy();
+    expect(errors.first('value').includes('between')).toBeTruthy();
+
+    wrapper.setData({
+      transaction: {
+        to: '0xE824633E6d247e64ba2cD841D8270505770d53fE',
+        gasPrice: '90',
+        gasLimit: '22000',
+        value: '1.5',
+        // prettier-ignore
+        data: '0xa9059cbb000000000000000000000000b6ed7644c69416d67b522e20bc294a9a9b405b31000000000000000000000000000000000000000000000000000000003b9aca00',
+      }
+    })
+
+    await $nextTick();
+    await $nextTick();
+
+    expect(errors.has('address')).toBeFalsy();
+    expect(errors.has('price')).toBeFalsy();
+    expect(errors.has('limit')).toBeFalsy();
+    expect(errors.has('value')).toBeFalsy();
+    expect(errors.has('data')).toBeFalsy();
   });
 });

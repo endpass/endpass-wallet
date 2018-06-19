@@ -20,21 +20,22 @@ export default {
     isPublicAccount(state) {
       return state.activeAccount && state.activeAccount._privKey === null;
     },
-    balance(state) {
-      const totalAmountActiveTnx = state.pendingTransactions
+    pendingBalance(state) {
+      return state.pendingTransactions
         .filter(tnx => tnx.canseled === false)
         .map(tnx => {
           const { value, gasLimit, gasPrice } = tnx;
           const limit = hexToNumberString(gasLimit);
           const price = hexToNumberString(gasPrice);
-          const gasCost = toBN(limit).mul(toBN(price));
           const tnxValue = tnx.token === 'ETH' ? toWei(value) : 0;
 
-          return gasCost.add(toBN(tnxValue));
+          return toBN(limit * price).add(toBN(tnxValue));
         })
-        .reduce((total, item) =>  total.add(item), toBN(0));
-
-      return toBN(state.balance || 0).sub(totalAmountActiveTnx).toString();
+        .reduce((total, item) =>  total.add(item), toBN(0))
+        .toString();
+    },
+    balance(state, { pendingBalance }) {
+      return toBN(state.balance || 0).sub(toBN(pendingBalance)).toString();
     },
   },
   mutations: {

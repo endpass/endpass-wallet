@@ -23,7 +23,7 @@
                        label="Amount"
                        type="number"
                        name="value"
-                       v-validate="`required|decimal|max_value:${maxAmount}`"
+                       v-validate="`required|decimal:${decimals}|between:0,${maxAmount}`"
                        data-vv-as="amount"
                        id="value"
                        aria-describedby="value"
@@ -45,7 +45,7 @@
                        label="Gas price"
                        name="price"
                        type="number"
-                       v-validate="'required|integer|min_value:0|max_value:100'"
+                       v-validate="'required|numeric|integer|between:0,100'"
                        id="price"
                        aria-describedby="price"
                        placeholder="Gas price"
@@ -60,7 +60,7 @@
                        label="Gas limit"
                        name="limit"
                        type="number"
-                       v-validate="'required|numeric|integer|min_value:21000|max_value:4000000'"
+                       v-validate="'required|numeric|integer|between:21000,4000000'"
                        id="limit"
                        aria-describedby="limit"
                        placeholder="Gas limit"
@@ -144,6 +144,13 @@ export default {
         return this.selectedTokenInfo.balance;
       }
     },
+    decimals() {
+      const { selectedToken, selectedTokenInfo } = this;
+      
+      if (selectedToken === 'ETH') return '18';
+
+      return selectedTokenInfo && selectedTokenInfo.decimals || 0;
+    },
     divider() {
       if (this.selectedToken === 'ETH') {
         return toBN('10').pow(toBN('18'))
@@ -181,9 +188,13 @@ export default {
         });
         const beforeDec = tnxValue.split('.')[0] || '';
         const afterDec = tnxValue.split('.')[1] || '';
+        
+        if (!Number(beforeDec) && afterDec <= 0) return '0';
+
         const afterNew =
           afterDec + this.divider.toString().slice(afterDec.length + 1);
-        value = numberToHex(Number(beforeDec + afterNew));
+
+        value = numberToHex(beforeDec.replace(/\b0+/g, '') + afterNew);
         data = contract.methods.transfer(to, value).encodeABI();
       }
 
