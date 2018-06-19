@@ -248,13 +248,16 @@ export default {
           this.transactionData
         );
 
-        this.web3.eth
+        const sendEvent = this.web3.eth
           .sendSignedTransaction('0x' + serializedTx.toString('hex'))
-          .on('receipt', resp => {
-            this.updateTransaction({
-              oldHash: resp.transactionHash,
-              newTrx: { status: 'success' },
-            });
+          .on('confirmation', (confNumber, receipt) => {
+            if (confNumber > 4) {
+              sendEvent.off('confirmation')
+              this.updateTransaction({
+                oldHash: resp.transactionHash,
+                newTrx: { status: 'success' },
+              });
+            }
           })
           .on('error', (err, receipt) => {
             this.$validator.flag('address', {
