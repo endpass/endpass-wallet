@@ -136,9 +136,8 @@ export default {
       if (this.selectedToken === 'ETH') {
         const { gasPrice } = this.transaction;
         const balanceBN = toBN(toWei(this.balance || '0'));
-        const gasPriceBN = toBN(toWei(gasPrice || '0', 'Gwei'));
-        const estimateGasBN = toBN(this.estimateGas);
-        const amountBN = balanceBN.sub(gasPriceBN.mul(estimateGasBN));
+        const gasPriceWei = toWei(gasPrice || '0', 'Gwei');
+        const amountBN = balanceBN.sub(toBN(gasPriceWei * this.estimateGas));
         const amount = fromWei(amountBN.toString());
         return amount > 0 ? amount : 0;
       } else {
@@ -146,7 +145,13 @@ export default {
       }
     },
     divider() {
-      return toBN('10').pow(toBN(this.selectedTokenInfo.decimals || '0'));
+      if (this.selectedToken === 'ETH') {
+        return toBN('10').pow(toBN('18'))
+      };
+
+      const { selectedTokenInfo } = this;
+      const dec = selectedTokenInfo && selectedTokenInfo.decimals || '0';
+      return toBN('10').pow(toBN(dec));
     },
     transactionData() {
       let {
