@@ -91,14 +91,14 @@ export default {
         return token.symbol;
       })
       return price.getPrices(symbols.toString(),
-        context.rootState.accounts.settings.fiatCurrency).then((resp) => {
-          context.commit('setTokenPrices', resp.data);
+        'ETH').then((resp) => {
+          context.commit('setTokenPrices', resp);
       })
     },
     updateTokenPrice(context, symbol) {
       return price.getPrice(symbol,
-        context.rootState.accounts.settings.fiatCurrency).then((resp) => {
-          context.commit('setTokenPrice', symbol, resp.data);
+        'ETH').then((resp) => {
+          context.commit('setTokenPrice', symbol, resp);
       })
     },
     subsctibeOnTokenPriceUpdates(context) {

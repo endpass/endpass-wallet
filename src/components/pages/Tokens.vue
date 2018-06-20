@@ -18,7 +18,7 @@
                       <span class="token-symbol">{{token.symbol}}</span>
                       <span class="token-name">{{token.name}}</span>
                       <balance :amount="getTokenAmount(token)" :currency="''"/>
-                      <balance v-if="prices && prices[token.symbol]" :price="prices[token.symbol][currency]" :amount="getTokenAmount(token)" :currency="currency" v-on:update="updateTokenPrice(token.symbol)" :decimals="2"/>
+                      <balance v-if="prices && prices[token.symbol]" :price="getTokenPrice(token.symbol)" :amount="getTokenAmount(token)" :currency="currency" v-on:update="updateTokenPrice(token.symbol)" :decimals="2"/>
                     </a>
                   </div>
                 </nav>
@@ -80,6 +80,7 @@ export default {
     ...mapState({
       activeTokens: state => state.tokens.activeTokens,
       prices: state => state.tokens.prices,
+      ethPrice: state => state.price.price,
       currency: state => state.accounts.settings.fiatCurrency
     }),
     filteredTokens() {
@@ -104,7 +105,7 @@ export default {
     getTokenAmount(token) {
       let balanceBn = new BigNumber(token.balance);
       let decimalsBn = new BigNumber(10).pow(token.decimals);
-      return balanceBn.div(decimalsBn); 
+      return balanceBn.div(decimalsBn);
     },
     saveToken(token) {
       // Add token to subscription
@@ -126,6 +127,9 @@ export default {
           console.error(e);
         });
     },
+    getTokenPrice(symbol) {
+      return new BigNumber(prices[token.symbol]).times(this.ethPrice).toString();
+    }
   },
   created() {
     this.getAllTokens();

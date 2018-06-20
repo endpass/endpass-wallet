@@ -12,7 +12,7 @@ export default {
 						fsym: symbol,
 						tsyms: currencys
 					}
-				}).then(data => res(data))
+				}).then(resp => res(resp.data))
 				.catch(e => rej(e))
 			})
 		});
@@ -29,7 +29,7 @@ export default {
 						fsyms: symbols,
 						tsyms: currencys
 					}
-				}).then(data => res(data))
+				}).then(resp => res(resp.data))
 				.catch(e => rej(e))
 			})
 		});
