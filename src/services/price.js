@@ -1,7 +1,7 @@
 import axios from 'axios'
 import throttledQueue from 'throttled-queue'
-
-let throttle = throttledQueue(1, 2000);
+import { serviceThrottleTimeout } from '@/config'
+let throttle = throttledQueue(1, serviceThrottleTimeout);
 
 export default {
 	getPrice(symbol, currencys) {
@@ -16,7 +16,7 @@ export default {
 				.catch(e => rej(e))
 			})
 		});
-		return throttlePromice 
+		return throttlePromice
 	},
 	getEthPrice(currencys) {
 		return this.getPrice('ETH', currencys);

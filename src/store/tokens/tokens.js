@@ -2,6 +2,7 @@ import TokenTracker from 'eth-token-tracker';
 import EthplorerService from '@/services/ethplorer';
 import price from '@/services/price';
 import storage from '@/services/storage';
+import { subscribtionsAPIInterval } from '@/config'
 
 export default {
   namespaced: true,
@@ -103,7 +104,7 @@ export default {
     subsctibeOnTokenPriceUpdates(context) {
       setInterval(()=>{
         context.dispatch('updateTokenPrices');
-      }, 5000);
+      }, subscribtionsAPIInterval);
     },
     createTokenSubscription(context, nonZerotokens) {
       const address = context.rootState.accounts.activeAccount.getAddressString();

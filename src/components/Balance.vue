@@ -14,6 +14,7 @@
 	export default {
 		props: {
 			amount: {
+				default: 0
 			},
 			price: {
 				default: 1
@@ -23,7 +24,7 @@
 				default: 'ETH'
 			},
 			decimals: {
-				default: null
+				default: 18
 			}
 		},
 		computed: {
