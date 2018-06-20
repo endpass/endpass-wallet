@@ -68,7 +68,7 @@
                       :disabled="!isFormValid">Add</v-button>
           </div>
           <div class="is-pulled-right">
-            <a class="button" @click="close" :disabled="!loadedToken">Cancel</a>
+            <a class="button" @click="close" :disabled="loadingToken">Cancel</a>
           </div>
         </div>
         <div v-else>
