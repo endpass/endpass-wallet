@@ -137,7 +137,6 @@ export default {
   },
   components: {
     SearchInput,
-    Balance,
     AddTokenModal
   }
 }
