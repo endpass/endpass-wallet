@@ -108,8 +108,12 @@ export default {
         return false;
       }
     },
-    isPending () {
-      return !this.date && !this.transaction.canseled
+    isPending() {
+      return (
+        !this.date &&
+        !this.transaction.canseled &&
+        this.transaction.status === 'pending'
+      );
     },
     statusText () {
       if (this.transaction.canseled) {
@@ -134,7 +138,7 @@ export default {
       const canselTransaction = {};
       Object.assign(canselTransaction, this.transaction);
       canselTransaction.value = web3.utils.numberToHex('0');
-      canselTransaction.to = this.address()
+      canselTransaction.to = this.address;
       let initialGwei = parseInt(web3.utils.fromWei(web3.utils.hexToNumberString(canselTransaction.gasPrice), 'Gwei'), 10);
       canselTransaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei((initialGwei + 1).toString(),'Gwei'));
       canselTransaction.gasLimit = canselTransaction.gasLimit;

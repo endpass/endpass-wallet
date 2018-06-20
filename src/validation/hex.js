@@ -4,7 +4,7 @@ export default {
   },
   validate(value, args) {
     const hexRegex = /^(0x|0X)([a-fA-F0-9]+)?$/;
-    const isHex = value.match(hexRegex);
+    const isHex = !!value.match(hexRegex);
     const message = 'This is not a valid hex';
     return {
       valid: isHex,
