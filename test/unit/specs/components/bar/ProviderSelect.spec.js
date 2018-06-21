@@ -1,4 +1,4 @@
-import InfoBar from '@/components/bar/InfoBar.vue'
+import ProviderSelect from '@/components/bar/ProviderSelect.vue'
 import { shallow, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import Router from 'vue-router'
@@ -10,7 +10,7 @@ localVue.use(Router)
 
 global.localStorage = LocalStorageMock;
 
-describe('InfoBar', () => {
+describe('ProviderSelect', () => {
   let actions
   let store
   let wrapper
@@ -33,7 +33,7 @@ describe('InfoBar', () => {
       },
       actions
     })
-    wrapper = shallow(InfoBar, { store, localVue })
+    wrapper = shallow(ProviderSelect, { store, localVue })
   })
 
   it('toogle modal state', () => {
