@@ -38,7 +38,7 @@ export default {
       let actions = [
         {id: -1, name: "Add Custom Network"}
       ]
-      return Array.concat(this.networks, actions);
+      return this.networks.concat(actions);
     }
   },
   methods: {

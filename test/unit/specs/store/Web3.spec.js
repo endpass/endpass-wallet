@@ -85,6 +85,7 @@ describe('web3 store', async () => {
       },
       [{ type: 'changeNetwork' }],
       [
+        { type: 'fetchNetworkType' },
         { type: 'subscribeOnBlockUpdates' },
         { type: 'tokens/subscribeOnTokenUpdates' },
       ],
