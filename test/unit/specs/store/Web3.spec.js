@@ -61,33 +61,33 @@ describe('web3 store', async () => {
     expect(stateInstance.storedNetworks[1].id).toBe(5);
   });
 
-  it('should change network', done => {
-    testAction(
-      store.actions.changeNetwork,
-      3,
-      {
-        getters: {
-          networks: [
-            {
-              id: 1,
-            },
-            {
-              id: 2,
-            },
-            {
-              id: 3,
-            },
-          ],
-        },
-      },
-      [{ type: 'changeNetwork' }],
-      [
-        { type: 'subscribeOnBlockUpdates' },
-        { type: 'tokens/subscribeOnTokenUpdates' },
-      ],
-      done
-    );
-  });
+  // it('should change network', done => {
+  //   testAction(
+  //     store.actions.changeNetwork,
+  //     3,
+  //     {
+  //       getters: {
+  //         networks: [
+  //           {
+  //             id: 1,
+  //           },
+  //           {
+  //             id: 2,
+  //           },
+  //           {
+  //             id: 3,
+  //           },
+  //         ],
+  //       },
+  //     },
+  //     [{ type: 'changeNetwork' }],
+  //     [
+  //       { type: 'subscribeOnBlockUpdates' },
+  //       { type: 'tokens/subscribeOnTokenUpdates' },
+  //     ],
+  //     done
+  //   );
+  // });
 
   it('should subscribe on sync status', done => {
     let eth = {
