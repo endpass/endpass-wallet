@@ -3,20 +3,25 @@ import { infuraConf } from '@/config.js';
 import EthBlockTracker from 'eth-block-tracker';
 import storage from '@/services/storage';
 import { subscribtionsBlockchainInterval } from '@/config'
+import { providerFactory, DebounceProvider } from '@/class';
 
-Web3.providers.HttpProvider.prototype.sendAsync =
-  Web3.providers.HttpProvider.prototype.send;
+const activeNet = {
+  name: 'Main',
+  id: 1,
+  url: `https://mainnet.infura.io/${infuraConf.key}`,
+};
+
+const { HttpProvider } = Web3.providers;
+HttpProvider.prototype.sendAsync = HttpProvider.prototype.send;
+const Provider = providerFactory(HttpProvider, DebounceProvider);
+const provider = new Provider(activeNet.url);
+const web3 = new Web3(provider);
+
 export default {
   namespaced: true,
   state() {
-    const activeNet = {
-      name: 'Main',
-      id: 1,
-      url: `https://mainnet.infura.io/${infuraConf.key}`,
-    };
-
     return {
-      web3: new Web3(activeNet.url),
+      web3,
       defaultNetworks: [
         {
           id: 1,
@@ -48,10 +53,15 @@ export default {
   mutations: {
     changeNetwork(state, network) {
       state.activeNet = network;
-      if (state.web3) {
-        state.web3.setProvider(state.activeNet.url);
+      const provider = new Provider(state.activeNet.url)
+      if (state.web3 && state.web3.setProvider) {
+        if (state.web3.currentProvider.destroy) {
+          state.web3.currentProvider.destroy()
+        }
+
+        state.web3.setProvider(provider);
       } else {
-        state.web3 = new Web3(state.activeNet.url);
+        state.web3 = new Web3(provider);
       }
     },
     addNewProvider(state, network) {

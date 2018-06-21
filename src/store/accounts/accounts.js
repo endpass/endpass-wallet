@@ -1,6 +1,8 @@
 import storage from '@/services/storage';
 import web3 from 'web3';
-const { toBN, hexToNumberString, toWei, fromWei } = web3.utils;
+import { BigNumber } from 'bignumber.js';
+
+const { hexToNumberString, toWei } = web3.utils;
 
 export default {
   namespaced: true,
@@ -23,21 +25,21 @@ export default {
     },
     pendingBalance(state) {
       return state.pendingTransactions
-        .filter(tnx => tnx.canseled === false)
+        .filter(tnx => tnx.canseled === false && tnx.status === 'pending')
         .map(tnx => {
           const { value, gasLimit, gasPrice } = tnx;
           const limit = hexToNumberString(gasLimit);
           const price = hexToNumberString(gasPrice);
-          const gasCost = toBN(limit).mul(toBN(price));
-          const tnxValue = tnx.token === 'ETH' ? toWei(value) : 0;
+          const gasCost = BigNumber(limit).times(price);
+          const tnxValue = tnx.token === 'ETH' ? toWei(value) : '0';
 
-          return gasCost.add(toBN(tnxValue));
+          return gasCost.plus(tnxValue);
         })
-        .reduce((total, item) =>  total.add(item), toBN(0))
-        .toString();
+        .reduce((total, item) => total.plus(item), BigNumber('0'))
+        .toFixed();
     },
     balance(state, { pendingBalance }) {
-      return toBN(state.balance || 0).sub(toBN(pendingBalance)).toString();
+      return BigNumber(state.balance || '0').minus(pendingBalance).toFixed();
     },
   },
   mutations: {

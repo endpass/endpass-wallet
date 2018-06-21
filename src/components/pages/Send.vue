@@ -97,7 +97,7 @@
                        :disabled="isSending"
                        required />
 
-              <v-button @click.prevent="sendTransaction"
+              <v-button @click.prevent="toggleModal"
                         className="is-primary is-medium"
                         :loading="isSending"
                         :disabled="isSyncing">Send</v-button>
@@ -108,6 +108,11 @@
         </div>
       </div>
     </div>
+    <transaction-modal v-if="isModal"
+                       :transaction="transaction"
+                       :token="selectedToken"
+                       @confirm="confirmTransaction"
+                       @close="toggleModal" />
   </div>
 </template>
 
@@ -115,15 +120,16 @@
 import erc20ABI from '@/erc20.json';
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
+import { BigNumber } from 'bignumber.js';
 import { mapFields } from 'vee-validate';
 import { mapState, mapMutations } from 'vuex';
 import accounts from '@/mixins/accounts';
-import { BigNumber } from 'bignumber.js';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import TransactionModal from '@/components/modal/TransactionModal';
 
-const { BN, toBN, fromWei, hexToNumberString, numberToHex, toWei } = web3.utils;
+const { fromWei, hexToNumberString, numberToHex, toWei } = web3.utils;
 
 export default {
   data: () => ({
@@ -140,6 +146,7 @@ export default {
       nonce: '',
     },
     estimateGas: 0,
+    isModal: false,
   }),
   computed: {
     ...mapState({
@@ -175,11 +182,11 @@ export default {
     maxAmount() {
       if (this.selectedToken === 'ETH') {
         const { gasPrice } = this.transaction;
-        const balanceBN = new BN(toWei(this.balance || '0'));
-        const gasPriceBN = new BN(toWei(gasPrice || '0', 'Gwei'));
-        const estimateGasBN = new BN(this.estimateGas);
-        const amountBN = balanceBN.sub(gasPriceBN.mul(estimateGasBN));
-        const amount = fromWei(amountBN.toString());
+        const balanceBN = BigNumber(toWei(this.balance || '0'));
+        const gasPriceBN = BigNumber(toWei(gasPrice || '0', 'Gwei')); 
+        const estimateGasBN = BigNumber(this.estimateGas || '0'); 
+        const amountBN = balanceBN.minus(gasPriceBN.times(estimateGasBN)); 
+        const amount = fromWei(amountBN.toFixed());
         return amount > 0 ? amount : 0;
       } else {
         return this.selectedTokenInfo.balance;
@@ -194,18 +201,12 @@ export default {
     decimals() {
       const { selectedToken, selectedTokenInfo } = this;
 
-      if (selectedToken === 'ETH') return '9';
+      if (selectedToken === 'ETH') return '18';
 
-      return selectedTokenInfo && selectedTokenInfo.decimals || 0;
+      return selectedTokenInfo && selectedTokenInfo.decimals || '0';
     },
     divider() {
-      if (this.selectedToken === 'ETH') {
-        return toBN('10').pow(toBN('18'))
-      };
-
-      const { selectedTokenInfo } = this;
-      const dec = selectedTokenInfo && selectedTokenInfo.decimals || '0';
-      return toBN('10').pow(toBN(dec));
+      return BigNumber('10').pow(this.decimals);
     },
     transactionData() {
       let {
@@ -216,7 +217,9 @@ export default {
         gasPrice,
         gasLimit,
       } = this.transaction;
-      let value = numberToHex(toWei(tnxValue || '0'));
+      const tnxValueBN = BigNumber(tnxValue || '0');
+      const tnxValueWei = tnxValueBN.times(this.divider).toFixed();
+      const value = numberToHex(tnxValueWei);
 
       if (to && to.toUpperCase().indexOf('0X') !== 0) {
         to = `0x${to}`;
@@ -233,15 +236,7 @@ export default {
         const contract = new this.web3.eth.Contract(erc20ABI, address, {
           from: this.address,
         });
-        const beforeDec = tnxValue.split('.')[0] || '';
-        const afterDec = tnxValue.split('.')[1] || '';
 
-        if (!Number(beforeDec) && afterDec <= 0) return '0';
-
-        const afterNew =
-          afterDec + this.divider.toString().slice(afterDec.length + 1);
-
-        value = numberToHex(beforeDec.replace(/\b0+/g, '') + afterNew);
         data = contract.methods.transfer(to, value).encodeABI();
       }
 
@@ -273,9 +268,9 @@ export default {
       if (this.selectedToken !== 'ETH') {
         historyItem.reciverAddress = this.toCache;
         historyItem.tokenInfo = this.selectedTokenInfo;
-        historyItem.value = toBN(hexToNumberString(trx.value))
+        historyItem.value = BigNumber(hexToNumberString(trx.value))
           .div(this.divider)
-          .toString();
+          .toFixed();
       }
 
       return historyItem;
@@ -340,6 +335,13 @@ export default {
         this.transaction.to = this.toCache;
       });
     },
+    toggleModal() {
+      this.isModal = !this.isModal;
+    },
+    confirmTransaction() {
+      this.toggleModal();
+      this.sendTransaction();
+    },
     async updateEstimateGas() {
       let { data, to, value, gasLimit, gasPrice } = this.transactionData;
 
@@ -347,7 +349,7 @@ export default {
         to,
         value: hexToNumberString(value),
         data,
-      })
+      });
     }
   },
   watch: {
@@ -380,6 +382,7 @@ export default {
     VForm,
     VButton,
     VInput,
+    TransactionModal,
   },
   mixins: [accounts],
 };
