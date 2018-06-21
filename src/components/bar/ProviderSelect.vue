@@ -1,17 +1,15 @@
 <template>
   <div class="provider-select">
-      <div class="net-select">
-        <multiselect
-           v-model="selectedNet" :options="networks"
-           track-by="id" label="name"
-                         :show-labels="false"
-                         :allow-empty="false"
-                         />
-      </div>
-      <a class="button is-small is-white" @click="openCustomProviderModal()">
-        <span class="icon is-small"> +
-        </span>
-      </a>
+    <div class="net-select">
+      <multiselect
+         :options="networkOptions"
+         track-by="id" label="name"
+                       :show-labels="false"
+                       :allow-empty="false"
+                       :value="selectedNet"
+                       @select="selectNet"
+                       />
+    </div>
     <custom-provider-modal @close="closeCustomProviderModal"
               v-if="customProviderModalOpen"/>
   </div>
@@ -31,31 +29,44 @@ export default {
     }
   },
   computed: {
-    selectedNet: {
-      get() {
-        return this.$store.state.web3.activeNet;
-      },
-      set(net) {
-        this.changeNetwork(net.id).catch(e => {
-          this.$notify({
-            title: e.title,
-            text: e.text,
-            type: 'is-warning',
-          });
-          console.error(e);
-        });
-        this.storage.write('net', net.id).catch(e => {
-          this.$notify({
-            title: e.title,
-            text: e.text,
-            type: 'is-warning',
-          });
-        });
-      }
+    selectedNet() {
+      return this.$store.state.web3.activeNet;
     },
+    networkOptions() {
+      // Options that dispatch methods
+      let actions = [
+        {id: -1, name: "Add Custom Network"}
+      ]
+      return Array.concat(this.networks, actions);
+    }
   },
   methods: {
     ...mapActions('web3', ['changeNetwork']),
+    // Triggers when a network is selected
+    selectNet(net) {
+      if (net.id === -1) {
+        this.openCustomProviderModal();
+      } else {
+        this.setNetwork(net.id);
+      }
+    },
+    setNetwork(id) {
+      this.changeNetwork(id).catch(e => {
+        this.$notify({
+          title: e.title,
+          text: e.text,
+          type: 'is-warning',
+        });
+        console.error(e);
+      });
+      this.storage.write('net', id).catch(e => {
+        this.$notify({
+          title: e.title,
+          text: e.text,
+          type: 'is-warning',
+        });
+      });
+    },
     openCustomProviderModal() {
       this.customProviderModalOpen = true;
     },
