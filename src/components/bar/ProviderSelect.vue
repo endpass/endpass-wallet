@@ -8,6 +8,7 @@
                        :allow-empty="false"
                        :value="selectedNet"
                        @select="selectNet"
+                       placeholder="Select network"
                        />
     </div>
     <custom-provider-modal @close="closeCustomProviderModal"
