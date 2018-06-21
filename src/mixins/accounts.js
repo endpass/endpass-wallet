@@ -10,7 +10,9 @@ export default {
       return this.activeAccount.getAddressString();
     },
     balance() {
-      return this.$store.state.accounts.balance === null ? null : web3.utils.fromWei(this.$store.state.accounts.balance);
-    }
+      return this.$store.state.accounts.balance === null
+        ? null
+        : web3.utils.fromWei(this.$store.getters['accounts/balance']);
+    },
   }
 }

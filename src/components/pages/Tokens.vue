@@ -9,6 +9,12 @@
                 <nav class="panel">
                   <p class="panel-heading">
                   Your Tokens
+                    <button class="button is-primary" name="button" @click.prevent="openAddTokenModal()">
+                      <!-- <span class="icon panel-icon is-small"
+                          v-html="require('@/img/plus.svg')">
+                      </span> -->
+                      +
+                    </button>
                   </p>
                   <div class="panel-block">
                     <search-input v-model="search"></search-input>
@@ -57,6 +63,8 @@
         </div>
       </div>
     </div>
+    <add-token-modal @close="closeAddTokenModal"
+      v-if="addTokenModalOpen"/>
   </div>
 </template>
 
@@ -65,12 +73,14 @@ import EndpassService from '@/services/endpass'
 import { BigNumber } from 'bignumber.js';
 import Balance from '@/components/Balance'
 import SearchInput from '@/components/SearchInput.vue'
+import AddTokenModal from '@/components/AddTokenModal'
 import { mapState, mapActions } from 'vuex'
 
 export default {
   data() {
     return {
       search: '',
+      addTokenModalOpen:false,
       tokens: [],
       serializeInterval: null,
       subscription: null
@@ -128,7 +138,13 @@ export default {
         });
     },
     getTokenPrice(symbol) {
-      return new BigNumber(prices[token.symbol]).times(this.ethPrice).toString();
+      return new BigNumber(this.prices[symbol]['ETH']).times(this.ethPrice).toString();
+    },
+    openAddTokenModal() {
+      this.addTokenModalOpen = true;
+    },
+    closeAddTokenModal() {
+      this.addTokenModalOpen = false;
     }
   },
   created() {
@@ -136,7 +152,8 @@ export default {
   },
   components: {
     SearchInput,
-    Balance
+    Balance,
+    AddTokenModal
   }
 }
 </script>

@@ -19,7 +19,7 @@ export default {
 	  updatePrice(context) {
       let price = priceService.getEthPrice(context.rootState.accounts.settings.fiatCurrency);
       price.then((resp) => {
-        context.commit('setPrice', resp.data[context.rootState.accounts.settings.fiatCurrency]);
+        context.commit('setPrice', resp[context.rootState.accounts.settings.fiatCurrency]);
         context.commit('setUpdateTime', new Date().time);
       }).catch(e => {
         console.error(e, 'bal');

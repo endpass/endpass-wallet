@@ -43,11 +43,9 @@
 				}
 
 				let balance = amountBn.times(priceBn);
-				if(this.decimals){
-					return balance.toFixed(this.decimals);
-				} else {
-					return balance.toFixed()
-				}
+				let balanceString = balance.toFixed(this.decimals).match(/^[0-9]{1,18}(\.[0-9]{0,18}[^0]{1,18}){0,1}/);
+				balanceString = balanceString ? balanceString[0] : '0';
+				return balanceString;
 			},
 			hasUpdate() {
 				return this.$listeners.update

@@ -18,51 +18,53 @@
                        placeholder="Receiver address"
                        :disabled="isSending"
                        required />
-              <div class="columns">
-                <div class="column is-half is-full-mobile">
-                  <v-input v-model.number="value"
-                           label="Amount"
-                           type="number"
-                           name="value"
-                           v-validate="`required|decimal|max_value:${maxAmount}`"
-                           id="value"
-                           aria-describedby="value"
-                           placeholder="Amount"
-                           :disabled="isSending"
-                           required>
-                    <span class="select" slot="addon">
-                      <select v-model="selectedToken">
-                        <option value="ETH">ETH</option>
-                        <option
-                          :value="token.symbol"
-                          v-for="token in tokens"
-                          :key="token.address">{{token.symbol}}</option>
-                      </select>
-                    </span>
-                  </v-input>
+          <div class="columns">
+            <div class="column is-half is-full-mobile">
+              <v-input v-model="transaction.value"
+                       label="Amount"
+                       type="number"
+                       name="value"
+                       v-validate="`required|decimal:${decimals}|between:0,${maxAmount}`"
+                       data-vv-as="amount"
+                       id="value"
+                       aria-describedby="value"
+                       placeholder="Amount"
+                       :disabled="isSending"
+                       required>
+                <span class="select" slot="addon">
+                  <select v-model="selectedToken">
+                    <option value="ETH">ETH</option>
+                    <option
+                      :value="token.symbol"
+                      v-for="token in tokens"
+                      :key="token.address">{{token.symbol}}</option>
+                  </select>
+                </span>
+              </v-input>
+            </div>
+            <div class="column is-half is-full-mobile">
+              <v-input v-model.number="price"
+                       label="Price"
+                       type="number"
+                       name="price"
+                       v-validate="`required|decimal|max_value:${maxPrice}`"
+                       id="price"
+                       aria-describedby="price"
+                       placeholder="Price"
+                       :disabled="isSending"
+                       required>
+                <div class="control" slot="addon">
+                  <a class="button is-static">{{fiatCurrency}}</a>
                 </div>
-                <div class="column is-half is-full-mobile">
-                  <v-input v-model.number="price"
-                           label="Price"
-                           type="number"
-                           name="price"
-                           v-validate="`required|decimal|max_value:${maxPrice}`"
-                           id="price"
-                           aria-describedby="price"
-                           placeholder="Price"
-                           :disabled="isSending"
-                           required>
-                    <div class="control" slot="addon">
-                      <a class="button is-static">{{fiatCurrency}}</a>
-                    </div>
-                  </v-input>
-                </div>
-              </div>
-              <v-input v-model.number="gasPrice"
+              </v-input>
+            </div>
+          </div>
+
+              <v-input v-model="transaction.gasPrice"
                        label="Gas price"
                        name="gasPrice"
                        type="number"
-                       v-validate="'required|integer|min_value:0|max_value:100'"
+                       v-validate="'required|numeric|integer|between:0,100'"
                        id="gasPrice"
                        aria-describedby="gasPrice"
                        placeholder="Gas price"
@@ -73,11 +75,11 @@
                 </div>
               </v-input>
 
-              <v-input v-model.number="gasLimit"
+              <v-input v-model="transaction.gasLimit"
                        label="Gas limit"
                        name="limit"
                        type="number"
-                       v-validate="'required|numeric|integer|min_value:21000|max_value:4000000'"
+                       v-validate="'required|numeric|integer|between:21000,4000000'"
                        id="limit"
                        aria-describedby="limit"
                        placeholder="Gas limit"
@@ -120,21 +122,22 @@ import { BigNumber } from 'bignumber.js';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
-const { BN, fromWei, hexToNumberString, numberToHex, toWei } = web3.utils;
+
+const { BN, toBN, fromWei, hexToNumberString, numberToHex, toWei } = web3.utils;
 
 export default {
   data: () => ({
     selectedToken: 'ETH',
     toCache: '',
     isSending: false,
-    isFormValid: false,
     transactionHash: null,
     transaction: {
-      gasPrice: '0x14f46b0400',
-      gasLimit: '0x55f0',
+      gasPrice: '90',
+      gasLimit: '22000',
+      value: '0',
       to: '',
-      value: '0x0',
       data: '0x',
+      nonce: '',
     },
     estimateGas: 0,
   }),
@@ -152,7 +155,9 @@ export default {
         if(!this.ethPrice)
           return
         let price = new BigNumber(this.ethPrice);
-        let number = new BigNumber(fromWei(hexToNumberString(this.transaction.value))).times(price).toFixed(2);
+        let ceildValue = this.transaction.value.match(/^[0-9]{1,18}\.{0,1}[0-9]{0,9}/);
+        ceildValue = ceildValue ? ceildValue[0] : '0';
+        let number = new BigNumber(fromWei(toWei(ceildValue, 'Gwei'))).times(price).toFixed(2);
         return +number
       },
       set(newValue) {
@@ -163,103 +168,96 @@ export default {
         this.transaction.value = numberToHex(toWei(price.toFixed(18)));
       }
     },
-    gasPrice: {
-      get() {
-        if (this.transaction.gasPrice === '') {
-          return '';
-        }
-
-        return fromWei(hexToNumberString(this.transaction.gasPrice), 'Gwei');
-      },
-      set(newValue) {
-        if (newValue === '') {
-          this.transaction.gasPrice = '';
-          return;
-        }
-
-        this.transaction.gasPrice = numberToHex(
-          toWei(newValue.toString(), 'Gwei')
-        );
-      },
-    },
     // token object based on the selectedToken symbol string
     selectedTokenInfo() {
       return this.tokens.find(t => t.symbol === this.selectedToken);
     },
-    gasLimit: {
-      get() {
-        if (this.transaction.gasLimit === '') {
-          return '';
-        }
-
-        return hexToNumberString(this.transaction.gasLimit);
-      },
-      set(newValue) {
-        if (newValue === '') {
-          this.transaction.gasLimit = '';
-          return;
-        }
-
-        this.transaction.gasLimit = numberToHex(newValue.toString());
-      },
-    },
-    value: {
-      get() {
-        const { value: transValue } = this.transaction;
-
-        if (transValue === '') {
-          return '';
-        }
-
-        if (this.selectedToken === 'ETH') {
-          return fromWei(hexToNumberString(transValue));
-        } else {
-          const divider = new BN('10').pow(
-            new BN(this.selectedTokenInfo.decimals)
-          );
-          const result = new BN(hexToNumberString(transValue));
-          const beforeDecimal = result.div(divider).toString();
-          const afterDecimal = result.mod(divider).toString();
-
-          return `${beforeDecimal}.${afterDecimal}`;
-        }
-      },
-      set(newValue) {
-        if (newValue === '') {
-          this.transaction.value = '';
-          return;
-        }
-
-        if (this.selectedToken === 'ETH') {
-          this.transaction.value = numberToHex(
-            toWei(newValue.toString(), 'ether')
-          );
-        } else {
-          const divider = new BN('10').pow(
-            new BN(this.selectedTokenInfo.decimals)
-          );
-          const value = new BN(newValue).mul(divider).toString();
-          this.transaction.value = numberToHex(value);
-        }
-      },
-    },
     maxAmount() {
-      const { balance } = this;
-      const weiBalance = toWei(balance && balance.toString() || '0', 'ether');
-      const amountWei = weiBalance - this.estimateGas * this.gasPrice;
-      const amount = fromWei(amountWei.toString());
-
-      return amount > 0 ? amount : 0;
+      if (this.selectedToken === 'ETH') {
+        const { gasPrice } = this.transaction;
+        const balanceBN = new BN(toWei(this.balance || '0'));
+        const gasPriceBN = new BN(toWei(gasPrice || '0', 'Gwei'));
+        const estimateGasBN = new BN(this.estimateGas);
+        const amountBN = balanceBN.sub(gasPriceBN.mul(estimateGasBN));
+        const amount = fromWei(amountBN.toString());
+        return amount > 0 ? amount : 0;
+      } else {
+        return this.selectedTokenInfo.balance;
+      }
     },
     maxPrice() {
-      const balance = new BigNumber(this.balance);
-      const price = new BigNumber(this.ethPrice);
+      const balance = new BigNumber(this.maxAmount);
+      const price = new BigNumber(this.price);
       const amount = balance.times(price).toNumber();
       return amount > 0 ? amount : 0;
-    }
+    },
+    decimals() {
+      const { selectedToken, selectedTokenInfo } = this;
+
+      if (selectedToken === 'ETH') return '9';
+
+      return selectedTokenInfo && selectedTokenInfo.decimals || 0;
+    },
+    divider() {
+      if (this.selectedToken === 'ETH') {
+        return toBN('10').pow(toBN('18'))
+      };
+
+      const { selectedTokenInfo } = this;
+      const dec = selectedTokenInfo && selectedTokenInfo.decimals || '0';
+      return toBN('10').pow(toBN(dec));
+    },
+    transactionData() {
+      let {
+        to,
+        data,
+        nonce,
+        value: tnxValue,
+        gasPrice,
+        gasLimit,
+      } = this.transaction;
+      let value = numberToHex(toWei(tnxValue || '0'));
+
+      if (to && to.toUpperCase().indexOf('0X') !== 0) {
+        to = `0x${to}`;
+      }
+
+      if (this.selectedToken !== 'ETH') {
+        if (!this.selectedTokenInfo || !this.selectedTokenInfo.address) {
+          throw 'Invalid token address';
+        }
+
+        this.toCache = to;
+        const { address } = this.selectedTokenInfo;
+        to = address;
+        const contract = new this.web3.eth.Contract(erc20ABI, address, {
+          from: this.address,
+        });
+        const beforeDec = tnxValue.split('.')[0] || '';
+        const afterDec = tnxValue.split('.')[1] || '';
+
+        if (!Number(beforeDec) && afterDec <= 0) return '0';
+
+        const afterNew =
+          afterDec + this.divider.toString().slice(afterDec.length + 1);
+
+        value = numberToHex(beforeDec.replace(/\b0+/g, '') + afterNew);
+        data = contract.methods.transfer(to, value).encodeABI();
+      }
+
+      return {
+        from: this.address,
+        to: to || undefined,
+        value,
+        gasPrice: numberToHex(toWei(gasPrice || '0', 'Gwei')),
+        gasLimit: numberToHex(gasLimit || '0'),
+        data: data || '0x',
+        nonce: numberToHex(nonce || 0),
+      };
+    },
   },
   methods: {
-    ...mapMutations('accounts', ['addTransaction', 'removeTransaction']),
+    ...mapMutations('accounts', ['addTransaction', 'updateTransaction']),
     createTransactionHistory(trx) {
       const historyItem = {};
 
@@ -269,10 +267,15 @@ export default {
       historyItem.gasPrice = trx.gasPrice;
       historyItem.nonce = trx.nonce;
       historyItem.canseled = false;
+      historyItem.token = this.selectedToken;
+      historyItem.status = 'pending';
 
       if (this.selectedToken !== 'ETH') {
         historyItem.reciverAddress = this.toCache;
         historyItem.tokenInfo = this.selectedTokenInfo;
+        historyItem.value = toBN(hexToNumberString(trx.value))
+          .div(this.divider)
+          .toString();
       }
 
       return historyItem;
@@ -284,22 +287,29 @@ export default {
       this.web3.eth.getTransactionCount(keyHex).then(nonce => {
         const nonceWithPending = nonce + this.pendingTransactions.length;
         this.transaction.nonce = numberToHex(nonceWithPending);
-        if (this.selectedToken !== 'ETH') {
-          this.createTokenTransaction();
-        }
-        const tx = new Tx(this.transaction);
+
+        const tx = new Tx(this.transactionData);
         tx.sign(this.activeAccount.getPrivateKey());
         const serializedTx = tx.serialize();
         const transactionForHistory = this.createTransactionHistory(
-          this.transaction
+          this.transactionData
         );
 
-        this.web3.eth
+        const sendEvent = this.web3.eth
           .sendSignedTransaction('0x' + serializedTx.toString('hex'))
-          .on('receipt', resp => {
-            this.removeTransaction(resp.transactionHash);
+          .on('confirmation', (confNumber, { transactionHash }) => {
+            if (confNumber > 0) {
+              sendEvent.off('confirmation')
+              this.updateTransaction({
+                oldHash: transactionHash,
+                newTrx: { status: 'success' },
+              });
+            }
           })
           .on('error', (err, receipt) => {
+            this.$validator.flag('address', {
+              valid: false,
+            });
             this.isSending = false;
 
             const cause = receipt ? ', because out of gas' : '';
@@ -308,9 +318,14 @@ export default {
               title: 'Error sending transaction',
               text: `Transaction was not sent${cause}`,
               type: 'is-danger',
-            })
+            });
+
+            console.error(err)
           })
           .on('transactionHash', hash => {
+            this.$validator.flag('address', {
+              valid: false,
+            });
             this.isSending = false;
             this.transactionHash = hash;
             this.$notify({
@@ -322,39 +337,43 @@ export default {
             transactionForHistory.hash = hash;
             this.addTransaction(transactionForHistory);
           });
-
         this.transaction.to = this.toCache;
       });
     },
-    createTokenTransaction() {
-      if (!this.selectedTokenInfo || !this.selectedTokenInfo.address) {
-        throw 'Invalid token address';
-      }
+    async updateEstimateGas() {
+      let { data, to, value, gasLimit, gasPrice } = this.transactionData;
 
-      const tokenAddress = this.selectedTokenInfo.address;
-      const contract = new this.web3.eth.Contract(erc20ABI, tokenAddress, {
-        from: this.address,
-      });
-      this.toCache = this.transaction.to;
-      this.transaction.to = tokenAddress;
-      this.transaction.data = contract.methods
-        .transfer(this.transaction.to, this.transaction.value)
-        .encodeABI();
-    },
+      this.estimateGas = await this.web3.eth.estimateGas({
+        to,
+        value: hexToNumberString(value),
+        data,
+      })
+    }
   },
   watch: {
     'transaction.to': {
       async handler() {
         await this.$nextTick();
+        await this.$nextTick();
 
         if (!this.errors.has('address')) {
-          this.estimateGas = await this.web3.eth.estimateGas({
-            to: this.transaction.to || undefined,
-            amount: hexToNumberString(this.transaction.value),
-          })
+          this.updateEstimateGas();
         }
       },
-      immediate: true
+      immediate: true,
+    },
+    'transaction.data': {
+      async handler() {
+        await this.$nextTick();
+        await this.$nextTick();
+
+        if (!this.errors.has('data')) {
+          this.updateEstimateGas();
+        }
+      },
+    },
+    selectedToken() {
+      this.updateEstimateGas();
     }
   },
   components: {
