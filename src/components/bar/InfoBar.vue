@@ -1,25 +1,12 @@
 <template>
-  <div class="section info-bar"
-       :class="{mainnet: isMainNet, testnet: !isMainNet}">
+  <div class="section info-bar" :class="networkClass">
     <div class="container">
       <div class="level">
         <div class="level-left">
           <div class="level-item">
             <div class="level-control">
               <p class="heading">Current Network</p>
-              <div class="flex">
-                <div class="select">
-                  <select v-model="selectedNet">
-                    <option v-for="net in networks" :value="net.id" :key="net.id">
-                    {{net.name}}
-                    </option>
-                  </select>
-                </div>    
-                <a class="button is-small is-white" @click="openCustomProviderModal()">
-                  <span class="icon is-small"> +
-                  </span>
-                </a>
-              </div>
+              <provider-select/>
             </div>
           </div>
           <div class="level-item">
@@ -49,78 +36,34 @@
         </div>
       </div>
     </div>
-    <custom-provider-modal @close="closeCustomProviderModal"
-      v-if="customProviderModalOpen"/>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
 import AccountChooser from '@/components/bar/AccountChooser.vue'
-import CustomProviderModal from '@/components/bar/CustomProviderModal.vue'
+import ProviderSelect from '@/components/bar/ProviderSelect.vue'
 import SyncStatus from '@/components/bar/SyncStatus.vue'
-import accounts from '@/mixins/accounts'
-import storage from '@/mixins/storage';
 import Balance from '@/components/Balance'
+import accounts from '@/mixins/accounts'
+import net from '@/mixins/net'
 
 export default {
-  data: () => ({
-    customProviderModalOpen: false,
-  }),
   computed: {
-
     ...mapState({
       price: state => state.price.price
     }),
-    networks() {
-      return this.$store.getters['web3/networks'];
-    },
-    activeNet() {
-      return this.$store.state.web3.activeNet;
-    },
-    isMainNet() {
-      return this.activeNet.id === 1;
-    },
-    selectedNet: {
-      get() {
-        return this.$store.state.web3.activeNet.id;
-      },
-      set(newValue) {
-        this.changeNetwork(newValue).catch(e => {
-          this.$notify({
-            title: e.title,
-            text: e.text,
-            type: 'is-warning',
-          });
-          console.error(e);
-        });
-        this.storage.write('net', newValue).catch(e => {
-          this.$notify({
-            title: e.title,
-            text: e.text,
-            type: 'is-warning',
-          });
-        });
-      }
-    },
   },
   methods: {
-    ...mapActions('web3', ['changeNetwork']),
     ...mapActions('price', ['updatePrice']),
-    openCustomProviderModal() {
-      this.customProviderModalOpen = true;
-    },
-    closeCustomProviderModal() {
-      this.customProviderModalOpen = false;
-    },
   },
   components: {
     AccountChooser,
-    CustomProviderModal,
+    ProviderSelect,
     SyncStatus,
     Balance
   },
-  mixins: [accounts, storage],
+  mixins: [net, accounts],
 };
 </script>
 

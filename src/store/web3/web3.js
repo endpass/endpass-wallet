@@ -8,6 +8,7 @@ import { providerFactory, DebounceProvider } from '@/class';
 const activeNet = {
   name: 'Main',
   id: 1,
+  networkType: 'main',
   url: `https://mainnet.infura.io/${infuraConf.key}`,
 };
 
@@ -25,16 +26,19 @@ export default {
       defaultNetworks: [
         {
           id: 1,
+          networkType: 'main',
           name: 'Main',
           url: `https://mainnet.infura.io/${infuraConf.key}`,
         },
         {
           name: 'Ropsten',
+          networkType: 'ropsten',
           id: 3,
           url: `https://ropsten.infura.io/${infuraConf.key}`,
         },
         {
           name: 'Rinkeby',
+          networkType: 'rinkeby',
           id: 4,
           url: `https://rinkeby.infura.io/${infuraConf.key}`,
         },
@@ -77,6 +81,9 @@ export default {
     setBlockNumber(state, number) {
       state.blockNumber = number;
     },
+    setNetworkType(state, type) {
+      state.activeNet.networkType = type;
+    },
   },
   actions: {
     changeNetwork({ commit, dispatch, getters }, networkId) {
@@ -85,6 +92,7 @@ export default {
       commit('changeNetwork', network);
       storage.write('net', network.id);
       return Promise.all([
+        dispatch('fetchNetworkType'),
         dispatch('subscribeOnBlockUpdates'),
         dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true})
       ]);
@@ -108,6 +116,17 @@ export default {
         } else {
           context.dispatch('subscribeOnSyncStatus')
         }
+      });
+      return promise;
+    },
+    fetchNetworkType(context) {
+      // network type already set, return resolved promise
+      if (context.state.activeNet.networkType) {
+        return Promise.resolve();
+      }
+      let promise = context.state.web3.eth.net.getNetworkType();
+      promise.then(resp => {
+        context.commit('setNetworkType', resp);
       });
       return promise;
     },
