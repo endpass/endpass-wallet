@@ -97,7 +97,7 @@
                        :disabled="isSending"
                        required />
 
-              <v-button @click.prevent="sendTransaction"
+              <v-button @click.prevent="toggleModal"
                         className="is-primary is-medium"
                         :loading="isSending"
                         :disabled="isSyncing">Send</v-button>
@@ -108,6 +108,11 @@
         </div>
       </div>
     </div>
+    <transaction-modal v-if="isModal"
+                       :transaction="transaction"
+                       :token="selectedToken"
+                       @confirm="confirmTransaction"
+                       @close="toggleModal" />
   </div>
 </template>
 
@@ -119,10 +124,10 @@ import { BigNumber } from 'bignumber.js';
 import { mapFields } from 'vee-validate';
 import { mapState, mapMutations } from 'vuex';
 import accounts from '@/mixins/accounts';
-import { BigNumber } from 'bignumber.js';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import TransactionModal from '@/components/modal/TransactionModal';
 
 const { fromWei, hexToNumberString, numberToHex, toWei } = web3.utils;
 
@@ -141,6 +146,7 @@ export default {
       nonce: '',
     },
     estimateGas: 0,
+    isModal: false,
   }),
   computed: {
     ...mapState({
@@ -230,14 +236,6 @@ export default {
         const contract = new this.web3.eth.Contract(erc20ABI, address, {
           from: this.address,
         });
-<<<<<<<
-        const beforeDec = tnxValue.split('.')[0] || '';
-        const afterDec = tnxValue.split('.')[1] || '';
-
-        if (!Number(beforeDec) && afterDec <= 0) return '0';
-=======
-
->>>>>>>
 
         data = contract.methods.transfer(to, value).encodeABI();
       }
@@ -337,6 +335,13 @@ export default {
         this.transaction.to = this.toCache;
       });
     },
+    toggleModal() {
+      this.isModal = !this.isModal;
+    },
+    confirmTransaction() {
+      this.toggleModal();
+      this.sendTransaction();
+    },
     async updateEstimateGas() {
       let { data, to, value, gasLimit, gasPrice } = this.transactionData;
 
@@ -377,6 +382,7 @@ export default {
     VForm,
     VButton,
     VInput,
+    TransactionModal,
   },
   mixins: [accounts],
 };

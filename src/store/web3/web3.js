@@ -14,6 +14,8 @@ const activeNet = {
 const { HttpProvider } = Web3.providers;
 HttpProvider.prototype.sendAsync = HttpProvider.prototype.send;
 const Provider = providerFactory(HttpProvider, DebounceProvider);
+const provider = new Provider(activeNet.url);
+const web3 = new Web3(provider);
 
 export default {
   namespaced: true,
