@@ -7,8 +7,16 @@ export default {
     activeNet() {
       return this.$store.state.web3.activeNet;
     },
-    isMainNet() {
-      return this.activeNet.id === 1;
+    networkType() {
+      return this.activeNet.networkType;
     },
+    networkClass() {
+      return {
+        mainnet: this.networkType === 'main',
+        privatenet: this.networkType === 'private',
+        testnet: this.networkType !== 'main' &&
+          this.networkType !== 'private',
+      }
+    }
   }
 }

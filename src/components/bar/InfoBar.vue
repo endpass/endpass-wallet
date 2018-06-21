@@ -1,6 +1,5 @@
 <template>
-  <div class="section info-bar"
-       :class="{mainnet: isMainNet, testnet: !isMainNet}">
+  <div class="section info-bar" :class="networkClass">
     <div class="container">
       <div class="level">
         <div class="level-left">

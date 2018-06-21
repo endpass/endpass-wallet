@@ -8386,6 +8386,10 @@ vue-loader@^13.3.0:
     vue-style-loader "^3.0.0"
     vue-template-es2015-compiler "^1.6.0"
 
+vue-multiselect@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vue-multiselect/-/vue-multiselect-2.1.0.tgz#9e8ee7087658f029d06778cdb8da0b34ee3f1e28"
+
 vue-notification@^1.3.7:
   version "1.3.10"
   resolved "https://registry.yarnpkg.com/vue-notification/-/vue-notification-1.3.10.tgz#d5ce8380beb552bcf3cdcbb7aa72b28d82791d66"
