@@ -20,11 +20,17 @@ describe('Send', () => {
   beforeEach(() => {
     store = new Vuex.Store({
       state: {
+        price: {
+          price: 400
+        },
         accounts: {
           activeAccount: {
             getAddressString() {
               return '0x9eceefdf3554e178a6549006f2c02163e63c9fd8';
-            },
+            }
+          },
+          settings: {
+            fiatCurrency: 'USD'
           },
           balance: null,
           pendingTransactions: [
@@ -89,7 +95,7 @@ describe('Send', () => {
     });
 
     const { errors, $nextTick } = wrapper.vm;
-    
+
     wrapper.setData({
       transaction: {
         to: '',
@@ -104,7 +110,7 @@ describe('Send', () => {
     await $nextTick();
 
     expect(errors.first('address').includes('required')).toBeTruthy();
-    expect(errors.first('price').includes('between')).toBeTruthy();
+    expect(errors.first('gasPrice').includes('between')).toBeTruthy();
     expect(errors.first('limit').includes('between')).toBeTruthy();
     expect(errors.first('value').includes('decimal')).toBeTruthy();
     expect(errors.first('data').includes('hex')).toBeTruthy();
@@ -122,7 +128,7 @@ describe('Send', () => {
     await $nextTick();
 
     expect(errors.first('address').includes('not a valid')).toBeTruthy();
-    expect(errors.first('price').includes('numeric')).toBeTruthy();
+    expect(errors.first('gasPrice').includes('numeric')).toBeTruthy();
     expect(errors.first('limit').includes('numeric')).toBeTruthy();
     expect(errors.first('value').includes('between')).toBeTruthy();
 

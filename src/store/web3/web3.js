@@ -2,6 +2,7 @@ import Web3 from 'web3';
 import { infuraConf } from '@/config.js';
 import EthBlockTracker from 'eth-block-tracker';
 import storage from '@/services/storage';
+import { subscribtionsBlockchainInterval } from '@/config'
 
 Web3.providers.HttpProvider.prototype.sendAsync =
   Web3.providers.HttpProvider.prototype.send;
@@ -84,7 +85,7 @@ export default {
       }).id + 1;
       commit('addNewProvider', network);
       return dispatch('changeNetwork', network.id);
-    }, 
+    },
     subscribeOnSyncStatus(context) {
       let providerCache = context.state.web3.currentProvider;
       let promise = context.state.web3.eth.isSyncing();
@@ -93,7 +94,7 @@ export default {
           context.commit('setSyncStatus', resp);
           setTimeout(()=> {
             context.dispatch('subscribeOnSyncStatus')
-          }, 3000);
+          }, subscribtionsBlockchainInterval);
         } else {
           context.dispatch('subscribeOnSyncStatus')
         }
@@ -106,7 +107,7 @@ export default {
       }
       context.state.blockSubscribtion = new EthBlockTracker({
         provider: context.state.web3.currentProvider,
-        pollingInterval:3000
+        pollingInterval:subscribtionsBlockchainInterval
       });
       context.state.blockSubscribtion.on('latest', block => {
         if (context.rootState.accounts.activeAccount) {

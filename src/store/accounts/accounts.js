@@ -9,6 +9,7 @@ export default {
     accounts: [],
     activeAccount: null,
     balance: null,
+    price: null,
     pendingTransactions: [],
     // prettier-ignore
     availableCurrencies: ['USD', 'AUD', 'BRL', 'CAD', 'CHF', 'CLP', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PKR', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'ZAR'],
@@ -80,6 +81,9 @@ export default {
     setBalance(state, balance) {
       state.balance = balance;
     },
+    setPrice(state, price) {
+      state.price = price;
+    },
     setSettings(state, settings) {
       state.settings = JSON.parse(JSON.stringify(settings));
     },
@@ -96,23 +100,16 @@ export default {
         dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true})
       ]);
     },
-    updateBalance({ state, commit, rootState }) {
-      if (rootState.accounts.activeAccount) {
-        const address = rootState.accounts.activeAccount.getAddressString();
-        rootState.web3.web3.eth
-          .getBalance(address)
-          .then(balance => {
-            state.pendingTransactions
-              .filter(tnx => !tnx.canseled && tnx.status === 'success')
-              .forEach(tnx => {
-                commit('removeTransaction', tnx.hash);
-              });
-
-            commit('setBalance', balance);
-          })
-          .catch(e => {
-            console.error(e, 'bal');
-          });
+    updateBalance(context) {
+      if(context.rootState.accounts.activeAccount) {
+        let address = context.rootState.accounts.activeAccount.getAddressString();
+        let balance = context.rootState.web3.web3.eth.getBalance(address)
+        balance.then((balance) => {
+          context.commit('setBalance', balance);
+        }).catch(e => {
+          console.error(e, 'bal');
+        });
+        return balance
       }
     },
     updateSettings({ commit }, settings) {

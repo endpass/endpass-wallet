@@ -1,6 +1,8 @@
 import TokenTracker from 'eth-token-tracker';
 import EthplorerService from '@/services/ethplorer';
+import price from '@/services/price';
 import storage from '@/services/storage';
+import { subscribtionsAPIInterval } from '@/config'
 
 export default {
   namespaced: true,
@@ -10,6 +12,7 @@ export default {
       activeTokens: [],
       //tokens from localStorage
       savedTokens: [],
+      prices: null,
       tokensSubscription: null,
       tokensSerializeInterval: null,
     };
@@ -21,6 +24,15 @@ export default {
     saveTokens(state, tokens = []) {
       // TODO check for errors here, activeTokens is undefined
       state.activeTokens = tokens;
+    },
+    setTokenPrices(state, prices) {
+      state.prices = prices;
+    },
+    setTokenPrice(state, symbol, price) {
+      if(!state.prices){
+       state.prices = {};
+      }
+      state.prices[symbol] = price;
     },
     saveTokensFromStorage(state, tokens = []) {
       state.savedTokens = tokens;
@@ -60,6 +72,7 @@ export default {
         // get tokens with balances
         return dispatch('getNonZeroTokens')
           .then(resp => {
+            dispatch('subsctibeOnTokenPriceUpdates', resp.data.tokens || []);
             return dispatch('createTokenSubscription', resp.data.tokens || []);
           })
           .catch(e => {
@@ -70,6 +83,28 @@ export default {
             throw error;
           });
       }
+    },
+    updateTokenPrices(context) {
+      if(context.state.activeTokens.length === 0)
+        return
+      const symbols = context.state.activeTokens.map(token => {
+        return token.symbol;
+      })
+      return price.getPrices(symbols.toString(),
+        'ETH').then((resp) => {
+          context.commit('setTokenPrices', resp);
+      })
+    },
+    updateTokenPrice(context, symbol) {
+      return price.getPrice(symbol,
+        'ETH').then((resp) => {
+          context.commit('setTokenPrice', symbol, resp);
+      })
+    },
+    subsctibeOnTokenPriceUpdates(context) {
+      setInterval(()=>{
+        context.dispatch('updateTokenPrices');
+      }, subscribtionsAPIInterval);
     },
     createTokenSubscription(context, nonZerotokens) {
       const address = context.rootState.accounts.activeAccount.getAddressString();

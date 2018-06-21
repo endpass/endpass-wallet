@@ -41,10 +41,10 @@
             </div>
           </div>
           <div class="level-item" v-if="balance !== null">
-            <div class="level-stat">
-              <p class="heading">Balance</p>
-              <span class="title">{{ balance }}</span> ETH
-            </div>
+            <balance :amount="balance" class="level-stat" />
+          </div>
+          <div class="level-item" v-if="price !== null && balance !== null">
+            <balance :amount="balance" :price="price" :decimals="2" currency="USD" v-on:update="updatePrice" class="level-stat" />
           </div>
         </div>
       </div>
@@ -55,18 +55,23 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import AccountChooser from '@/components/bar/AccountChooser.vue'
 import CustomProviderModal from '@/components/bar/CustomProviderModal.vue'
 import SyncStatus from '@/components/bar/SyncStatus.vue'
 import accounts from '@/mixins/accounts'
 import storage from '@/mixins/storage';
+import Balance from '@/components/Balance'
 
 export default {
   data: () => ({
     customProviderModalOpen: false,
   }),
   computed: {
+
+    ...mapState({
+      price: state => state.price.price
+    }),
     networks() {
       return this.$store.getters['web3/networks'];
     },
@@ -101,6 +106,7 @@ export default {
   },
   methods: {
     ...mapActions('web3', ['changeNetwork']),
+    ...mapActions('price', ['updatePrice']),
     openCustomProviderModal() {
       this.customProviderModalOpen = true;
     },
@@ -111,7 +117,8 @@ export default {
   components: {
     AccountChooser,
     CustomProviderModal,
-    SyncStatus
+    SyncStatus,
+    Balance
   },
   mixins: [accounts, storage],
 };

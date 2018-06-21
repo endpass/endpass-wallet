@@ -23,7 +23,8 @@
                     <a v-for="token in activeTokens" :key="token.address + 'sub'" class="panel-block is-clearfix is-block">
                       <span class="token-symbol">{{token.symbol}}</span>
                       <span class="token-name">{{token.name}}</span>
-                      <span class="token-balance is-pulled-right">{{token.balance || 0}}</span>
+                      <balance :amount="getTokenAmount(token)" :currency="''"/>
+                      <balance v-if="prices && prices[token.symbol]" :price="getTokenPrice(token.symbol)" :amount="getTokenAmount(token)" :currency="currency" v-on:update="updateTokenPrice(token.symbol)" :decimals="2"/>
                     </a>
                   </div>
                 </nav>
@@ -69,6 +70,8 @@
 
 <script>
 import EndpassService from '@/services/endpass'
+import { BigNumber } from 'bignumber.js';
+import Balance from '@/components/Balance'
 import SearchInput from '@/components/SearchInput.vue'
 import AddTokenModal from '@/components/AddTokenModal'
 import { mapState, mapActions } from 'vuex'
@@ -84,9 +87,12 @@ export default {
     }
   },
   computed: {
-    activeTokens() {
-      return this.$store.state.tokens.activeTokens
-    },
+    ...mapState({
+      activeTokens: state => state.tokens.activeTokens,
+      prices: state => state.tokens.prices,
+      ethPrice: state => state.price.price,
+      currency: state => state.accounts.settings.fiatCurrency
+    }),
     filteredTokens() {
       let unwatchedTokens = this.tokens.filter((token) => {
         return !this.activeTokens.some((activeToken) => {
@@ -105,6 +111,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions('tokens', ['updateTokenPrice']),
+    getTokenAmount(token) {
+      let balanceBn = new BigNumber(token.balance);
+      let decimalsBn = new BigNumber(10).pow(token.decimals);
+      return balanceBn.div(decimalsBn);
+    },
     saveToken(token) {
       // Add token to subscription
       this.$set(token, 'manuallyAdded', true);
@@ -125,6 +137,9 @@ export default {
           console.error(e);
         });
     },
+    getTokenPrice(symbol) {
+      return new BigNumber(this.prices[symbol]['ETH']).times(this.ethPrice).toString();
+    },
     openAddTokenModal() {
       this.addTokenModalOpen = true;
     },
@@ -137,6 +152,7 @@ export default {
   },
   components: {
     SearchInput,
+    Balance,
     AddTokenModal
   }
 }

@@ -18,7 +18,8 @@
                        placeholder="Receiver address"
                        :disabled="isSending"
                        required />
-
+          <div class="columns">
+            <div class="column is-half is-full-mobile">
               <v-input v-model="transaction.value"
                        label="Amount"
                        type="number"
@@ -40,14 +41,32 @@
                   </select>
                 </span>
               </v-input>
+            </div>
+            <div class="column is-half is-full-mobile">
+              <v-input v-model.number="price"
+                       label="Price"
+                       type="number"
+                       name="price"
+                       v-validate="`required|decimal|max_value:${maxPrice}`"
+                       id="price"
+                       aria-describedby="price"
+                       placeholder="Price"
+                       :disabled="isSending"
+                       required>
+                <div class="control" slot="addon">
+                  <a class="button is-static">{{fiatCurrency}}</a>
+                </div>
+              </v-input>
+            </div>
+          </div>
 
               <v-input v-model="transaction.gasPrice"
                        label="Gas price"
-                       name="price"
+                       name="gasPrice"
                        type="number"
                        v-validate="'required|numeric|integer|between:0,100'"
-                       id="price"
-                       aria-describedby="price"
+                       id="gasPrice"
+                       aria-describedby="gasPrice"
                        placeholder="Gas price"
                        :disabled="isSending"
                        required>
@@ -99,6 +118,7 @@ import Tx from 'ethereumjs-tx';
 import { mapFields } from 'vee-validate';
 import { mapState, mapMutations } from 'vuex';
 import accounts from '@/mixins/accounts';
+import { BigNumber } from 'bignumber.js';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
@@ -127,7 +147,27 @@ export default {
       tokens: state => state.tokens.activeTokens,
       web3: state => state.web3.web3,
       isSyncing: state => !!state.web3.isSyncing,
+      fiatCurrency: state => state.accounts.settings.fiatCurrency,
+      ethPrice: state => state.price.price,
     }),
+    price: {
+      get() {
+        if(!this.ethPrice)
+          return
+        let price = new BigNumber(this.ethPrice);
+        let ceildValue = this.transaction.value.match(/^[0-9]{1,18}\.{0,1}[0-9]{0,9}/);
+        ceildValue = ceildValue ? ceildValue[0] : '0';
+        let number = new BigNumber(fromWei(toWei(ceildValue, 'Gwei'))).times(price).toFixed(2);
+        return +number
+      },
+      set(newValue) {
+        if (typeof newValue !== 'number') return;
+        let ethPrice = new BigNumber(this.ethPrice);
+        let value = new BigNumber(newValue);
+        let price = value.div(ethPrice);
+        this.transaction.value = numberToHex(toWei(price.toFixed(18)));
+      }
+    },
     // token object based on the selectedToken symbol string
     selectedTokenInfo() {
       return this.tokens.find(t => t.symbol === this.selectedToken);
@@ -135,20 +175,26 @@ export default {
     maxAmount() {
       if (this.selectedToken === 'ETH') {
         const { gasPrice } = this.transaction;
-        const balanceBN = toBN(toWei(this.balance || '0'));
-        const gasPriceBN = toBN(toWei(gasPrice || '0', 'Gwei')); 
-        const estimateGasBN = toBN(this.estimateGas); 
-        const amountBN = balanceBN.sub(gasPriceBN.mul(estimateGasBN)); 
+        const balanceBN = new BN(toWei(this.balance || '0'));
+        const gasPriceBN = new BN(toWei(gasPrice || '0', 'Gwei'));
+        const estimateGasBN = new BN(this.estimateGas);
+        const amountBN = balanceBN.sub(gasPriceBN.mul(estimateGasBN));
         const amount = fromWei(amountBN.toString());
         return amount > 0 ? amount : 0;
       } else {
         return this.selectedTokenInfo.balance;
       }
     },
+    maxPrice() {
+      const balance = new BigNumber(this.maxAmount);
+      const price = new BigNumber(this.price);
+      const amount = balance.times(price).toNumber();
+      return amount > 0 ? amount : 0;
+    },
     decimals() {
       const { selectedToken, selectedTokenInfo } = this;
-      
-      if (selectedToken === 'ETH') return '18';
+
+      if (selectedToken === 'ETH') return '9';
 
       return selectedTokenInfo && selectedTokenInfo.decimals || 0;
     },
@@ -189,7 +235,7 @@ export default {
         });
         const beforeDec = tnxValue.split('.')[0] || '';
         const afterDec = tnxValue.split('.')[1] || '';
-        
+
         if (!Number(beforeDec) && afterDec <= 0) return '0';
 
         const afterNew =
