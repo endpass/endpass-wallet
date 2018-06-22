@@ -82,8 +82,6 @@ import accounts from '@/mixins/accounts'
 import { mapState } from 'vuex';
 import { mapGetters } from 'vuex'
 
-
-window.web3 = web3
 export default {
   props: ['transaction'],
   data () {
@@ -94,6 +92,7 @@ export default {
   computed: {
     ...mapState({
       isSyncing: state => state.web3.isSyncing,
+      web3: state => state.web3.web3
     }),
     ...mapGetters('accounts', ['isPublicAccount']),
     recieve() {
@@ -114,7 +113,7 @@ export default {
       canselTransaction.value = '0';
       canselTransaction.to = this.address;
       canselTransaction.gasPrice = canselTransaction.gasPrice + 1;
-      let tx = new Tx(canselTransaction.getApiObject());
+      let tx = new Tx(canselTransaction.getApiObject(this.web3.eth));
       tx.sign(this.activeAccount.getPrivateKey());
       var serializedTx = tx.serialize();
       this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))

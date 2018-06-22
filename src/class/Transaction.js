@@ -46,10 +46,18 @@ export class Transaction {
   set gasPrice(price) {
     if(!isNumeric(price))
       return this._gasPrice = '0';
-    this._gasPrice = web3.utils.toWei(price, 'Gwei');
+    this._gasPrice = web3.utils.toWei(price.toString(), 'Gwei');
   }
   get gasPrice() {
     return web3.utils.fromWei(this._gasPrice, 'Gwei');
+  }
+  set gasLimit(limit) {
+    if(!isNumeric(limit))
+      return this._gasLimit = '0';
+    this._gasLimit = limit.toString()
+  }
+  get gasLimit() {
+    return this._gasLimit;
   }
   async getFullPrice(eth) {
     if (!this.tokenInfo) {
@@ -69,9 +77,9 @@ export class Transaction {
     }
     return await eth.estimateGas(estimationParams);
   }
-  getApiObject() {
+  getApiObject(eth) {
     if(this.tokenInfo) {
-      let contract = new web3.eth.Contract(erc20ABI, this.tokenInfo.address, {
+      let contract = new eth.Contract(erc20ABI, this.tokenInfo.address, {
         from: this.from,
       });
       return {
@@ -80,7 +88,7 @@ export class Transaction {
         gasPrice: web3.utils.numberToHex(this._gasPrice),
         value: '0x0',
         gasLimit: web3.utils.numberToHex(this.gas),
-        data: contract.transfer(this.to, this._value).encodeABI(),
+        data: contract.methods.transfer(this.to, this._value).encodeABI(),
         nonce: web3.utils.numberToHex(this.nonce)
       }
     } else {

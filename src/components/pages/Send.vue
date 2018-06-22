@@ -137,6 +137,7 @@ export default {
     transaction: new Transaction({
       gasPrice: '90',
       gasLimit: '22000',
+      from: this.address,
       value: '0',
       to: '',
       data: '0x'
@@ -171,10 +172,6 @@ export default {
         this.transaction.value = fiatAmount.div(ethPrice).toFixed(18)
       }
     },
-    // token object based on the selectedToken symbol string
-    selectedTokenInfo() {
-      return this.tokens.find(t => t.address === this.selectedToken);
-    },
     maxAmount() {
       if (!this.transaction.tokenInfo) {
         const balanceBN = BigNumber(this.balance || '0');
@@ -183,7 +180,7 @@ export default {
         const amount = amountBN.toFixed();
         return amount > 0 ? amount : 0;
       } else {
-        return this.selectedTokenInfo.balance;
+        return this.transaction.tokenInfo.balance;
       }
     },
     maxPrice() {
@@ -194,12 +191,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('accounts', ['addTransaction', 'updateTransaction']),
+    ...mapMutations('accounts', ['addTransaction']),
     sendTransaction() {
       this.isSending = true;
       this.web3.eth.getTransactionCount(this.address).then(nonce => {
         this.transaction.nonce = (nonce + this.pendingTransactions.length).toString();
-        const web3Transaction = new Tx(this.transaction.getApiObject());
+        const web3Transaction = new Tx(this.transaction.getApiObject(this.web3.eth));
         web3Transaction.sign(this.account.getPrivateKey());
         const serializedTx = web3Transaction.serialize();
         this.addTransaction(this.transaction);
