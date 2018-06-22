@@ -11,7 +11,7 @@ export class Transaction {
       this.value = transaction.value;
     }
     this.gasPrice = transaction.gasPrice;
-    this.gas = transaction.gas;
+    this.gasLimit = transaction.gasLimit;
     this.to = transaction.to;
     this.from = transaction.from;
     this.nonce = transaction.nonce;
@@ -24,7 +24,7 @@ export class Transaction {
   }
   set value(value) {
     if(!isNumeric(value))
-      return
+      return this._value = '0';
     if(this.tokenInfo) {
       let valueBN = new BigNumber(value);
       let multiplyer = new BigNumber(this.tokenInfo.decimals).pow('10');
@@ -45,22 +45,29 @@ export class Transaction {
   }
   set gasPrice(price) {
     if(!isNumeric(price))
-      return
+      return this._gasPrice = '0';
     this._gasPrice = web3.utils.toWei(price, 'Gwei');
   }
   get gasPrice() {
     return web3.utils.fromWei(this._gasPrice, 'Gwei');
   }
-  getFullPrice() {
-    let trxEthValue = this.tokenInfo ? '0' : this.value;
-    if(this.gasPrice && this.gas) {
-      let valueBN = web3.utils.BN(trxEthValue);
-      let gasBN = web3.utils.BN(this.gas);
-      let gasPriceBN = web3.utils.BN(this.value);
-      return fromWei(valueBN.add(gasBN.mul(gasPriceBN)));
+  async getFullPrice(eth) {
+    if (!this.tokenInfo) {
+      const estimation = await this.estimateGas(eth);
+      const gasPriceBN = BigNumber(this._gasPrice || '0');
+      return gasPriceBN.times(estimation).toString();
     } else {
-      return trxEthValue
+      return this.tokenInfo.balance;
     }
+  }
+  async estimateGas(eth) {
+    let estimationParams = {
+      data: this.data
+    };
+    if(this.to) {
+      estimationParams.to = this.to
+    }
+    return await eth.estimateGas(estimationParams);
   }
   getApiObject() {
     if(this.tokenInfo) {
@@ -74,7 +81,7 @@ export class Transaction {
         value: '0x0',
         gasLimit: web3.utils.numberToHex(this.gas),
         data: contract.transfer(this.to, this._value).encodeABI(),
-        nonce: this.nonce
+        nonce: web3.utils.numberToHex(this.nonce)
       }
     } else {
       return {
@@ -82,9 +89,9 @@ export class Transaction {
         to: this.to,
         gasPrice: web3.utils.numberToHex(this._gasPrice),
         value: web3.utils.numberToHex(this._value),
-        gasLimit: web3.utils.numberToHex(this.gas),
+        gasLimit: web3.utils.numberToHex(this.gasLimit),
         data: this.data,
-        nonce: this.nonce
+        nonce: web3.utils.numberToHex(this.nonce)
       }
     }
   }

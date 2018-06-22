@@ -24,7 +24,7 @@
                        label="Amount"
                        type="number"
                        name="value"
-                       v-validate="`required|decimal:${decimals}|between:0,${maxAmount}`"
+                       v-validate="`required|decimal:${transaction.tokenInfo && transaction.tokenInfo.decimals || 18}|between:0,${maxAmount}`"
                        data-vv-as="amount"
                        id="value"
                        aria-describedby="value"
@@ -32,10 +32,10 @@
                        :disabled="isSending"
                        required>
                 <span class="select" slot="addon">
-                  <select v-model="selectedToken">
-                    <option value="ETH">ETH</option>
+                  <select v-model="transaction.tokenInfo">
+                    <option value="">ETH</option>
                     <option
-                      :value="token.symbol"
+                      :value="token"
                       v-for="token in tokens"
                       :key="token.address">{{token.symbol}}</option>
                   </select>
@@ -47,7 +47,7 @@
                        label="Price"
                        type="number"
                        name="price"
-                       v-validate="`required|decimal|max_value:${maxPrice}`"
+                       v-validate="`required|decimal:2|max_value:${maxPrice}`"
                        id="price"
                        aria-describedby="price"
                        placeholder="Price"
@@ -117,19 +117,16 @@
 </template>
 
 <script>
-import erc20ABI from '@/erc20.json';
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
-import { BigNumber } from 'bignumber.js';
+import { BigNumber } from 'bignumber.js'
+import { Transaction } from '@/class'
 import { mapFields } from 'vee-validate';
 import { mapState, mapMutations } from 'vuex';
-import accounts from '@/mixins/accounts';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import TransactionModal from '@/components/modal/TransactionModal';
-
-const { fromWei, hexToNumberString, numberToHex, toWei } = web3.utils;
 
 export default {
   data: () => ({
@@ -137,20 +134,22 @@ export default {
     toCache: '',
     isSending: false,
     transactionHash: null,
-    transaction: {
+    transaction: new Transaction({
       gasPrice: '90',
       gasLimit: '22000',
       value: '0',
       to: '',
-      data: '0x',
-      nonce: '',
-    },
+      data: '0x'
+    }),
     estimateGas: 0,
     isModal: false,
   }),
   computed: {
     ...mapState({
       pendingTransactions: state => state.accounts.pendingTransactions,
+      balance: state => state.accounts.balance,
+      address: state => state.accounts.activeAccount.getAddressString(),
+      account: state => state.accounts.activeAccount,
       tokens: state => state.tokens.activeTokens,
       web3: state => state.web3.web3,
       isSyncing: state => !!state.web3.isSyncing,
@@ -162,31 +161,26 @@ export default {
         if(!this.ethPrice)
           return
         let price = new BigNumber(this.ethPrice);
-        let ceildValue = this.transaction.value.match(/^[0-9]{1,18}\.{0,1}[0-9]{0,9}/);
-        ceildValue = ceildValue ? ceildValue[0] : '0';
-        let number = new BigNumber(fromWei(toWei(ceildValue, 'Gwei'))).times(price).toFixed(2);
-        return +number
+        let number = new BigNumber(this.transaction.value).times(price).toFixed(2);
+        return number
       },
       set(newValue) {
         if (typeof newValue !== 'number') return;
         let ethPrice = new BigNumber(this.ethPrice);
-        let value = new BigNumber(newValue);
-        let price = value.div(ethPrice);
-        this.transaction.value = numberToHex(toWei(price.toFixed(18)));
+        let fiatAmount = new BigNumber(newValue);
+        this.transaction.value = fiatAmount.div(ethPrice).toFixed(18)
       }
     },
     // token object based on the selectedToken symbol string
     selectedTokenInfo() {
-      return this.tokens.find(t => t.symbol === this.selectedToken);
+      return this.tokens.find(t => t.address === this.selectedToken);
     },
     maxAmount() {
-      if (this.selectedToken === 'ETH') {
-        const { gasPrice } = this.transaction;
-        const balanceBN = BigNumber(toWei(this.balance || '0'));
-        const gasPriceBN = BigNumber(toWei(gasPrice || '0', 'Gwei')); 
-        const estimateGasBN = BigNumber(this.estimateGas || '0'); 
-        const amountBN = balanceBN.minus(gasPriceBN.times(estimateGasBN)); 
-        const amount = fromWei(amountBN.toFixed());
+      if (!this.transaction.tokenInfo) {
+        const balanceBN = BigNumber(this.balance || '0');
+        const estimateGasBN = BigNumber(this.estimateGas || '0');
+        const amountBN = balanceBN.minus(estimateGasBN);
+        const amount = amountBN.toFixed();
         return amount > 0 ? amount : 0;
       } else {
         return this.selectedTokenInfo.balance;
@@ -195,110 +189,27 @@ export default {
     maxPrice() {
       const balance = new BigNumber(this.maxAmount);
       const price = new BigNumber(this.price);
-      const amount = balance.times(price).toNumber();
+      const amount = balance.times(price).toFixed();
       return amount > 0 ? amount : 0;
-    },
-    decimals() {
-      const { selectedToken, selectedTokenInfo } = this;
-
-      if (selectedToken === 'ETH') return '18';
-
-      return selectedTokenInfo && selectedTokenInfo.decimals || '0';
-    },
-    divider() {
-      return BigNumber('10').pow(this.decimals);
-    },
-    transactionData() {
-      let {
-        to,
-        data,
-        nonce,
-        value: tnxValue,
-        gasPrice,
-        gasLimit,
-      } = this.transaction;
-      const tnxValueBN = BigNumber(tnxValue || '0');
-      const tnxValueWei = tnxValueBN.times(this.divider).toFixed();
-      const value = numberToHex(tnxValueWei);
-
-      if (to && to.toUpperCase().indexOf('0X') !== 0) {
-        to = `0x${to}`;
-      }
-
-      if (this.selectedToken !== 'ETH') {
-        if (!this.selectedTokenInfo || !this.selectedTokenInfo.address) {
-          throw 'Invalid token address';
-        }
-
-        this.toCache = to;
-        const { address } = this.selectedTokenInfo;
-        to = address;
-        const contract = new this.web3.eth.Contract(erc20ABI, address, {
-          from: this.address,
-        });
-
-        data = contract.methods.transfer(to, value).encodeABI();
-      }
-
-      return {
-        from: this.address,
-        to: to || undefined,
-        value,
-        gasPrice: numberToHex(toWei(gasPrice || '0', 'Gwei')),
-        gasLimit: numberToHex(gasLimit || '0'),
-        data: data || '0x',
-        nonce: numberToHex(nonce || 0),
-      };
-    },
+    }
   },
   methods: {
     ...mapMutations('accounts', ['addTransaction', 'updateTransaction']),
-    createTransactionHistory(trx) {
-      const historyItem = {};
-
-      historyItem.to = trx.to;
-      historyItem.value = fromWei(hexToNumberString(trx.value));
-      historyItem.gasLimit = trx.gasLimit;
-      historyItem.gasPrice = trx.gasPrice;
-      historyItem.nonce = trx.nonce;
-      historyItem.canseled = false;
-      historyItem.token = this.selectedToken;
-      historyItem.status = 'pending';
-
-      if (this.selectedToken !== 'ETH') {
-        historyItem.reciverAddress = this.toCache;
-        historyItem.tokenInfo = this.selectedTokenInfo;
-        historyItem.value = BigNumber(hexToNumberString(trx.value))
-          .div(this.divider)
-          .toFixed();
-      }
-
-      return historyItem;
-    },
     sendTransaction() {
-      const keyHex = this.address;
       this.isSending = true;
-
-      this.web3.eth.getTransactionCount(keyHex).then(nonce => {
-        const nonceWithPending = nonce + this.pendingTransactions.length;
-        this.transaction.nonce = numberToHex(nonceWithPending);
-
-        const tx = new Tx(this.transactionData);
-        tx.sign(this.activeAccount.getPrivateKey());
-        const serializedTx = tx.serialize();
-        const transactionForHistory = this.createTransactionHistory(
-          this.transactionData
-        );
+      this.web3.eth.getTransactionCount(this.address).then(nonce => {
+        this.transaction.nonce = (nonce + this.pendingTransactions.length).toString();
+        const web3Transaction = new Tx(this.transaction.getApiObject());
+        web3Transaction.sign(this.account.getPrivateKey());
+        const serializedTx = web3Transaction.serialize();
+        this.addTransaction(this.transaction);
 
         const sendEvent = this.web3.eth
           .sendSignedTransaction('0x' + serializedTx.toString('hex'))
           .on('confirmation', (confNumber, { transactionHash }) => {
             if (confNumber > 0) {
               sendEvent.off('confirmation')
-              this.updateTransaction({
-                oldHash: transactionHash,
-                newTrx: { status: 'success' },
-              });
+              this.transaction.status = 'success'
             }
           })
           .on('error', (err, receipt) => {
@@ -322,18 +233,15 @@ export default {
               valid: false,
             });
             this.isSending = false;
-            this.transactionHash = hash;
+            this.transaction.status = 'pending';
+            this.transaction.hash = hash;
             this.$notify({
               title: 'Successful',
               text: 'Transaction was sent',
               type: 'is-info',
             })
-
-            transactionForHistory.hash = hash;
-            this.addTransaction(transactionForHistory);
           });
-        this.transaction.to = this.toCache;
-      });
+      })
     },
     toggleModal() {
       this.isModal = !this.isModal;
@@ -343,13 +251,7 @@ export default {
       this.sendTransaction();
     },
     async updateEstimateGas() {
-      let { data, to, value, gasLimit, gasPrice } = this.transactionData;
-
-      this.estimateGas = await this.web3.eth.estimateGas({
-        to,
-        value: hexToNumberString(value),
-        data,
-      });
+      this.estimateGas = await this.transaction.getFullPrice(this.web3.eth);
     }
   },
   watch: {
@@ -384,7 +286,6 @@ export default {
     VInput,
     TransactionModal,
   },
-  mixins: [accounts],
 };
 </script>
 
