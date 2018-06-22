@@ -28,10 +28,10 @@ export class Transaction {
     if(this.tokenInfo) {
       let valueBN = new BigNumber(value);
       let multiplyer = new BigNumber(this.tokenInfo.decimals).pow('10');
-      this._value = valueBN.times(multiplyer).toString();
+      this._value = valueBN.times(multiplyer).toFixed();
     } else {
       let valueBN = new BigNumber(value);
-      this._value = web3.utils.toWei(valueBN.toString());
+      this._value = web3.utils.toWei(valueBN.toFixed());
     }
   }
   get value() {
@@ -47,7 +47,7 @@ export class Transaction {
     if(!isNumeric(price))
       return this._gasPrice = '0';
     let priceBN = new BigNumber(price);
-    this._gasPrice = web3.utils.toWei(priceBN.toString(), 'Gwei');
+    this._gasPrice = web3.utils.toWei(priceBN.toFixed(), 'Gwei');
   }
   get gasPrice() {
     return web3.utils.fromWei(this._gasPrice, 'Gwei');
@@ -56,7 +56,7 @@ export class Transaction {
     if(!isNumeric(limit))
       return this._gasLimit = '0';
     let limitBN = new BigNumber(limit);
-    this._gasLimit = limitBN.toString();
+    this._gasLimit = limitBN.toFixed();
   }
   get gasLimit() {
     return this._gasLimit;
@@ -65,7 +65,7 @@ export class Transaction {
     if (!this.tokenInfo) {
       const estimation = await this.estimateGas(eth);
       const gasPriceBN = BigNumber(this._gasPrice || '0');
-      return gasPriceBN.times(estimation).toString();
+      return gasPriceBN.times(estimation).toFixed();
     } else {
       return this.tokenInfo.balance;
     }
