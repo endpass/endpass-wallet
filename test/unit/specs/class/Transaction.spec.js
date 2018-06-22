@@ -1,4 +1,4 @@
-import Transaction from '@/class/Transaction'
+import { Transaction } from '@/class'
 import { BigNumber } from 'bignumber.js';
 
 let apiResponce = {

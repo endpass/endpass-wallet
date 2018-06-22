@@ -63,33 +63,12 @@ describe('Send', () => {
     });
     wrapper = shallow(Send, { store, localVue });
   });
-  it('sets correct data', () => {
-    wrapper.vm.transaction.gasPrice = '10';
-    wrapper.vm.transaction.gasLimit = '10';
-    wrapper.vm.transaction.value = '10';
-    expect(wrapper.vm.transaction.gasPrice).toBe('10');
-    expect(wrapper.vm.transaction.gasLimit).toBe('10');
-    expect(wrapper.vm.transaction.value).toBe('10');
-  });
-  it('sets contract data', () => {
-    wrapper.setData({ selectedToken: 'AAA' });
-    wrapper.vm.transaction.value = '10';
-    expect(wrapper.vm.selectedTokenInfo).toBeTruthy();
-    expect(wrapper.vm.selectedTokenInfo.address).toBe(
-      '0xB6eD7644C69416d67B522e20bC294A9a9B405B31'
-    );
-
-    expect(wrapper.vm.transactionData.data).toBe(
-      '0xa9059cbb000000000000000000000000b6ed7644c69416d67b522e20bc294a9a9b405b31000000000000000000000000000000000000000000000000000000003b9aca00'
-    );
-  });
 
   it('should validate data', async () => {
     wrapper = mount(Send, {
       store,
       localVue,
       computed: {
-        transactionData: () => null,
         maxAmount: () => 2,
       },
     });
@@ -111,7 +90,7 @@ describe('Send', () => {
 
     expect(errors.first('address').includes('required')).toBeTruthy();
     expect(errors.first('gasPrice').includes('between')).toBeTruthy();
-    expect(errors.first('limit').includes('between')).toBeTruthy();
+    expect(errors.first('gasLimit').includes('between')).toBeTruthy();
     expect(errors.first('value').includes('decimal')).toBeTruthy();
     expect(errors.first('data').includes('hex')).toBeTruthy();
 

@@ -137,7 +137,6 @@ export default {
     transaction: new Transaction({
       gasPrice: '90',
       gasLimit: '22000',
-      from: this.address,
       value: '0',
       to: '',
       data: '0x'
@@ -194,6 +193,7 @@ export default {
     ...mapMutations('accounts', ['addTransaction']),
     sendTransaction() {
       this.isSending = true;
+      this.transaction.from = this.address
       this.web3.eth.getTransactionCount(this.address).then(nonce => {
         this.transaction.nonce = (nonce + this.pendingTransactions.length).toString();
         const web3Transaction = new Tx(this.transaction.getApiObject(this.web3.eth));
