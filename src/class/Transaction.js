@@ -30,7 +30,8 @@ export class Transaction {
       let multiplyer = new BigNumber(this.tokenInfo.decimals).pow('10');
       this._value = valueBN.times(multiplyer).toString();
     } else {
-      this._value = web3.utils.toWei(value.toString());
+      let valueBN = new BigNumber(value);
+      this._value = web3.utils.toWei(valueBN.toString());
     }
   }
   get value() {
@@ -45,7 +46,8 @@ export class Transaction {
   set gasPrice(price) {
     if(!isNumeric(price))
       return this._gasPrice = '0';
-    this._gasPrice = web3.utils.toWei(price.toString(), 'Gwei');
+    let priceBN = new BigNumber(price);
+    this._gasPrice = web3.utils.toWei(priceBN.toString(), 'Gwei');
   }
   get gasPrice() {
     return web3.utils.fromWei(this._gasPrice, 'Gwei');
@@ -53,7 +55,8 @@ export class Transaction {
   set gasLimit(limit) {
     if(!isNumeric(limit))
       return this._gasLimit = '0';
-    this._gasLimit = limit.toString()
+    let limitBN = new BigNumber(limit);
+    this._gasLimit = limitBN.toString();
   }
   get gasLimit() {
     return this._gasLimit;
