@@ -1,1 +1,1 @@
-export { providerFactory, DebounceProvider } from './provider';
+export { providerFactory } from './provider';

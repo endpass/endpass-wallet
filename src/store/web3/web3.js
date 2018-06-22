@@ -3,7 +3,7 @@ import { infuraConf } from '@/config.js';
 import EthBlockTracker from 'eth-block-tracker';
 import storage from '@/services/storage';
 import { subscribtionsBlockchainInterval } from '@/config'
-import { providerFactory, DebounceProvider } from '@/class';
+import { providerFactory } from '@/class';
 
 const activeNet = {
   name: 'Main',
@@ -12,10 +12,7 @@ const activeNet = {
   url: `https://mainnet.infura.io/${infuraConf.key}`,
 };
 
-const { HttpProvider } = Web3.providers;
-HttpProvider.prototype.sendAsync = HttpProvider.prototype.send;
-const Provider = providerFactory(HttpProvider, DebounceProvider);
-const provider = new Provider(activeNet.url);
+const provider = providerFactory(activeNet.url);
 const web3 = new Web3(provider);
 
 export default {
@@ -57,7 +54,7 @@ export default {
   mutations: {
     changeNetwork(state, network) {
       state.activeNet = network;
-      const provider = new Provider(state.activeNet.url)
+      const provider = providerFactory(state.activeNet.url)
       if (state.web3 && state.web3.setProvider) {
         if (state.web3.currentProvider.destroy) {
           state.web3.currentProvider.destroy()
