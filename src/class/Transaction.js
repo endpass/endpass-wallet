@@ -30,8 +30,7 @@ export class Transaction {
       let multiplyer = new BigNumber(this.tokenInfo.decimals).pow('10');
       this._value = valueBN.times(multiplyer).toString();
     } else {
-      value = typeof value === 'number' ? value.toString() : value;
-      this._value = web3.utils.toWei(value);
+      this._value = web3.utils.toWei(value.toString());
     }
   }
   get value() {

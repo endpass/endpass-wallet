@@ -33,7 +33,7 @@
                        required>
                 <span class="select" slot="addon">
                   <select v-model="transaction.tokenInfo">
-                    <option value="">ETH</option>
+                    <option :value="undefined">ETH</option>
                     <option
                       :value="token"
                       v-for="token in tokens"
@@ -77,11 +77,11 @@
 
               <v-input v-model="transaction.gasLimit"
                        label="Gas limit"
-                       name="limit"
+                       name="gasLimit"
                        type="number"
                        v-validate="'required|numeric|integer|between:21000,4000000'"
-                       id="limit"
-                       aria-describedby="limit"
+                       id="gasLimit"
+                       aria-describedby="gasLimit"
                        placeholder="Gas limit"
                        :disabled="isSending"
                        required />
@@ -121,7 +121,6 @@ import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import { BigNumber } from 'bignumber.js'
 import { Transaction } from '@/class'
-import { mapFields } from 'vee-validate';
 import { mapState, mapMutations } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
@@ -138,6 +137,7 @@ export default {
       gasPrice: '90',
       gasLimit: '22000',
       value: '0',
+      tokenInfo: undefined,
       to: '',
       data: '0x'
     }),

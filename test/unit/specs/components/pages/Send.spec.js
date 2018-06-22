@@ -84,7 +84,8 @@ describe('Send', () => {
         data: 'asdfas',
       }
     })
-    wrapper.find('input#address').trigger('blur');
+
+    await wrapper.vm.$validator.validateAll()
 
     await $nextTick();
 
@@ -104,17 +105,18 @@ describe('Send', () => {
       }
     })
 
+    await wrapper.vm.$validator.validateAll();
     await $nextTick();
 
     expect(errors.first('address').includes('not a valid')).toBeTruthy();
     expect(errors.first('gasPrice').includes('numeric')).toBeTruthy();
-    expect(errors.first('limit').includes('numeric')).toBeTruthy();
+    expect(errors.first('gasLimit').includes('numeric')).toBeTruthy();
     expect(errors.first('value').includes('between')).toBeTruthy();
 
     wrapper.setData({
       transaction: {
         to: '0xE824633E6d247e64ba2cD841D8270505770d53fE',
-        gasPrice: '90',
+        gasPrice: '91',
         gasLimit: '22000',
         value: '1.5',
         // prettier-ignore
@@ -122,12 +124,13 @@ describe('Send', () => {
       }
     })
 
-    await $nextTick();
-    await $nextTick();
+    await wrapper.vm.$validator.validateAll()
 
+    await $nextTick();
+    
     expect(errors.has('address')).toBeFalsy();
-    expect(errors.has('price')).toBeFalsy();
-    expect(errors.has('limit')).toBeFalsy();
+    expect(errors.has('gasPrice')).toBeFalsy();
+    expect(errors.has('gasLimit')).toBeFalsy();
     expect(errors.has('value')).toBeFalsy();
     expect(errors.has('data')).toBeFalsy();
   });

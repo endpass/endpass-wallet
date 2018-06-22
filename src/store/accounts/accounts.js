@@ -74,12 +74,6 @@ export default {
       });
       state.pendingTransactions[trxIndex].state = 'canseled';
     },
-    updateTransaction(state, updates) {
-      let trxIndex = state.pendingTransactions.findIndex((trx) => {
-        return trx.hash === updates.oldHash;
-      });
-      Object.assign(state.pendingTransactions[trxIndex], updates.newTrx);
-    },
     setBalance(state, balance) {
       state.balance = balance;
     },
