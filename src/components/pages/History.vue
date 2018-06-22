@@ -27,6 +27,7 @@
 import appTransaction from '@/components/Transaction'
 import EthplorerService from '@/services/ethplorer'
 import accounts from '@/mixins/accounts'
+import { Transaction } from '@/class'
 
 export default {
   data () {
@@ -54,10 +55,10 @@ export default {
   created() {
     const historyPromise = EthplorerService.getHistory(this.address);
     const transactionsPromise = EthplorerService.getInfo(this.address);
-  
+
     Promise.all([transactionsPromise, historyPromise])
       .then(values => {
-        this.transactions = values[0].data.concat(values[1].data.operations);
+        this.transactions = values[0].data.concat(values[1].data.operations).map(trx => new Transaction(trx));
       })
       .catch(e => {
         this.$notify({

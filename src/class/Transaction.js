@@ -2,7 +2,7 @@ import web3 from 'web3'
 import { BigNumber } from 'bignumber.js';
 import erc20ABI from '@/erc20.json';
 
-export default class {
+export class Transaction {
   constructor(transaction) {
     this.tokenInfo = transaction.tokenInfo;
     if(this.tokenInfo) {
@@ -15,7 +15,7 @@ export default class {
     this.to = transaction.to;
     this.from = transaction.from;
     this.nonce = transaction.nonce;
-    this.hash = transaction.hash;
+    this.hash = transaction.hash || transaction.transactionHash;
     this.data = transaction.data || transaction.input;
     if(transaction.timestamp) {
       this.date = new Date(transaction.timestamp*1000);
@@ -62,7 +62,7 @@ export default class {
       return trxEthValue
     }
   }
-  getApiObject(nonce) {
+  getApiObject() {
     if(this.tokenInfo) {
       let contract = new web3.eth.Contract(erc20ABI, this.tokenInfo.address, {
         from: this.from,
@@ -74,7 +74,7 @@ export default class {
         value: '0x0',
         gasLimit: web3.utils.numberToHex(this.gas),
         data: contract.transfer(this.to, this._value).encodeABI(),
-        nonce
+        nonce: this.nonce
       }
     } else {
       return {
@@ -84,7 +84,7 @@ export default class {
         value: web3.utils.numberToHex(this._value),
         gasLimit: web3.utils.numberToHex(this.gas),
         data: this.data,
-        nonce
+        nonce: this.nonce
       }
     }
   }

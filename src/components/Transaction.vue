@@ -1,11 +1,11 @@
 <template lang="html">
-  <div class="transaction" :class="'is-'+statusText">
+  <div class="transaction" :class="'is-'+transaction.status">
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
         {{transaction.hash}}
         </p>
-        <div class="card-header-icon" :title="statusText">
+        <div class="card-header-icon" :title="transaction.status">
           <span v-if="transaction.success" class="icon has-text-success is-medium"
                 v-html="require('@/img/circle-check.svg')"></span>
           <span v-else-if="transaction.canseled" class="icon
@@ -18,10 +18,10 @@
       <div class="card-content">
         <div class="columns">
           <div class="column">
-            <span class="heading">{{statusText}}</span>
-            <p v-if="date">
+            <span class="heading">{{transaction.status}}</span>
+            <p v-if="transaction.date">
               <span class="text-label">Date</span>
-              <span class="date">{{date}}</span>
+              <span class="date">{{transaction.date.toLocaleString()}}</span>
             </p>
 
             <p v-if="recieve">
@@ -30,18 +30,16 @@
             </p>
             <p v-else>
               <span class="text-label">To</span>
-              <span class="address"  v-if="transaction.reciverAddress">{{transaction.reciverAddress}}</span>
-              <span class="address" v-else>{{transaction.to}}</span>
+              <span class="address">{{transaction.to}}</span>
             </p>
-            <p v-if="transaction.data || transaction.iput">
-              {{parsePata(data)}}
+            <p v-if="transaction.data">
+              {{parsePata(transaction.data)}}
             </p>
           </div>
 
           <div class="column is-one-third">
             <p>
-              <span class="title amount" v-if="transaction.tokenInfo">{{parseTokenAmount()}}</span>
-              <span class="title amount" v-else>{{transaction.value}}</span>
+              <span class="title amount">{{transaction.value}}</span>
               <span v-if="transaction.tokenInfo">{{transaction.tokenInfo.symbol}}</span>
               <span v-else>ETH</span>
             </p>
@@ -58,7 +56,7 @@
           </div>
         </div>
       </div>
-      <div v-if="isPending  && !isPublicAccount" class="card-footer">
+      <div v-if="transaction.status === 'pending'  && !isPublicAccount" class="card-footer">
         <a class="card-footer-item" @click="resend" :disabled="isSyncing">
           <span class="icon is-medium"
                 v-html="require('@/img/loop.svg')"></span>Resend
@@ -100,30 +98,6 @@ export default {
     recieve() {
       return this.transaction.to === this.address;
     },
-    date() {
-      if(this.transaction.timestamp) {
-        const date = new Date(this.transaction.timestamp*1000);
-        return date.toLocaleString();
-      } else {
-        return false;
-      }
-    },
-    isPending() {
-      return (
-        !this.date &&
-        !this.transaction.canseled &&
-        this.transaction.status === 'pending'
-      );
-    },
-    statusText () {
-      if (this.transaction.canseled) {
-        return 'cancelled'
-      } else if (this.isPending) {
-        return 'pending'
-      } else {
-        return 'confirmed'
-      }
-    }
   },
   methods: {
     resend() {
@@ -135,15 +109,11 @@ export default {
     cansel() {
       if(this.transaction.date)
         return;
-      const canselTransaction = {};
-      Object.assign(canselTransaction, this.transaction);
-      canselTransaction.value = web3.utils.numberToHex('0');
+      const canselTransaction = new Transaction(this.transaction);
+      canselTransaction.value = '0';
       canselTransaction.to = this.address;
-      let initialGwei = parseInt(web3.utils.fromWei(web3.utils.hexToNumberString(canselTransaction.gasPrice), 'Gwei'), 10);
-      canselTransaction.gasPrice = web3.utils.numberToHex(web3.utils.toWei((initialGwei + 1).toString(),'Gwei'));
-      canselTransaction.gasLimit = canselTransaction.gasLimit;
-      delete canselTransaction.hash
-      let tx = new Tx(canselTransaction);
+      canselTransaction.gasPrice = canselTransaction.gasPrice + 1;
+      let tx = new Tx(canselTransaction.getApiObject());
       tx.sign(this.activeAccount.getPrivateKey());
       var serializedTx = tx.serialize();
       this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
@@ -151,22 +121,10 @@ export default {
         this.$store.commit('accounts/canselTransaction', this.transaction.hash);
       });
     },
-    parseTokenAmount() {
-      let BN = web3.utils.BN;
-      let divider = new BN('10');
-      divider = divider.pow(new BN(this.transaction.tokenInfo.decimals));
-      let result = new BN (this.transaction.value);
-      let beforeDecimal = result.div(divider);
-      let afterDecimal  = result.mod(divider);
-      return beforeDecimal.toString() + '.' + afterDecimal.toString();
-    },
     parsePata() {
-      let dataString = this.transaction.data || this.transaction.input || '0x';
+      let dataString = this.transaction.data || '0x';
       return web3.utils.hexToString(dataString);
     }
-  },
-  updated () {
-    console.log(this.transaction)
   },
   components: {
     ResendModal
