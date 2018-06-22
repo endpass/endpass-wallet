@@ -5,21 +5,11 @@ import storage from '@/services/storage';
 import { subscribtionsBlockchainInterval } from '@/config'
 import { providerFactory } from '@/class';
 
-const activeNet = {
-  name: 'Main',
-  id: 1,
-  networkType: 'main',
-  url: `https://mainnet.infura.io/${infuraConf.key}`,
-};
-
-const provider = providerFactory(activeNet.url);
-const web3 = new Web3(provider);
-
 export default {
   namespaced: true,
   state() {
     return {
-      web3,
+      web3: null,
       defaultNetworks: [
         {
           id: 1,
@@ -43,7 +33,12 @@ export default {
       storedNetworks: [],
       isSyncing: false,
       blockNumber: 0,
-      activeNet,
+      activeNet: {
+        name: 'Main',
+        id: 1,
+        networkType: 'main',
+        url: `https://mainnet.infura.io/${infuraConf.key}`,
+      },
     };
   },
   getters: {
@@ -84,8 +79,7 @@ export default {
   },
   actions: {
     changeNetwork({ commit, dispatch, getters }, networkId) {
-      const netIndex = getters.networks.findIndex(net => net.id === networkId);
-      const network = getters.networks[netIndex];
+      const network = getters.networks.find(net => net.id === networkId);
       commit('changeNetwork', network);
       storage.write('net', network.id);
       return Promise.all([
