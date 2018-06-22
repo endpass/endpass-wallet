@@ -209,7 +209,7 @@ export default {
           .on('confirmation', (confNumber, { transactionHash }) => {
             if (confNumber > 0) {
               sendEvent.off('confirmation')
-              this.transaction.status = 'success'
+              this.transaction.state = 'success'
             }
           })
           .on('error', (err, receipt) => {
@@ -233,7 +233,7 @@ export default {
               valid: false,
             });
             this.isSending = false;
-            this.transaction.status = 'pending';
+            this.transaction.state = 'pending';
             this.transaction.hash = hash;
             this.$notify({
               title: 'Successful',

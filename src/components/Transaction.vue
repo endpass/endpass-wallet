@@ -1,11 +1,11 @@
 <template lang="html">
-  <div class="transaction" :class="'is-'+transaction.status">
+  <div class="transaction" :class="'is-'+transaction.state">
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
         {{transaction.hash}}
         </p>
-        <div class="card-header-icon" :title="transaction.status">
+        <div class="card-header-icon" :title="transaction.state">
           <span v-if="transaction.success" class="icon has-text-success is-medium"
                 v-html="require('@/img/circle-check.svg')"></span>
           <span v-else-if="transaction.canseled" class="icon
@@ -18,7 +18,7 @@
       <div class="card-content">
         <div class="columns">
           <div class="column">
-            <span class="heading">{{transaction.status}}</span>
+            <span class="heading">{{transaction.state}}</span>
             <p v-if="transaction.date">
               <span class="text-label">Date</span>
               <span class="date">{{transaction.date.toLocaleString()}}</span>
@@ -56,7 +56,7 @@
           </div>
         </div>
       </div>
-      <div v-if="transaction.status === 'pending'  && !isPublicAccount" class="card-footer">
+      <div v-if="transaction.state === 'pending'  && !isPublicAccount" class="card-footer">
         <a class="card-footer-item" @click="resend" :disabled="isSyncing">
           <span class="icon is-medium"
                 v-html="require('@/img/loop.svg')"></span>Resend
@@ -76,6 +76,7 @@
 <script>
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
+import { Transaction } from '@/class'
 import ResendModal from './ResendModal';
 import accounts from '@/mixins/accounts'
 import { mapState } from 'vuex';
