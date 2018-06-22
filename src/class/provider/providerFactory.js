@@ -1,35 +1,34 @@
-export default (BaseClass, ...mixins) => {
-  class Base extends BaseClass {
-    constructor(...args) {
-      super(...args);
-      mixins.forEach(mixin => {
-        copyProps(this, new mixin());
-      });
-      this.parent = new BaseClass(...args)
-    }
+import Web3 from 'web3';
+import DebounceProvider from './DebounceProvider';
+import providerMixin from './providerMixin';
+
+const { HttpProvider, WebsocketProvider, IpcProvider } = Web3.providers;
+
+HttpProvider.prototype.sendAsync = HttpProvider.prototype.send;
+WebsocketProvider.prototype.sendAsync = WebsocketProvider.prototype.send;
+IpcProvider.prototype.sendAsync = IpcProvider.prototype.send;
+
+export default url => {
+  let BaseProvider;
+
+  switch (true) {
+    case url.indexOf('http') === 0:
+      BaseProvider = HttpProvider;
+      break;
+
+    case url.indexOf('ws') === 0:
+      BaseProvider = WebsocketProvider;
+      break;
+
+    case url.indexOf('.ipc') > 0:
+      BaseProvider = IpcProvider;
+      break;
+
+    default:
+      throw 'Invalid url or path parameter for the provider';
   }
 
-  const copyProps = (target, source) => {
-    Object.getOwnPropertyNames(source)
-      .concat(Object.getOwnPropertySymbols(source))
-      .forEach(prop => {
-        if (
-          !prop.match(
-            /^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/
-          )
-        )
-        Object.defineProperty(
-          target,
-          prop,
-          Object.getOwnPropertyDescriptor(source, prop)
-        );
-      });
-  };
+  const Provider = providerMixin(BaseProvider, DebounceProvider);
 
-  mixins.forEach(mixin => {
-    copyProps(Base.prototype, mixin.prototype);
-    copyProps(Base, mixin);
-  });
-
-  return Base;
+  return new Provider(url);
 };
