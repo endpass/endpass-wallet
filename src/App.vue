@@ -16,13 +16,28 @@
 import AppNav from '@/components/AppNav.vue'
 import InfoBar from '@/components/bar/InfoBar.vue'
 import accounts from '@/mixins/accounts'
-import { mapActions } from 'vuex'
+import { mapState } from 'vuex'
+import { NotificationError } from '@/class';
 
 export default {
   name: 'App',
-  data () {
-    return {
+  computed: {
+    ...mapState('errors', {
+      errorEmitter: state => state.errorEmitter,
+    }),
+  },
+  methods: {
+    handleError(err) {
+      if (err instanceof NotificationError) {
+        const { title, text, type } = err;
+        this.$notify({ title, text, type });
+      } else {
+        console.error(err);
+      }
     }
+  },
+  mounted() {
+    this.errorEmitter.on('error', this.handleError);
   },
   components: {
     AppNav,
