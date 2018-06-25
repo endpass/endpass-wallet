@@ -79,14 +79,7 @@ export default {
       }
       let i = this.accounts.length
       let account = this.hdWallet.deriveChild(i).getWallet()
-      this.addAccount(account).catch(e => {
-        this.$notify({
-          title: e.title,
-          text: e.text,
-          type: 'is-warning',
-        });
-        console.error(e);
-      })
+      this.addAccount(account);
       this.createdAccount = account
     },
     close() {

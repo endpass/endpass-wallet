@@ -29,13 +29,16 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
+import error from '@/mixins/error';
 import VSelect from '@/components/ui/form/VSelect.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
   name: 'settings-page',
   data: () => ({
-    newSettings: {},
+    newSettings: {
+      fiatCurrency: 'USD',
+    },
   }),
   computed: {
     ...mapState('accounts', ['settings', 'availableCurrencies']),
@@ -55,13 +58,6 @@ export default {
             text: 'Settings was saved',
             type: 'is-info',
           });
-        })
-        .catch(e => {
-          this.$notify({
-            title: e.title,
-            text: e.text,
-            type: 'is-warning',
-          });
         });
     },
   },
@@ -74,9 +70,10 @@ export default {
     try {
       this.newSettings = JSON.parse(JSON.stringify(this.settings));
     } catch (e) {
-      console.error(e);
+      this.emitError(e);
     }
   },
+  mixins: [error],
 };
 </script>
 

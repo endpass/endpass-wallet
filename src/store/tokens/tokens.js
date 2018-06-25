@@ -3,6 +3,7 @@ import EthplorerService from '@/services/ethplorer';
 import price from '@/services/price';
 import storage from '@/services/storage';
 import { subscribtionsAPIInterval } from '@/config'
+import { NotificationError } from '@/class';
 
 export default {
   namespaced: true,
@@ -47,16 +48,15 @@ export default {
   actions: {
     addTokenToSubscription({ state, commit, dispatch }, token) {
       // Save token without blance for furer seances
-      let tokenExist = state.tokensSubscription.tokens.find(
-        subscribtionToken => {
-          return subscribtionToken.address === token.address;
-        }
+      const tokenExist = state.tokensSubscription.tokens.find(
+        subscribtionToken => subscribtionToken.address === token.address
       );
+      
       if (!tokenExist) {
         commit('saveTokenToWatchStorage', token);
         storage
           .write('eth.mainnet.tokens.saved', state.savedTokens)
-          .catch(e => console.error(e));
+          .catch(e => dispatch('errors/emitError', e, {root: true}));
         state.tokensSubscription.add({
           ...token,
         });
@@ -75,80 +75,79 @@ export default {
             dispatch('subsctibeOnTokenPriceUpdates', resp.data.tokens || []);
             return dispatch('createTokenSubscription', resp.data.tokens || []);
           })
-          .catch(e => {
-            console.error(e);
-            const title = 'Failed token subscription';
-            const text = 'Token information won\'t be updated. Please reload page.';
-            const error = Object.assign(e, { title, text });
-            throw error;
+          .catch(() => {
+            const error = NotificationError({
+              title: 'Failed token subscription',
+              text: 'Token information won\'t be updated. Please reload page.',
+              type: 'is-warning',
+            });
+            dispatch('errors/emitError', error, {root: true});
           });
       }
     },
-    updateTokenPrices(context) {
-      if(context.state.activeTokens.length === 0)
-        return
-      const symbols = context.state.activeTokens.map(token => {
-        return token.symbol;
-      })
-      return price.getPrices(symbols.toString(),
-        'ETH').then((resp) => {
-          context.commit('setTokenPrices', resp);
-      })
+    updateTokenPrices({ state, commit }) {
+      if (state.activeTokens.length === 0) return;
+
+      const symbols = state.activeTokens.map(token => token.symbol);
+
+      return price
+        .getPrices(symbols.toString(), 'ETH')
+        .then(resp => commit('setTokenPrices', resp));
     },
-    updateTokenPrice(context, symbol) {
-      return price.getPrice(symbol,
-        'ETH').then((resp) => {
-          context.commit('setTokenPrice', symbol, resp);
-      })
+    updateTokenPrice({ commit }, symbol) {
+      return price.getPrice(symbol, 'ETH').then(resp => {
+        commit('setTokenPrice', symbol, resp);
+      });
     },
-    subsctibeOnTokenPriceUpdates(context) {
-      setInterval(()=>{
-        context.dispatch('updateTokenPrices');
+    subsctibeOnTokenPriceUpdates({ dispatch }) {
+      setInterval(() => {
+        dispatch('updateTokenPrices');
       }, subscribtionsAPIInterval);
     },
-    createTokenSubscription(context, nonZerotokens) {
-      const address = context.rootState.accounts.activeAccount.getAddressString();
+    createTokenSubscription({ state, commit, rootState }, nonZerotokens) {
+      const address = rootState.accounts.activeAccount.getAddressString();
       //remove repetitive tokens
-      const filteredSavedTokensTokens = context.state.savedTokens.filter(
-        savedToken => {
-          return !nonZerotokens.find(nonZeroToken => {
-            return nonZeroToken.tokenInfo.address === savedToken.address;
-          });
-        }
+      const filteredSavedTokensTokens = state.savedTokens.filter(
+        savedToken =>
+          !nonZerotokens.find(
+            nonZeroToken =>
+              nonZeroToken.tokenInfo.address === savedToken.address
+          )
       );
+
       const tokensToWatch = filteredSavedTokensTokens.concat(
-        nonZerotokens.map(nonZeroToken => {
-          return {
-            address: nonZeroToken.tokenInfo.address,
-          };
-        })
+        nonZerotokens.map(nonZeroToken => ({
+          address: nonZeroToken.tokenInfo.address,
+        }))
       );
+
       const subscription = new TokenTracker({
         userAddress: address,
-        provider: context.rootState.web3.web3.currentProvider,
+        provider: rootState.web3.web3.currentProvider,
         pollingInterval: 4000,
         tokens: tokensToWatch,
       });
+
       const interval = setInterval(() => {
-        if (context.state.tokensSubscription) {
-          let balances = context.state.tokensSubscription.serialize();
+        if (state.tokensSubscription) {
+          const balances = state.tokensSubscription.serialize();
           // TODO check for errors here
           if (balances.length && typeof balances[0].symbol !== 'undefined')
-            context.commit('saveTokens', balances);
+            commit('saveTokens', balances);
         }
       }, 4000);
-      context.commit('saveInterval', interval);
-      context.commit('saveSubscription', subscription);
+      commit('saveInterval', interval);
+      commit('saveSubscription', subscription);
     },
-    getNonZeroTokens(context) {
-      let address = context.rootState.accounts.activeAccount.getAddressString();
+    getNonZeroTokens({ rootState }) {
+      const address = rootState.accounts.activeAccount.getAddressString();
       return EthplorerService.getTransactions(address);
     },
-    init({ commit }) {
+    init({ commit, dispatch }) {
       return storage
         .read('eth.mainnet.tokens.saved')
         .then(tokens => commit('saveTokensFromStorage', tokens || []))
-        .catch(e => console.error(e));
+        .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
   },
 };

@@ -68,11 +68,6 @@ export default {
           await this.addAccount(account);
           router.push('/');
         } catch (e) {
-          this.$notify({
-            title: e.title,
-            text: e.text,
-            type: 'is-warning',
-          });
           console.error(e);
         }
       }
