@@ -74,23 +74,17 @@ export default {
 	},
   computed: {
     providersLinks() {
-      let links = this.$store.getters['web3/networks'].map(net => net.url).toString();
-      return links
-    }
+      return this.$store.getters['web3/networks']
+        .map(net => net.url)
+        .toString();
+    },
   },
 	methods: {
     ...mapActions('web3', {
       addNewProviderToStore: 'addNewProvider',
     }),
 		addNewProvider() {
-      this.addNewProviderToStore(this.provider).catch(e => {
-        this.$notify({
-          title: e.title,
-          text: e.text,
-          type: 'is-warning',
-        });
-        console.error(e);
-      });
+      this.addNewProviderToStore(this.provider);
       this.providerAdded = true;
 		},
     close() {
