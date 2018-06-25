@@ -25,7 +25,7 @@ export default {
     },
     pendingBalance(state) {
       return state.pendingTransactions
-        .filter(tnx => tnx.canseled === false && tnx.status === 'pending')
+        .filter(tnx => tnx.status === 'canseled' && tnx.status === 'pending')
         .map(tnx => {
           const { value, gasLimit, gasPrice } = tnx;
           const limit = hexToNumberString(gasLimit);
@@ -64,7 +64,7 @@ export default {
       let trxIndex = state.pendingTransactions.findIndex((trx) => {
         return trx.hash === trxHash;
       });
-      if(state.pendingTransactions[trxIndex].canseled)
+      if(state.pendingTransactions[trxIndex].state === 'canseled')
         return
       state.pendingTransactions.splice(trxIndex,1);
     },
@@ -72,13 +72,7 @@ export default {
       let trxIndex = state.pendingTransactions.findIndex((trx) => {
         return trx.hash === trxHash;
       });
-      state.pendingTransactions[trxIndex].canseled = true;
-    },
-    updateTransaction(state, updates) {
-      let trxIndex = state.pendingTransactions.findIndex((trx) => {
-        return trx.hash === updates.oldHash;
-      });
-      Object.assign(state.pendingTransactions[trxIndex], updates.newTrx);
+      state.pendingTransactions[trxIndex].state = 'canseled';
     },
     setBalance(state, balance) {
       state.balance = balance;
