@@ -52,21 +52,7 @@ export default {
       }
     },
     setNetwork(id) {
-      this.changeNetwork(id).catch(e => {
-        this.$notify({
-          title: e.title,
-          text: e.text,
-          type: 'is-warning',
-        });
-        console.error(e);
-      });
-      this.storage.write('net', id).catch(e => {
-        this.$notify({
-          title: e.title,
-          text: e.text,
-          type: 'is-warning',
-        });
-      });
+      this.changeNetwork(id);
     },
     openCustomProviderModal() {
       this.customProviderModalOpen = true;

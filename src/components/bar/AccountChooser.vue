@@ -55,14 +55,7 @@ export default {
       if (!account) {
         return
       }
-      this.setActiveAccountToStore(account).catch(e => {
-        this.$notify({
-          title: e.title,
-          text: e.text,
-          type: 'is-warning',
-        });
-        console.error(e);
-      });
+      this.setActiveAccountToStore(account);
     },
     openNewAccountModal() {
       this.newAccountModalOpen = true
