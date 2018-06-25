@@ -124,6 +124,7 @@ describe('web3 store', async () => {
         id: 3,
       },
       {
+        state: stateInstance,
         getters: {
           networks: [
             {

@@ -52,10 +52,9 @@ export default {
     // Set HD wallet that generates accounts
     setWallet(state, wallet) {
       // Do not set wallet if already exists
-      if (state.hdWallet) {
-        return
+      if (!state.hdWallet) {
+        state.hdWallet = wallet
       }
-      state.hdWallet = wallet
     },
     addTransaction(state, transaction) {
       state.pendingTransactions.push(transaction);
@@ -87,32 +86,32 @@ export default {
   actions: {
     addAccount({ commit, dispatch }, account) {
       commit('addAccount', account);
-      return dispatch('setActiveAccount', account);
+      return dispatch('setActiveAccount', account).catch(e =>
+        dispatch('errors/emitError', e, { root: true })
+      );
     },
     setActiveAccount({ commit, dispatch }, account) {
       commit('setActiveAccount', account);
       return Promise.all([
         dispatch('updateBalance'),
-        dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true})
-      ]);
+        dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true }),
+      ]).catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    updateBalance(context) {
-      if(context.rootState.accounts.activeAccount) {
-        let address = context.rootState.accounts.activeAccount.getAddressString();
-        let balance = context.rootState.web3.web3.eth.getBalance(address)
-        balance.then((balance) => {
-          context.commit('setBalance', balance);
-        }).catch(e => {
-          console.error(e, 'bal');
-        });
-        return balance
+    updateBalance({ commit, dispatch, rootState }) {
+      if (rootState.accounts.activeAccount) {
+        const address = rootState.accounts.activeAccount.getAddressString();
+
+        return rootState.web3.web3.eth.getBalance(address)
+          .then(balance => commit('setBalance', balance))
+          .catch(e => dispatch('errors/emitError', e, { root: true }));
       }
     },
-    updateSettings({ commit }, settings) {
+    updateSettings({ commit, dispatch }, settings) {
       commit('setSettings', settings);
-      return storage.write('settings', settings);
+      return storage.write('settings', settings)
+        .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
-    init({ commit }) {
+    init({ commit, dispatch }) {
       return storage
         .read('settings')
         .then(settings => {
@@ -120,7 +119,7 @@ export default {
             commit('setSettings', settings);
           }
         })
-        .catch(e => console.error(e));
+        .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
   }
 }
