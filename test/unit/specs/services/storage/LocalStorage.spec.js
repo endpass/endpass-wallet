@@ -1,5 +1,6 @@
 import LocalStorageMock from '../../../localStorageMock';
 import LocalStorage from '@/services/storage/LocalStorage';
+import { NotificationError } from '@/class';
 
 global.localStorage = LocalStorageMock;
 
@@ -84,11 +85,15 @@ describe('Storage', () => {
       global.localStorage[key] = throwingFunc;
     });
 
-    await expect(localStore.read('someObject')).rejects.toThrow('Wrong data');
-    await expect(localStore.remove('someObject')).rejects.toThrow('Wrong data');
-    await expect(localStore.clear()).rejects.toThrow('Wrong data');
+    await expect(localStore.read('someObject')).rejects.toThrow(
+      NotificationError
+    );
+    await expect(localStore.remove('someObject')).rejects.toThrow(
+      NotificationError
+    );
+    await expect(localStore.clear()).rejects.toThrow(NotificationError);
     await expect(localStore.write('someObject', mockObject)).rejects.toThrow(
-      'Wrong data'
+      NotificationError
     );
 
     expect(throwingFunc).toHaveBeenCalledTimes(4);

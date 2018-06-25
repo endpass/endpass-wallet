@@ -60,11 +60,6 @@ export default {
           await this.addAccount(wallet);
           router.push('/');
         } catch (e) {
-          this.$notify({
-            title: e.title,
-            text: e.text,
-            type: 'is-warning',
-          });
           console.error(e);
         }
       }

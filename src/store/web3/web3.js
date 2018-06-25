@@ -3,26 +3,13 @@ import { infuraConf } from '@/config.js';
 import EthBlockTracker from 'eth-block-tracker';
 import storage from '@/services/storage';
 import { subscribtionsBlockchainInterval } from '@/config'
-import { providerFactory, DebounceProvider } from '@/class';
-
-const activeNet = {
-  name: 'Main',
-  id: 1,
-  networkType: 'main',
-  url: `https://mainnet.infura.io/${infuraConf.key}`,
-};
-
-const { HttpProvider } = Web3.providers;
-HttpProvider.prototype.sendAsync = HttpProvider.prototype.send;
-const Provider = providerFactory(HttpProvider, DebounceProvider);
-const provider = new Provider(activeNet.url);
-const web3 = new Web3(provider);
+import { providerFactory } from '@/class';
 
 export default {
   namespaced: true,
   state() {
     return {
-      web3,
+      web3: null,
       defaultNetworks: [
         {
           id: 1,
@@ -46,7 +33,12 @@ export default {
       storedNetworks: [],
       isSyncing: false,
       blockNumber: 0,
-      activeNet,
+      activeNet: {
+        name: 'Main',
+        id: 1,
+        networkType: 'main',
+        url: `https://mainnet.infura.io/${infuraConf.key}`,
+      },
     };
   },
   getters: {
@@ -57,10 +49,10 @@ export default {
   mutations: {
     changeNetwork(state, network) {
       state.activeNet = network;
-      const provider = new Provider(state.activeNet.url)
+      const provider = providerFactory(state.activeNet.url);
       if (state.web3 && state.web3.setProvider) {
         if (state.web3.currentProvider.destroy) {
-          state.web3.currentProvider.destroy()
+          state.web3.currentProvider.destroy();
         }
 
         state.web3.setProvider(provider);
@@ -70,7 +62,6 @@ export default {
     },
     addNewProvider(state, network) {
       state.storedNetworks.push(network);
-      storage.write('networks', state.storedNetworks);
     },
     setProviders(state, networks) {
       state.storedNetworks = networks;
@@ -87,67 +78,71 @@ export default {
   },
   actions: {
     changeNetwork({ commit, dispatch, getters }, networkId) {
-      const netIndex = getters.networks.findIndex(net => net.id === networkId);
-      const network = getters.networks[netIndex];
+      const network = getters.networks.find(net => net.id === networkId);
       commit('changeNetwork', network);
-      storage.write('net', network.id);
+
       return Promise.all([
+        storage.write('net', network.id),
         dispatch('fetchNetworkType'),
         dispatch('subscribeOnBlockUpdates'),
-        dispatch('tokens/subscribeOnTokenUpdates',{}, {root: true})
-      ]);
+        dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true }),
+      ]).catch(e => dispatch('errors/emitError', e, {root: true}));
     },
-    addNewProvider({ commit, dispatch, getters }, network) {
-      network.id = getters.networks.reduce((max, next) => {
-        return max.id > next.id ? max : next;
-      }).id + 1;
+    addNewProvider({ state, commit, dispatch, getters }, network) {
+      network.id =
+        getters.networks.reduce(
+          (max, next) => (max.id > next.id ? max.id : next.id)
+        ) + 1;
       commit('addNewProvider', network);
-      return dispatch('changeNetwork', network.id);
+
+      return Promise.all([
+        storage.write('networks', state.storedNetworks),
+        dispatch('changeNetwork', network.id),
+      ]).catch(e => dispatch('errors/emitError', e, {root: true}));
     },
-    subscribeOnSyncStatus(context) {
-      let providerCache = context.state.web3.currentProvider;
-      let promise = context.state.web3.eth.isSyncing();
-      promise.then(resp => {
-        if (providerCache === context.state.web3.currentProvider) {
-          context.commit('setSyncStatus', resp);
-          setTimeout(()=> {
-            context.dispatch('subscribeOnSyncStatus')
+    subscribeOnSyncStatus({ state, commit, dispatch }) {
+      const providerCache = state.web3.currentProvider;
+
+      return state.web3.eth.isSyncing().then(resp => {
+        if (providerCache === state.web3.currentProvider) {
+          commit('setSyncStatus', resp);
+          setTimeout(() => {
+            dispatch('subscribeOnSyncStatus');
           }, subscribtionsBlockchainInterval);
         } else {
-          context.dispatch('subscribeOnSyncStatus')
+          dispatch('subscribeOnSyncStatus');
         }
       });
-      return promise;
     },
-    fetchNetworkType(context) {
+    fetchNetworkType({ state, commit }) {
       // network type already set, return resolved promise
-      if (context.state.activeNet.networkType) {
+      if (state.activeNet.networkType) {
         return Promise.resolve();
       }
-      let promise = context.state.web3.eth.net.getNetworkType();
-      promise.then(resp => {
-        context.commit('setNetworkType', resp);
-      });
-      return promise;
+
+      return state.web3.eth.net
+        .getNetworkType()
+        .then(resp => commit('setNetworkType', resp))
+        .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
-    subscribeOnBlockUpdates(context) {
-      if (context.state.blockSubscribtion) {
-        context.state.blockSubscribtion.stop();
+    subscribeOnBlockUpdates({ state, commit, dispatch, rootState}) {
+      if (state.blockSubscribtion) {
+        state.blockSubscribtion.stop();
       }
-      context.state.blockSubscribtion = new EthBlockTracker({
-        provider: context.state.web3.currentProvider,
-        pollingInterval:subscribtionsBlockchainInterval
+      state.blockSubscribtion = new EthBlockTracker({
+        provider: state.web3.currentProvider,
+        pollingInterval: subscribtionsBlockchainInterval,
       });
-      context.state.blockSubscribtion.on('latest', block => {
-        if (context.rootState.accounts.activeAccount) {
-          context.dispatch('accounts/updateBalance', {}, { root: true });
+      state.blockSubscribtion.on('latest', block => {
+        if (rootState.accounts.activeAccount) {
+          dispatch('accounts/updateBalance', {}, { root: true });
         }
-        context.commit(
+        commit(
           'setBlockNumber',
           web3.utils.hexToNumberString(block.number)
         );
       });
-      context.state.blockSubscribtion.start();
+      state.blockSubscribtion.start();
     },
     init({ commit, dispatch, state }) {
       return storage
@@ -169,7 +164,7 @@ export default {
           dispatch('subscribeOnSyncStatus');
           dispatch('subscribeOnBlockUpdates');
         })
-        .catch(e => console.error(e));
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
   },
 };

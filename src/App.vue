@@ -16,19 +16,15 @@
 import AppNav from '@/components/AppNav.vue'
 import InfoBar from '@/components/bar/InfoBar.vue'
 import accounts from '@/mixins/accounts'
-import { mapActions } from 'vuex'
+import errorHandler from '@/mixins/errorHandler';
 
 export default {
   name: 'App',
-  data () {
-    return {
-    }
-  },
   components: {
     AppNav,
     InfoBar
   },
-  mixins: [accounts]
+  mixins: [accounts, errorHandler],
 }
 </script>
 
