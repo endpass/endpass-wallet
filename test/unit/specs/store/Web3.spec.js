@@ -85,36 +85,11 @@ describe('web3 store', async () => {
       },
       [{ type: 'changeNetwork' }],
       [
-        { type: 'fetchNetworkType' },
         { type: 'subscribeOnBlockUpdates' },
         { type: 'tokens/subscribeOnTokenUpdates' },
       ],
       done
     );
-  });
-
-  it('should subscribe on sync status', done => {
-    let eth = {
-      isSyncing: () => {
-        return new Promise((res, rej) => {
-          res(1);
-        });
-      },
-    };
-    let contextMock = {
-      state: {
-        web3: {
-          currentProvider: 0,
-          eth,
-        },
-      },
-      commit: () => {},
-      dispatch: () => {},
-    };
-    const spyIsSyncing = jest.spyOn(eth, 'isSyncing');
-    store.actions.subscribeOnSyncStatus(contextMock);
-    expect(spyIsSyncing).toHaveBeenCalled();
-    done();
   });
 
   it('should add provider network', done => {
@@ -124,7 +99,6 @@ describe('web3 store', async () => {
         id: 3,
       },
       {
-        state: stateInstance,
         getters: {
           networks: [
             {

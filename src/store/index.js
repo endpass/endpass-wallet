@@ -6,6 +6,7 @@ import tokens from './tokens/tokens';
 import web3 from './web3/web3';
 import price from './price/price';
 import errors from './errors/errors';
+import connectionStatus from './connection-status/connection-status';
 
 Vue.use(Vuex);
 const store = new Vuex.Store({
@@ -24,6 +25,7 @@ const store = new Vuex.Store({
     tokens,
     price,
     errors,
+    connectionStatus,
   },
 });
 

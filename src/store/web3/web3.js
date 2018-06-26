@@ -32,7 +32,6 @@ export default {
       ],
       storedNetworks: [],
       isSyncing: false,
-      blockNumber: 0,
       activeNet: {
         name: 'Main',
         id: 1,
@@ -63,14 +62,14 @@ export default {
     addNewProvider(state, network) {
       state.storedNetworks.push(network);
     },
+    setBlockNumber(state, number) {
+      state.blockNumber = number;
+    },
     setProviders(state, networks) {
       state.storedNetworks = networks;
     },
     setSyncStatus(state, syncObject) {
       state.isSyncing = syncObject;
-    },
-    setBlockNumber(state, number) {
-      state.blockNumber = number;
     },
     setNetworkType(state, type) {
       state.activeNet.networkType = type;
@@ -100,20 +99,6 @@ export default {
         dispatch('changeNetwork', network.id),
       ]).catch(e => dispatch('errors/emitError', e, {root: true}));
     },
-    subscribeOnSyncStatus({ state, commit, dispatch }) {
-      const providerCache = state.web3.currentProvider;
-
-      return state.web3.eth.isSyncing().then(resp => {
-        if (providerCache === state.web3.currentProvider) {
-          commit('setSyncStatus', resp);
-          setTimeout(() => {
-            dispatch('subscribeOnSyncStatus');
-          }, subscribtionsBlockchainInterval);
-        } else {
-          dispatch('subscribeOnSyncStatus');
-        }
-      });
-    },
     fetchNetworkType({ state, commit }) {
       // network type already set, return resolved promise
       if (state.activeNet.networkType) {
@@ -139,7 +124,7 @@ export default {
         }
         commit(
           'setBlockNumber',
-          web3.utils.hexToNumberString(block.number)
+          state.web3.utils.hexToNumberString(block.number)
         );
       });
       state.blockSubscribtion.start();
@@ -161,7 +146,7 @@ export default {
 
           commit('setProviders', storedNetworks || []);
           commit('changeNetwork', activeNet);
-          dispatch('subscribeOnSyncStatus');
+          dispatch('connectionStatus/subscribeOnSyncStatus', {}, {root: true});
           dispatch('subscribeOnBlockUpdates');
         })
         .catch(e => dispatch('errors/emitError', e, { root: true }));
