@@ -253,10 +253,7 @@ export default {
           .on('error', (err, receipt) => {
             sendEvent.off('error');
             this.isSending = false;
-            this.transaction = new Transaction(defaultTnx);
-            this.$validator.flag('address', {
-              valid: false,
-            });
+            this.resetForm();
 
             const cause = receipt ? ', because out of gas' : '';
 
@@ -274,18 +271,25 @@ export default {
             this.transaction.state = 'pending';
             this.transactionHash = hash;
             this.transaction.hash = hash;
-            this.transaction = new Transaction(defaultTnx);
-            this.$validator.flag('address', {
-              valid: false,
-            });
+            this.resetForm();
 
             this.$notify({
               title: 'Successful',
               text: 'Transaction was sent',
               type: 'is-info',
-            })
+            });
           });
       })
+    },
+    async resetForm() {
+      this.$validator.pause();
+      await this.$nextTick();
+      this.transaction = new Transaction(defaultTnx);
+      await this.$nextTick();
+      this.$validator.resume();
+      this.$validator.flag('address', {
+        valid: false,
+      });
     },
     toggleModal() {
       this.isModal = !this.isModal;
