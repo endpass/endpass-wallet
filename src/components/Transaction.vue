@@ -109,11 +109,11 @@ export default {
     cansel() {
       if(this.transaction.date)
         return;
-      const canselTransaction = new Transaction(this.transaction);
-      canselTransaction.value = '0';
-      canselTransaction.to = this.address;
-      canselTransaction.gasPrice = canselTransaction.gasPrice + 1;
-      let tx = new Tx(canselTransaction.getApiObject(this.web3.eth));
+      const cancelTransaction = this.transaction.clone();
+      cancelTransaction.value = '0';
+      cancelTransaction.to = this.address;
+      cancelTransaction.gasPrice = cancelTransaction.getUpGasPrice();
+      let tx = new Tx(cancelTransaction.getApiObject(this.web3.eth));
       tx.sign(this.activeAccount.getPrivateKey());
       var serializedTx = tx.serialize();
       this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))

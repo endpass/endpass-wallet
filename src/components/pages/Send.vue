@@ -18,47 +18,48 @@
                        placeholder="Receiver address"
                        :disabled="isSending"
                        required />
-          <div class="columns">
-            <div class="column is-half is-full-mobile">
-              <v-input v-model="transaction.value"
-                       label="Amount"
-                       type="number"
-                       name="value"
-                       v-validate="`required|decimal:${transaction.tokenInfo && transaction.tokenInfo.decimals || 18}|between:0,${maxAmount}`"
-                       data-vv-as="amount"
-                       id="value"
-                       aria-describedby="value"
-                       placeholder="Amount"
-                       :disabled="isSending"
-                       required>
-                <span class="select" slot="addon">
-                  <select v-model="transaction.tokenInfo">
-                    <option :value="undefined">ETH</option>
-                    <option
-                      :value="token"
-                      v-for="token in tokens"
-                      :key="token.address">{{token.symbol}}</option>
-                  </select>
-                </span>
-              </v-input>
-            </div>
-            <div class="column is-half is-full-mobile">
-              <v-input v-model.number="price"
-                       label="Price"
-                       type="number"
-                       name="price"
-                       v-validate="`required|decimal:2|max_value:${maxPrice}`"
-                       id="price"
-                       aria-describedby="price"
-                       placeholder="Price"
-                       :disabled="isSending"
-                       required>
-                <div class="control" slot="addon">
-                  <a class="button is-static">{{fiatCurrency}}</a>
+
+              <div class="columns">
+                <div class="column is-half is-full-mobile">
+                  <v-input v-model="value"
+                          label="Amount"
+                          type="number"
+                          name="value"
+                          v-validate="`required|decimal:${decimal}|between:0,${maxAmount}`"
+                          data-vv-as="amount"
+                          id="value"
+                          aria-describedby="value"
+                          placeholder="Amount"
+                          :disabled="isSending"
+                          required>
+                    <span class="select" slot="addon">
+                      <select v-model="transaction.tokenInfo">
+                        <option :value="undefined">ETH</option>
+                        <option
+                          :value="token"
+                          v-for="token in tokens"
+                          :key="token.address">{{token.symbol}}</option>
+                      </select>
+                    </span>
+                  </v-input>
                 </div>
-              </v-input>
-            </div>
-          </div>
+                <div class="column is-half is-full-mobile">
+                  <v-input v-model="price"
+                          label="Price"
+                          type="number"
+                          name="price"
+                          v-validate="`required|decimal:2|max_value:${maxPrice}`"
+                          id="price"
+                          aria-describedby="price"
+                          placeholder="Price"
+                          :disabled="isSending"
+                          required>
+                    <div class="control" slot="addon">
+                      <a class="button is-static">{{fiatCurrency}}</a>
+                    </div>
+                  </v-input>
+                </div>
+              </div>
 
               <v-input v-model="transaction.gasPrice"
                        label="Gas price"
@@ -127,21 +128,25 @@ import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import TransactionModal from '@/components/modal/TransactionModal';
 
+const defaultTnx = {
+  gasPrice: '90',
+  gasLimit: '22000',
+  value: '0',
+  tokenInfo: undefined,
+  to: '',
+  data: '0x'
+}
+
 export default {
   data: () => ({
     selectedToken: 'ETH',
     toCache: '',
     isSending: false,
     transactionHash: null,
-    transaction: new Transaction({
-      gasPrice: '90',
-      gasLimit: '22000',
-      value: '0',
-      tokenInfo: undefined,
-      to: '',
-      data: '0x'
-    }),
-    estimateGas: 0,
+    transaction: new Transaction(defaultTnx),
+    estimateGasCost: 0,
+    priceInFiat: '0.00',
+    lastInputPrice: 'amount',
     isModal: false,
   }),
   computed: {
@@ -156,64 +161,102 @@ export default {
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
       ethPrice: state => state.price.price,
     }),
-    price: {
+    value: {
       get() {
-        if(!this.ethPrice)
-          return
-        let price = new BigNumber(this.ethPrice);
-        let number = new BigNumber(this.transaction.value).times(price).toFixed(2);
-        return number
+        const { value } = this.transaction;
+
+        if (this.lastInputPrice === 'fiat' && value > 0) {
+          const { price, ethPrice, decimal } = this;
+          return BigNumber(price).div(ethPrice).toFixed(decimal);
+        }
+
+        return value;
       },
       set(newValue) {
-        if (typeof newValue !== 'number') return;
-        let ethPrice = new BigNumber(this.ethPrice);
-        let fiatAmount = new BigNumber(newValue);
-        this.transaction.value = fiatAmount.div(ethPrice).toFixed(18)
-      }
+        this.transaction.value = newValue;
+        this.lastInputPrice = 'amount';
+        this.priceInFiat = BigNumber(newValue || '0')
+          .times(this.ethPrice)
+          .toFixed(2);
+
+        this.$nextTick(() => this.$validator.validate('price'));
+      },
+    },
+    price: {
+      get() {
+        if (this.lastInputPrice === 'amount' && this.priceInFiat > 0) {
+          const { value, ethPrice } = this;
+          return BigNumber(value).times(ethPrice).toFixed(2);
+        }
+
+        return this.priceInFiat;
+      },
+      set(newValue) {
+        this.priceInFiat = newValue;
+        this.lastInputPrice = 'fiat';
+        this.transaction.value = BigNumber(newValue || '0')
+          .div(this.ethPrice)
+          .toFixed(newValue > 0 ? this.decimal : 0);
+
+        this.$nextTick(() => this.$validator.validate('value'));
+      },
     },
     maxAmount() {
-      if (!this.transaction.tokenInfo) {
-        const balanceBN = BigNumber(this.balance || '0');
-        const estimateGasBN = BigNumber(this.estimateGas || '0');
-        const amountBN = balanceBN.minus(estimateGasBN);
-        const amount = amountBN.toFixed();
-        return amount > 0 ? amount : 0;
-      } else {
-        return this.transaction.tokenInfo.balance;
+      if (this.transaction.tokenInfo) {
+        return this.transaction.tokenInfo.balance || '0';
       }
+
+      const { fromWei } = web3.utils;
+      const balanceBN = BigNumber(this.balance || '0');
+      const estimateGasCostBN = BigNumber(this.estimateGasCost || '0');
+      const amountBN = balanceBN.minus(estimateGasCostBN);
+      const amount = fromWei(amountBN.toFixed());
+
+      return amount > 0 ? amount : 0;
     },
     maxPrice() {
       const balance = new BigNumber(this.maxAmount);
-      const price = new BigNumber(this.price);
-      const amount = balance.times(price).toFixed();
+      const amount = balance.times(this.ethPrice).minus('0.01').toFixed(2);
       return amount > 0 ? amount : 0;
+    },
+    decimal() {
+      const { tokenInfo } = this.transaction;
+      return tokenInfo && tokenInfo.decimals || 18;
     }
   },
   methods: {
-    ...mapMutations('accounts', ['addTransaction']),
+    ...mapMutations('accounts', ['addTransaction', 'updateTransaction']),
     sendTransaction() {
       this.isSending = true;
       this.transaction.from = this.address
       this.web3.eth.getTransactionCount(this.address).then(nonce => {
-        this.transaction.nonce = (nonce + this.pendingTransactions.length).toString();
-        const web3Transaction = new Tx(this.transaction.getApiObject(this.web3.eth));
-        web3Transaction.sign(this.account.getPrivateKey());
-        const serializedTx = web3Transaction.serialize();
+        const pendingLength = this.pendingTransactions.filter(
+          tnx => tnx.state === 'pending'
+        ).length;
+        this.transaction.nonce = (nonce + pendingLength).toString();
+        const tx = new Tx(this.transaction.getApiObject(this.web3.eth));
+        tx.sign(this.account.getPrivateKey());
+        const serializedTx = tx.serialize();
         this.addTransaction(this.transaction);
 
         const sendEvent = this.web3.eth
           .sendSignedTransaction('0x' + serializedTx.toString('hex'))
           .on('confirmation', (confNumber, { transactionHash }) => {
             if (confNumber > 0) {
-              sendEvent.off('confirmation')
-              this.transaction.state = 'success'
+              sendEvent.off('confirmation');
+              this.updateTransaction({
+                hash: transactionHash,
+                state: 'success',
+              })
             }
           })
           .on('error', (err, receipt) => {
+            sendEvent.off('error');
+            this.isSending = false;
+            this.transaction = new Transaction(defaultTnx);
             this.$validator.flag('address', {
               valid: false,
             });
-            this.isSending = false;
 
             const cause = receipt ? ', because out of gas' : '';
 
@@ -226,12 +269,16 @@ export default {
             console.error(err)
           })
           .on('transactionHash', hash => {
+            sendEvent.off('transactionHash');
+            this.isSending = false;
+            this.transaction.state = 'pending';
+            this.transactionHash = hash;
+            this.transaction.hash = hash;
+            this.transaction = new Transaction(defaultTnx);
             this.$validator.flag('address', {
               valid: false,
             });
-            this.isSending = false;
-            this.transaction.state = 'pending';
-            this.transaction.hash = hash;
+
             this.$notify({
               title: 'Successful',
               text: 'Transaction was sent',
@@ -247,8 +294,8 @@ export default {
       this.toggleModal();
       this.sendTransaction();
     },
-    async updateEstimateGas() {
-      this.estimateGas = await this.transaction.getFullPrice(this.web3.eth);
+    async updateEstimateGasCost() {
+      this.estimateGasCost = await this.transaction.getFullPrice(this.web3.eth);
     }
   },
   watch: {
@@ -258,7 +305,7 @@ export default {
         await this.$nextTick();
 
         if (!this.errors.has('address')) {
-          this.updateEstimateGas();
+          this.updateEstimateGasCost();
         }
       },
       immediate: true,
@@ -269,13 +316,13 @@ export default {
         await this.$nextTick();
 
         if (!this.errors.has('data')) {
-          this.updateEstimateGas();
+          this.updateEstimateGasCost();
         }
       },
     },
     selectedToken() {
-      this.updateEstimateGas();
-    }
+      this.updateEstimateGasCost();
+    },
   },
   components: {
     VForm,

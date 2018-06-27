@@ -1,109 +1,178 @@
-import web3 from 'web3'
+import web3 from 'web3';
 import { BigNumber } from 'bignumber.js';
 import erc20ABI from '@/erc20.json';
 
+const { numberToHex, toWei } = web3.utils;
+
 export class Transaction {
-  constructor(transaction) {
-    this.tokenInfo = transaction.tokenInfo;
-    if(this.tokenInfo) {
-      this._value = transaction.value
+  constructor({
+    data,
+    from,
+    gasPrice = '90',
+    gasLimit = '22000',
+    hash,
+    input,
+    nonce,
+    state = 'success',
+    timestamp,
+    to = '',
+    tokenInfo = undefined,
+    transactionHash,
+    value = '0',
+  }) {
+    if (tokenInfo) {
+      this.tokenInfo = tokenInfo;
+      this.valueWei = value;
     } else {
-      this.value = transaction.value;
+      this.value = value;
     }
-    this.gasPrice = transaction.gasPrice;
-    this.gasLimit = transaction.gasLimit;
-    this.to = transaction.to;
-    this.from = transaction.from;
-    this.nonce = transaction.nonce;
-    this.hash = transaction.hash || transaction.transactionHash;
-    this.data = transaction.data || transaction.input;
-    if(transaction.timestamp) {
-      this.date = new Date(transaction.timestamp*1000);
+
+    this.data = data || input;
+    this.from = from;
+    this.gasPrice = gasPrice;
+    this.gasLimit = gasLimit;
+    this.hash = hash || transactionHash;
+    this.nonce = nonce;
+    this.state = state;
+    this.to = to;
+    if (timestamp) {
+      this.date = new Date(timestamp * 1000);
     }
-    this.state = transaction.state || 'success'
   }
   set value(value) {
-    if(!isNumeric(value))
-      return this._value = '0';
-    if(this.tokenInfo) {
-      let valueBN = new BigNumber(value);
-      let multiplyer = new BigNumber(this.tokenInfo.decimals).pow('10');
-      this._value = valueBN.times(multiplyer).toFixed();
-    } else {
-      let valueBN = new BigNumber(value);
-      this._value = web3.utils.toWei(valueBN.toFixed());
-    }
+    this._value = String(value);
   }
   get value() {
-    if(this.tokenInfo) {
-      let valueBN = new BigNumber(this._value);
-      let divider = new BigNumber('10').pow(this.tokenInfo.decimals);
-      return valueBN.div(divider).toString();
-    } else {
-      return web3.utils.fromWei(this._value);
+    return this._value;
+  }
+  get valueWei() {
+    if (!isNumeric(this._value)) return '0';
+
+    let multiplier = BigNumber('10').pow(18);
+
+    if (this.tokenInfo) {
+      multiplier = BigNumber('10').pow(this.tokenInfo.decimals || 0);
     }
+
+    return BigNumber(this._value).times(multiplier).toFixed(0);
+  }
+  set valueWei(valueWei) {
+    if (!isNumeric(valueWei)) return '0';
+
+    let multiplier = BigNumber('10').pow(18);
+
+    if (this.tokenInfo) {
+      multiplier = BigNumber('10').pow(this.tokenInfo.decimals || 0);
+    }
+
+    this._value = BigNumber(valueWei).div(multiplier).toFixed();
   }
   set gasPrice(price) {
-    if(!isNumeric(price))
-      return this._gasPrice = '0';
-    let priceBN = new BigNumber(price);
-    this._gasPrice = web3.utils.toWei(priceBN.toFixed(), 'Gwei');
+    this._gasPrice = price.toString();
   }
   get gasPrice() {
-    return web3.utils.fromWei(this._gasPrice, 'Gwei');
+    return this._gasPrice;
+  }
+  get gasPriceWei() {
+    if (!isNumeric(this.gasPrice)) return '0';
+
+    return toWei(this.gasPrice, 'Gwei');
   }
   set gasLimit(limit) {
-    if(!isNumeric(limit))
-      return this._gasLimit = '0';
-    let limitBN = new BigNumber(limit);
-    this._gasLimit = limitBN.toFixed();
+    this._gasLimit = limit;
   }
   get gasLimit() {
     return this._gasLimit;
   }
-  async getFullPrice(eth) {
-    if (!this.tokenInfo) {
-      const estimation = await this.estimateGas(eth);
-      const gasPriceBN = BigNumber(this._gasPrice || '0');
-      return gasPriceBN.times(estimation).toFixed();
-    } else {
-      return this.tokenInfo.balance;
+  get validTo() {
+    let { to } = this;
+
+    if (to && to.toUpperCase().indexOf('0X') !== 0) {
+      to = `0x${to}`;
     }
+
+    return to || undefined;
+  }
+  get gasCost() {
+    return BigNumber(this.gasPriceWei).times(this.gasLimit);
+  }
+  getValidData(eth) {
+    let { data } = this;
+
+    if (this.tokenInfo) {
+      const contract = new eth.Contract(erc20ABI, this.tokenInfo.address, {
+        from: this.from,
+      });
+
+      data = contract.methods.transfer(this.validTo, this.valueWei).encodeABI();
+    }
+
+    return data;
+  }
+  async getFullPrice(eth) {
+    const estimation = await this.estimateGas(eth);
+
+    return BigNumber(this.gasPriceWei)
+      .times(estimation)
+      .toFixed();
   }
   async estimateGas(eth) {
-    let estimationParams = {
-      data: this.data
+    const estimationParams = {
+      data: this.getValidData(eth),
+      to: this.validTo,
     };
-    if(this.to) {
-      estimationParams.to = this.to
-    }
+
     return await eth.estimateGas(estimationParams);
   }
   getApiObject(eth) {
-    if(this.tokenInfo) {
-      let contract = new eth.Contract(erc20ABI, this.tokenInfo.address, {
-        from: this.from,
-      });
-      return {
-        from: this.from,
+    this.data = this.getValidData(eth);
+    let tnxData = {
+      from: this.from,
+      to: this.validTo,
+      gasPrice: numberToHex(this.gasPriceWei),
+      value: numberToHex(this.valueWei),
+      gasLimit: numberToHex(this.gasLimit || 0),
+      data: this.data,
+      nonce: numberToHex(this.nonce),
+    };
+
+    if (this.tokenInfo) {
+      tnxData = {
+        ...tnxData,
         to: this.tokenInfo.address,
-        gasPrice: web3.utils.numberToHex(this._gasPrice),
         value: '0x0',
-        gasLimit: web3.utils.numberToHex(this.gas),
-        data: contract.methods.transfer(this.to, this._value).encodeABI(),
-        nonce: web3.utils.numberToHex(this.nonce)
-      }
-    } else {
-      return {
-        from: this.from,
-        to: this.to,
-        gasPrice: web3.utils.numberToHex(this._gasPrice),
-        value: web3.utils.numberToHex(this._value),
-        gasLimit: web3.utils.numberToHex(this.gasLimit),
-        data: this.data,
-        nonce: web3.utils.numberToHex(this.nonce)
-      }
+      };
     }
+
+    return tnxData;
+  }
+  getUpGasPrice() {
+    return BigNumber(this.gasPrice)
+      .times('1.1')
+      .integerValue(BigNumber.ROUND_CEIL);
+  }
+  clone() {
+    let tnxData = {
+      from: this.from,
+      to: this.validTo,
+      gasPrice: this.gasPrice,
+      value: this.value,
+      gasLimit: this.gasLimit,
+      data: this.data,
+      nonce: this.nonce,
+      hash: this.hash,
+    };
+
+    if (this.tokenInfo) {
+      tnxData = {
+        ...tnxData,
+        tokenInfo: this.tokenInfo,
+        to: this.validTo,
+        value: this.valueWei,
+      };
+    }
+
+    return new Transaction(tnxData);
   }
 }
 function isNumeric(n) {

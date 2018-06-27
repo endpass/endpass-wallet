@@ -25,15 +25,11 @@ export default {
     },
     pendingBalance(state) {
       return state.pendingTransactions
-        .filter(tnx => tnx.status === 'canseled' && tnx.status === 'pending')
+        .filter(tnx => tnx.state === 'pending')
         .map(tnx => {
-          const { value, gasLimit, gasPrice } = tnx;
-          const limit = hexToNumberString(gasLimit);
-          const price = hexToNumberString(gasPrice);
-          const gasCost = BigNumber(limit).times(price);
-          const tnxValue = tnx.token === 'ETH' ? toWei(value) : '0';
+          const tnxValue = tnx.token === 'ETH' ? tnx.valueWei : '0';
 
-          return gasCost.plus(tnxValue);
+          return BigNumber(tnx.gasCost).plus(tnxValue);
         })
         .reduce((total, item) => total.plus(item), BigNumber('0'))
         .toFixed();
@@ -72,6 +68,12 @@ export default {
         return trx.hash === trxHash;
       });
       state.pendingTransactions[trxIndex].state = 'canseled';
+    },
+    updateTransaction(state, data) {
+      const trxForUpdate = state.pendingTransactions.find(
+        trx => trx.hash === data.hash
+      );
+      Object.assign(trxForUpdate, data);
     },
     setBalance(state, balance) {
       state.balance = balance;

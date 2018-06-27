@@ -134,4 +134,31 @@ describe('Send', () => {
     expect(errors.has('value')).toBeFalsy();
     expect(errors.has('data')).toBeFalsy();
   });
+
+  it('should allow empty string in input', () => {
+    wrapper = mount(Send, {
+      store,
+      localVue,
+      computed: {
+        maxAmount: () => 2,
+      },
+    });
+
+    const inputIdArr = ['gasPrice', 'gasLimit', 'value'];
+
+    inputIdArr
+      .map(inputId => wrapper.find(`#${inputId}`))
+      .forEach(inputElem => {
+        inputElem.element.value = '';
+        inputElem.trigger('input');
+        expect(inputElem.element.value).toBe('');
+      })
+
+    // const { gasLimit, gasPrice, value, to } = wrapper.vm.transaction;
+
+    // expect(value).toBe('');
+    // expect(gasPrice).toBe('');
+    // expect(gasLimit).toBe('');
+    // expect(to).toBe('');
+  });
 });
