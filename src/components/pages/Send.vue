@@ -48,7 +48,7 @@
                           label="Price"
                           type="number"
                           name="price"
-                          v-validate="`required|decimal:2|max_value:${maxPrice}`"
+                          v-validate="`required|decimal:2|between:0,${maxPrice}`"
                           id="price"
                           aria-describedby="price"
                           placeholder="Price"
