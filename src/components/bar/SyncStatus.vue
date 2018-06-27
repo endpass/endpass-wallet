@@ -3,13 +3,12 @@
 		<p class="heading">Block number</p>
 		<div class="tags has-addons">
 		  <span class="tag">{{blockNumber}}</span>
-			<span class="tag is-warning" v-if="showSyncing">Syncing</span>
-			<span class="tag is-success" v-else>Synced</span>
+			<span class="tag" :class="'is-'+appStatus"></span>
 		</div>
 	</div>
 </template>
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 export default {
 	data() {
 		return {
@@ -19,16 +18,15 @@ export default {
 	computed: {
 		...mapState({
 	  	blockNumber: state => state.web3.blockNumber,
-	  	isSyncing: state => state.web3.isSyncing,
 	  	account: state => state.accounts.activeAccount,
 	  	balance: state => state.accounts.balance
 	  }),
-		showSyncing() {
-			return (this.account && this.balance === null) || this.isSyncing 
-		}
+		...mapGetters('connectionStatus', [
+			'appStatus'
+		])
 	}
 }
 </script>
 <style>
-	
+
 </style>

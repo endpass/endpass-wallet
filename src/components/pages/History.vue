@@ -59,6 +59,10 @@ export default {
     Promise.all([transactionsPromise, historyPromise])
       .then(values => {
         this.transactions = values[0].data.concat(values[1].data.operations).map(trx => new Transaction(trx));
+        this.$store.dispatch('connectionStatus/updateApiErrorStatus', {
+          id: 'ethplorer',
+          status: true
+        }, {root: true})
       })
       .catch(e => {
         this.$notify({
@@ -68,6 +72,11 @@ export default {
           type: 'is-warning',
         });
         console.error(e);
+        e.apiError = {
+          id: 'ethplorer',
+          status: false
+        };
+        this.$store.dispatch('errors/emitError', e, { root: true });
       });
   },
   components: {

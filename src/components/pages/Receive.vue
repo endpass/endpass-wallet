@@ -56,9 +56,14 @@ export default {
   created() {
     EthplorerService.getInfo(this.address)
       .then(resp => {
+        console.log('failed')
         this.transactions = resp.data.filter(trx => {
           return trx.to === this.address;
         });
+        this.$store.dispatch('connectionStatus/updateApiErrorStatus', {
+          id: 'ethplorer',
+          status: true
+        })
       })
       .catch(e => {
         this.$notify({
@@ -67,6 +72,11 @@ export default {
             'An error occurred while retrieving transaction information. Please try again.',
           type: 'is-warning',
         });
+        e.apiError = {
+          id: 'ethplorer',
+          status: false
+        };
+        this.$store.dispatch('errors/emitError', e, { root: true });
         console.error(e);
       });
   },

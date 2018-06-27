@@ -59,7 +59,9 @@ describe('price store', async () => {
       }, {
         type: 'setUpdateTime'
       }],
-      [],
+      [{
+        type: 'connectionStatus/updateApiErrorStatus'
+      }],
       done
     );
   });

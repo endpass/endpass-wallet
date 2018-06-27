@@ -15,7 +15,11 @@ const localVue = createLocalVue()
 
 localVue.use(Vuex)
 describe('HistoryPage', () => {
-  let actions
+  let actions = {
+    'connectionStatus/updateApiErrorStatus': function() {
+
+    }
+  }
   let store
   let wrapper
   beforeEach(() => {
@@ -57,7 +61,7 @@ describe('HistoryPage', () => {
             id: '2',
             from: wallet.getAddressString()
           }
-        ] 
+        ]
       }
     })
 
@@ -89,7 +93,7 @@ describe('HistoryPage', () => {
             id: '2',
             from: wallet.getAddressString()
           }
-        ] 
+        ]
       }
     })
 

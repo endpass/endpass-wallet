@@ -6,9 +6,8 @@ export default {
 	state: {
     web3Connection: true,
     apiConnection: true,
-    isSyncing: false,
+    isSyncing: true,
     blockNumber: null,
-    web3ErrorArray: [],
     apiErrorsArray:[],
 	},
 	mutations: {
@@ -22,36 +21,29 @@ export default {
       state.isSyncing = status;
     },
     addApiErrorId(state, id) {
-      var index = array.indexOf(id);
+      var index = state.apiErrorsArray.indexOf(id);
       if (index === -1) state.apiErrorsArray.push(id);
     },
     removeApiErrorId(state, id) {
-      var index = array.indexOf(id);
-      if (index !== -1) array.splice(index, 1);
+      var index = state.apiErrorsArray.indexOf(id);
+      if (index !== -1) state.apiErrorsArray.splice(index, 1);
     }
 	},
   getters: {
     appStatus(state) {
       if (!state.web3Connection) {
-        return {
-          status: 'danger',
-          message: 'Network not responding'
-        }
-      } else if (!state.apiResponce) {
-        return {
-          status: 'warning',
-          message: 'Synching'
-        }
+        return 'danger'
+      } else if (state.isSyncing) {
+        return 'warning'
+      } else if (!state.apiConnection) {
+        return 'warning'
       } else {
-        return {
-          status: 'success',
-          message: 'Synched'
-        }
+        return 'success'
       }
     }
   },
   actions: {
-    updateApiErrorStatus({ commit, state }, id, status) {
+    updateApiErrorStatus({ commit, state }, { id, status }) {
       if(status) {
         commit('addApiErrorId', id);
         commit('setApiConnectionStatus', status)
@@ -67,12 +59,20 @@ export default {
       return rootState.web3.web3.eth.isSyncing().then(resp => {
         if (providerCache === rootState.web3.web3.currentProvider) {
           commit('setSyncStatus', resp);
+          commit('setWeb3ConnectionStatus', true);
           setTimeout(() => {
             dispatch('subscribeOnSyncStatus');
           }, subscribtionsBlockchainInterval);
         } else {
           dispatch('subscribeOnSyncStatus');
         }
+      })
+      .catch(e => {
+        commit('setWeb3ConnectionStatus', false);
+        dispatch('errors/emitError', e, { root: true })
+        setTimeout(() => {
+          dispatch('subscribeOnSyncStatus');
+        }, subscribtionsBlockchainInterval);
       });
     },
     init({ commit, dispatch, state }) {

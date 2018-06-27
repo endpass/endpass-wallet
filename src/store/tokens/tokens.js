@@ -51,7 +51,7 @@ export default {
       const tokenExist = state.tokensSubscription.tokens.find(
         subscribtionToken => subscribtionToken.address === token.address
       );
-      
+
       if (!tokenExist) {
         commit('saveTokenToWatchStorage', token);
         storage
@@ -72,11 +72,11 @@ export default {
         // get tokens with balances
         return dispatch('getNonZeroTokens')
           .then(resp => {
-            dispatch('subsctibeOnTokenPriceUpdates', resp.data.tokens || []);
-            return dispatch('createTokenSubscription', resp.data.tokens || []);
+            dispatch('subsctibeOnTokenPriceUpdates', resp.tokens || []);
+            return dispatch('createTokenSubscription', resp.tokens || []);
           })
           .catch(() => {
-            const error = NotificationError({
+            const error = new NotificationError({
               title: 'Failed token subscription',
               text: 'Token information won\'t be updated. Please reload page.',
               type: 'is-warning',
@@ -139,9 +139,22 @@ export default {
       commit('saveInterval', interval);
       commit('saveSubscription', subscription);
     },
-    getNonZeroTokens({ rootState }) {
+    getNonZeroTokens({ rootState, dispatch }) {
       const address = rootState.accounts.activeAccount.getAddressString();
-      return EthplorerService.getTransactions(address);
+      let promise = EthplorerService.getTransactions(address);
+      promise.then(() => {
+        dispatch('connectionStatus/updateApiErrorStatus', {
+          id: 'ethplorer',
+          status: true
+        }, { root: true })
+      }).catch((e) => {
+        e.apiError = {
+          id: 'ethplorer',
+          status: false
+        };
+        dispatch('errors/emitError', e, { root: true })
+      });
+      return promise
     },
     init({ commit, dispatch }) {
       return storage
