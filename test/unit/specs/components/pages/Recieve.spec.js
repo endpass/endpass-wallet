@@ -14,7 +14,11 @@ const localVue = createLocalVue()
 localVue.use(Vuex)
 
 describe('ReceivePage', () => {
-  let actions
+  let actions = {
+    'connectionStatus/updateApiErrorStatus': function() {
+
+    }
+  }
   let store
 
   beforeEach(() => {
@@ -26,7 +30,7 @@ describe('ReceivePage', () => {
         },
         web3: {
           web3: web3
-        }
+        },
       },
       actions
     })

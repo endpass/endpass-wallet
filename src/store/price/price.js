@@ -16,13 +16,21 @@ export default {
 		}
 	},
 	actions: {
-	  updatePrice(context) {
-      let price = priceService.getEthPrice(context.rootState.accounts.settings.fiatCurrency);
+	  updatePrice({commit, dispatch, rootState}) {
+      let price = priceService.getEthPrice(rootState.accounts.settings.fiatCurrency);
       price.then((resp) => {
-        context.commit('setPrice', resp[context.rootState.accounts.settings.fiatCurrency]);
-        context.commit('setUpdateTime', new Date().time);
+        commit('setPrice', resp[rootState.accounts.settings.fiatCurrency]);
+        commit('setUpdateTime', new Date().time);
+        dispatch('connectionStatus/updateApiErrorStatus', {
+          id: 'price',
+          status: true
+        }, {root: true})
       }).catch(e => {
-        console.error(e, 'bal');
+        e.apiError = {
+          id: 'price',
+          status: false
+        };
+        dispatch('errors/emitError', e, { root: true })
       });
       return price
 	  },

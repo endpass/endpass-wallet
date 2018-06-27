@@ -109,7 +109,9 @@ describe('tokens', () => {
         },
       },
       [],
-      [],
+      [{
+        type: 'connectionStatus/updateApiErrorStatus'
+      }],
       done
     );
   });
