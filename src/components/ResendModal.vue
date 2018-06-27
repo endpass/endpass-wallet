@@ -59,7 +59,7 @@ export default {
   props: ['transaction'],
   data() {
     return {
-      newTransaction: new Transaction (this.transaction)
+      newTransaction: this.transaction.clone(),
     }
   },
   computed: {

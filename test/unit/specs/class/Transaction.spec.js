@@ -1,7 +1,7 @@
 import { Transaction } from '@/class'
 import { BigNumber } from 'bignumber.js';
 
-let apiResponce = {
+const apiResponse = {
   from:"0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b",
   hash:"0x902aa048c9fee4cc01f0533457009cdce6a172ea9eee5005617ae4ca3fc5fd04",
   input:"0x",
@@ -9,8 +9,9 @@ let apiResponce = {
   timestamp:1525898092,
   to:"0x7c59542b20002ed255598172cab48b86d865dfbb",
   value:0.00000915
-},
-apiTokenResponce = {
+}
+
+const apiTokenResponse = {
   from:"0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b",
   timestamp:1525898092,
   to:"0x7c59542b20002ed255598172cab48b86d865dfbb",
@@ -37,25 +38,27 @@ apiTokenResponce = {
 describe('Transaction Class', () => {
 
   it('creates transaction with API format', () => {
-    let transaction = new Transaction(apiResponce);
-    expect(transaction.value).toBe(apiResponce.value.toString());
-    expect(transaction._value).toBe((apiResponce.value * Math.pow(10,18)).toString());
-    expect(transaction.from).toBe(apiResponce.from);
-    expect(transaction.to).toBe(apiResponce.to);
-    expect(transaction.data).toBe(apiResponce.input);
+    const transaction = new Transaction(apiResponse);
+    expect(transaction.value).toBe(apiResponse.value.toString());
+    expect(transaction.valueWei).toBe(
+      (apiResponse.value * Math.pow(10, 18)).toString()
+    );
+    expect(transaction.from).toBe(apiResponse.from);
+    expect(transaction.to).toBe(apiResponse.to);
+    expect(transaction.data).toBe(apiResponse.input);
     expect(transaction.date.getFullYear()).toBe(2018);
     expect(transaction.state).toBe('success');
   });
 
   it('creates transaction with token API format', () => {
-    let transaction = new Transaction(apiTokenResponce);
+    const transaction = new Transaction(apiTokenResponse);
     let _valueBN = new BigNumber("22245335081606680213")
     let valueBN = _valueBN.div(new BigNumber('10').pow(18))
     expect(transaction.value).toBe(valueBN.toString());
-    expect(transaction._value).toBe(_valueBN.toString());
-    expect(transaction.from).toBe(apiTokenResponce.from);
-    expect(transaction.to).toBe(apiTokenResponce.to);
-    expect(transaction.data).toBe(apiTokenResponce.input);
+    expect(transaction.valueWei).toBe(_valueBN.toString());
+    expect(transaction.from).toBe(apiTokenResponse.from);
+    expect(transaction.to).toBe(apiTokenResponse.to);
+    expect(transaction.data).toBe(apiTokenResponse.input);
     expect(transaction.date.getFullYear()).toBe(2018);
     expect(transaction.state).toBe('success');
   });
