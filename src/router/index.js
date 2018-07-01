@@ -11,6 +11,7 @@ import NewWallet from '@/components/pages/NewWallet'
 import ImportWallet from '@/components/pages/ImportWallet'
 import ExportWallet from '@/components/pages/ExportWallet'
 import SettingsPage from '@/components/pages/Settings';
+import LoginPage from '@/components/pages/Login';
 
 import store from '../store'
 Vue.use(Router)
@@ -69,6 +70,11 @@ export default new Router({
       name: 'SettingsPage',
       component: SettingsPage,
       beforeEnter: multiguard([hasWalletGuard])
+    },
+    {
+      path: '/login',
+      name: 'LoginPage',
+      component: LoginPage,
     },
   ]
 })

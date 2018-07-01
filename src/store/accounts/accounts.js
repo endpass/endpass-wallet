@@ -1,3 +1,4 @@
+import { userService } from '@/services'
 import storage from '@/services/storage';
 import web3 from 'web3';
 import Bip39 from 'bip39';
@@ -7,11 +8,10 @@ import EthWallet from 'ethereumjs-wallet';
 import { Wallet, Address } from '@/class' ;
 import { BigNumber } from 'bignumber.js';
 
-const { hexToNumberString, toWei } = web3.utils;
-
 export default {
   namespaced: true,
   state: {
+    email: null,
     hdWallet: null,
     wallets: {},
     wallet: null,
@@ -93,6 +93,9 @@ export default {
     setSettings(state, settings) {
       state.settings = JSON.parse(JSON.stringify(settings));
     },
+    setEmail(state, email) {
+      state.email = email;
+    },
   },
   actions: {
     addWallet({ commit, dispatch }, json) {
@@ -141,6 +144,11 @@ export default {
     updateSettings({ commit, dispatch }, settings) {
       commit('setSettings', settings);
       return storage.write('settings', settings)
+        .catch(e => dispatch('errors/emitError', e, {root: true}));
+    },
+    login({ commit, dispatch }, email) {
+      return userService.login(email)
+        .then(() => commit('setEmail', email))
         .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
     init({ commit, dispatch }) {

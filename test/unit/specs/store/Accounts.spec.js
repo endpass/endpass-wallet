@@ -1,5 +1,6 @@
 import store from '@/store/accounts/accounts';
 import localStorageMock from '../../localStorageMock.js';
+import { userService } from '@/services';
 
 global.localStorage = localStorageMock;
 
@@ -48,5 +49,31 @@ describe('accounts store', () => {
     const { settings } = localStorageMock.store;
 
     expect(JSON.parse(settings)).toBe('123');
+  });
+
+  it('should call mutation from login action', async () => {
+    const commit = jest.fn();
+    const state = {};
+    userService.login = jest.fn(() => Promise.resolve('email_link'));
+
+    await actions.login({ commit, state }, '123@123.com');
+
+    expect(userService.login).toHaveBeenCalledTimes(1);
+    expect(commit.mock.calls[0]).toEqual(['setEmail', '123@123.com']);
+  });
+
+  it('should handle error in the login action', async () => {
+    const dispatch = jest.fn();
+    const state = {};
+    userService.login = jest.fn(() => Promise.reject('error'));
+
+    await actions.login({ dispatch, state }, '123@123.com');
+
+    expect(userService.login).toHaveBeenCalledTimes(1);
+    expect(dispatch.mock.calls[0]).toEqual([
+      'errors/emitError',
+      'error',
+      expect.any(Object),
+    ]);
   });
 });
