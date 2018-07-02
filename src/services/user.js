@@ -1,20 +1,20 @@
 import axios from 'axios';
 import { NotificationError } from '@/class';
 
+const api = 'https://endpass.com/api/v1';
+
 export default {
   login(email) {
     // return axios
-    //   .post('https://endpass.com/api/v1/auth', {
-    //     params: {
-    //       email,
-    //     },
+    //   .post(`${api}/auth`, {
+    //     email,
     //   })
     //   .then(console.log)
     //   .catch(console.log);
 
     const error = new NotificationError({
       title: 'Auth error',
-      text: 'Something went wrong in the auth process. Please, try again',
+      text: 'Invalid or missing email address. Please, try again',
       type: 'is-danger',
     });
 
@@ -34,5 +34,145 @@ export default {
       .catch(() => {
         throw error;
       });
+  },
+
+  getUser() {
+    // return axios
+    //   .get(`${api}/user`)
+    //   .then(console.log)
+    //   .catch(console.log);
+
+    return Promise.resolve({
+      id: 'abcd-1234',
+      email: 'user@example.com',
+      net: 3,
+      networks: [],
+      settings: {
+        currency: 'USD',
+      },
+      tokens: [
+        {
+          address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
+          decimals: 18,
+          logo: '/img/0xe41d2489571d322189246dafa5ebde1f4699f498.png',
+          manuallyAdded: true,
+          name: '0x Project',
+          symbol: 'ZRX',
+        },
+      ],
+    }).catch(() => {
+      throw new NotificationError({
+        title: 'User request error',
+        text: 'Failed to get user information. Please, reload page',
+        type: 'is-danger',
+      });
+    });
+  },
+
+  setUser(userSettings) {
+    // return axios
+    //   .post(`${api}/user`, userSettings)
+    //   .then(console.log)
+    //   .catch(console.log);
+
+    return Promise.resolve({
+      success: true,
+    });
+  },
+
+  getAccounts() {
+    // return axios
+    //   .get(`${api}/accounts`)
+    //   .then(console.log)
+    //   .catch(console.log);
+
+    return Promise.resolve([
+      '0x9eceefdf3554e178a6549006f2c02163e63c9fd8',
+    ]).catch(() => {
+      throw new NotificationError({
+        title: 'Accounts request error',
+        text: 'Failed to get user accounts. Please, reload page',
+        type: 'is-danger',
+      });
+    });
+  },
+
+  setAccounts(account) {
+    // return axios
+    //   .post(`${api}/accounts`, account)
+    //   .then(console.log)
+    //   .catch(console.log);
+
+    return Promise.resolve({
+      success: true,
+    });
+  },
+
+  getAccount(account) {
+    // return axios
+    //   .get(`${api}/account/${account}`)
+    //   .then(console.log)
+    //   .catch(console.log);
+
+    return Promise.resolve({
+      version: 3,
+      id: '70534c78-ceb7-4e7e-b805-106504a880c9',
+      address: '9eceefdf3554e178a6549006f2c02163e63c9fd8',
+      crypto: {
+        ciphertext:
+          '73041b43d5952ab3177282b8c3df935b60c99c7fc13c77bc602d6be9b421ea2d',
+        cipherparams: { iv: 'acb168461a9850642c2b490cf4ed29eb' },
+        cipher: 'aes-128-ctr',
+        kdf: 'scrypt',
+        kdfparams: {
+          dklen: 32,
+          salt:
+            '14770d04f812b80db04b14e6d132e917ff2047aa814c3a9b103f7d4849a48a2c',
+          n: 262144,
+          r: 8,
+          p: 1,
+        },
+        mac: '4543eebe2f1ca245547be1bba36b7107f13b8e44ef166c7bf7452b4a4461ed4e',
+      },
+    }).catch(() => {
+      const shortAcc = account.replace(/^(.{5}).+/, '$1…');
+
+      throw new NotificationError({
+        title: 'Account request error',
+        text: `Failed to get account ${shortAcc}. Please, reload page`,
+        type: 'is-danger',
+      });
+    });
+  },
+
+  getV3Accounts() {
+    // return this.getAccounts()
+    //   .then(accounts => {
+    //     const allAcc = accounts.map(this.getAccount);
+    //     return Promise.all(allAcc);
+    //   })
+    //   .catch(console.log);
+
+    return Promise.resolve(['0x9eceefdf3554e178a6549006f2c02163e63c9fd8'])
+      .then(accounts => {
+        const allAcc = accounts.map(this.getAccount);
+        return Promise.all(allAcc);
+      })
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Accounts request error',
+          text: 'Failed to get user accounts. Please, reload page',
+          type: 'is-danger',
+        });
+      });
+  },
+
+  getFullUserInfo() {
+    return Promise.all([this.getUser(), this.getV3Accounts()])
+      .then(([user, accounts]) => ({
+        accounts,
+        ...user,
+      }))
+      .catch(() => {});
   },
 };
