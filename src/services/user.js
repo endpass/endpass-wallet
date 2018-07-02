@@ -9,6 +9,7 @@ export default {
     //   .post(`${api}/auth`, {
     //     email,
     //   })
+    //   .then(res => JSON.parse(res.data))
     //   .then(console.log)
     //   .catch(console.log);
 
@@ -39,6 +40,7 @@ export default {
   getUser() {
     // return axios
     //   .get(`${api}/user`)
+    //   .then(res => JSON.parse(res.data))
     //   .then(console.log)
     //   .catch(console.log);
 
@@ -46,20 +48,29 @@ export default {
       id: 'abcd-1234',
       email: 'user@example.com',
       net: 3,
-      networks: [],
+      networks: [
+        {
+          id: 5,
+          name: 'asdfa',
+          url:
+            'https://mail.yandexru/?msid=1526891347.96404.20950.49223&m_pssp=domik',
+        },
+      ],
       settings: {
         currency: 'USD',
       },
-      tokens: [
-        {
-          address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
-          decimals: 18,
-          logo: '/img/0xe41d2489571d322189246dafa5ebde1f4699f498.png',
-          manuallyAdded: true,
-          name: '0x Project',
-          symbol: 'ZRX',
-        },
-      ],
+      tokens: {
+        '3': [
+          {
+            address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
+            decimals: 18,
+            logo: '/img/0xe41d2489571d322189246dafa5ebde1f4699f498.png',
+            manuallyAdded: true,
+            name: '0x Project',
+            symbol: 'ZRX',
+          },
+        ],
+      },
     }).catch(() => {
       throw new NotificationError({
         title: 'User request error',
@@ -72,6 +83,7 @@ export default {
   setUser(userSettings) {
     // return axios
     //   .post(`${api}/user`, userSettings)
+    //   .then(res => JSON.parse(res.data))
     //   .then(console.log)
     //   .catch(console.log);
 
@@ -83,6 +95,7 @@ export default {
   getAccounts() {
     // return axios
     //   .get(`${api}/accounts`)
+    //   .then(res => JSON.parse(res.data))
     //   .then(console.log)
     //   .catch(console.log);
 
@@ -100,6 +113,7 @@ export default {
   setAccounts(account) {
     // return axios
     //   .post(`${api}/accounts`, account)
+    //   .then(res => JSON.parse(res.data))
     //   .then(console.log)
     //   .catch(console.log);
 
@@ -111,6 +125,7 @@ export default {
   getAccount(account) {
     // return axios
     //   .get(`${api}/account/${account}`)
+    //   .then(res => JSON.parse(res.data))
     //   .then(console.log)
     //   .catch(console.log);
 
