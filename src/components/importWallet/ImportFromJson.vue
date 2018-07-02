@@ -27,8 +27,7 @@
              id="jsonKeystorePassword"
              name="jsonKeystorePassword"
              type="password"
-             v-validate="'required|min:8'"
-             @input="handleInput"
+             validator="required|min:8"
              data-vv-as="password"
              key="jsonKeystorePasswordUnique"
              aria-describedby="jsonKeystorePassword"
@@ -60,10 +59,6 @@ export default {
   methods: {
     ...mapActions('accounts', ['addAccount']),
     ...mapMutations('accounts', ['setWallet']),
-    handleInput() {
-      this.errors.removeById('wrongPass');
-      this.$validator.validate();
-    },
     parseJson() {
       const reader = new FileReader();
       reader.onload = this.addWalletWithJson.bind(this);
@@ -74,10 +69,8 @@ export default {
 
       await new Promise(res => setTimeout(res, 20));
 
-      let wallet;
-
       try {
-        wallet = this.createWalletWithJson(e);
+        this.addWalletWithV3(e.target.result, this.jsonKeystorePassword, true);
       } catch (e) {
         let error = {
           field: 'jsonKeystorePassword',
@@ -110,9 +103,6 @@ export default {
       }
 
       this.isCreating = false;
-    },
-    createWalletWithJson(e) {
-      return EthWallet.fromV3(e.target.result, this.jsonKeystorePassword, true);
     },
     setFile(e) {
       this.errors.removeById('wrongFile');

@@ -7,15 +7,6 @@
 <script>
 export default {
   name: 'v-form',
-  inject: ['$validator'],
-  provide() {
-    const form = {};
-    Object.defineProperty(form, 'isFormValid', {
-      enumerable: true,
-      get: () => this.isFormValid,
-    });
-    return { form };
-  },
   props: {
     id: {
       type: String,
@@ -37,14 +28,11 @@ export default {
       return !(hasInvalidField || errors.count());
     },
   },
-  watch: {
-    isFormValid: {
-      handler(newVal) {
-        this.$emit('input', newVal);
-      },
-      immediate: true,
-    },
-  },
+  methods: {
+    validateFrom() {
+      this.$emit('formValid', this.isFormValid());
+    }
+  }
 };
 </script>
 

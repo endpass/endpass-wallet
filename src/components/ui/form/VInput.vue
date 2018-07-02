@@ -8,6 +8,7 @@
       <div class="control"
            :class="{'is-expanded': $slots.addon }">
         <input v-model="innerValue"
+              v-validate="validator"
                @blur="$emit('blur', $event.target.value)"
                class="input"
                :class="{'is-danger': error || errors.has(name) }"
@@ -26,7 +27,6 @@
 <script>
 export default {
   name: 'v-input',
-  inject: ['$validator'],
   props: {
     value: {
       type: [String, Number],
@@ -51,6 +51,10 @@ export default {
     placeholder: {
       type: String,
       default: null,
+    },
+    validator: {
+      type: String,
+      default: false,
     },
     ariaDescribedby: {
       type: String,

@@ -19,7 +19,7 @@
         <div class="level-right">
           <div class="level-item">
             <div class="level-control">
-              <span  v-if="activeAccount">
+              <span  v-if="address">
                 <p class="heading">Current Account</p>
                 <account-chooser/>
               </span>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import AccountChooser from '@/components/bar/AccountChooser.vue'
 import ProviderSelect from '@/components/bar/ProviderSelect.vue'
 import SyncStatus from '@/components/bar/SyncStatus.vue'
@@ -51,8 +51,12 @@ import net from '@/mixins/net'
 export default {
   computed: {
     ...mapState({
-      price: state => state.price.price
+      price: state => state.price.price,
+      address: state => state.accounts.address && state.accounts.address.getAddressString()
     }),
+    ...mapGetters('accounts', {
+      balance: 'balance'
+    })
   },
   methods: {
     ...mapActions('price', ['updatePrice']),
@@ -63,7 +67,7 @@ export default {
     SyncStatus,
     Balance
   },
-  mixins: [net, accounts],
+  mixins: [net],
 };
 </script>
 

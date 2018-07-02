@@ -4,8 +4,7 @@
              label="Private key"
              id="privateKey"
              name="privateKey"
-             v-validate="'required|private_key'"
-             @input="handleInput"
+             validator="required|private_key"
              data-vv-as="private key"
              key="privateKeyUnique"
              aria-describedby="privateKey"
@@ -14,14 +13,13 @@
 
     <v-button className="is-primary is-medium"
               :loading="isCreating"
-              @click.prevent="addWalletWithPrivateKey">Import</v-button>
+              @click.prevent="addWallet">Import</v-button>
   </v-form>
 </template>
 
 <script>
-import EthWallet from 'ethereumjs-wallet';
 import router from '@/router';
-import { mapActions, mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
@@ -33,19 +31,15 @@ export default {
     privateKey: '',
   }),
   methods: {
-    ...mapActions('accounts', ['addAccount']),
-    ...mapMutations('accounts', ['setWallet']),
-    handleInput() {
-      this.errors.removeById('wrongPrivateKey');
-      this.$validator.validate();
-    },
-    async addWalletWithPrivateKey() {
+    ...mapActions('accounts', ['addWalletWithPrivateKey']),
+    async addWallet() {
       this.isCreating = true;
 
       let wallet;
 
       try {
-        wallet = this.createWalletWithPrivateKey();
+        wallet = this.addWalletWithPrivateKey(this.privateKey);
+        router.push('/');
       } catch (e) {
         this.errors.add({
           field: 'privateKey',
@@ -54,23 +48,8 @@ export default {
         });
         console.error(e);
       }
-
-      if (wallet) {
-        try {
-          await this.addAccount(wallet);
-          router.push('/');
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
       this.isCreating = false;
-    },
-    createWalletWithPrivateKey() {
-      return EthWallet.fromPrivateKey(
-        Buffer.from(this.privateKey.replace(/^0x/, ''), 'hex')
-      );
-    },
+    }
   },
   components: {
     VForm,

@@ -2,16 +2,16 @@
   <div class="account-chooser field has-addons">
     <div v-if="hdWallet" class="control">
       <div class="select">
-        <select @change="setActiveAccount" v-model="selectedAccountId">
-          <option v-for="(account, i) in accounts"
-                  :value="i">
-          {{i}}. {{account.getAddressString() |truncateAddr}}
+        <select @change="selectWallet(wallet)">
+          <option v-for="(wallet, key) in wallet"
+                  :value="key">
+          {{i}}. {{address |truncateAddr}}
           </option>
         </select>
       </div>
-    </div> 
-    <div v-else-if="account" class="control">
-        {{account.getAddressString() |truncateAddr}}
+    </div>
+    <div v-else-if="address" class="control">
+        {{address |truncateAddr}}
     </div>
     <div v-if="hdWallet" class="new-account control">
       <a class="button is-primary" @click="openNewAccountModal">&plus;</a>
@@ -22,33 +22,29 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapMutations } from 'vuex';
 import NewAccountModal from '@/components/NewAccountModal'
 import accounts from '@/mixins/accounts'
 
 export default {
   data () {
     return {
-      selectedAccountId: 0,
       newAccountModalOpen: false
     }
   },
   computed: {
     ...mapState({
       hdWallet: state => state.accounts.hdWallet,
-      accounts: state => state.accounts.accounts,
-      account: state => state.accounts.activeAccount,
+      wallets: state => state.accounts.wallets,
+      address: state => state.accounts.address && state.accounts.address.getAddressString(),
     }),
-    selectedAccount () {
-      if (!this.accounts.length) {
-        return
-      }
-      return this.accounts[this.selectedAccountId]
-    }
   },
   methods: {
     ...mapActions('accounts', {
       setActiveAccountToStore:'setActiveAccount',
+    }),
+    ...mapMutations('accounts', {
+      selectWallet:'selectWallet',
     }),
     setActiveAccount() {
       let account = this.selectedAccount

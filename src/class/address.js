@@ -2,7 +2,7 @@ import ethUtil from 'ethereumjs-util';
 
 // A wallet based on an Ethereum address string, to be used in place of
 // ethereumjs-wallet when only the address is available
-export default class AddressWallet {
+export class Address {
   constructor(addressString) {
     addressString = ethUtil.addHexPrefix(addressString);
     if (!ethUtil.isValidAddress(addressString)) {

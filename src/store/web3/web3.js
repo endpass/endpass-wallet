@@ -124,9 +124,7 @@ export default {
         pollingInterval: subscribtionsBlockchainInterval,
       });
       state.blockSubscribtion.on('latest', block => {
-        if (rootState.accounts.activeAccount) {
-          dispatch('accounts/updateBalance', {}, { root: true });
-        }
+        dispatch('accounts/updateBalance', {}, { root: true });
         commit(
           'setBlockNumber',
           state.web3.utils.hexToNumberString(block.number)

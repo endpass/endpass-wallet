@@ -1,6 +1,6 @@
 <template>
       <div class="home-page app-page">
-        <div class="section" v-if="activeAccount">
+        <div class="section" v-if="address">
           <div class="container">
             <div class="card app-card">
               <div class="card-header">
@@ -56,7 +56,7 @@
 
 import Balance from '@/components/Balance'
 import accounts from '@/mixins/accounts'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   data () {
@@ -64,9 +64,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('accounts', ['isPublicAccount'])
+    ...mapGetters('accounts', {
+      'isPublicAccount': 'isPublicAccount',
+      'balance' : 'balance'
+    }),
+    ...mapState({
+      address: state => state.accounts.address && state.accounts.address.getAddressString()
+    })
   },
-  mixins: [accounts],
   components: {
     Balance
   }

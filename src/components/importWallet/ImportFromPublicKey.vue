@@ -4,8 +4,7 @@
              label="Address"
              id="address"
              name="address"
-             v-validate="'required|address'"
-             @input="handleInput"
+             validator="'required|address'"
              data-vv-as="private key"
              key="publicKeyUnique"
              aria-describedby="address"
@@ -19,7 +18,6 @@
 </template>
 
 <script>
-import AddressWallet from '@/services/addressWallet';
 import router from '@/router';
 import { mapActions, mapMutations } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
@@ -33,19 +31,12 @@ export default {
     address: '',
   }),
   methods: {
-    ...mapActions('accounts', ['addAccount']),
-    ...mapMutations('accounts', ['setWallet']),
-    handleInput() {
-      this.errors.removeById('wrongAddress');
-      this.$validator.validate();
-    },
+    ...mapMutations('accounts', ['addAddress']),
     async addWalletWithAddress() {
       this.isCreating = true;
-
-      let wallet;
-
       try {
-        wallet = this.createWalletWithAddress();
+        this.addAddress(this.address);
+        router.push('/');
       } catch (e) {
         this.errors.add({
           field: 'address',
@@ -54,20 +45,7 @@ export default {
         });
         console.error(e);
       }
-
-      if (wallet) {
-        try {
-          await this.addAccount(wallet);
-          router.push('/');
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
       this.isCreating = false;
-    },
-    createWalletWithAddress() {
-      return new AddressWallet(this.address);
     },
   },
   components: {
