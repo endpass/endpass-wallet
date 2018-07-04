@@ -5,13 +5,6 @@ const api = 'https://endpass.com/api/v1';
 
 export default {
   login(email) {
-    // return axios
-    //   .post(`${api}/auth`, {
-    //     email,
-    //   })
-    //   .then(console.log)
-    //   .catch(console.log);
-
     const error = new NotificationError({
       title: 'Auth error',
       text: 'Invalid or missing email address. Please, try again',
@@ -37,12 +30,6 @@ export default {
   },
 
   getSettings() {
-    // return axios
-    //   .get(`${api}/user`)
-    //   .then(res => res.data)
-    //   .then(console.log)
-    //   .catch(console.log);
-
     return Promise.resolve({
       id: 'abcd-1234',
       email: 'user@example.com',
@@ -80,36 +67,18 @@ export default {
   },
 
   setSettings(settings) {
-    // return axios
-    //   .post(`${api}/user`, settings)
-    //   .then(res => res.data)
-    //   .then(console.log)
-    //   .catch(console.log);
-
     return Promise.resolve({
       success: true,
     });
   },
 
   removeSettings(propsArr) {
-    // return axios
-    //   .delete(`${api}/user`, propsArr)
-    //   .then(res => res.data)
-    //   .then(console.log)
-    //   .catch(console.log);
-
     return Promise.resolve({
       success: true,
     });
   },
 
   getAccounts() {
-    // return axios
-    //   .get(`${api}/accounts`)
-    //   .then(res => res.data)
-    //   .then(console.log)
-    //   .catch(console.log);
-
     return Promise.resolve([
       '0x9eceefdf3554e178a6549006f2c02163e63c9fd8',
     ]).catch(() => {
@@ -122,24 +91,12 @@ export default {
   },
 
   setAccounts(account) {
-    // return axios
-    //   .post(`${api}/accounts`, account)
-    //   .then(res => res.data)
-    //   .then(console.log)
-    //   .catch(console.log);
-
     return Promise.resolve({
       success: true,
     });
   },
 
   getAccount(account) {
-    // return axios
-    //   .get(`${api}/account/${account}`)
-    //   .then(res => res.data)
-    //   .then(console.log)
-    //   .catch(console.log);
-
     return Promise.resolve({
       version: 3,
       id: '70534c78-ceb7-4e7e-b805-106504a880c9',
@@ -172,13 +129,6 @@ export default {
   },
 
   getV3Accounts() {
-    // return this.getAccounts()
-    //   .then(accounts => {
-    //     const allAcc = accounts.map(this.getAccount);
-    //     return Promise.all(allAcc);
-    //   })
-    //   .catch(console.log);
-
     return Promise.resolve(['0x9eceefdf3554e178a6549006f2c02163e63c9fd8'])
       .then(accounts => {
         const allAcc = accounts.map(this.getAccount);

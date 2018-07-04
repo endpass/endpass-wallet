@@ -4,12 +4,27 @@ import { userService } from '@/services';
 export default class ServerStorage {
   read(prop) {
     return Promise.resolve()
-      .then(() => userService.getUser())
+      .then(() => userService.getSettings())
       .then(user => user[prop])
       .catch(() => {
         throw new NotificationError({
-          title: 'Error in local storage',
-          text: "Can't read data from server storage, maybe it is not available",
+          title: 'Error in server storage',
+          text:
+            "Can't read data from server storage, maybe it is not available",
+          type: 'is-warning',
+        });
+      });
+  }
+
+  readAll() {
+    return Promise.resolve()
+      .then(() => userService.getFullUserInfo())
+      .then(user => user || {})
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error in server storage',
+          text:
+            "Can't read data from server storage. Please, reload page",
           type: 'is-warning',
         });
       });
@@ -17,10 +32,22 @@ export default class ServerStorage {
 
   write(prop, data) {
     return Promise.resolve()
-      .then(() => userService.setUser({ [prop]: data }))
+      .then(() => userService.setSettings({ [prop]: data }))
       .catch(() => {
         throw new NotificationError({
-          title: 'Error in local storage',
+          title: 'Error in server storage',
+          text: "Can't save data to server storage, maybe it is not available",
+          type: 'is-warning',
+        });
+      });
+  }
+
+  writeBulk(dataObj) {
+    return Promise.resolve()
+      .then(() => userService.setSettings(dataObj))
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error in server storage',
           text: "Can't save data to server storage, maybe it is not available",
           type: 'is-warning',
         });
@@ -28,34 +55,10 @@ export default class ServerStorage {
   }
 
   remove(prop) {
-    return Promise.resolve()
-      .then(() => userService.setUser({ [prop]: null }))
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Error in local storage',
-          text:
-            "Can't remove data from server storage, maybe it is not available",
-          type: 'is-warning',
-        });
-      });
+    return Promise.resolve();
   }
 
   clear() {
-    return Promise.resolve()
-      .then(() =>
-        userService.setUser({
-          net: null,
-          networks: null,
-          settings: null,
-          tokens: null,
-        })
-      )
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Error in local storage',
-          text: "Can't clear server storage, maybe it is not available",
-          type: 'is-warning',
-        });
-      });
+    return Promise.resolve();
   }
 }
