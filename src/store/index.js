@@ -5,6 +5,7 @@ import accounts from './accounts/accounts';
 import tokens from './tokens/tokens';
 import web3 from './web3/web3';
 import price from './price/price';
+import transactions from './transactions/transactions';
 import errors from './errors/errors';
 import connectionStatus from './connection-status/connection-status';
 
@@ -24,6 +25,7 @@ const store = new Vuex.Store({
     web3,
     tokens,
     price,
+    transactions,
     errors,
     connectionStatus,
   },

@@ -1,5 +1,7 @@
 import storage from '@/services/storage';
 import web3 from 'web3';
+import Bip39 from 'bip39';
+import HDKey from 'ethereumjs-wallet/hdkey';
 import { hdKeyMnemonic } from '@/config'
 import EthWallet from 'ethereumjs-wallet';
 import { Wallet, Address } from '@/class' ;
@@ -25,7 +27,7 @@ export default {
   },
   getters: {
     isPublicAccount(state) {
-      return !state.wallet instanceof Wallet;
+      return state.address instanceof Address && !state.wallet instanceof Wallet;
     },
     pendingBalance(state) {
       return state.pendingTransactions
@@ -48,8 +50,11 @@ export default {
     addAddress(state ,addressString) {
       state.address = new Address(addressString);
     },
-    addWallet(state, wallet) {
-      state.wallets[wallet.getAddressString()] = wallet;
+    addWallet(state, { wallet, address}) {
+      state.wallets[address] = wallet;
+    },
+    addHdWallet(state, wallet) {
+      state.hdWallet = wallet;
     },
     selectWallet(state, wallet) {
       state.wallet = wallet;
@@ -91,12 +96,14 @@ export default {
   actions: {
     addWallet({ commit, dispatch }, json) {
       const wallet = new Wallet(json);
-      commit('addWallet', wallet);
+      commit('addWallet', {
+        wallet,
+        address: json.address});
       commit('selectWallet', wallet);
       commit('addAddress', json.address);
     },
-    addWalletWithV3({ commit, dispatch }, json, password) {
-      const wallet = EthWallet.fromV3(Buffer.from(privateKey), password);
+    addWalletWithV3({ commit, dispatch }, {json, key}) {
+      const wallet = EthWallet.fromV3(json, key, true);
       dispatch('addWallet', json);
     },
     addWalletWithPrivateKey({ commit, dispatch }, privateKey, password = '') {
@@ -104,13 +111,13 @@ export default {
       const json = wallet.toV3(new Buffer(password));
       dispatch('addWallet', json);
     },
-    addHdWallet({ commit, dispatch }, hdkeyPhrase, hdWalletpassword, walletPassword) {
+    addHdWallet({ commit, dispatch }, hdkeyPhrase, walletPassword = '') {
       const seed = Bip39.mnemonicToSeed(hdkeyPhrase);
       const hdKey = HDKey.fromMasterSeed(seed);
       const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
       const wallet = hdWallet.deriveChild(0).getWallet();
       commit('addHdWallet', hdWallet);
-      dispatch('addWallet', wallet,toV3(walletPassword));
+      dispatch('addWallet', wallet.toV3(new Buffer(walletPassword)));
     },
     updateBalance({ commit, dispatch, state, rootState }) {
       if (state.address) {

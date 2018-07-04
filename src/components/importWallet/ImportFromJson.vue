@@ -57,8 +57,7 @@ export default {
     file: null,
   }),
   methods: {
-    ...mapActions('accounts', ['addAccount']),
-    ...mapMutations('accounts', ['setWallet']),
+    ...mapActions('accounts', ['addWalletWithV3']),
     parseJson() {
       const reader = new FileReader();
       reader.onload = this.addWalletWithJson.bind(this);
@@ -70,7 +69,10 @@ export default {
       await new Promise(res => setTimeout(res, 20));
 
       try {
-        this.addWalletWithV3(e.target.result, this.jsonKeystorePassword, true);
+        this.addWalletWithV3({
+          json: e.target.result,
+          key: this.jsonKeystorePassword});
+        router.push('/');
       } catch (e) {
         let error = {
           field: 'jsonKeystorePassword',
@@ -91,15 +93,6 @@ export default {
 
         this.errors.add(error);
         console.error(e);
-      }
-
-      if (wallet) {
-        try {
-          await this.addAccount(wallet);
-          router.push('/');
-        } catch (e) {
-          console.error(e);
-        }
       }
 
       this.isCreating = false;

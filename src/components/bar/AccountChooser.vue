@@ -3,9 +3,9 @@
     <div v-if="hdWallet" class="control">
       <div class="select">
         <select @change="selectWallet(wallet)">
-          <option v-for="(wallet, key) in wallet"
+          <option value="" v-for="(wallet, key, index) in wallets"
                   :value="key">
-          {{i}}. {{address |truncateAddr}}
+          {{index}}. {{address |truncateAddr}}
           </option>
         </select>
       </div>

@@ -13,19 +13,17 @@ export default {
       default: null,
     },
   },
+  provide() {
+    const form = {};
+    Object.defineProperty(form, 'isFormValid', {
+      enumerable: true,
+      get: () => this.isFormValid,
+    });
+    return { form };
+  },
   computed: {
     isFormValid() {
-      const { fields, errors } = this;
-
-      if (!(fields || errors)) {
-        return true;
-      }
-
-      const hasInvalidField = Object.keys(fields).some(
-        field => fields[field] && fields[field].invalid
-      );
-
-      return !(hasInvalidField || errors.count());
+      return !this.errors.count();
     },
   },
   methods: {

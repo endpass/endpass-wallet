@@ -4,7 +4,7 @@
              label="Address"
              id="address"
              name="address"
-             validator="'required|address'"
+             validator="required|address"
              data-vv-as="private key"
              key="publicKeyUnique"
              aria-describedby="address"
@@ -34,6 +34,7 @@ export default {
     ...mapMutations('accounts', ['addAddress']),
     async addWalletWithAddress() {
       this.isCreating = true;
+      await new Promise(res => setTimeout(res, 20));
       try {
         this.addAddress(this.address);
         router.push('/');

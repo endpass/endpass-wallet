@@ -12,7 +12,7 @@
               <v-input v-model="transaction.to"
                        label="To"
                        name="address"
-                       v-validate="'required|address'"
+                       validator="required|address"
                        id="address"
                        aria-describedby="address"
                        placeholder="Receiver address"
@@ -21,11 +21,11 @@
 
               <div class="columns">
                 <div class="column is-half is-full-mobile">
-                  <v-input v-model="value"
+                  <v-input v-model="transaction.value"
                           label="Amount"
                           type="number"
                           name="value"
-                          v-validate="`required|decimal:${decimal}|between:0,${maxAmount}`"
+                          :validator="`required|decimal:${decimal}|between:0,${maxAmount}`"
                           data-vv-as="amount"
                           id="value"
                           aria-describedby="value"
@@ -48,7 +48,7 @@
                           label="Price"
                           type="number"
                           name="price"
-                          v-validate="`required|decimal:2|between:0,${maxPrice}`"
+                          :validator="`required|decimal:2|between:0,${maxPrice}`"
                           id="price"
                           aria-describedby="price"
                           placeholder="Price"
@@ -65,7 +65,7 @@
                        label="Gas price"
                        name="gasPrice"
                        type="number"
-                       v-validate="'required|numeric|integer|between:0,100'"
+                       validator="required|numeric|integer|between:0,100"
                        id="gasPrice"
                        aria-describedby="gasPrice"
                        placeholder="Gas price"
@@ -80,7 +80,7 @@
                        label="Gas limit"
                        name="gasLimit"
                        type="number"
-                       v-validate="'required|numeric|integer|between:21000,4000000'"
+                       validator="required|numeric|integer|between:21000,4000000"
                        id="gasLimit"
                        aria-describedby="gasLimit"
                        placeholder="Gas limit"
@@ -91,42 +91,44 @@
                        v-model="transaction.data"
                        label="Data"
                        name="data"
-                       v-validate="'required|hex'"
+                       validator="required|hex"
                        id="data"
                        aria-describedby="data"
                        placeholder="Data"
                        :disabled="isSending"
                        required />
 
-              <v-button @click.prevent="toggleModal"
+              <v-button @click.prevent="toggleTransactionModal"
                         className="is-primary is-medium"
                         :loading="isSending"
                         :disabled="isSyncing">Send</v-button>
 
-              <div v-if="transactionHash">{{ transactionHash }}</div>
+              <div v-if="transaction.hash">{{ transaction.hash }}</div>
             </v-form>
           </div>
         </div>
       </div>
     </div>
-    <transaction-modal v-if="isModal"
+    <transaction-modal v-if="isTransactionModal"
                        :transaction="transaction"
                        :token="selectedToken"
                        @confirm="confirmTransaction"
-                       @close="toggleModal" />
+                       @close="toggleTransactionModal" />
+    <password-modal v-if="isPasswordModal"
+                       @confirm="confirmPassword"
+                       @close="togglePasswordModal" />
   </div>
 </template>
 
 <script>
-import web3 from 'web3';
-import Tx from 'ethereumjs-tx';
 import { BigNumber } from 'bignumber.js'
 import { Transaction } from '@/class'
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import TransactionModal from '@/components/modal/TransactionModal';
+import PasswordModal from '@/components/modal/PasswordModal';
 
 const defaultTnx = {
   gasPrice: '90',
@@ -140,21 +142,18 @@ const defaultTnx = {
 export default {
   data: () => ({
     selectedToken: 'ETH',
-    toCache: '',
     isSending: false,
-    transactionHash: null,
     transaction: new Transaction(defaultTnx),
     estimateGasCost: 0,
     priceInFiat: '0.00',
     lastInputPrice: 'amount',
-    isModal: false,
+    isTransactionModal: false,
+    isPasswordModal: false
   }),
   computed: {
     ...mapState({
-      pendingTransactions: state => state.accounts.pendingTransactions,
       balance: state => state.accounts.balance,
-      address: state => state.accounts.activeAccount.getAddressString(),
-      account: state => state.accounts.activeAccount,
+      address: state => state.accounts.address.getAddressString(),
       tokens: state => state.tokens.activeTokens,
       web3: state => state.web3.web3,
       isSyncing: state => !!state.web3.isSyncing,
@@ -178,8 +177,6 @@ export default {
         this.priceInFiat = BigNumber(newValue || '0')
           .times(this.ethPrice)
           .toFixed(2);
-
-        this.$nextTick(() => this.$validator.validate('price'));
       },
     },
     price: {
@@ -197,8 +194,6 @@ export default {
         this.transaction.value = BigNumber(newValue || '0')
           .div(this.ethPrice)
           .toFixed(newValue > 0 ? this.decimal : 0);
-
-        this.$nextTick(() => this.$validator.validate('value'));
       },
     },
     maxAmount() {
@@ -206,7 +201,7 @@ export default {
         return this.transaction.tokenInfo.balance || '0';
       }
 
-      const { fromWei } = web3.utils;
+      const { fromWei } = this.web3.utils;
       const balanceBN = BigNumber(this.balance || '0');
       const estimateGasCostBN = BigNumber(this.estimateGasCost || '0');
       const amountBN = balanceBN.minus(estimateGasCostBN);
@@ -225,62 +220,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('accounts', ['addTransaction', 'updateTransaction']),
-    sendTransaction() {
-      this.isSending = true;
-      this.transaction.from = this.address
-      this.web3.eth.getTransactionCount(this.address).then(nonce => {
-        const pendingLength = this.pendingTransactions.filter(
-          tnx => tnx.state === 'pending'
-        ).length;
-        this.transaction.nonce = (nonce + pendingLength).toString();
-        const tx = new Tx(this.transaction.getApiObject(this.web3.eth));
-        tx.sign(this.account.getPrivateKey());
-        const serializedTx = tx.serialize();
-        this.addTransaction(this.transaction);
-
-        const sendEvent = this.web3.eth
-          .sendSignedTransaction('0x' + serializedTx.toString('hex'))
-          .on('confirmation', (confNumber, { transactionHash }) => {
-            if (confNumber > 0) {
-              sendEvent.off('confirmation');
-              this.updateTransaction({
-                hash: transactionHash,
-                state: 'success',
-              })
-            }
-          })
-          .on('error', (err, receipt) => {
-            sendEvent.off('error');
-            this.isSending = false;
-            this.resetForm();
-
-            const cause = receipt ? ', because out of gas' : '';
-
-            this.$notify({
-              title: 'Error sending transaction',
-              text: `Transaction was not sent${cause}`,
-              type: 'is-danger',
-            });
-
-            console.error(err)
-          })
-          .on('transactionHash', hash => {
-            sendEvent.off('transactionHash');
-            this.isSending = false;
-            this.transaction.state = 'pending';
-            this.transactionHash = hash;
-            this.transaction.hash = hash;
-            this.resetForm();
-
-            this.$notify({
-              title: 'Successful',
-              text: 'Transaction was sent',
-              type: 'is-info',
-            });
-          });
-      })
-    },
+    ...mapActions('transactions', ['sendTransaction']),
     async resetForm() {
       this.$validator.pause();
       await this.$nextTick();
@@ -291,12 +231,37 @@ export default {
         valid: false,
       });
     },
-    toggleModal() {
-      this.isModal = !this.isModal;
+    toggleTransactionModal() {
+      this.isTransactionModal = !this.isTransactionModal;
+    },
+    togglePasswordModal() {
+      this.isPasswordModal = !this.isPasswordModal;
+    },
+    requestPassword() {
+      this.togglePasswordModal();
+    },
+    confirmPassword(password = '') {
+      this.isSending = true;
+      this.transaction.from = this.address
+      this.togglePasswordModal();
+      this.sendTransaction({ transaction: this.transaction, password}).then(() => {
+        this.isSending = false;
+        this.resetForm();
+        this.$notify({
+          title: 'Successful',
+          text: 'Transaction was sent',
+          type: 'is-info',
+        });
+      })
+      .catch(e => {
+        this.isSending = false;
+        this.resetForm();
+        this.$notify(e);
+      });
     },
     confirmTransaction() {
-      this.toggleModal();
-      this.sendTransaction();
+      this.toggleTransactionModal();
+      this.togglePasswordModal();
     },
     async updateEstimateGasCost() {
       this.estimateGasCost = await this.transaction.getFullPrice(this.web3.eth);
@@ -333,6 +298,7 @@ export default {
     VButton,
     VInput,
     TransactionModal,
+    PasswordModal
   },
 };
 </script>

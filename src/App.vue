@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="app-container">
 
-    <app-nav class="app-section" :active-account="!!activeAccount"></app-nav>
+    <app-nav class="app-section"></app-nav>
     <info-bar class="app-section"></info-bar>
     <notifications position="top center" width="100%" :speed="500"
                                          :duration="5000" classes="app-notification"/>
@@ -23,8 +23,7 @@ export default {
   components: {
     AppNav,
     InfoBar
-  },
-  mixins: [accounts, errorHandler],
+  }
 }
 </script>
 

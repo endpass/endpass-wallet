@@ -4,8 +4,7 @@
              label="Seed phrase"
              id="hdkeySeed"
              name="hdkeyPhrase"
-             validator="'required|seed_phrase'"
-             @input="handleInput"
+             validator="required|seed_phrase"
              data-vv-as="seed phrase"
              key="hdkeyPhraseUnique"
              aria-describedby="hdkeyPhrase"
@@ -19,10 +18,8 @@
 </template>
 
 <script>
-import Bip39 from 'bip39';
-import HDKey from 'ethereumjs-wallet/hdkey';
 import router from '@/router';
-import { mapActions, mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
@@ -37,6 +34,8 @@ export default {
     ...mapActions('accounts', ['addHdWallet']),
     async addWalletWithPhrase() {
       this.isCreating = true;
+
+      await new Promise(res => setTimeout(res, 20));
 
       try {
         this.addHdWallet(this.hdkeyPhrase);

@@ -12,4 +12,7 @@ export class Wallet {
       return v3.address;
     };
   }
+  signTransaction(transaction, password) {
+    return transaction.sign(this.getPrivateKey(password));
+  }
 }

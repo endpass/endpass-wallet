@@ -35,10 +35,10 @@ export default {
     async addWallet() {
       this.isCreating = true;
 
-      let wallet;
+      await new Promise(res => setTimeout(res, 20));
 
       try {
-        wallet = this.addWalletWithPrivateKey(this.privateKey);
+        this.addWalletWithPrivateKey(this.privateKey);
         router.push('/');
       } catch (e) {
         this.errors.add({
