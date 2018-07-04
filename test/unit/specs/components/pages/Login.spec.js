@@ -4,6 +4,7 @@ import Notifications from 'vue-notification';
 import validation from '@/validation';
 
 import LoginPage from '@/components/pages/Login.vue';
+import { generateStubs } from '@/utils/testUtils';
 
 const localVue = createLocalVue();
 
@@ -15,6 +16,35 @@ describe('LoginPage', () => {
   let actions;
   let store;
   let options;
+
+  describe('render', () => {
+    let wrapper;
+
+    beforeAll(() => {
+      wrapper = shallow(LoginPage, {
+        stubs: generateStubs(LoginPage)
+      });
+    });
+
+    it('should be a Vue component', () => {
+      expect(wrapper.name()).toBe('login-page');
+      expect(wrapper.isVueInstance()).toBeTruthy();
+    });
+
+    it('should render component', () => {
+      expect(wrapper.element).toMatchSnapshot();
+    });
+
+    describe('the send button', () => {
+      it('should change "disable" attribute', () => {
+        wrapper.setData({ termsAccepted: true });
+        expect(wrapper.find('v-button').attributes().disabled).toBeFalsy();
+
+        wrapper.setData({ termsAccepted: false });
+        expect(wrapper.find('v-button').attributes().disabled).toBeTruthy();
+      });
+    });
+  });
 
   beforeEach(() => {
     actions = {

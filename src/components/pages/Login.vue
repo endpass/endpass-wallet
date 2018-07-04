@@ -19,9 +19,15 @@
                        :disabled="isSending"
                        required />
 
+              <v-checkbox v-model="termsAccepted">
+                I accept <a href="https://endpass.com/terms/" target="_blank">Terms of Service</a>
+                and <a href="https://endpass.com/privacy/" target="_blank">Privacy Policy</a>
+              </v-checkbox>
+
               <v-button @click.prevent="handleLogin"
                         id="send-button"
                         className="is-primary is-medium"
+                        :disabled="!termsAccepted"
                         :loading="isSending">Send</v-button>
 
             </v-form>
@@ -39,13 +45,16 @@ import { mapState, mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import VCheckbox from '@/components/ui/form/VCheckbox.vue';
 import error from '@/mixins/error';
 
 export default {
+  name: 'login-page',
   data: () => ({
     email: '',
     isSending: false,
     isSuccess: false,
+    termsAccepted: false
   }),
   methods: {
     ...mapActions('accounts', ['login']),
@@ -71,6 +80,7 @@ export default {
     VForm,
     VButton,
     VInput,
+    VCheckbox
   },
   mixins: [error],
 };
