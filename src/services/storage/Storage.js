@@ -1,9 +1,11 @@
 import debounce from 'lodash.debounce';
+import StubStorage from './StubStorage';
 
 export default class Storage {
-  constructor(localStore = {}, remoteStore = {}) {
-    this.localStore = localStore;
-    this.remoteStore = remoteStore;
+  constructor(localStore, remoteStore) {
+    this.stubStorage = new StubStorage();
+    this.localStore = localStore || this.stubStorage;
+    this.remoteStore = remoteStore || this.stubStorage;
     this.isSync = false;
     this.syncStateDebounce = debounce(this.syncState, 1000, {
       leading: true,
@@ -57,5 +59,9 @@ export default class Storage {
 
   clear() {
     return this.localStore.clear();
+  }
+
+  disableRemote() {
+    this.remoteStore = this.stubStorage;
   }
 }

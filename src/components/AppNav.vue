@@ -49,7 +49,7 @@
         <a class="navbar-item"
                      v-else
                      to=""
-                     @click.prevent="setEmail(null)">
+                     @click.prevent="logout()">
           <span class="icon is-small"
                 v-html="require('@/img/account-logout.svg')"></span>Logout
         </a>
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapGetters, mapActions, mapState } from 'vuex'
 
 export default {
   data () {
@@ -75,7 +75,7 @@ export default {
     ...mapGetters('accounts', ['isPublicAccount']),
   },
   methods: {
-    ...mapMutations('accounts', ['setEmail']),
+    ...mapActions('accounts', ['logout']),
     toggleNavMenu () {
       this.navMenuActive = !this.navMenuActive
     }

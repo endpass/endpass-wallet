@@ -148,15 +148,28 @@ export default {
     },
     login({ commit, dispatch }, email) {
       return userService.login(email)
-        .then(() => commit('setEmail', email))
+        .catch(e => dispatch('errors/emitError', e, {root: true}));
+    },
+    logout({ commit, dispatch }) {
+      commit('setEmail', null);
+      return storage.clear()
+        .then(() => window.location = '/logout')
         .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
     init({ commit, dispatch }) {
-      return storage
-        .read('settings')
-        .then(settings => {
+      return Promise.all([
+        storage.read('settings'),
+        storage.read('email'),
+      ])
+        .then(([settings, email]) => {
+          commit('setEmail', email);
+
           if (settings) {
             commit('setSettings', settings);
+          }
+
+          if (!email) {
+            storage.disableRemote();
           }
         })
         .catch(e => dispatch('errors/emitError', e, {root: true}));

@@ -51,15 +51,14 @@ describe('accounts store', () => {
     expect(JSON.parse(settings)).toBe('123');
   });
 
-  it('should call mutation from login action', async () => {
+  it('should call mutation from logout action', async () => {
     const commit = jest.fn();
     const state = {};
-    userService.login = jest.fn(() => Promise.resolve('email_link'));
 
-    await actions.login({ commit, state }, '123@123.com');
+    await actions.logout({ commit, state });
 
-    expect(userService.login).toHaveBeenCalledTimes(1);
-    expect(commit.mock.calls[0]).toEqual(['setEmail', '123@123.com']);
+    expect(commit).toHaveBeenCalledTimes(1);
+    expect(commit.mock.calls[0]).toEqual(['setEmail', null]);
   });
 
   it('should handle error in the login action', async () => {
