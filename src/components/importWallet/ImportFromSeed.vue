@@ -10,7 +10,16 @@
              aria-describedby="hdkeyPhrase"
              placeholder="Seed phrase"
              required />
-
+     <v-input v-model="walletPassword"
+              label="Wallet password"
+              id="jsonKeystorePassword"
+              name="walletPassword"
+              type="password"
+              validator="required|min:8"
+              data-vv-as="password"
+              aria-describedby="jsonKeystorePassword"
+              placeholder="wallet password"
+              required />
     <v-button className="is-primary is-medium"
               :loading="isCreating"
               @click.prevent="addWalletWithPhrase">Import</v-button>
@@ -28,7 +37,8 @@ export default {
   name: 'import-from-seed',
   data: () => ({
     isCreating: false,
-    hdkeyPhrase: ''
+    hdkeyPhrase: '',
+    walletPassword: ''
   }),
   methods: {
     ...mapActions('accounts', ['addHdWallet']),
@@ -38,7 +48,7 @@ export default {
       await new Promise(res => setTimeout(res, 20));
 
       try {
-        this.addHdWallet(this.hdkeyPhrase);
+        this.addHdWallet({key: this.hdkeyPhrase, password: this.walletPassword});
         router.push('/');
       } catch (e) {
         this.errors.add({

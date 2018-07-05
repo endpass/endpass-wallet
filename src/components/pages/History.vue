@@ -24,9 +24,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import appTransaction from '@/components/Transaction'
 import EthplorerService from '@/services/ethplorer'
-import accounts from '@/mixins/accounts'
 import { Transaction } from '@/class'
 
 export default {
@@ -36,8 +36,12 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      address: state => state.accounts.address && state.accounts.address.getAddressString(),
+      pendingTransactions: state => state.transactions.pendingTransactions
+    }),
     processedTransactions() {
-      const fullTransactions = this.transactions.concat(this.$store.state.accounts.pendingTransactions);
+      const fullTransactions = this.transactions.concat(this.pendingTransactions);
       return fullTransactions.sort((trx1, trx2) => {
         if(typeof trx2.timestamp === 'undefined')
           return 1
@@ -81,8 +85,7 @@ export default {
   },
   components: {
     appTransaction
-  },
-  mixins: [accounts]
+  }
 }
 </script>
 

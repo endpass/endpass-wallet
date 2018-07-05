@@ -10,7 +10,16 @@
              aria-describedby="privateKey"
              placeholder="Private key"
              required />
-
+     <v-input v-model="walletPassword"
+              label="Wallet password"
+              id="jsonKeystorePassword"
+              name="walletPassword"
+              type="password"
+              validator="required|min:8"
+              data-vv-as="password"
+              aria-describedby="jsonKeystorePassword"
+              placeholder="wallet password"
+              required />
     <v-button className="is-primary is-medium"
               :loading="isCreating"
               @click.prevent="addWallet">Import</v-button>
@@ -29,6 +38,7 @@ export default {
   data: () => ({
     isCreating: false,
     privateKey: '',
+    walletPassword: ''
   }),
   methods: {
     ...mapActions('accounts', ['addWalletWithPrivateKey']),
@@ -38,7 +48,7 @@ export default {
       await new Promise(res => setTimeout(res, 20));
 
       try {
-        this.addWalletWithPrivateKey(this.privateKey);
+        this.addWalletWithPrivateKey({ privateKey: this.privateKey, password: this.walletPassword});
         router.push('/');
       } catch (e) {
         this.errors.add({

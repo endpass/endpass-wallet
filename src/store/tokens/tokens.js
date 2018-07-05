@@ -64,7 +64,7 @@ export default {
     },
     subscribeOnTokenUpdates({ dispatch, state, rootState }) {
       //destroy old subscription and recreate new one (in case of addres/provider change)
-      if (rootState.accounts.activeAccount) {
+      if (rootState.accounts.address) {
         if (state.tokensSerializeInterval) {
           clearInterval(state.tokensSerializeInterval);
           state.tokensSubscription.stop();
@@ -105,7 +105,7 @@ export default {
       }, subscribtionsAPIInterval);
     },
     createTokenSubscription({ state, commit, rootState }, nonZerotokens) {
-      const address = rootState.accounts.activeAccount.getAddressString();
+      const address = rootState.accounts.address.getAddressString();
       //remove repetitive tokens
       const filteredSavedTokensTokens = state.savedTokens.filter(
         savedToken =>
@@ -140,7 +140,7 @@ export default {
       commit('saveSubscription', subscription);
     },
     getNonZeroTokens({ rootState, dispatch }) {
-      const address = rootState.accounts.activeAccount.getAddressString();
+      const address = rootState.accounts.address.getAddressString();
       let promise = EthplorerService.getTransactions(address);
       promise.then(() => {
         dispatch('connectionStatus/updateApiErrorStatus', {

@@ -7,12 +7,10 @@
         <v-form>
           <v-input v-model="jsonKeystorePassword"
                    label="V3 JSON keystore password"
-                   id="jsonKeystorePassword"
                    name="jsonKeystorePassword"
                    type="password"
                    validator="required"
                    data-vv-as="password"
-                   key="jsonKeystorePasswordUnique"
                    aria-describedby="jsonKeystorePassword"
                    placeholder="V3 JSON keystore password"
                    required></v-input>

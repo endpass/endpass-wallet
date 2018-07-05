@@ -3,54 +3,55 @@
     <v-form>
 
       <v-input label="Choose a password to encrypt your wallet file"
-               v-model="password"
+               v-model="exportedV3Password"
                type="password"
                name="password"
                id="keystore-pass"
-               v-validate="'required|min:8'"
+               validator="required|min:8"
                aria-describedby="password"
                placeholder="JSON keystore password"
                autocomplete="new-password" />
 
       <v-button :loading="exportingJson"
                 className="is-primary is-medium"
-                @click.prevent="exportJSON">Export</v-button>
+                @click.prevent="openPasswordModal">Export</v-button>
 
     </v-form>
+    <password-modal v-if="passwordModalOpen" @confirm="exportJSON" @close="closePasswordModal"></password-modal>
   </div>
 </template>
 
 <script>
-import accounts from '@/mixins/accounts';
+import { mapState } from 'vuex'
+import PasswordModal from '@/components/modal/PasswordModal'
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
 
 export default {
   data: () => ({
-    password: '',
+    exportedV3Password: '',
     exportingJson: false,
+    passwordModalOpen: false
   }),
+  computed: {
+    ...mapState({
+      wallet: state => state.accounts.wallet
+    })
+  },
   methods: {
-    exportJSON() {
-      if (this.activeAccount) {
+    async exportJSON(password = '') {
+      this.closePasswordModal();
+      if (this.wallet) {
         this.exportingJson = true;
-        this.runExportJsonWorker()
-          .then(this.saveJSON)
-          .catch(this.exportError);
+        await new Promise(res => setTimeout(res, 20));
+        try {
+          this.saveJSON(this.wallet.exportToJSON(password, this.exportedV3Password));
+        } catch (e) {
+          this.exportError(e);
+        }
+        this.exportingJson = false;
       }
-    },
-    runExportJsonWorker() {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          try {
-            const jsonString = this.activeAccount.toV3String(this.password);
-            resolve(jsonString);
-          } catch (e) {
-            reject(e);
-          }
-        }, 20);
-      });
     },
     saveJSON(data) {
       const filename = `endpass_wallet_${this.address}.json`;
@@ -75,13 +76,19 @@ export default {
       });
       console.error(e);
     },
+    openPasswordModal() {
+      this.passwordModalOpen = true;
+    },
+    closePasswordModal() {
+      this.passwordModalOpen = false;
+    }
   },
   components: {
     VForm,
     VInput,
     VButton,
+    PasswordModal
   },
-  mixins: [accounts],
 };
 </script>
 

@@ -40,7 +40,7 @@ export default {
           const pendingLength = state.pendingTransactions.filter(
             tnx => tnx.state === 'pending'
           ).length;
-          transaction.nonce = (nonce + pendingLength).toString();
+          transaction.nonce = transaction.nonce || (nonce + pendingLength).toString();
           const tx = new Tx(transaction.getApiObject(eth));
           dispatch('signTransaction', {transaction: tx, password});
           const serializedTx = tx.serialize();

@@ -17,9 +17,7 @@ export default {
 	},
 	computed: {
 		...mapState({
-	  	blockNumber: state => state.web3.blockNumber,
-	  	account: state => state.accounts.activeAccount,
-	  	balance: state => state.accounts.balance
+	  	blockNumber: state => state.web3.blockNumber
 	  }),
 		...mapGetters('connectionStatus', [
 			'appStatus'

@@ -2,7 +2,7 @@
   <div class="account-chooser field has-addons">
     <div v-if="hdWallet" class="control">
       <div class="select">
-        <select @change="selectWallet(wallet)">
+        <select @change="selectWallet()">
           <option value="" v-for="(wallet, key, index) in wallets"
                   :value="key">
           {{index}}. {{address |truncateAddr}}
@@ -22,14 +22,13 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 import NewAccountModal from '@/components/NewAccountModal'
-import accounts from '@/mixins/accounts'
 
 export default {
   data () {
     return {
-      newAccountModalOpen: false
+      newAccountModalOpen: false,
     }
   },
   computed: {
@@ -40,19 +39,7 @@ export default {
     }),
   },
   methods: {
-    ...mapActions('accounts', {
-      setActiveAccountToStore:'setActiveAccount',
-    }),
-    ...mapMutations('accounts', {
-      selectWallet:'selectWallet',
-    }),
-    setActiveAccount() {
-      let account = this.selectedAccount
-      if (!account) {
-        return
-      }
-      this.setActiveAccountToStore(account);
-    },
+    ...mapMutations('accounts', ['selectWallet']),
     openNewAccountModal() {
       this.newAccountModalOpen = true
     },
@@ -70,7 +57,6 @@ export default {
   },
   components: {
     NewAccountModal
-  },
-  mixins: [accounts]
+  }
 }
 </script>

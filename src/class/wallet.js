@@ -5,8 +5,11 @@ export class Wallet {
     this.getPrivateKey = function(password) {
       return EthWallet.fromV3(v3, password, true).getPrivateKey();
     };
-    this.exportToJSON = function () {
-      return v3
+    this.getPrivateKeyString = function(password) {
+      return EthWallet.fromV3(v3, password, true).getPrivateKeyString();
+    };
+    this.exportToJSON = function (password, exportedV3Password) {
+      return EthWallet.fromV3(v3, password, true).toV3String(exportedV3Password);
     };
     this.getAddressString = function() {
       return v3.address;

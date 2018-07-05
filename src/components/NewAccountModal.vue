@@ -5,9 +5,23 @@
 
       <div v-if="!createdAccount">
         <p class="subtitle">You currently have
-        <strong>{{accounts.length}}</strong> active addresses in your wallet.</p>
+        <strong>{{wallets.length}}</strong> active addresses in your wallet.</p>
         <p class="subtitle">Click the button below to create an additional
       address you can use to receive Ethereum and tokens.</p>
+        <v-form>
+        <v-input v-model="walletPassword"
+                 label="Wallet password"
+                 name="walletPassword"
+                 type="password"
+                 validator="required|min:8"
+                 data-vv-as="password"
+                 aria-describedby="walletPassword"
+                 placeholder="Wallet password"
+                 required></v-input>
+         <v-button :loading="createdingAccount"
+                   className="is-primary is-medium"
+                   @click.prevent="createNewAccount">Create address</v-button>
+        </v-form>
       </div>
       <div v-else>
         <p class="subtitle">New Address Created</p>
@@ -18,7 +32,7 @@
           </div>
           <div class="message-body">
             <p>Use this address to receive Ether and tokens.</p>
-            <p class="code address">{{createdAccount.getAddressString()}}</p>
+            <p class="code address">{{address}}</p>
           </div>
         </div>
 
@@ -29,58 +43,49 @@
           <div class="message-body">
             <p class="bold">Save this for your records and DO NOT share it
             with anyone!</p>
-            <p class="code">{{createdAccount.getPrivateKeyString()}}</p>
+            <p class="code">{{privateKey}}</p>
           </div>
         </div>
 
       </div>
-
-      <div slot="footer">
-        <div v-if="!createdAccount">
-          <a class="button is-primary" @click="createNewAccount">Create
-            New Address</a>
-          <a class="button" @click="close">Cancel</a>
-        </div>
-        <div v-else>
-          <a class="button is-primary" @click="close">Close</a>
-        </div>
-      </div>
-
     </v-modal>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import VModal from '@/components/ui/VModal'
+import VInput from '@/components/ui/form/VInput.vue';
+import VForm from '@/components/ui/form/VForm.vue';
+import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
   data () {
     return {
-      createdAccount: null
+      createdAccount: null,
+      createdingAccount: false,
+      privateKey: '',
+      walletPassword: ''
     }
   },
   computed: {
-    hdWallet () {
-      return this.$store.state.accounts.hdWallet
-    },
-    // All accounts that have been created
-    accounts () {
-      return this.$store.state.accounts.accounts
-    }
+    ...mapState({
+      wallet: state => state.accounts.wallet,
+      address: state => state.accounts.address && state.accounts.address.getAddressString(),
+      wallets: state => state.accounts.wallets
+    })
   },
   methods: {
-    ...mapActions('accounts', ['addAccount']),
+    ...mapActions('accounts', ['generateWallet']),
     // Create the next account derived from the HD wallet seed
     // TODO consider gap limit if multiple hd accounts are already used
-    createNewAccount() {
-      if (!this.hdWallet) {
-        return
-      }
-      let i = this.accounts.length
-      let account = this.hdWallet.deriveChild(i).getWallet()
-      this.addAccount(account);
-      this.createdAccount = account
+    async createNewAccount() {
+      this.createdingAccount = true;
+      await new Promise(res => setTimeout(res, 20));
+      this.generateWallet(this.walletPassword);
+      this.privateKey = this.wallet.getPrivateKeyString(this.walletPassword);
+      this.createdingAccount = false;
+      this.createdAccount = true;
     },
     close() {
       this.$emit('close')
@@ -88,6 +93,9 @@ export default {
   },
   components: {
     VModal,
+    VInput,
+    VForm,
+    VButton
   }
 }
 </script>

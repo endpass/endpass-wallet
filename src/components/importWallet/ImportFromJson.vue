@@ -34,6 +34,17 @@
              placeholder="V3 JSON keystore password"
              required />
 
+     <v-input v-model="walletPassword"
+              label="Wallet password"
+              id="jsonKeystorePassword"
+              name="walletPassword"
+              type="password"
+              validator="required|min:8"
+              data-vv-as="password"
+              aria-describedby="jsonKeystorePassword"
+              placeholder="wallet password"
+              required />
+
     <v-button className="is-primary is-medium"
               :loading="isCreating"
               @click.prevent="parseJson">Import</v-button>
@@ -54,6 +65,7 @@ export default {
     isCreating: false,
     jsonKeystorePassword: '',
     fileName: '',
+    walletPassword: '',
     file: null,
   }),
   methods: {
@@ -71,7 +83,9 @@ export default {
       try {
         this.addWalletWithV3({
           json: e.target.result,
-          key: this.jsonKeystorePassword});
+          key: this.jsonKeystorePassword,
+          walletPassword: this.walletPassword
+        });
         router.push('/');
       } catch (e) {
         let error = {

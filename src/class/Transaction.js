@@ -148,7 +148,7 @@ export class Transaction {
   }
   getUpGasPrice() {
     return BigNumber(this.gasPrice)
-      .times('1.1')
+      .plus('10')
       .integerValue(BigNumber.ROUND_CEIL);
   }
   clone() {
