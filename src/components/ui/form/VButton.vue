@@ -18,7 +18,7 @@ export default {
   inject: {
     form: {
       default: () => ({
-        isFormValid: false,
+        isFormValid: true,
       }),
     },
   },

@@ -27,7 +27,13 @@ describe('HistoryPage', () => {
     store = new Vuex.Store({
       state: {
         accounts: {
-          activeAccount: wallet,
+          address: {
+            getAddressString() {
+              return '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b'
+            }
+          },
+        },
+        transactions: {
           pendingTransactions: [{"timestamp":1524505925,"from":"0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b","to":"0x7c59542b20002ed255598172cab48b86d865dfbb","hash":"0x7fcb1e71def6d0d353251831f46d60401e6321b5e0b0b135085be4688ca2a9b1","value":0.009979,"input":"0x","success":true}]
         },
         web3: {
@@ -71,7 +77,7 @@ describe('HistoryPage', () => {
     moxios.wait(() => {
       let elems = wrapper.vm.transactions;
       expect(elems.length).toBe(2);
-      expect(elems[0].to).toBe(wrapper.vm.address)
+      expect(elems[0].to).toBe(wallet.getAddressString())
       done();
     })
   })
@@ -104,8 +110,8 @@ describe('HistoryPage', () => {
       wrapper.vm.$nextTick(() => {
         let elems = wrapper.vm.processedTransactions;
         expect(elems.length).toBe(3);
-        expect(elems[1].to).toBe(wrapper.vm.address)
-        expect(elems[2].timestamp).toBe(store.state.accounts.pendingTransactions[0].timestamp);
+        expect(elems[2].from).toBe(wrapper.vm.address)
+        expect(elems[2].timestamp).toBe(store.state.transactions.pendingTransactions[0].timestamp);
         done();
       })
     })

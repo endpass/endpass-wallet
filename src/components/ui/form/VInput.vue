@@ -54,7 +54,7 @@ export default {
     },
     validator: {
       type: String,
-      default: false,
+      default: '',
     },
     ariaDescribedby: {
       type: String,

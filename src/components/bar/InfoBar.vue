@@ -45,7 +45,6 @@ import AccountChooser from '@/components/bar/AccountChooser.vue'
 import ProviderSelect from '@/components/bar/ProviderSelect.vue'
 import SyncStatus from '@/components/bar/SyncStatus.vue'
 import Balance from '@/components/Balance'
-import accounts from '@/mixins/accounts'
 import net from '@/mixins/net'
 
 export default {
