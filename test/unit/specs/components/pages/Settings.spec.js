@@ -45,22 +45,22 @@ describe('SettingsPage', () => {
     expect(wrapper.vm.$data.newSettings).toEqual(wrapper.vm.settings);
   });
 
-  // it('should call update action when click', () => {
-  //   wrapper = mount(SettingsPage, options);
-  //
-  //   const newSettings = {
-  //     fiatCurrency: 'AUD',
-  //   };
+  it('should call update action when click', () => {
+    wrapper = mount(SettingsPage, options);
 
-    // wrapper.setData({ newSettings });
+    const newSettings = {
+      fiatCurrency: 'AUD',
+    };
 
-    // wrapper.find('a#save-button').trigger('click');
+    wrapper.setData({ newSettings });
 
-    // expect(actions.updateSettings.mock.calls).toHaveLength(1);
-    // expect(actions.updateSettings).toBeCalledWith(
-    //   expect.any(Object),
-    //   newSettings,
-    //   undefined
-    // );
+    wrapper.find('a#save-button').trigger('click');
+
+    expect(actions.updateSettings.mock.calls).toHaveLength(1);
+    expect(actions.updateSettings).toBeCalledWith(
+      expect.any(Object),
+      newSettings,
+      undefined
+    );
   });
 });
