@@ -73,7 +73,7 @@ export default new Router({
   ]
 })
 function hasWalletGuard (to, from, next) {
-  if(store.state.accounts.activeAccount) {
+  if(store.state.accounts.address) {
     next();
   } else {
     next(from.fullPath);
@@ -81,7 +81,7 @@ function hasWalletGuard (to, from, next) {
 }
 
 function noWalletGuard(to, from, next) {
-  if(!store.state.accounts.activeAccount) {
+  if(!store.state.accounts.address) {
     next();
   } else {
     next(from.fullPath);
@@ -89,7 +89,7 @@ function noWalletGuard(to, from, next) {
 }
 
 function privateWalletGuard(to, from, next) {
-  if(!store.state.accounts.activeAccount._privKey !== null) {
+  if(store.state.accounts.wallet) {
     next();
   } else {
     next(from.fullPath);

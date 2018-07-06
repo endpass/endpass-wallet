@@ -7,7 +7,12 @@
 <script>
 export default {
   name: 'v-form',
-  inject: ['$validator'],
+  props: {
+    id: {
+      type: String,
+      default: null,
+    },
+  },
   provide() {
     const form = {};
     Object.defineProperty(form, 'isFormValid', {
@@ -15,12 +20,6 @@ export default {
       get: () => this.isFormValid,
     });
     return { form };
-  },
-  props: {
-    id: {
-      type: String,
-      default: null,
-    },
   },
   computed: {
     isFormValid() {
@@ -37,14 +36,11 @@ export default {
       return !(hasInvalidField || errors.count());
     },
   },
-  watch: {
-    isFormValid: {
-      handler(newVal) {
-        this.$emit('input', newVal);
-      },
-      immediate: true,
-    },
-  },
+  methods: {
+    validateFrom() {
+      this.$emit('formValid', this.isFormValid());
+    }
+  }
 };
 </script>
 

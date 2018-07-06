@@ -48,15 +48,11 @@ describe('SettingsPage', () => {
   it('should call update action when click', () => {
     wrapper = mount(SettingsPage, options);
 
-    expect(wrapper.vm.isFormValid).toBeFalsy();
-
     const newSettings = {
       fiatCurrency: 'AUD',
     };
 
     wrapper.setData({ newSettings });
-
-    expect(wrapper.vm.isFormValid).toBeTruthy();
 
     wrapper.find('a#save-button').trigger('click');
 

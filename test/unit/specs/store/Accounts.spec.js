@@ -7,16 +7,21 @@ const { state, mutations, actions } = store;
 
 describe('accounts store', () => {
   it('should set wallet value', () => {
-    mutations.setActiveAccount(state, 1);
-    expect(state.activeAccount).toBe(1);
+    state.wallets = {
+      '0x3c75226555FC496168d48B88DF83B95F16771F37': 1
+    }
+    mutations.selectWallet(state, '0x3c75226555FC496168d48B88DF83B95F16771F37');
+    expect(state.wallet).toBe(1);
   });
 
   it('should add a new account and set it active', () => {
-    mutations.addAccount(state, 2);
-    mutations.setActiveAccount(state, 2);
-    expect(state.accounts.length).toBe(1);
-    expect(state.accounts[0]).toBe(2);
-    expect(state.activeAccount).toBe(2);
+    mutations.addWallet(state, {
+      address: '0x3c75226555FC496168d48B88DF83B95F16771F37',
+      wallet: 2
+    });
+    mutations.selectWallet(state, '0x3c75226555FC496168d48B88DF83B95F16771F37');
+    expect(state.wallets['0x3c75226555FC496168d48B88DF83B95F16771F37']).toBe(2);
+    expect(state.wallet).toBe(2);
   });
 
   it('should set new settings', () => {

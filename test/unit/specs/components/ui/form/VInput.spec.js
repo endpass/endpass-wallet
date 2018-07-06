@@ -57,9 +57,9 @@ describe('VInput', () => {
 
     expect(wrapper.find('label').text()).toBe('Some Label');
     expect(wrapper.find('p').text()).toBe('Some error');
-    expect(input.element.value).toBe('some value');    
+    expect(input.element.value).toBe('some value');
     expect(input.attributes().type).toBe('email');
-    
+
     Object.keys(options).forEach(prop => {
       expect(input.attributes()[camelToKebab(prop)]).toBe(options[prop]);
     })

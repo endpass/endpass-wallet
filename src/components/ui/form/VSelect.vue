@@ -3,7 +3,7 @@
     <label class="label"
            v-if="label">{{ label }}</label>
     <div class="control select">
-      <select v-model="selected">
+      <select v-model="selected" :name="name" v-validate="validator">
         <option v-for="item in options"
                 :key="item.val || item"
                 :value="item.val || item">{{ item.text || item }}</option>
@@ -20,6 +20,14 @@ export default {
       type: String,
       default: null,
     },
+    validator: {
+      type: String,
+      default: '',
+    },
+    name: {
+      type: String,
+      default: '',
+    },
     options: {
       type: Array,
       default: () => [],
@@ -28,6 +36,9 @@ export default {
       type: String,
       default: null,
     },
+  },
+  inject: {
+    $validator: '$validator'
   },
   computed: {
     selected: {
@@ -38,7 +49,7 @@ export default {
         this.$emit('input', newVal);
       },
     },
-  },
+  }
 };
 </script>
 

@@ -69,7 +69,8 @@
       </div>
     </div>
 
-    <resend-modal :transaction="transaction" v-if="resendModalOpen" @close="closeResendModal"/>
+    <resend-modal :transaction="transactionToSend" v-if="resendModalOpen" @close="closeResendModal" @confirm="confirmResend"/>
+    <password-modal v-if="passwordModalOpen" @close="closePassword" @confirm="confirmPassword"/>
   </div>
 </template>
 
@@ -77,16 +78,18 @@
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import { Transaction } from '@/class'
-import ResendModal from './ResendModal';
-import accounts from '@/mixins/accounts'
-import { mapState } from 'vuex';
-import { mapGetters } from 'vuex'
+import ResendModal from './ResendModal'
+import PasswordModal from '@/components/modal/PasswordModal'
+import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
 
 export default {
   props: ['transaction'],
   data () {
     return {
-      resendModalOpen: false
+      resendModalOpen: false,
+      passwordModalOpen: false,
+      transactionToSend: null,
+      state: null
     }
   },
   computed: {
@@ -100,8 +103,34 @@ export default {
     },
   },
   methods: {
+    ...mapActions('transactions', ['sendTransaction']),
+    ...mapMutations('transactions', ['removeTransaction']),
     resend() {
       this.resendModalOpen = true
+      this.state = 'resent'
+    },
+    requestPassword() {
+      this.passwordModalOpen = true;
+    },
+    closePassword() {
+      this.passwordModalOpen = false;
+    },
+    confirmPassword(password = '') {
+      this.sendTransaction({ transaction: this.transactionToSend, password}).then(() => {
+        this.transaction.status = 'canseled';
+        this.$notify({
+          title: 'Successful',
+          text: `Transaction was ${this.state}`,
+          type: 'is-info',
+        });
+      })
+      .catch(e => {
+        this.$notify(e);
+      });
+    },
+    confirmResend(transaction) {
+      this.transactionToSend = transaction;
+      this.requestPassword();
     },
     closeResendModal() {
       this.resendModalOpen = false
@@ -109,17 +138,12 @@ export default {
     cansel() {
       if(this.transaction.date)
         return;
-      const cancelTransaction = this.transaction.clone();
-      cancelTransaction.value = '0';
-      cancelTransaction.to = this.address;
-      cancelTransaction.gasPrice = cancelTransaction.getUpGasPrice();
-      let tx = new Tx(cancelTransaction.getApiObject(this.web3.eth));
-      tx.sign(this.activeAccount.getPrivateKey());
-      var serializedTx = tx.serialize();
-      this.$store.state.web3.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
-      .on('transactionHash', (hash) => {
-        this.$store.commit('accounts/canselTransaction', this.transaction.hash);
-      });
+        this.state = 'canseled'
+      this.transactionToSend = this.transaction.clone();
+      this.transactionToSend.value = '0';
+      this.transactionToSend.to = this.address;
+      this.transactionToSend.gasPrice = this.transactionToSend.getUpGasPrice();
+      this.requestPassword();
     },
     parsePata() {
       let dataString = this.transaction.data || '0x';
@@ -127,9 +151,9 @@ export default {
     }
   },
   components: {
-    ResendModal
-  },
-  mixins: [accounts]
+    ResendModal,
+    PasswordModal
+  }
 }
 </script>
 

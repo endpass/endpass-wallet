@@ -4,14 +4,22 @@
              label="Seed phrase"
              id="hdkeySeed"
              name="hdkeyPhrase"
-             v-validate="'required|seed_phrase'"
-             @input="handleInput"
+             validator="required|seed_phrase"
              data-vv-as="seed phrase"
              key="hdkeyPhraseUnique"
              aria-describedby="hdkeyPhrase"
              placeholder="Seed phrase"
              required />
-
+     <v-input v-model="walletPassword"
+              label="Wallet password"
+              id="jsonKeystorePassword"
+              name="walletPassword"
+              type="password"
+              validator="required|min:8"
+              data-vv-as="password"
+              aria-describedby="jsonKeystorePassword"
+              placeholder="wallet password"
+              required />
     <v-button className="is-primary is-medium"
               :loading="isCreating"
               @click.prevent="addWalletWithPhrase">Import</v-button>
@@ -19,10 +27,8 @@
 </template>
 
 <script>
-import Bip39 from 'bip39';
-import HDKey from 'ethereumjs-wallet/hdkey';
 import router from '@/router';
-import { mapActions, mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
@@ -32,27 +38,18 @@ export default {
   data: () => ({
     isCreating: false,
     hdkeyPhrase: '',
-    mnemonic: {
-      // phrase: '', //BIP39 mnemonic
-      // seed: '', //Derived from mnemonic phrase
-      path: `m/44'/60'/0'/0`, //Derivation path
-    },
+    walletPassword: ''
   }),
   methods: {
-    ...mapActions('accounts', ['addAccount']),
-    ...mapMutations('accounts', ['setWallet']),
-    handleInput() {
-      this.errors.removeById('wrongPhrase');
-      this.$validator.validate();
-    },
+    ...mapActions('accounts', ['addHdWallet']),
     async addWalletWithPhrase() {
       this.isCreating = true;
 
-      let hdWallet;
+      await new Promise(res => setTimeout(res, 20));
 
       try {
-        hdWallet = this.createWalletWithPrase();
-        this.setWallet(hdWallet);
+        this.addHdWallet({key: this.hdkeyPhrase, password: this.walletPassword});
+        router.push('/');
       } catch (e) {
         this.errors.add({
           field: 'hdkeyPhrase',
@@ -62,23 +59,7 @@ export default {
         console.error(e);
       }
 
-      if (hdWallet) {
-        try {
-          const account = hdWallet.deriveChild(0).getWallet();
-          await this.addAccount(account);
-          router.push('/');
-        } catch (e) {
-          console.error(e);
-        }
-      }
-      
       this.isCreating = false;
-    },
-    createWalletWithPrase() {
-      const seed = Bip39.mnemonicToSeed(this.hdkeyPhrase);
-      const hdKey = HDKey.fromMasterSeed(seed);
-      const hdWallet = hdKey.derivePath(this.mnemonic.path);
-      return hdWallet;
     },
   },
   components: {

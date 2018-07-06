@@ -1,8 +1,8 @@
 <template>
   <div class="export-private-key">
-    <div v-if="!showPrivateKey">
+    <div v-if="!privateKey">
       <p class="subtitle">Click the button below to display your private key</p>
-      <a class="button is-primary" @click="showPrivateKey=true">Show Private
+      <a class="button is-primary" @click="openPasswordModal">Show Private
       Key</a>
     </div>
     <div v-else>
@@ -10,27 +10,45 @@
       anyone!</p>
       <p class="code">{{privateKey}}</p>
       <p>
-        <a class="button is-light" @click="showPrivateKey=false">Close</a>
+        <a class="button is-light" @click="privateKey=null">Close</a>
       </p>
     </div>
+    <password-modal v-if="passwordModalOpen" @close="closePasswordModal" @confirm="getPrivateKey"></password-modal>
   </div>
 </template>
 
 
 <script>
-import accounts from '@/mixins/accounts'
+
+import PasswordModal from '@/components/modal/PasswordModal'
+import { mapState } from 'vuex';
 
 export default {
   data () {
     return {
-      showPrivateKey: false
+      privateKey: null,
+      passwordModalOpen: false
     }
   },
   computed: {
-    privateKey() {
-      return this.activeAccount.getPrivateKeyString();
-    }
+    ...mapState({
+      wallet: state => state.accounts.wallet
+    })
   },
-  mixins: [accounts]
+  methods : {
+    openPasswordModal() {
+      this.passwordModalOpen = true;
+    },
+    closePasswordModal() {
+      this.passwordModalOpen = false;
+    },
+    async getPrivateKey(password = '') {
+      await new Promise(res => setTimeout(res, 20));
+      this.privateKey = this.wallet.getPrivateKeyString(password);
+    },
+  },
+  components: {
+    PasswordModal
+  }
 }
 </script>

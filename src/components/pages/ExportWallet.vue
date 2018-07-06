@@ -57,7 +57,7 @@
 <script>
 import ExportToJson from '@/components/ExportToJson.vue'
 import ExportToPrivateKey from '@/components/ExportToPrivateKey.vue'
-import accounts from '@/mixins/accounts'
+import { mapState } from 'vuex';
 
 export default {
   data () {
@@ -65,11 +65,15 @@ export default {
       exportType: 'privateKey',
     }
   },
+  computed: {
+    ...mapState({
+      address: state => state.accounts.address && state.accounts.address.getAddressString(),
+    })
+  },
   components: {
     ExportToJson,
     ExportToPrivateKey
-  },
-  mixins: [accounts]
+  }
 }
 </script>
 

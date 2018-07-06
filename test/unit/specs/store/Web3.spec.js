@@ -66,8 +66,10 @@ describe('web3 store', async () => {
       store.actions.changeNetwork,
       3,
       {
-        accounts: {
-          activeAccount: true
+        state: {
+          accounts: {
+            wallet: null
+          },
         },
         getters: {
           networks: [

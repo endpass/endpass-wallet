@@ -27,13 +27,23 @@
              id="jsonKeystorePassword"
              name="jsonKeystorePassword"
              type="password"
-             v-validate="'required|min:8'"
-             @input="handleInput"
+             validator="required|min:8"
              data-vv-as="password"
              key="jsonKeystorePasswordUnique"
              aria-describedby="jsonKeystorePassword"
              placeholder="V3 JSON keystore password"
              required />
+
+     <v-input v-model="walletPassword"
+              label="Wallet password"
+              id="jsonKeystorePassword"
+              name="walletPassword"
+              type="password"
+              validator="required|min:8"
+              data-vv-as="password"
+              aria-describedby="jsonKeystorePassword"
+              placeholder="wallet password"
+              required />
 
     <v-button className="is-primary is-medium"
               :loading="isCreating"
@@ -55,15 +65,11 @@ export default {
     isCreating: false,
     jsonKeystorePassword: '',
     fileName: '',
+    walletPassword: '',
     file: null,
   }),
   methods: {
-    ...mapActions('accounts', ['addAccount']),
-    ...mapMutations('accounts', ['setWallet']),
-    handleInput() {
-      this.errors.removeById('wrongPass');
-      this.$validator.validate();
-    },
+    ...mapActions('accounts', ['addWalletWithV3']),
     parseJson() {
       const reader = new FileReader();
       reader.onload = this.addWalletWithJson.bind(this);
@@ -74,10 +80,13 @@ export default {
 
       await new Promise(res => setTimeout(res, 20));
 
-      let wallet;
-
       try {
-        wallet = this.createWalletWithJson(e);
+        this.addWalletWithV3({
+          json: e.target.result,
+          key: this.jsonKeystorePassword,
+          walletPassword: this.walletPassword
+        });
+        router.push('/');
       } catch (e) {
         let error = {
           field: 'jsonKeystorePassword',
@@ -100,19 +109,7 @@ export default {
         console.error(e);
       }
 
-      if (wallet) {
-        try {
-          await this.addAccount(wallet);
-          router.push('/');
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
       this.isCreating = false;
-    },
-    createWalletWithJson(e) {
-      return EthWallet.fromV3(e.target.result, this.jsonKeystorePassword, true);
     },
     setFile(e) {
       this.errors.removeById('wrongFile');

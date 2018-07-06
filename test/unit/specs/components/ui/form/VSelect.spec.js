@@ -1,4 +1,5 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
+import VeeValidate from 'vee-validate';
 
 import VSelect from '@/components/ui/form/VSelect.vue';
 
@@ -8,7 +9,11 @@ describe('VSelect', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(VSelect, { localVue });
+    wrapper = shallow(VSelect, { localVue,
+      provide: () => ({
+        $validator: new VeeValidate.Validator(),
+      })
+    });
   });
 
   it('should render props', () => {

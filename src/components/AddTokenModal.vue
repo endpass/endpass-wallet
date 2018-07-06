@@ -113,7 +113,7 @@ export default {
   computed: {
     ...mapState({
       web3: state => state.web3.web3,
-      address: state => state.accounts.activeAccount.getAddressString()
+      address: state => state.accounts.address.getAddressString()
     }),
     isFormValid() {
       const hasInvalidField = Object.keys(this.fields).some(

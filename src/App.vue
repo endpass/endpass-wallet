@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="app-container">
 
-    <app-nav class="app-section" :active-account="!!activeAccount"></app-nav>
+    <app-nav class="app-section"></app-nav>
     <info-bar class="app-section"></info-bar>
     <notifications position="top center" width="100%" :speed="500"
                                          :duration="5000" classes="app-notification"/>
@@ -15,7 +15,6 @@
 <script>
 import AppNav from '@/components/AppNav.vue'
 import InfoBar from '@/components/bar/InfoBar.vue'
-import accounts from '@/mixins/accounts'
 import errorHandler from '@/mixins/errorHandler';
 
 export default {
@@ -24,7 +23,7 @@ export default {
     AppNav,
     InfoBar
   },
-  mixins: [accounts, errorHandler],
+  mixins: [errorHandler],
 }
 </script>
 
