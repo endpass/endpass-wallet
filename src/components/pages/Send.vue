@@ -103,7 +103,7 @@
                         :loading="isSending"
                         :disabled="isSyncing">Send</v-button>
 
-              <div v-if="transaction.hash">{{ transaction.hash }}</div>
+              <div v-if="transactionHash">{{ transactionHash }}</div>
             </v-form>
           </div>
         </div>
@@ -124,6 +124,7 @@
 import { BigNumber } from 'bignumber.js'
 import { Transaction } from '@/class'
 import { mapState, mapActions } from 'vuex';
+import web3 from 'web3';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
@@ -146,6 +147,7 @@ export default {
     transaction: new Transaction(defaultTnx),
     estimateGasCost: 0,
     priceInFiat: '0.00',
+    transactionHash: null,
     lastInputPrice: 'amount',
     isTransactionModal: false,
     isPasswordModal: false
@@ -201,7 +203,7 @@ export default {
         return this.transaction.tokenInfo.balance || '0';
       }
 
-      const { fromWei } = this.web3.utils;
+      const { fromWei } = web3.utils;
       const balanceBN = BigNumber(this.balance || '0');
       const estimateGasCostBN = BigNumber(this.estimateGasCost || '0');
       const amountBN = balanceBN.minus(estimateGasCostBN);
@@ -244,7 +246,8 @@ export default {
       this.isSending = true;
       this.transaction.from = this.address
       this.togglePasswordModal();
-      this.sendTransaction({ transaction: this.transaction, password}).then(() => {
+      this.sendTransaction({ transaction: this.transaction, password}).then((hash) => {
+        this.transactionHash = hash;
         this.isSending = false;
         this.resetForm();
         this.$notify({

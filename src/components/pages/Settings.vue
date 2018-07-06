@@ -11,6 +11,8 @@
 
               <v-select v-model="newSettings.fiatCurrency"
                         label="Fiat Currency"
+                        name='fiatCurrency'
+                        :validator='`is_not:${settings.fiatCurrency}`'
                         :options="availableCurrencies" />
 
               <v-button id="save-button"

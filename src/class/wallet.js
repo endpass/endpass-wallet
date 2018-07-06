@@ -14,6 +14,9 @@ export class Wallet {
     this.getAddressString = function() {
       return v3.address;
     };
+    this.getJson = function() {
+      return v3;
+    };
   }
   signTransaction(transaction, password) {
     return transaction.sign(this.getPrivateKey(password));

@@ -22,7 +22,8 @@ export default {
   components: {
     AppNav,
     InfoBar
-  }
+  },
+  mixins: [errorHandler],
 }
 </script>
 

@@ -23,7 +23,17 @@ export default {
   },
   computed: {
     isFormValid() {
-      return !this.errors.count();
+      const { fields, errors } = this;
+
+      if (!(fields || errors)) {
+        return true;
+      }
+
+      const hasInvalidField = Object.keys(fields).some(
+        field => fields[field] && fields[field].invalid
+      );
+
+      return !(hasInvalidField || errors.count());
     },
   },
   methods: {

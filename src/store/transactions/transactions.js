@@ -51,7 +51,7 @@ export default {
               transaction.state = 'pending';
               transaction.hash = hash;
               commit('addTransaction', transaction);
-              res()
+              res(hash);
             })
             .on('confirmation', (confNumber, { transactionHash }) => {
               if (confNumber > 0) {
