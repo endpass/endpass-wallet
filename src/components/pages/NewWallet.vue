@@ -13,7 +13,13 @@
               <p>Your wallet recovery phrase</p>
               <p class="code" data-test="seed-phrase">{{mnemonic.phrase}}</p>
             </div>
-            <router-link to="/" class="button is-primary">I have written down my seed phrase</router-link>
+            <router-link
+              to="/"
+              class="button is-primary"
+              :disabled="!!remainingSeedPhraseTimeout"
+            >
+              I have written down my seed phrase {{getRemainingSeedPhraseTimeout}}
+            </router-link>
           </div>
         </div>
       </div>
@@ -42,6 +48,10 @@ import router from '@/router'
 import Bip39 from 'bip39'
 import EthWallet from 'ethereumjs-wallet'
 import HDKey from 'ethereumjs-wallet/hdkey'
+import VueTimers from 'vue-timers/mixin'
+
+const SEED_PHRASE_TIMEOUT_SEC = 10;
+const UPDATE_SEED_PHRASE_INTERVAL_MSEC = 1000;
 
 export default {
   data () {
@@ -51,13 +61,17 @@ export default {
         phrase: '', //BIP39 mnemonic
         seed: '', //Derived from mnemonic phrase
         path: `m/44'/60'/0'/0` //Derivation path
-      }
+      },
+      remainingSeedPhraseTimeout: SEED_PHRASE_TIMEOUT_SEC
     }
   },
   computed: {
     // Wallet has been created
     walletCreated () {
       return this.mnemonic.seed && !this.creatingWallet
+    },
+    getRemainingSeedPhraseTimeout() {
+      return this.remainingSeedPhraseTimeout > 0 ? `(${this.remainingSeedPhraseTimeout})` : '';
     }
   },
   methods: {
@@ -92,6 +106,7 @@ export default {
       let account = hdWallet.deriveChild(0).getWallet();
       this.$store.dispatch('accounts/addAccount', account);
       this.creatingWallet = false;
+      this.$timer.start('seedPhrase');
     },
     throwCreationError(error) {
       this.creatingWallet = false;
@@ -101,6 +116,23 @@ export default {
         type: 'is-danger',
       });
       console.error(error);
+    },
+    handleSeedPhraseTimer() {
+      this.remainingSeedPhraseTimeout -= UPDATE_SEED_PHRASE_INTERVAL_MSEC / 1000;
+
+      if (this.remainingSeedPhraseTimeout <= 0) {
+        this.$timer.stop('seedPhrase');
+      }
+    }
+  },
+  mixins: [VueTimers],
+  timers: {
+    seedPhrase: {
+      repeat: true,
+      time: UPDATE_SEED_PHRASE_INTERVAL_MSEC,
+      callback: function() {
+        this.handleSeedPhraseTimer();
+      }
     }
   }
 }
