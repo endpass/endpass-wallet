@@ -2,7 +2,7 @@ import store from '@/store/web3/web3'
 import LocalStorageMock from '../../localStorageMock.js'
 import testAction from '../ActionTestingHelper'
 
-jest.mock('@/services/user');
+jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
 global.localStorage = LocalStorageMock;
 
 const commit = state => (type, payload) =>

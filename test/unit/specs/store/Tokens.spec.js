@@ -6,7 +6,7 @@ import Web3 from 'web3'
 
 jest.mock('eth-token-tracker');
 jest.mock('@/services/ethplorer');
-jest.mock('@/services/user');
+jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
 
 Web3.providers.HttpProvider.prototype.sendAsync =
   Web3.providers.HttpProvider.prototype.send;
