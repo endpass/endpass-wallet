@@ -1,5 +1,6 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
+import Notifications from 'vue-notification'
 import VueTimers from 'vue-timers/mixin'
 
 import NewWallet from '@/components/pages/NewWallet.vue';
@@ -12,7 +13,23 @@ describe('NewWallet page', () => {
       let wrapper;
 
       beforeAll(() => {
-        wrapper = shallow(NewWallet);
+        const actions = {
+          'accounts/addHdWallet': jest.fn()
+        };
+        const store = new Vuex.Store({
+          state: {
+            accounts: {
+              hdWallet: null
+            }
+          },
+          actions });
+        const localVue = createLocalVue();
+
+        wrapper = shallow(NewWallet, {
+          localVue,
+          store,
+          mixins: [VueTimers]
+        });
       });
 
       it('should return empty string', () => {
@@ -37,23 +54,59 @@ describe('NewWallet page', () => {
   });
 
   describe('methods', () => {
-    describe('commitWalletCreationChanges', () => {
+    describe('createWallet', () => {
       let wrapper;
 
       beforeAll(() => {
         const actions = {
-          'accounts/addAccount': jest.fn()
+          'addHdWallet': jest.fn()
         };
-        const mutations = {
-          'accounts/setWallet': jest.fn()
-        };
-        const store = new Vuex.Store({ actions, mutations });
+        const store = new Vuex.Store({
+          modules:{
+            accounts: {
+              state: {
+                hdWallet: null,
+              },
+              namespaced: true,
+              actions
+            }
+          }
+        });
         const localVue = createLocalVue();
-        const mockHdWallet = {
-          deriveChild: jest.fn(() => ({
-            getWallet: jest.fn(() => 'wallet')
-          }))
+
+        localVue.use(Notifications);
+        wrapper = shallow(NewWallet, {
+          localVue,
+          store,
+          mixins: [VueTimers]
+        })
+        wrapper.vm.createWallet();
+        let spy = spyOn(wrapper.vm.$timer, 'start');
+      });
+
+      // it('should start seed phrase timer', (done) => {
+      //   jest.runOnlyPendingTimers();
+      //   jest.advanceTimersByTime(50);
+      //   expect(wrapper.vm.$timer.start).toHaveBeenCalledTimes(1);
+      //   expect(wrapper.vm.$timer.start).toHaveBeenCalledWith('seedPhrase');
+      // });
+    });
+
+    describe('handleSeedPhraseTimer', () => {
+      let wrapper;
+
+      beforeEach(() => {
+        const actions = {
+          'accounts/addHdWallet': jest.fn()
         };
+        const store = new Vuex.Store({
+          state: {
+            accounts: {
+              hdWallet: null
+            }
+          },
+          actions });
+        const localVue = createLocalVue();
 
         wrapper = shallow(NewWallet, {
           localVue,
@@ -61,21 +114,6 @@ describe('NewWallet page', () => {
           mixins: [VueTimers]
         });
 
-        spyOn(wrapper.vm.$timer, 'start');
-        wrapper.vm.commitWalletCreationChanges(mockHdWallet);
-      });
-
-      it('should start seed phrase timer', () => {
-        expect(wrapper.vm.$timer.start).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$timer.start).toHaveBeenCalledWith('seedPhrase');
-      });
-    });
-
-    describe('handleSeedPhraseTimer', () => {
-      let wrapper;
-
-      beforeEach(() => {
-        wrapper = shallow(NewWallet);
 
         spyOn(wrapper.vm.$timer, 'stop');
       });
@@ -106,7 +144,23 @@ describe('NewWallet page', () => {
     let wrapper;
 
     beforeAll(() => {
-      wrapper = shallow(NewWallet);
+      const actions = {
+        'accounts/addHdWallet': jest.fn()
+      };
+      const store = new Vuex.Store({
+        state: {
+          accounts: {
+            hdWallet: null
+          }
+        },
+        actions });
+      const localVue = createLocalVue();
+
+      wrapper = shallow(NewWallet, {
+        localVue,
+        store,
+        mixins: [VueTimers]
+      });
     });
 
     describe('seedPhrase', () => {

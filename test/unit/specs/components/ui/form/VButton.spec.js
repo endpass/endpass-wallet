@@ -43,7 +43,7 @@ describe('VButton', () => {
     expect(button.attributes().disabled).toBeFalsy();
 
     button.trigger('click');
-    await new Promise((res, rej) => {setTimeout(()=> {res()}, 20)})
+    await new Promise((res, rej) => {setTimeout(()=> {res()}, 40)})
     expect(wrapper.emitted().click.length).toBe(1);
 
     wrapper.setProps({ disabled: true });
@@ -57,7 +57,7 @@ describe('VButton', () => {
 
     button.trigger('click');
 
-    await new Promise((res, rej) => {setTimeout(()=> {res()}, 20)})
+    await new Promise((res, rej) => {setTimeout(()=> {res()}, 40)})
     expect(wrapper.emitted().click.length).toBe(2);
     done()
   });
