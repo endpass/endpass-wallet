@@ -54,35 +54,35 @@ describe('NewWallet page', () => {
   });
 
   describe('methods', () => {
-    describe('createWallet', () => {
-      let wrapper;
-
-      beforeAll(() => {
-        const actions = {
-          'addHdWallet': jest.fn()
-        };
-        const store = new Vuex.Store({
-          modules:{
-            accounts: {
-              state: {
-                hdWallet: null,
-              },
-              namespaced: true,
-              actions
-            }
-          }
-        });
-        const localVue = createLocalVue();
-
-        localVue.use(Notifications);
-        wrapper = shallow(NewWallet, {
-          localVue,
-          store,
-          mixins: [VueTimers]
-        })
-        wrapper.vm.createWallet();
-        let spy = spyOn(wrapper.vm.$timer, 'start');
-      });
+    // describe('createWallet', () => {
+    //   let wrapper;
+    //
+    //   beforeAll(() => {
+    //     const actions = {
+    //       'addHdWallet': jest.fn()
+    //     };
+    //     const store = new Vuex.Store({
+    //       modules:{
+    //         accounts: {
+    //           state: {
+    //             hdWallet: null,
+    //           },
+    //           namespaced: true,
+    //           actions
+    //         }
+    //       }
+    //     });
+    //     const localVue = createLocalVue();
+    //
+    //     localVue.use(Notifications);
+    //     wrapper = shallow(NewWallet, {
+    //       localVue,
+    //       store,
+    //       mixins: [VueTimers]
+    //     })
+    //     wrapper.vm.createWallet();
+    //     let spy = spyOn(wrapper.vm.$timer, 'start');
+    //   });
 
       // it('should start seed phrase timer', (done) => {
       //   jest.runOnlyPendingTimers();
@@ -90,7 +90,7 @@ describe('NewWallet page', () => {
       //   expect(wrapper.vm.$timer.start).toHaveBeenCalledTimes(1);
       //   expect(wrapper.vm.$timer.start).toHaveBeenCalledWith('seedPhrase');
       // });
-    });
+    // });
 
     describe('handleSeedPhraseTimer', () => {
       let wrapper;
