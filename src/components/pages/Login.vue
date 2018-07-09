@@ -12,8 +12,7 @@
               <v-input v-model="email"
                        label="Email"
                        name="email"
-                       @input="$validator.validate('email')"
-                       v-validate="'required|email'"
+                       validator="required|email"
                        id="email"
                        aria-describedby="email"
                        placeholder="Your email"
@@ -40,6 +39,7 @@ import { mapState, mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import error from '@/mixins/error';
 
 export default {
   data: () => ({
@@ -61,6 +61,10 @@ export default {
             type: 'is-info',
           })
         })
+        .catch(e => {
+          this.isSending = false;
+          this.emitError(e);
+        });
     }
   },
   components: {
@@ -68,5 +72,6 @@ export default {
     VButton,
     VInput,
   },
+  mixins: [error],
 };
 </script>

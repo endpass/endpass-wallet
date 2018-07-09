@@ -90,7 +90,7 @@ export default {
     });
   },
 
-  setAccounts(account) {
+  setAccount(account) {
     return Promise.resolve({
       success: true,
     });

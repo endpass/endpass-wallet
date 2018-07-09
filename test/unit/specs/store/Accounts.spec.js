@@ -61,18 +61,13 @@ describe('accounts store', () => {
     expect(commit.mock.calls[0]).toEqual(['setEmail', null]);
   });
 
-  it('should handle error in the login action', async () => {
+  it('should call user service in login action', async () => {
     const dispatch = jest.fn();
     const state = {};
-    userService.login = jest.fn(() => Promise.reject('error'));
+    userService.login = jest.fn();
 
     await actions.login({ dispatch, state }, '123@123.com');
 
     expect(userService.login).toHaveBeenCalledTimes(1);
-    expect(dispatch.mock.calls[0]).toEqual([
-      'errors/emitError',
-      'error',
-      expect.any(Object),
-    ]);
   });
 });
