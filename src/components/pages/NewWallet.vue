@@ -48,7 +48,7 @@
                         required />
               <v-button className="is-primary is-medium"
                         :loading="isCreating"
-                        @click.prevent="createWallet">Import</v-button>
+                        @click.prevent="createWallet">Create New Wallet</v-button>
             </v-form>
           </div>
         </div>
