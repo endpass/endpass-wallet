@@ -2,6 +2,7 @@ import store from '@/store/web3/web3'
 import LocalStorageMock from '../../localStorageMock.js'
 import testAction from '../ActionTestingHelper'
 
+jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
 global.localStorage = LocalStorageMock;
 
 const commit = state => (type, payload) =>
@@ -31,10 +32,15 @@ describe('web3 store', async () => {
     });
   });
 
-  it('should get net value from local storage', async () => {
-    expect(stateInstance.activeNet.id).toBe(1);
+  it('should sync remote and local storage', async () => {
+    const netInLocalStore = JSON.parse(localStorage.getItem('net'));
+    const networksInLocalStore = JSON.parse(localStorage.getItem('networks'));
+
+    expect(stateInstance.activeNet.id).toBe(3);
+    expect(netInLocalStore).toBe(3);
     expect(stateInstance.storedNetworks.length).toBe(1);
-    expect(stateInstance.storedNetworks[0].id).toBe(4);
+    expect(stateInstance.storedNetworks[0].id).toBe(5);
+    expect(networksInLocalStore[0].id).toBe(5);
   });
 
   it('should get full list of networks', () => {

@@ -1,27 +1,67 @@
+import debounce from 'lodash.debounce';
+import StubStorage from './StubStorage';
+
 export default class Storage {
-  store = null;
-
-  constructor(store) {
-    this.store = store;
+  constructor(localStore, remoteStore) {
+    this.stubStorage = new StubStorage();
+    this.localStore = localStore || this.stubStorage;
+    this.remoteStore = remoteStore || this.stubStorage;
+    this.isSync = false;
+    this.syncStateDebounce = debounce(this.syncState, 1000, {
+      leading: true,
+      trailing: false,
+    });
   }
 
-  setStore(store) {
-    this.store = store;
+  async syncState() {
+    try {
+      const state = await this.remoteStore.readAll();
+      await this.localStore.writeBulk(state);
+      this.isSync = true;
+    } catch (e) {
+      throw e;
+    }
   }
 
-  read(prop) {
-    return this.store.read(prop);
+  async read(prop) {
+    if (!this.isSync) {
+      await this.syncStateDebounce();
+    }
+
+    return await this.localStore.read(prop);
+  }
+
+  async readAll() {
+    if (!this.isSync) {
+      await this.syncStateDebounce();
+    }
+
+    return await this.localStore.readAll();
   }
 
   write(prop, data) {
-    return this.store.write(prop, data);
+    return Promise.all([
+      this.remoteStore.write(prop, data),
+      this.localStore.write(prop, data),
+    ]);
+  }
+
+  writeBulk(dataObj) {
+    return Promise.all([
+      this.remoteStore.writeBulk(dataObj),
+      this.localStore.writeBulk(dataObj),
+    ]);
   }
 
   remove(prop) {
-    return this.store.remove(prop);
+    return this.localStore.remove(prop);
   }
 
   clear() {
-    return this.store.clear();
+    return this.localStore.clear();
+  }
+
+  disableRemote() {
+    this.remoteStore = this.stubStorage;
   }
 }

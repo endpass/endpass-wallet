@@ -8,10 +8,40 @@ export default class LocalStorage {
       .then(() => this.Global.localStorage.getItem(prop))
       .then(val => {
         if (val !== null) {
-          return JSON.parse(val);
+          try {
+            return JSON.parse(val);
+          } catch (e) {}
         }
 
         return val;
+      })
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error in local storage',
+          text: "Can't read data from local storage, maybe it is not available",
+          type: 'is-warning',
+        });
+      });
+  }
+
+  readAll() {
+    const result = {};
+
+    return Promise.resolve()
+      .then(() => {
+        Object.keys(this.Global.localStorage).forEach(key => {
+          let val = this.Global.localStorage.getItem(key);
+
+          if (val !== null) {
+            try {
+              val = JSON.parse(val);
+            } catch (e) {}
+          }
+
+          result[key] = val;
+        });
+
+        return result;
       })
       .catch(() => {
         throw new NotificationError({
@@ -35,13 +65,31 @@ export default class LocalStorage {
       });
   }
 
+  writeBulk(dataObj) {
+    return Promise.resolve()
+      .then(() => {
+        Object.keys(dataObj).forEach(prop => {
+          const strData = JSON.stringify(dataObj[prop]);
+          return this.Global.localStorage.setItem(prop, strData);
+        });
+      })
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error in local storage',
+          text: "Can't save data to local storage, maybe it is not available",
+          type: 'is-warning',
+        });
+      });
+  }
+
   remove(prop) {
     return Promise.resolve()
       .then(() => this.Global.localStorage.removeItem(prop))
       .catch(() => {
         throw new NotificationError({
           title: 'Error in local storage',
-          text: "Can't remove data from local storage, maybe it is not available",
+          text:
+            "Can't remove data from local storage, maybe it is not available",
           type: 'is-warning',
         });
       });
