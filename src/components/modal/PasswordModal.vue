@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     confirm() {
-      this.$emit('confirm')
+      this.$emit('confirm', this.jsonKeystorePassword)
     },
     close() {
       this.$emit('close')

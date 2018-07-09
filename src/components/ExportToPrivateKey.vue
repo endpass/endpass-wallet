@@ -2,7 +2,7 @@
   <div class="export-private-key">
     <div v-if="!privateKey">
       <p class="subtitle">Click the button below to display your private key</p>
-      <a class="button is-primary" @click="openPasswordModal">Show Private
+      <a class="button is-primary" :class="{'is-loading' : exportingKey }" @click="openPasswordModal">Show Private
       Key</a>
     </div>
     <div v-else>
@@ -27,7 +27,8 @@ export default {
   data () {
     return {
       privateKey: null,
-      passwordModalOpen: false
+      passwordModalOpen: false,
+      exportingKey: false
     }
   },
   computed: {
@@ -42,9 +43,18 @@ export default {
     closePasswordModal() {
       this.passwordModalOpen = false;
     },
-    async getPrivateKey(password = '') {
-      await new Promise(res => setTimeout(res, 20));
-      this.privateKey = this.wallet.getPrivateKeyString(password);
+    async getPrivateKey(password) {
+      this.closePasswordModal();
+      if (this.wallet) {
+        this.exportingKey = true;
+        await new Promise(res => setTimeout(res, 20));
+        try {
+          this.privateKey = this.wallet.getPrivateKeyString(password);
+        } catch (e) {
+          this.exportError(e);
+        }
+        this.exportingKey = false;
+      }
     },
   },
   components: {

@@ -40,7 +40,7 @@ export default {
     })
   },
   methods: {
-    async exportJSON(password = '') {
+    async exportJSON(password) {
       this.closePasswordModal();
       if (this.wallet) {
         this.exportingJson = true;

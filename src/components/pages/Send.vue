@@ -242,7 +242,7 @@ export default {
     requestPassword() {
       this.togglePasswordModal();
     },
-    confirmPassword(password = '') {
+    confirmPassword(password) {
       this.isSending = true;
       this.transaction.from = this.address
       this.togglePasswordModal();

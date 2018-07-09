@@ -115,7 +115,7 @@ export default {
     closePassword() {
       this.passwordModalOpen = false;
     },
-    confirmPassword(password = '') {
+    confirmPassword(password) {
       this.sendTransaction({ transaction: this.transactionToSend, password}).then(() => {
         this.transaction.status = 'canseled';
         this.$notify({

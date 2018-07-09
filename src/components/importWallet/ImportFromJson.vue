@@ -36,12 +36,13 @@
 
      <v-input v-model="walletPassword"
               label="Wallet password"
-              id="jsonKeystorePassword"
+              id="walletPassword"
               name="walletPassword"
               type="password"
               validator="required|min:8"
               data-vv-as="password"
-              aria-describedby="jsonKeystorePassword"
+              aria-describedby="walletPassword"
+              key="jwalletPasswordUnique"
               placeholder="wallet password"
               required />
 
