@@ -13,6 +13,7 @@ export default {
       default: null,
     },
   },
+  inject: ['$validator'],
   provide() {
     const form = {};
     Object.defineProperty(form, 'isFormValid', {
