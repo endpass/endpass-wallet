@@ -1,3 +1,4 @@
+import { userService } from '@/services'
 import storage from '@/services/storage';
 import web3 from 'web3';
 import Bip39 from 'bip39';
@@ -7,11 +8,10 @@ import EthWallet from 'ethereumjs-wallet';
 import { Wallet, Address } from '@/class' ;
 import { BigNumber } from 'bignumber.js';
 
-const { hexToNumberString, toWei } = web3.utils;
-
 export default {
   namespaced: true,
   state: {
+    email: null,
     hdWallet: null,
     wallets: {},
     wallet: null,
@@ -69,6 +69,9 @@ export default {
     setSettings(state, settings) {
       state.settings = JSON.parse(JSON.stringify(settings));
     },
+    setEmail(state, email) {
+      state.email = email;
+    },
   },
   actions: {
     addWallet({ commit, dispatch }, json) {
@@ -79,15 +82,21 @@ export default {
       commit('selectWallet', json.address);
       commit('addAddress', json.address);
     },
+    addWalletAndStore({ commit, dispatch }, json) {
+      return Promise.all([
+        dispatch('addWallet', json),
+        userService.setAccount(json),
+      ]).catch(e => dispatch('errors/emitError', e, { root: true }));
+    },
     addWalletWithV3({ commit, dispatch }, {json, key, walletPassword}) {
       const wallet = EthWallet.fromV3(json, key, true);
       const newJson = wallet.toV3(new Buffer(walletPassword));
-      dispatch('addWallet', newJson);
+      dispatch('addWalletAndStore', newJson);
     },
     addWalletWithPrivateKey({ commit, dispatch }, {privateKey, password}) {
       const wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));
       const json = wallet.toV3(new Buffer(password));
-      dispatch('addWallet', json);
+      dispatch('addWalletAndStore', json);
     },
     generateWallet({commit, dispatch, state}, password){
       if (!state.hdWallet) {
@@ -95,7 +104,7 @@ export default {
       }
       let i = Object.keys(state.wallets).length;
       let wallet = state.hdWallet.deriveChild(i).getWallet();
-      dispatch('addWallet', wallet.toV3(new Buffer(password)));
+      dispatch('addWalletAndStore', wallet.toV3(new Buffer(password)));
     },
     addHdWallet({ commit, dispatch }, {key, password}) {
       const seed = Bip39.mnemonicToSeed(key);
@@ -103,7 +112,7 @@ export default {
       const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
       const wallet = hdWallet.deriveChild(0).getWallet();
       commit('addHdWallet', hdWallet);
-      dispatch('addWallet', wallet.toV3(new Buffer(password)));
+      dispatch('addWalletAndStore', wallet.toV3(new Buffer(password)));
     },
     updateBalance({ commit, dispatch, state, rootState }) {
       if (state.address) {
@@ -119,12 +128,34 @@ export default {
       return storage.write('settings', settings)
         .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
+    login({ commit, dispatch }, email) {
+      return userService.login(email);
+    },
+    logout({ commit, dispatch }) {
+      commit('setEmail', null);
+      return storage.clear()
+        .then(() => window.location = '/logout')
+        .catch(e => dispatch('errors/emitError', e, {root: true}));
+    },
     init({ commit, dispatch }) {
-      return storage
-        .read('settings')
-        .then(settings => {
+      return Promise.all([
+        storage.read('settings'),
+        storage.read('email'),
+        userService.getV3Accounts(),
+      ])
+        .then(([settings, email, accounts]) => {
+          commit('setEmail', email);
+
           if (settings) {
             commit('setSettings', settings);
+          }
+
+          if (!email) {
+            storage.disableRemote();
+          }
+
+          if (accounts && accounts.length) {
+            accounts.forEach(wallet => dispatch('addWallet', wallet));
           }
         })
         .catch(e => dispatch('errors/emitError', e, {root: true}));
