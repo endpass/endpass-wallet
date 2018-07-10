@@ -5,6 +5,7 @@ import HDKey from 'ethereumjs-wallet/hdkey';
 
 const v3json = {"version":3,"id":"9322350b-903d-49ab-bfec-25cec7fe7334","address":"4ce2109f8db1190cd44bc6554e35642214fbe144","crypto":{"ciphertext":"5655777529d7da80e96b3ccba57bac1a3c503aebb93e4a20671a1d7cf0b00a98","cipherparams":{"iv":"e96a3446554e4b40bbc4040641a1b12e"},"cipher":"aes-128-ctr","kdf":"scrypt","kdfparams":{"dklen":32,"salt":"7e930fe09f597c46a450ed60a0183f5508137c9c4ef0e4f8743a11b55c634505","n":262144,"r":8,"p":1},"mac":"64ba0f0cc1f3b5b3760dabc6d027bc3abbfcbd020f2144106a4434fed76e0b7e"}};
 const v3password = '123123123';
+import { userService } from '@/services';
 
 global.localStorage = localStorageMock;
 
@@ -125,5 +126,25 @@ describe('accounts store', () => {
     const { settings } = localStorageMock.store;
 
     expect(JSON.parse(settings)).toBe('123');
+  });
+
+  it('should call mutation from logout action', async () => {
+    const commit = jest.fn();
+    const state = {};
+
+    await actions.logout({ commit, state });
+
+    expect(commit).toHaveBeenCalledTimes(1);
+    expect(commit.mock.calls[0]).toEqual(['setEmail', null]);
+  });
+
+  it('should call user service in login action', async () => {
+    const dispatch = jest.fn();
+    const state = {};
+    userService.login = jest.fn();
+
+    await actions.login({ dispatch, state }, '123@123.com');
+
+    expect(userService.login).toHaveBeenCalledTimes(1);
   });
 });

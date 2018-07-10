@@ -6,12 +6,13 @@ import Web3 from 'web3'
 
 jest.mock('eth-token-tracker');
 jest.mock('@/services/ethplorer');
+jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
 
 Web3.providers.HttpProvider.prototype.sendAsync =
   Web3.providers.HttpProvider.prototype.send;
 
 localStorage.setItem(
-  'eth.mainnet.tokens.saved',
+  'tokens',
   JSON.stringify([
     {
       address: '0x0',
@@ -33,17 +34,22 @@ describe('tokens', () => {
     moxios.uninstall();
   });
 
-  it('it should get tokens from localStorage', async () => {
+  it('it should get tokens from storage', async () => {
     await tokens.actions.init({ commit: commit(stateInstance) });
-    expect(stateInstance.savedTokens.length).toBe(1);
-    expect(stateInstance.savedTokens[0].address).toBe('0x0');
+    expect(stateInstance.savedTokens['3'].length).toBe(1);
+    expect(stateInstance.savedTokens['3'][0].address).toBe(
+      '0xE41d2489571d322189246DaFA5ebDe1F4699F498'
+    );
   });
   it('saves token to watch storage', () => {
-    tokens.mutations.saveTokenToWatchStorage(stateInstance, { address: '0x2' });
-    expect(stateInstance.savedTokens.length).toBe(2);
+    tokens.mutations.addToken(stateInstance, {
+      token: { address: '0x2' },
+      net: 3,
+    });
+    expect(stateInstance.savedTokens['3'].length).toBe(2);
   });
   it('saves Tokens', () => {
-    tokens.mutations.saveTokens(stateInstance, [1, 2, 3]);
+    tokens.mutations.saveActiveTokens(stateInstance, [1, 2, 3]);
     expect(stateInstance.activeTokens.length).toBe(3);
   });
   it('saves Interval', () => {
@@ -67,6 +73,11 @@ describe('tokens', () => {
               },
             },
           },
+          web3: {
+            activeNet: {
+              id: 3,
+            }
+          }
         },
         state: {
           savedTokens: stateInstance.savedTokens,
@@ -79,7 +90,7 @@ describe('tokens', () => {
           },
         },
       },
-      [{ type: 'saveTokenToWatchStorage' }],
+      [{ type: 'addToken' }],
       [],
       done
     );
@@ -143,6 +154,18 @@ describe('tokens', () => {
             },
           },
         },
+        getters: {
+          savedActiveTokens: [
+            {
+              address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
+              decimals: 18,
+              logo: '/img/0xe41d2489571d322189246dafa5ebde1f4699f498.png',
+              manuallyAdded: true,
+              name: '0x Project',
+              symbol: 'ZRX',
+            },
+          ],
+        }
       },
       [{ type: 'saveInterval' }, { type: 'saveSubscription' }],
       [],

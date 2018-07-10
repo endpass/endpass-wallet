@@ -39,13 +39,27 @@
           <span class="icon is-small"
                 v-html="require('@/img/cog.svg')"></span>Settings
         </router-link>
+        <router-link class="navbar-item"
+                      v-if="!email"
+                      :to="{name:'LoginPage'}"
+                      @click.native="toggleNavMenu">
+          <span class="icon is-small"
+                v-html="require('@/img/account-login.svg')"></span>Login
+        </router-link>
+        <a class="navbar-item"
+                     v-else
+                     to=""
+                     @click.prevent="logout()">
+          <span class="icon is-small"
+                v-html="require('@/img/account-logout.svg')"></span>Logout
+        </a>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapActions, mapState } from 'vuex'
 
 export default {
   data () {
@@ -55,11 +69,13 @@ export default {
   },
   computed: {
     ...mapState({
-      wallet: state => state.accounts.wallet
+      wallet: state => state.accounts.wallet,
+      email: state => state.accounts.email,
     }),
-    ...mapGetters('accounts', ['isPublicAccount'])
+    ...mapGetters('accounts', ['isPublicAccount']),
   },
   methods: {
+    ...mapActions('accounts', ['logout']),
     toggleNavMenu () {
       this.navMenuActive = !this.navMenuActive
     }

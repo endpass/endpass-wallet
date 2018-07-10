@@ -12,17 +12,28 @@ export default {
       // tokens from subscribtipn
       activeTokens: [],
       //tokens from localStorage
-      savedTokens: [],
+      savedTokens: {},
       prices: null,
       tokensSubscription: null,
       tokensSerializeInterval: null,
     };
   },
-  mutations: {
-    saveTokenToWatchStorage(state, token) {
-      state.savedTokens.push(token);
+  getters: {
+    net(state, getters, rootState) {
+      return rootState.web3.activeNet.id;
     },
-    saveTokens(state, tokens = []) {
+    savedActiveTokens(state, { net }) {
+      return state.savedTokens[net];
+    }
+  },
+  mutations: {
+    addToken(state, {token, net}) {
+      state.savedTokens[net].push(token);
+    },
+    saveTokens(state, tokens = {}) {
+      state.savedTokens = tokens;
+    },
+    saveActiveTokens(state, tokens = []) {
       // TODO check for errors here, activeTokens is undefined
       state.activeTokens = tokens;
     },
@@ -35,9 +46,6 @@ export default {
       }
       state.prices[symbol] = price;
     },
-    saveTokensFromStorage(state, tokens = []) {
-      state.savedTokens = tokens;
-    },
     saveInterval(state, interval) {
       state.tokensSerializeInterval = interval;
     },
@@ -46,16 +54,19 @@ export default {
     },
   },
   actions: {
-    addTokenToSubscription({ state, commit, dispatch }, token) {
+    addTokenToSubscription({ state, commit, dispatch, rootState }, token) {
       // Save token without blance for furer seances
       const tokenExist = state.tokensSubscription.tokens.find(
         subscribtionToken => subscribtionToken.address === token.address
       );
 
       if (!tokenExist) {
-        commit('saveTokenToWatchStorage', token);
+        commit('addToken', {
+          token,
+          net: rootState.web3.activeNet.id,
+        })
         storage
-          .write('eth.mainnet.tokens.saved', state.savedTokens)
+          .write('tokens', state.savedTokens)
           .catch(e => dispatch('errors/emitError', e, {root: true}));
         state.tokensSubscription.add({
           ...token,
@@ -104,10 +115,10 @@ export default {
         dispatch('updateTokenPrices');
       }, subscribtionsAPIInterval);
     },
-    createTokenSubscription({ state, commit, rootState }, nonZerotokens) {
+    createTokenSubscription({ state, commit, getters, rootState }, nonZerotokens) {
       const address = rootState.accounts.address.getAddressString();
       //remove repetitive tokens
-      const filteredSavedTokensTokens = state.savedTokens.filter(
+      const filteredSavedTokensTokens = getters.savedActiveTokens.filter(
         savedToken =>
           !nonZerotokens.find(
             nonZeroToken =>
@@ -133,7 +144,7 @@ export default {
           const balances = state.tokensSubscription.serialize();
           // TODO check for errors here
           if (balances.length && typeof balances[0].symbol !== 'undefined')
-            commit('saveTokens', balances);
+            commit('saveActiveTokens', balances);
         }
       }, 4000);
       commit('saveInterval', interval);
@@ -158,8 +169,8 @@ export default {
     },
     init({ commit, dispatch }) {
       return storage
-        .read('eth.mainnet.tokens.saved')
-        .then(tokens => commit('saveTokensFromStorage', tokens || []))
+        .read('tokens')
+        .then(tokens => commit('saveTokens', tokens || {}))
         .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
   },
