@@ -2,7 +2,7 @@ import TokenTracker from 'eth-token-tracker';
 import EthplorerService from '@/services/ethplorer';
 import price from '@/services/price';
 import storage from '@/services/storage';
-import { subscribtionsAPIInterval } from '@/config'
+import { subscriptionsAPIInterval } from '@/config'
 import { NotificationError } from '@/class';
 
 export default {
@@ -113,7 +113,7 @@ export default {
     subsctibeOnTokenPriceUpdates({ dispatch }) {
       setInterval(() => {
         dispatch('updateTokenPrices');
-      }, subscribtionsAPIInterval);
+      }, subscriptionsAPIInterval);
     },
     createTokenSubscription({ state, commit, getters, rootState }, nonZerotokens) {
       const address = rootState.accounts.address.getAddressString();

@@ -1,5 +1,4 @@
-import priceService from '@/services/price'
-import { subscribtionsBlockchainInterval } from '@/config'
+import { subscriptionsBlockchainInterval } from '@/config'
 
 export default {
   namespaced: true,
@@ -62,7 +61,7 @@ export default {
           commit('setWeb3ConnectionStatus', true);
           setTimeout(() => {
             dispatch('subscribeOnSyncStatus');
-          }, subscribtionsBlockchainInterval);
+          }, subscriptionsBlockchainInterval);
         } else {
           dispatch('subscribeOnSyncStatus');
         }
@@ -72,7 +71,7 @@ export default {
         dispatch('errors/emitError', e, { root: true })
         setTimeout(() => {
           dispatch('subscribeOnSyncStatus');
-        }, subscribtionsBlockchainInterval);
+        }, subscriptionsBlockchainInterval);
       });
     },
     init({ commit, dispatch, state }) {
