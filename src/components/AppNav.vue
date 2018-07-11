@@ -39,6 +39,11 @@
           <span class="icon is-small"
                 v-html="require('@/img/cog.svg')"></span>Settings
         </router-link>
+        <router-link v-if="wallet" class="navbar-item" :to="{name:
+        'ToolsPage'}" @click.native="toggleNavMenu">
+          <span class="icon is-small"
+                v-html="require('@/img/cog.svg')"></span>Tools
+        </router-link>
         <router-link class="navbar-item"
                       v-if="!email"
                       :to="{name:'LoginPage'}"

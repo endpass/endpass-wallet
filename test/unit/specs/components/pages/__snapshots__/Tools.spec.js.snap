@@ -1,0 +1,239 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tools page render should enable "Sign message" button 1`] = `
+<div
+  class="app-page tools-page"
+>
+  <div
+    class="section"
+  >
+    <div
+      class="container is-narrow"
+    >
+      <div
+        class="card app-card main-app-card"
+      >
+        <div
+          class="card-header"
+        >
+          <h1
+            class="card-header-title"
+          >
+            Tools
+          </h1>
+        </div>
+         
+        <div
+          class="card-content"
+        >
+          <form
+            id="signing-message-form"
+          >
+            <div
+              class="field"
+            >
+              <label
+                class="label"
+              >
+                Message
+              </label>
+               
+              <div
+                class="control"
+              >
+                <textarea
+                  class="textarea"
+                  placeholder="This is a message that you are signing to prove that you own the address you say you own."
+                />
+              </div>
+            </div>
+             
+            <div
+              class="field"
+            >
+              <div
+                class="control"
+              >
+                <a
+                  class="button is-primary is-medium"
+                >
+                  Sign message
+                </a>
+              </div>
+            </div>
+             
+            <!---->
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <!---->
+</div>
+`;
+
+exports[`Tools page render should render the initial state of the page 1`] = `
+<div
+  class="app-page tools-page"
+>
+  <div
+    class="section"
+  >
+    <div
+      class="container is-narrow"
+    >
+      <div
+        class="card app-card main-app-card"
+      >
+        <div
+          class="card-header"
+        >
+          <h1
+            class="card-header-title"
+          >
+            Tools
+          </h1>
+        </div>
+         
+        <div
+          class="card-content"
+        >
+          <form
+            id="signing-message-form"
+          >
+            <div
+              class="field"
+            >
+              <label
+                class="label"
+              >
+                Message
+              </label>
+               
+              <div
+                class="control"
+              >
+                <textarea
+                  class="textarea"
+                  placeholder="This is a message that you are signing to prove that you own the address you say you own."
+                />
+              </div>
+            </div>
+             
+            <div
+              class="field"
+            >
+              <div
+                class="control"
+              >
+                <a
+                  class="button is-primary is-medium"
+                  disabled="disabled"
+                >
+                  Sign message
+                </a>
+              </div>
+            </div>
+             
+            <!---->
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <!---->
+</div>
+`;
+
+exports[`Tools page render should show signed message 1`] = `
+<div
+  class="app-page tools-page"
+>
+  <div
+    class="section"
+  >
+    <div
+      class="container is-narrow"
+    >
+      <div
+        class="card app-card main-app-card"
+      >
+        <div
+          class="card-header"
+        >
+          <h1
+            class="card-header-title"
+          >
+            Tools
+          </h1>
+        </div>
+         
+        <div
+          class="card-content"
+        >
+          <form
+            id="signing-message-form"
+          >
+            <div
+              class="field"
+            >
+              <label
+                class="label"
+              >
+                Message
+              </label>
+               
+              <div
+                class="control"
+              >
+                <textarea
+                  class="textarea"
+                  placeholder="This is a message that you are signing to prove that you own the address you say you own."
+                />
+              </div>
+            </div>
+             
+            <div
+              class="field"
+            >
+              <div
+                class="control"
+              >
+                <a
+                  class="button is-primary is-medium"
+                  disabled="disabled"
+                >
+                  Sign message
+                </a>
+              </div>
+            </div>
+             
+            <div
+              class="field"
+            >
+              <label
+                class="label"
+              >
+                Signature
+              </label>
+               
+              <div
+                class="control"
+              >
+                <textarea
+                  class="textarea"
+                  disabled="disabled"
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <!---->
+</div>
+`;
