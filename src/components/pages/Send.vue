@@ -21,7 +21,7 @@
 
               <div class="columns">
                 <div class="column is-half is-full-mobile">
-                  <v-input v-model="transaction.value"
+                  <v-input v-model="value"
                           label="Amount"
                           type="number"
                           name="value"
@@ -179,6 +179,8 @@ export default {
         this.priceInFiat = BigNumber(newValue || '0')
           .times(this.ethPrice)
           .toFixed(2);
+        
+        this.$nextTick(() => this.$validator.validate('price'));
       },
     },
     price: {
@@ -196,6 +198,8 @@ export default {
         this.transaction.value = BigNumber(newValue || '0')
           .div(this.ethPrice)
           .toFixed(newValue > 0 ? this.decimal : 0);
+
+        this.$nextTick(() => this.$validator.validate('value'));
       },
     },
     maxAmount() {
