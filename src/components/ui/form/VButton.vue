@@ -5,7 +5,7 @@
          :disabled="!form.isFormValid || disabled"
          class="button"
          :class="[...classes, {'is-loading' : loading }]"
-         @click.prevent="$emit('click', $event)">
+         @click.prevent="processClick">
         <slot />
       </a>
     </div>
@@ -16,6 +16,7 @@
 export default {
   name: 'v-button',
   inject: {
+    $validator: '$validator',
     form: {
       default: () => ({
         isFormValid: true,
@@ -45,6 +46,21 @@ export default {
       return this.className.split(' ');
     },
   },
+  methods: {
+    processClick($event) {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          this.$emit('click', $event)
+          return;
+        }
+        this.$notify({
+          title: 'Form invalid',
+          text: 'Please correct errors.',
+          type: 'is-warning',
+        });
+      });
+    }
+  }
 };
 </script>
 

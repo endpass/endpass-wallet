@@ -3,12 +3,15 @@
     <label class="label"
            v-if="label">{{ label }}</label>
     <div class="control select">
-      <select v-model="selected" :name="name" v-validate="validator">
+      <select v-model="selected" :name="name"
+      :data-vv-as="label || name" v-validate="validator">
         <option v-for="item in options"
                 :key="item.val || item"
                 :value="item.val || item">{{ item.text || item }}</option>
       </select>
     </div>
+    <p class="help is-danger"
+       v-if="error || errors && errors.has(name) ">{{ error || errors && errors.first(name) }}</p>
   </div>
 </template>
 

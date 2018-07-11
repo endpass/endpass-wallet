@@ -60,30 +60,6 @@ export default {
       state.wallet = state.wallets[address];
       state.address = new Address(address);
     },
-    // Set HD wallet that generates accounts
-    addTransaction(state, transaction) {
-      state.pendingTransactions.push(transaction);
-    },
-    removeTransaction(state, trxHash) {
-      let trxIndex = state.pendingTransactions.findIndex((trx) => {
-        return trx.hash === trxHash;
-      });
-      if(state.pendingTransactions[trxIndex].state === 'canseled')
-        return
-      state.pendingTransactions.splice(trxIndex,1);
-    },
-    canselTransaction(state, trxHash) {
-      let trxIndex = state.pendingTransactions.findIndex((trx) => {
-        return trx.hash === trxHash;
-      });
-      state.pendingTransactions[trxIndex].state = 'canseled';
-    },
-    updateTransaction(state, data) {
-      const trxForUpdate = state.pendingTransactions.find(
-        trx => trx.hash === data.hash
-      );
-      Object.assign(trxForUpdate, data);
-    },
     setBalance(state, balance) {
       state.balance = balance;
     },
@@ -153,6 +129,7 @@ export default {
         .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
     login({ commit, dispatch }, email) {
+      console.log('kek')
       return userService.login(email);
     },
     logout({ commit, dispatch }) {

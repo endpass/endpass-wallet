@@ -47,7 +47,8 @@ describe('LoginPage', () => {
 
     wrapper.find('a#send-button').trigger('click');
 
-    expect(actions.login.mock.calls).toHaveLength(1);
+    await new Promise(res => setTimeout(res, 50));
+    expect(actions.login).toHaveBeenCalledTimes(1);
     expect(actions.login).toBeCalledWith(expect.any(Object), email, undefined);
 
     await actions.login();

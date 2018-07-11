@@ -8,7 +8,8 @@
       <div class="control"
            :class="{'is-expanded': $slots.addon }">
         <input v-model="innerValue"
-              v-validate="validator"
+               v-validate="validator"
+               :data-vv-as="label || name"
                @blur="$emit('blur', $event.target.value)"
                class="input"
                :class="{'is-danger': error || errors.has(name) }"

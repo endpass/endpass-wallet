@@ -1,6 +1,6 @@
 <template>
   <div class="new-wallet app-page">
-    <div class="section" v-if="walletCreated">
+    <div class="section" v-if="hdWallet">
       <div class="container has-text-centered is-narrow">
         <div class="card app-card">
           <div class="card-content">
@@ -11,7 +11,7 @@
             wallet without it.</p>
             <div class="box">
               <p>Your wallet recovery phrase</p>
-              <p class="code" data-test="seed-phrase">{{mnemonic.phrase}}</p>
+              <p class="code" data-test="seed-phrase">{{key}}</p>
             </div>
             <router-link
               to="/"
@@ -35,7 +35,21 @@
             <p class="subtitle">Just click the button below to create a new,
             secure Ethereum Wallet. Your wallet can contain multiple addresses
             for storing Ethereum and ERC20 compatible tokens.</p>
-            <button id="newWalletButon" class="button is-primary is-medium" :class="{'is-loading' : creatingWallet }" @click="clickNewWalletButton">Generate New Wallet</button>
+            <v-form>
+               <v-input v-model="walletPassword"
+                        label="Wallet password"
+                        id="jsonKeystorePassword"
+                        name="walletPassword"
+                        type="password"
+                        validator="required|min:8"
+                        data-vv-as="password"
+                        aria-describedby="jsonKeystorePassword"
+                        placeholder="wallet password"
+                        required />
+              <v-button className="is-primary is-medium"
+                        :loading="isCreating"
+                        @click.prevent="createWallet">Create New Wallet</v-button>
+            </v-form>
           </div>
         </div>
       </div>
@@ -46,9 +60,11 @@
 <script>
 import router from '@/router'
 import Bip39 from 'bip39'
-import EthWallet from 'ethereumjs-wallet'
-import HDKey from 'ethereumjs-wallet/hdkey'
 import VueTimers from 'vue-timers/mixin'
+import { mapActions, mapState } from 'vuex'
+import VForm from '@/components/ui/form/VForm.vue';
+import VInput from '@/components/ui/form/VInput.vue';
+import VButton from '@/components/ui/form/VButton.vue';
 
 const SEED_PHRASE_TIMEOUT_SEC = 10;
 const UPDATE_SEED_PHRASE_INTERVAL_MSEC = 1000;
@@ -56,66 +72,42 @@ const UPDATE_SEED_PHRASE_INTERVAL_MSEC = 1000;
 export default {
   data () {
     return {
-      creatingWallet: false,
-      mnemonic : {
-        phrase: '', //BIP39 mnemonic
-        seed: '', //Derived from mnemonic phrase
-        path: `m/44'/60'/0'/0` //Derivation path
-      },
+      walletPassword: '',
+      key: null,
+      isCreating: false,
       remainingSeedPhraseTimeout: SEED_PHRASE_TIMEOUT_SEC
     }
   },
   computed: {
-    // Wallet has been created
-    walletCreated () {
-      return this.mnemonic.seed && !this.creatingWallet
-    },
+    ...mapState({
+      hdWallet: state => state.accounts.hdWallet
+    }),
     getRemainingSeedPhraseTimeout() {
       return this.remainingSeedPhraseTimeout > 0 ? `(${this.remainingSeedPhraseTimeout})` : '';
     }
   },
   methods: {
+    ...mapActions('accounts', ['addHdWallet']),
     // Generate a new HD wallet node
     // TODO encrypt seed in memory
-    clickNewWalletButton() {
-      if(this.creatingWallet)
-        return
-      this.creatingWallet = true;
-      this.runWalletGenerationWorker()
-      .then(this.commitWalletCreationChanges)
-      .catch(this.throwCreationError);
-    },
-    runWalletGenerationWorker() {
-      let promise = new Promise((resolve, reject) => {
-        setTimeout(()=>{
-          try {
-            this.mnemonic.phrase = Bip39.generateMnemonic()
-            this.mnemonic.seed = Bip39.mnemonicToSeed(this.mnemonic.phrase);
-            const hdWalletPreDrive = HDKey.fromMasterSeed(this.mnemonic.seed);
-            const hdWallet = hdWalletPreDrive.derivePath(this.mnemonic.path);
-            resolve(hdWallet)
-          } catch (e) {
-            reject(e);
-          }
-        },20)
-      });
-      return promise
-    },
-    commitWalletCreationChanges(hdWallet){
-      this.$store.commit('accounts/setWallet', hdWallet);
-      let account = hdWallet.deriveChild(0).getWallet();
-      this.$store.dispatch('accounts/addAccount', account);
-      this.creatingWallet = false;
-      this.$timer.start('seedPhrase');
-    },
-    throwCreationError(error) {
-      this.creatingWallet = false;
-      this.$notify({
-        title: 'Error creating wallet',
-        text: 'Could not create wallet. Please try again.',
-        type: 'is-danger',
-      });
-      console.error(error);
+    async createWallet() {
+      this.isCreating = true;
+      let key;
+      await new Promise(res => setTimeout(res, 20));
+      try {
+        key = Bip39.generateMnemonic();
+        this.addHdWallet({key, password: this.walletPassword});
+        this.key = key;
+        this.$timer.start('seedPhrase');
+      } catch (e) {
+        this.$notify({
+          title: 'Error creating wallet',
+          text: 'Could not create wallet. Please try again.',
+          type: 'is-danger',
+        });
+        console.error(e);
+      }
+      this.isCreating = false;
     },
     handleSeedPhraseTimer() {
       this.remainingSeedPhraseTimeout -= UPDATE_SEED_PHRASE_INTERVAL_MSEC / 1000;
@@ -134,6 +126,11 @@ export default {
         this.handleSeedPhraseTimer();
       }
     }
+  },
+  components: {
+    VForm,
+    VInput,
+    VButton,
   }
 }
 </script>
