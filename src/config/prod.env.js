@@ -11,6 +11,12 @@ const subscriptionsAPIInterval = 5000;
 const subscriptionsBlockchainInterval = 3000;
 const userAPIUrl = 'http://user-url-for-prod.com';
 
+// Parameters for cipher encrypting wallet
+const kdfParams = {
+  kdf: 'scrypt',
+  n: 8192,
+}
+
 export default {
   hdKeyMnemonic,
   infuraConf,
@@ -18,4 +24,5 @@ export default {
   subscriptionsAPIInterval,
   subscriptionsBlockchainInterval,
   userAPIUrl,
+  kdfParams,
 };
