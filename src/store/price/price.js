@@ -1,5 +1,5 @@
 import priceService from '@/services/price'
-import { subscribtionsAPIInterval } from '@/config'
+import { subscriptionsAPIInterval } from '@/config'
 
 export default {
   namespaced: true,
@@ -37,7 +37,7 @@ export default {
 	  subsctibeOnPriceUpdates(context) {
 	  	setInterval(()=>{
 	  		context.dispatch('updatePrice')
-	  	}, subscribtionsAPIInterval);
+	  	}, subscriptionsAPIInterval);
 	  },
 		init({ dispatch }) {
 	    	return dispatch("subsctibeOnPriceUpdates");
