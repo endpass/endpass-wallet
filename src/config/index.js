@@ -7,7 +7,7 @@ switch (process.env.NODE_ENV) {
   case 'production':
     env = prodEnv;
     break;
-  
+
   default:
     env = {
       ...prodEnv,
@@ -23,4 +23,5 @@ export const {
   subscriptionsAPIInterval,
   subscriptionsBlockchainInterval,
   userAPIUrl,
+  kdfParams,
 } = env;

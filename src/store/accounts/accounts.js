@@ -3,7 +3,7 @@ import storage from '@/services/storage';
 import web3 from 'web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
-import { hdKeyMnemonic } from '@/config'
+import { hdKeyMnemonic, kdfParams } from '@/config'
 import EthWallet from 'ethereumjs-wallet';
 import { Wallet, Address } from '@/class' ;
 import { BigNumber } from 'bignumber.js';
@@ -90,12 +90,12 @@ export default {
     },
     addWalletWithV3({ commit, dispatch }, {json, key, walletPassword}) {
       const wallet = EthWallet.fromV3(json, key, true);
-      const newJson = wallet.toV3(new Buffer(walletPassword));
+      const newJson = wallet.toV3(new Buffer(walletPassword), kdfParams);
       dispatch('addWalletAndStore', newJson);
     },
     addWalletWithPrivateKey({ commit, dispatch }, {privateKey, password}) {
       const wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));
-      const json = wallet.toV3(new Buffer(password));
+      const json = wallet.toV3(new Buffer(password), kdfParams);
       dispatch('addWalletAndStore', json);
     },
     generateWallet({commit, dispatch, state}, password){
@@ -104,7 +104,7 @@ export default {
       }
       let i = Object.keys(state.wallets).length;
       let wallet = state.hdWallet.deriveChild(i).getWallet();
-      dispatch('addWalletAndStore', wallet.toV3(new Buffer(password)));
+      dispatch('addWalletAndStore', wallet.toV3(new Buffer(password), kdfParams));
     },
     addHdWallet({ commit, dispatch }, {key, password}) {
       const seed = Bip39.mnemonicToSeed(key);
@@ -112,7 +112,7 @@ export default {
       const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
       const wallet = hdWallet.deriveChild(0).getWallet();
       commit('addHdWallet', hdWallet);
-      dispatch('addWalletAndStore', wallet.toV3(new Buffer(password)));
+      dispatch('addWalletAndStore', wallet.toV3(new Buffer(password), kdfParams));
     },
     updateBalance({ commit, dispatch, state, rootState }) {
       if (state.address) {

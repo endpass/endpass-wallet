@@ -1,4 +1,5 @@
 import EthWallet from 'ethereumjs-wallet';
+import { kdfParams } from '@/config';
 
 export class Wallet {
   constructor(v3) {
@@ -9,7 +10,7 @@ export class Wallet {
       return EthWallet.fromV3(v3, password, true).getPrivateKeyString();
     };
     this.exportToJSON = function (password, exportedV3Password) {
-      return EthWallet.fromV3(v3, password, true).toV3String(exportedV3Password);
+      return EthWallet.fromV3(v3, password, true).toV3String(exportedV3Password, kdfParams);
     };
     this.getAddressString = function() {
       return v3.address;
