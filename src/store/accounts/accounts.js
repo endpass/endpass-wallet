@@ -29,21 +29,16 @@ export default {
     isPublicAccount(state) {
       return state.address instanceof Address && !state.wallet instanceof Wallet;
     },
-    pendingBalance(state) {
-      return state.pendingTransactions
-        .filter(tnx => tnx.state === 'pending')
-        .map(tnx => {
-          const tnxValue = tnx.token === 'ETH' ? tnx.valueWei : '0';
+    balance(state, getters, rootState, rootGetters) {
+      const pendingBalance = rootGetters['transactions/pendingBalance'];
 
-          return BigNumber(tnx.gasCost).plus(tnxValue);
-        })
-        .reduce((total, item) => total.plus(item), BigNumber('0'))
+      if (state.balance === null) return null;
+
+      const balanceWei = BigNumber(state.balance || '0')
+        .minus(pendingBalance)
         .toFixed();
-    },
-    balance(state, { pendingBalance }) {
-      return state.balance === null
-        ? null
-        : web3.utils.fromWei(BigNumber(state.balance || '0').minus(pendingBalance).toFixed());
+
+      return web3.utils.fromWei(balanceWei);
     },
   },
   mutations: {
@@ -129,7 +124,6 @@ export default {
         .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
     login({ commit, dispatch }, email) {
-      console.log('kek')
       return userService.login(email);
     },
     logout({ commit, dispatch }) {

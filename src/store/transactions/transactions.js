@@ -1,9 +1,23 @@
 import Tx from 'ethereumjs-tx';
+import { BigNumber } from 'bignumber.js';
 
 export default {
   namespaced: true,
   state: {
     pendingTransactions: [],
+  },
+  getters: {
+    pendingBalance(state) {
+      return state.pendingTransactions
+        .filter(tnx => tnx.state === 'pending')
+        .map(tnx => {
+          const tnxValue = tnx.token === 'ETH' ? tnx.valueWei : '0';
+
+          return BigNumber(tnx.gasCost).plus(tnxValue);
+        })
+        .reduce((total, item) => total.plus(item), BigNumber('0'))
+        .toFixed();
+    },
   },
   mutations: {
     addTransaction(state, transaction) {
