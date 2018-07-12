@@ -26,44 +26,22 @@ exports[`Tools page render should enable "Sign message" button 1`] = `
         <div
           class="card-content"
         >
-          <form
+          <v-form
             id="signing-message-form"
           >
-            <div
-              class="field"
-            >
-              <label
-                class="label"
-              >
-                Message
-              </label>
-               
-              <div
-                class="control"
-              >
-                <textarea
-                  class="textarea"
-                  placeholder="This is a message that you are signing to prove that you own the address you say you own."
-                />
-              </div>
-            </div>
+            <v-textarea
+              label="Message"
+              placeholder="This is a message that you are signing to prove that you own the address you say you own."
+            />
              
-            <div
-              class="field"
+            <v-button
+              classname="is-primary is-medium"
             >
-              <div
-                class="control"
-              >
-                <a
-                  class="button is-primary is-medium"
-                >
-                  Sign message
-                </a>
-              </div>
-            </div>
+              Sign message
+            </v-button>
              
             <!---->
-          </form>
+          </v-form>
         </div>
       </div>
     </div>
@@ -99,45 +77,23 @@ exports[`Tools page render should render the initial state of the page 1`] = `
         <div
           class="card-content"
         >
-          <form
+          <v-form
             id="signing-message-form"
           >
-            <div
-              class="field"
-            >
-              <label
-                class="label"
-              >
-                Message
-              </label>
-               
-              <div
-                class="control"
-              >
-                <textarea
-                  class="textarea"
-                  placeholder="This is a message that you are signing to prove that you own the address you say you own."
-                />
-              </div>
-            </div>
+            <v-textarea
+              label="Message"
+              placeholder="This is a message that you are signing to prove that you own the address you say you own."
+            />
              
-            <div
-              class="field"
+            <v-button
+              classname="is-primary is-medium"
+              disabled="true"
             >
-              <div
-                class="control"
-              >
-                <a
-                  class="button is-primary is-medium"
-                  disabled="disabled"
-                >
-                  Sign message
-                </a>
-              </div>
-            </div>
+              Sign message
+            </v-button>
              
             <!---->
-          </form>
+          </v-form>
         </div>
       </div>
     </div>
@@ -173,62 +129,25 @@ exports[`Tools page render should show signed message 1`] = `
         <div
           class="card-content"
         >
-          <form
+          <v-form
             id="signing-message-form"
           >
-            <div
-              class="field"
-            >
-              <label
-                class="label"
-              >
-                Message
-              </label>
-               
-              <div
-                class="control"
-              >
-                <textarea
-                  class="textarea"
-                  placeholder="This is a message that you are signing to prove that you own the address you say you own."
-                />
-              </div>
-            </div>
+            <v-textarea
+              label="Message"
+              placeholder="This is a message that you are signing to prove that you own the address you say you own."
+            />
              
-            <div
-              class="field"
+            <v-button
+              classname="is-primary is-medium"
+              disabled="true"
             >
-              <div
-                class="control"
-              >
-                <a
-                  class="button is-primary is-medium"
-                  disabled="disabled"
-                >
-                  Sign message
-                </a>
-              </div>
-            </div>
+              Sign message
+            </v-button>
              
-            <div
-              class="field"
-            >
-              <label
-                class="label"
-              >
-                Signature
-              </label>
-               
-              <div
-                class="control"
-              >
-                <textarea
-                  class="textarea"
-                  disabled="disabled"
-                />
-              </div>
-            </div>
-          </form>
+            <v-textarea
+              label="Signature"
+            />
+          </v-form>
         </div>
       </div>
     </div>

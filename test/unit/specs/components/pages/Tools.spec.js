@@ -1,8 +1,7 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
-import Notifications from 'vue-notification'
-import VForm from '@/components/ui/form/VForm.vue';
-import VButton from '@/components/ui/form/VButton.vue';
+import Notifications from 'vue-notification';
 import ToolsPage from '@/components/pages/Tools.vue';
+import { generateStubs } from '@/utils/testUtils';
 
 describe('Tools page', () => {
   const signedMessage = {};
@@ -34,10 +33,7 @@ describe('Tools page', () => {
     wrapper = shallow(ToolsPage, {
       localVue,
       mocks: { $store },
-      stubs: {
-        'v-form': VForm,
-        'v-button': VButton
-      }
+      stubs: generateStubs(ToolsPage)
     });
   });
 

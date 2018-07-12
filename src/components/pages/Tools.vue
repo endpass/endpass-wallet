@@ -8,30 +8,20 @@
           </div>
           <div class="card-content">
             <v-form id="signing-message-form">
-              <div class="field">
-                <label class="label">Message</label>
-                <div class="control">
-                  <textarea
-                    v-model="signingMessage.message"
-                    class="textarea"
-                    placeholder="This is a message that you are signing to prove that you own the address you say you own."
-                  />
-                </div>
-              </div>
+              <v-textarea
+                v-model="signingMessage.message"
+                label="Message"
+                placeholder="This is a message that you are signing to prove that you own the address you say you own."
+              />
               <v-button
                 className="is-primary is-medium"
                 :disabled="!signingMessage.message"
                 @click.prevent="togglePasswordModal">Sign message</v-button>
-              <div class="field" v-if="signingMessage.signedMessage">
-                <label class="label">Signature</label>
-                <div class="control">
-                  <textarea
-                    v-model="getSignedMessage"
-                    class="textarea"
-                    disabled
-                  />
-                </div>
-              </div>
+              <v-textarea
+                v-if="signingMessage.signedMessage"
+                v-model="getSignedMessage"
+                label="Signature"
+              />
             </v-form>
           </div>
         </div>
@@ -49,6 +39,7 @@
 import { mapState } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import VTextarea from '@/components/ui/form/VTextarea.vue';
 import PasswordModal from '@/components/modal/PasswordModal';
 
 export default {
@@ -90,6 +81,7 @@ export default {
   components: {
     VForm,
     VButton,
+    VTextarea,
     PasswordModal
   }
 };
