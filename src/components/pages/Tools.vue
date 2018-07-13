@@ -46,6 +46,7 @@ import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
 import PasswordModal from '@/components/modal/PasswordModal';
+import modalMixin from '@/mixins/modal';
 
 export default {
   name: 'tools-page',
@@ -53,8 +54,7 @@ export default {
     signingMessage: {
       message: '',
       signedMessage: null
-    },
-    isPasswordModal: false
+    }
   }),
   computed: {
     ...mapState({
@@ -66,9 +66,6 @@ export default {
     }
   },
   methods: {
-    togglePasswordModal() {
-      this.isPasswordModal = !this.isPasswordModal;
-    },
     signMessage(password) {
       try {
         this.togglePasswordModal();
@@ -84,6 +81,7 @@ export default {
       }
     }
   },
+  mixins: [modalMixin],
   components: {
     VForm,
     VButton,
