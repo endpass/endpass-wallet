@@ -32,6 +32,7 @@
             </div>
           </div>
           <div class="column is-half">
+            <h4 class="title is-4">Add token</h4>
             <multiselect
                :options="filteredTokens"
                track-by="address" label="name"
@@ -40,33 +41,6 @@
                @select="addTokenToSubscription"
                placeholder="Select token"
                />
-
-            <!-- <div class="card app-card">
-              <div class="card-content">
-                <nav class="panel">
-                  <p class="panel-heading">
-                  Add Token
-                  </p>
-                  <div class="panel-block">
-                    <search-input v-model="search"></search-input>
-                  </div>
-                  <div class="scroller">
-                    <a v-for="token in filteredTokens"
-                       :key="token.address"
-                       @click="saveToken(token)"
-                       :disabled="token.manuallyAdded"
-                       class="panel-block is-clearfix is-block">
-
-                      <span class="icon panel-icon is-small"
-                            v-html="require('@/img/plus.svg')">
-                      </span>
-                      <span class="token-symbol">{{token.symbol}}</span>
-                      <span class="token-name">{{token.name}}</span>
-                    </a>
-                  </div>
-                </nav>
-              </div>
-            </div> -->
           </div>
 
         </div>
