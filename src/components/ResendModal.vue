@@ -2,29 +2,27 @@
   <div class="new-account-modal">
     <v-modal @close="close">
       <v-form id="sendEther">
-        <v-input v-model="transaction.gasPrice"
+        <v-input v-model="newTransaction.gasPrice"
                  label="Gas price"
                  name="gasPrice"
                  type="number"
-                 validator="required|numeric|integer|between:0,100"
+                 :validator="`required|numeric|integer|between:${transaction.gasPrice},100`"
                  id="gasPrice"
                  aria-describedby="gasPrice"
                  placeholder="Gas price"
-                 :disabled="isSending"
                  required>
           <div class="control" slot="addon">
             <a class="button is-static">Gwei</a>
           </div>
         </v-input>
-        <v-input v-model="transaction.gasLimit"
+        <v-input v-model="newTransaction.gasLimit"
                  label="Gas limit"
                  name="gasLimit"
                  type="number"
-                 validator="required|numeric|integer|between:21000,4000000"
+                 :validator="`required|numeric|integer|between:${transaction.gasLimit},4000000`"
                  id="gasLimit"
                  aria-describedby="gasLimit"
                  placeholder="Gas limit"
-                 :disabled="isSending"
                  required />
 
         <v-button @click.prevent="confirmResend"
@@ -46,19 +44,19 @@ export default {
   props: ['transaction'],
   data() {
     return {
-      newTransaction: new Transaction (this.transaction)
+      newTransaction: null,
     }
   },
   methods: {
     confirmResend() {
-      this.$emit('confirm', this.transaction);
+      this.$emit('confirm', this.newTransaction);
     },
     close() {
-      this.$emit('closeResendModal');
+      this.$emit('close');
     },
   },
   created() {
-    this.transaction = this.transaction.clone();
+    this.newTransaction = this.transaction.clone();
   },
   components: {
     VModal,

@@ -1,5 +1,6 @@
 import Tx from 'ethereumjs-tx';
 import { BigNumber } from 'bignumber.js';
+import { EventEmitter, NotificationError } from '@/class';
 
 export default {
   namespaced: true,
@@ -23,70 +24,126 @@ export default {
     addTransaction(state, transaction) {
       state.pendingTransactions.push(transaction);
     },
-    removeTransaction(state, trxHash) {
-      let trxIndex = state.pendingTransactions.findIndex((trx) => {
-        return trx.hash === trxHash;
-      });
-      if(state.pendingTransactions[trxIndex].state === 'canseled')
-        return
-      state.pendingTransactions.splice(trxIndex,1);
-    },
-    canselTransaction(state, trxHash) {
-      let trxIndex = state.pendingTransactions.findIndex((trx) => {
-        return trx.hash === trxHash;
-      });
-      state.pendingTransactions[trxIndex].state = 'canseled';
-    },
-    updateTransaction(state, data) {
-      const trxForUpdate = state.pendingTransactions.find(
-        trx => trx.hash === data.hash
-      );
-      Object.assign(trxForUpdate, data);
-    }
   },
   actions: {
-    sendTransaction({rootState, state, dispatch, commit}, {transaction, password}) {
-      const eth = rootState.web3.web3.eth,
-      address = rootState.accounts.address.getAddressString(),
-      wallet = rootState.accounts.wallet;
-      return new Promise((res, rej) => {
-        eth.getTransactionCount(address).then(nonce => {
+    async sendSignedTransaction(
+      { rootState, state, dispatch },
+      { transaction, password }
+    ) {
+      const address = rootState.accounts.address.getAddressString();
+      const eth = rootState.web3.web3.eth;
+      const wallet = rootState.accounts.wallet;
+
+      try {
+        if (!transaction.nonce) {
+          const nonce = await eth.getTransactionCount(address);
           const pendingLength = state.pendingTransactions.filter(
             tnx => tnx.state === 'pending'
           ).length;
-          transaction.nonce = transaction.nonce || (nonce + pendingLength).toString();
-          const tx = new Tx(transaction.getApiObject(eth));
-          dispatch('signTransaction', {transaction: tx, password});
-          const serializedTx = tx.serialize();
-          const sendEvent = eth
-            .sendSignedTransaction('0x' + serializedTx.toString('hex'))
-            .on('transactionHash', hash => {
-              sendEvent.off('transactionHash');
+          transaction.nonce = (nonce + pendingLength).toString();
+        }
+
+        const tx = new Tx(transaction.getApiObject(eth));
+        wallet.signTransaction(tx, password);
+        const serializedTx = tx.serialize();
+        const preparedTrx = `0x${serializedTx.toString('hex')}`;
+        const eventEmitter = new EventEmitter();
+
+        const sendEvent = eth
+          .sendSignedTransaction(preparedTrx)
+          .once('transactionHash', hash => {
+            eventEmitter.emit('transactionHash', hash);
+          })
+          .on('confirmation', confNumber => {
+            if (confNumber > 0) {
+              sendEvent.off('confirmation');
+              eventEmitter.emit('confirmation', confNumber);
+            }
+          })
+          .once('error', (err, receipt) => {
+            dispatch('handleSendingError', receipt);
+            eventEmitter.emit('error');
+          });
+
+        return eventEmitter;
+      } catch (e) {
+        dispatch('handleSendingError');
+      }
+    },
+    sendTransaction({ dispatch, commit }, { transaction, password }) {
+      return dispatch('sendSignedTransaction', { transaction, password }).then(
+        sendEvent =>
+          new Promise((res, rej) => {
+            sendEvent.once('transactionHash', hash => {
               transaction.state = 'pending';
               transaction.hash = hash;
               commit('addTransaction', transaction);
               res(hash);
-            })
-            .on('confirmation', (confNumber, { transactionHash }) => {
-              if (confNumber > 0) {
-                sendEvent.off('confirmation');
-                transaction.state = 'success';
-              }
-            })
-            .on('error', (err, receipt) => {
-              sendEvent.off('error');
-              const cause = receipt ? ', because out of gas' : '';
-              rej({
-                title: 'Error sending transaction',
-                text: `Transaction was not sent${cause}`,
-                type: 'is-danger',
-              });
             });
-        });
-      });
+
+            sendEvent.once('confirmation', () => {
+              transaction.state = 'success';
+            });
+
+            sendEvent.once('error', rej);
+          })
+      );
     },
-    signTransaction({rootState}, {transaction, password}){
-      return rootState.accounts.wallet.signTransaction(transaction, password);
-    }
-  }
-}
+    resendTransaction({ dispatch, state }, { transaction, password }) {
+      return dispatch('sendSignedTransaction', { transaction, password }).then(
+        sendEvent =>
+          new Promise((res, rej) => {
+            const trxInList = state.pendingTransactions.find(
+              trx => transaction.hash === trx.hash
+            );
+
+            sendEvent.once('transactionHash', hash => {
+              trxInList.hash = hash;
+              res(hash);
+            });
+
+            sendEvent.once('confirmation', () => {
+              trxInList.state = 'success';
+            });
+
+            sendEvent.once('error', rej);
+          })
+      );
+    },
+    cancelTransaction({ state, dispatch }, { transaction, password }) {
+      return dispatch('sendSignedTransaction', { transaction, password }).then(
+        sendEvent =>
+          new Promise((res, rej) => {
+            const trxInList = state.pendingTransactions.find(
+              trx => transaction.hash === trx.hash
+            );
+
+            sendEvent.once('transactionHash', () => {
+              const shortTnx = trxInList.hash.slice(0, 10);
+              const error = new NotificationError({
+                title: 'Try to cancel the transaction',
+                text: `The cancellation ${shortTnx}... was started`,
+              });
+              dispatch('errors/emitError', error, { root: true });
+            });
+
+            sendEvent.once('confirmation', () => {
+              trxInList.state = 'canceled';
+              res();
+            });
+
+            sendEvent.once('error', rej);
+          })
+      );
+    },
+    handleSendingError({ dispatch }, receipt) {
+      const cause = receipt ? ', because out of gas' : '';
+      const error = new NotificationError({
+        title: 'Error sending transaction',
+        text: `Transaction was not sent${cause}`,
+        type: 'is-danger',
+      });
+      dispatch('errors/emitError', error, { root: true });
+    },
+  },
+};
