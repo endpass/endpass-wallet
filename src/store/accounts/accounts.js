@@ -128,8 +128,10 @@ export default {
       return storage.write('settings', settings)
         .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
+    validatePassword({ state }, password) {
+      return state.wallet.validatePassword(password);
+    },
     login({ commit, dispatch }, email) {
-      console.log('kek')
       return userService.login(email);
     },
     logout({ commit, dispatch }) {

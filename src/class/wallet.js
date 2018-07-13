@@ -15,9 +15,16 @@ export class Wallet {
     this.getAddressString = function() {
       return v3.address;
     };
-    this.getJson = function() {
-      return v3;
-    };
+    this.validatePassword = function (password) {
+      return new Promise((res, rej) => {
+        try {
+          EthWallet.fromV3(v3, password, true);
+          res();
+        } catch (e) {
+          rej(e);
+        }
+      });
+    }
   }
   signTransaction(transaction, password) {
     return transaction.sign(this.getPrivateKey(password));

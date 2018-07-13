@@ -2,10 +2,10 @@
   <div class="account-chooser field has-addons">
     <div v-if="hdWallet" class="control">
       <div class="select">
-        <select @change="selectWallet()">
+        <select v-model="activeAddress">
           <option value="" v-for="(wallet, key, index) in wallets"
                   :value="key">
-          {{index}}. {{address |truncateAddr}}
+          {{index}}. {{key |truncateAddr}}
           </option>
         </select>
       </div>
@@ -37,6 +37,14 @@ export default {
       wallets: state => state.accounts.wallets,
       address: state => state.accounts.address && state.accounts.address.getAddressString(),
     }),
+    activeAddress: {
+      get() {
+        return this.address.replace(/^0x/, '');
+      },
+      set(newValue) {
+        this.selectWallet(newValue);
+      }
+    }
   },
   methods: {
     ...mapMutations('accounts', ['selectWallet']),
