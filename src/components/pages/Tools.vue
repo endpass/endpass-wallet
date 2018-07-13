@@ -31,7 +31,12 @@
       v-if="isPasswordModal"
       @confirm="signMessage"
       @close="togglePasswordModal"
-    />
+    >
+      <div class="field">
+        <label class="label">Message</label>
+        <p>{{signingMessage.message}}</p>
+      </div>
+    </password-modal>
   </div>
 </template>
 
@@ -75,6 +80,7 @@ export default {
           text: 'An error occurred while signing the message. Please try again.',
           type: 'is-danger',
         });
+        console.error(error);
       }
     }
   },

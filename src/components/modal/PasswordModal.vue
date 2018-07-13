@@ -5,6 +5,7 @@
 
       <div>
         <v-form>
+          <slot></slot>
           <v-input v-model="jsonKeystorePassword"
                    label="V3 JSON keystore password"
                    name="jsonKeystorePassword"
@@ -31,6 +32,7 @@ import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
+  name: 'password-modal',
   data () {
     return {
       jsonKeystorePassword: '',

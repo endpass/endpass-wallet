@@ -103,6 +103,71 @@ exports[`Tools page render should render the initial state of the page 1`] = `
 </div>
 `;
 
+exports[`Tools page render should show modal window for password confirmation 1`] = `
+<div
+  class="app-page tools-page"
+>
+  <div
+    class="section"
+  >
+    <div
+      class="container is-narrow"
+    >
+      <div
+        class="card app-card main-app-card"
+      >
+        <div
+          class="card-header"
+        >
+          <h1
+            class="card-header-title"
+          >
+            Tools
+          </h1>
+        </div>
+         
+        <div
+          class="card-content"
+        >
+          <v-form
+            id="signing-message-form"
+          >
+            <v-textarea
+              label="Message"
+              placeholder="This is a message that you are signing to prove that you own the address you say you own."
+            />
+             
+            <v-button
+              classname="is-primary is-medium"
+            >
+              Sign message
+            </v-button>
+             
+            <!---->
+          </v-form>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <password-modal>
+    <div
+      class="field"
+    >
+      <label
+        class="label"
+      >
+        Message
+      </label>
+       
+      <p>
+        message
+      </p>
+    </div>
+  </password-modal>
+</div>
+`;
+
 exports[`Tools page render should show signed message 1`] = `
 <div
   class="app-page tools-page"

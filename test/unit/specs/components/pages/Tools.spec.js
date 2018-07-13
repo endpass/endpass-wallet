@@ -61,6 +61,17 @@ describe('Tools page', () => {
 
       expect(wrapper.element).toMatchSnapshot();
     });
+
+    it('should show modal window for password confirmation', () => {
+      wrapper.setData({
+        signingMessage: {
+          message: 'message'
+        },
+        isPasswordModal: true
+      });
+
+      expect(wrapper.element).toMatchSnapshot();
+    });
   });
 
   describe('methods', () => {
@@ -100,6 +111,9 @@ describe('Tools page', () => {
         vm.$store.state.web3.web3.eth.accounts.sign = jest.fn(() => {
           throw new Error();
         });
+
+        global.console.error = jest.fn();
+
         vm.signMessage(password);
 
         expect(vm.signingMessage.signedMessage).toBeNull();
