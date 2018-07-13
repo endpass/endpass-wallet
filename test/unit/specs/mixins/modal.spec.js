@@ -7,7 +7,7 @@ describe('Modal mixin', () => {
       const expected = {
         isPasswordModal: false
       };
-      console.log(data);
+
       expect(data).toEqual(expected);
     });
   });

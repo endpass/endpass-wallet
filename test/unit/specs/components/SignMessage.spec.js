@@ -1,9 +1,9 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
-import ToolsPage from '@/components/pages/Tools.vue';
+import SignMessage from '@/components/SignMessage';
 import { generateStubs } from '@/utils/testUtils';
 
-describe('Tools page', () => {
+describe('SignMessage', () => {
   const signedMessage = {};
   let wrapper;
 
@@ -30,23 +30,21 @@ describe('Tools page', () => {
 
     localVue.use(Notifications);
 
-    wrapper = shallow(ToolsPage, {
+    wrapper = shallow(SignMessage, {
       localVue,
       mocks: { $store },
-      stubs: generateStubs(ToolsPage)
+      stubs: generateStubs(SignMessage)
     });
   });
 
   describe('render', () => {
-    it('should render the initial state of the page', () => {
+    it('should render the initial state of the component', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
 
     it('should enable "Sign message" button', () => {
       wrapper.setData({
-        signingMessage: {
-          message: 'message'
-        }
+        message: 'message'
       });
 
       expect(wrapper.element).toMatchSnapshot();
@@ -55,18 +53,14 @@ describe('Tools page', () => {
     it('should show signed message', () => {
       const signedMessage = { message: 'message' };
 
-      wrapper.setData({
-        signingMessage: { signedMessage }
-      });
+      wrapper.setData({ signedMessage });
 
       expect(wrapper.element).toMatchSnapshot();
     });
 
     it('should show modal window for password confirmation', () => {
       wrapper.setData({
-        signingMessage: {
-          message: 'message'
-        },
+        message: 'message',
         isPasswordModal: true
       });
 
@@ -75,20 +69,6 @@ describe('Tools page', () => {
   });
 
   describe('methods', () => {
-    describe('togglePasswordModal', () => {
-      it('should toggle password modal', () => {
-        const { vm } = wrapper;
-        let isPasswordModal = vm.isPasswordModal;
-
-        vm.togglePasswordModal();
-        expect(vm.isPasswordModal).toBe(!isPasswordModal);
-
-        isPasswordModal = vm.isPasswordModal;
-        vm.togglePasswordModal();
-        expect(vm.isPasswordModal).toBe(!isPasswordModal);
-      });
-    });
-
     describe('signMessage', () => {
       const password = 'password';
 
@@ -101,7 +81,7 @@ describe('Tools page', () => {
 
         vm.signMessage(password);
 
-        expect(vm.signingMessage.signedMessage).toEqual(signedMessage);
+        expect(vm.signedMessage).toEqual(signedMessage);
         expect(vm.$notify).not.toHaveBeenCalled();
       });
 
@@ -116,7 +96,7 @@ describe('Tools page', () => {
 
         vm.signMessage(password);
 
-        expect(vm.signingMessage.signedMessage).toBeNull();
+        expect(vm.signedMessage).toBeNull();
         expect(vm.$notify).toHaveBeenCalledTimes(1);
         expect(vm.$notify).toHaveBeenCalledWith({
           title: 'Error signing message',

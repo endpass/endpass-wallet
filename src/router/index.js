@@ -12,7 +12,7 @@ import ImportWallet from '@/components/pages/ImportWallet'
 import ExportWallet from '@/components/pages/ExportWallet'
 import SettingsPage from '@/components/pages/Settings';
 import LoginPage from '@/components/pages/Login';
-import ToolsPage from '@/components/pages/Tools';
+import MessagePage from '@/components/pages/Message';
 
 import store from '../store'
 Vue.use(Router)
@@ -78,9 +78,9 @@ export default new Router({
       component: LoginPage,
     },
     {
-      path: '/tools',
-      name: 'ToolsPage',
-      component: ToolsPage,
+      path: '/message',
+      name: 'MessagePage',
+      component: MessagePage,
       beforeEnter: multiguard([hasWalletGuard])
     }
   ]

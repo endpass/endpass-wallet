@@ -39,11 +39,16 @@
           <span class="icon is-small"
                 v-html="require('@/img/cog.svg')"></span>Settings
         </router-link>
-        <router-link v-if="wallet" class="navbar-item" :to="{name:
-        'ToolsPage'}" @click.native="toggleNavMenu">
-          <span class="icon is-small"
-                v-html="require('@/img/cog.svg')"></span>Tools
-        </router-link>
+        <div class="navbar-item has-dropdown is-hoverable" v-if="wallet">
+          <a class="navbar-link">
+            <span class="icon is-small" v-html="require('@/img/cog.svg')"></span>Tools
+          </a>
+          <div class="navbar-dropdown">
+            <router-link v-if="wallet" class="navbar-item" :to="{name:'MessagePage'}" @click.native="toggleNavMenu">
+              Message
+            </router-link>
+          </div>
+        </div>
         <router-link class="navbar-item"
                       v-if="!email"
                       :to="{name:'LoginPage'}"
@@ -92,7 +97,8 @@ export default {
 // Navbar
 .app-nav {
   .navbar-menu {
-    a.navbar-item {
+    a.navbar-item,
+    a.navbar-link {
       font-family: $heading-font-family;
       font-size: 1.1rem;
       text-transform: uppercase;
