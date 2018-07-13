@@ -148,7 +148,10 @@ export default {
 
           commit('setProviders', storedNetworks || []);
           commit('changeNetwork', activeNet);
-          dispatch('subscribeOnBlockUpdates');
+          Promise.all([
+            dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true }),
+            dispatch('subscribeOnBlockUpdates')
+          ]).catch(e => dispatch('errors/emitError', e, {root: true}));
         })
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },

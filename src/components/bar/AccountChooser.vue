@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import NewAccountModal from '@/components/NewAccountModal'
 
 export default {
@@ -39,7 +39,7 @@ export default {
     }),
   },
   methods: {
-    ...mapMutations('accounts', ['selectWallet']),
+    ...mapActions('accounts', ['selectWallet']),
     openNewAccountModal() {
       this.newAccountModalOpen = true
     },

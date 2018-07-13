@@ -56,10 +56,6 @@ export default {
     addHdWallet(state, wallet) {
       state.hdWallet = wallet;
     },
-    selectWallet(state, address) {
-      state.wallet = state.wallets[address];
-      state.address = new Address(address);
-    },
     setBalance(state, balance) {
       state.balance = balance;
     },
@@ -79,8 +75,13 @@ export default {
       commit('addWallet', {
         wallet,
         address: json.address});
-      commit('selectWallet', json.address);
+      dispatch('selectWallet', json.address);
       commit('addAddress', json.address);
+    },
+    selectWallet({commit, state, dispatch}, address) {
+      state.wallet = state.wallets[address];
+      state.address = new Address(address);
+      dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true });
     },
     addWalletAndStore({ commit, dispatch }, json) {
       return Promise.all([
@@ -129,7 +130,6 @@ export default {
         .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
     login({ commit, dispatch }, email) {
-      console.log('kek')
       return userService.login(email);
     },
     logout({ commit, dispatch }) {
