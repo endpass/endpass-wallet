@@ -1,183 +1,102 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Message page render should render the initial state of the page 1`] = `
-<div
-  class="app-page"
->
+<base-page>
+   
   <div
-    class="section"
+    class="tabs"
   >
-    <div
-      class="container is-narrow"
-    >
-      <div
-        class="card app-card main-app-card"
+    <ul>
+      <li
+        class="is-active"
       >
-        <div
-          class="card-header"
-        >
-          <h1
-            class="card-header-title"
-          >
-            Message
-          </h1>
-        </div>
-         
-        <div
-          class="card-content"
-        >
-          <div
-            class="tabs"
-          >
-            <ul>
-              <li
-                class="is-active"
-              >
-                <a>
-                  Sign
-                </a>
-              </li>
-               
-              <li
-                class=""
-              >
-                <a>
-                  Verify
-                </a>
-              </li>
-            </ul>
-          </div>
-           
-          <sign-message />
-           
-          <verify-message
-            style="display: none;"
-          />
-        </div>
-      </div>
-    </div>
+        <a>
+          Sign
+        </a>
+      </li>
+       
+      <li
+        class=""
+      >
+        <a>
+          Verify
+        </a>
+      </li>
+    </ul>
   </div>
-</div>
+   
+  <sign-message />
+   
+  <verify-message
+    style="display: none;"
+  />
+</base-page>
 `;
 
 exports[`Message page render should set Sign tab 1`] = `
-<div
-  class="app-page"
->
+<base-page>
+   
   <div
-    class="section"
+    class="tabs"
   >
-    <div
-      class="container is-narrow"
-    >
-      <div
-        class="card app-card main-app-card"
+    <ul>
+      <li
+        class="is-active"
       >
-        <div
-          class="card-header"
-        >
-          <h1
-            class="card-header-title"
-          >
-            Message
-          </h1>
-        </div>
-         
-        <div
-          class="card-content"
-        >
-          <div
-            class="tabs"
-          >
-            <ul>
-              <li
-                class="is-active"
-              >
-                <a>
-                  Sign
-                </a>
-              </li>
-               
-              <li
-                class=""
-              >
-                <a>
-                  Verify
-                </a>
-              </li>
-            </ul>
-          </div>
-           
-          <sign-message />
-           
-          <verify-message
-            style="display: none;"
-          />
-        </div>
-      </div>
-    </div>
+        <a>
+          Sign
+        </a>
+      </li>
+       
+      <li
+        class=""
+      >
+        <a>
+          Verify
+        </a>
+      </li>
+    </ul>
   </div>
-</div>
+   
+  <sign-message />
+   
+  <verify-message
+    style="display: none;"
+  />
+</base-page>
 `;
 
 exports[`Message page render should set Verify tab 1`] = `
-<div
-  class="app-page"
->
+<base-page>
+   
   <div
-    class="section"
+    class="tabs"
   >
-    <div
-      class="container is-narrow"
-    >
-      <div
-        class="card app-card main-app-card"
+    <ul>
+      <li
+        class=""
       >
-        <div
-          class="card-header"
-        >
-          <h1
-            class="card-header-title"
-          >
-            Message
-          </h1>
-        </div>
-         
-        <div
-          class="card-content"
-        >
-          <div
-            class="tabs"
-          >
-            <ul>
-              <li
-                class=""
-              >
-                <a>
-                  Sign
-                </a>
-              </li>
-               
-              <li
-                class="is-active"
-              >
-                <a>
-                  Verify
-                </a>
-              </li>
-            </ul>
-          </div>
-           
-          <sign-message
-            style="display: none;"
-          />
-           
-          <verify-message
-            style=""
-          />
-        </div>
-      </div>
-    </div>
+        <a>
+          Sign
+        </a>
+      </li>
+       
+      <li
+        class="is-active"
+      >
+        <a>
+          Verify
+        </a>
+      </li>
+    </ul>
   </div>
-</div>
+   
+  <sign-message
+    style="display: none;"
+  />
+   
+  <verify-message
+    style=""
+  />
+</base-page>
 `;

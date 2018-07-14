@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Base page render should render default slot 1`] = `
+<div
+  class="app-page"
+>
+  <div
+    class="section"
+  >
+    <div
+      class="container is-narrow"
+    >
+      <div
+        class="card app-card main-app-card"
+      >
+        <div
+          class="card-header"
+        >
+          <h1
+            class="card-header-title"
+          />
+        </div>
+         
+        <div
+          class="card-content"
+        >
+          <div>
+            default slot
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Base page render should render the initial state of the page 1`] = `
+<div
+  class="app-page"
+>
+  <div
+    class="section"
+  >
+    <div
+      class="container is-narrow"
+    >
+      <div
+        class="card app-card main-app-card"
+      >
+        <div
+          class="card-header"
+        >
+          <h1
+            class="card-header-title"
+          />
+        </div>
+         
+        <div
+          class="card-content"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Base page render should render title slot 1`] = `
+<div
+  class="app-page"
+>
+  <div
+    class="section"
+  >
+    <div
+      class="container is-narrow"
+    >
+      <div
+        class="card app-card main-app-card"
+      >
+        <div
+          class="card-header"
+        >
+          <h1
+            class="card-header-title"
+          >
+            title
+          </h1>
+        </div>
+         
+        <div
+          class="card-content"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

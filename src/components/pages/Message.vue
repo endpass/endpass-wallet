@@ -1,32 +1,24 @@
 <template>
-  <div class="app-page">
-    <div class="section">
-      <div class="container is-narrow">
-        <div class="card app-card main-app-card">
-          <div class="card-header">
-            <h1 class="card-header-title">Message</h1>
-          </div>
-          <div class="card-content">
-            <div class="tabs">
-              <ul>
-                <li :class="[ isSignTabActive ? 'is-active' : '']">
-                  <a @click="setSignTabActive">Sign</a>
-                </li>
-                <li :class="[ isVerifyTabActive ? 'is-active' : '']">
-                  <a @click="setVerifyTabActive">Verify</a>
-                </li>
-              </ul>
-            </div>
-            <sign-message v-show="isSignTabActive"/>
-            <verify-message v-show="isVerifyTabActive"/>
-          </div>
-        </div>
-      </div>
+  <base-page>
+    <template slot="title">Message</template>
+
+    <div class="tabs">
+      <ul>
+        <li :class="[ isSignTabActive ? 'is-active' : '']">
+          <a @click="setSignTabActive">Sign</a>
+        </li>
+        <li :class="[ isVerifyTabActive ? 'is-active' : '']">
+          <a @click="setVerifyTabActive">Verify</a>
+        </li>
+      </ul>
     </div>
-  </div>
+    <sign-message v-show="isSignTabActive"/>
+    <verify-message v-show="isVerifyTabActive"/>
+  </base-page>
 </template>
 
 <script>
+import BasePage from '@/components/pages/Base';
 import SignMessage from '@/components/SignMessage';
 import VerifyMessage from '@/components/VerifyMessage';
 
@@ -57,6 +49,7 @@ export default {
     }
   },
   components: {
+    BasePage,
     SignMessage,
     VerifyMessage
   }
