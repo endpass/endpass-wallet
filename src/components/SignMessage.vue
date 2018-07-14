@@ -14,6 +14,7 @@
         v-if="signedMessage"
         v-model="getSignedMessage"
         label="Signature"
+        disabled
       />
     </v-form>
     <password-modal

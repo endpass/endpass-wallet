@@ -44,7 +44,7 @@
             <span class="icon is-small" v-html="require('@/img/cog.svg')"></span>Tools
           </a>
           <div class="navbar-dropdown">
-            <router-link v-if="wallet" class="navbar-item" :to="{name:'MessagePage'}" @click.native="toggleNavMenu">
+            <router-link class="navbar-item" :to="{name:'MessagePage'}" @click.native="toggleNavMenu">
               Message
             </router-link>
           </div>

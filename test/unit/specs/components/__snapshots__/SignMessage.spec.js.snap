@@ -102,6 +102,7 @@ exports[`SignMessage render should show signed message 1`] = `
     </v-button>
      
     <v-textarea
+      disabled=""
       label="Signature"
     />
   </v-form>
