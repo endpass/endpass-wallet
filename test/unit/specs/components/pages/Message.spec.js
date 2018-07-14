@@ -15,5 +15,21 @@ describe('Message page', () => {
     it('should render the initial state of the page', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
+
+    it('should set Sign tab', () => {
+      wrapper.setData({
+        action: 'SIGN'
+      });
+
+      expect(wrapper.element).toMatchSnapshot();
+    });
+
+    it('should set Verify tab', () => {
+      wrapper.setData({
+        action: 'VERIFY'
+      });
+
+      expect(wrapper.element).toMatchSnapshot();
+    });
   });
 });
