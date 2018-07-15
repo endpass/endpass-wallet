@@ -32,32 +32,15 @@
             </div>
           </div>
           <div class="column is-half">
-            <div class="card app-card">
-              <div class="card-content">
-                <nav class="panel">
-                  <p class="panel-heading">
-                  Add Token
-                  </p>
-                  <div class="panel-block">
-                    <search-input v-model="search"></search-input>
-                  </div>
-                  <div class="scroller">
-                    <a v-for="token in filteredTokens"
-                       :key="token.address"
-                       @click="saveToken(token)"
-                       :disabled="token.manuallyAdded"
-                       class="panel-block is-clearfix is-block">
-
-                      <span class="icon panel-icon is-small"
-                            v-html="require('@/img/plus.svg')">
-                      </span>
-                      <span class="token-symbol">{{token.symbol}}</span>
-                      <span class="token-name">{{token.name}}</span>
-                    </a>
-                  </div>
-                </nav>
-              </div>
-            </div>
+            <h4 class="title is-4">Add token</h4>
+            <multiselect
+               :options="filteredTokens"
+               track-by="address" label="name"
+               :show-labels="false"
+               :allow-empty="false"
+               @select="addTokenToSubscription"
+               placeholder="Select token"
+               />
           </div>
 
         </div>
@@ -69,6 +52,7 @@
 </template>
 
 <script>
+import Multiselect from 'vue-multiselect'
 import EndpassService from '@/services/endpass'
 import { BigNumber } from 'bignumber.js';
 import Balance from '@/components/Balance'
@@ -97,30 +81,17 @@ export default {
       let unwatchedTokens = this.tokens.filter((token) => {
         return !this.activeTokens.some((activeToken) => {
           return activeToken.address === token.address;
-        })
-      });
-      let search = this.search.toLowerCase()
-      if(search === '') {
-        return unwatchedTokens
-      } else {
-        return unwatchedTokens.filter((token) => {
-          return token.symbol.toLowerCase().includes(search) ||
-            token.name.toLowerCase().includes(this.search)
         });
-      }
+      });
+      return unwatchedTokens
     }
   },
   methods: {
-    ...mapActions('tokens', ['updateTokenPrice']),
+    ...mapActions('tokens', ['updateTokenPrice', 'addTokenToSubscription']),
     getTokenAmount(token) {
       let balanceBn = new BigNumber(token.balance);
       let decimalsBn = new BigNumber(10).pow(token.decimals);
       return balanceBn.div(decimalsBn);
-    },
-    saveToken(token) {
-      // Add token to subscription
-      this.$set(token, 'manuallyAdded', true);
-      this.$store.dispatch('tokens/addTokenToSubscription', token);
     },
     getAllTokens(context) {
       EndpassService.getTokensList()
@@ -153,7 +124,8 @@ export default {
   components: {
     SearchInput,
     Balance,
-    AddTokenModal
+    AddTokenModal,
+    Multiselect
   }
 }
 </script>

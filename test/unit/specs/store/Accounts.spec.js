@@ -9,7 +9,11 @@ import { userService } from '@/services';
 
 global.localStorage = localStorageMock;
 
+//Fake action from antoher storage
+store.actions['tokens/subscribeOnTokenUpdates'] = jest.fn();
+
 const { state, mutations, actions } = store;
+
 
 const commit = store => (type, payload) =>
   mutations[type](store, payload);
@@ -33,7 +37,7 @@ describe('accounts store', () => {
     state.wallets = {
       '0x3c75226555FC496168d48B88DF83B95F16771F37': 1
     }
-    mutations.selectWallet(state, '0x3c75226555FC496168d48B88DF83B95F16771F37');
+    actions.selectWallet(context, '0x3c75226555FC496168d48B88DF83B95F16771F37');
     expect(state.wallet).toBe(1);
   });
 
@@ -42,7 +46,7 @@ describe('accounts store', () => {
       address: '0x3c75226555FC496168d48B88DF83B95F16771F37',
       wallet: 2
     });
-    mutations.selectWallet(state, '0x3c75226555FC496168d48B88DF83B95F16771F37');
+    actions.selectWallet(context, '0x3c75226555FC496168d48B88DF83B95F16771F37');
     expect(state.wallets['0x3c75226555FC496168d48B88DF83B95F16771F37']).toBe(2);
     expect(state.wallet).toBe(2);
   });

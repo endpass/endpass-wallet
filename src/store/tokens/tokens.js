@@ -23,11 +23,12 @@ export default {
       return rootState.web3.activeNet.id;
     },
     savedActiveTokens(state, { net }) {
-      return state.savedTokens[net];
+      return state.savedTokens[net] || [];
     }
   },
   mutations: {
     addToken(state, {token, net}) {
+      state.savedTokens[net] = state.savedTokens[net] ? state.savedTokens[net] : [];
       state.savedTokens[net].push(token);
     },
     saveTokens(state, tokens = {}) {
@@ -83,8 +84,8 @@ export default {
         // get tokens with balances
         return dispatch('getNonZeroTokens')
           .then(resp => {
-            dispatch('subsctibeOnTokenPriceUpdates', resp.tokens || []);
-            return dispatch('createTokenSubscription', resp.tokens || []);
+            dispatch('subsctibeOnTokenPriceUpdates', resp.data.tokens || []);
+            return dispatch('createTokenSubscription', resp.data.tokens || []);
           })
           .catch(() => {
             const error = new NotificationError({
