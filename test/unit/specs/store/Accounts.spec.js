@@ -108,6 +108,16 @@ describe('accounts store', () => {
     expect(state.wallet.getAddressString(v3password).toUpperCase()).toBe(v3json.address.toUpperCase());
   })
 
+  it('shoud validate password', () => {
+    const promise = actions.validatePassword(context, v3password);
+    expect(promise).resolves.toBe();
+  })
+
+  it('shoud reject wrong password', () => {
+    const promise = actions.validatePassword(context, '');
+    expect(promise).rejects.toMatch('error');
+  })
+
   it('should call mutation from update settings action', async () => {
     const commit = jest.fn();
     const state = {};

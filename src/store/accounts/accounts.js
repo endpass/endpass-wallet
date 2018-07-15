@@ -123,6 +123,9 @@ export default {
       return storage.write('settings', settings)
         .catch(e => dispatch('errors/emitError', e, {root: true}));
     },
+    validatePassword({ state }, password) {
+      return state.wallet.validatePassword(password);
+    },
     login({ commit, dispatch }, email) {
       return userService.login(email);
     },
