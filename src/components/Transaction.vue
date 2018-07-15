@@ -40,9 +40,7 @@
 
           <div class="column is-one-third">
             <p>
-              <span class="title amount">{{transaction.value}}</span>
-              <span v-if="transaction.tokenInfo">{{transaction.tokenInfo.symbol}}</span>
-              <span v-else>ETH</span>
+              <balance :amount="transaction.value" :currency="(transaction.tokenInfo && transaction.tokenInfo.symbol) || 'ETH'"></balance>
             </p>
             <p class="received" v-if="recieve">
               <span class="icon is-medium"
@@ -76,6 +74,7 @@
 </template>
 
 <script>
+import Balance from '@/components/Balance'
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import { Transaction } from '@/class'
@@ -162,6 +161,7 @@ export default {
     }
   },
   components: {
+    Balance,
     ResendModal,
     PasswordModal
   },
