@@ -263,7 +263,6 @@ export default {
       .catch(e => {
         this.isSending = false;
         this.resetForm();
-        this.$notify(e);
       });
     },
     confirmTransaction() {

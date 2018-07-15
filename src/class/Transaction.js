@@ -96,6 +96,10 @@ export class Transaction {
   get gasCost() {
     return BigNumber(this.gasPriceWei).times(this.gasLimit);
   }
+  get token() {
+    const token = this.tokenInfo && this.tokenInfo.symbol;
+    return token || 'ETH';
+  }
   getValidData(eth) {
     let { data } = this;
 

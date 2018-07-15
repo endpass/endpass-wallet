@@ -6,12 +6,13 @@
         {{transaction.hash}}
         </p>
         <div class="card-header-icon" :title="transaction.state">
-          <span v-if="transaction.success" class="icon has-text-success is-medium"
+          <span v-if="transaction.state === 'success'"
+                class="icon has-text-success is-medium"
                 v-html="require('@/img/circle-check.svg')"></span>
-          <span v-else-if="transaction.canseled" class="icon
-                                                 has-text-danger is-medium"
+          <span v-else-if="transaction.state === 'canceled'"
+                class="icon has-text-danger is-medium"
                 v-html="require('@/img/ban.svg')"></span>
-          <span v-else-if="transaction.isPending" class="icon is-medium"
+          <span v-else-if="transaction.state === 'pending'" class="icon is-medium"
                 v-html="require('@/img/ellipses.svg')"></span>
         </div>
       </div>
@@ -33,7 +34,7 @@
               <span class="address">{{transaction.to}}</span>
             </p>
             <p v-if="transaction.data">
-              {{parsePata(transaction.data)}}
+              {{parseData(transaction.data)}}
             </p>
           </div>
 
@@ -61,7 +62,7 @@
           <span class="icon is-medium"
                 v-html="require('@/img/loop.svg')"></span>Resend
         </a>
-        <a class="card-footer-item has-text-danger" @click="cansel" :disabled="isSyncing"
+        <a class="card-footer-item has-text-danger" @click="cancel" :disabled="isSyncing"
          type="button" name="button">
           <span class="icon is-medium"
                 v-html="require('@/img/ban.svg')"></span>Cancel
@@ -80,7 +81,8 @@ import Tx from 'ethereumjs-tx';
 import { Transaction } from '@/class'
 import ResendModal from './ResendModal'
 import PasswordModal from '@/components/modal/PasswordModal'
-import { mapState, mapMutations, mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
+import error from '@/mixins/error';
 
 export default {
   props: ['transaction'],
@@ -95,7 +97,9 @@ export default {
   computed: {
     ...mapState({
       isSyncing: state => state.web3.isSyncing,
-      web3: state => state.web3.web3
+      web3: state => state.web3.web3,
+      address: state =>
+        state.accounts.address && state.accounts.address.getAddressString(),
     }),
     ...mapGetters('accounts', ['isPublicAccount']),
     recieve() {
@@ -103,9 +107,9 @@ export default {
     },
   },
   methods: {
-    ...mapActions('transactions', ['sendTransaction']),
-    ...mapMutations('transactions', ['removeTransaction']),
+    ...mapActions('transactions', ['resendTransaction', 'cancelTransaction']),
     resend() {
+      this.transactionToSend = this.transaction.clone();
       this.resendModalOpen = true
       this.state = 'resent'
     },
@@ -116,17 +120,24 @@ export default {
       this.passwordModalOpen = false;
     },
     confirmPassword(password) {
-      this.sendTransaction({ transaction: this.transactionToSend, password}).then(() => {
-        this.transaction.status = 'canseled';
-        this.$notify({
-          title: 'Successful',
-          text: `Transaction was ${this.state}`,
-          type: 'is-info',
-        });
-      })
-      .catch(e => {
-        this.$notify(e);
-      });
+      this.resendModalOpen = false;
+      this.passwordModalOpen = false;
+
+      const sendTransaction =
+        this.state === 'canceled'
+          ? this.cancelTransaction
+          : this.resendTransaction;
+
+      sendTransaction({ transaction: this.transactionToSend, password})
+        .then(() => {
+          this.$notify({
+            title: 'Successful',
+            text: `Transaction was ${this.state}`,
+            type: 'is-info',
+          });
+          this.state = null;
+        })
+        .catch(() => {});
     },
     confirmResend(transaction) {
       this.transactionToSend = transaction;
@@ -135,17 +146,17 @@ export default {
     closeResendModal() {
       this.resendModalOpen = false
     },
-    cansel() {
-      if(this.transaction.date)
-        return;
-        this.state = 'canseled'
+    cancel() {
+      if (this.transaction.date) return;
+
+      this.state = 'canceled'
       this.transactionToSend = this.transaction.clone();
       this.transactionToSend.value = '0';
       this.transactionToSend.to = this.address;
       this.transactionToSend.gasPrice = this.transactionToSend.getUpGasPrice();
       this.requestPassword();
     },
-    parsePata() {
+    parseData() {
       let dataString = this.transaction.data || '0x';
       return web3.utils.hexToString(dataString);
     }
@@ -153,7 +164,7 @@ export default {
   components: {
     ResendModal,
     PasswordModal
-  }
+  },
 }
 </script>
 
