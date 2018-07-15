@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import appTransaction from '@/components/Transaction'
 import EthplorerService from '@/services/ethplorer'
 import accounts from '@/mixins/accounts'
@@ -47,6 +48,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      address: state => state.accounts.address && state.accounts.address.getAddressString()
+    }),
     processedTransactions() {
       return this.transactions.sort((trx1, trx2) => {
         return trx2.timestamp - trx1.timestamp;
@@ -56,7 +60,6 @@ export default {
   created() {
     EthplorerService.getInfo(this.address)
       .then(resp => {
-        console.log('failed')
         this.transactions = resp.data.filter(trx => {
           return trx.to === this.address;
         });
@@ -82,8 +85,7 @@ export default {
   },
   components: {
     appTransaction
-  },
-  mixins: [accounts]
+  }
 }
 </script>
 

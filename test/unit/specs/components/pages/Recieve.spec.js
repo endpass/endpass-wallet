@@ -26,7 +26,7 @@ describe('ReceivePage', () => {
     store = new Vuex.Store({
       state: {
         accounts: {
-          activeAccount: wallet
+          address: wallet
         },
         web3: {
           web3: web3
