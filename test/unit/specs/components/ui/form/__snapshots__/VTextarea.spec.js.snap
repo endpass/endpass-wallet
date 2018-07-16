@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VTextarea render should render component 1`] = `
+<div
+  class="field"
+>
+  <!---->
+   
+  <div
+    class="control"
+  >
+    <textarea
+      class="textarea"
+    />
+  </div>
+</div>
+`;
+
+exports[`VTextarea render should render component with label 1`] = `
+<div
+  class="field"
+>
+  <label
+    class="label"
+  >
+    Label
+  </label>
+   
+  <div
+    class="control"
+  >
+    <textarea
+      class="textarea"
+    />
+  </div>
+</div>
+`;

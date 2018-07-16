@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SignMessage render should enable "Sign message" button 1`] = `
+<div>
+  <v-form
+    id="signing-message-form"
+  >
+    <v-textarea
+      label="Message"
+      placeholder="This is a message that you are signing to prove that you own the address you say you own."
+    />
+     
+    <v-button
+      classname="is-primary is-medium"
+    >
+      Sign message
+    </v-button>
+     
+    <!---->
+  </v-form>
+   
+  <!---->
+</div>
+`;
+
+exports[`SignMessage render should render the initial state of the component 1`] = `
+<div>
+  <v-form
+    id="signing-message-form"
+  >
+    <v-textarea
+      label="Message"
+      placeholder="This is a message that you are signing to prove that you own the address you say you own."
+    />
+     
+    <v-button
+      classname="is-primary is-medium"
+      disabled="true"
+    >
+      Sign message
+    </v-button>
+     
+    <!---->
+  </v-form>
+   
+  <!---->
+</div>
+`;
+
+exports[`SignMessage render should show modal window for password confirmation 1`] = `
+<div>
+  <v-form
+    id="signing-message-form"
+  >
+    <v-textarea
+      label="Message"
+      placeholder="This is a message that you are signing to prove that you own the address you say you own."
+    />
+     
+    <v-button
+      classname="is-primary is-medium"
+    >
+      Sign message
+    </v-button>
+     
+    <!---->
+  </v-form>
+   
+  <password-modal>
+    <div
+      class="field"
+    >
+      <label
+        class="label"
+      >
+        Message
+      </label>
+       
+      <p>
+        message
+      </p>
+    </div>
+  </password-modal>
+</div>
+`;
+
+exports[`SignMessage render should show signed message 1`] = `
+<div>
+  <v-form
+    id="signing-message-form"
+  >
+    <v-textarea
+      label="Message"
+      placeholder="This is a message that you are signing to prove that you own the address you say you own."
+    />
+     
+    <v-button
+      classname="is-primary is-medium"
+      disabled="true"
+    >
+      Sign message
+    </v-button>
+     
+    <v-textarea
+      disabled=""
+      label="Signature"
+    />
+  </v-form>
+   
+  <!---->
+</div>
+`;
