@@ -1,7 +1,7 @@
 <template>
 	<div>
     <p class="heading">Balance</p>
-    <span class="title">{{ balance }}</span>
+    <span class="title" :class="{'long-number': balance.length > 6}">{{ balance }}</span>
     {{currency}}
     <a v-if="hasUpdate" @click.prevent="update()">
     	<span class="icon is-small"
