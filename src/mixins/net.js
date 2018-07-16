@@ -14,9 +14,8 @@ export default {
       return {
         mainnet: this.networkType === 'main',
         privatenet: this.networkType === 'private',
-        testnet: this.networkType !== 'main' &&
-          this.networkType !== 'private',
-      }
-    }
-  }
-}
+        testnet: this.networkType !== 'main' && this.networkType !== 'private',
+      };
+    },
+  },
+};

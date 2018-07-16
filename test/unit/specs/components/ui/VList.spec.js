@@ -11,7 +11,7 @@ describe('VList', () => {
     list: {
       item1: 'text1',
       item2: 'text2',
-    }
+    },
   };
 
   beforeEach(() => {
@@ -33,7 +33,10 @@ describe('VList', () => {
   it('should emit event', () => {
     wrapper.setProps(props);
 
-    wrapper.findAll('a').at(1).trigger('click');
+    wrapper
+      .findAll('a')
+      .at(1)
+      .trigger('click');
 
     // FIXME unexpected behavor, nextTick don't help
     // expect(wrapper.vm.$data.active).toBe('item2');

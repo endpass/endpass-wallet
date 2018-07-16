@@ -1,21 +1,23 @@
 import ethUtils from 'ethereumjs-util';
 export default {
   getMessage(field, params, data) {
-      return (data && data.message) || 'Something went wrong';
+    return (data && data.message) || 'Something went wrong';
   },
   validate(value, args) {
-    let isKey
+    let isKey;
     try {
-      isKey = ethUtils.isValidPublic(Buffer.from(value.replace(/^0x/,''), 'hex'));
+      isKey = ethUtils.isValidPublic(
+        Buffer.from(value.replace(/^0x/, ''), 'hex'),
+      );
     } catch (e) {
       return {
         valid: false,
-        data: { message: e.message }
-      }
+        data: { message: e.message },
+      };
     }
     return {
       valid: isKey,
-      data: !isKey  ? { message: 'This is not a valid public key' } : undefined
-    }
-  }
-}
+      data: !isKey ? { message: 'This is not a valid public key' } : undefined,
+    };
+  },
+};

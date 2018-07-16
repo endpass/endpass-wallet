@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import Vue from 'vue';
 import { default as VeeValidate, Validator } from 'vee-validate';
 import address from './address';
 import privateKey from './privateKey';

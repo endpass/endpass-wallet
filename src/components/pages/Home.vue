@@ -53,29 +53,28 @@
 </template>
 
 <script>
-
-import Balance from '@/components/Balance'
-import accounts from '@/mixins/accounts'
-import { mapGetters, mapState } from 'vuex'
+import Balance from '@/components/Balance';
+import accounts from '@/mixins/accounts';
+import { mapGetters, mapState } from 'vuex';
 
 export default {
-  data () {
-    return {
-    }
+  data() {
+    return {};
   },
   computed: {
     ...mapGetters('accounts', {
-      'isPublicAccount': 'isPublicAccount',
-      'balance' : 'balance'
+      isPublicAccount: 'isPublicAccount',
+      balance: 'balance',
     }),
     ...mapState({
-      address: state => state.accounts.address && state.accounts.address.getAddressString()
-    })
+      address: state =>
+        state.accounts.address && state.accounts.address.getAddressString(),
+    }),
   },
   components: {
-    Balance
-  }
-}
+    Balance,
+  },
+};
 </script>
 
 <style lang="scss">

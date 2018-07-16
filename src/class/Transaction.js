@@ -54,7 +54,9 @@ export class Transaction {
       multiplier = BigNumber('10').pow(this.tokenInfo.decimals || 0);
     }
 
-    return BigNumber(this._value).times(multiplier).toFixed(0);
+    return BigNumber(this._value)
+      .times(multiplier)
+      .toFixed(0);
   }
   set valueWei(valueWei) {
     if (!isNumeric(valueWei)) return '0';
@@ -65,7 +67,9 @@ export class Transaction {
       multiplier = BigNumber('10').pow(this.tokenInfo.decimals || 0);
     }
 
-    this._value = BigNumber(valueWei).div(multiplier).toFixed();
+    this._value = BigNumber(valueWei)
+      .div(multiplier)
+      .toFixed();
   }
   set gasPrice(price) {
     this._gasPrice = price.toString();

@@ -4,7 +4,7 @@ const userAPIUrl = 'http://user-url-for-dev.com';
 const kdfParams = {
   kdf: 'scrypt',
   n: 1024, // low for development
-}
+};
 
 export default {
   userAPIUrl,

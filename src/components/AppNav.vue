@@ -69,13 +69,13 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapState } from 'vuex'
+import { mapGetters, mapActions, mapState } from 'vuex';
 
 export default {
-  data () {
+  data() {
     return {
-      navMenuActive: false
-    }
+      navMenuActive: false,
+    };
   },
   computed: {
     ...mapState({
@@ -86,11 +86,11 @@ export default {
   },
   methods: {
     ...mapActions('accounts', ['logout']),
-    toggleNavMenu () {
-      this.navMenuActive = !this.navMenuActive
-    }
-  }
-}
+    toggleNavMenu() {
+      this.navMenuActive = !this.navMenuActive;
+    },
+  },
+};
 </script>
 
 <style lang="scss">
@@ -111,8 +111,11 @@ export default {
     }
   }
 
-  a.navbar-item.is-active, a.navbar-item:hover, a.navbar-link.is-active,
-  a.navbar-link:hover, .router-link-exact-active {
+  a.navbar-item.is-active,
+  a.navbar-item:hover,
+  a.navbar-link.is-active,
+  a.navbar-link:hover,
+  .router-link-exact-active {
     background-color: initial;
     color: $purple;
 
@@ -121,7 +124,8 @@ export default {
     }
   }
 
-  .navbar-item .icon:only-child, .navbar-link .icon:only-child {
+  .navbar-item .icon:only-child,
+  .navbar-link .icon:only-child {
     margin-left: 0;
     margin-right: 0.25em;
   }

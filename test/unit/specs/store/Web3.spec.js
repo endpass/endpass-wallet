@@ -1,6 +1,6 @@
-import store from '@/store/web3/web3'
-import LocalStorageMock from '../../localStorageMock.js'
-import testAction from '../ActionTestingHelper'
+import store from '@/store/web3/web3';
+import LocalStorageMock from '../../localStorageMock.js';
+import testAction from '../ActionTestingHelper';
 
 jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
 global.localStorage = LocalStorageMock;
@@ -11,9 +11,9 @@ const commit = state => (type, payload) =>
 //Fake action from antoher storage
 store.actions['tokens/subscribeOnTokenUpdates'] = jest.fn();
 
-const dispatch = context => (type) => {
+const dispatch = context => type => {
   store.actions[type](context);
-}
+};
 
 const stateInstance = store.state();
 
@@ -24,13 +24,13 @@ describe('web3 store', async () => {
       'networks',
       JSON.stringify([
         { name: 'TestNet', id: 4, url: 'https://testnet.infura.io/' },
-      ])
+      ]),
     );
 
     store.state = stateInstance;
     await store.actions.init({
       commit: commit(stateInstance),
-      dispatch: dispatch({state: stateInstance, commit, dispatch}),
+      dispatch: dispatch({ state: stateInstance, commit, dispatch }),
       state: stateInstance,
     });
   });
@@ -77,7 +77,7 @@ describe('web3 store', async () => {
       {
         state: {
           accounts: {
-            wallet: null
+            wallet: null,
           },
         },
         getters: {
@@ -100,7 +100,7 @@ describe('web3 store', async () => {
         { type: 'subscribeOnBlockUpdates' },
         { type: 'tokens/subscribeOnTokenUpdates' },
       ],
-      done
+      done,
     );
   });
 
@@ -112,7 +112,7 @@ describe('web3 store', async () => {
       },
       {
         state: {
-          storedNetworks: []
+          storedNetworks: [],
         },
         getters: {
           networks: [
@@ -130,7 +130,7 @@ describe('web3 store', async () => {
       },
       [{ type: 'addNewProvider' }],
       [{ type: 'changeNetwork' }],
-      done
+      done,
     );
   });
 });

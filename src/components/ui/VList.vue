@@ -32,7 +32,7 @@ export default {
   computed: {
     isEmpty() {
       return !Object.keys(this.list).length;
-    }
+    },
   },
   watch: {
     active(val) {

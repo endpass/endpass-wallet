@@ -11,12 +11,12 @@ describe('VButton', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(VButton, { localVue,
+    wrapper = shallow(VButton, {
+      localVue,
       provide: () => ({
         $validator: new VeeValidate.Validator(),
-      })
+      }),
     });
-
   });
 
   it('should render props', () => {
@@ -37,13 +37,17 @@ describe('VButton', () => {
     expect(wrapper.contains('a.some-class.some-class-1')).toBeTruthy();
   });
 
-  it('should emit event if not disabled',async (done) => {
+  it('should emit event if not disabled', async done => {
     const button = wrapper.find('a');
 
     expect(button.attributes().disabled).toBeFalsy();
 
     button.trigger('click');
-    await new Promise((res, rej) => {setTimeout(()=> {res()}, 40)})
+    await new Promise((res, rej) => {
+      setTimeout(() => {
+        res();
+      }, 40);
+    });
     expect(wrapper.emitted().click.length).toBe(1);
 
     wrapper.setProps({ disabled: true });
@@ -57,8 +61,12 @@ describe('VButton', () => {
 
     button.trigger('click');
 
-    await new Promise((res, rej) => {setTimeout(()=> {res()}, 40)})
+    await new Promise((res, rej) => {
+      setTimeout(() => {
+        res();
+      }, 40);
+    });
     expect(wrapper.emitted().click.length).toBe(2);
-    done()
+    done();
   });
 });

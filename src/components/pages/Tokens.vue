@@ -52,39 +52,39 @@
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect'
-import EndpassService from '@/services/endpass'
+import Multiselect from 'vue-multiselect';
+import EndpassService from '@/services/endpass';
 import { BigNumber } from 'bignumber.js';
-import Balance from '@/components/Balance'
-import SearchInput from '@/components/SearchInput.vue'
-import AddTokenModal from '@/components/AddTokenModal'
-import { mapState, mapActions } from 'vuex'
+import Balance from '@/components/Balance';
+import SearchInput from '@/components/SearchInput.vue';
+import AddTokenModal from '@/components/AddTokenModal';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   data() {
     return {
       search: '',
-      addTokenModalOpen:false,
+      addTokenModalOpen: false,
       tokens: [],
       serializeInterval: null,
-      subscription: null
-    }
+      subscription: null,
+    };
   },
   computed: {
     ...mapState({
       activeTokens: state => state.tokens.activeTokens,
       prices: state => state.tokens.prices,
       ethPrice: state => state.price.price,
-      currency: state => state.accounts.settings.fiatCurrency
+      currency: state => state.accounts.settings.fiatCurrency,
     }),
     filteredTokens() {
-      let unwatchedTokens = this.tokens.filter((token) => {
-        return !this.activeTokens.some((activeToken) => {
+      let unwatchedTokens = this.tokens.filter(token => {
+        return !this.activeTokens.some(activeToken => {
           return activeToken.address === token.address;
         });
       });
-      return unwatchedTokens
-    }
+      return unwatchedTokens;
+    },
   },
   methods: {
     ...mapActions('tokens', ['updateTokenPrice', 'addTokenToSubscription']),
@@ -109,14 +109,16 @@ export default {
         });
     },
     getTokenPrice(symbol) {
-      return new BigNumber(this.prices[symbol]['ETH']).times(this.ethPrice).toString();
+      return new BigNumber(this.prices[symbol]['ETH'])
+        .times(this.ethPrice)
+        .toString();
     },
     openAddTokenModal() {
       this.addTokenModalOpen = true;
     },
     closeAddTokenModal() {
       this.addTokenModalOpen = false;
-    }
+    },
   },
   created() {
     this.getAllTokens();
@@ -125,9 +127,9 @@ export default {
     SearchInput,
     Balance,
     AddTokenModal,
-    Multiselect
-  }
-}
+    Multiselect,
+  },
+};
 </script>
 
 <style lang="scss">

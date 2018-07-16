@@ -38,7 +38,7 @@ export default {
   data: () => ({
     isCreating: false,
     hdkeyPhrase: '',
-    walletPassword: ''
+    walletPassword: '',
   }),
   methods: {
     ...mapActions('accounts', ['addHdWallet']),
@@ -48,7 +48,10 @@ export default {
       await new Promise(res => setTimeout(res, 20));
 
       try {
-        this.addHdWallet({key: this.hdkeyPhrase, password: this.walletPassword});
+        this.addHdWallet({
+          key: this.hdkeyPhrase,
+          password: this.walletPassword,
+        });
         router.push('/');
       } catch (e) {
         this.errors.add({

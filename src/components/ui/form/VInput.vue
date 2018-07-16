@@ -79,7 +79,7 @@ export default {
     },
   },
   inject: {
-    $validator: '$validator'
+    $validator: '$validator',
   },
   methods: {
     camelToKebab: str => str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`),
@@ -99,7 +99,7 @@ export default {
           ...res,
           [this.camelToKebab(prop)]: this.$props[prop],
         }),
-        {}
+        {},
       );
     },
   },

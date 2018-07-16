@@ -54,7 +54,7 @@ export default {
     email: '',
     isSending: false,
     isSuccess: false,
-    termsAccepted: false
+    termsAccepted: false,
   }),
   methods: {
     ...mapActions('accounts', ['login']),
@@ -68,19 +68,19 @@ export default {
             title: 'Success',
             text: 'Click the link in your email to log in',
             type: 'is-info',
-          })
+          });
         })
         .catch(e => {
           this.isSending = false;
           this.emitError(e);
         });
-    }
+    },
   },
   components: {
     VForm,
     VButton,
     VInput,
-    VCheckbox
+    VCheckbox,
   },
   mixins: [error],
 };

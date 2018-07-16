@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import PasswordModal from '@/components/modal/PasswordModal'
+import { mapState } from 'vuex';
+import PasswordModal from '@/components/modal/PasswordModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
@@ -21,12 +21,12 @@ import VButton from '@/components/ui/form/VButton';
 export default {
   data: () => ({
     exportingJson: false,
-    passwordModalOpen: false
+    passwordModalOpen: false,
   }),
   computed: {
     ...mapState({
-      wallet: state => state.accounts.wallet
-    })
+      wallet: state => state.accounts.wallet,
+    }),
   },
   methods: {
     async exportJSON(password) {
@@ -52,7 +52,23 @@ export default {
       a.download = filename;
       a.href = window.URL.createObjectURL(blob);
       a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-      e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+      e.initMouseEvent(
+        'click',
+        true,
+        false,
+        window,
+        0,
+        0,
+        0,
+        0,
+        0,
+        false,
+        false,
+        false,
+        false,
+        0,
+        null,
+      );
       a.dispatchEvent(e);
       a.remove();
       this.exportingJson = false;
@@ -71,13 +87,13 @@ export default {
     },
     closePasswordModal() {
       this.passwordModalOpen = false;
-    }
+    },
   },
   components: {
     VForm,
     VInput,
     VButton,
-    PasswordModal
+    PasswordModal,
   },
 };
 </script>

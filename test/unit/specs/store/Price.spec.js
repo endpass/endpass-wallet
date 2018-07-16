@@ -1,13 +1,13 @@
-import state from '@/store/price/price'
-import moxios from 'moxios'
-import testAction from '../ActionTestingHelper'
+import state from '@/store/price/price';
+import moxios from 'moxios';
+import testAction from '../ActionTestingHelper';
 
 const commit = state => (type, payload) =>
   state.mutations[type](state, payload);
 
-const dispatch = context => (type) => {
+const dispatch = context => type => {
   state.actions[type](context);
-}
+};
 
 describe('price store', async () => {
   let stateInstance;
@@ -16,7 +16,7 @@ describe('price store', async () => {
     stateInstance = state.state;
     await state.actions.init({
       commit: commit(stateInstance),
-      dispatch: dispatch({state: stateInstance, commit, dispatch}),
+      dispatch: dispatch({ state: stateInstance, commit, dispatch }),
       state: stateInstance,
     });
   });
@@ -33,7 +33,7 @@ describe('price store', async () => {
     expect(stateInstance.updateTime).toBe(10);
   });
 
-  it('should update price', (done) => {
+  it('should update price', done => {
     moxios.stubRequest(/min-api\.cryptocompare\.com\/data\/price/, {
       status: 200,
       response: [
@@ -54,15 +54,20 @@ describe('price store', async () => {
           },
         },
       },
-      [{
-        type: 'setPrice'
-      }, {
-        type: 'setUpdateTime'
-      }],
-      [{
-        type: 'connectionStatus/updateApiErrorStatus'
-      }],
-      done
+      [
+        {
+          type: 'setPrice',
+        },
+        {
+          type: 'setUpdateTime',
+        },
+      ],
+      [
+        {
+          type: 'connectionStatus/updateApiErrorStatus',
+        },
+      ],
+      done,
     );
   });
 });

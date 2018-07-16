@@ -10,7 +10,7 @@ export default {
       challenge: {
         challenge_type: 'email_link',
       },
-    })
+    });
   },
 
   getSettings() {

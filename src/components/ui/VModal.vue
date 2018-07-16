@@ -24,11 +24,11 @@ export default {
   name: 'v-modal',
   inject: ['$validator'],
   methods: {
-    close () {
-      this.$emit('close')
-    }
-  }
-}
+    close() {
+      this.$emit('close');
+    },
+  },
+};
 </script>
 
 <style lang="scss">

@@ -34,7 +34,7 @@
 
 <script>
 import web3 from 'web3';
-import VModal from '@/components/ui/VModal'
+import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       newTransaction: null,
-    }
+    };
   },
   methods: {
     confirmResend() {
@@ -62,8 +62,8 @@ export default {
     VModal,
     VForm,
     VInput,
-    VButton
-  }
+    VButton,
+  },
 };
 </script>
 

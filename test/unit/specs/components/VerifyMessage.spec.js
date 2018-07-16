@@ -15,12 +15,12 @@ describe('VerifyMessage', () => {
           web3: {
             eth: {
               accounts: {
-                recover: jest.fn(() => address)
-              }
-            }
-          }
-        }
-      }
+                recover: jest.fn(() => address),
+              },
+            },
+          },
+        },
+      },
     };
 
     localVue.use(Notifications);
@@ -28,7 +28,7 @@ describe('VerifyMessage', () => {
     wrapper = shallow(VerifyMessage, {
       localVue,
       mocks: { $store },
-      stubs: generateStubs(VerifyMessage)
+      stubs: generateStubs(VerifyMessage),
     });
   });
 
@@ -39,7 +39,7 @@ describe('VerifyMessage', () => {
 
     it('should enable "Verify message" button', () => {
       wrapper.setData({
-        signedMessageString: '{}'
+        signedMessageString: '{}',
       });
 
       expect(wrapper.element).toMatchSnapshot();
@@ -47,7 +47,7 @@ describe('VerifyMessage', () => {
 
     it('should disable "Verify message" button', () => {
       wrapper.setData({
-        signedMessageString: 'string'
+        signedMessageString: 'string',
       });
 
       expect(wrapper.element).toMatchSnapshot();
@@ -90,7 +90,8 @@ describe('VerifyMessage', () => {
         expect(vm.$notify).toHaveBeenCalledTimes(1);
         expect(vm.$notify).toHaveBeenCalledWith({
           title: 'Error while verifying the message',
-          text: 'An error occurred while verifying the message. Please try again.',
+          text:
+            'An error occurred while verifying the message. Please try again.',
           type: 'is-danger',
         });
       });

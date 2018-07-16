@@ -1,147 +1,198 @@
-[{
+[
+  {
     "constant": false,
-    "inputs": [{
+    "inputs": [
+      {
         "name": "spender",
         "type": "address"
-    }, {
+      },
+      {
         "name": "value",
         "type": "uint256"
-    }],
+      }
+    ],
     "name": "approve",
-    "outputs": [{
+    "outputs": [
+      {
         "name": "",
         "type": "bool"
-    }],
+      }
+    ],
     "payable": false,
     "type": "function"
-}, {
+  },
+  {
     "constant": true,
     "inputs": [],
     "name": "totalSupply",
-    "outputs": [{
+    "outputs": [
+      {
         "name": "",
         "type": "uint256"
-    }],
+      }
+    ],
     "payable": false,
     "type": "function"
-}, {
+  },
+  {
     "constant": false,
-    "inputs": [{
+    "inputs": [
+      {
         "name": "from",
         "type": "address"
-    }, {
+      },
+      {
         "name": "to",
         "type": "address"
-    }, {
+      },
+      {
         "name": "value",
         "type": "uint256"
-    }],
+      }
+    ],
     "name": "transferFrom",
-    "outputs": [{
+    "outputs": [
+      {
         "name": "",
         "type": "bool"
-    }],
+      }
+    ],
     "payable": false,
     "type": "function"
-}, {
+  },
+  {
     "constant": true,
-    "inputs": [{
+    "inputs": [
+      {
         "name": "who",
         "type": "address"
-    }],
+      }
+    ],
     "name": "balanceOf",
-    "outputs": [{
+    "outputs": [
+      {
         "name": "",
         "type": "uint256"
-    }],
+      }
+    ],
     "payable": false,
     "type": "function"
-}, {
+  },
+  {
     "constant": false,
-    "inputs": [{
+    "inputs": [
+      {
         "name": "to",
         "type": "address"
-    }, {
+      },
+      {
         "name": "value",
         "type": "uint256"
-    }],
+      }
+    ],
     "name": "transfer",
-    "outputs": [{
+    "outputs": [
+      {
         "name": "",
         "type": "bool"
-    }],
+      }
+    ],
     "payable": false,
     "type": "function"
-}, {
+  },
+  {
     "constant": false,
-    "inputs": [{
+    "inputs": [
+      {
         "name": "spender",
         "type": "address"
-    }, {
+      },
+      {
         "name": "value",
         "type": "uint256"
-    }, {
+      },
+      {
         "name": "extraData",
         "type": "bytes"
-    }],
+      }
+    ],
     "name": "approveAndCall",
-    "outputs": [{
+    "outputs": [
+      {
         "name": "",
         "type": "bool"
-    }],
+      }
+    ],
     "payable": false,
     "type": "function"
-}, {
+  },
+  {
     "constant": true,
-    "inputs": [{
+    "inputs": [
+      {
         "name": "owner",
         "type": "address"
-    }, {
+      },
+      {
         "name": "spender",
         "type": "address"
-    }],
+      }
+    ],
     "name": "allowance",
-    "outputs": [{
+    "outputs": [
+      {
         "name": "",
         "type": "uint256"
-    }],
+      }
+    ],
     "payable": false,
     "type": "function"
-}, {
+  },
+  {
     "anonymous": false,
-    "inputs": [{
+    "inputs": [
+      {
         "indexed": true,
         "name": "owner",
         "type": "address"
-    }, {
+      },
+      {
         "indexed": true,
         "name": "spender",
         "type": "address"
-    }, {
+      },
+      {
         "indexed": false,
         "name": "value",
         "type": "uint256"
-    }],
+      }
+    ],
     "name": "Approval",
     "type": "event"
-}, {
+  },
+  {
     "anonymous": false,
-    "inputs": [{
+    "inputs": [
+      {
         "indexed": true,
         "name": "from",
         "type": "address"
-    }, {
+      },
+      {
         "indexed": true,
         "name": "to",
         "type": "address"
-    }, {
+      },
+      {
         "indexed": false,
         "name": "value",
         "type": "uint256"
-    }],
+      }
+    ],
     "name": "Transfer",
     "type": "event"
-}, {
+  },
+  {
     "constant": true,
     "inputs": [],
     "name": "name",
@@ -153,28 +204,31 @@
     ],
     "payable": false,
     "type": "function"
-}, {
-  "constant": true,
-  "inputs": [],
-  "name": "decimals",
-  "outputs": [
-    {
-      "name": "",
-      "type": "uint8"
-    }
-  ],
-  "payable": false,
-  "type": "function"
-}, {
-  "constant": true,
-  "inputs": [],
-  "name": "symbol",
-  "outputs": [
-    {
-      "name": "",
-      "type": "string"
-    }
-  ],
-  "payable": false,
-  "type": "function"
-}]
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  }
+]

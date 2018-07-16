@@ -9,13 +9,16 @@ export class Wallet {
     this.getPrivateKeyString = function(password) {
       return EthWallet.fromV3(v3, password, true).getPrivateKeyString();
     };
-    this.exportToJSON = function (password, exportedV3Password) {
-      return EthWallet.fromV3(v3, password, true).toV3String(exportedV3Password, kdfParams);
+    this.exportToJSON = function(password, exportedV3Password) {
+      return EthWallet.fromV3(v3, password, true).toV3String(
+        exportedV3Password,
+        kdfParams,
+      );
     };
     this.getAddressString = function() {
       return v3.address;
     };
-    this.validatePassword = function (password) {
+    this.validatePassword = function(password) {
       return new Promise((res, rej) => {
         try {
           EthWallet.fromV3(v3, password, true);
@@ -24,7 +27,7 @@ export class Wallet {
           rej(e);
         }
       });
-    }
+    };
   }
   signTransaction(transaction, password) {
     return transaction.sign(this.getPrivateKey(password));

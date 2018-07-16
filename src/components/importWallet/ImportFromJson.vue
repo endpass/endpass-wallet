@@ -121,7 +121,7 @@ export default {
   watch: {
     jsonKeystorePassword() {
       this.errors.removeById('wrongPass');
-    }
+    },
   },
   components: {
     VForm,

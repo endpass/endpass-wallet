@@ -1,8 +1,8 @@
-import Vue from 'vue'
-import testAction from '../ActionTestingHelper'
-import tokens from '@/store/tokens/tokens'
-import moxios from 'moxios'
-import Web3 from 'web3'
+import Vue from 'vue';
+import testAction from '../ActionTestingHelper';
+import tokens from '@/store/tokens/tokens';
+import moxios from 'moxios';
+import Web3 from 'web3';
 
 jest.mock('eth-token-tracker');
 jest.mock('@/services/ethplorer');
@@ -17,7 +17,7 @@ localStorage.setItem(
     {
       address: '0x0',
     },
-  ])
+  ]),
 );
 
 const commit = state => (type, payload) =>
@@ -38,7 +38,7 @@ describe('tokens', () => {
     await tokens.actions.init({ commit: commit(stateInstance) });
     expect(stateInstance.savedTokens['3'].length).toBe(1);
     expect(stateInstance.savedTokens['3'][0].address).toBe(
-      '0xE41d2489571d322189246DaFA5ebDe1F4699F498'
+      '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
     );
   });
   it('saves token to watch storage', () => {
@@ -60,7 +60,7 @@ describe('tokens', () => {
     tokens.mutations.saveSubscription(stateInstance, 1);
     expect(stateInstance.tokensSubscription).toBe(1);
   });
-  it('adds Token To Subscription', (done) => {
+  it('adds Token To Subscription', done => {
     testAction(
       tokens.actions.addTokenToSubscription,
       { address: '0x0' },
@@ -76,8 +76,8 @@ describe('tokens', () => {
           web3: {
             activeNet: {
               id: 3,
-            }
-          }
+            },
+          },
         },
         state: {
           savedTokens: stateInstance.savedTokens,
@@ -92,7 +92,7 @@ describe('tokens', () => {
       },
       [{ type: 'addToken' }],
       [],
-      done
+      done,
     );
   });
   it('gets non zero tokens', done => {
@@ -120,10 +120,12 @@ describe('tokens', () => {
         },
       },
       [],
-      [{
-        type: 'connectionStatus/updateApiErrorStatus'
-      }],
-      done
+      [
+        {
+          type: 'connectionStatus/updateApiErrorStatus',
+        },
+      ],
+      done,
     );
   });
   it('creates Token Subscription', done => {
@@ -165,11 +167,11 @@ describe('tokens', () => {
               symbol: 'ZRX',
             },
           ],
-        }
+        },
       },
       [{ type: 'saveInterval' }, { type: 'saveSubscription' }],
       [],
-      done
+      done,
     );
   });
 });

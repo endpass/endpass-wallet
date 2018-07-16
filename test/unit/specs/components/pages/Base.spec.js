@@ -12,8 +12,8 @@ describe('Base page', () => {
     it('should render default slot', () => {
       const wrapper = shallow(BasePage, {
         slots: {
-          default: '<div>default slot</div>'
-        }
+          default: '<div>default slot</div>',
+        },
       });
 
       expect(wrapper.element).toMatchSnapshot();
@@ -22,8 +22,8 @@ describe('Base page', () => {
     it('should render title slot', () => {
       const wrapper = shallow(BasePage, {
         slots: {
-          title: 'title'
-        }
+          title: 'title',
+        },
       });
 
       expect(wrapper.element).toMatchSnapshot();

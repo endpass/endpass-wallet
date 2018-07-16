@@ -74,24 +74,24 @@
 </template>
 
 <script>
-import Balance from '@/components/Balance'
+import Balance from '@/components/Balance';
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
-import { Transaction } from '@/class'
-import ResendModal from './ResendModal'
-import PasswordModal from '@/components/modal/PasswordModal'
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { Transaction } from '@/class';
+import ResendModal from './ResendModal';
+import PasswordModal from '@/components/modal/PasswordModal';
+import { mapState, mapGetters, mapActions } from 'vuex';
 import error from '@/mixins/error';
 
 export default {
   props: ['transaction'],
-  data () {
+  data() {
     return {
       resendModalOpen: false,
       passwordModalOpen: false,
       transactionToSend: null,
-      state: null
-    }
+      state: null,
+    };
   },
   computed: {
     ...mapState({
@@ -109,8 +109,8 @@ export default {
     ...mapActions('transactions', ['resendTransaction', 'cancelTransaction']),
     resend() {
       this.transactionToSend = this.transaction.clone();
-      this.resendModalOpen = true
-      this.state = 'resent'
+      this.resendModalOpen = true;
+      this.state = 'resent';
     },
     requestPassword() {
       this.passwordModalOpen = true;
@@ -127,7 +127,7 @@ export default {
           ? this.cancelTransaction
           : this.resendTransaction;
 
-      sendTransaction({ transaction: this.transactionToSend, password})
+      sendTransaction({ transaction: this.transactionToSend, password })
         .then(() => {
           this.$notify({
             title: 'Successful',
@@ -143,12 +143,12 @@ export default {
       this.requestPassword();
     },
     closeResendModal() {
-      this.resendModalOpen = false
+      this.resendModalOpen = false;
     },
     cancel() {
       if (this.transaction.date) return;
 
-      this.state = 'canceled'
+      this.state = 'canceled';
       this.transactionToSend = this.transaction.clone();
       this.transactionToSend.value = '0';
       this.transactionToSend.to = this.address;
@@ -158,14 +158,14 @@ export default {
     parseData() {
       let dataString = this.transaction.data || '0x';
       return web3.utils.hexToString(dataString);
-    }
+    },
   },
   components: {
     Balance,
     ResendModal,
-    PasswordModal
+    PasswordModal,
   },
-}
+};
 </script>
 
 <style lang="scss">

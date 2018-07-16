@@ -9,8 +9,8 @@ describe('VCheckbox', () => {
     beforeAll(() => {
       wrapper = shallow(VCheckbox, {
         slots: {
-          default: '<div/>'
-        }
+          default: '<div/>',
+        },
       });
     });
 
@@ -34,10 +34,14 @@ describe('VCheckbox', () => {
     describe('value', () => {
       it('should change checkbox state', () => {
         wrapper.setProps({ value: true });
-        expect(wrapper.find('input[type="checkbox"]').element.checked).toBeTruthy();
+        expect(
+          wrapper.find('input[type="checkbox"]').element.checked,
+        ).toBeTruthy();
 
         wrapper.setProps({ value: false });
-        expect(wrapper.find('input[type="checkbox"]').element.checked).toBeFalsy();
+        expect(
+          wrapper.find('input[type="checkbox"]').element.checked,
+        ).toBeFalsy();
       });
     });
   });

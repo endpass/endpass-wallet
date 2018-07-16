@@ -25,13 +25,13 @@ export default {
   computed: {
     isFormValid() {
       const { fields, errors } = this;
-      
+
       if (!(fields || errors)) {
         return true;
       }
-      
+
       const hasInvalidField = Object.keys(fields).some(
-        field => fields[field] && fields[field].invalid
+        field => fields[field] && fields[field].invalid,
       );
 
       return !(hasInvalidField || errors.any());
@@ -40,8 +40,8 @@ export default {
   methods: {
     validateFrom() {
       this.$emit('formValid', this.isFormValid());
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -48,9 +48,9 @@ export default {
   },
   methods: {
     processClick($event) {
-      this.$validator.validateAll().then((result) => {
+      this.$validator.validateAll().then(result => {
         if (result) {
-          this.$emit('click', $event)
+          this.$emit('click', $event);
           return;
         }
         this.$notify({
@@ -59,8 +59,8 @@ export default {
           type: 'is-warning',
         });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

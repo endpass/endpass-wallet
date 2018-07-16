@@ -23,8 +23,7 @@ export default class ServerStorage {
       .catch(() => {
         throw new NotificationError({
           title: 'Error in server storage',
-          text:
-            "Can't read data from server storage. Please, reload page",
+          text: "Can't read data from server storage. Please, reload page",
           type: 'is-warning',
         });
       });

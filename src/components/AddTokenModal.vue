@@ -90,9 +90,9 @@ import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
-  data () {
+  data() {
     return {
-      loadedToken:false,
+      loadedToken: false,
       addedToken: false,
       loadingToken: false,
       foundToken: false,
@@ -101,27 +101,27 @@ export default {
         addres: '',
         symbol: '',
         name: '',
-        decimals: ''
+        decimals: '',
       },
       notFound: {
         decimals: false,
         name: false,
-        symbol: false
-      }
-    }
+        symbol: false,
+      },
+    };
   },
   computed: {
     ...mapState({
       web3: state => state.web3.web3,
-      address: state => state.accounts.address.getAddressString()
+      address: state => state.accounts.address.getAddressString(),
     }),
     isFormValid() {
       const hasInvalidField = Object.keys(this.fields).some(
-        field => this.fields[field] && this.fields[field].invalid
+        field => this.fields[field] && this.fields[field].invalid,
       );
 
       return !(hasInvalidField || this.errors.count());
-    }
+    },
   },
   methods: {
     ...mapActions('tokens', ['addTokenToSubscription']),
@@ -130,12 +130,12 @@ export default {
         addres: '',
         symbol: '',
         name: '',
-        decimals: ''
+        decimals: '',
       };
       this.notFound = {
         decimals: false,
         name: false,
-        symbol: false
+        symbol: false,
       };
       this.addedToken = false;
     },
@@ -147,63 +147,87 @@ export default {
     createToken() {
       this.loadingToken = true;
       let contract = new this.web3.eth.Contract(erc20ABI, this.token.address);
-      this.checkContractExistence(contract).then(() => {
-        this.getTokenData(contract).then(() => {
-          if(!(this.notFound.decimals || this.notFound.symbol || this.notFound.name)) {
-            this.addToken(this.token);
-          } else {
-            this.loadingToken = false;
-            this.loadedToken = true;
-          }
+      this.checkContractExistence(contract)
+        .then(() => {
+          this.getTokenData(contract).then(() => {
+            if (
+              !(
+                this.notFound.decimals ||
+                this.notFound.symbol ||
+                this.notFound.name
+              )
+            ) {
+              this.addToken(this.token);
+            } else {
+              this.loadingToken = false;
+              this.loadedToken = true;
+            }
+          });
         })
-      }).catch(e => {
-        this.loadingToken = false;
-        this.$notify({
-          title: 'Not a valid erc20 token',
-          text: 'Please ensure token matches standard, and check address.',
-          type: 'is-warning',
+        .catch(e => {
+          this.loadingToken = false;
+          this.$notify({
+            title: 'Not a valid erc20 token',
+            text: 'Please ensure token matches standard, and check address.',
+            type: 'is-warning',
+          });
+          console.error(e);
         });
-        console.error(e);
-      })
     },
     checkContractExistence(contract) {
-      return contract.methods.balanceOf(this.address).call()
+      return contract.methods.balanceOf(this.address).call();
     },
     getTokenData(contract) {
       let tryToGetNamePromise = new Promise((res, rej) => {
-        contract.methods.name().call().then((resp) => {
-          res(resp);
-        }).catch((e) => {
-          res(false);
-        });
+        contract.methods
+          .name()
+          .call()
+          .then(resp => {
+            res(resp);
+          })
+          .catch(e => {
+            res(false);
+          });
       });
       let tryToGetDecimalsPromise = new Promise((res, rej) => {
-        contract.methods.decimals().call().then((resp) => {
-          res(resp);
-        }).catch((e) => {
-          res(false);
-        });
+        contract.methods
+          .decimals()
+          .call()
+          .then(resp => {
+            res(resp);
+          })
+          .catch(e => {
+            res(false);
+          });
       });
       let tryToGetSymbolPromise = new Promise((res, rej) => {
-        contract.methods.symbol().call().then((resp) => {
-          res(resp);
-        }).catch((e) => {
-          res(false);
-        });
+        contract.methods
+          .symbol()
+          .call()
+          .then(resp => {
+            res(resp);
+          })
+          .catch(e => {
+            res(false);
+          });
       });
-      return Promise.all([tryToGetNamePromise, tryToGetDecimalsPromise, tryToGetSymbolPromise]).then((arr) => {
-        if(arr[0]) {
-          this.token.name = arr[0]
+      return Promise.all([
+        tryToGetNamePromise,
+        tryToGetDecimalsPromise,
+        tryToGetSymbolPromise,
+      ]).then(arr => {
+        if (arr[0]) {
+          this.token.name = arr[0];
         } else {
           this.notFound.name = true;
         }
-        if(arr[1]) {
-          this.token.decimals = arr[1]
+        if (arr[1]) {
+          this.token.decimals = arr[1];
         } else {
           this.notFound.decimals = true;
         }
-        if(arr[2]) {
-          this.token.symbol = arr[2]
+        if (arr[2]) {
+          this.token.symbol = arr[2];
         } else {
           this.notFound.symbol = true;
         }
@@ -211,16 +235,16 @@ export default {
       });
     },
     close() {
-      this.$emit('close')
-    }
+      this.$emit('close');
+    },
   },
   components: {
     VModal,
     VForm,
     VInput,
-    VButton
-  }
-}
+    VButton,
+  },
+};
 </script>
 
 <style lang="scss">

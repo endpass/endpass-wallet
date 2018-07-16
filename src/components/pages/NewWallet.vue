@@ -58,10 +58,10 @@
 </template>
 
 <script>
-import router from '@/router'
-import Bip39 from 'bip39'
-import VueTimers from 'vue-timers/mixin'
-import { mapActions, mapState } from 'vuex'
+import router from '@/router';
+import Bip39 from 'bip39';
+import VueTimers from 'vue-timers/mixin';
+import { mapActions, mapState } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
@@ -70,21 +70,23 @@ const SEED_PHRASE_TIMEOUT_SEC = 10;
 const UPDATE_SEED_PHRASE_INTERVAL_MSEC = 1000;
 
 export default {
-  data () {
+  data() {
     return {
       walletPassword: '',
       key: null,
       isCreating: false,
-      remainingSeedPhraseTimeout: SEED_PHRASE_TIMEOUT_SEC
-    }
+      remainingSeedPhraseTimeout: SEED_PHRASE_TIMEOUT_SEC,
+    };
   },
   computed: {
     ...mapState({
-      hdWallet: state => state.accounts.hdWallet
+      hdWallet: state => state.accounts.hdWallet,
     }),
     getRemainingSeedPhraseTimeout() {
-      return this.remainingSeedPhraseTimeout > 0 ? `(${this.remainingSeedPhraseTimeout})` : '';
-    }
+      return this.remainingSeedPhraseTimeout > 0
+        ? `(${this.remainingSeedPhraseTimeout})`
+        : '';
+    },
   },
   methods: {
     ...mapActions('accounts', ['addHdWallet']),
@@ -96,7 +98,7 @@ export default {
       await new Promise(res => setTimeout(res, 20));
       try {
         key = Bip39.generateMnemonic();
-        this.addHdWallet({key, password: this.walletPassword});
+        this.addHdWallet({ key, password: this.walletPassword });
         this.key = key;
         this.$timer.start('seedPhrase');
       } catch (e) {
@@ -110,12 +112,13 @@ export default {
       this.isCreating = false;
     },
     handleSeedPhraseTimer() {
-      this.remainingSeedPhraseTimeout -= UPDATE_SEED_PHRASE_INTERVAL_MSEC / 1000;
+      this.remainingSeedPhraseTimeout -=
+        UPDATE_SEED_PHRASE_INTERVAL_MSEC / 1000;
 
       if (this.remainingSeedPhraseTimeout <= 0) {
         this.$timer.stop('seedPhrase');
       }
-    }
+    },
   },
   mixins: [VueTimers],
   timers: {
@@ -124,13 +127,13 @@ export default {
       time: UPDATE_SEED_PHRASE_INTERVAL_MSEC,
       callback: function() {
         this.handleSeedPhraseTimer();
-      }
-    }
+      },
+    },
   },
   components: {
     VForm,
     VInput,
     VButton,
-  }
-}
+  },
+};
 </script>

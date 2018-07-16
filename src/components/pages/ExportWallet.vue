@@ -55,26 +55,27 @@
 </template>
 
 <script>
-import ExportToJson from '@/components/ExportToJson.vue'
-import ExportToPrivateKey from '@/components/ExportToPrivateKey.vue'
+import ExportToJson from '@/components/ExportToJson.vue';
+import ExportToPrivateKey from '@/components/ExportToPrivateKey.vue';
 import { mapState } from 'vuex';
 
 export default {
-  data () {
+  data() {
     return {
       exportType: 'privateKey',
-    }
+    };
   },
   computed: {
     ...mapState({
-      address: state => state.accounts.address && state.accounts.address.getAddressString(),
-    })
+      address: state =>
+        state.accounts.address && state.accounts.address.getAddressString(),
+    }),
   },
   components: {
     ExportToJson,
-    ExportToPrivateKey
-  }
-}
+    ExportToPrivateKey,
+  },
+};
 </script>
 
 <style lang="scss">

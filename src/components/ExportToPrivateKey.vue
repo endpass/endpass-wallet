@@ -19,24 +19,23 @@
 
 
 <script>
-
-import PasswordModal from '@/components/modal/PasswordModal'
+import PasswordModal from '@/components/modal/PasswordModal';
 import { mapState } from 'vuex';
 
 export default {
-  data () {
+  data() {
     return {
       privateKey: null,
       passwordModalOpen: false,
-      exportingKey: false
-    }
+      exportingKey: false,
+    };
   },
   computed: {
     ...mapState({
-      wallet: state => state.accounts.wallet
-    })
+      wallet: state => state.accounts.wallet,
+    }),
   },
-  methods : {
+  methods: {
     openPasswordModal() {
       this.passwordModalOpen = true;
     },
@@ -58,7 +57,7 @@ export default {
     },
   },
   components: {
-    PasswordModal
-  }
-}
+    PasswordModal,
+  },
+};
 </script>
