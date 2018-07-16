@@ -5,7 +5,7 @@ export default (BaseClass, ...mixins) => {
       mixins.forEach(mixin => {
         copyProps(this, new mixin());
       });
-      this.parent = new BaseClass(...args)
+      this.parent = new BaseClass(...args);
     }
   }
 
@@ -15,14 +15,14 @@ export default (BaseClass, ...mixins) => {
       .forEach(prop => {
         if (
           !prop.match(
-            /^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/
+            /^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/,
           )
         )
-        Object.defineProperty(
-          target,
-          prop,
-          Object.getOwnPropertyDescriptor(source, prop)
-        );
+          Object.defineProperty(
+            target,
+            prop,
+            Object.getOwnPropertyDescriptor(source, prop),
+          );
       });
   };
 

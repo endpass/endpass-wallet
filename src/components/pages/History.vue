@@ -24,37 +24,38 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import appTransaction from '@/components/Transaction'
-import EthplorerService from '@/services/ethplorer'
-import { Transaction } from '@/class'
+import { mapState } from 'vuex';
+import appTransaction from '@/components/Transaction';
+import EthplorerService from '@/services/ethplorer';
+import { Transaction } from '@/class';
 
 export default {
-  data () {
+  data() {
     return {
-      transactions: []
-    }
+      transactions: [],
+    };
   },
   computed: {
     ...mapState({
-      address: state => state.accounts.address && state.accounts.address.getAddressString(),
-      pendingTransactions: state => state.transactions.pendingTransactions
+      address: state =>
+        state.accounts.address && state.accounts.address.getAddressString(),
+      pendingTransactions: state => state.transactions.pendingTransactions,
     }),
     processedTransactions() {
-      const fullTransactions = this.transactions.concat(this.pendingTransactions);
+      const fullTransactions = this.transactions.concat(
+        this.pendingTransactions,
+      );
       return fullTransactions.sort((trx1, trx2) => {
-        if(typeof trx2.timestamp === 'undefined')
-          return 1
-        if(typeof trx1.timestamp === 'undefined')
-          return -1
+        if (typeof trx2.timestamp === 'undefined') return 1;
+        if (typeof trx1.timestamp === 'undefined') return -1;
         return trx2.timestamp - trx1.timestamp;
       });
     },
     // Whether history is supported on this network
-    historyAvailable () {
-      let activeNet = this.$store.state.web3.activeNet.name
-      return activeNet === 'Main'
-    }
+    historyAvailable() {
+      let activeNet = this.$store.state.web3.activeNet.name;
+      return activeNet === 'Main';
+    },
   },
   created() {
     const historyPromise = EthplorerService.getHistory(this.address);
@@ -62,11 +63,17 @@ export default {
 
     Promise.all([transactionsPromise, historyPromise])
       .then(values => {
-        this.transactions = values[0].data.concat(values[1].data.operations).map(trx => new Transaction(trx));
-        this.$store.dispatch('connectionStatus/updateApiErrorStatus', {
-          id: 'ethplorer',
-          status: true
-        }, {root: true})
+        this.transactions = values[0].data
+          .concat(values[1].data.operations)
+          .map(trx => new Transaction(trx));
+        this.$store.dispatch(
+          'connectionStatus/updateApiErrorStatus',
+          {
+            id: 'ethplorer',
+            status: true,
+          },
+          { root: true },
+        );
       })
       .catch(e => {
         this.$notify({
@@ -78,19 +85,19 @@ export default {
         console.error(e);
         e.apiError = {
           id: 'ethplorer',
-          status: false
+          status: false,
         };
         this.$store.dispatch('errors/emitError', e, { root: true });
       });
   },
   components: {
-    appTransaction
-  }
-}
+    appTransaction,
+  },
+};
 </script>
 
 <style lang="scss">
-  .transactions {
-      max-width: 700px;
-  }
+.transactions {
+  max-width: 700px;
+}
 </style>

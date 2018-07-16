@@ -36,26 +36,27 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import appTransaction from '@/components/Transaction'
-import EthplorerService from '@/services/ethplorer'
-import accounts from '@/mixins/accounts'
+import { mapState } from 'vuex';
+import appTransaction from '@/components/Transaction';
+import EthplorerService from '@/services/ethplorer';
+import accounts from '@/mixins/accounts';
 
 export default {
-  data () {
+  data() {
     return {
-      transactions: []
-    }
+      transactions: [],
+    };
   },
   computed: {
     ...mapState({
-      address: state => state.accounts.address && state.accounts.address.getAddressString()
+      address: state =>
+        state.accounts.address && state.accounts.address.getAddressString(),
     }),
     processedTransactions() {
       return this.transactions.sort((trx1, trx2) => {
         return trx2.timestamp - trx1.timestamp;
       });
-    }
+    },
   },
   created() {
     EthplorerService.getInfo(this.address)
@@ -65,8 +66,8 @@ export default {
         });
         this.$store.dispatch('connectionStatus/updateApiErrorStatus', {
           id: 'ethplorer',
-          status: true
-        })
+          status: true,
+        });
       })
       .catch(e => {
         this.$notify({
@@ -77,20 +78,20 @@ export default {
         });
         e.apiError = {
           id: 'ethplorer',
-          status: false
+          status: false,
         };
         this.$store.dispatch('errors/emitError', e, { root: true });
         console.error(e);
       });
   },
   components: {
-    appTransaction
-  }
-}
+    appTransaction,
+  },
+};
 </script>
 
 <style lang="scss">
-  .transactions {
-      max-width: 700px;
-  }
+.transactions {
+  max-width: 700px;
+}
 </style>

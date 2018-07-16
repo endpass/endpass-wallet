@@ -39,17 +39,19 @@ describe('VTextarea', () => {
         value: 'value',
         placeholder: 'placeholder',
         disabled: 'disabled',
-        label: 'label'
+        label: 'label',
       };
       const expectedProps = {
         id: 'id',
         placeholder: 'placeholder',
-        disabled: 'disabled'
-      }
+        disabled: 'disabled',
+      };
 
       wrapper.setProps(props);
 
-      expect(wrapper.find('textarea').attributes()).toEqual(expect.objectContaining(expectedProps));
+      expect(wrapper.find('textarea').attributes()).toEqual(
+        expect.objectContaining(expectedProps),
+      );
     });
 
     describe('value', () => {

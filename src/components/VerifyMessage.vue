@@ -25,7 +25,7 @@ export default {
   name: 'verify-message',
   data: () => ({
     address: null,
-    signedMessageString: null
+    signedMessageString: null,
   }),
   computed: {
     ...mapState({
@@ -34,10 +34,10 @@ export default {
     signedMessage() {
       try {
         return JSON.parse(this.signedMessageString);
-      } catch(error) {
+      } catch (error) {
         return '';
       }
-    }
+    },
   },
   methods: {
     verifyMessage() {
@@ -47,17 +47,18 @@ export default {
         this.address = null;
         this.$notify({
           title: 'Error while verifying the message',
-          text: 'An error occurred while verifying the message. Please try again.',
+          text:
+            'An error occurred while verifying the message. Please try again.',
           type: 'is-danger',
         });
         console.error(error);
       }
-    }
+    },
   },
   components: {
     VForm,
     VButton,
-    VTextarea
-  }
+    VTextarea,
+  },
 };
 </script>

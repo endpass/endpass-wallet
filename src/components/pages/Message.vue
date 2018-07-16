@@ -24,13 +24,13 @@ import VerifyMessage from '@/components/VerifyMessage';
 
 const ACTION_TYPES = {
   SIGN: 'SIGN',
-  VERIFY: 'VERIFY'
+  VERIFY: 'VERIFY',
 };
 
 export default {
   name: 'message-page',
   data: () => ({
-    action: ACTION_TYPES.SIGN
+    action: ACTION_TYPES.SIGN,
   }),
   computed: {
     isSignTabActive() {
@@ -38,7 +38,7 @@ export default {
     },
     isVerifyTabActive() {
       return this.action === ACTION_TYPES.VERIFY;
-    }
+    },
   },
   methods: {
     setSignTabActive() {
@@ -46,12 +46,12 @@ export default {
     },
     setVerifyTabActive() {
       this.action = ACTION_TYPES.VERIFY;
-    }
+    },
   },
   components: {
     BasePage,
     SignMessage,
-    VerifyMessage
-  }
+    VerifyMessage,
+  },
 };
 </script>

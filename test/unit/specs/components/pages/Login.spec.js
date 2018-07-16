@@ -22,7 +22,7 @@ describe('LoginPage', () => {
 
     beforeAll(() => {
       wrapper = shallow(LoginPage, {
-        stubs: generateStubs(LoginPage)
+        stubs: generateStubs(LoginPage),
       });
     });
 

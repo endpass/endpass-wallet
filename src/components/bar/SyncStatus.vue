@@ -10,21 +10,16 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 export default {
-	data() {
-		return {
-
-		}
-	},
-	computed: {
-		...mapState({
-	  	blockNumber: state => state.web3.blockNumber
-	  }),
-		...mapGetters('connectionStatus', [
-			'appStatus'
-		])
-	}
-}
+  data() {
+    return {};
+  },
+  computed: {
+    ...mapState({
+      blockNumber: state => state.web3.blockNumber,
+    }),
+    ...mapGetters('connectionStatus', ['appStatus']),
+  },
+};
 </script>
 <style>
-
 </style>

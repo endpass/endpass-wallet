@@ -6,7 +6,7 @@ export class Address {
   constructor(addressString) {
     addressString = ethUtil.addHexPrefix(addressString);
     if (!ethUtil.isValidAddress(addressString)) {
-      throw new Error("Not a valid Ethereum address");
+      throw new Error('Not a valid Ethereum address');
     }
     this.address = ethUtil.toBuffer(addressString);
     this._privKey = null;
@@ -20,7 +20,7 @@ export class Address {
   }
 
   getAddressString() {
-    return ethUtil.bufferToHex(this.address)
+    return ethUtil.bufferToHex(this.address);
   }
 
   getChecksumAddressString() {

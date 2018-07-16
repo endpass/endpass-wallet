@@ -17,17 +17,17 @@
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect'
+import Multiselect from 'vue-multiselect';
 import { mapActions } from 'vuex';
-import CustomProviderModal from '@/components/bar/CustomProviderModal.vue'
-import net from '@/mixins/net'
+import CustomProviderModal from '@/components/bar/CustomProviderModal.vue';
+import net from '@/mixins/net';
 import storage from '@/mixins/storage';
 
 export default {
-	data() {
+  data() {
     return {
       customProviderModalOpen: false,
-    }
+    };
   },
   computed: {
     selectedNet() {
@@ -35,11 +35,9 @@ export default {
     },
     networkOptions() {
       // Options that dispatch methods
-      let actions = [
-        {id: -1, name: "Add Custom Network"}
-      ]
+      let actions = [{ id: -1, name: 'Add Custom Network' }];
       return this.networks.concat(actions);
-    }
+    },
   },
   methods: {
     ...mapActions('web3', ['changeNetwork']),
@@ -66,7 +64,7 @@ export default {
     CustomProviderModal,
   },
   mixins: [net, storage],
-}
+};
 </script>
 
 
@@ -81,4 +79,5 @@ export default {
 }
 </style>
 
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+<style src="vue-multiselect/dist/vue-multiselect.min.css">
+</style>

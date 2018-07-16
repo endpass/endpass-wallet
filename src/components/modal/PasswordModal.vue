@@ -26,34 +26,34 @@
 
 <script>
 import { mapActions } from 'vuex';
-import VModal from '@/components/ui/VModal'
+import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
   name: 'password-modal',
-  data () {
+  data() {
     return {
       jsonKeystorePassword: '',
-      proccessingCongirmation: false
-    }
+      proccessingCongirmation: false,
+    };
   },
   methods: {
     confirm() {
-      this.$emit('confirm', this.jsonKeystorePassword)
+      this.$emit('confirm', this.jsonKeystorePassword);
     },
     close() {
-      this.$emit('close')
-    }
+      this.$emit('close');
+    },
   },
   components: {
     VModal,
     VForm,
     VInput,
-    VButton
-  }
-}
+    VButton,
+  },
+};
 </script>
 
 <style lang="scss">

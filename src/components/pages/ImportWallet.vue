@@ -54,17 +54,17 @@ export default {
       switch (this.importType) {
         case 'privateKey':
           return 'ImportFromPrivateKey';
-        
+
         case 'json':
           return 'ImportFromJson';
 
         case 'address':
-          return 'ImportFromPublicKey';          
-      
+          return 'ImportFromPublicKey';
+
         default:
           return 'ImportFromSeed';
       }
-    }
+    },
   },
   components: {
     VList,

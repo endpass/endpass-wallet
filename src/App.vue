@@ -13,18 +13,18 @@
 </template>
 
 <script>
-import AppNav from '@/components/AppNav.vue'
-import InfoBar from '@/components/bar/InfoBar.vue'
+import AppNav from '@/components/AppNav.vue';
+import InfoBar from '@/components/bar/InfoBar.vue';
 import errorHandler from '@/mixins/errorHandler';
 
 export default {
   name: 'App',
   components: {
     AppNav,
-    InfoBar
+    InfoBar,
   },
   mixins: [errorHandler],
-}
+};
 </script>
 
 <style lang="scss">
@@ -38,5 +38,4 @@ export default {
   background: $light-grey;
   height: 100%;
 }
-
 </style>

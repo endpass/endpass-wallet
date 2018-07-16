@@ -28,7 +28,7 @@ export default {
   actions: {
     async sendSignedTransaction(
       { rootState, state, dispatch },
-      { transaction, password }
+      { transaction, password },
     ) {
       const address = rootState.accounts.address.getAddressString();
       const eth = rootState.web3.web3.eth;
@@ -38,7 +38,7 @@ export default {
         if (!transaction.nonce) {
           const nonce = await eth.getTransactionCount(address);
           const pendingLength = state.pendingTransactions.filter(
-            tnx => tnx.state === 'pending'
+            tnx => tnx.state === 'pending',
           ).length;
           transaction.nonce = (nonce + pendingLength).toString();
         }
@@ -86,7 +86,7 @@ export default {
             });
 
             sendEvent.once('error', rej);
-          })
+          }),
       );
     },
     resendTransaction({ dispatch, state }, { transaction, password }) {
@@ -94,7 +94,7 @@ export default {
         sendEvent =>
           new Promise((res, rej) => {
             const trxInList = state.pendingTransactions.find(
-              trx => transaction.hash === trx.hash
+              trx => transaction.hash === trx.hash,
             );
 
             sendEvent.once('transactionHash', hash => {
@@ -107,7 +107,7 @@ export default {
             });
 
             sendEvent.once('error', rej);
-          })
+          }),
       );
     },
     cancelTransaction({ state, dispatch }, { transaction, password }) {
@@ -115,7 +115,7 @@ export default {
         sendEvent =>
           new Promise((res, rej) => {
             const trxInList = state.pendingTransactions.find(
-              trx => transaction.hash === trx.hash
+              trx => transaction.hash === trx.hash,
             );
 
             sendEvent.once('transactionHash', () => {
@@ -133,7 +133,7 @@ export default {
             });
 
             sendEvent.once('error', rej);
-          })
+          }),
       );
     },
     handleSendingError({ dispatch }, receipt) {

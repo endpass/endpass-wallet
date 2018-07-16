@@ -7,7 +7,7 @@ describe('Message page', () => {
 
   beforeEach(() => {
     wrapper = shallow(Message, {
-      stubs: generateStubs(Message)
+      stubs: generateStubs(Message),
     });
   });
 
@@ -18,7 +18,7 @@ describe('Message page', () => {
 
     it('should set Sign tab', () => {
       wrapper.setData({
-        action: 'SIGN'
+        action: 'SIGN',
       });
 
       expect(wrapper.element).toMatchSnapshot();
@@ -26,7 +26,7 @@ describe('Message page', () => {
 
     it('should set Verify tab', () => {
       wrapper.setData({
-        action: 'VERIFY'
+        action: 'VERIFY',
       });
 
       expect(wrapper.element).toMatchSnapshot();

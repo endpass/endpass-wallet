@@ -41,8 +41,8 @@ export default {
   data() {
     return {
       innerValue: this.value,
-      ignoreProps: ['label']
-    }
+      ignoreProps: ['label'],
+    };
   },
   methods: {
     getTextareaProps() {
@@ -53,15 +53,15 @@ export default {
 
         return accumulator;
       }, {});
-    }
+    },
   },
   watch: {
     value(value) {
-      this.innerValue = value
+      this.innerValue = value;
     },
     innerValue(value) {
-      this.$emit('input', value)
-    }
-  }
+      this.$emit('input', value);
+    },
+  },
 };
 </script>

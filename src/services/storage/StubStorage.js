@@ -1,25 +1,25 @@
 export default class StubStorage {
-  read(){
+  read() {
     return Promise.resolve();
   }
 
-  readAll(){
+  readAll() {
     return Promise.resolve();
   }
 
-  write(){
+  write() {
     return Promise.resolve();
   }
 
-  writeBulk(){
-    return Promise.resolve();
-  }
-  
-  remove(){
+  writeBulk() {
     return Promise.resolve();
   }
 
-  clear(){
+  remove() {
+    return Promise.resolve();
+  }
+
+  clear() {
     return Promise.resolve();
   }
 }

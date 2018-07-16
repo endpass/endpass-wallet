@@ -1,12 +1,12 @@
-import state from '@/store/connection-status/connection-status'
-import testAction from '../ActionTestingHelper'
+import state from '@/store/connection-status/connection-status';
+import testAction from '../ActionTestingHelper';
 
 const commit = state => (type, payload) =>
   state.mutations[type](state, payload);
 
-const dispatch = context => (type) => {
+const dispatch = context => type => {
   state.actions[type](context);
-}
+};
 
 describe('connection status store', () => {
   let stateInstance;
@@ -51,7 +51,7 @@ describe('connection status store', () => {
             currentProvider: 0,
             eth,
           },
-        }
+        },
       },
       commit: () => {},
       dispatch: () => {},

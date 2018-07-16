@@ -41,21 +41,22 @@
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
-import AccountChooser from '@/components/bar/AccountChooser.vue'
-import ProviderSelect from '@/components/bar/ProviderSelect.vue'
-import SyncStatus from '@/components/bar/SyncStatus.vue'
-import Balance from '@/components/Balance'
-import net from '@/mixins/net'
+import AccountChooser from '@/components/bar/AccountChooser.vue';
+import ProviderSelect from '@/components/bar/ProviderSelect.vue';
+import SyncStatus from '@/components/bar/SyncStatus.vue';
+import Balance from '@/components/Balance';
+import net from '@/mixins/net';
 
 export default {
   computed: {
     ...mapState({
       price: state => state.price.price,
-      address: state => state.accounts.address && state.accounts.address.getAddressString()
+      address: state =>
+        state.accounts.address && state.accounts.address.getAddressString(),
     }),
     ...mapGetters('accounts', {
-      balance: 'balance'
-    })
+      balance: 'balance',
+    }),
   },
   methods: {
     ...mapActions('price', ['updatePrice']),
@@ -64,7 +65,7 @@ export default {
     AccountChooser,
     ProviderSelect,
     SyncStatus,
-    Balance
+    Balance,
   },
   mixins: [net],
 };

@@ -17,20 +17,20 @@ export default {
     value: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   data() {
     return {
-      innerValue: this.value
-    }
+      innerValue: this.value,
+    };
   },
   watch: {
     value(value) {
-      this.innerValue = value
+      this.innerValue = value;
     },
     innerValue(value) {
-      this.$emit('input', value)
-    }
-  }
+      this.$emit('input', value);
+    },
+  },
 };
 </script>

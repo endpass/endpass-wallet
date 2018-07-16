@@ -23,19 +23,20 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import NewAccountModal from '@/components/NewAccountModal'
+import NewAccountModal from '@/components/NewAccountModal';
 
 export default {
-  data () {
+  data() {
     return {
       newAccountModalOpen: false,
-    }
+    };
   },
   computed: {
     ...mapState({
       hdWallet: state => state.accounts.hdWallet,
       wallets: state => state.accounts.wallets,
-      address: state => state.accounts.address && state.accounts.address.getAddressString(),
+      address: state =>
+        state.accounts.address && state.accounts.address.getAddressString(),
     }),
     activeAddress: {
       get() {
@@ -43,28 +44,28 @@ export default {
       },
       set(newValue) {
         this.selectWallet(newValue);
-      }
-    }
+      },
+    },
   },
   methods: {
     ...mapActions('accounts', ['selectWallet']),
     openNewAccountModal() {
-      this.newAccountModalOpen = true
+      this.newAccountModalOpen = true;
     },
     closeNewAccountModal() {
-      this.newAccountModalOpen = false
-    }
+      this.newAccountModalOpen = false;
+    },
   },
   filters: {
     // Truncate an address to the first 4 and last 4 characters
     truncateAddr(value) {
-      if (!value) return ''
-      value = value.toString()
-    return `${value.substr(0,4)}...${value.substr(value.length-4)}`
-    }
+      if (!value) return '';
+      value = value.toString();
+      return `${value.substr(0, 4)}...${value.substr(value.length - 4)}`;
+    },
   },
   components: {
-    NewAccountModal
-  }
-}
+    NewAccountModal,
+  },
+};
 </script>

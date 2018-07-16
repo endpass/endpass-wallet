@@ -1,11 +1,11 @@
-import { userService } from '@/services'
+import { userService } from '@/services';
 import storage from '@/services/storage';
 import web3 from 'web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
-import { hdKeyMnemonic, kdfParams } from '@/config'
+import { hdKeyMnemonic, kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
-import { Wallet, Address } from '@/class' ;
+import { Wallet, Address } from '@/class';
 import { BigNumber } from 'bignumber.js';
 
 export default {
@@ -27,7 +27,9 @@ export default {
   },
   getters: {
     isPublicAccount(state) {
-      return state.address instanceof Address && !state.wallet instanceof Wallet;
+      return (
+        state.address instanceof Address && !state.wallet instanceof Wallet
+      );
     },
     balance(state, getters, rootState, rootGetters) {
       const pendingBalance = rootGetters['transactions/pendingBalance'];
@@ -42,10 +44,10 @@ export default {
     },
   },
   mutations: {
-    addAddress(state ,addressString) {
+    addAddress(state, addressString) {
       state.address = new Address(addressString);
     },
-    addWallet(state, { wallet, address}) {
+    addWallet(state, { wallet, address }) {
       state.wallets[address] = wallet;
     },
     addHdWallet(state, wallet) {
@@ -69,11 +71,12 @@ export default {
       const wallet = new Wallet(json);
       commit('addWallet', {
         wallet,
-        address: json.address});
+        address: json.address,
+      });
       dispatch('selectWallet', json.address);
       commit('addAddress', json.address);
     },
-    selectWallet({commit, state, dispatch}, address) {
+    selectWallet({ commit, state, dispatch }, address) {
       state.wallet = state.wallets[address];
       state.address = new Address(address);
       dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true });
@@ -89,40 +92,48 @@ export default {
       const newJson = wallet.toV3(new Buffer(password), kdfParams);
       dispatch('addWalletAndStore', newJson);
     },
-    addWalletWithPrivateKey({ commit, dispatch }, {privateKey, password}) {
+    addWalletWithPrivateKey({ commit, dispatch }, { privateKey, password }) {
       const wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));
       const json = wallet.toV3(new Buffer(password), kdfParams);
       dispatch('addWalletAndStore', json);
     },
-    generateWallet({commit, dispatch, state}, password){
+    generateWallet({ commit, dispatch, state }, password) {
       if (!state.hdWallet) {
-        return
+        return;
       }
       let i = Object.keys(state.wallets).length;
       let wallet = state.hdWallet.deriveChild(i).getWallet();
-      dispatch('addWalletAndStore', wallet.toV3(new Buffer(password), kdfParams));
+      dispatch(
+        'addWalletAndStore',
+        wallet.toV3(new Buffer(password), kdfParams),
+      );
     },
-    addHdWallet({ commit, dispatch }, {key, password}) {
+    addHdWallet({ commit, dispatch }, { key, password }) {
       const seed = Bip39.mnemonicToSeed(key);
       const hdKey = HDKey.fromMasterSeed(seed);
       const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
       const wallet = hdWallet.deriveChild(0).getWallet();
       commit('addHdWallet', hdWallet);
-      dispatch('addWalletAndStore', wallet.toV3(new Buffer(password), kdfParams));
+      dispatch(
+        'addWalletAndStore',
+        wallet.toV3(new Buffer(password), kdfParams),
+      );
     },
     updateBalance({ commit, dispatch, state, rootState }) {
       if (state.address) {
         const address = state.address.getAddressString();
 
-        return rootState.web3.web3.eth.getBalance(address)
+        return rootState.web3.web3.eth
+          .getBalance(address)
           .then(balance => commit('setBalance', balance))
           .catch(e => dispatch('errors/emitError', e, { root: true }));
       }
     },
     updateSettings({ commit, dispatch }, settings) {
       commit('setSettings', settings);
-      return storage.write('settings', settings)
-        .catch(e => dispatch('errors/emitError', e, {root: true}));
+      return storage
+        .write('settings', settings)
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     validatePassword({ state }, password) {
       return state.wallet.validatePassword(password);
@@ -132,9 +143,10 @@ export default {
     },
     logout({ commit, dispatch }) {
       commit('setEmail', null);
-      return storage.clear()
-        .then(() => window.location = '/logout')
-        .catch(e => dispatch('errors/emitError', e, {root: true}));
+      return storage
+        .clear()
+        .then(() => (window.location = '/logout'))
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     init({ commit, dispatch }) {
       return Promise.all([
@@ -157,7 +169,7 @@ export default {
             accounts.forEach(wallet => dispatch('addWallet', wallet));
           }
         })
-        .catch(e => dispatch('errors/emitError', e, {root: true}));
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-  }
-}
+  },
+};

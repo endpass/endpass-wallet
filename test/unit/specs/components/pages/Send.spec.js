@@ -64,73 +64,73 @@ describe('Send', () => {
     wrapper = shallow(Send, { store, localVue });
   });
 
-  it('should validate data', async () => { 
-    wrapper = mount(Send, { 
-      store, 
-      localVue, 
-      computed: { 
-        maxAmount: () => 2, 
-      }, 
-    }); 
- 
-    const { errors, $nextTick } = wrapper.vm; 
- 
-    wrapper.setData({ 
-      transaction: { 
-        to: '', 
-        gasPrice: '900', 
-        gasLimit: '2200000000', 
-        data: 'asdfas', 
-      }, 
-      value: '2.222222222222222222222222', 
-    }); 
- 
-    await wrapper.vm.$validator.validateAll(); 
- 
-    expect(errors.first('address').includes('required')).toBeTruthy(); 
-    expect(errors.first('gasPrice').includes('between')).toBeTruthy(); 
-    expect(errors.first('gasLimit').includes('between')).toBeTruthy(); 
-    expect(errors.first('price').includes('between')).toBeTruthy(); 
-    expect(errors.first('value').includes('decimal')).toBeTruthy(); 
-    expect(errors.first('data').includes('hex')).toBeTruthy(); 
- 
-    wrapper.setData({ 
-      transaction: { 
-        to: '0xE824633E6d247e64ba2cD841D8270505770d53fE', 
-        gasPrice: '91', 
-        gasLimit: '22000', 
-        // prettier-ignore 
-        data: '0xa9059cbb000000000000000000000000b6ed7644c69416d67b522e20bc294a9a9b405b31000000000000000000000000000000000000000000000000000000003b9aca00' 
-      }, 
-      value: '1.5', 
-    }); 
- 
-    await wrapper.vm.$validator.validateAll(); 
- 
-    expect(errors.has('address')).toBeFalsy(); 
-    expect(errors.has('gasPrice')).toBeFalsy(); 
-    expect(errors.has('gasLimit')).toBeFalsy(); 
-    expect(errors.has('price')).toBeFalsy(); 
-    expect(errors.has('value')).toBeFalsy(); 
-    expect(errors.has('data')).toBeFalsy(); 
- 
-    wrapper.setData({ 
-      transaction: { 
-        to: '123', 
-        gasPrice: '-90', 
-        gasLimit: '-22000', 
-        data: '0x', 
-      }, 
-      value: '-2.22222', 
-    }); 
- 
-    await wrapper.vm.$validator.validateAll(); 
- 
-    expect(errors.first('address').includes('not a valid')).toBeTruthy(); 
-    expect(errors.first('gasPrice').includes('numeric')).toBeTruthy(); 
-    expect(errors.first('gasLimit').includes('numeric')).toBeTruthy(); 
-    expect(errors.first('price').includes('between')).toBeTruthy(); 
-    expect(errors.first('value').includes('between')).toBeTruthy(); 
+  it('should validate data', async () => {
+    wrapper = mount(Send, {
+      store,
+      localVue,
+      computed: {
+        maxAmount: () => 2,
+      },
+    });
+
+    const { errors, $nextTick } = wrapper.vm;
+
+    wrapper.setData({
+      transaction: {
+        to: '',
+        gasPrice: '900',
+        gasLimit: '2200000000',
+        data: 'asdfas',
+      },
+      value: '2.222222222222222222222222',
+    });
+
+    await wrapper.vm.$validator.validateAll();
+
+    expect(errors.first('address').includes('required')).toBeTruthy();
+    expect(errors.first('gasPrice').includes('between')).toBeTruthy();
+    expect(errors.first('gasLimit').includes('between')).toBeTruthy();
+    expect(errors.first('price').includes('between')).toBeTruthy();
+    expect(errors.first('value').includes('decimal')).toBeTruthy();
+    expect(errors.first('data').includes('hex')).toBeTruthy();
+
+    wrapper.setData({
+      transaction: {
+        to: '0xE824633E6d247e64ba2cD841D8270505770d53fE',
+        gasPrice: '91',
+        gasLimit: '22000',
+        // prettier-ignore
+        data: '0xa9059cbb000000000000000000000000b6ed7644c69416d67b522e20bc294a9a9b405b31000000000000000000000000000000000000000000000000000000003b9aca00'
+      },
+      value: '1.5',
+    });
+
+    await wrapper.vm.$validator.validateAll();
+
+    expect(errors.has('address')).toBeFalsy();
+    expect(errors.has('gasPrice')).toBeFalsy();
+    expect(errors.has('gasLimit')).toBeFalsy();
+    expect(errors.has('price')).toBeFalsy();
+    expect(errors.has('value')).toBeFalsy();
+    expect(errors.has('data')).toBeFalsy();
+
+    wrapper.setData({
+      transaction: {
+        to: '123',
+        gasPrice: '-90',
+        gasLimit: '-22000',
+        data: '0x',
+      },
+      value: '-2.22222',
+    });
+
+    await wrapper.vm.$validator.validateAll();
+
+    expect(errors.first('address').includes('not a valid')).toBeTruthy();
+    expect(errors.first('gasPrice').includes('numeric')).toBeTruthy();
+    expect(errors.first('gasLimit').includes('numeric')).toBeTruthy();
+    expect(errors.first('price').includes('between')).toBeTruthy();
+    expect(errors.first('value').includes('between')).toBeTruthy();
   });
 
   it('should allow empty string in input', () => {

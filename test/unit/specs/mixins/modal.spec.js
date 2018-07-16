@@ -5,7 +5,7 @@ describe('Modal mixin', () => {
     it('should return correct data', () => {
       const data = modalMixin.data();
       const expected = {
-        isPasswordModal: false
+        isPasswordModal: false,
       };
 
       expect(data).toEqual(expected);
@@ -17,7 +17,7 @@ describe('Modal mixin', () => {
       it('should toggle modal window for password confirmation', () => {
         const { togglePasswordModal } = modalMixin.methods;
         const context = {
-          isPasswordModal: false
+          isPasswordModal: false,
         };
 
         togglePasswordModal.call(context);

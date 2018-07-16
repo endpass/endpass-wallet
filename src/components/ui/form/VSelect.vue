@@ -41,7 +41,7 @@ export default {
     },
   },
   inject: {
-    $validator: '$validator'
+    $validator: '$validator',
   },
   computed: {
     selected: {
@@ -52,7 +52,7 @@ export default {
         this.$emit('input', newVal);
       },
     },
-  }
+  },
 };
 </script>
 

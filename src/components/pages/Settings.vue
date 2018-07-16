@@ -49,14 +49,13 @@ export default {
       updateSettingsInStore: 'updateSettings',
     }),
     updateSettings(settings) {
-      this.updateSettingsInStore(settings)
-        .then(() => {
-          this.$notify({
-            title: 'Successful',
-            text: 'Settings was saved',
-            type: 'is-info',
-          });
+      this.updateSettingsInStore(settings).then(() => {
+        this.$notify({
+          title: 'Successful',
+          text: 'Settings was saved',
+          type: 'is-info',
         });
+      });
     },
   },
   components: {

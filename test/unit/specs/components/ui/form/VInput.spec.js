@@ -18,12 +18,13 @@ describe('VInput', () => {
       },
       provide: () => ({
         $validator: new VeeValidate.Validator(),
-      })
+      }),
     });
   });
 
   it('should render props', () => {
-    const camelToKebab = str => str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`)
+    const camelToKebab = str =>
+      str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`);
 
     const input = wrapper.find('input');
 
@@ -36,7 +37,7 @@ describe('VInput', () => {
       ariaDescribedby: 'describe',
       autocomplete: 'new-password',
       testACamelCase: 'test camel case',
-    }
+    };
 
     expect(wrapper.contains('label')).toBeFalsy();
     expect(input.attributes().type).toBe('text');
@@ -45,7 +46,7 @@ describe('VInput', () => {
 
     Object.keys(options).forEach(prop => {
       expect(input.attributes()[camelToKebab(prop)]).toBeFalsy();
-    })
+    });
 
     wrapper.setProps({
       type: 'email',
@@ -62,7 +63,7 @@ describe('VInput', () => {
 
     Object.keys(options).forEach(prop => {
       expect(input.attributes()[camelToKebab(prop)]).toBe(options[prop]);
-    })
+    });
   });
 
   it('should emit event', () => {

@@ -121,8 +121,8 @@
 </template>
 
 <script>
-import { BigNumber } from 'bignumber.js'
-import { Transaction } from '@/class'
+import { BigNumber } from 'bignumber.js';
+import { Transaction } from '@/class';
 import { mapState, mapActions } from 'vuex';
 import web3 from 'web3';
 import VForm from '@/components/ui/form/VForm.vue';
@@ -137,8 +137,8 @@ const defaultTnx = {
   value: '0',
   tokenInfo: undefined,
   to: '',
-  data: '0x'
-}
+  data: '0x',
+};
 
 export default {
   data: () => ({
@@ -150,7 +150,7 @@ export default {
     transactionHash: null,
     lastInputPrice: 'amount',
     isTransactionModal: false,
-    isPasswordModal: false
+    isPasswordModal: false,
   }),
   computed: {
     ...mapState({
@@ -168,7 +168,9 @@ export default {
 
         if (this.lastInputPrice === 'fiat' && value > 0) {
           const { price, ethPrice, decimal } = this;
-          return BigNumber(price).div(ethPrice).toFixed(decimal);
+          return BigNumber(price)
+            .div(ethPrice)
+            .toFixed(decimal);
         }
 
         return value;
@@ -179,7 +181,7 @@ export default {
         this.priceInFiat = BigNumber(newValue || '0')
           .times(this.ethPrice)
           .toFixed(2);
-        
+
         this.$nextTick(() => this.$validator.validate('price'));
       },
     },
@@ -187,7 +189,9 @@ export default {
       get() {
         if (this.lastInputPrice === 'amount' && this.priceInFiat > 0) {
           const { value, ethPrice } = this;
-          return BigNumber(value).times(ethPrice).toFixed(2);
+          return BigNumber(value)
+            .times(ethPrice)
+            .toFixed(2);
         }
 
         return this.priceInFiat;
@@ -217,13 +221,16 @@ export default {
     },
     maxPrice() {
       const balance = new BigNumber(this.maxAmount);
-      const amount = balance.times(this.ethPrice).minus('0.01').toFixed(2);
+      const amount = balance
+        .times(this.ethPrice)
+        .minus('0.01')
+        .toFixed(2);
       return amount > 0 ? amount : 0;
     },
     decimal() {
       const { tokenInfo } = this.transaction;
-      return tokenInfo && tokenInfo.decimals || 18;
-    }
+      return (tokenInfo && tokenInfo.decimals) || 18;
+    },
   },
   methods: {
     ...mapActions('transactions', ['sendTransaction']),
@@ -248,22 +255,23 @@ export default {
     },
     confirmPassword(password) {
       this.isSending = true;
-      this.transaction.from = this.address
+      this.transaction.from = this.address;
       this.togglePasswordModal();
-      this.sendTransaction({ transaction: this.transaction, password}).then((hash) => {
-        this.transactionHash = hash;
-        this.isSending = false;
-        this.resetForm();
-        this.$notify({
-          title: 'Successful',
-          text: 'Transaction was sent',
-          type: 'is-info',
+      this.sendTransaction({ transaction: this.transaction, password })
+        .then(hash => {
+          this.transactionHash = hash;
+          this.isSending = false;
+          this.resetForm();
+          this.$notify({
+            title: 'Successful',
+            text: 'Transaction was sent',
+            type: 'is-info',
+          });
+        })
+        .catch(e => {
+          this.isSending = false;
+          this.resetForm();
         });
-      })
-      .catch(e => {
-        this.isSending = false;
-        this.resetForm();
-      });
     },
     confirmTransaction() {
       this.toggleTransactionModal();
@@ -271,7 +279,7 @@ export default {
     },
     async updateEstimateGasCost() {
       this.estimateGasCost = await this.transaction.getFullPrice(this.web3.eth);
-    }
+    },
   },
   watch: {
     'transaction.to': {
@@ -304,7 +312,7 @@ export default {
     VButton,
     VInput,
     TransactionModal,
-    PasswordModal
+    PasswordModal,
   },
 };
 </script>

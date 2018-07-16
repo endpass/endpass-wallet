@@ -13,19 +13,19 @@ describe('SignMessage', () => {
       state: {
         accounts: {
           wallet: {
-            getPrivateKey: jest.fn(() => 'private key')
-          }
+            getPrivateKey: jest.fn(() => 'private key'),
+          },
         },
         web3: {
           web3: {
             eth: {
               accounts: {
-                sign: jest.fn(() => signedMessage)
-              }
-            }
-          }
-        }
-      }
+                sign: jest.fn(() => signedMessage),
+              },
+            },
+          },
+        },
+      },
     };
 
     localVue.use(Notifications);
@@ -33,7 +33,7 @@ describe('SignMessage', () => {
     wrapper = shallow(SignMessage, {
       localVue,
       mocks: { $store },
-      stubs: generateStubs(SignMessage)
+      stubs: generateStubs(SignMessage),
     });
   });
 
@@ -44,7 +44,7 @@ describe('SignMessage', () => {
 
     it('should enable "Sign message" button', () => {
       wrapper.setData({
-        message: 'message'
+        message: 'message',
       });
 
       expect(wrapper.element).toMatchSnapshot();
@@ -61,7 +61,7 @@ describe('SignMessage', () => {
     it('should show modal window for password confirmation', () => {
       wrapper.setData({
         message: 'message',
-        isPasswordModal: true
+        isPasswordModal: true,
       });
 
       expect(wrapper.element).toMatchSnapshot();
@@ -100,7 +100,8 @@ describe('SignMessage', () => {
         expect(vm.$notify).toHaveBeenCalledTimes(1);
         expect(vm.$notify).toHaveBeenCalledWith({
           title: 'Error signing message',
-          text: 'An error occurred while signing the message. Please try again.',
+          text:
+            'An error occurred while signing the message. Please try again.',
           type: 'is-danger',
         });
       });

@@ -89,19 +89,19 @@ export default {
         dispatch('fetchNetworkType'),
         dispatch('subscribeOnBlockUpdates'),
         dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true }),
-      ]).catch(e => dispatch('errors/emitError', e, {root: true}));
+      ]).catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     addNewProvider({ state, commit, dispatch, getters }, network) {
       network.id =
         getters.networks.reduce(
-          (max, next) => (max.id > next.id ? max.id : next.id)
+          (max, next) => (max.id > next.id ? max.id : next.id),
         ) + 1;
       commit('addNewProvider', network);
 
       return Promise.all([
         storage.write('networks', state.storedNetworks),
         dispatch('changeNetwork', network.id),
-      ]).catch(e => dispatch('errors/emitError', e, {root: true}));
+      ]).catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     fetchNetworkType({ state, commit }) {
       // network type already set, return resolved promise
@@ -112,9 +112,9 @@ export default {
       return state.web3.eth.net
         .getNetworkType()
         .then(resp => commit('setNetworkType', resp))
-        .catch(e => dispatch('errors/emitError', e, {root: true}));
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    subscribeOnBlockUpdates({ state, commit, dispatch, rootState}) {
+    subscribeOnBlockUpdates({ state, commit, dispatch, rootState }) {
       if (state.blockSubscribtion) {
         state.blockSubscribtion.stop();
       }
@@ -126,7 +126,7 @@ export default {
         dispatch('accounts/updateBalance', {}, { root: true });
         commit(
           'setBlockNumber',
-          state.web3.utils.hexToNumberString(block.number)
+          state.web3.utils.hexToNumberString(block.number),
         );
       });
       state.blockSubscribtion.start();
@@ -139,7 +139,7 @@ export default {
           Promise.all([
             storage.read('networks').then(net => (net ? net : [])),
             cachedNet ? cachedNet : 1,
-          ])
+          ]),
         )
         .then(([storedNetworks, cachedNet]) => {
           const activeNet =
@@ -150,8 +150,8 @@ export default {
           commit('changeNetwork', activeNet);
           Promise.all([
             dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true }),
-            dispatch('subscribeOnBlockUpdates')
-          ]).catch(e => dispatch('errors/emitError', e, {root: true}));
+            dispatch('subscribeOnBlockUpdates'),
+          ]).catch(e => dispatch('errors/emitError', e, { root: true }));
         })
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },

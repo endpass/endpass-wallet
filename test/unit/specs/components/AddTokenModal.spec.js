@@ -18,78 +18,78 @@ let fakeContract = {
     balanceOf: () => {
       call: () => {
         return new Promise((res, rej) => {
-          res('balanceOf')
-        })
-      }
+          res('balanceOf');
+        });
+      };
     },
     name: () => {
       return {
         call: () => {
           return new Promise((res, rej) => {
-            res('name')
-          })
-        }
-      }
+            res('name');
+          });
+        },
+      };
     },
     symbol: () => {
       return {
         call: () => {
           return new Promise((res, rej) => {
-            res('symbol')
-          })
-        }
-      }
+            res('symbol');
+          });
+        },
+      };
     },
     decimals: () => {
       return {
         call: () => {
           return new Promise((res, rej) => {
-            res('decimals')
-          })
-        }
-      }
-    }
-  }
-}
+            res('decimals');
+          });
+        },
+      };
+    },
+  },
+};
 
 let fakeEmptyContract = {
   methods: {
     balanceOf: () => {
       call: () => {
         return new Promise((res, rej) => {
-          rej()
-        })
-      }
+          rej();
+        });
+      };
     },
     name: () => {
       return {
         call: () => {
           return new Promise((res, rej) => {
-            rej()
-          })
-        }
-      }
+            rej();
+          });
+        },
+      };
     },
     symbol: () => {
       return {
         call: () => {
           return new Promise((res, rej) => {
-            rej()
-          })
-        }
-      }
+            rej();
+          });
+        },
+      };
     },
     decimals: () => {
       return {
         call: () => {
           return new Promise((res, rej) => {
-            rej()
-          })
-        }
-      }
-    }
-  }
-}
+            rej();
+          });
+        },
+      };
+    },
+  },
+};
 
 describe('AddTokenModal', () => {
   let store;
@@ -100,12 +100,10 @@ describe('AddTokenModal', () => {
         tokens: {
           namespaced: true,
           actions: {
-            addTokenToSubscription() {
-
-            }
-          }
-        }
-      }
+            addTokenToSubscription() {},
+          },
+        },
+      },
     });
     wrapper = shallow(AddTokenModal, { store, localVue });
   });
@@ -114,7 +112,7 @@ describe('AddTokenModal', () => {
       expect(wrapper.vm.token.symbol).toBe('symbol');
       expect(wrapper.vm.token.name).toBe('name');
       expect(wrapper.vm.token.decimals).toBe('decimals');
-      done()
+      done();
     });
   });
   it('sets empty flags', done => {
@@ -122,17 +120,17 @@ describe('AddTokenModal', () => {
       expect(wrapper.vm.notFound.symbol).toBe(true);
       expect(wrapper.vm.notFound.name).toBe(true);
       expect(wrapper.vm.notFound.decimals).toBe(true);
-      done()
+      done();
     });
   });
 
   it('correctly resets contract data', done => {
     wrapper.vm.getTokenData(fakeContract).then(() => {
       wrapper.vm.addMore();
-        expect(wrapper.vm.token.symbol).toBe('');
-        expect(wrapper.vm.token.name).toBe('');
-        expect(wrapper.vm.token.decimals).toBe('');
-      done()
+      expect(wrapper.vm.token.symbol).toBe('');
+      expect(wrapper.vm.token.name).toBe('');
+      expect(wrapper.vm.token.decimals).toBe('');
+      done();
     });
   });
 
@@ -142,7 +140,7 @@ describe('AddTokenModal', () => {
       expect(wrapper.vm.notFound.symbol).toBe(false);
       expect(wrapper.vm.notFound.name).toBe(false);
       expect(wrapper.vm.notFound.decimals).toBe(false);
-      done()
+      done();
     });
   });
 

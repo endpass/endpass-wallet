@@ -86,14 +86,14 @@ describe('Storage', () => {
     });
 
     await expect(localStore.read('someObject')).rejects.toThrow(
-      NotificationError
+      NotificationError,
     );
     await expect(localStore.remove('someObject')).rejects.toThrow(
-      NotificationError
+      NotificationError,
     );
     await expect(localStore.clear()).rejects.toThrow(NotificationError);
     await expect(localStore.write('someObject', mockObject)).rejects.toThrow(
-      NotificationError
+      NotificationError,
     );
 
     expect(throwingFunc).toHaveBeenCalledTimes(4);

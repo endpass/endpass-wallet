@@ -38,7 +38,7 @@ export default {
   data: () => ({
     isCreating: false,
     privateKey: '',
-    walletPassword: ''
+    walletPassword: '',
   }),
   methods: {
     ...mapActions('accounts', ['addWalletWithPrivateKey']),
@@ -48,7 +48,10 @@ export default {
       await new Promise(res => setTimeout(res, 20));
 
       try {
-        this.addWalletWithPrivateKey({ privateKey: this.privateKey, password: this.walletPassword});
+        this.addWalletWithPrivateKey({
+          privateKey: this.privateKey,
+          password: this.walletPassword,
+        });
         router.push('/');
       } catch (e) {
         this.errors.add({
@@ -59,7 +62,7 @@ export default {
         console.error(e);
       }
       this.isCreating = false;
-    }
+    },
   },
   components: {
     VForm,

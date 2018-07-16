@@ -42,7 +42,7 @@ export default {
   name: 'sign-message',
   data: () => ({
     message: '',
-    signedMessage: null
+    signedMessage: null,
   }),
   computed: {
     ...mapState({
@@ -51,30 +51,34 @@ export default {
     }),
     getSignedMessage() {
       return JSON.stringify(this.signedMessage);
-    }
+    },
   },
   methods: {
     signMessage(password) {
       try {
         this.togglePasswordModal();
-        this.signedMessage = this.web3.eth.accounts.sign(this.message, this.wallet.getPrivateKey(password));
+        this.signedMessage = this.web3.eth.accounts.sign(
+          this.message,
+          this.wallet.getPrivateKey(password),
+        );
       } catch (error) {
         this.signedMessage = null;
         this.$notify({
           title: 'Error signing message',
-          text: 'An error occurred while signing the message. Please try again.',
+          text:
+            'An error occurred while signing the message. Please try again.',
           type: 'is-danger',
         });
         console.error(error);
       }
-    }
+    },
   },
   mixins: [modalMixin],
   components: {
     VForm,
     VButton,
     VTextarea,
-    PasswordModal
-  }
+    PasswordModal,
+  },
 };
 </script>

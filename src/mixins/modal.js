@@ -1,10 +1,10 @@
 export default {
   data: () => ({
-    isPasswordModal: false
+    isPasswordModal: false,
   }),
   methods: {
     togglePasswordModal() {
       this.isPasswordModal = !this.isPasswordModal;
-    }
-  }
+    },
+  },
 };

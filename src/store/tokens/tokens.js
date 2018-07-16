@@ -2,7 +2,7 @@ import TokenTracker from 'eth-token-tracker';
 import EthplorerService from '@/services/ethplorer';
 import price from '@/services/price';
 import storage from '@/services/storage';
-import { subscriptionsAPIInterval } from '@/config'
+import { subscriptionsAPIInterval } from '@/config';
 import { NotificationError } from '@/class';
 
 export default {
@@ -24,11 +24,13 @@ export default {
     },
     savedActiveTokens(state, { net }) {
       return state.savedTokens[net] || [];
-    }
+    },
   },
   mutations: {
-    addToken(state, {token, net}) {
-      state.savedTokens[net] = state.savedTokens[net] ? state.savedTokens[net] : [];
+    addToken(state, { token, net }) {
+      state.savedTokens[net] = state.savedTokens[net]
+        ? state.savedTokens[net]
+        : [];
       state.savedTokens[net].push(token);
     },
     saveTokens(state, tokens = {}) {
@@ -42,8 +44,8 @@ export default {
       state.prices = prices;
     },
     setTokenPrice(state, symbol, price) {
-      if(!state.prices){
-       state.prices = {};
+      if (!state.prices) {
+        state.prices = {};
       }
       state.prices[symbol] = price;
     },
@@ -58,17 +60,17 @@ export default {
     addTokenToSubscription({ state, commit, dispatch, rootState }, token) {
       // Save token without blance for furer seances
       const tokenExist = state.tokensSubscription.tokens.find(
-        subscribtionToken => subscribtionToken.address === token.address
+        subscribtionToken => subscribtionToken.address === token.address,
       );
 
       if (!tokenExist) {
         commit('addToken', {
           token,
           net: rootState.web3.activeNet.id,
-        })
+        });
         storage
           .write('tokens', state.savedTokens)
-          .catch(e => dispatch('errors/emitError', e, {root: true}));
+          .catch(e => dispatch('errors/emitError', e, { root: true }));
         state.tokensSubscription.add({
           ...token,
         });
@@ -90,10 +92,10 @@ export default {
           .catch(() => {
             const error = new NotificationError({
               title: 'Failed token subscription',
-              text: 'Token information won\'t be updated. Please reload page.',
+              text: "Token information won't be updated. Please reload page.",
               type: 'is-warning',
             });
-            dispatch('errors/emitError', error, {root: true});
+            dispatch('errors/emitError', error, { root: true });
           });
       }
     },
@@ -116,21 +118,24 @@ export default {
         dispatch('updateTokenPrices');
       }, subscriptionsAPIInterval);
     },
-    createTokenSubscription({ state, commit, getters, rootState }, nonZerotokens) {
+    createTokenSubscription(
+      { state, commit, getters, rootState },
+      nonZerotokens,
+    ) {
       const address = rootState.accounts.address.getAddressString();
       //remove repetitive tokens
       const filteredSavedTokensTokens = getters.savedActiveTokens.filter(
         savedToken =>
           !nonZerotokens.find(
             nonZeroToken =>
-              nonZeroToken.tokenInfo.address === savedToken.address
-          )
+              nonZeroToken.tokenInfo.address === savedToken.address,
+          ),
       );
 
       const tokensToWatch = filteredSavedTokensTokens.concat(
         nonZerotokens.map(nonZeroToken => ({
           address: nonZeroToken.tokenInfo.address,
-        }))
+        })),
       );
 
       const subscription = new TokenTracker({
@@ -154,25 +159,31 @@ export default {
     getNonZeroTokens({ rootState, dispatch }) {
       const address = rootState.accounts.address.getAddressString();
       let promise = EthplorerService.getTransactions(address);
-      promise.then(() => {
-        dispatch('connectionStatus/updateApiErrorStatus', {
-          id: 'ethplorer',
-          status: true
-        }, { root: true })
-      }).catch((e) => {
-        e.apiError = {
-          id: 'ethplorer',
-          status: false
-        };
-        dispatch('errors/emitError', e, { root: true })
-      });
-      return promise
+      promise
+        .then(() => {
+          dispatch(
+            'connectionStatus/updateApiErrorStatus',
+            {
+              id: 'ethplorer',
+              status: true,
+            },
+            { root: true },
+          );
+        })
+        .catch(e => {
+          e.apiError = {
+            id: 'ethplorer',
+            status: false,
+          };
+          dispatch('errors/emitError', e, { root: true });
+        });
+      return promise;
     },
     init({ commit, dispatch }) {
       return storage
         .read('tokens')
         .then(tokens => commit('saveTokens', tokens || {}))
-        .catch(e => dispatch('errors/emitError', e, {root: true}));
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
   },
 };

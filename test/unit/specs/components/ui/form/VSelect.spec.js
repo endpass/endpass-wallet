@@ -9,10 +9,11 @@ describe('VSelect', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(VSelect, { localVue,
+    wrapper = shallow(VSelect, {
+      localVue,
       provide: () => ({
         $validator: new VeeValidate.Validator(),
-      })
+      }),
     });
   });
 

@@ -57,21 +57,21 @@
 </template>
 <script>
 import { mapActions } from 'vuex';
-import VModal from '@/components/ui/VModal'
+import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 
 export default {
-	data() {
-		return {
+  data() {
+    return {
       isFormValid: false,
-			providerAdded: false,
-			provider: {
-				name: '',
-				url: ''
-			}
-		}
-	},
+      providerAdded: false,
+      provider: {
+        name: '',
+        url: '',
+      },
+    };
+  },
   computed: {
     providersLinks() {
       return this.$store.getters['web3/networks']
@@ -79,24 +79,24 @@ export default {
         .toString();
     },
   },
-	methods: {
+  methods: {
     ...mapActions('web3', {
       addNewProviderToStore: 'addNewProvider',
     }),
-		addNewProvider() {
+    addNewProvider() {
       this.addNewProviderToStore(this.provider);
       this.providerAdded = true;
-		},
+    },
     close() {
-      this.$emit('close')
-    }
-	},
+      this.$emit('close');
+    },
+  },
   components: {
     VModal,
     VInput,
     VForm,
-  }
-}
+  },
+};
 </script>
 <style lang="css">
 	

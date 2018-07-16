@@ -63,27 +63,28 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import VModal from '@/components/ui/VModal'
+import VModal from '@/components/ui/VModal';
 import VInput from '@/components/ui/form/VInput.vue';
 import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
-  data () {
+  data() {
     return {
       createdAccount: null,
       createdingAccount: false,
       privateKey: '',
       currentWalletPassword: '',
-      newWalletPassword: ''
-    }
+      newWalletPassword: '',
+    };
   },
   computed: {
     ...mapState({
       wallet: state => state.accounts.wallet,
-      address: state => state.accounts.address && state.accounts.address.getAddressString(),
-      wallets: state => state.accounts.wallets
-    })
+      address: state =>
+        state.accounts.address && state.accounts.address.getAddressString(),
+      wallets: state => state.accounts.wallets,
+    }),
   },
   methods: {
     ...mapActions('accounts', ['generateWallet', 'validatePassword']),
@@ -92,33 +93,37 @@ export default {
     async createNewAccount() {
       this.createdingAccount = true;
       await new Promise(res => setTimeout(res, 20));
-      this.validatePassword(this.currentWalletPassword).then(() => {
-        this.generateWallet(this.newWalletPassword);
-        this.privateKey = this.wallet.getPrivateKeyString(this.newWalletPassword);
-        this.createdingAccount = false;
-        this.createdAccount = true;
-      }).catch((e) => {
-        this.createdingAccount = false;
-        this.currentWalletPassword = '';
-        this.newWalletPassword = '';
-        this.$notify({
-          title: 'Wrong password',
-          text: 'Invalid password for current wallet. Please try again.',
-          type: 'is-danger',
+      this.validatePassword(this.currentWalletPassword)
+        .then(() => {
+          this.generateWallet(this.newWalletPassword);
+          this.privateKey = this.wallet.getPrivateKeyString(
+            this.newWalletPassword,
+          );
+          this.createdingAccount = false;
+          this.createdAccount = true;
+        })
+        .catch(e => {
+          this.createdingAccount = false;
+          this.currentWalletPassword = '';
+          this.newWalletPassword = '';
+          this.$notify({
+            title: 'Wrong password',
+            text: 'Invalid password for current wallet. Please try again.',
+            type: 'is-danger',
+          });
         });
-      });
     },
     close() {
-      this.$emit('close')
-    }
+      this.$emit('close');
+    },
   },
   components: {
     VModal,
     VInput,
     VForm,
-    VButton
-  }
-}
+    VButton,
+  },
+};
 </script>
 
 <style lang="scss">
