@@ -2,16 +2,6 @@
   <div class="export-json">
     <v-form>
 
-      <v-input label="Choose a password to encrypt your wallet file"
-               v-model="exportedV3Password"
-               type="password"
-               name="password"
-               id="keystore-pass"
-               validator="required|min:8"
-               aria-describedby="password"
-               placeholder="JSON keystore password"
-               autocomplete="new-password" />
-
       <v-button :loading="exportingJson"
                 className="is-primary is-medium"
                 @click.prevent="openPasswordModal">Export</v-button>
@@ -30,7 +20,6 @@ import VButton from '@/components/ui/form/VButton';
 
 export default {
   data: () => ({
-    exportedV3Password: '',
     exportingJson: false,
     passwordModalOpen: false
   }),
@@ -46,7 +35,7 @@ export default {
         this.exportingJson = true;
         await new Promise(res => setTimeout(res, 20));
         try {
-          this.saveJSON(this.wallet.exportToJSON(password, this.exportedV3Password));
+          this.saveJSON(this.wallet.exportToJSON(password, password));
         } catch (e) {
           this.exportError(e);
         }
@@ -54,7 +43,8 @@ export default {
       }
     },
     saveJSON(data) {
-      const filename = `endpass_wallet_${this.address}.json`;
+      const address = this.wallet.getAddressString();
+      const filename = `endpass_wallet_${address}.json`;
       const blob = new Blob([data], { type: 'text/json' });
       const e = document.createEvent('MouseEvents');
       const a = document.createElement('a');

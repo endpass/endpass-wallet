@@ -34,18 +34,6 @@
              placeholder="V3 JSON keystore password"
              required />
 
-     <v-input v-model="walletPassword"
-              label="Wallet password"
-              id="walletPassword"
-              name="walletPassword"
-              type="password"
-              validator="required|min:8"
-              data-vv-as="password"
-              aria-describedby="walletPassword"
-              key="jwalletPasswordUnique"
-              placeholder="wallet password"
-              required />
-
     <v-button className="is-primary is-medium"
               :loading="isCreating"
               @click.prevent="parseJson">Import</v-button>
@@ -66,7 +54,6 @@ export default {
     isCreating: false,
     jsonKeystorePassword: '',
     fileName: '',
-    walletPassword: '',
     file: null,
   }),
   methods: {
@@ -74,7 +61,16 @@ export default {
     parseJson() {
       const reader = new FileReader();
       reader.onload = this.addWalletWithJson.bind(this);
-      reader.readAsText(this.file);
+
+      try {
+        reader.readAsText(this.file);
+      } catch (e) {
+        this.errors.add({
+          field: 'fileName',
+          msg: 'File is invalid',
+          id: 'wrongFile',
+        });
+      }
     },
     async addWalletWithJson(e) {
       this.isCreating = true;
@@ -84,8 +80,7 @@ export default {
       try {
         this.addWalletWithV3({
           json: e.target.result,
-          key: this.jsonKeystorePassword,
-          walletPassword: this.walletPassword
+          password: this.jsonKeystorePassword,
         });
         router.push('/');
       } catch (e) {
@@ -107,7 +102,6 @@ export default {
         }
 
         this.errors.add(error);
-        console.error(e);
       }
 
       this.isCreating = false;
@@ -123,6 +117,11 @@ export default {
         this.file = null;
       }
     },
+  },
+  watch: {
+    jsonKeystorePassword() {
+      this.errors.removeById('wrongPass');
+    }
   },
   components: {
     VForm,
