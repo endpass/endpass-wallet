@@ -84,9 +84,9 @@ export default {
         userService.setAccount(json),
       ]).catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    addWalletWithV3({ commit, dispatch }, {json, key, walletPassword}) {
-      const wallet = EthWallet.fromV3(json, key, true);
-      const newJson = wallet.toV3(new Buffer(walletPassword), kdfParams);
+    addWalletWithV3({ commit, dispatch }, { json, password }) {
+      const wallet = EthWallet.fromV3(json, password, true);
+      const newJson = wallet.toV3(new Buffer(password), kdfParams);
       dispatch('addWalletAndStore', newJson);
     },
     addWalletWithPrivateKey({ commit, dispatch }, {privateKey, password}) {

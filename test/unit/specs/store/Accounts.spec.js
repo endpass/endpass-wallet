@@ -73,13 +73,13 @@ describe('accounts store', () => {
     expect(state.settings).toBe(2);
   });
 
-  it('shoud create wallet istance', () => {
+  it('shoud create wallet instance', () => {
     actions.addWallet(context, v3json);
     expect(state.wallet instanceof Wallet).toBe(true);
     expect(state.wallet.getAddressString().toUpperCase()).toBe(v3json.address.toUpperCase());
   })
 
-  it('shoud create wallet istance with privateKey ', () => {
+  it('shoud create wallet instance with privateKey ', () => {
     actions.addWalletWithPrivateKey(context, {
       privateKey: '4daf66f4ffed6d47e75d22e2c962d1f9a36550dc2cfda4bfb5da741bdc97d6ba',
       password: v3password
@@ -88,17 +88,16 @@ describe('accounts store', () => {
     expect(state.wallet.getAddressString(v3password)).toBe(v3json.address);
   })
 
-  it('shoud create wallet istance with v3Json ', () => {
+  it('shoud create wallet instance with v3Json ', () => {
     actions.addWalletWithV3(context, {
       json: v3json,
-      key: v3password,
-      walletPassword: v3password
+      password: v3password,
     });
     expect(state.wallet instanceof Wallet).toBe(true);
     expect(state.wallet.getAddressString(v3password)).toBe(v3json.address);
   })
 
-  it('shoud create wallet istance with seed phrase ', () => {
+  it('shoud create wallet instance with seed phrase ', () => {
     actions.addHdWallet(context, {key: 'salt suit force stomach lounge endless soul junk join leg sort aware',
     password: v3password});
     expect(state.hdWallet instanceof HDKey).toBe(true);
