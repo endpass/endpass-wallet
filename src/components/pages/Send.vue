@@ -87,6 +87,18 @@
                        :disabled="isSending"
                        required />
 
+              <v-input v-model="userNonce"
+                       @input="setTrxNonce"
+                       label="Nonce"
+                       name="nonce"
+                       type="number"
+                       :validator="`required|numeric|integer|min_value:${nextNonceInBlock}`"
+                       id="nonce"
+                       aria-describedby="nonce"
+                       placeholder="Nonce"
+                       :disabled="isSending"
+                       required />
+
               <v-input v-show="selectedToken === 'ETH'"
                        v-model="transaction.data"
                        label="Data"
@@ -148,6 +160,8 @@ export default {
     estimateGasCost: 0,
     priceInFiat: '0.00',
     transactionHash: null,
+    nextNonceInBlock: 0,
+    userNonce: null,
     lastInputPrice: 'amount',
     isTransactionModal: false,
     isPasswordModal: false,
@@ -233,7 +247,14 @@ export default {
     },
   },
   methods: {
-    ...mapActions('transactions', ['sendTransaction']),
+    ...mapActions('transactions', [
+      'sendTransaction',
+      'getNextNonce',
+      'getNonceInBlock',
+    ]),
+    setTrxNonce(nonce) {
+      this.transaction.nonce = nonce;
+    },
     async resetForm() {
       this.$validator.pause();
       await this.$nextTick();
@@ -243,6 +264,7 @@ export default {
       this.$validator.flag('address', {
         valid: false,
       });
+      this.updateUserNonce();
     },
     toggleTransactionModal() {
       this.isTransactionModal = !this.isTransactionModal;
@@ -262,9 +284,10 @@ export default {
           this.transactionHash = hash;
           this.isSending = false;
           this.resetForm();
+          const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`;
           this.$notify({
             title: 'Successful',
-            text: 'Transaction was sent',
+            text: `Transaction ${shortHash} was sent`,
             type: 'is-info',
           });
         })
@@ -279,6 +302,11 @@ export default {
     },
     async updateEstimateGasCost() {
       this.estimateGasCost = await this.transaction.getFullPrice(this.web3.eth);
+    },
+    updateUserNonce() {
+      this.getNextNonce().then(nonce => {
+        this.userNonce = nonce;
+      });
     },
   },
   watch: {
@@ -306,6 +334,17 @@ export default {
     selectedToken() {
       this.updateEstimateGasCost();
     },
+  },
+  created() {
+    this.updateUserNonce();
+
+    this.interval = setInterval(async () => {
+      this.nextNonceInBlock = await this.getNonceInBlock();
+      this.$validator.validate('nonce')
+    }, 2000);
+  },
+  beforeDestroy() {
+    clearInterval(this.interval);
   },
   components: {
     VForm,
