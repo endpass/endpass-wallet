@@ -11,6 +11,12 @@
           </div>
           <div class="level-item">
             <div class="level-control">
+              <p class="heading">Currency</p>
+              <currency-select/>
+            </div>
+          </div>
+          <div class="level-item">
+            <div class="level-control">
               <sync-status/>
             </div>
           </div>
@@ -43,6 +49,7 @@
 import { mapActions, mapState, mapGetters } from 'vuex';
 import AccountChooser from '@/components/bar/AccountChooser.vue';
 import ProviderSelect from '@/components/bar/ProviderSelect.vue';
+import CurrencySelect from '@/components/bar/CurrencySelect.vue';
 import SyncStatus from '@/components/bar/SyncStatus.vue';
 import Balance from '@/components/Balance';
 import net from '@/mixins/net';
@@ -66,6 +73,7 @@ export default {
     ProviderSelect,
     SyncStatus,
     Balance,
+    CurrencySelect,
   },
   mixins: [net],
 };
@@ -81,7 +89,9 @@ export default {
   &.testnet {
     background-color: darken($warning, 35%);
   }
-
+  &.classic {
+    background-color: darken($danger, 35%);
+  }
   .title {
     color: $white;
   }

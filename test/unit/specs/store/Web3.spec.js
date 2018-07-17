@@ -48,7 +48,7 @@ describe('web3 store', async () => {
 
   it('should get full list of networks', () => {
     let netList = store.getters.networks(stateInstance);
-    expect(netList.length).toBe(4);
+    expect(netList.length).toBe(5);
   });
 
   it('should change network', () => {
@@ -60,6 +60,14 @@ describe('web3 store', async () => {
     expect(stateInstance.activeNet.id).toBe(4);
   });
 
+  it('should change currency', () => {
+    store.mutations.changeCurrency(stateInstance, {
+      name: 'ETH-TEST',
+      id: 2,
+    });
+    expect(stateInstance.activeCurrency.id).toBe(2);
+  });
+
   it('should add provider network', () => {
     store.mutations.addNewProvider(stateInstance, {
       name: 'Test',
@@ -68,6 +76,14 @@ describe('web3 store', async () => {
     });
     expect(stateInstance.storedNetworks.length).toBe(2);
     expect(stateInstance.storedNetworks[1].id).toBe(5);
+  });
+
+  it('should filter networks with active net', () => {
+    store.mutations.changeCurrency(stateInstance, {
+      name: 'ETH-TEST',
+      id: 2,
+    });
+    expect(store.getters.networks(stateInstance).length).toBe(2);
   });
 
   it('should change with action network', done => {
@@ -100,6 +116,34 @@ describe('web3 store', async () => {
         { type: 'subscribeOnBlockUpdates' },
         { type: 'tokens/subscribeOnTokenUpdates' },
       ],
+      done,
+    );
+  });
+
+  it('should change with action currency', done => {
+    testAction(
+      store.actions.changeCurrency,
+      3,
+      {
+        state: {
+          currencys: stateInstance.currencys,
+        },
+        getters: {
+          networks: [
+            {
+              id: 1,
+            },
+            {
+              id: 2,
+            },
+            {
+              id: 3,
+            },
+          ],
+        },
+      },
+      [{ type: 'changeCurrency' }],
+      [{ type: 'changeNetwork' }],
       done,
     );
   });
