@@ -4,7 +4,7 @@
       <template slot="header">Add New Provider</template>
 
       <div v-if="!providerAdded">
-	      <v-form v-model="isFormValid">
+	      <v-form>
 
           <v-input v-model="provider.name"
                    v-validate="'required'"
@@ -24,6 +24,15 @@
                    placeholder="Provider url"
                    required />
 
+         <v-select v-model="provider.currency"
+                  :options="currencys"
+                  v-validate="'required'"
+                  name="currency"
+                  label="Provider currency"
+                  id="currency"
+                  aria-describedby="currency"
+                  placeholder="Provider currency"
+                  required />
 	      </v-form>
       </div>
       <div v-else>
@@ -43,7 +52,7 @@
       <div slot="footer">
         <div v-if="!providerAdded">
           <a class="button is-primary"
-             :disabled="!isFormValid"
+             :disabled="errors && errors.any()"
              @click="addNewProvider">Create New Provider</a>
           <a class="button" @click="close">Cancel</a>
         </div>
@@ -56,15 +65,15 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
+import VSelect from '@/components/ui/form/VSelect';
 
 export default {
   data() {
     return {
-      isFormValid: false,
       providerAdded: false,
       provider: {
         name: '',
@@ -73,6 +82,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      currencys: state => state.web3.currencys.map(currency => {return {val: currency.id, text: currency.name}})
+    }),
     providersLinks() {
       return this.$store.getters['web3/networks']
         .map(net => net.url)
@@ -84,8 +96,17 @@ export default {
       addNewProviderToStore: 'addNewProvider',
     }),
     addNewProvider() {
-      this.addNewProviderToStore(this.provider);
-      this.providerAdded = true;
+      this.$validator.validateAll().then(result => {
+        if (result) {
+          this.addNewProviderToStore(this.provider);
+          this.providerAdded = true;
+        }
+        this.$notify({
+          title: 'Form invalid',
+          text: 'Please correct errors.',
+          type: 'is-warning',
+        });
+      });
     },
     close() {
       this.$emit('close');
@@ -94,10 +115,11 @@ export default {
   components: {
     VModal,
     VInput,
+    VSelect,
     VForm,
   },
 };
 </script>
 <style lang="css">
-	
+
 </style>

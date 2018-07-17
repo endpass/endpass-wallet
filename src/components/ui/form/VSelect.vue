@@ -20,12 +20,15 @@ export default {
   name: 'v-select',
   props: {
     value: {
-      type: String,
       default: null,
     },
     validator: {
       type: String,
       default: '',
+    },
+    error: {
+      type: String,
+      default: null,
     },
     name: {
       type: String,
