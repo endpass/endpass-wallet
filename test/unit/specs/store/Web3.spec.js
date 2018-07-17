@@ -126,6 +126,7 @@ describe('web3 store', async () => {
       3,
       {
         state: {
+          activeNet: stateInstance.activeNet,
           currencys: stateInstance.currencys,
         },
         getters: {
