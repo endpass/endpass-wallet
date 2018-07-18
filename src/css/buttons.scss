@@ -57,3 +57,11 @@ a {
     }
   }
 }
+
+// Button group
+.buttons {
+  .button {
+    // Buttons in group expand
+    flex: 1;
+  }
+}
