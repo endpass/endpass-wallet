@@ -1,6 +1,7 @@
 <template>
   <div class="field">
     <label class="label"
+           :class="{'has-text-danger': error || errors.has(name) }"
            v-if="label"
            :for="id">{{ label }}</label>
     <div class="field"
@@ -22,6 +23,7 @@
     </div>
     <p class="help is-danger"
        v-if="error || errors.has(name) ">{{ error || errors.first(name) }}</p>
+    <p class="help" v-else-if="help">{{ help }}</p>
   </div>
 </template>
 
@@ -46,6 +48,10 @@ export default {
       default: null,
     },
     label: {
+      type: String,
+      default: null,
+    },
+    help: {
       type: String,
       default: null,
     },

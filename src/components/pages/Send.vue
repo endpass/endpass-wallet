@@ -15,7 +15,8 @@
                        validator="required|address"
                        id="address"
                        aria-describedby="address"
-                       placeholder="Receiver address"
+                       placeholder="0x..."
+                       help="Address to send to"
                        :disabled="isSending"
                        required />
 
