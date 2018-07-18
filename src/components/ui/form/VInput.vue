@@ -114,4 +114,33 @@ export default {
 .field > .field {
   margin-bottom: 0;
 }
+
+.label {
+  color: $medium-grey;
+}
+
+.input, .textarea {
+  box-shadow: none;
+  border: none;
+  outline: none;
+  border-radius: 0;
+  padding: 0;
+  box-sizing: content-box;
+  border-bottom: 1px solid $dark-grey;
+  transition: box-shadow .4s, border .4s;
+
+  &:hover, &.is-hovered {
+  border-bottom: 1px solid $primary;
+    box-shadow: 0 1px 0 0 $primary;
+  }
+
+  &:focus,&.is-focused,&:active,&.is-active {
+    border-bottom: 1px solid $primary;
+    box-shadow: 0 1px 0 0 $primary;
+  }
+  &.is-danger:focus,&.is-danger.is-focused,&.is-danger:active,&.is-danger.is-active,&.is-danger:hover,&.is-danger.is-hovered {
+    border-bottom: 1px solid $danger;
+    box-shadow: 0 1px 0 0 $danger;
+  }
+}
 </style>
