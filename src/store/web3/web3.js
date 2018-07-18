@@ -147,7 +147,7 @@ export default {
         dispatch('changeNetwork', network.id),
       ]).catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    fetchNetworkType({ state, commit }) {
+    fetchNetworkType({ state, commit, dispatch }) {
       // network type already set, return resolved promise
       if (state.activeNet.networkType) {
         return Promise.resolve();
