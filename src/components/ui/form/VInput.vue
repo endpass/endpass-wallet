@@ -133,6 +133,11 @@ export default {
   color: $medium-grey;
 }
 
+.help {
+  font-size: 0.85rem;
+  margin-top: 0.15rem;
+}
+
 .input, .textarea {
   box-shadow: none;
   border: none;
@@ -150,6 +155,7 @@ export default {
   &:focus,&.is-focused,&:active,&.is-active {
     border-bottom: 1px solid $primary;
     box-shadow: 0 1px 0 0 $primary;
+    font-weight: 700;
   }
   &.is-danger:focus,&.is-danger.is-focused,&.is-danger:active,&.is-danger.is-active,&.is-danger:hover,&.is-danger.is-hovered {
     border-bottom: 1px solid $danger;
