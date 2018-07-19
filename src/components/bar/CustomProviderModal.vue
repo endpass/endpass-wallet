@@ -40,17 +40,17 @@
         </div>
       </div>
 
-      <div slot="footer">
-        <div v-if="!providerAdded">
+      <template slot="footer">
+        <div class="buttons" v-if="!providerAdded">
           <a class="button is-primary"
              :disabled="!isFormValid"
              @click="addNewProvider">Create New Provider</a>
           <a class="button" @click="close">Cancel</a>
         </div>
-        <div v-else>
+        <div class="buttons" v-else>
           <a class="button is-primary" @click="close">Close</a>
         </div>
-      </div>
+      </template>
 
     </v-modal>
   </div>
@@ -99,5 +99,5 @@ export default {
 };
 </script>
 <style lang="css">
-	
+
 </style>
