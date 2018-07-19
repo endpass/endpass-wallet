@@ -115,6 +115,14 @@ export default {
 <style lang="scss">
 .field.has-addons {
   margin-bottom: 0;
+  .control:last-child {
+    .button, .input, .select select {
+      border: none;
+      outline: none;
+      border-bottom: 1px solid $dark-grey;
+    }
+  }
+
 }
 
 .field > .field {
@@ -131,12 +139,11 @@ export default {
   outline: none;
   border-radius: 0;
   padding: 0;
-  box-sizing: content-box;
   border-bottom: 1px solid $dark-grey;
   transition: box-shadow .4s, border .4s;
 
   &:hover, &.is-hovered {
-  border-bottom: 1px solid $primary;
+    border-bottom: 1px solid $primary;
     box-shadow: 0 1px 0 0 $primary;
   }
 

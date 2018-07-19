@@ -57,4 +57,9 @@ export default {
 </script>
 
 <style lang="scss">
+.select {
+  &:not(.is-multiple):not(.is-loading)::after {
+    border-color: $primary;
+  }
+}
 </style>
