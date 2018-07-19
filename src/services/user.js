@@ -63,6 +63,87 @@ export default {
       }))
       .catch(() => {});
   },
+
+  getOtpSettings() {
+    return Promise.resolve({
+      secret: 'AABC',
+      // status: 'enabled',
+    });
+
+    // return Promise.reject().catch(() => {
+    //   throw new NotificationError({
+    //     title: 'Error requesting two-factor authentication settings',
+    //     text: `Failed to get OTP settings.`,
+    //     type: 'is-danger',
+    //   });
+    // });
+  },
+
+  setOtpSettings(secret, code) {
+    return Promise.resolve({
+      data: {
+        success: true,
+        // success: false,
+        // message: 'server message'
+      },
+    })
+      .then(({ data }) => {
+        if (!data.success) {
+          console.warn(`POST ${api}/otp: ${data.message}`);
+          return Promise.reject();
+        }
+
+        return data;
+      })
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error saving two-factor authentication settings',
+          text: `Failed to save OTP settings.`,
+          type: 'is-danger',
+        });
+      });
+
+    // return Promise.reject().catch(() => {
+    //   throw new NotificationError({
+    //     title: 'Error saving two-factor authentication settings',
+    //     text: `Failed to save OTP settings.`,
+    //     type: 'is-danger',
+    //   });
+    // });
+  },
+
+  deleteOtpSettings(code) {
+    return Promise.resolve({
+      data: {
+        success: true,
+        // success: false,
+        // message: 'server message'
+      },
+    })
+      .then(({ data }) => {
+        if (!data.success) {
+          console.warn(`DELETE ${api}/otp: ${data.message}`);
+          return Promise.reject();
+        }
+
+        return data;
+      })
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error removing two-factor authentication settings',
+          text: `Failed to remove OTP settings.`,
+          type: 'is-danger',
+        });
+      });
+
+    // return Promise.reject().catch(() => {
+    //   throw new NotificationError({
+    //     title: 'Error removing two-factor authentication settings',
+    //     text: `Failed to remove OTP settings.`,
+    //     type: 'is-danger',
+    //   });
+    // });
+  },
 };
 
 // export default {
@@ -262,5 +343,56 @@ export default {
 //         ...settings,
 //       }))
 //       .catch(() => {});
+//   },
+
+//   getOtpSettings() {
+//     return axios
+//       .get(`${api}/otp`)
+//       .then(res => res.data)
+//       .catch(() => {
+//         throw new NotificationError({
+//           title: 'Error requesting two-factor authentication settings',
+//           text: `Failed to get OTP settings.`,
+//           type: 'is-danger',
+//         });
+//       });
+//   },
+
+//   setOtpSettings(secret, code) {
+//     return axios
+//       .post(`${api}/otp`, { secret, code })
+//       .then(({ data }) => {
+//         if (!data.success) {
+//           console.warn(`POST ${api}/otp: ${data.message}`);
+//           return Promise.reject();
+//         }
+//
+//         return data;
+//       }).catch(() => {
+//         throw new NotificationError({
+//           title: 'Error saving two-factor authentication settings',
+//           text: `Failed to save OTP settings.`,
+//           type: 'is-danger',
+//         });
+//       });
+//   },
+//   deleteOtpSettings(code) {
+//     return axios
+//       .delete(`${api}/otp`, {
+//         data: { code }
+//       }).then(({ data }) => {
+//         if (!data.success) {
+//           console.warn(`DELETE ${api}/otp: ${data.message}`);
+//           return Promise.reject();
+//         }
+//
+//         return data;
+//       }).catch(() => {
+//         throw new NotificationError({
+//           title: 'Error removing two-factor authentication settings',
+//           text: `Failed to remove OTP settings.`,
+//           type: 'is-danger',
+//         });
+//       });
 //   },
 // };

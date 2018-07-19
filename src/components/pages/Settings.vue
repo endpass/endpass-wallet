@@ -1,38 +1,29 @@
 <template>
-  <div class="app-page settings-page">
-    <div class="section">
-      <div class="container is-narrow">
-        <div class="card app-card main-app-card">
-          <div class="card-header">
-            <h1 class="card-header-title">Settings</h1>
-          </div>
-          <div class="card-content">
-            <v-form id="save-settings">
+  <base-page class="settings-page">
+    <template slot="title">Settings</template>
 
-              <v-select v-model="newSettings.fiatCurrency"
-                        label="Fiat Currency"
-                        name='fiatCurrency'
-                        :validator='`is_not:${settings.fiatCurrency}`'
-                        :options="availableCurrencies" />
-
-              <v-button id="save-button"
-                        className="is-primary is-medium"
-                        @click.prevent="updateSettings(newSettings)">Save</v-button>
-
-            </v-form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+    <v-form id="save-settings" class="save-settings">
+      <v-select v-model="newSettings.fiatCurrency"
+                label="Fiat Currency"
+                name='fiatCurrency'
+                :validator='`is_not:${settings.fiatCurrency}`'
+                :options="availableCurrencies" />
+      <v-button id="save-button"
+                className="is-primary is-medium"
+                @click.prevent="updateSettings(newSettings)">Save</v-button>
+    </v-form>
+    <two-factor-auth-settings/>
+  </base-page>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import BasePage from '@/components/pages/Base';
 import VForm from '@/components/ui/form/VForm.vue';
 import error from '@/mixins/error';
 import VSelect from '@/components/ui/form/VSelect.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
 
 export default {
   name: 'settings-page',
@@ -59,9 +50,11 @@ export default {
     },
   },
   components: {
+    BasePage,
     VForm,
     VSelect,
     VButton,
+    TwoFactorAuthSettings
   },
   mounted() {
     try {
@@ -75,4 +68,7 @@ export default {
 </script>
 
 <style lang="scss">
+  .save-settings .field:last-child {
+    margin-bottom: .75rem;
+  }
 </style>
