@@ -62,6 +62,44 @@
                 </div>
               </div>
 
+              <div class="priority-options">
+                <label class="label">Priority</label>
+                <p class="help">Set priority higher if you would like to
+                pay a higher fee to get your transaction confirmed faster.</p>
+                <div class="field has-addons">
+                  <div class="control">
+                    <a class="button is-multiline"
+                       :class="{'is-info': transaction.gasPrice ===
+                       suggestedGasPrices.low, 'is-selected': transaction.gasPrice ===
+                       suggestedGasPrices.low}"
+                       @click="setSuggestedGasPrice('low')">
+                      Low
+                      <span class="help">{{suggestedGasPrices.low}} Gwei</span>
+                    </a>
+                  </div>
+                  <div class="control">
+                    <a class="button is-multiline"
+                       :class="{'is-info': transaction.gasPrice ===
+                       suggestedGasPrices.medium, 'is-selected': transaction.gasPrice ===
+                       suggestedGasPrices.medium}"
+                       @click="setSuggestedGasPrice('medium')">
+                      Medium
+                      <span class="help">{{suggestedGasPrices.medium}} Gwei</span>
+                    </a>
+                  </div>
+                  <div class="control">
+                    <a class="button is-multiline"
+                       :class="{'is-info': transaction.gasPrice ===
+                       suggestedGasPrices.high, 'is-selected': transaction.gasPrice ===
+                       suggestedGasPrices.high}"
+                       @click="setSuggestedGasPrice('high')">
+                      High
+                      <span class="help">{{suggestedGasPrices.high}} Gwei</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
               <v-input v-model="transaction.gasPrice"
                        label="Gas price"
                        name="gasPrice"
@@ -145,7 +183,7 @@ import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 
 const defaultTnx = {
-  gasPrice: '90',
+  gasPrice: '40',
   gasLimit: '22000',
   value: '0',
   tokenInfo: undefined,
@@ -246,6 +284,15 @@ export default {
       const { tokenInfo } = this.transaction;
       return (tokenInfo && tokenInfo.decimals) || 18;
     },
+    // Suggested gas prices for different priorities
+    // TODO dynamically update from API
+    suggestedGasPrices() {
+      return {
+        low: '10',
+        medium: '40',
+        high: '90'
+      }
+    },
   },
   methods: {
     ...mapActions('transactions', [
@@ -255,6 +302,9 @@ export default {
     ]),
     setTrxNonce(nonce) {
       this.transaction.nonce = nonce;
+    },
+    setSuggestedGasPrice(priority) {
+      this.transaction.gasPrice = this.suggestedGasPrices[priority] || '1';
     },
     async resetForm() {
       this.$validator.pause();

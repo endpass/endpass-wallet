@@ -65,3 +65,11 @@ a {
     flex: 1;
   }
 }
+
+// Multiline buttons
+.button.is-multiline {
+  min-height: 2.25em;
+  white-space: unset;
+  height: auto;
+  flex-direction: column;
+}

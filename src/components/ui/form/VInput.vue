@@ -116,10 +116,10 @@ export default {
 .field.has-addons {
   margin-bottom: 0;
   .control:last-child {
-    .button, .input, .select select {
+    .button.is-static, .input, .select select {
       border: none;
       outline: none;
-      border-bottom: 1px solid $dark-grey;
+      //border-bottom: 1px solid $dark-grey;
     }
   }
 
