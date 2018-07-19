@@ -39,6 +39,10 @@ export default {
       type: String,
       default: null,
     },
+    error: {
+      type: String,
+      default: null,
+    },
   },
   inject: {
     $validator: '$validator',
