@@ -197,12 +197,25 @@
                 </div>
               </div>
 
-              <v-button @click.prevent="toggleTransactionModal"
-                        className="is-primary is-medium"
-                        :loading="isSending"
-                        :disabled="isSyncing">Send</v-button>
+              <div class="field is-horizontal">
+                <div class="field-label"></div>
+                <div class="field-body">
+                  <v-button @click.prevent="toggleTransactionModal"
+                            className="is-primary is-medium"
+                            :loading="isSending"
+                            :disabled="isSyncing">Send</v-button>
+                </div>
+              </div>
 
-              <div v-if="transactionHash">{{ transactionHash }}</div>
+              <div class="field is-horizontal" v-if="transactionHash">
+                <div class="field-label">
+                  <label class="label">Transaction Id</label>
+                </div>
+                <div class="field-body">
+                  <p>{{ transactionHash }}</p>
+                </div>
+              </div>
+
             </v-form>
           </div>
         </div>
