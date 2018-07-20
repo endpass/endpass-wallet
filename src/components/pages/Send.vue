@@ -1,6 +1,6 @@
 <template>
   <div class="app-page send-page">
-    <div class="section">
+    <div class="section is-narrow">
       <div class="container is-narrow">
         <div class="card app-card main-app-card">
           <div class="card-header">
