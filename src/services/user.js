@@ -7,10 +7,45 @@ export default {
   login(email) {
     return Promise.resolve({
       success: true,
+      // success: false,
       challenge: {
         challenge_type: 'email_link',
+        // challenge_type: 'otp',
       },
-    });
+    })
+      .then(({ success, challenge }) => {
+        if (!success) {
+          return Promise.reject();
+        }
+
+        return challenge.challenge_type;
+      })
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Auth error',
+          text: 'Invalid or missing email address. Please, try again',
+          type: 'is-danger',
+        });
+      });
+  },
+
+  loginViaOTP(code) {
+    return Promise.resolve({
+      success: true,
+      // success: false,
+    })
+      .then(({ success }) => {
+        if (!success) {
+          return Promise.reject();
+        }
+      })
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Auth error',
+          text: 'Invalid or missing one time password. Please, try again',
+          type: 'is-danger',
+        });
+      });
   },
 
   getSettings() {
@@ -178,6 +213,25 @@ export default {
 //         throw error;
 //       });
 //   },
+
+// loginViaOTP(code) {
+//   return axios
+//     .post(`${api}/token`, {
+//       challenge_type: 'otp',
+//       code
+//     }).then(({ success }) => {
+//       if (!success) {
+//         return Promise.reject();
+//       }
+//     })
+//     .catch(() => {
+//       throw new NotificationError({
+//         title: 'Auth error',
+//         text: 'Invalid or missing one time password. Please, try again',
+//         type: 'is-danger',
+//       });
+//     });
+// },
 
 //   getSettings() {
 //     // return axios

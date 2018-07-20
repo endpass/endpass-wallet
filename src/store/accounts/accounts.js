@@ -155,6 +155,9 @@ export default {
         .then(() => (window.location = '/logout'))
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
+    loginViaOTP({}, { code }) {
+      return userService.loginViaOTP(code);
+    },
     getOtpSettings({ commit, dispatch }) {
       return userService
         .getOtpSettings()

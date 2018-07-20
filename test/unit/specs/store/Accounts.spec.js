@@ -203,6 +203,19 @@ describe('accounts store', () => {
   });
 
   describe('actions', () => {
+    describe('loginViaOTP', () => {
+      it('should call userService.loginViaOTP', () => {
+        const code = '123456';
+
+        userService.loginViaOTP = jest.fn();
+
+        actions.loginViaOTP({}, { code });
+
+        expect(userService.loginViaOTP).toHaveBeenCalledTimes(1);
+        expect(userService.loginViaOTP).toHaveBeenCalledWith(code);
+      });
+    });
+
     describe('getOtpSettings', () => {
       it('should get OTP settings', async () => {
         const otpSettings = {};
