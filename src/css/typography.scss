@@ -24,3 +24,15 @@ code, .code {
   word-wrap: break-word;
   font-family: "Lucida Console","Courier New",monospace;
 }
+
+.long-number {
+  max-width: 250px;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.long-number:hover {
+  max-width: none;
+}
