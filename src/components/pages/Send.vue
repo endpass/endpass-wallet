@@ -9,7 +9,7 @@
           <div class="card-content">
             <v-form id="sendEther">
 
-              <v-input v-model="transaction.to"
+              <v-input-address v-model="transaction.to"
                        label="To"
                        name="address"
                        validator="required|address"
@@ -127,6 +127,7 @@ import { mapState, mapActions } from 'vuex';
 import web3 from 'web3';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
+import VInputAddress from '@/components/ui/form/VInputAddress.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
@@ -244,6 +245,7 @@ export default {
         valid: false,
       });
     },
+
     toggleTransactionModal() {
       this.isTransactionModal = !this.isTransactionModal;
     },
@@ -311,6 +313,7 @@ export default {
     VForm,
     VButton,
     VInput,
+    VInputAddress,
     TransactionModal,
     PasswordModal,
   },

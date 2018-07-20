@@ -8,7 +8,7 @@
       <div class="control"
            :class="{'is-expanded': $slots.addon }">
         <input v-model="innerValue"
-               v-validate="validator"
+               :v-validate="`${required ? 'required|' : ''}ensAddress`"
                :data-vv-as="label || name"
                class="input"
                :class="{'is-danger': error || errors.has(name) }"
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+var ENS = require('ethereum-ens');
 export default {
   name: 'v-input',
   props: {
@@ -36,9 +37,9 @@ export default {
       type: String,
       default: null,
     },
-    type: {
-      type: String,
-      default: 'text',
+    required: {
+      type: Boolean,
+      default: true,
     },
     name: {
       type: String,
