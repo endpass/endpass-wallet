@@ -8,7 +8,10 @@
           </div>
           <div class="card-content">
             <p>Your Wallet Address:</p>
-            <p class="code address is-size-5">{{address}}</p>
+            <account
+              :address="address"
+              :balance="balance"
+            />
           </div>
         </div>
       </div>
@@ -36,10 +39,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import appTransaction from '@/components/Transaction';
+import Account from '@/components/Account';
 import EthplorerService from '@/services/ethplorer';
-import accounts from '@/mixins/accounts';
 
 export default {
   data() {
@@ -52,10 +55,13 @@ export default {
       address: state =>
         state.accounts.address && state.accounts.address.getAddressString(),
     }),
+    ...mapGetters('accounts', {
+      balance: 'balance',
+    }),
     processedTransactions() {
-      return this.transactions.sort((trx1, trx2) => {
-        return trx2.timestamp - trx1.timestamp;
-      });
+      const trxArr = [...this.transactions];
+
+      return trxArr.sort((trx1, trx2) => trx2.timestamp - trx1.timestamp);
     },
   },
   created() {
@@ -85,6 +91,7 @@ export default {
       });
   },
   components: {
+    Account,
     appTransaction,
   },
 };
