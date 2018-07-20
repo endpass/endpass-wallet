@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { NotificationError } from '@/class';
-
-const api = 'https://endpass.com/api/v1';
+import { identityAPIUrl } from '@/config';
 
 export default {
   login(email) {
@@ -124,7 +123,7 @@ export default {
     })
       .then(({ data }) => {
         if (!data.success) {
-          console.warn(`POST ${api}/otp: ${data.message}`);
+          console.warn(`POST ${identityAPIUrl}/otp: ${data.message}`);
           return Promise.reject();
         }
 
@@ -157,7 +156,7 @@ export default {
     })
       .then(({ data }) => {
         if (!data.success) {
-          console.warn(`DELETE ${api}/otp: ${data.message}`);
+          console.warn(`DELETE ${identityAPIUrl}/otp: ${data.message}`);
           return Promise.reject();
         }
 
@@ -184,7 +183,7 @@ export default {
 // export default {
 //   login(email) {
 //     // return axios
-//     //   .post(`${api}/auth`, {
+//     //   .post(`${identityAPIUrl}/auth`, {
 //     //     email,
 //     //   })
 //     //   .then(console.log)
@@ -216,7 +215,7 @@ export default {
 
 // loginViaOTP(code) {
 //   return axios
-//     .post(`${api}/token`, {
+//     .post(`${identityAPIUrl}/token`, {
 //       challenge_type: 'otp',
 //       code
 //     }).then(({ success }) => {
@@ -235,7 +234,7 @@ export default {
 
 //   getSettings() {
 //     // return axios
-//     //   .get(`${api}/user`)
+//     //   .get(`${identityAPIUrl}/user`)
 //     //   .then(res => res.data)
 //     //   .then(console.log)
 //     //   .catch(console.log);
@@ -278,7 +277,7 @@ export default {
 
 //   setSettings(settings) {
 //     // return axios
-//     //   .post(`${api}/user`, settings)
+//     //   .post(`${identityAPIUrl}/user`, settings)
 //     //   .then(res => res.data)
 //     //   .then(console.log)
 //     //   .catch(console.log);
@@ -290,7 +289,7 @@ export default {
 
 //   removeSettings(propsArr) {
 //     // return axios
-//     //   .delete(`${api}/user`, propsArr)
+//     //   .delete(`${identityAPIUrl}/user`, propsArr)
 //     //   .then(res => res.data)
 //     //   .then(console.log)
 //     //   .catch(console.log);
@@ -302,7 +301,7 @@ export default {
 
 //   getAccounts() {
 //     // return axios
-//     //   .get(`${api}/accounts`)
+//     //   .get(`${identityAPIUrl}/accounts`)
 //     //   .then(res => res.data)
 //     //   .then(console.log)
 //     //   .catch(console.log);
@@ -320,7 +319,7 @@ export default {
 
 //   setAccount(account) {
 //     // return axios
-//     //   .post(`${api}/accounts`, account)
+//     //   .post(`${identityAPIUrl}/accounts`, account)
 //     //   .then(res => res.data)
 //     //   .then(console.log)
 //     //   .catch(console.log);
@@ -332,7 +331,7 @@ export default {
 
 //   getAccount(account) {
 //     // return axios
-//     //   .get(`${api}/account/${account}`)
+//     //   .get(`${identityAPIUrl}/account/${account}`)
 //     //   .then(res => res.data)
 //     //   .then(console.log)
 //     //   .catch(console.log);
@@ -401,7 +400,7 @@ export default {
 
 //   getOtpSettings() {
 //     return axios
-//       .get(`${api}/otp`)
+//       .get(`${identityAPIUrl}/otp`)
 //       .then(res => res.data)
 //       .catch(() => {
 //         throw new NotificationError({
@@ -414,10 +413,10 @@ export default {
 
 //   setOtpSettings(secret, code) {
 //     return axios
-//       .post(`${api}/otp`, { secret, code })
+//       .post(`${identityAPIUrl}/otp`, { secret, code })
 //       .then(({ data }) => {
 //         if (!data.success) {
-//           console.warn(`POST ${api}/otp: ${data.message}`);
+//           console.warn(`POST ${identityAPIUrl}/otp: ${data.message}`);
 //           return Promise.reject();
 //         }
 //
@@ -432,11 +431,11 @@ export default {
 //   },
 //   deleteOtpSettings(code) {
 //     return axios
-//       .delete(`${api}/otp`, {
+//       .delete(`${identityAPIUrl}/otp`, {
 //         data: { code }
 //       }).then(({ data }) => {
 //         if (!data.success) {
-//           console.warn(`DELETE ${api}/otp: ${data.message}`);
+//           console.warn(`DELETE ${identityAPIUrl}/otp: ${data.message}`);
 //           return Promise.reject();
 //         }
 //
