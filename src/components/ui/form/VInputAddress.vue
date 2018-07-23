@@ -6,12 +6,14 @@
     <div class="field"
          :class="{'has-addons': $slots.addon }">
       <div class="control"
-           :class="{'is-expanded': $slots.addon }">
+           :class="{'is-expanded': $slots.addon,
+           'is-loading': pendingEns }">
         <input v-model="innerValue"
-               :v-validate="`${required ? 'required|' : ''}ensAddress`"
+               v-validate.disabled=""
                :data-vv-as="label || name"
                class="input"
-               :class="{'is-danger': error || errors.has(name) }"
+               :class="{'is-danger': error || errors.has(name)}"
+               :disabled="disabled || pendingEns"
                v-bind="props">
       </div>
       <div class="control"
@@ -21,18 +23,27 @@
     </div>
     <p class="help is-danger"
        v-if="error || errors.has(name) ">{{ error || errors.first(name) }}</p>
+    <p class="help is-info"
+        v-if="pendingEns">Resolving name</p>
   </div>
 </template>
 
 <script>
-var ENS = require('ethereum-ens');
+import { ENSResolver } from '@/class';
+import { mapState } from 'vuex';
+import  web3 from 'web3';
 export default {
+  data() {
+    const ens = new ENSResolver(this.$store.state.web3.web3);
+    return {
+      validatingEns: false,
+      value: '',
+      pendingEns: false,
+      ens
+    }
+  },
   name: 'v-input',
   props: {
-    value: {
-      type: [String, Number],
-      default: null,
-    },
     id: {
       type: String,
       default: null,
@@ -53,10 +64,6 @@ export default {
       type: String,
       default: null,
     },
-    validator: {
-      type: String,
-      default: '',
-    },
     ariaDescribedby: {
       type: String,
       default: null,
@@ -72,17 +79,16 @@ export default {
     error: {
       type: String,
       default: null,
-    },
-    autocomplete: {
-      type: String,
-      default: null,
-    },
+    }
   },
   inject: {
     $validator: '$validator',
   },
   methods: {
     camelToKebab: str => str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`),
+    checkENCname() {
+
+    }
   },
   computed: {
     innerValue: {
@@ -90,7 +96,60 @@ export default {
         return this.value;
       },
       set(newVal) {
-        this.$emit('input', newVal);
+        const field = this.$validator.fields.find({ name: this.name, });
+        if (!field) return;
+        const zeroAddressRegex = /^0x0+$/;
+        const isHashKey = web3.utils.isAddress(newVal);
+        const isZeroKey = newVal.match(zeroAddressRegex);
+        const message = isZeroKey
+          ? 'This is a zero address'
+          : 'This is not a valid address';
+        if(newVal.match(/^.+\.eth$/) || newVal.match(/^.+\.etc$/)) {
+          this.value = newVal;
+          this.pendingEns = true;
+          this.$validator.errors.remove(this.name);
+          field.setFlags({
+            invalid: true,
+            valid: false,
+            pending: true
+          });
+          this.ens.getAddress(newVal).then(addres => {
+            field.setFlags({
+              valid: true,
+              invalid: false,
+              pending:false
+            });
+            this.$emit('input', addres);
+            this.value = newVal;
+            this.pendingEns = false;
+          }).catch(e => {
+            this.$validator.errors.add({
+              id: field.id,
+              field: this.name,
+              msg: e.message,
+              scope: this.$options.scope,
+            });
+            this.value = newVal;
+            this.pendingEns = false;
+          })
+        } else if(isHashKey && !isZeroKey) {
+          field.setFlags({
+            valid: true,
+            invalid: false,
+            pending:false
+          });
+          this.$validator.errors.remove(this.name);
+          this.$emit('input', newVal);
+          this.value = newVal;
+        } else {
+          this.value = newVal;
+          this.$validator.errors.add({
+            id: field.id,
+            field: this.name,
+            msg: message,
+            scope: this.$options.scope,
+          });
+        }
       },
     },
     props() {
@@ -102,7 +161,7 @@ export default {
         {},
       );
     },
-  },
+  }
 };
 </script>
 

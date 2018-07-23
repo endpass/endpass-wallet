@@ -10,9 +10,9 @@
             <v-form id="sendEther">
 
               <v-input-address v-model="transaction.to"
+                       ref="addressInput"
                        label="To"
                        name="address"
-                       validator="required|address"
                        id="address"
                        aria-describedby="address"
                        placeholder="Receiver address"

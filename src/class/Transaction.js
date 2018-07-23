@@ -1,6 +1,6 @@
 import web3 from 'web3';
 import { BigNumber } from 'bignumber.js';
-import erc20ABI from '@/erc20.json';
+import erc20ABI from '@/abi/erc20.json';
 
 const { numberToHex, toWei } = web3.utils;
 

@@ -48,16 +48,14 @@ export default {
   },
   methods: {
     processClick($event) {
-      this.$validator.validateAll().then(result => {
-        if (result) {
-          this.$emit('click', $event);
-          return;
-        }
-        this.$notify({
-          title: 'Form invalid',
-          text: 'Please correct errors.',
-          type: 'is-warning',
-        });
+      if (this.form.isFormValid) {
+        this.$emit('click', $event);
+        return;
+      }
+      this.$notify({
+        title: 'Form invalid',
+        text: 'Please correct errors.',
+        type: 'is-warning',
       });
     },
   },
