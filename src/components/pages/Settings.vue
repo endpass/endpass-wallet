@@ -6,10 +6,11 @@
       <v-select v-model="newSettings.fiatCurrency"
                 label="Fiat Currency"
                 name='fiatCurrency'
-                :validator='`is_not:${settings.fiatCurrency}`'
                 :options="availableCurrencies" />
+
       <v-button id="save-button"
                 className="is-primary is-medium"
+                :disabled="!isSettingsChange"
                 @click.prevent="updateSettings(newSettings)">Save</v-button>
     </v-form>
     <two-factor-auth-settings/>
@@ -34,6 +35,9 @@ export default {
   }),
   computed: {
     ...mapState('accounts', ['settings', 'availableCurrencies']),
+    isSettingsChange() {
+      return JSON.stringify(this.settings) !== JSON.stringify(this.newSettings);
+    },
   },
   methods: {
     ...mapActions('accounts', {
