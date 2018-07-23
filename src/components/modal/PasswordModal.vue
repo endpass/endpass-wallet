@@ -7,6 +7,7 @@
         <v-form>
           <slot></slot>
           <v-input v-model="jsonKeystorePassword"
+                   @input="handleInput"
                    label="V3 JSON keystore password"
                    name="jsonKeystorePassword"
                    type="password"
@@ -40,11 +41,30 @@ export default {
     };
   },
   methods: {
+    ...mapActions('accounts', ['validatePassword']),
     confirm() {
-      this.$emit('confirm', this.jsonKeystorePassword);
+      this.proccessingCongirmation = true;
+      const { jsonKeystorePassword: password } = this;
+
+      this.validatePassword(password)
+        .then(() => {
+          this.proccessingCongirmation = false;
+          this.$emit('confirm', password);
+        })
+        .catch(() => {
+          this.proccessingCongirmation = false;
+          this.errors.add({
+            field: 'jsonKeystorePassword',
+            msg: 'Password is invalid',
+            id: 'wrongPassword',
+          });
+        });
     },
     close() {
       this.$emit('close');
+    },
+    handleInput() {
+      this.errors.removeById('wrongPassword');
     },
   },
   components: {
