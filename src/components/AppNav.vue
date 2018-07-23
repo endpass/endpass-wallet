@@ -16,25 +16,25 @@
           <span class="icon is-small"
                 v-html="require('@/img/home.svg')"></span>Dashboard
         </router-link>
-        <router-link v-if="wallet" class="navbar-item" :to="{name: 'HistoryPage'}" @click.native="toggleNavMenu">
+        <router-link v-if="address" class="navbar-item" :to="{name: 'HistoryPage'}" @click.native="toggleNavMenu">
           <span class="icon is-small"
                 v-html="require('@/img/clock.svg')"></span>History
         </router-link>
-        <router-link v-if="wallet && !isPublicAccount" class="navbar-item" :to="{name: 'SendPage'}" @click.native="toggleNavMenu">
+        <router-link v-if="wallet" class="navbar-item" :to="{name: 'SendPage'}" @click.native="toggleNavMenu">
           <span class="icon is-small"
                 v-html="require('@/img/arrow-thick-left.svg')"></span>Send
         </router-link>
-        <router-link v-if="wallet" class="navbar-item" :to="{name:
+        <router-link v-if="address" class="navbar-item" :to="{name:
         'ReceivePage'}" @click.native="toggleNavMenu">
           <span class="icon is-small"
                 v-html="require('@/img/arrow-thick-right.svg')"></span>Receive
         </router-link>
-        <router-link v-if="wallet" class="navbar-item" :to="{name:
+        <router-link v-if="address" class="navbar-item" :to="{name:
         'TokensPage'}" @click.native="toggleNavMenu">
           <span class="icon is-small"
                 v-html="require('@/img/compass.svg')"></span>Tokens
         </router-link>
-        <router-link v-if="wallet" class="navbar-item" :to="{name:
+        <router-link v-if="address" class="navbar-item" :to="{name:
         'SettingsPage'}" @click.native="toggleNavMenu">
           <span class="icon is-small"
                 v-html="require('@/img/cog.svg')"></span>Settings
@@ -80,6 +80,7 @@ export default {
   computed: {
     ...mapState({
       wallet: state => state.accounts.wallet,
+      address: state => state.accounts.address && state.accounts.address.getAddressString(),
       email: state => state.accounts.email,
     }),
     ...mapGetters('accounts', ['isPublicAccount']),
