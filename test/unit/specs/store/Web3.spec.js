@@ -47,6 +47,7 @@ describe('web3 store', async () => {
   });
 
   it('should get full list of networks', () => {
+    stateInstance.activeCurrency = null;
     let netList = store.getters.networks(stateInstance);
     expect(netList.length).toBe(5);
   });
