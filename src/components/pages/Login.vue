@@ -1,51 +1,49 @@
 <template>
-  <div class="app-page send-page">
-    <div class="section">
-      <div class="container is-narrow">
-        <div class="card app-card main-app-card">
-          <div class="card-header">
-            <h1 class="card-header-title">Login/Register</h1>
-          </div>
-          <div class="card-content">
-            <v-form id="login" v-if="!isSuccess">
+  <base-page>
+    <template slot="title">Login/Register</template>
 
-              <v-input v-model="email"
-                       label="Email"
-                       name="email"
-                       validator="required|email"
-                       id="email"
-                       aria-describedby="email"
-                       placeholder="Your email"
-                       :disabled="isSending"
-                       required />
+    <v-form id="login" v-if="!isSuccess">
 
-              <v-checkbox v-model="termsAccepted">
-                I accept <a href="https://endpass.com/terms/" target="_blank">Terms of Service</a>
-                and <a href="https://endpass.com/privacy/" target="_blank">Privacy Policy</a>
-              </v-checkbox>
+      <v-input v-model="email"
+               label="Email"
+               name="email"
+               validator="required|email"
+               id="email"
+               aria-describedby="email"
+               placeholder="Your email"
+               :disabled="isSending"
+               required />
 
-              <v-button @click.prevent="handleLogin"
-                        id="send-button"
-                        className="is-primary is-medium"
-                        :disabled="!termsAccepted"
-                        :loading="isSending">Send</v-button>
+      <v-checkbox v-model="termsAccepted">
+        I accept <a href="https://endpass.com/terms/" target="_blank">Terms of Service</a>
+        and <a href="https://endpass.com/privacy/" target="_blank">Privacy Policy</a>
+      </v-checkbox>
 
-            </v-form>
-            <p id="success-message"
-               v-else>Click the link in your email to log in</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+      <v-button @click.prevent="handleLogin"
+                id="send-button"
+                className="is-primary is-medium"
+                :disabled="!termsAccepted"
+                :loading="isSending">Send</v-button>
+
+    </v-form>
+    <p id="success-message"
+       v-else>Click the link in your email to log in</p>
+
+    <two-factor-auth-modal v-if="isTwoFactorAuthModal"
+                           @close="toggleTwoFactorAuthModal"
+                           @confirm="handleConfirmTwoFactorAuthModal"/>
+  </base-page>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import BasePage from '@/components/pages/Base';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VCheckbox from '@/components/ui/form/VCheckbox.vue';
+import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
+import modalMixin from '@/mixins/modal';
 import error from '@/mixins/error';
 
 export default {
@@ -57,31 +55,51 @@ export default {
     termsAccepted: false,
   }),
   methods: {
-    ...mapActions('accounts', ['login']),
+    ...mapActions('accounts', ['login', 'loginViaOTP']),
     handleLogin() {
       this.isSending = true;
       this.login(this.email)
-        .then(() => {
-          this.isSending = false;
-          this.isSuccess = true;
-          this.$notify({
-            title: 'Success',
-            text: 'Click the link in your email to log in',
-            type: 'is-info',
-          });
+        .then(challengeType => {
+          if (challengeType === 'otp') {
+            this.toggleTwoFactorAuthModal();
+            this.isSending = false;
+          } else {
+            this.handleSuccessfulLogin();
+          }
         })
-        .catch(e => {
-          this.isSending = false;
-          this.emitError(e);
-        });
+        .catch(this.handleFailedLogin);
     },
+    handleConfirmTwoFactorAuthModal(code) {
+      this.toggleTwoFactorAuthModal();
+      this.isSending = true;
+
+      this.loginViaOTP({ code })
+        .then(this.handleSuccessfulLogin)
+        .catch(this.handleFailedLogin);
+    },
+    handleSuccessfulLogin() {
+      this.isSending = false;
+      this.isSuccess = true;
+
+      this.$notify({
+        title: 'Success',
+        text: 'Click the link in your email to log in',
+        type: 'is-info',
+      });
+    },
+    handleFailedLogin(error) {
+      this.isSending = false;
+      this.emitError(error);
+    }
   },
   components: {
+    BasePage,
     VForm,
     VButton,
     VInput,
     VCheckbox,
+    TwoFactorAuthModal
   },
-  mixins: [error],
+  mixins: [error, modalMixin],
 };
 </script>

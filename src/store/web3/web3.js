@@ -158,6 +158,12 @@ export default {
         .then(resp => commit('setNetworkType', resp))
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
+    validateNetwork(ctx, network) {
+      const providerTemp = providerFactory(network.url);
+      const web3Temp = new Web3(providerTemp);
+
+      return web3Temp.eth.net.getNetworkType();
+    },
     subscribeOnBlockUpdates({ state, commit, dispatch, rootState }) {
       if (state.blockSubscribtion) {
         state.blockSubscribtion.stop();

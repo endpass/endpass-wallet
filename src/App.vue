@@ -7,6 +7,8 @@
                                          :duration="5000" classes="app-notification"/>
 
     <div class="main app-section">
+      <quick-actions/>
+
       <router-view/>
     </div>
   </div>
@@ -15,6 +17,7 @@
 <script>
 import AppNav from '@/components/AppNav.vue';
 import InfoBar from '@/components/bar/InfoBar.vue';
+import QuickActions from '@/components/QuickActions.vue';
 import errorHandler from '@/mixins/errorHandler';
 
 export default {
@@ -22,6 +25,7 @@ export default {
   components: {
     AppNav,
     InfoBar,
+    QuickActions,
   },
   mixins: [errorHandler],
 };

@@ -42,6 +42,10 @@ export default {
       type: String,
       default: null,
     },
+    error: {
+      type: String,
+      default: null,
+    },
   },
   inject: {
     $validator: '$validator',
@@ -60,4 +64,9 @@ export default {
 </script>
 
 <style lang="scss">
+.select {
+  &:not(.is-multiple):not(.is-loading)::after {
+    border-color: $primary;
+  }
+}
 </style>

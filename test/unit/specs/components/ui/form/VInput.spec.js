@@ -10,12 +10,23 @@ localVue.use(VeeValidate);
 describe('VInput', () => {
   let wrapper;
 
+  const options = {
+    name: 'someName',
+    disabled: 'disabled',
+    required: 'required',
+    placeholder: 'Some placeholder',
+    autocomplete: 'new-password',
+    ariaDescribedby: 'describe',
+    autocomplete: 'new-password',
+  };
+
   beforeEach(() => {
     wrapper = shallow(VInput, {
       localVue,
       slots: {
         addon: '<span>My Addon</span>',
       },
+      propsData: options,
       provide: () => ({
         $validator: new VeeValidate.Validator(),
       }),
@@ -28,38 +39,25 @@ describe('VInput', () => {
 
     const input = wrapper.find('input');
 
-    const options = {
-      name: 'someName',
-      disabled: 'disabled',
-      required: 'required',
-      placeholder: 'Some placeholder',
-      autocomplete: 'new-password',
-      ariaDescribedby: 'describe',
-      autocomplete: 'new-password',
-      testACamelCase: 'test camel case',
-    };
-
     expect(wrapper.contains('label')).toBeFalsy();
     expect(input.attributes().type).toBe('text');
     expect(input.element.value).toBeFalsy();
     expect(wrapper.contains('p')).toBeFalsy();
 
-    Object.keys(options).forEach(prop => {
-      expect(input.attributes()[camelToKebab(prop)]).toBeFalsy();
-    });
-
     wrapper.setProps({
       type: 'email',
       value: 'some value',
       label: 'Some Label',
-      error: 'Some error',
-      ...options,
+      help: 'help text',
     });
 
+    expect(wrapper.find('p.help').text()).toBe('help text');
     expect(wrapper.find('label').text()).toBe('Some Label');
-    expect(wrapper.find('p').text()).toBe('Some error');
     expect(input.element.value).toBe('some value');
     expect(input.attributes().type).toBe('email');
+
+    wrapper.setProps({ error: 'Some error' });
+    expect(wrapper.find('p.help').text()).toBe('Some error');
 
     Object.keys(options).forEach(prop => {
       expect(input.attributes()[camelToKebab(prop)]).toBe(options[prop]);

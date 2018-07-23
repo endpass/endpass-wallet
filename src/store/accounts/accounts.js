@@ -24,6 +24,10 @@ export default {
     settings: {
       fiatCurrency: 'USD',
     },
+    otpSettings: {
+      secret: null,
+      status: null,
+    },
   },
   getters: {
     isPublicAccount(state) {
@@ -64,6 +68,9 @@ export default {
     },
     setEmail(state, email) {
       state.email = email;
+    },
+    setOtpSettings(state, otpSettings) {
+      state.otpSettings = otpSettings;
     },
   },
   actions: {
@@ -146,6 +153,30 @@ export default {
       return storage
         .clear()
         .then(() => (window.location = '/logout'))
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
+    },
+    loginViaOTP({}, { code }) {
+      return userService.loginViaOTP(code);
+    },
+    getOtpSettings({ commit, dispatch }) {
+      return userService
+        .getOtpSettings()
+        .then(otpSettings => commit('setOtpSettings', otpSettings))
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
+    },
+    setOtpSettings({ commit, dispatch }, { secret, code }) {
+      return userService
+        .setOtpSettings(secret, code)
+        .then(() => commit('setOtpSettings', { status: 'enabled' }))
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
+    },
+    deleteOtpSettings({ commit, dispatch }, { code }) {
+      return userService
+        .deleteOtpSettings(code)
+        .then(() => {
+          commit('setOtpSettings', {});
+          dispatch('getOtpSettings');
+        })
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     init({ commit, dispatch }) {

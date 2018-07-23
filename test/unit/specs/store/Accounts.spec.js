@@ -189,4 +189,130 @@ describe('accounts store', () => {
 
     expect(userService.login).toHaveBeenCalledTimes(1);
   });
+
+  describe('mutations', () => {
+    describe('setOtpSettings', () => {
+      it('should set setOtpSettings', () => {
+        const newOptSettings = {};
+
+        mutations.setOtpSettings(state, newOptSettings);
+
+        expect(state.otpSettings).toEqual(newOptSettings);
+      });
+    });
+  });
+
+  describe('actions', () => {
+    describe('loginViaOTP', () => {
+      it('should call userService.loginViaOTP', () => {
+        const code = '123456';
+
+        userService.loginViaOTP = jest.fn();
+
+        actions.loginViaOTP({}, { code });
+
+        expect(userService.loginViaOTP).toHaveBeenCalledTimes(1);
+        expect(userService.loginViaOTP).toHaveBeenCalledWith(code);
+      });
+    });
+
+    describe('getOtpSettings', () => {
+      it('should get OTP settings', async () => {
+        const otpSettings = {};
+        const commit = jest.fn();
+
+        userService.getOtpSettings = jest.fn().mockResolvedValue(otpSettings);
+
+        await actions.getOtpSettings({ commit });
+
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit).toHaveBeenCalledWith('setOtpSettings', otpSettings);
+      });
+
+      it('should not get OTP settings', async () => {
+        const error = {};
+        const dispatch = jest.fn();
+
+        userService.getOtpSettings = jest.fn().mockRejectedValue(error);
+
+        await actions.getOtpSettings({ dispatch });
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+          root: true,
+        });
+      });
+    });
+
+    describe('setOtpSettings', () => {
+      const savedOtpSettings = {
+        secret: 'secret',
+        code: 'code',
+      };
+
+      it('should set OTP settings', async () => {
+        const newOtpSettings = {
+          status: 'enabled',
+        };
+        const commit = jest.fn();
+
+        userService.setOtpSettings = jest
+          .fn()
+          .mockResolvedValue(newOtpSettings);
+
+        await actions.setOtpSettings({ commit }, savedOtpSettings);
+
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit).toHaveBeenCalledWith('setOtpSettings', newOtpSettings);
+      });
+
+      it('should not set OTP settings', async () => {
+        const error = {};
+        const dispatch = jest.fn();
+
+        userService.setOtpSettings = jest.fn().mockRejectedValue(error);
+
+        await actions.setOtpSettings({ dispatch }, savedOtpSettings);
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+          root: true,
+        });
+      });
+    });
+
+    describe('deleteOtpSettings', () => {
+      const code = '123456';
+
+      it('should delete OTP settings', async () => {
+        const newOtpSettings = {};
+        const commit = jest.fn();
+        const dispatch = jest.fn();
+
+        userService.deleteOtpSettings = jest.fn().mockResolvedValue();
+
+        await actions.deleteOtpSettings({ commit, dispatch }, { code });
+
+        expect(commit).toHaveBeenCalledTimes(1);
+        expect(commit).toHaveBeenCalledWith('setOtpSettings', newOtpSettings);
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch).toHaveBeenCalledWith('getOtpSettings');
+      });
+
+      it('should not delete OTP settings', async () => {
+        const error = {};
+        const dispatch = jest.fn();
+
+        userService.deleteOtpSettings = jest.fn().mockRejectedValue(error);
+
+        await actions.deleteOtpSettings({ dispatch }, { code });
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+          root: true,
+        });
+      });
+    });
+  });
 });

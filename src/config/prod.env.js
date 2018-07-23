@@ -9,7 +9,8 @@ const infuraConf = {
 const serviceThrottleTimeout = 2000;
 const subscriptionsAPIInterval = 5000;
 const subscriptionsBlockchainInterval = 3000;
-const userAPIUrl = 'http://user-url-for-prod.com';
+const identityAPIUrl = 'http://user-url-for-prod.com';
+const tokenInfoAPIUrl = 'http://user-url-for-prod.com';
 
 // Parameters for cipher encrypting wallet
 const kdfParams = {
@@ -23,6 +24,7 @@ export default {
   serviceThrottleTimeout,
   subscriptionsAPIInterval,
   subscriptionsBlockchainInterval,
-  userAPIUrl,
+  identityAPIUrl,
+  tokenInfoAPIUrl,
   kdfParams,
 };
