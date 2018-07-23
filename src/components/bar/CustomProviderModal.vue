@@ -8,6 +8,7 @@
 
           <v-input v-model="provider.name"
                    v-validate="'required'"
+                   :disabled="isLoading"
                    name="name"
                    label="Network name"
                    id="name"
@@ -17,11 +18,13 @@
 
           <v-input v-model="provider.url"
                    v-validate="`required|url:require_protocol:true|not_in:${providersLinks}`"
+                   :disabled="isLoading"
                    name="url"
                    label="Provider url"
                    id="url"
                    aria-describedby="url"
                    placeholder="Provider url"
+                   @input="handleInput"
                    required />
 
 	      </v-form>
@@ -41,14 +44,16 @@
       </div>
 
       <template slot="footer">
-        <div class="buttons" v-if="!providerAdded">
-          <a class="button is-primary"
+        <div class="buttons">
+          <a v-if="!providerAdded"
+             class="button is-primary"
+             :class="{'is-loading' : isLoading }"
              :disabled="!isFormValid"
              @click="addNewProvider">Create New Provider</a>
-          <a class="button" @click="close">Cancel</a>
-        </div>
-        <div class="buttons" v-else>
-          <a class="button is-primary" @click="close">Close</a>
+          <a class="button"
+             :disabled="isLoading"
+             :class="{ 'is-primary': providerAdded }"
+             @click="close">Cancel</a>
         </div>
       </template>
 
@@ -66,6 +71,7 @@ export default {
     return {
       isFormValid: false,
       providerAdded: false,
+      isLoading: false,
       provider: {
         name: '',
         url: '',
@@ -82,13 +88,33 @@ export default {
   methods: {
     ...mapActions('web3', {
       addNewProviderToStore: 'addNewProvider',
+      validateNetwork: 'validateNetwork',
     }),
     addNewProvider() {
-      this.addNewProviderToStore(this.provider);
-      this.providerAdded = true;
+      this.isLoading = true;
+
+      this.validateNetwork(this.provider)
+        .then(() => {
+          this.isLoading = false;
+          this.addNewProviderToStore(this.provider);
+          this.providerAdded = true;
+        })
+        .catch(() => {
+          this.isLoading = false;
+          this.errors.add({
+            field: 'url',
+            msg: 'Provider is invalid',
+            id: 'wrongUrl',
+          });
+        });
     },
     close() {
-      this.$emit('close');
+      if (!this.isLoading) {
+        this.$emit('close');
+      }
+    },
+    handleInput() {
+      this.errors.removeById('wrongUrl');
     },
   },
   components: {
