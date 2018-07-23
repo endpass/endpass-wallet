@@ -4,7 +4,7 @@
       <template slot="header">Add New Provider</template>
 
       <div v-if="!providerAdded">
-	      <v-form v-model="isFormValid">
+	      <v-form>
 
           <v-input v-model="provider.name"
                    v-validate="'required'"
@@ -27,6 +27,15 @@
                    @input="handleInput"
                    required />
 
+         <v-select v-model="provider.currency"
+                  :options="currencys"
+                  v-validate="'required'"
+                  name="currency"
+                  label="Provider currency"
+                  id="currency"
+                  aria-describedby="currency"
+                  placeholder="Provider currency"
+                  required />
 	      </v-form>
       </div>
       <div v-else>
@@ -42,7 +51,6 @@
           </div>
         </div>
       </div>
-
       <template slot="footer">
         <div class="buttons">
           <a v-if="!providerAdded"
@@ -61,15 +69,15 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
+import VSelect from '@/components/ui/form/VSelect';
 
 export default {
   data() {
     return {
-      isFormValid: false,
       providerAdded: false,
       isLoading: false,
       provider: {
@@ -79,6 +87,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      currencys: state => state.web3.currencys.map(currency => {return {val: currency.id, text: currency.name}})
+    }),
     providersLinks() {
       return this.$store.getters['web3/networks']
         .map(net => net.url)
@@ -120,6 +131,7 @@ export default {
   components: {
     VModal,
     VInput,
+    VSelect,
     VForm,
   },
 };
