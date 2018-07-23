@@ -1,22 +1,11 @@
 <template lang="html">
-  <div class="transaction" :class="'is-'+transaction.state">
+  <div class="transaction" :class="statusClass">
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
         {{transaction.hash}}
         </p>
-        <div class="card-header-icon" :title="transaction.state">
-          <span v-if="transaction.state === 'success'"
-                class="icon has-text-success is-medium"
-                v-html="require('@/img/circle-check.svg')"></span>
-          <span v-else-if="transaction.state === 'canceled'"
-                class="icon has-text-danger is-medium"
-                v-html="require('@/img/ban.svg')"></span>
-          <span v-else-if="transaction.state === 'pending'" class="icon is-medium"
-                v-html="require('@/img/ellipses.svg')"></span>
-          <span v-else-if="transaction.state === 'error'"
-                class="icon has-text-danger is-medium"
-                v-html="require('@/img/warning.svg')"></span>
+        <div class="card-header-icon">
         </div>
       </div>
       <div class="card-content">
@@ -111,6 +100,25 @@ export default {
     recieve() {
       return this.transaction.to === this.address;
     },
+    isSuccess() {
+      return this.transaction.state === 'success';
+    },
+    isError() {
+      return this.transaction.state === 'error'
+      || this.state === 'error'
+      || this.state === 'canceled';
+    },
+    isPending() {
+      return this.transaction.state === 'pending';
+    },
+    // Dynamic class based on transaction status
+    statusClass() {
+      return {
+        'is-success': this.isSuccess,
+        'is-warning': this.isPending,
+        'is-danger': this.isError,
+      }
+    },
   },
   methods: {
     ...mapActions('transactions', ['resendTransaction', 'cancelTransaction']),
@@ -183,7 +191,7 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  &.is-cancelled .card {
+  &.is-danger .card {
     border-top-color: $danger;
     .card-header-icon .icon svg {
       fill: $danger;
@@ -192,7 +200,7 @@ export default {
       color: $danger;
     }
   }
-  &.is-pending .card {
+  &.is-warning .card {
     border-top-color: $warning;
     .card-header-icon .icon svg {
       fill: $warning;
@@ -201,7 +209,7 @@ export default {
       color: $warning;
     }
   }
-  &.is-confirmed .card {
+  &.is-success .card {
     border-top-color: $success;
     .card-header-icon .icon svg {
       fill: $success;
