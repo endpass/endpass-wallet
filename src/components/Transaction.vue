@@ -3,15 +3,13 @@
     <div class="card">
       <div class="card-header">
         <p class="card-header-title">
-        {{transaction.hash}}
+          <a @click="toggleExpanded">{{transaction.hash}}</a>
         </p>
-        <div class="card-header-icon">
-        </div>
       </div>
-      <div class="card-content">
+      <div class="card-content" v-if="isExpanded">
         <div class="columns">
           <div class="column">
-            <span class="heading">{{transaction.state}}</span>
+            <span class="heading status-text">{{transaction.state}}</span>
             <p v-if="transaction.date">
               <span class="text-label">Date</span>
               <span class="date">{{transaction.date.toLocaleString()}}</span>
@@ -85,6 +83,7 @@ export default {
     return {
       resendModalOpen: false,
       passwordModalOpen: false,
+      isExpanded: false, // details are expanded
       transactionToSend: null,
       state: null,
     };
@@ -157,6 +156,9 @@ export default {
       this.transactionToSend = transaction;
       this.requestPassword();
     },
+    toggleExpanded() {
+      this.isExpanded = !this.isExpanded;
+    },
     closeResendModal() {
       this.resendModalOpen = false;
     },
@@ -193,27 +195,18 @@ export default {
   }
   &.is-danger .card {
     border-top-color: $danger;
-    .card-header-icon .icon svg {
-      fill: $danger;
-    }
     .status-text {
       color: $danger;
     }
   }
   &.is-warning .card {
     border-top-color: $warning;
-    .card-header-icon .icon svg {
-      fill: $warning;
-    }
     .status-text {
       color: $warning;
     }
   }
   &.is-success .card {
     border-top-color: $success;
-    .card-header-icon .icon svg {
-      fill: $success;
-    }
     .status-text {
       color: $success;
     }
