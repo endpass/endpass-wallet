@@ -2,6 +2,7 @@ import Vuex from 'vuex';
 import { shallow, createLocalVue, mount } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import VeeValidate from 'vee-validate';
+// import validation from '@/validation';
 
 import SettingsPage from '@/components/pages/Settings.vue';
 import { generateStubs } from '@/utils/testUtils';
@@ -15,6 +16,9 @@ localVue.use(Notifications);
 describe('SettingsPage', () => {
   const actions = {
     updateSettings: jest.fn(),
+    getOtpSettings: jest.fn(),
+    setOtpSettings: jest.fn(),
+    deleteOtpSettings: jest.fn(),
   };
   const storeOptions = {
     modules: {
@@ -25,6 +29,9 @@ describe('SettingsPage', () => {
             fiatCurrency: 'USD',
           },
           availableCurrencies: ['USD', 'AUD', 'BRL'],
+          otpSettings: {
+            secret: 'AABC',
+          },
         },
         actions,
       },
@@ -74,5 +81,35 @@ describe('SettingsPage', () => {
       newSettings,
       undefined,
     );
+  });
+
+  it('should validate settings properly', async () => {
+    wrapper = mount(SettingsPage, { store, localVue });
+    const button = wrapper.find('a.button');
+
+    expect(wrapper.vm.errors.any()).toBeFalsy();
+    expect(button.attributes().disabled).toBeTruthy();
+
+    wrapper.setData({
+      newSettings: {
+        fiatCurrency: 'AUD',
+      },
+    });
+
+    await wrapper.vm.$validator.validateAll();
+
+    expect(wrapper.vm.errors.any()).toBeFalsy();
+    expect(button.attributes().disabled).toBeFalsy();
+
+    wrapper.setData({
+      newSettings: {
+        fiatCurrency: 'USD',
+      },
+    });
+
+    await wrapper.vm.$validator.validateAll();
+
+    expect(wrapper.vm.errors.any()).toBeFalsy();
+    expect(button.attributes().disabled).toBeTruthy();
   });
 });
