@@ -1,8 +1,9 @@
 <template>
-	<div>
-    <p class="heading">Balance</p>
-    <span class="title" :class="{'long-number': balance.length > 6}">{{ balance }}</span>
-    {{currency}}
+	<div class="balance">
+    <span class="title amount" :class="{'long-number': balance.length > 6}">{{ balance }}</span>
+    <span class="currency">
+      {{currency}}
+    </span>
     <a v-if="hasUpdate" @click.prevent="update()">
     	<span class="icon is-small"
                 v-html="require('@/img/reload.svg')"></span>
@@ -60,5 +61,20 @@ export default {
   },
 };
 </script>
-<style>
+
+<style lang="scss">
+.balance {
+  line-height: 2.2rem;
+  .amount {
+    display: inline-block;
+    margin: 0;
+    font-size: 2rem;
+    vertical-align: bottom;
+  }
+  .currency {
+    display: inline-block;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+}
 </style>
