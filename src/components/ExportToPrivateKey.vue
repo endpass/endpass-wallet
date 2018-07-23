@@ -55,6 +55,16 @@ export default {
         this.exportingKey = false;
       }
     },
+    exportError(e) {
+      this.exportingKey = false;
+      this.$notify({
+        title: 'Error exporting to private key',
+        text:
+          'Could not get private key with your wallet and password. Please try again.',
+        type: 'is-danger',
+      });
+      console.error(e);
+    },
   },
   components: {
     PasswordModal,

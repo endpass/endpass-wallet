@@ -22,14 +22,22 @@ describe('ReceivePage', () => {
     moxios.install();
     store = new Vuex.Store({
       state: {
-        accounts: {
-          address: wallet,
-        },
         web3: {
-          web3: web3,
+          web3,
         },
       },
       actions,
+      modules: {
+        accounts: {
+          namespaced: true,
+          state: {
+            address: wallet,
+          },
+          getters: {
+            balance: jest.fn(),
+          },
+        },
+      },
     });
   });
 

@@ -8,6 +8,7 @@
 
           <v-input v-model="provider.name"
                    v-validate="'required'"
+                   :disabled="isLoading"
                    name="name"
                    label="Network name"
                    id="name"
@@ -17,11 +18,13 @@
 
           <v-input v-model="provider.url"
                    v-validate="`required|url:require_protocol:true|not_in:${providersLinks}`"
+                   :disabled="isLoading"
                    name="url"
                    label="Provider url"
                    id="url"
                    aria-describedby="url"
                    placeholder="Provider url"
+                   @input="handleInput"
                    required />
 
          <v-select v-model="provider.currency"
@@ -48,18 +51,19 @@
           </div>
         </div>
       </div>
-
-      <div slot="footer">
-        <div v-if="!providerAdded">
-          <a class="button is-primary"
-             :disabled="errors && errors.any()"
+      <template slot="footer">
+        <div class="buttons">
+          <a v-if="!providerAdded"
+             class="button is-primary"
+             :class="{'is-loading' : isLoading }"
+             :disabled="!isFormValid"
              @click="addNewProvider">Create New Provider</a>
-          <a class="button" @click="close">Cancel</a>
+          <a class="button"
+             :disabled="isLoading"
+             :class="{ 'is-primary': providerAdded }"
+             @click="close">Cancel</a>
         </div>
-        <div v-else>
-          <a class="button is-primary" @click="close">Close</a>
-        </div>
-      </div>
+      </template>
 
     </v-modal>
   </div>
@@ -75,6 +79,7 @@ export default {
   data() {
     return {
       providerAdded: false,
+      isLoading: false,
       provider: {
         name: '',
         url: '',
@@ -94,22 +99,33 @@ export default {
   methods: {
     ...mapActions('web3', {
       addNewProviderToStore: 'addNewProvider',
+      validateNetwork: 'validateNetwork',
     }),
     addNewProvider() {
-      this.$validator.validateAll().then(result => {
-        if (result) {
+      this.isLoading = true;
+
+      this.validateNetwork(this.provider)
+        .then(() => {
+          this.isLoading = false;
           this.addNewProviderToStore(this.provider);
           this.providerAdded = true;
-        }
-        this.$notify({
-          title: 'Form invalid',
-          text: 'Please correct errors.',
-          type: 'is-warning',
+        })
+        .catch(() => {
+          this.isLoading = false;
+          this.errors.add({
+            field: 'url',
+            msg: 'Provider is invalid',
+            id: 'wrongUrl',
+          });
         });
-      });
     },
     close() {
-      this.$emit('close');
+      if (!this.isLoading) {
+        this.$emit('close');
+      }
+    },
+    handleInput() {
+      this.errors.removeById('wrongUrl');
     },
   },
   components: {
