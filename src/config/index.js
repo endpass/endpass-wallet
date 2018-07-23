@@ -22,6 +22,7 @@ export const {
   serviceThrottleTimeout,
   subscriptionsAPIInterval,
   subscriptionsBlockchainInterval,
-  userAPIUrl,
+  identityAPIUrl,
+  tokenInfoAPIUrl,
   kdfParams,
 } = env;
