@@ -2,52 +2,48 @@
   <div class="transaction" :class="statusClass">
     <div class="card">
       <div class="card-header">
-        <p class="card-header-title">
-          <a @click="toggleExpanded">{{transaction.hash}}</a>
-        </p>
-      </div>
-      <div class="card-content" v-if="isExpanded">
-        <div class="columns">
-          <div class="column">
-            <span class="heading status-text">{{transaction.state}}</span>
-            <p v-if="transaction.date">
-              <span class="text-label">Date</span>
-              <span class="date">{{transaction.date.toLocaleString()}}</span>
-            </p>
-
-            <p v-if="recieve">
-              <span class="text-label">From</span>
-              <span class="address">{{transaction.from}}</span>
-            </p>
-            <p v-else>
-              <span class="text-label">To</span>
-              <span class="address">{{transaction.to}}</span>
-            </p>
-            <p v-if="transaction.nonce">
-              <span class="text-label">Nonce</span>
-              <span class="address">{{transaction.nonce}}</span>
-            </p>
-            <p v-if="transaction.data">
-              {{parseData(transaction.data)}}
-            </p>
-          </div>
-
-          <div class="column is-one-third">
-            <p>
-              <balance :amount="transaction.value" :currency="(transaction.tokenInfo && transaction.tokenInfo.symbol) || 'ETH'"></balance>
-            </p>
-            <p class="received" v-if="recieve">
+          <a @click="toggleExpanded" class="card-header-title">
+            <p>{{transaction.hash | truncateHash}}</p>
+            <p class="received" title="Received" v-if="recieve">
               <span class="icon is-medium"
                     v-html="require('@/img/arrow-thick-right.svg')"></span>
-              <span class="heading">Received</span>
             </p>
-            <p class="sent" v-else>
+            <span v-if="recieve" class="heading">Received</span>
+            <p class="sent" title="Sent" v-else>
               <span class="icon is-medium"
                     v-html="require('@/img/arrow-thick-left.svg')"></span>
-              <span class="heading">Sent</span>
             </p>
-          </div>
-        </div>
+            <span v-if="!recieve" class="heading">Sent</span>
+            <balance :amount="transaction.value" :currency="symbol"></balance>
+          </a>
+      </div>
+      <div class="card-content" v-if="isExpanded">
+        <p>
+        <span class="text-label">Txid</span>
+        <p>{{transaction.hash}}</p>
+        </p>
+        <span class="heading status-text">{{transaction.state}}</span>
+        <p v-if="transaction.date">
+        <span class="text-label">Date</span>
+        <span class="date">{{transaction.date.toLocaleString()}}</span>
+        </p>
+
+        <p v-if="recieve">
+        <span class="text-label">From</span>
+        <span class="address">{{transaction.from}}</span>
+        </p>
+        <p v-else>
+        <span class="text-label">To</span>
+        <span class="address">{{transaction.to}}</span>
+        </p>
+        <p v-if="transaction.nonce">
+        <span class="text-label">Nonce</span>
+        <span class="">{{transaction.nonce}}</span>
+        </p>
+        <p v-if="transaction.data">
+        <span class="text-label">Data</span>
+        {{parseData(transaction.data)}}
+        </p>
       </div>
       <div v-if="transaction.state === 'pending'  && !isPublicAccount" class="card-footer">
         <a class="card-footer-item" @click="resend" :disabled="isSyncing">
@@ -118,6 +114,9 @@ export default {
         'is-danger': this.isError,
       }
     },
+    symbol() {
+      return (this.transaction.tokenInfo && this.transaction.tokenInfo.symbol) || 'ETH'
+    },
   },
   methods: {
     ...mapActions('transactions', ['resendTransaction', 'cancelTransaction']),
@@ -177,6 +176,13 @@ export default {
       return web3.utils.hexToString(dataString);
     },
   },
+  filters: {
+    truncateHash(value) {
+      if (!value) return '';
+      value = value.toString();
+      return `${value.substr(0, 4)}...${value.substr(value.length - 8)}`;
+    },
+  },
   components: {
     Balance,
     ResendModal,
@@ -226,6 +232,12 @@ export default {
   .text-label {
     color: lighten($dark-grey, 20%);
     margin-right: 0.2em;
+  }
+
+  .card-header-title {
+    * {
+      margin-left: 0.5rem;
+    }
   }
 }
 </style>
