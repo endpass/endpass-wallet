@@ -44,7 +44,7 @@ export default {
         {
           name: 'Ethereum classic',
           currency: 3,
-          networkType: 'rinkeby',
+          networkType: 'ethClassic',
           id: 61,
           url: 'https://etc-geth.0xinfra.com',
         },
