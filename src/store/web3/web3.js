@@ -67,7 +67,10 @@ export default {
       isSyncing: false,
       blockNumber: 0,
       activeNet,
-      activeCurrency: null,
+      activeCurrency: {
+        name: 'ETH',
+        id: 1,
+      },
     };
   },
   getters: {
@@ -131,9 +134,6 @@ export default {
       if (state.activeNet.currency !== currency.id) {
         dispatch('changeNetwork', getters.networks[0].id);
       }
-      return Promise.all([storage.write('currency', currency.id)]).catch(e =>
-        dispatch('errors/emitError', e, { root: true }),
-      );
     },
     addNewProvider({ state, commit, dispatch, getters }, network) {
       network.id =
@@ -183,16 +183,16 @@ export default {
           Promise.all([
             storage.read('networks').then(net => (net ? net : [])),
             cachedNet ? cachedNet : 1,
-            storage.read('currency'),
           ]),
         )
-        .then(([storedNetworks, cachedNet, cachedCurrency]) => {
+        .then(([storedNetworks, cachedNet]) => {
           const activeNet =
             state.defaultNetworks.find(net => net.id === cachedNet) ||
             storedNetworks.find(net => net.id === cachedNet);
           const activeCurrency =
-            state.currencys.find(currency => currency.id === cachedCurrency) ||
-            null;
+            state.currencys.find(
+              currency => activeNet.currency === currency.id,
+            ) || activeCurrency;
           commit('setProviders', storedNetworks || []);
           commit('changeNetwork', activeNet);
           if (activeCurrency) {
