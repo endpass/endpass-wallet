@@ -32,7 +32,7 @@ export default {
   getters: {
     isPublicAccount(state) {
       return (
-        state.address instanceof Address && !state.wallet instanceof Wallet
+        state.address instanceof Address && !(state.wallet instanceof Wallet)
       );
     },
     balance(state, getters, rootState, rootGetters) {

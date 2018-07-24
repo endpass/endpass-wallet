@@ -1,9 +1,9 @@
 <template>
   <div class="quick-actions container">
-    <div class="level is-mobile" v-if="wallet">
+    <div class="level is-mobile" v-if="address">
       <div class="level-left">
         <router-link
-           v-if="!isPublicAccount"
+           v-if="wallet"
            class="level-item button"
            :to="{name: 'SendPage'}">
           <span class="icon is-small"
@@ -35,6 +35,7 @@ export default {
   computed: {
     ...mapState({
       wallet: state => state.accounts.wallet,
+      address: state => state.accounts.address && state.accounts.address.getAddressString()
     }),
     ...mapGetters('accounts', ['isPublicAccount']),
   },
