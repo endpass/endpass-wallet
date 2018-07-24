@@ -89,7 +89,7 @@ import ResendModal from './ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import error from '@/mixins/error';
-
+window.web3 = web3
 export default {
   props: ['transaction'],
   data() {
