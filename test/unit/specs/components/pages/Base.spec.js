@@ -1,16 +1,29 @@
 import { shallow } from '@vue/test-utils';
+import VeeValidate from 'vee-validate';
 import BasePage from '@/components/pages/Base';
 
 describe('Base page', () => {
+  let wrapper;
+  let options;
+
+  beforeEach(() => {
+    options = {
+      provide: () => ({
+        $validator: new VeeValidate.Validator(),
+      }),
+    };
+
+    wrapper = shallow(BasePage, options);
+  });
+
   describe('render', () => {
     it('should render the initial state of the page', () => {
-      const wrapper = shallow(BasePage);
-
       expect(wrapper.element).toMatchSnapshot();
     });
 
     it('should render default slot', () => {
       const wrapper = shallow(BasePage, {
+        ...options,
         slots: {
           default: '<div>default slot</div>',
         },
@@ -21,6 +34,7 @@ describe('Base page', () => {
 
     it('should render title slot', () => {
       const wrapper = shallow(BasePage, {
+        ...options,
         slots: {
           title: 'title',
         },

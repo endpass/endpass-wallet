@@ -1,7 +1,7 @@
 import { shallow, createLocalVue, mount } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
-import validation from '@/validation';
+import VeeValidate from 'vee-validate';
 
 import LoginPage from '@/components/pages/Login.vue';
 import { generateStubs } from '@/utils/testUtils';
@@ -10,6 +10,7 @@ const localVue = createLocalVue();
 
 localVue.use(Vuex);
 localVue.use(Notifications);
+localVue.use(VeeValidate);
 
 describe('LoginPage', () => {
   let wrapper;
@@ -231,38 +232,38 @@ describe('LoginPage', () => {
     expect(wrapper.find('p#success-message')).toBeTruthy();
   });
 
-  // it('should validate data', async () => {
-  //   wrapper = mount(LoginPage, {
-  //     store,
-  //     localVue,
-  //   });
+  it('should validate data', async () => {
+    wrapper = mount(LoginPage, {
+      store,
+      localVue,
+    });
 
-  //   const { errors } = wrapper.vm;
+    const { errors } = wrapper.vm;
 
-  //   wrapper.setData({
-  //     email: '',
-  //   });
+    wrapper.setData({
+      email: '',
+    });
 
-  //   await wrapper.vm.$validator.validateAll();
+    await wrapper.vm.$validator.validateAll();
 
-  //   expect(errors.first('email').includes('required')).toBeTruthy();
+    expect(errors.first('email').includes('required')).toBeTruthy();
 
-  //   wrapper.setData({
-  //     email: '123@123.com',
-  //   });
+    wrapper.setData({
+      email: '123@123.com',
+    });
 
-  //   await wrapper.vm.$validator.validateAll();
+    await wrapper.vm.$validator.validateAll();
 
-  //   expect(errors.has('email')).toBeFalsy();
+    expect(errors.has('email')).toBeFalsy();
 
-  //   wrapper.setData({
-  //     email: '123',
-  //   });
+    wrapper.setData({
+      email: '123',
+    });
 
-  //   await wrapper.vm.$validator.validateAll();
+    await wrapper.vm.$validator.validateAll();
 
-  //   expect(
-  //     errors.first('email').includes('must be a valid email')
-  //   ).toBeTruthy();
-  // });
+    expect(
+      errors.first('email').includes('must be a valid email'),
+    ).toBeTruthy();
+  });
 });
