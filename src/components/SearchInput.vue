@@ -18,8 +18,12 @@
 
 <script>
 export default {
+  name: 'search-input',
   props: {
-    value: String,
+    value: {
+      type: String,
+      default: '',
+    },
   },
 };
 </script>

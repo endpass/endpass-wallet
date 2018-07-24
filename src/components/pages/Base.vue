@@ -20,5 +20,6 @@
 <script>
 export default {
   name: 'base-page',
+  inject: ['$validator'],
 };
 </script>
