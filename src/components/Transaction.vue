@@ -15,6 +15,7 @@
             </p>
             <span v-if="!recieve" class="heading">Sent</span>
             <balance :amount="transaction.value" :currency="symbol"></balance>
+            <p class="date">{{date.fromNow()}}</p>
           </a>
       </div>
       <div class="card-content" v-if="isExpanded">
@@ -25,7 +26,7 @@
         <span class="heading status-text">{{transaction.state}}</span>
         <p v-if="transaction.date">
         <span class="text-label">Date</span>
-        <span class="date">{{transaction.date.toLocaleString()}}</span>
+        <span class="date">{{date.format("YYYY-MM-DD H:mm")}}</span>
         </p>
 
         <p v-if="recieve">
@@ -72,7 +73,9 @@ import ResendModal from './ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import error from '@/mixins/error';
+import moment from 'moment';
 window.web3 = web3
+
 export default {
   props: ['transaction'],
   data() {
@@ -116,6 +119,10 @@ export default {
     },
     symbol() {
       return (this.transaction.tokenInfo && this.transaction.tokenInfo.symbol) || 'ETH'
+    },
+    // Returns date as a moment.js object
+    date() {
+      return moment(this.transaction.date);
     },
   },
   methods: {
