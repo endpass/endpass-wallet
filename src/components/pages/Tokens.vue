@@ -122,7 +122,11 @@ export default {
     },
   },
   methods: {
-    ...mapActions('tokens', ['updateTokenPrice', 'addTokenToSubscription']),
+    ...mapActions('tokens', [
+      'addTokenToSubscription',
+      'updateTokenPrice',
+      'removeTokenFromSubscription',
+    ]),
     getTokenAmount(token) {
       let balanceBn = new BigNumber(token.balance);
       let decimalsBn = new BigNumber(10).pow(token.decimals);

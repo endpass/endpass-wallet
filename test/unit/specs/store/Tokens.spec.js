@@ -3,6 +3,9 @@ import testAction from '../ActionTestingHelper';
 import tokens from '@/store/tokens/tokens';
 import moxios from 'moxios';
 import Web3 from 'web3';
+import localStorageMock from '../../localStorageMock.js';
+
+global.localStorage = localStorageMock;
 
 jest.mock('eth-token-tracker');
 jest.mock('@/services/ethplorer');
@@ -11,55 +14,59 @@ jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
 Web3.providers.HttpProvider.prototype.sendAsync =
   Web3.providers.HttpProvider.prototype.send;
 
-localStorage.setItem(
-  'tokens',
-  JSON.stringify([
-    {
-      address: '0x0',
-    },
-  ]),
-);
-
-const commit = state => (type, payload) =>
+const commitFactory = state => (type, payload) =>
   tokens.mutations[type](state, payload);
 
-let stateInstance = tokens.state();
+const { actions, mutations } = tokens;
 
 describe('tokens', () => {
+  let commit;
+  let stateInstance;
+
   beforeEach(() => {
     moxios.install();
+    commit = jest.fn();
+    stateInstance = tokens.state();
   });
 
   afterEach(() => {
     moxios.uninstall();
+    commit.mockClear();
   });
 
   it('it should get tokens from storage', async () => {
-    await tokens.actions.init({ commit: commit(stateInstance) });
+    await tokens.actions.init({ commit: commitFactory(stateInstance) });
     expect(stateInstance.savedTokens['3'].length).toBe(1);
     expect(stateInstance.savedTokens['3'][0].address).toBe(
       '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
     );
   });
+
   it('saves token to watch storage', () => {
+    expect(stateInstance.savedTokens['3']).toBeFalsy();
+
     tokens.mutations.addToken(stateInstance, {
       token: { address: '0x2' },
       net: 3,
     });
-    expect(stateInstance.savedTokens['3'].length).toBe(2);
+    expect(stateInstance.savedTokens['3'].length).toBe(1);
   });
+
   it('saves Tokens', () => {
     tokens.mutations.saveActiveTokens(stateInstance, [1, 2, 3]);
     expect(stateInstance.activeTokens.length).toBe(3);
   });
+
   it('saves Interval', () => {
     tokens.mutations.saveInterval(stateInstance, 1);
     expect(stateInstance.tokensSerializeInterval).toBe(1);
   });
+
   it('saves Subscription', () => {
     tokens.mutations.saveSubscription(stateInstance, 1);
     expect(stateInstance.tokensSubscription).toBe(1);
   });
+
   it('adds Token To Subscription', done => {
     testAction(
       tokens.actions.addTokenToSubscription,
@@ -95,6 +102,7 @@ describe('tokens', () => {
       done,
     );
   });
+
   it('gets non zero tokens', done => {
     moxios.stubRequest(/api\.ethplorer\.io\/getAddressInfo/, {
       status: 200,
@@ -128,6 +136,7 @@ describe('tokens', () => {
       done,
     );
   });
+
   it('creates Token Subscription', done => {
     const Timeout = setTimeout(function() {}, 0).constructor;
     testAction(
@@ -173,5 +182,57 @@ describe('tokens', () => {
       [],
       done,
     );
+  });
+
+  describe('remove', () => {
+    let state;
+    let getters;
+    let token;
+
+    beforeEach(() => {
+      const tokensForSubscription = [
+        { address: 'address1' },
+        { address: 'address2' },
+      ];
+      state = {
+        ...stateInstance,
+        tokensSubscription: {
+          tokens: [...tokensForSubscription],
+        },
+        savedTokens: {
+          '3': [...tokensForSubscription],
+        },
+        activeTokens: [...tokensForSubscription],
+      };
+      getters = { net: 3 };
+      token = { address: 'address2' };
+    });
+
+    it('should remove token from subscription', () => {
+      mutations.removeToken(state, { token, net: 3 });
+      mutations.removeToken(state, { token, net: 3 });
+
+      const { activeTokens, savedTokens, tokensSubscription } = state;
+
+      expect(tokensSubscription.tokens).toHaveLength(1);
+      expect(savedTokens['3']).toHaveLength(1);
+      expect(activeTokens).toHaveLength(1);
+    });
+
+    it('should call remove mutation', async () => {
+      await actions.removeTokenFromSubscription(
+        { commit, state, getters },
+        token,
+      );
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toBeCalledWith(
+        'removeToken',
+        expect.objectContaining({
+          token,
+          net: 3,
+        }),
+      );
+    });
   });
 });
