@@ -86,10 +86,23 @@ export default {
     font-size: 2rem;
     vertical-align: bottom;
   }
+
   .currency {
     display: inline-block;
     text-transform: uppercase;
     font-weight: 700;
+  }
+
+  &.is-small {
+    line-height: 1.5rem;
+    .amount {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .currency {
+      font-size: 0.8rem;
+    }
   }
 }
 </style>

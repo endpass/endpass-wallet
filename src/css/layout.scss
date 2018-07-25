@@ -51,6 +51,11 @@ html,body {
   padding: 1rem 1.5rem;
 }
 
+.card-content.is-narrow {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 // Reverse direction on mobile
 @media screen and (max-width: 768px) {
   .is-reverse-mobile {

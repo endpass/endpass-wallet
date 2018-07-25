@@ -8,7 +8,7 @@
               <div class="card-header">
                 <p class="card-header-title">Your Tokens</p>
               </div>
-              <div class="card-content">
+              <div class="card-content is-narrow">
                 <nav v-if="userTokenList.length" class="panel">
                   <div class="panel-block">
                     <search-input v-model="search" />
@@ -26,11 +26,13 @@
                       <span class="token-symbol">{{ token.symbol }}</span>
                       <span class="token-name">{{ token.name }}</span>
                       <balance
+                        class="is-small is-inline-block"
                         :amount="getTokenAmount(token)"
                         :currency="''"
                       />
                       <balance
                         v-if="prices && prices[token.symbol]"
+                        class="is-small is-inline-block"
                         :amount="getTokenAmount(token)"
                         :currency="currency"
                         :decimals="2"
@@ -39,7 +41,8 @@
                       />
                       <span
                         :id="`remove-token-${index}`"
-                        class="icon has-text-danger is-medium"
+                        class="icon has-text-danger is-small is-pulled-right"
+                        title="Remove Token"
                         @click.prevent="removeTokenFromSubscription(token)"
                         v-html="require('@/img/ban.svg')"
                       />
