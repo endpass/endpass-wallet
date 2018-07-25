@@ -7,16 +7,6 @@
           <router-link :to="{name: 'NewWallet'}" class="button
           is-primary" v-if="!address">Create Wallet</router-link>
         </div>
-        <div class="navbar-item has-dropdown is-hoverable" v-if="wallet">
-          <a class="navbar-link">
-            <span class="icon is-small" v-html="require('@/img/cog.svg')"></span>Tools
-          </a>
-          <div class="navbar-dropdown">
-            <router-link class="navbar-item" :to="{name:'MessagePage'}" >
-              Message
-            </router-link>
-          </div>
-        </div>
       </div>
 
       <div class="navbar-end">
@@ -79,12 +69,6 @@ export default {
     }
   }
 
-  .navbar-burger {
-    span {
-      height: 3px;
-    }
-  }
-
   a.navbar-item.is-active,
   a.navbar-item:hover,
   a.navbar-link.is-active,
@@ -96,6 +80,10 @@ export default {
     .icon svg {
       fill: $purple;
     }
+  }
+
+  .navbar-end {
+    margin-right: 2rem;
   }
 
   .navbar-item .icon:only-child,
