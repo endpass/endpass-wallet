@@ -80,6 +80,7 @@ export default {
 .balance {
   line-height: 2.2rem;
   .amount {
+    color: inherit;
     display: inline-block;
     margin: 0;
     font-size: 2rem;

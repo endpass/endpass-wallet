@@ -7,7 +7,9 @@
             {{transaction.hash | truncateHash}}
             </div>
 
-            <div class="level-item">
+            <div class="level-item" :class="{'has-text-success': recieve,
+            'has-text-danger': !recieve}">
+              <span class="is-size-4" v-text="recieve ? '+' : '-'"></span>
               <balance :amount="transaction.value" :currency="symbol"></balance>
             </div>
           </a>
