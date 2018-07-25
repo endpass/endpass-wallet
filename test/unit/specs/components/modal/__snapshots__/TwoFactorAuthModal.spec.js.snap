@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
+<v-modal>
+   
+  <v-form>
+    <div
+      class="field"
+    >
+      <div
+        class="has-text-centered"
+      >
+        <img
+          src="https://chart.googleapis.com/chart?chs=166x166&chld=L|0&cht=qr&chl=otpauth://totp/Endpass:email?secret=secret"
+        />
+      </div>
+       
+      <label
+        class="label"
+      >
+        Secret
+      </label>
+      
+      secret
+    
+    </div>
+     
+    <v-input
+      label="Verification Code"
+      validator="required"
+    />
+     
+    <v-button
+      classname="is-primary is-medium"
+    >
+      Verify
+    </v-button>
+  </v-form>
+</v-modal>
+`;
+
+exports[`TwoFactorAuthModal render should render without secret and QR code 1`] = `
+<v-modal>
+   
+  <v-form>
+    <!---->
+     
+    <v-input
+      label="Verification Code"
+      validator="required"
+    />
+     
+    <v-button
+      classname="is-primary is-medium"
+    >
+      Verify
+    </v-button>
+  </v-form>
+</v-modal>
+`;
+
+exports[`TwoFactorAuthModal render should render without secret and QR code 2`] = `
+<v-modal>
+   
+  <v-form>
+    <!---->
+     
+    <v-input
+      label="Verification Code"
+      validator="required"
+    />
+     
+    <v-button
+      classname="is-primary is-medium"
+    >
+      Verify
+    </v-button>
+  </v-form>
+</v-modal>
+`;
+
+exports[`TwoFactorAuthModal render should render without secret and QR code 3`] = `
+<v-modal>
+   
+  <v-form>
+    <!---->
+     
+    <v-input
+      label="Verification Code"
+      validator="required"
+    />
+     
+    <v-button
+      classname="is-primary is-medium"
+    >
+      Verify
+    </v-button>
+  </v-form>
+</v-modal>
+`;

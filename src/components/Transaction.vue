@@ -14,6 +14,9 @@
                 v-html="require('@/img/ban.svg')"></span>
           <span v-else-if="transaction.state === 'pending'" class="icon is-medium"
                 v-html="require('@/img/ellipses.svg')"></span>
+          <span v-else-if="transaction.state === 'error'"
+                class="icon has-text-danger is-medium"
+                v-html="require('@/img/warning.svg')"></span>
         </div>
       </div>
       <div class="card-content">
@@ -32,6 +35,10 @@
             <p v-else>
               <span class="text-label">To</span>
               <span class="address">{{transaction.to}}</span>
+            </p>
+            <p v-if="transaction.nonce">
+              <span class="text-label">Nonce</span>
+              <span class="address">{{transaction.nonce}}</span>
             </p>
             <p v-if="transaction.data">
               {{parseData(transaction.data)}}
@@ -82,7 +89,7 @@ import ResendModal from './ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import error from '@/mixins/error';
-
+window.web3 = web3
 export default {
   props: ['transaction'],
   data() {

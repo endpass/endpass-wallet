@@ -3210,6 +3210,10 @@ eth-token-tracker@^1.1.4:
     ethjs-query "^0.2.6"
     human-standard-token-abi "^1.0.2"
 
+ethereum-blockies@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/ethereum-blockies/-/ethereum-blockies-0.1.1.tgz#879fe959deef492a7a92b43dc34ae8dc2ee591fc"
+
 ethereum-common@^0.0.18:
   version "0.0.18"
   resolved "https://registry.yarnpkg.com/ethereum-common/-/ethereum-common-0.0.18.tgz#2fdc3576f232903358976eb39da783213ff9523f"
@@ -5031,6 +5035,10 @@ isurl@^1.0.0-alpha5:
   dependencies:
     has-to-string-tag-x "^1.2.0"
     is-object "^1.0.1"
+
+jest-canvas-mock@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/jest-canvas-mock/-/jest-canvas-mock-1.1.0.tgz#f6ed0998b6be3ae2b7e095d7173441ae62cc831e"
 
 jest-changed-files@^22.2.0:
   version "22.4.3"

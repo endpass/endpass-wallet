@@ -60,6 +60,15 @@ describe('Send', () => {
         },
       },
       actions,
+      modules: {
+        transactions: {
+          namespaced: true,
+          actions: {
+            getNextNonce: jest.fn(),
+            getNonceInBlock: jest.fn(),
+          },
+        },
+      },
     });
     wrapper = shallow(Send, { store, localVue });
   });

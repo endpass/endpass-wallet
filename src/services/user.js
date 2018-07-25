@@ -1,16 +1,50 @@
 import axios from 'axios';
 import { NotificationError } from '@/class';
-
-const api = 'https://endpass.com/api/v1';
+import { identityAPIUrl } from '@/config';
 
 export default {
   login(email) {
     return Promise.resolve({
       success: true,
+      // success: false,
       challenge: {
         challenge_type: 'email_link',
+        // challenge_type: 'otp',
       },
-    });
+    })
+      .then(({ success, challenge }) => {
+        if (!success) {
+          return Promise.reject();
+        }
+
+        return challenge.challenge_type;
+      })
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Auth error',
+          text: 'Invalid or missing email address. Please, try again',
+          type: 'is-danger',
+        });
+      });
+  },
+
+  loginViaOTP(code) {
+    return Promise.resolve({
+      success: true,
+      // success: false,
+    })
+      .then(({ success }) => {
+        if (!success) {
+          return Promise.reject();
+        }
+      })
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Auth error',
+          text: 'Invalid or missing one time password. Please, try again',
+          type: 'is-danger',
+        });
+      });
   },
 
   getSettings() {
@@ -63,12 +97,93 @@ export default {
       }))
       .catch(() => {});
   },
+
+  getOtpSettings() {
+    return Promise.resolve({
+      secret: 'AABC',
+      // status: 'enabled',
+    });
+
+    // return Promise.reject().catch(() => {
+    //   throw new NotificationError({
+    //     title: 'Error requesting two-factor authentication settings',
+    //     text: `Failed to get OTP settings.`,
+    //     type: 'is-danger',
+    //   });
+    // });
+  },
+
+  setOtpSettings(secret, code) {
+    return Promise.resolve({
+      data: {
+        success: true,
+        // success: false,
+        // message: 'server message'
+      },
+    })
+      .then(({ data }) => {
+        if (!data.success) {
+          console.warn(`POST ${identityAPIUrl}/otp: ${data.message}`);
+          return Promise.reject();
+        }
+
+        return data;
+      })
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error saving two-factor authentication settings',
+          text: `Failed to save OTP settings.`,
+          type: 'is-danger',
+        });
+      });
+
+    // return Promise.reject().catch(() => {
+    //   throw new NotificationError({
+    //     title: 'Error saving two-factor authentication settings',
+    //     text: `Failed to save OTP settings.`,
+    //     type: 'is-danger',
+    //   });
+    // });
+  },
+
+  deleteOtpSettings(code) {
+    return Promise.resolve({
+      data: {
+        success: true,
+        // success: false,
+        // message: 'server message'
+      },
+    })
+      .then(({ data }) => {
+        if (!data.success) {
+          console.warn(`DELETE ${identityAPIUrl}/otp: ${data.message}`);
+          return Promise.reject();
+        }
+
+        return data;
+      })
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error removing two-factor authentication settings',
+          text: `Failed to remove OTP settings.`,
+          type: 'is-danger',
+        });
+      });
+
+    // return Promise.reject().catch(() => {
+    //   throw new NotificationError({
+    //     title: 'Error removing two-factor authentication settings',
+    //     text: `Failed to remove OTP settings.`,
+    //     type: 'is-danger',
+    //   });
+    // });
+  },
 };
 
 // export default {
 //   login(email) {
 //     // return axios
-//     //   .post(`${api}/auth`, {
+//     //   .post(`${identityAPIUrl}/auth`, {
 //     //     email,
 //     //   })
 //     //   .then(console.log)
@@ -98,9 +213,28 @@ export default {
 //       });
 //   },
 
+// loginViaOTP(code) {
+//   return axios
+//     .post(`${identityAPIUrl}/token`, {
+//       challenge_type: 'otp',
+//       code
+//     }).then(({ success }) => {
+//       if (!success) {
+//         return Promise.reject();
+//       }
+//     })
+//     .catch(() => {
+//       throw new NotificationError({
+//         title: 'Auth error',
+//         text: 'Invalid or missing one time password. Please, try again',
+//         type: 'is-danger',
+//       });
+//     });
+// },
+
 //   getSettings() {
 //     // return axios
-//     //   .get(`${api}/user`)
+//     //   .get(`${identityAPIUrl}/user`)
 //     //   .then(res => res.data)
 //     //   .then(console.log)
 //     //   .catch(console.log);
@@ -143,7 +277,7 @@ export default {
 
 //   setSettings(settings) {
 //     // return axios
-//     //   .post(`${api}/user`, settings)
+//     //   .post(`${identityAPIUrl}/user`, settings)
 //     //   .then(res => res.data)
 //     //   .then(console.log)
 //     //   .catch(console.log);
@@ -155,7 +289,7 @@ export default {
 
 //   removeSettings(propsArr) {
 //     // return axios
-//     //   .delete(`${api}/user`, propsArr)
+//     //   .delete(`${identityAPIUrl}/user`, propsArr)
 //     //   .then(res => res.data)
 //     //   .then(console.log)
 //     //   .catch(console.log);
@@ -167,7 +301,7 @@ export default {
 
 //   getAccounts() {
 //     // return axios
-//     //   .get(`${api}/accounts`)
+//     //   .get(`${identityAPIUrl}/accounts`)
 //     //   .then(res => res.data)
 //     //   .then(console.log)
 //     //   .catch(console.log);
@@ -185,7 +319,7 @@ export default {
 
 //   setAccount(account) {
 //     // return axios
-//     //   .post(`${api}/accounts`, account)
+//     //   .post(`${identityAPIUrl}/accounts`, account)
 //     //   .then(res => res.data)
 //     //   .then(console.log)
 //     //   .catch(console.log);
@@ -197,7 +331,7 @@ export default {
 
 //   getAccount(account) {
 //     // return axios
-//     //   .get(`${api}/account/${account}`)
+//     //   .get(`${identityAPIUrl}/account/${account}`)
 //     //   .then(res => res.data)
 //     //   .then(console.log)
 //     //   .catch(console.log);
@@ -262,5 +396,56 @@ export default {
 //         ...settings,
 //       }))
 //       .catch(() => {});
+//   },
+
+//   getOtpSettings() {
+//     return axios
+//       .get(`${identityAPIUrl}/otp`)
+//       .then(res => res.data)
+//       .catch(() => {
+//         throw new NotificationError({
+//           title: 'Error requesting two-factor authentication settings',
+//           text: `Failed to get OTP settings.`,
+//           type: 'is-danger',
+//         });
+//       });
+//   },
+
+//   setOtpSettings(secret, code) {
+//     return axios
+//       .post(`${identityAPIUrl}/otp`, { secret, code })
+//       .then(({ data }) => {
+//         if (!data.success) {
+//           console.warn(`POST ${identityAPIUrl}/otp: ${data.message}`);
+//           return Promise.reject();
+//         }
+//
+//         return data;
+//       }).catch(() => {
+//         throw new NotificationError({
+//           title: 'Error saving two-factor authentication settings',
+//           text: `Failed to save OTP settings.`,
+//           type: 'is-danger',
+//         });
+//       });
+//   },
+//   deleteOtpSettings(code) {
+//     return axios
+//       .delete(`${identityAPIUrl}/otp`, {
+//         data: { code }
+//       }).then(({ data }) => {
+//         if (!data.success) {
+//           console.warn(`DELETE ${identityAPIUrl}/otp: ${data.message}`);
+//           return Promise.reject();
+//         }
+//
+//         return data;
+//       }).catch(() => {
+//         throw new NotificationError({
+//           title: 'Error removing two-factor authentication settings',
+//           text: `Failed to remove OTP settings.`,
+//           type: 'is-danger',
+//         });
+//       });
 //   },
 // };

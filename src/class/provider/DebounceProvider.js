@@ -23,13 +23,24 @@ export default class DebounceProvider {
 
     if (this.cache && this.cache[cacheKey] && this.cache[cacheKey].func) {
       this.cache[cacheKey].date = new Date();
+      this.cache[cacheKey].buffer.push(args);
     } else {
-      const send = (...args) => this.parent[method](...args);
+      const send = (...args) => {
+        this.parent[method](args[0], (e, result) => {
+          const dfdArr = [...this.cache[cacheKey].buffer];
+          this.cache[cacheKey].buffer = [];
+          dfdArr.forEach(([payload, callback]) => {
+            const { id } = payload;
+            callback(e, { ...result, id });
+          });
+        });
+      };
       const func = debounce(send, 1000, { maxWait: 1000 });
 
       this.cache[cacheKey] = {
         date: new Date(),
         func,
+        buffer: [args],
       };
     }
 

@@ -6,7 +6,7 @@
          track-by="id" label="name"
                        :show-labels="false"
                        :allow-empty="false"
-                       :value="selectedNet"
+                       :value="activeNet"
                        @select="selectNet"
                        placeholder="Select network"
                        />
@@ -30,9 +30,6 @@ export default {
     };
   },
   computed: {
-    selectedNet() {
-      return this.$store.state.web3.activeNet;
-    },
     networkOptions() {
       // Options that dispatch methods
       let actions = [{ id: -1, name: 'Add Custom Network' }];

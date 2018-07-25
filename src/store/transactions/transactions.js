@@ -26,21 +26,38 @@ export default {
     },
   },
   actions: {
+    async getNonceInBlock({ rootState }) {
+      const address = rootState.accounts.address.getAddressString();
+      const eth = rootState.web3.web3.eth;
+      return await eth.getTransactionCount(address);
+    },
+    async getNextNonce({ state, dispatch }) {
+      const nonce = await dispatch('getNonceInBlock');
+      const actualNonce = state.pendingTransactions
+        .filter(tnx => tnx.state === 'pending')
+        .map(tnx => tnx.nonce)
+        .sort((a, b) => (a > b ? 1 : -1))
+        .reduce((lastNonce, tnxNonce) => {
+          if (lastNonce === tnxNonce) {
+            return +tnxNonce + 1;
+          } else {
+            return lastNonce;
+          }
+        }, nonce.toString())
+        .toString();
+
+      return actualNonce;
+    },
     async sendSignedTransaction(
       { rootState, state, dispatch },
       { transaction, password },
     ) {
-      const address = rootState.accounts.address.getAddressString();
       const eth = rootState.web3.web3.eth;
       const wallet = rootState.accounts.wallet;
 
       try {
         if (!transaction.nonce) {
-          const nonce = await eth.getTransactionCount(address);
-          const pendingLength = state.pendingTransactions.filter(
-            tnx => tnx.state === 'pending',
-          ).length;
-          transaction.nonce = (nonce + pendingLength).toString();
+          transaction.nonce = await dispatch('getNextNonce');
         }
 
         const tx = new Tx(transaction.getApiObject(eth));
@@ -61,13 +78,13 @@ export default {
             }
           })
           .once('error', (err, receipt) => {
-            dispatch('handleSendingError', receipt);
-            eventEmitter.emit('error');
+            dispatch('handleSendingError', { err, receipt, transaction });
+            eventEmitter.emit('error', err);
           });
 
         return eventEmitter;
-      } catch (e) {
-        dispatch('handleSendingError');
+      } catch (err) {
+        dispatch('handleSendingError', { transaction });
       }
     },
     sendTransaction({ dispatch, commit }, { transaction, password }) {
@@ -85,7 +102,11 @@ export default {
               transaction.state = 'success';
             });
 
-            sendEvent.once('error', rej);
+            sendEvent.once('error', err => {
+              transaction.state = 'error';
+              transaction.error = err;
+              rej();
+            });
           }),
       );
     },
@@ -106,7 +127,11 @@ export default {
               trxInList.state = 'success';
             });
 
-            sendEvent.once('error', rej);
+            sendEvent.once('error', err => {
+              trxInList.state = 'error';
+              trxInList.error = err;
+              rej();
+            });
           }),
       );
     },
@@ -132,15 +157,22 @@ export default {
               res();
             });
 
-            sendEvent.once('error', rej);
+            sendEvent.once('error', err => {
+              trxInList.state = 'error';
+              trxInList.error = err;
+              rej();
+            });
           }),
       );
     },
-    handleSendingError({ dispatch }, receipt) {
-      const cause = receipt ? ', because out of gas' : '';
+    handleSendingError({ dispatch }, { err = '', receipt, transaction }) {
+      const cause =
+        receipt || err.includes('out of gas') ? ', because out of gas' : '';
+      const { hash } = transaction;
+      const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`;
       const error = new NotificationError({
         title: 'Error sending transaction',
-        text: `Transaction was not sent${cause}`,
+        text: `Transaction ${shortHash} was not sent${cause}`,
         type: 'is-danger',
       });
       dispatch('errors/emitError', error, { root: true });

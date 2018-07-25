@@ -1,0 +1,122 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TokensPage render should render component 1`] = `
+<div
+  class="tokens-page"
+>
+  <div
+    class="section"
+  >
+    <div
+      class="container"
+    >
+      <div
+        class="columns"
+      >
+        <div
+          class="column is-half"
+        >
+          <div
+            class="card app-card"
+          >
+            <div
+              class="card-content"
+            >
+              <nav
+                class="panel"
+              >
+                <p
+                  class="panel-heading"
+                >
+                  
+                Your Tokens
+                  
+                  <button
+                    class="button is-primary"
+                    name="button"
+                  >
+                    <span
+                      class="icon panel-icon is-small"
+                    >
+                      {}
+                    </span>
+                  </button>
+                </p>
+                 
+                <div
+                  class="panel-block"
+                >
+                  <search-input />
+                </div>
+                 
+                <div
+                  class="scroller"
+                >
+                  <a
+                    class="panel-block is-clearfix is-block"
+                  >
+                    <span
+                      class="token-symbol"
+                    >
+                      FST
+                    </span>
+                     
+                    <span
+                      class="token-name"
+                    >
+                      First Token
+                    </span>
+                     
+                    <balance
+                      amount="NaN"
+                      currency=""
+                    />
+                     
+                    <!---->
+                  </a>
+                  <a
+                    class="panel-block is-clearfix is-block"
+                  >
+                    <span
+                      class="token-symbol"
+                    >
+                      $SCdT
+                    </span>
+                     
+                    <span
+                      class="token-name"
+                    >
+                      second token
+                    </span>
+                     
+                    <balance
+                      amount="NaN"
+                      currency=""
+                    />
+                     
+                    <!---->
+                  </a>
+                </div>
+              </nav>
+            </div>
+          </div>
+        </div>
+         
+        <div
+          class="column is-half"
+        >
+          <h4
+            class="title is-4"
+          >
+            Add token
+          </h4>
+           
+          <!---->
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <!---->
+</div>
+`;

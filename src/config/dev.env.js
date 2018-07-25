@@ -1,4 +1,5 @@
-const userAPIUrl = 'http://user-url-for-dev.com';
+const identityAPIUrl = '/identity/api/v1';
+const tokenInfoAPIUrl = '/tokeninfo/api/v1';
 
 // Parameters for cipher encrypting wallet
 const kdfParams = {
@@ -7,6 +8,7 @@ const kdfParams = {
 };
 
 export default {
-  userAPIUrl,
+  identityAPIUrl,
+  tokenInfoAPIUrl,
   kdfParams,
 };

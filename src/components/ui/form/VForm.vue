@@ -37,6 +37,14 @@ export default {
       return !(hasInvalidField || errors.any());
     },
   },
+  watch: {
+    isFormValid: {
+      handler(newVal) {
+        this.$emit('input', newVal);
+      },
+      immediate: true,
+    },
+  },
   methods: {
     validateFrom() {
       this.$emit('formValid', this.isFormValid());

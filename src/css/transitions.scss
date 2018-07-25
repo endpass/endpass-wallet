@@ -10,3 +10,10 @@
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
+
+.slide-enter-active, .slide-leave-active {
+  transition: height 0.5s ease-in;
+}
+.slide-enter, .slide-leave-to {
+  height: 0;
+}

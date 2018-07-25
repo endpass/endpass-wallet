@@ -9,14 +9,10 @@
                 <h1 class="card-header-title">Your Endpass Wallet</h1>
                 <div class="address box">
                   <div class="columns">
-                    <div class="column">
-                      <p class="heading">Ethereum Address</p>
-                      <p
-                         class="code address">{{address}}</p>
-                    </div>
-                    <div class="column">
-                      <balance :amount="balance" />
-                    </div>
+                    <account 
+                      :address="address"
+                      :balance="balance"
+                    />
                     <div class="column" v-if="!isPublicAccount">
                       <p class="heading">Actions</p>
                       <router-link :to="{name: 'ExportWallet'}">
@@ -54,6 +50,7 @@
 
 <script>
 import Balance from '@/components/Balance';
+import Account from '@/components/Account';
 import accounts from '@/mixins/accounts';
 import { mapGetters, mapState } from 'vuex';
 
@@ -72,6 +69,7 @@ export default {
     }),
   },
   components: {
+    Account,
     Balance,
   },
 };

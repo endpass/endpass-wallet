@@ -10,17 +10,16 @@
                   <p class="panel-heading">
                   Your Tokens
                     <button class="button is-primary" name="button" @click.prevent="openAddTokenModal()">
-                      <!-- <span class="icon panel-icon is-small"
-                          v-html="require('@/img/plus.svg')">
-                      </span> -->
-                      +
+                      <span class="icon panel-icon is-small"
+                            v-html="require('@/img/plus.svg')">
+                      </span>
                     </button>
                   </p>
                   <div class="panel-block">
                     <search-input v-model="search"></search-input>
                   </div>
                   <div class="scroller">
-                    <a v-for="token in activeTokens" :key="token.address + 'sub'" class="panel-block is-clearfix is-block">
+                    <a v-for="token in userTokenList" :key="token.address + 'sub'" class="panel-block is-clearfix is-block">
                       <span class="token-symbol">{{token.symbol}}</span>
                       <span class="token-name">{{token.name}}</span>
                       <balance :amount="getTokenAmount(token)" :currency="''"/>
@@ -34,13 +33,16 @@
           <div class="column is-half">
             <h4 class="title is-4">Add token</h4>
             <multiselect
-               :options="filteredTokens"
-               track-by="address" label="name"
-               :show-labels="false"
-               :allow-empty="false"
-               @select="addTokenToSubscription"
-               placeholder="Select token"
-               />
+              :allow-empty="false"
+              :internal-search="false"
+              :options="searchTokenList"
+              :show-labels="false"
+              track-by="address"
+              label="name"
+              placeholder="Select token"
+              @search-change="setSearchToken"
+              @select="addTokenToSubscription"
+            />
           </div>
 
         </div>
@@ -61,9 +63,11 @@ import AddTokenModal from '@/components/AddTokenModal';
 import { mapState, mapActions } from 'vuex';
 
 export default {
+  name: 'tokens-page',
   data() {
     return {
       search: '',
+      searchToken: '',
       addTokenModalOpen: false,
       tokens: [],
       serializeInterval: null,
@@ -78,12 +82,43 @@ export default {
       currency: state => state.accounts.settings.fiatCurrency,
     }),
     filteredTokens() {
-      let unwatchedTokens = this.tokens.filter(token => {
-        return !this.activeTokens.some(activeToken => {
-          return activeToken.address === token.address;
-        });
+      return this.tokens.filter(
+        token =>
+          !this.activeTokens.some(
+            activeToken => activeToken.address === token.address,
+          ),
+      );
+    },
+    searchTokenList() {
+      const { searchToken } = this;
+
+      if (!searchToken) {
+        return this.filteredTokens;
+      }
+
+      const search = searchToken.toLowerCase();
+
+      return this.filteredTokens.filter(token => {
+        const { name, symbol } = token;
+
+        return (
+          name.toLowerCase().includes(search) ||
+          symbol.toLowerCase().includes(search)
+        );
       });
-      return unwatchedTokens;
+    },
+    userTokenList() {
+      const { search } = this;
+
+      if (!search) {
+        return this.activeTokens;
+      }
+
+      const searchLC = search.toLowerCase();
+
+      return this.activeTokens.filter(token =>
+        token.symbol.toLowerCase().includes(searchLC),
+      );
     },
   },
   methods: {
@@ -113,6 +148,9 @@ export default {
         .times(this.ethPrice)
         .toString();
     },
+    setSearchToken(query) {
+      this.searchToken = query;
+    },
     openAddTokenModal() {
       this.addTokenModalOpen = true;
     },
@@ -133,6 +171,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "vue-multiselect/dist/vue-multiselect.min.css";
 .scroller {
   max-height: 500px;
   overflow-y: scroll;

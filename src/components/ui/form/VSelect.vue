@@ -20,12 +20,15 @@ export default {
   name: 'v-select',
   props: {
     value: {
-      type: String,
       default: null,
     },
     validator: {
       type: String,
       default: '',
+    },
+    error: {
+      type: String,
+      default: null,
     },
     name: {
       type: String,
@@ -36,6 +39,10 @@ export default {
       default: () => [],
     },
     label: {
+      type: String,
+      default: null,
+    },
+    error: {
       type: String,
       default: null,
     },
@@ -57,4 +64,9 @@ export default {
 </script>
 
 <style lang="scss">
+.select {
+  &:not(.is-multiple):not(.is-loading)::after {
+    border-color: $primary;
+  }
+}
 </style>
