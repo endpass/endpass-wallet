@@ -1,15 +1,19 @@
 <template>
-  <div class="columns">
-    <div class="column">
-      <p class="heading">Ethereum Address</p>
-      <div class="address">
-        <img class="identicon" :src="icon">
-        <p class="code">
-          {{ address }}
+  <div class="media account">
+    <div class="media-left">
+        <p class="image is-32x32">
+          <img class="identicon" :src="icon">
         </p>
+    </div>
+    <div class="media-content">
+      <div class="content">
+        <h5 class="is-size-5">{{ address }}</h5>
+
+        <slot></slot>
       </div>
     </div>
-    <div class="column">
+    <div class="media-right">
+      <balance :amount="balance" />
       <balance :amount="balance" :currency="currency" />
     </div>
   </div>
@@ -45,11 +49,14 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+.account {
+}
+
 .identicon {
   display: inline-block;
-  width: 2rem;
-  height: 2rem;
+  width: 100%;
+  height: auto;
   border-radius: 50%;
 }
 </style>

@@ -3,24 +3,22 @@
         <div class="section" v-if="address">
           <div class="container">
             <div class="card app-card">
-              <div class="card-header">
-              </div>
               <div class="card-content">
-                <h1 class="card-header-title">Your Endpass Wallet</h1>
-                <div class="address box">
-                  <div class="columns">
+                <div class="columns">
+                  <div class="column">
+                    <p class="heading">Your Address</p>
                     <account
-                      :address="address"
-                      :balance="balance"
-                      :currency="activeCurrency.name"
-                    />
-                    <div class="column" v-if="!isPublicAccount">
-                      <p class="heading">Actions</p>
-                      <router-link :to="{name: 'ExportWallet'}">
-                        <span class="icon is-small"
-                              v-html="require('@/img/arrow-thick-bottom.svg')"></span>Export
-                      </router-link>
-                    </div>
+                       :address="address"
+                       :balance="balance"
+                       :currency="activeCurrency.name"
+                       />
+                  </div>
+                  <div class="column" v-if="!isPublicAccount">
+                    <p class="heading">Actions</p>
+                    <router-link :to="{name: 'ExportWallet'}">
+                      <span class="icon is-small"
+                            v-html="require('@/img/arrow-thick-bottom.svg')"></span>Export
+                    </router-link>
                   </div>
                 </div>
               </div>
