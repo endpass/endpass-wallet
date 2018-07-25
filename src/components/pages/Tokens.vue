@@ -9,7 +9,7 @@
                 <p class="card-header-title">Your Tokens</p>
               </div>
               <div class="card-content is-narrow">
-                <nav v-if="userTokenList.length" class="panel">
+                <nav v-if="activeTokens.length" class="panel">
                   <div class="panel-block">
                     <search-input v-model="search" />
                   </div>
