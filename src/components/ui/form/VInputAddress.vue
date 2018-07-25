@@ -9,7 +9,7 @@
            :class="{'is-expanded': $slots.addon,
            'is-loading': pendingEns }">
         <input v-model="innerValue"
-               v-validate.disabled=""
+               v-validate="'required|ensOrAddress'"
                :data-vv-as="label || name"
                class="input"
                :class="{'is-danger': error || errors.has(name)}"
@@ -37,6 +37,7 @@ export default {
     const ens = new ENSResolver(this.$store.state.web3.web3);
     return {
       validatingEns: false,
+      getNameTimeout: null,
       value: '',
       pendingEns: false,
       ens
@@ -86,8 +87,43 @@ export default {
   },
   methods: {
     camelToKebab: str => str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`),
-    checkENCname() {
-
+    clearFiledTimeout() {
+      if(this.getNameTimeout) {
+        clearTimeout(this.getNameTimeout)
+      }
+    },
+    async updateENS() {
+      if(this.innerValue.match(/^.+\.eth$/) || this.innerValue.match(/^.+\.etc$/)) {
+        const field = this.$validator.fields.find({ name: this.name, });
+        if (!field) return;
+        this.pendingEns = true;
+        this.$validator.errors.remove(this.name);
+        this.$validator.flag(this.name,{
+          invalid: true,
+          valid: false,
+          pending: true
+        });
+        try{
+          const address = await this.ens.getAddress(this.innerValue);
+          this.$validator.flag(this.name,{
+            valid: true,
+            invalid: false,
+            pending:false
+          });
+          this.$emit('input', address);
+        } catch (e) {
+          this.$validator.errors.remove(this.name);
+          this.$validator.errors.add({
+            id: field.id,
+            field: this.name,
+            msg: e.message,
+            scope: this.$options.scope,
+          });
+          throw e
+        } finally {
+          this.pendingEns = false;
+        }
+      }
     }
   },
   computed: {
@@ -106,43 +142,29 @@ export default {
           : 'This is not a valid address';
         if(newVal.match(/^.+\.eth$/) || newVal.match(/^.+\.etc$/)) {
           this.value = newVal;
-          this.pendingEns = true;
-          this.$validator.errors.remove(this.name);
-          field.setFlags({
-            invalid: true,
-            valid: false,
-            pending: true
-          });
-          this.ens.getAddress(newVal).then(addres => {
-            field.setFlags({
-              valid: true,
-              invalid: false,
-              pending:false
-            });
-            this.$emit('input', addres);
-            this.value = newVal;
-            this.pendingEns = false;
-          }).catch(e => {
-            this.$validator.errors.add({
-              id: field.id,
-              field: this.name,
-              msg: e.message,
-              scope: this.$options.scope,
-            });
-            this.value = newVal;
-            this.pendingEns = false;
-          })
-        } else if(isHashKey && !isZeroKey) {
-          field.setFlags({
+          this.$validator.flag(this.name,{
             valid: true,
             invalid: false,
             pending:false
           });
           this.$validator.errors.remove(this.name);
-          this.$emit('input', newVal);
+        } else if(isHashKey && !isZeroKey) {
+          this.$validator.flag(this.name,{
+            valid: true,
+            invalid: false,
+            pending:false
+          });
+          this.$validator.errors.remove(this.name);
           this.value = newVal;
+          this.$emit('input', newVal);
         } else {
           this.value = newVal;
+          this.$validator.errors.remove(this.name);
+          this.$validator.flag(this.name,{
+            invalid: true,
+            valid: false,
+            pending: true
+          });
           this.$validator.errors.add({
             id: field.id,
             field: this.name,

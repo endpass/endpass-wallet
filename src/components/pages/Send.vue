@@ -10,7 +10,7 @@
             <v-form id="sendEther">
 
               <v-input-address v-model="transaction.to"
-                       ref="addressInput"
+                       ref="address"
                        label="To"
                        name="address"
                        id="address"
@@ -98,7 +98,7 @@
                        :disabled="isSending"
                        required />
 
-              <v-button @click.prevent="toggleTransactionModal"
+              <v-button @click.prevent="fetchAddress"
                         className="is-primary is-medium"
                         :loading="isSending"
                         :disabled="isSyncing">Send</v-button>
@@ -274,6 +274,20 @@ export default {
           this.isSending = false;
           this.resetForm();
         });
+    },
+    async fetchAddress() {
+      this.isSending = true;
+      try {
+        await this.$refs.address.updateENS();
+        this.toggleTransactionModal();
+      } catch (e) {
+        this.$notify({
+          title: 'Error',
+          text: e.message,
+          type: 'is-warning',
+        });
+      }
+      this.isSending = false;
     },
     confirmTransaction() {
       this.toggleTransactionModal();
