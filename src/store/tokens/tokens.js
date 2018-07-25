@@ -1,5 +1,5 @@
 import TokenTracker from 'eth-token-tracker';
-import EthplorerService from '@/services/ethplorer';
+import { endpassService, ethplorerService } from '@/services';
 import price from '@/services/price';
 import storage from '@/services/storage';
 import { subscriptionsAPIInterval } from '@/config';
@@ -27,11 +27,36 @@ export default {
     },
   },
   mutations: {
-    addToken(state, { token, net }) {
-      state.savedTokens[net] = state.savedTokens[net]
-        ? state.savedTokens[net]
-        : [];
-      state.savedTokens[net].push(token);
+    addToken({ savedTokens }, { token, net }) {
+      savedTokens[net] = savedTokens[net] || [];
+      savedTokens[net].push(token);
+    },
+    removeToken(
+      { tokensSubscription, savedTokens, activeTokens },
+      { token, net },
+    ) {
+      const tokenActiveIdx = activeTokens.findIndex(
+        tkn => tkn.address === token.address,
+      );
+
+      if (tokenActiveIdx !== -1) {
+        activeTokens.splice(tokenActiveIdx, 1);
+      }
+
+      const { tokens } = tokensSubscription;
+      const tokenIdx = tokens.findIndex(tkn => tkn.address === token.address);
+
+      if (tokenIdx !== -1) {
+        tokens.splice(tokenIdx, 1);
+      }
+
+      const tokenSavedIdx = savedTokens[net].findIndex(
+        tkn => tkn.address === token.address,
+      );
+
+      if (tokenSavedIdx !== -1) {
+        savedTokens[net].splice(tokenIdx, 1);
+      }
     },
     saveTokens(state, tokens = {}) {
       state.savedTokens = tokens;
@@ -60,7 +85,7 @@ export default {
     addTokenToSubscription({ state, commit, dispatch, rootState }, token) {
       // Save token without blance for furer seances
       const tokenExist = state.tokensSubscription.tokens.find(
-        subscribtionToken => subscribtionToken.address === token.address,
+        subscriptionToken => subscriptionToken.address === token.address,
       );
 
       if (!tokenExist) {
@@ -71,33 +96,56 @@ export default {
         storage
           .write('tokens', state.savedTokens)
           .catch(e => dispatch('errors/emitError', e, { root: true }));
-        state.tokensSubscription.add({
-          ...token,
-        });
+        state.tokensSubscription.add({ ...token });
       }
     },
-    subscribeOnTokenUpdates({ dispatch, state, rootState }) {
-      //destroy old subscription and recreate new one (in case of addres/provider change)
-      if (rootState.accounts.address) {
-        if (state.tokensSerializeInterval) {
-          clearInterval(state.tokensSerializeInterval);
-          state.tokensSubscription.stop();
-        }
-        // get tokens with balances
-        return dispatch('getNonZeroTokens')
-          .then(resp => {
-            dispatch('subsctibeOnTokenPriceUpdates', resp.data.tokens || []);
-            return dispatch('createTokenSubscription', resp.data.tokens || []);
-          })
-          .catch(() => {
-            const error = new NotificationError({
-              title: 'Failed token subscription',
-              text: "Token information won't be updated. Please reload page.",
-              type: 'is-warning',
-            });
-            dispatch('errors/emitError', error, { root: true });
+    getAllTokens({ dispatch }) {
+      return endpassService
+        .getTokensList()
+        .then(({ data }) => data)
+        .catch(() => {
+          const error = new NotificationError({
+            title: 'Failed to get list of tokens',
+            text:
+              'An error occurred while retrieving the list of tokens. Please try again.',
+            type: 'is-warning',
           });
+          dispatch('errors/emitError', error, { root: true });
+        });
+    },
+    removeTokenFromSubscription({ commit, getters, state, dispatch }, token) {
+      const { net } = getters;
+
+      commit('removeToken', { token, net });
+
+      return storage
+        .write('tokens', state.savedTokens)
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
+    },
+    subscribeOnTokenUpdates({ dispatch, state, rootState }) {
+      // destroy old subscription and recreate new one (in case of address/provider change)
+      if (!rootState.accounts.address) {
+        return Promise.resolve();
       }
+
+      if (state.tokensSerializeInterval) {
+        clearInterval(state.tokensSerializeInterval);
+        state.tokensSubscription.stop();
+      }
+      // get tokens with balances
+      return dispatch('getNonZeroTokens')
+        .then(resp => {
+          dispatch('subsctibeOnTokenPriceUpdates', resp.data.tokens || []);
+          return dispatch('createTokenSubscription', resp.data.tokens || []);
+        })
+        .catch(() => {
+          const error = new NotificationError({
+            title: 'Failed token subscription',
+            text: "Token information won't be updated. Please reload page.",
+            type: 'is-warning',
+          });
+          dispatch('errors/emitError', error, { root: true });
+        });
     },
     updateTokenPrices({ state, commit }) {
       if (state.activeTokens.length === 0) return;
@@ -158,7 +206,7 @@ export default {
     },
     getNonZeroTokens({ rootState, dispatch }) {
       const address = rootState.accounts.address.getAddressString();
-      let promise = EthplorerService.getTransactions(address);
+      let promise = ethplorerService.getTransactions(address);
       promise
         .then(() => {
           dispatch(

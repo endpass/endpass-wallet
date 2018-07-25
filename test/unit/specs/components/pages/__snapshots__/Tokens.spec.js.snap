@@ -29,7 +29,7 @@ exports[`TokensPage render should render component 1`] = `
                   class="panel-heading"
                 >
                   
-                Your Tokens
+                  Your Tokens
                   
                   <button
                     class="button is-primary"
@@ -77,6 +77,13 @@ exports[`TokensPage render should render component 1`] = `
                     />
                      
                     <!---->
+                     
+                    <span
+                      class="icon has-text-danger is-medium"
+                      id="remove-token-0"
+                    >
+                      {}
+                    </span>
                   </a>
                   <a
                     class="panel-block is-clearfix is-block"
@@ -99,6 +106,13 @@ exports[`TokensPage render should render component 1`] = `
                     />
                      
                     <!---->
+                     
+                    <span
+                      class="icon has-text-danger is-medium"
+                      id="remove-token-1"
+                    >
+                      {}
+                    </span>
                   </a>
                 </div>
               </nav>
