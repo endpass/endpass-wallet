@@ -7,14 +7,13 @@
     </div>
     <div class="media-content">
       <div class="content">
-        <h5 class="is-size-5">{{ address }}</h5>
-
+        <h5 class="address">{{ addressFmt }}</h5>
         <slot></slot>
       </div>
     </div>
     <div class="media-right">
-      <balance :amount="balance" />
-      <balance :amount="balance" :currency="currency" />
+        <balance v-if="balance && balance.length" :amount="balance"
+        :currency="currency" />
     </div>
   </div>
 </template>
@@ -37,13 +36,24 @@ export default {
     },
     balance: {
       type: String,
-      default: '0',
     },
+    // Maximum length of address
+    size: {
+      type: Number,
+      default: 50,
+    }
   },
   computed: {
     icon() {
       const seed = this.address.toLowerCase();
       return makeBlockie(seed);
+    },
+    addressFmt() {
+      if (this.address.length <= this.size) {
+        return this.address;
+      } else {
+        return '...' + this.address.substr(this.address.length - this.size);
+      }
     },
   },
 };
@@ -51,6 +61,11 @@ export default {
 
 <style lang="scss">
 .account {
+  .address {
+    font-size: 1.25rem;
+    margin: 0;
+    max-height: 32px;
+  }
 }
 
 .identicon {

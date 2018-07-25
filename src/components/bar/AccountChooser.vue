@@ -3,9 +3,10 @@
     <div v-if="hdWallet" class="control">
 
       <multiselect
-                         :options="addresses"
+                         :options="Object.keys(wallets)"
                          label="Account"
-                         :option-height="30"
+                         :option-height="32"
+                         :searchable="false"
                          :show-labels="false"
                          :allow-empty="false"
                          :value="activeAddress"
@@ -14,10 +15,10 @@
                          >
 
                          <template slot="singleLabel" slot-scope="props">
-                           <span>{{ props.option | truncateAddr }}</span>
+                           <account :address="address" :size="8" />
                          </template>
                          <template slot="option" slot-scope="props">
-                           <p>{{ addresses.indexOf(props.option) }}. {{ props.option | truncateAddr }}</p>
+                           <account :address="props.option" :size="8" />
                          </template>
       </multiselect>
     </div>
@@ -35,6 +36,7 @@
 <script>
 import Multiselect from 'vue-multiselect';
 import { mapState, mapActions } from 'vuex';
+import Account from '@/components/Account';
 import NewAccountModal from '@/components/NewAccountModal';
 
 export default {
@@ -58,10 +60,6 @@ export default {
         this.selectWallet(newValue);
       },
     },
-    // Array of wallet addresses
-    addresses() {
-      return Object.keys(this.wallets);
-    }
   },
   methods: {
     ...mapActions('accounts', ['selectWallet']),
@@ -82,6 +80,7 @@ export default {
   },
   components: {
     Multiselect,
+    Account,
     NewAccountModal,
   },
 };
