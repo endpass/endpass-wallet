@@ -84,9 +84,6 @@ describe('TokensPage', () => {
       wrapper = shallow(TokensPage, {
         ...options,
         stubs: generateStubs(TokensPage),
-        // methods: {
-        //   getAllTokens: () => { console.log(1) }
-        // },
       });
     });
 
@@ -97,6 +94,29 @@ describe('TokensPage', () => {
 
     it('should render component', () => {
       expect(wrapper.element).toMatchSnapshot();
+    });
+
+    describe('v-spinner', () => {
+      it('should render v-spinner', () => {
+        wrapper.setComputed({
+          activeTokens: [],
+        });
+
+        expect(wrapper.find('v-spinner').attributes()).toEqual({
+          'is-loading': 'true',
+          class: 'spinner-block',
+        });
+      });
+
+      it('should not render v-spinner', () => {
+        wrapper.setComputed({
+          activeTokens: [{}, {}],
+        });
+
+        expect(wrapper.find('v-spinner').attributes()).toEqual({
+          class: 'spinner-block',
+        });
+      });
     });
   });
 

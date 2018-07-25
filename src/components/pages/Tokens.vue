@@ -18,6 +18,9 @@
                   <div class="panel-block">
                     <search-input v-model="search"></search-input>
                   </div>
+                  <v-spinner
+                    class="spinner-block"
+                    :is-loading="!activeTokens.length"/>
                   <div class="scroller">
                     <a v-for="token in userTokenList" :key="token.address + 'sub'" class="panel-block is-clearfix is-block">
                       <span class="token-symbol">{{token.symbol}}</span>
@@ -60,6 +63,7 @@ import { BigNumber } from 'bignumber.js';
 import Balance from '@/components/Balance';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/AddTokenModal';
+import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapActions } from 'vuex';
 
 export default {
@@ -166,6 +170,7 @@ export default {
     Balance,
     AddTokenModal,
     Multiselect,
+    VSpinner,
   },
 };
 </script>
@@ -206,5 +211,11 @@ export default {
 
 .token-symbol {
   font-weight: 600;
+}
+
+.tokens-page {
+  .spinner-block {
+    height: 108px;
+  }
 }
 </style>

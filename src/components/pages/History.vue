@@ -15,6 +15,7 @@
             </ul>
             <p v-else-if="!historyAvailable">Transaction history is only
             supported on the main network.</p>
+            <v-spinner v-else-if="isLoading" :is-loading="isLoading"/>
             <p v-else>This account has no transactions.</p>
           </div>
         </div>
@@ -25,6 +26,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import VSpinner from '@/components/ui/VSpinner';
 import appTransaction from '@/components/Transaction';
 import EthplorerService from '@/services/ethplorer';
 import { Transaction } from '@/class';
@@ -32,6 +34,7 @@ import { Transaction } from '@/class';
 export default {
   data() {
     return {
+      isLoading: true,
       transactions: [],
     };
   },
@@ -88,10 +91,14 @@ export default {
           status: false,
         };
         this.$store.dispatch('errors/emitError', e, { root: true });
+      })
+      .finally(() => {
+        this.isLoading = false;
       });
   },
   components: {
     appTransaction,
+    VSpinner
   },
 };
 </script>

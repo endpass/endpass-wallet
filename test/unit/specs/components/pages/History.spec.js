@@ -7,6 +7,7 @@ import HistoryPage from '@/components/pages/History.vue';
 import Web3 from 'web3';
 import { infuraConf } from '@/config';
 import ethereumWalletMock from '../../../ethereumWalletMock.js';
+import { generateStubs } from '@/utils/testUtils';
 
 const wallet = ethereumWalletMock;
 
@@ -45,8 +46,8 @@ describe('HistoryPage', () => {
           ],
         },
         web3: {
-          web3: {
-            activeNet: 'Main',
+          activeNet: {
+            name: 'Main',
           },
         },
       },
@@ -127,6 +128,42 @@ describe('HistoryPage', () => {
           store.state.transactions.pendingTransactions[0].timestamp,
         );
         done();
+      });
+    });
+  });
+
+  describe('render', () => {
+    let wrapper;
+
+    beforeEach(() => {
+      wrapper = shallow(HistoryPage, {
+        store,
+        localVue,
+        stubs: generateStubs(HistoryPage),
+      });
+    });
+
+    describe('v-spinner', () => {
+      it('should render v-spinner', () => {
+        wrapper.setData({
+          isLoading: true,
+        });
+        wrapper.setComputed({
+          historyAvailable: true,
+          processedTransactions: [],
+        });
+
+        expect(wrapper.find('v-spinner').attributes()).toEqual({
+          'is-loading': 'true',
+        });
+      });
+
+      it('should not render v-spinner', () => {
+        wrapper.setData({
+          isLoading: false,
+        });
+
+        expect(wrapper.find('v-spinner').exists()).toBeFalsy();
       });
     });
   });
