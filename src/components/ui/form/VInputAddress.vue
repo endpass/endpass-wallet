@@ -38,7 +38,6 @@ export default {
     return {
       validatingEns: false,
       getNameTimeout: null,
-      value: '',
       pendingEns: false,
       ens
     }
