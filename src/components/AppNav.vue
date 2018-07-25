@@ -1,63 +1,32 @@
 <template>
   <div class="app-nav navbar">
     <div class="navbar-brand">
-      <a class="navbar-burger" @click="toggleNavMenu" :class="{'is-active':navMenuActive}">
-        <span></span>
-        <span></span>
-        <span></span>
-      </a>
-      <router-link class="navbar-item logo-icon" to="/">
-        <img src="@/img/logo-light.png" alt="Endpass Wallet">
-      </router-link>
-      <div class="navbar-item">
-        <account-chooser v-if="address" :width="4"/>
-        <router-link :to="{name: 'NewWallet'}" class="button
-        is-primary" v-else>Create Wallet</router-link>
-      </div>
     </div>
-    <div class="navbar-menu" :class="{'is-active':navMenuActive}">
       <div class="navbar-start">
-        <router-link class="navbar-item" to="/" @click.native="toggleNavMenu">
-          <span class="icon is-small"
-                v-html="require('@/img/home.svg')"></span>Dashboard
-        </router-link>
-        <router-link v-if="address" class="navbar-item" :to="{name: 'HistoryPage'}" @click.native="toggleNavMenu">
-          <span class="icon is-small"
-                v-html="require('@/img/clock.svg')"></span>History
-        </router-link>
-        <router-link v-if="wallet" class="navbar-item" :to="{name: 'SendPage'}" @click.native="toggleNavMenu">
-          <span class="icon is-small"
-                v-html="require('@/img/arrow-thick-left.svg')"></span>Send
-        </router-link>
-        <router-link v-if="address" class="navbar-item" :to="{name:
-        'ReceivePage'}" @click.native="toggleNavMenu">
-          <span class="icon is-small"
-                v-html="require('@/img/arrow-thick-right.svg')"></span>Receive
-        </router-link>
-        <router-link v-if="address" class="navbar-item" :to="{name:
-        'TokensPage'}" @click.native="toggleNavMenu">
-          <span class="icon is-small"
-                v-html="require('@/img/compass.svg')"></span>Tokens
-        </router-link>
-        <router-link v-if="address" class="navbar-item" :to="{name:
-        'SettingsPage'}" @click.native="toggleNavMenu">
-          <span class="icon is-small"
-                v-html="require('@/img/cog.svg')"></span>Settings
-        </router-link>
+        <div class="navbar-item">
+          <router-link :to="{name: 'NewWallet'}" class="button
+          is-primary" v-if="!address">Create Wallet</router-link>
+        </div>
         <div class="navbar-item has-dropdown is-hoverable" v-if="wallet">
           <a class="navbar-link">
             <span class="icon is-small" v-html="require('@/img/cog.svg')"></span>Tools
           </a>
           <div class="navbar-dropdown">
-            <router-link class="navbar-item" :to="{name:'MessagePage'}" @click.native="toggleNavMenu">
+            <router-link class="navbar-item" :to="{name:'MessagePage'}" >
               Message
             </router-link>
           </div>
         </div>
+      </div>
+
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <account-chooser v-if="address" :width="4"/>
+        </div>
         <router-link class="navbar-item"
                       v-if="!email"
                       :to="{name:'LoginPage'}"
-                      @click.native="toggleNavMenu">
+                      >
           <span class="icon is-small"
                 v-html="require('@/img/account-login.svg')"></span>Login
         </router-link>
@@ -69,7 +38,6 @@
                 v-html="require('@/img/account-logout.svg')"></span>Logout
         </a>
       </div>
-    </div>
   </div>
 </template>
 
@@ -80,7 +48,6 @@ import AccountChooser from '@/components/bar/AccountChooser.vue';
 export default {
   data() {
     return {
-      navMenuActive: false,
     };
   },
   computed: {
@@ -93,9 +60,6 @@ export default {
   },
   methods: {
     ...mapActions('accounts', ['logout']),
-    toggleNavMenu() {
-      this.navMenuActive = !this.navMenuActive;
-    },
   },
   components: {
     AccountChooser,
