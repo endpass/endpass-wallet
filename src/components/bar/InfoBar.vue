@@ -5,14 +5,14 @@
         <div class="level-left">
           <div class="level-item">
             <div class="level-control">
-              <p class="heading">Current Network</p>
-              <provider-select/>
+              <p class="heading">Currency</p>
+              <currency-select/>
             </div>
           </div>
           <div class="level-item">
             <div class="level-control">
-              <p class="heading">Currency</p>
-              <currency-select/>
+              <p class="heading">Network</p>
+              <provider-select/>
             </div>
           </div>
           <div class="level-item">
@@ -26,7 +26,7 @@
           <div class="level-item">
             <div class="level-control">
               <span  v-if="address">
-                <p class="heading">Current Account</p>
+                <p class="heading">Account</p>
                 <account-chooser/>
               </span>
               <router-link :to="{name: 'NewWallet'}" class="button

@@ -15,13 +15,6 @@ html,body {
     flex: 0 1 auto;
   }
 
-  // Stick info bar to bottom on mobile
-  @media screen and (max-width: 1023px) {
-    .info-bar {
-      order:2;
-      margin-top: auto;
-    }
-  }
 }
 
 // Container for a single page in the app

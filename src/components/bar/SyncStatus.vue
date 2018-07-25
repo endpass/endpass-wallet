@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<p class="heading">Block number</p>
+		<p class="heading">Block</p>
 		<div class="tags has-addons">
 		  <span class="tag">{{blockNumber}}</span>
 			<span class="tag" :class="'is-'+appStatus"></span>
