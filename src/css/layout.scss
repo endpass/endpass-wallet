@@ -50,3 +50,11 @@ html,body {
 .section.is-narrow {
   padding: 1rem 1.5rem;
 }
+
+// Reverse direction on mobile
+@media screen and (max-width: 768px) {
+  .is-reverse-mobile {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}

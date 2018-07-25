@@ -2,24 +2,14 @@
   <div class="tokens-page">
     <div class="section">
       <div class="container">
-        <div class="columns">
+        <div class="columns is-reverse-mobile">
           <div class="column is-half">
             <div class="card app-card">
+              <div class="card-header">
+                <p class="card-header-title">Your Tokens</p>
+              </div>
               <div class="card-content">
-                <nav class="panel">
-                  <p class="panel-heading">
-                    Your Tokens
-                    <button
-                      class="button is-primary"
-                      name="button"
-                      @click.prevent="openAddTokenModal()"
-                    >
-                      <span
-                        class="icon panel-icon is-small"
-                        v-html="require('@/img/plus.svg')"
-                      />
-                    </button>
-                  </p>
+                <nav v-if="userTokenList.length" class="panel">
                   <div class="panel-block">
                     <search-input v-model="search" />
                   </div>
@@ -56,22 +46,37 @@
                     </a>
                   </div>
                 </nav>
+                <p v-else class="small">You have no tokens on this network. Add
+                some!</p>
               </div>
             </div>
           </div>
           <div class="column is-half">
-            <h4 class="title is-4">Add token</h4>
-            <multiselect
-              :allow-empty="false"
-              :internal-search="false"
-              :options="searchTokenList"
-              :show-labels="false"
-              track-by="address"
-              label="name"
-              placeholder="Select token"
-              @search-change="setSearchToken"
-              @select="addTokenToSubscription"
-            />
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-title">
+                  Add Token
+                </div>
+                <div class="card-header-icon">
+                  <a class="button is-outlined is-info is-small" @click.prevent="openAddTokenModal()">
+                    Add Custom Token
+                  </a>
+                </div>
+              </div>
+              <div class="card-content">
+                <multiselect
+                   :allow-empty="false"
+                   :internal-search="false"
+                   :options="searchTokenList"
+                   :show-labels="false"
+                   track-by="address"
+                   label="name"
+                   placeholder="Select token"
+                   @search-change="setSearchToken"
+                   @select="addTokenToSubscription"
+                   />
+              </div>
+            </div>
           </div>
 
         </div>
