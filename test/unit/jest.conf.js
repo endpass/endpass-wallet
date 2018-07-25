@@ -13,7 +13,9 @@ module.exports = {
     '.+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2|svg)$':
       'jest-transform-stub',
   },
-  transformIgnorePatterns: ['node_modules/(?!vue-timers)'],
+  transformIgnorePatterns: [
+    'node_modules/(?!vue-timers|vue-spinner-component)',
+  ],
   snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
   setupFiles: ['<rootDir>/test/unit/setup', 'jest-canvas-mock'],
 };
