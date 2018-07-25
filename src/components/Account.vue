@@ -2,9 +2,12 @@
   <div class="columns">
     <div class="column">
       <p class="heading">Ethereum Address</p>
-      <p class="code address">
-        <img :src="icon"> {{ address }}
-      </p>
+      <div class="address">
+        <div class="identicon" :style="{ backgroundImage: 'url(' + icon + ')' }"></div>
+        <p class="code">
+          {{ address }}
+        </p>
+      </div>
     </div>
     <div class="column">
       <balance :amount="balance" :currency="currency" />
@@ -36,7 +39,6 @@ export default {
   computed: {
     icon() {
       const seed = this.address.toLowerCase();
-      console.log(seed);
       return blockies
         .create({ seed:seed, size: 8, scale: 16})
         .toDataURL();
@@ -46,4 +48,12 @@ export default {
 </script>
 
 <style>
+.identicon {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  background-size:cover;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+}
 </style>
