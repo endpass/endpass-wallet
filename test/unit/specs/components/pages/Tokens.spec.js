@@ -36,6 +36,7 @@ describe('TokensPage', () => {
       updateTokenPrice: jest.fn(),
       addTokenToSubscription: jest.fn(),
       removeTokenFromSubscription: jest.fn(),
+      getAllTokens: jest.fn(() => tokens),
     };
 
     store = new Vuex.Store({
@@ -75,6 +76,7 @@ describe('TokensPage', () => {
     actions.updateTokenPrice.mockClear();
     actions.addTokenToSubscription.mockClear();
     actions.removeTokenFromSubscription.mockClear();
+    actions.getAllTokens.mockClear();
   });
 
   describe('render', () => {

@@ -1,14 +1,16 @@
-import Vue from 'vue';
-import testAction from '../ActionTestingHelper';
-import tokens from '@/store/tokens/tokens';
 import moxios from 'moxios';
 import Web3 from 'web3';
-import localStorageMock from '../../localStorageMock.js';
+import testAction from '../ActionTestingHelper';
+import tokens from '@/store/tokens/tokens';
+import { endpassService } from '@/services';
+import localStorageMock from '../../localStorageMock';
 
 global.localStorage = localStorageMock;
 
 jest.mock('eth-token-tracker');
-jest.mock('@/services/ethplorer');
+jest.mock('@/services/ethplorer', () =>
+  require('../../__mocks__/services/ethplorer'),
+);
 jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
 
 Web3.providers.HttpProvider.prototype.sendAsync =
@@ -21,11 +23,13 @@ const { actions, mutations } = tokens;
 
 describe('tokens', () => {
   let commit;
+  let dispatch;
   let stateInstance;
 
   beforeEach(() => {
     moxios.install();
     commit = jest.fn();
+    dispatch = jest.fn();
     stateInstance = tokens.state();
   });
 
@@ -40,6 +44,14 @@ describe('tokens', () => {
     expect(stateInstance.savedTokens['3'][0].address).toBe(
       '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
     );
+  });
+
+  it('it should get tokens from service', async () => {
+    endpassService.getTokensList = jest.fn(() => Promise.resolve());
+
+    await actions.getAllTokens({ dispatch });
+
+    expect(endpassService.getTokensList).toHaveBeenCalledTimes(1);
   });
 
   it('saves token to watch storage', () => {

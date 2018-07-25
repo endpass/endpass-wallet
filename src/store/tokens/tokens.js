@@ -1,5 +1,5 @@
 import TokenTracker from 'eth-token-tracker';
-import EthplorerService from '@/services/ethplorer';
+import { endpassService, ethplorerService } from '@/services';
 import price from '@/services/price';
 import storage from '@/services/storage';
 import { subscriptionsAPIInterval } from '@/config';
@@ -99,6 +99,20 @@ export default {
         state.tokensSubscription.add({ ...token });
       }
     },
+    getAllTokens({ dispatch }) {
+      return endpassService
+        .getTokensList()
+        .then(({ data }) => data)
+        .catch(() => {
+          const error = new NotificationError({
+            title: 'Failed to get list of tokens',
+            text:
+              'An error occurred while retrieving the list of tokens. Please try again.',
+            type: 'is-warning',
+          });
+          dispatch('errors/emitError', error, { root: true });
+        });
+    },
     removeTokenFromSubscription({ commit, getters, state, dispatch }, token) {
       const { net } = getters;
 
@@ -192,7 +206,7 @@ export default {
     },
     getNonZeroTokens({ rootState, dispatch }) {
       const address = rootState.accounts.address.getAddressString();
-      let promise = EthplorerService.getTransactions(address);
+      let promise = ethplorerService.getTransactions(address);
       promise
         .then(() => {
           dispatch(

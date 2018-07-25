@@ -82,7 +82,6 @@
 
 <script>
 import Multiselect from 'vue-multiselect';
-import EndpassService from '@/services/endpass';
 import { BigNumber } from 'bignumber.js';
 import Balance from '@/components/Balance';
 import SearchInput from '@/components/SearchInput.vue';
@@ -153,26 +152,12 @@ export default {
       'addTokenToSubscription',
       'updateTokenPrice',
       'removeTokenFromSubscription',
+      'getAllTokens',
     ]),
     getTokenAmount(token) {
       let balanceBn = new BigNumber(token.balance);
       let decimalsBn = new BigNumber(10).pow(token.decimals);
       return balanceBn.div(decimalsBn);
-    },
-    getAllTokens(context) {
-      EndpassService.getTokensList()
-        .then(resp => {
-          this.tokens = resp.data;
-        })
-        .catch(e => {
-          this.$notify({
-            title: 'Failed to get list of tokens',
-            text:
-              'An error occurred while retrieving the list of tokens. Please try again.',
-            type: 'is-warning',
-          });
-          console.error(e);
-        });
     },
     getTokenPrice(symbol) {
       return new BigNumber(this.prices[symbol]['ETH'])
@@ -190,7 +175,9 @@ export default {
     },
   },
   created() {
-    this.getAllTokens();
+    this.getAllTokens().then(tokens => {
+      this.tokens = tokens;
+    });
   },
   components: {
     SearchInput,
