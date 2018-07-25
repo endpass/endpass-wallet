@@ -1,6 +1,7 @@
 <template>
 	<div class="balance">
-    <span class="title amount" :class="{'long-number': balance.length > 6}">{{ balance }}</span>
+    <span class="title amount" :title="balanceString"
+      :class="{'long-number': balance.length > 6}">{{ balanceStringShort }}</span>
     <span class="currency">
       {{currency}}
     </span>
@@ -27,6 +28,9 @@ export default {
     decimals: {
       default: 18,
     },
+    round: {
+      default: 4,
+    },
   },
   computed: {
     balance() {
@@ -44,8 +48,18 @@ export default {
       }
 
       let balance = amountBn.times(priceBn);
-      let balanceString = balance
+      return balance;
+    },
+    balanceString() {
+      let balanceString = this.balance
         .toFixed(this.decimals)
+        .match(/^[0-9]{1,18}(\.[0-9]{0,18}[^0]{1,18}){0,1}/);
+      balanceString = balanceString ? balanceString[0] : '0';
+      return balanceString;
+    },
+    balanceStringShort() {
+      let balanceString = this.balance
+        .toFixed(this.round)
         .match(/^[0-9]{1,18}(\.[0-9]{0,18}[^0]{1,18}){0,1}/);
       balanceString = balanceString ? balanceString[0] : '0';
       return balanceString;
