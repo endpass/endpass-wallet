@@ -1,14 +1,14 @@
 <template>
   <div class="app-nav navbar">
     <div class="navbar-brand">
-      <router-link class="navbar-item logo-icon" to="/">
-        <img src="@/img/logo-light.png" alt="Endpass Wallet">
-      </router-link>
       <a class="navbar-burger" @click="toggleNavMenu" :class="{'is-active':navMenuActive}">
         <span></span>
         <span></span>
         <span></span>
       </a>
+      <router-link class="navbar-item logo-icon" to="/">
+        <img src="@/img/logo-light.png" alt="Endpass Wallet">
+      </router-link>
     </div>
     <div class="navbar-menu" :class="{'is-active':navMenuActive}">
       <div class="navbar-start">
