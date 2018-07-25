@@ -49,6 +49,10 @@ export default {
       type: String,
       default: null,
     },
+    value: {
+      type: String,
+      default: '',
+    },
     required: {
       type: Boolean,
       default: true,

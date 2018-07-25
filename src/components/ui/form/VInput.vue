@@ -11,6 +11,7 @@
         <input v-model="innerValue"
                v-validate="validator"
                :data-vv-as="label || name"
+               @blur="$emit('blur', $event.target.value)"
                class="input"
                :class="{'is-danger': error || errors.has(name) }"
                v-bind="props">
