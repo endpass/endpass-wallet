@@ -2,49 +2,68 @@
   <div class="transaction" :class="statusClass">
     <div class="card">
       <div class="card-header">
-          <a @click="toggleExpanded" class="card-header-title">
-            <p>{{transaction.hash | truncateHash}}</p>
-            <p class="received" title="Received" v-if="recieve">
-              <span class="icon is-medium"
-                    v-html="require('@/img/arrow-thick-right.svg')"></span>
-            </p>
-            <span v-if="recieve" class="heading">Received</span>
-            <p class="sent" title="Sent" v-else>
-              <span class="icon is-medium"
-                    v-html="require('@/img/arrow-thick-left.svg')"></span>
-            </p>
-            <span v-if="!recieve" class="heading">Sent</span>
-            <balance :amount="transaction.value" :currency="symbol"></balance>
-            <p class="date">{{date.fromNow()}}</p>
+          <a @click="toggleExpanded" class="card-header-link level is-mobile">
+            <div class="level-item">
+            {{transaction.hash | truncateHash}}
+            </div>
+
+            <div class="level-item">
+              <balance :amount="transaction.value" :currency="symbol"></balance>
+            </div>
           </a>
+
+          <div class="level is-mobile">
+            <div class="level-item">
+              <p class="received" title="Received" v-if="recieve">
+                <span class="icon is-medium"
+                      v-html="require('@/img/arrow-thick-right.svg')"></span>
+              </p>
+              <span v-if="recieve" class="heading">Received</span>
+              <p class="sent" title="Sent" v-else>
+                <span class="icon is-medium"
+                      v-html="require('@/img/arrow-thick-left.svg')"></span>
+              </p>
+              <span v-if="!recieve" class="heading">Sent</span>
+            </div>
+
+            <p class="date level-item">{{date.fromNow()}}</p>
+          </div>
       </div>
       <div class="card-content" v-if="isExpanded">
-        <p>
-        <span class="text-label">Txid</span>
-        <p>{{transaction.hash}}</p>
-        </p>
-        <span class="heading status-text">{{transaction.state}}</span>
-        <p v-if="transaction.date">
-        <span class="text-label">Date</span>
-        <span class="date">{{date.format("YYYY-MM-DD H:mm")}}</span>
-        </p>
+        <div v-if="transaction.hash.length">
+          <span class="text-label">Txid</span>
+          <p class="code">{{transaction.hash}}</p>
+        </div>
+        <div>
+          <span class="heading status-text">{{transaction.state}}</span>
+        </div>
 
-        <p v-if="recieve">
-        <span class="text-label">From</span>
-        <span class="address">{{transaction.from}}</span>
-        </p>
-        <p v-else>
-        <span class="text-label">To</span>
-        <span class="address">{{transaction.to}}</span>
-        </p>
-        <p v-if="transaction.nonce">
-        <span class="text-label">Nonce</span>
-        <span class="">{{transaction.nonce}}</span>
-        </p>
-        <p v-if="transaction.data">
-        <span class="text-label">Data</span>
-        {{parseData(transaction.data)}}
-        </p>
+        <div v-if="date">
+          <span class="text-label">Date</span>
+          <p class="date">{{date.format("YYYY-MM-DD H:mm")}}</p>
+        </div>
+
+        <div v-if="recieve">
+          <span class="text-label">From</span>
+          <p class="code address">{{transaction.from}}</p>
+        </div>
+
+        <div v-else>
+          <span class="text-label">To</span>
+          <p class="code address">{{transaction.to}}</p>
+        </div>
+
+        <div>
+          <span class="text-label">Nonce</span>
+          <span class="">{{transaction.nonce}}</span>
+        </div>
+
+        <div v-if="transaction.data">
+          <span class="text-label">Data</span>
+          <span class="code">
+            {{parseData(transaction.data)}}
+          </span>
+        </div>
       </div>
       <div v-if="transaction.state === 'pending'  && !isPublicAccount" class="card-footer">
         <a class="card-footer-item" @click="resend" :disabled="isSyncing">
@@ -222,6 +241,16 @@ export default {
     border-top-color: $success;
     .status-text {
       color: $success;
+    }
+  }
+
+  .card-header {
+    flex-direction: column;
+    .card-header-link {
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(75, 4, 114, .2);
+      }
     }
   }
 
