@@ -32,40 +32,13 @@ export default {
       type: String,
       default: '0',
     },
-    iconColor: {
-      type: String,
-      default: '#dfe',
-    },
-    iconBgColor: {
-      type: String,
-      default: '#aaa',
-    },
-    iconSize: {
-      type: Number,
-      default: 10,
-    },
-    iconScale: {
-      type: Number,
-      default: 2,
-    },
-    iconSpotColor: {
-      type: String,
-      default: '#000',
-    },
   },
   computed: {
     icon() {
-      const {
-        address: seed,
-        iconColor: color,
-        iconBgColor: bgcolor,
-        iconSize: size,
-        iconScale: scale,
-        iconSpotColor: spotcolor,
-      } = this;
-
+      const seed = this.address.toLowerCase();
+      console.log(seed);
       return blockies
-        .create({ seed, color, bgcolor, size, scale, spotcolor })
+        .create({ seed:seed, size: 8, scale: 16})
         .toDataURL();
     },
   },
