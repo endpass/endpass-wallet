@@ -35,6 +35,7 @@ describe('TokensPage', () => {
     actions = {
       updateTokenPrice: jest.fn(),
       addTokenToSubscription: jest.fn(),
+      removeTokenFromSubscription: jest.fn(),
     };
 
     store = new Vuex.Store({
@@ -53,6 +54,7 @@ describe('TokensPage', () => {
             activeTokens: tokens,
             prices: null,
           },
+          actions,
         },
         price: {
           namespaced: true,
@@ -66,27 +68,20 @@ describe('TokensPage', () => {
     options = {
       store,
       localVue,
-      methods: {
-        getAllTokens: () => {},
-      },
     };
   });
 
   afterEach(() => {
     actions.updateTokenPrice.mockClear();
     actions.addTokenToSubscription.mockClear();
+    actions.removeTokenFromSubscription.mockClear();
   });
 
   describe('render', () => {
-    let wrapper;
-
     beforeEach(() => {
       wrapper = shallow(TokensPage, {
         ...options,
         stubs: generateStubs(TokensPage),
-        // methods: {
-        //   getAllTokens: () => { console.log(1) }
-        // },
       });
     });
 
@@ -154,6 +149,20 @@ describe('TokensPage', () => {
         });
 
         expect(wrapper.vm.searchTokenList).toHaveLength(1);
+      });
+    });
+
+    describe('user token', () => {
+      it('should call remove action', () => {
+        const button = wrapper.find('span#remove-token-1');
+        button.trigger('click');
+
+        expect(actions.removeTokenFromSubscription).toHaveBeenCalledTimes(1);
+        expect(actions.removeTokenFromSubscription).toBeCalledWith(
+          expect.any(Object),
+          tokens[1],
+          undefined,
+        );
       });
     });
   });

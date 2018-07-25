@@ -8,22 +8,47 @@
               <div class="card-content">
                 <nav class="panel">
                   <p class="panel-heading">
-                  Your Tokens
-                    <button class="button is-primary" name="button" @click.prevent="openAddTokenModal()">
-                      <span class="icon panel-icon is-small"
-                            v-html="require('@/img/plus.svg')">
-                      </span>
+                    Your Tokens
+                    <button
+                      class="button is-primary"
+                      name="button"
+                      @click.prevent="openAddTokenModal()"
+                    >
+                      <span
+                        class="icon panel-icon is-small"
+                        v-html="require('@/img/plus.svg')"
+                      />
                     </button>
                   </p>
                   <div class="panel-block">
-                    <search-input v-model="search"></search-input>
+                    <search-input v-model="search" />
                   </div>
                   <div class="scroller">
-                    <a v-for="token in userTokenList" :key="token.address + 'sub'" class="panel-block is-clearfix is-block">
-                      <span class="token-symbol">{{token.symbol}}</span>
-                      <span class="token-name">{{token.name}}</span>
-                      <balance :amount="getTokenAmount(token)" :currency="''"/>
-                      <balance v-if="prices && prices[token.symbol]" :price="getTokenPrice(token.symbol)" :amount="getTokenAmount(token)" :currency="currency" v-on:update="updateTokenPrice(token.symbol)" :decimals="2"/>
+                    <a
+                      v-for="(token, index) in userTokenList"
+                      :key="token.address + 'sub'"
+                      class="panel-block is-clearfix is-block"
+                    >
+                      <span class="token-symbol">{{ token.symbol }}</span>
+                      <span class="token-name">{{ token.name }}</span>
+                      <balance
+                        :amount="getTokenAmount(token)"
+                        :currency="''"
+                      />
+                      <balance
+                        v-if="prices && prices[token.symbol]"
+                        :amount="getTokenAmount(token)"
+                        :currency="currency"
+                        :decimals="2"
+                        :price="getTokenPrice(token.symbol)"
+                        @update="updateTokenPrice(token.symbol)"
+                      />
+                      <span
+                        :id="`remove-token-${index}`"
+                        class="icon has-text-danger is-medium"
+                        @click.prevent="removeTokenFromSubscription(token)"
+                        v-html="require('@/img/ban.svg')"
+                      />
                     </a>
                   </div>
                 </nav>
@@ -48,8 +73,10 @@
         </div>
       </div>
     </div>
-    <add-token-modal @close="closeAddTokenModal"
-      v-if="addTokenModalOpen"/>
+    <add-token-modal
+      v-if="addTokenModalOpen"
+      @close="closeAddTokenModal"
+    />
   </div>
 </template>
 
@@ -175,7 +202,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "vue-multiselect/dist/vue-multiselect.min.css";
+@import 'vue-multiselect/dist/vue-multiselect.min.css';
 .scroller {
   max-height: 500px;
   overflow-y: scroll;
