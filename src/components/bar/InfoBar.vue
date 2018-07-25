@@ -23,16 +23,6 @@
         </div>
 
         <div class="level-right">
-          <div class="level-item">
-            <div class="level-control">
-              <span  v-if="address">
-                <p class="heading">Account</p>
-                <account-chooser/>
-              </span>
-              <router-link :to="{name: 'NewWallet'}" class="button
-              is-primary" v-else>Create Wallet</router-link>
-            </div>
-          </div>
           <div class="level-item" v-if="balance !== null">
             <balance :amount="balance" class="level-stat" :currency="activeCurrency.name" />
           </div>

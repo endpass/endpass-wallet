@@ -9,6 +9,13 @@
       <router-link class="navbar-item logo-icon" to="/">
         <img src="@/img/logo-light.png" alt="Endpass Wallet">
       </router-link>
+      <div class="navbar-item">
+        <span  v-if="address">
+          <account-chooser :width="4"/>
+        </span>
+        <router-link :to="{name: 'NewWallet'}" class="button
+        is-primary" v-else>Create Wallet</router-link>
+      </div>
     </div>
     <div class="navbar-menu" :class="{'is-active':navMenuActive}">
       <div class="navbar-start">
@@ -70,6 +77,7 @@
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
+import AccountChooser from '@/components/bar/AccountChooser.vue';
 
 export default {
   data() {
@@ -90,6 +98,9 @@ export default {
     toggleNavMenu() {
       this.navMenuActive = !this.navMenuActive;
     },
+  },
+  components: {
+    AccountChooser,
   },
 };
 </script>

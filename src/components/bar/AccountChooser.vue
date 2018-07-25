@@ -5,7 +5,7 @@
       <multiselect
                          :options="Object.keys(wallets)"
                          label="Account"
-                         :option-height="32"
+                         :option-height="height"
                          :searchable="false"
                          :show-labels="false"
                          :allow-empty="false"
@@ -15,10 +15,10 @@
                          >
 
                          <template slot="singleLabel" slot-scope="props">
-                           <account :address="address" :size="8" />
+                           <account :address="address" :size="width" />
                          </template>
                          <template slot="option" slot-scope="props">
-                           <account :address="props.option" :size="8" />
+                           <account :address="props.option" :size="width" />
                          </template>
       </multiselect>
     </div>
@@ -44,6 +44,17 @@ export default {
     return {
       newAccountModalOpen: false,
     };
+  },
+  props: {
+    // Maximum width of address
+    width: {
+      type: Number,
+      default: 50,
+    },
+    height: {
+      type: Number,
+      default: 32,
+    }
   },
   computed: {
     ...mapState({
@@ -85,3 +96,7 @@ export default {
   },
 };
 </script>
+
+
+<style lang="scss">
+</style>
