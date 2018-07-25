@@ -1,14 +1,25 @@
 <template lang="html">
   <div class="account-chooser field has-addons">
     <div v-if="hdWallet" class="control">
-      <div class="select">
-        <select v-model="activeAddress">
-          <option value="" v-for="(wallet, key, index) in wallets"
-                  :value="key">
-          {{index}}. {{key |truncateAddr}}
-          </option>
-        </select>
-      </div>
+
+      <multiselect
+                         :options="addresses"
+                         label="Account"
+                         :option-height="30"
+                         :show-labels="false"
+                         :allow-empty="false"
+                         :value="activeAddress"
+                         @select="selectWallet"
+                         placeholder="Select account"
+                         >
+
+                         <template slot="singleLabel" slot-scope="props">
+                           <span>{{ props.option | truncateAddr }}</span>
+                         </template>
+                         <template slot="option" slot-scope="props">
+                           <p>{{ addresses.indexOf(props.option) }}. {{ props.option | truncateAddr }}</p>
+                         </template>
+      </multiselect>
     </div>
     <div v-else-if="address" class="control">
         {{address |truncateAddr}}
@@ -22,6 +33,7 @@
 </template>
 
 <script>
+import Multiselect from 'vue-multiselect';
 import { mapState, mapActions } from 'vuex';
 import NewAccountModal from '@/components/NewAccountModal';
 
@@ -46,6 +58,10 @@ export default {
         this.selectWallet(newValue);
       },
     },
+    // Array of wallet addresses
+    addresses() {
+      return Object.keys(this.wallets);
+    }
   },
   methods: {
     ...mapActions('accounts', ['selectWallet']),
@@ -65,6 +81,7 @@ export default {
     },
   },
   components: {
+    Multiselect,
     NewAccountModal,
   },
 };
