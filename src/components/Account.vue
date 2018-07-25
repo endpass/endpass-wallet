@@ -3,7 +3,7 @@
     <div class="column">
       <p class="heading">Ethereum Address</p>
       <div class="address">
-        <div class="identicon" :style="{ backgroundImage: 'url(' + icon + ')' }"></div>
+        <img class="identicon" :src="icon">
         <p class="code">
           {{ address }}
         </p>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import blockies from 'ethereum-blockies';
+import makeBlockie from 'ethereum-blockies-base64';
 import Balance from '@/components/Balance';
 
 export default {
@@ -39,9 +39,7 @@ export default {
   computed: {
     icon() {
       const seed = this.address.toLowerCase();
-      return blockies
-        .create({ seed:seed, size: 8, scale: 16})
-        .toDataURL();
+      return makeBlockie(seed);
     },
   },
 };
@@ -52,8 +50,6 @@ export default {
   display: inline-block;
   width: 2rem;
   height: 2rem;
-  background-size:cover;
-  background-repeat: no-repeat;
   border-radius: 50%;
 }
 </style>
