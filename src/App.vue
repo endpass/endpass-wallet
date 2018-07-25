@@ -1,24 +1,32 @@
 <template>
-  <div id="app" class="app-container has-navbar-fixed-bottom">
+  <div id="app" class="app-container">
 
-    <div class="columns">
-      <div class="column is-narrow no-padding-right">
-        <nav-sidebar/>
-      </div>
-      <div class="column no-padding-left">
-        <app-nav class="app-section"></app-nav>
-        <info-bar class="app-section"></info-bar>
-        <notifications position="top center" width="100%" :speed="500"
-                                             :duration="5000" classes="app-notification"/>
+    <header class="app-header">
+      <p>header</p>
+    </header>
 
-        <div class="main app-section">
+    <div class="app-content">
+      <div class="columns">
+        <div class="column is-narrow no-padding-right">
+          <nav-sidebar/>
+        </div>
+        <div class="column no-padding-left">
+          <app-nav class="app-section"></app-nav>
+          <info-bar class="app-section"></info-bar>
+          <notifications position="top center" width="100%" :speed="500"
+                                               :duration="5000" classes="app-notification"/>
 
-          <router-view/>
+          <div class="main app-content app-section">
+
+            <router-view/>
+          </div>
         </div>
       </div>
     </div>
 
-    <quick-actions/>
+    <footer class="app-footer">
+      <quick-actions class="is-hidden-desktop"/>
+    </footer>
   </div>
 </template>
 
@@ -47,12 +55,6 @@ export default {
 @import './css/layout.scss';
 @import './css/notifications.scss';
 @import './css/typography.scss';
-
-.app-container {
-  &.has-navbar-fixed-bottom {
-    padding-bottom: 3.25rem;
-  }
-}
 
 .main {
   background: $light-grey;

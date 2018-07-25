@@ -9,10 +9,21 @@ html,body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: $light-grey;
+  overflow-x: hidden;
 
   // Direct child of app container, a major element
   &>.app-section {
     flex: 0 1 auto;
+  }
+
+  &>.app-content {
+    flex: 1 0 auto;
+  }
+
+  &>.app-footer {
+    position: relative;
+    margin-top: auto;
   }
 
 }
