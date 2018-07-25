@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="app-container">
+  <div id="app" class="app-container has-navbar-fixed-bottom">
 
     <div class="columns">
       <div class="column is-narrow no-padding-right">
@@ -12,12 +12,13 @@
                                              :duration="5000" classes="app-notification"/>
 
         <div class="main app-section">
-          <quick-actions/>
 
           <router-view/>
         </div>
       </div>
     </div>
+
+    <quick-actions/>
   </div>
 </template>
 
@@ -46,6 +47,12 @@ export default {
 @import './css/layout.scss';
 @import './css/notifications.scss';
 @import './css/typography.scss';
+
+.app-container {
+  &.has-navbar-fixed-bottom {
+    padding-bottom: 3.25rem;
+  }
+}
 
 .main {
   background: $light-grey;
