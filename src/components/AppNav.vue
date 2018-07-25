@@ -10,9 +10,7 @@
         <img src="@/img/logo-light.png" alt="Endpass Wallet">
       </router-link>
       <div class="navbar-item">
-        <span  v-if="address">
-          <account-chooser :width="4"/>
-        </span>
+        <account-chooser v-if="address" :width="4"/>
         <router-link :to="{name: 'NewWallet'}" class="button
         is-primary" v-else>Create Wallet</router-link>
       </div>
