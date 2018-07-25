@@ -66,9 +66,9 @@ describe('Send', () => {
           actions: {
             getNextNonce: jest.fn(),
             getNonceInBlock: jest.fn(),
-          }
-        }
-      }
+          },
+        },
+      },
     });
     wrapper = shallow(Send, { store, localVue });
   });
@@ -105,7 +105,7 @@ describe('Send', () => {
 
     wrapper.setData({
       transaction: {
-        to: '0xE824633E6d247e64ba2cD841D8270505770d53fE',
+        to: '',
         gasPrice: '91',
         gasLimit: '22000',
         // prettier-ignore
@@ -114,9 +114,12 @@ describe('Send', () => {
       value: '1.5',
     });
 
+    wrapper.vm.$refs.address.$el.querySelector('input').value =
+      '0xE824633E6d247e64ba2cD841D8270505770d53fE';
+
     await wrapper.vm.$validator.validateAll();
 
-    expect(errors.has('address')).toBeFalsy();
+    expect(errors.any('address')).toBeFalsy();
     expect(errors.has('gasPrice')).toBeFalsy();
     expect(errors.has('gasLimit')).toBeFalsy();
     expect(errors.has('price')).toBeFalsy();

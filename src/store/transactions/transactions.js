@@ -60,7 +60,6 @@ export default {
           transaction.nonce = await dispatch('getNextNonce');
         }
 
-
         const tx = new Tx(transaction.getApiObject(eth));
         wallet.signTransaction(tx, password);
         const serializedTx = tx.serialize();
@@ -106,7 +105,7 @@ export default {
             sendEvent.once('error', err => {
               transaction.state = 'error';
               transaction.error = err;
-              rej()
+              rej();
             });
           }),
       );
@@ -131,7 +130,7 @@ export default {
             sendEvent.once('error', err => {
               trxInList.state = 'error';
               trxInList.error = err;
-              rej()
+              rej();
             });
           }),
       );
@@ -161,7 +160,7 @@ export default {
             sendEvent.once('error', err => {
               trxInList.state = 'error';
               trxInList.error = err;
-              rej()
+              rej();
             });
           }),
       );
@@ -170,7 +169,7 @@ export default {
       const cause =
         receipt || err.includes('out of gas') ? ', because out of gas' : '';
       const { hash } = transaction;
-      const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`
+      const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`;
       const error = new NotificationError({
         title: 'Error sending transaction',
         text: `Transaction ${shortHash} was not sent${cause}`,

@@ -83,7 +83,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import erc20ABI from '@/erc20.json';
+import erc20ABI from '@/abi/erc20.json';
 import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';

@@ -31,7 +31,7 @@ export default class DebounceProvider {
           this.cache[cacheKey].buffer = [];
           dfdArr.forEach(([payload, callback]) => {
             const { id } = payload;
-            callback(e, { ...result, id })
+            callback(e, { ...result, id });
           });
         });
       };
@@ -40,7 +40,7 @@ export default class DebounceProvider {
       this.cache[cacheKey] = {
         date: new Date(),
         func,
-        buffer: [ args ],
+        buffer: [args],
       };
     }
 

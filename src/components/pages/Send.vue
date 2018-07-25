@@ -8,24 +8,23 @@
           </div>
           <div class="card-content">
             <v-form id="sendEther">
-
               <div class="field is-horizontal">
                 <div class="field-label is-normal">
                   <label class="label" for="address">To</label>
                 </div>
                 <div class="field-body">
-                  <v-input v-model="transaction.to"
+                  <v-input-address v-model="transaction.to"
+                           ref="address"
+                           label="To"
                            name="address"
-                           validator="required|address"
                            id="address"
                            aria-describedby="address"
-                           placeholder="0x..."
+                           placeholder="0x... or ENS"
                            help="Address to send to"
                            :disabled="isSending"
                            required />
                 </div>
               </div>
-
               <div class="send-amount field is-horizontal">
                 <div class="field-label is-normal">
                   <label class="label" for="amount">Amount</label>
@@ -200,7 +199,7 @@
               <div class="field is-horizontal">
                 <div class="field-label"></div>
                 <div class="field-body">
-                  <v-button @click.prevent="toggleTransactionModal"
+                  <v-button @click.prevent="fetchAddress"
                             className="is-primary is-medium"
                             :loading="isSending"
                             :disabled="isSyncing">Send</v-button>
@@ -239,6 +238,7 @@ import { mapState, mapActions } from 'vuex';
 import web3 from 'web3';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
+import VInputAddress from '@/components/ui/form/VInputAddress.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
@@ -379,6 +379,7 @@ export default {
       });
       this.updateUserNonce();
     },
+
     toggleTransactionModal() {
       this.isTransactionModal = !this.isTransactionModal;
     },
@@ -411,6 +412,20 @@ export default {
           this.isSending = false;
           this.resetForm();
         });
+    },
+    async fetchAddress() {
+      this.isSending = true;
+      try {
+        await this.$refs.address.updateENS();
+        this.toggleTransactionModal();
+      } catch (e) {
+        this.$notify({
+          title: 'Error',
+          text: e.message,
+          type: 'is-warning',
+        });
+      }
+      this.isSending = false;
     },
     confirmTransaction() {
       this.toggleTransactionModal();
@@ -466,6 +481,7 @@ export default {
     VForm,
     VButton,
     VInput,
+    VInputAddress,
     TransactionModal,
     PasswordModal,
   },
