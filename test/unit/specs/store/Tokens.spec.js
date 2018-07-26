@@ -198,7 +198,11 @@ describe('tokens', () => {
           ],
         },
       },
-      [{ type: 'saveInterval' }, { type: 'saveSubscription' }],
+      [
+        { type: 'saveActiveTokens' },
+        { type: 'saveInterval' },
+        { type: 'saveSubscription' },
+      ],
       [],
       done,
     );

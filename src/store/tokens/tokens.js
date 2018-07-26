@@ -170,7 +170,7 @@ export default {
     },
     createTokenSubscription(
       { state, commit, getters, rootState },
-      nonZerotokens,
+      nonZeroTokens,
     ) {
       commit('saveActiveTokens', []);
 
@@ -178,14 +178,14 @@ export default {
       //remove repetitive tokens
       const filteredSavedTokens = getters.savedActiveTokens.filter(
         savedToken =>
-          !nonZerotokens.find(
+          !nonZeroTokens.find(
             nonZeroToken =>
               nonZeroToken.tokenInfo.address === savedToken.address,
           ),
       );
 
       const tokensToWatch = filteredSavedTokens.concat(
-        nonZerotokens.map(nonZeroToken => ({
+        nonZeroTokens.map(nonZeroToken => ({
           address: nonZeroToken.tokenInfo.address,
         })),
       );
@@ -210,7 +210,7 @@ export default {
     },
     getNonZeroTokens({ rootState, dispatch }) {
       const address = rootState.accounts.address.getAddressString();
-      let promise = ethplorerService.getTransactions(address);
+      const promise = ethplorerService.getTransactions(address);
       promise
         .then(() => {
           dispatch(
