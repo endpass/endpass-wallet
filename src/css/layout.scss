@@ -9,7 +9,7 @@ html,body {
 
   display: grid;
   // grid-template-rows: 40px 300px auto minmax(auto, 60px);
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: auto 1fr;
   grid-template-rows: auto 1fr auto;
 
   grid-template-areas:

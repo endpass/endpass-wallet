@@ -1,16 +1,17 @@
 <template>
   <div class="nav-sidebar">
-    <div class="navbar-brand">
+    <div class="nav-sidebar-header">
       <a class="navbar-burger" @click="toggleNavMenu" :class="{'is-active':navMenuActive}">
         <span></span>
         <span></span>
         <span></span>
       </a>
-      <router-link class="logo-icon" to="/" exact>
+      <router-link class="logo logo-icon" to="/" exact>
         <img src="@/img/logo-light.png" alt="Endpass Wallet">
       </router-link>
     </div>
-    <div class="menu navbar-menu" :class="{'is-active':navMenuActive}" @click="closeNavMenu">
+
+    <div class="menu nav-sidebar-content navbar-menu" :class="{'is-active':navMenuActive}" @click="closeNavMenu">
       <div class="menu-inner">
         <ul class="menu-list">
           <li>
@@ -63,7 +64,9 @@
           </li>
         </ul>
       </div>
+    </div>
 
+    <div class="nav-sidebar-footer">
     </div>
   </div>
 </template>
@@ -100,6 +103,8 @@ export default {
 .nav-sidebar {
   height: 100%;
   background-color: $white;
+  display: grid;
+
   .menu-inner, .menu-list {
     width: 100%;
   }
@@ -107,10 +112,19 @@ export default {
     padding: 0 .75em;
   }
 
-  .navbar-burger {
-    span {
-      height: 3px;
+  .nav-sidebar-header {
+    display: flex;
+    .navbar-burger {
+      margin-left: 0;
+      margin-right: auto;
+      span {
+        height: 3px;
+      }
+    }
+    .logo {
+      flex: 1;
     }
   }
+
 }
 </style>
