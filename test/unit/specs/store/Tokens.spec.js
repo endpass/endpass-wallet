@@ -38,7 +38,7 @@ describe('tokens', () => {
     commit.mockClear();
   });
 
-  it('it should get tokens from storage', async () => {
+  it('should get tokens from storage', async () => {
     await tokens.actions.init({ commit: commitFactory(stateInstance) });
     expect(stateInstance.savedTokens['3'].length).toBe(1);
     expect(stateInstance.savedTokens['3'][0].address).toBe(
@@ -46,12 +46,20 @@ describe('tokens', () => {
     );
   });
 
-  it('it should get tokens from service', async () => {
+  it('should get tokens from service', async () => {
     endpassService.getTokensList = jest.fn(() => Promise.resolve());
 
     await actions.getAllTokens({ dispatch });
 
     expect(endpassService.getTokensList).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return an empty array if an error occurs', async () => {
+    endpassService.getTokensList = jest.fn(() => Promise.reject());
+
+    const result = await actions.getAllTokens({ dispatch });
+
+    expect(result).toEqual([]);
   });
 
   it('saves token to watch storage', () => {

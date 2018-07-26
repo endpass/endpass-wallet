@@ -179,7 +179,7 @@ export default {
     },
   },
   created() {
-    this.getAllTokens().then(tokens => {
+    this.getAllTokens().then((tokens = []) => {
       this.tokens = tokens;
     });
   },

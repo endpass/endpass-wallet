@@ -111,6 +111,8 @@ export default {
             type: 'is-warning',
           });
           dispatch('errors/emitError', error, { root: true });
+
+          return [];
         });
     },
     removeTokenFromSubscription({ commit, getters, state, dispatch }, token) {
@@ -170,9 +172,11 @@ export default {
       { state, commit, getters, rootState },
       nonZerotokens,
     ) {
+      commit('saveActiveTokens', []);
+
       const address = rootState.accounts.address.getAddressString();
       //remove repetitive tokens
-      const filteredSavedTokensTokens = getters.savedActiveTokens.filter(
+      const filteredSavedTokens = getters.savedActiveTokens.filter(
         savedToken =>
           !nonZerotokens.find(
             nonZeroToken =>
@@ -180,7 +184,7 @@ export default {
           ),
       );
 
-      const tokensToWatch = filteredSavedTokensTokens.concat(
+      const tokensToWatch = filteredSavedTokens.concat(
         nonZerotokens.map(nonZeroToken => ({
           address: nonZeroToken.tokenInfo.address,
         })),
