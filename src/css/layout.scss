@@ -13,9 +13,9 @@ html,body {
   grid-template-rows: auto 1fr auto;
 
   grid-template-areas:
-    "sidebar header"
-    "sidebar main"
-    "sidebar footer";
+    "nav header"
+    "nav main"
+    "nav footer";
 
   background: $light-grey;
   overflow-x: hidden;
@@ -25,8 +25,9 @@ html,body {
     grid-area: header;
   }
 
-  &>.app-sidebar {
-    grid-area: sidebar;
+  &>.app-nav {
+    grid-area: nav;
+
   }
 
   &>.app-content {
@@ -37,7 +38,6 @@ html,body {
     grid-area: footer;
   }
 
-
   .app-section {
   }
 
@@ -46,12 +46,13 @@ html,body {
 // Responsive layout on mobile
 @media screen and (max-width: 768px) {
   .app-container {
-    grid-template-columns: 40px 1fr;
-    grid-template-rows: 4fr auto 1fr;
+    grid-template-columns: auto;
+    grid-template-rows: 2fr 2fr auto 1fr;
     grid-template-areas:
-      "sidebar header"
-      "main main"
-      "footer footer";
+      "nav"
+      "header"
+      "main"
+      "footer";
   }
 }
 

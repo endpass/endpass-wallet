@@ -1,33 +1,27 @@
 <template>
-  <div class="app-nav navbar">
-    <div class="navbar-brand">
-    </div>
-      <div class="navbar-start">
-        <div class="navbar-item">
+  <div class="app-header-inner">
+        <div class="nav-item" v-if="!address">
           <router-link :to="{name: 'NewWallet'}" class="button
-          is-primary" v-if="!address">Create Wallet</router-link>
+          is-primary">Create Wallet</router-link>
         </div>
-      </div>
 
-      <div class="navbar-end">
-        <div class="navbar-item">
+        <div class="nav-item">
           <account-chooser v-if="address" :width="4"/>
         </div>
-        <router-link class="navbar-item"
+        <router-link class="nav-item button"
                       v-if="!email"
                       :to="{name:'LoginPage'}"
                       >
           <span class="icon is-small"
                 v-html="require('@/img/account-login.svg')"></span>Login
         </router-link>
-        <a class="navbar-item"
+        <a class="nav-item button"
                      v-else
                      to=""
                      @click.prevent="logout()">
           <span class="icon is-small"
                 v-html="require('@/img/account-logout.svg')"></span>Logout
         </a>
-      </div>
   </div>
 </template>
 
@@ -58,6 +52,13 @@ export default {
 </script>
 
 <style lang="scss">
+
+.app-header-inner {
+    display:grid;
+    grid-template-columns: 3fr 1fr;
+    grid-gap: 1rem;
+}
+
 // Navbar
 .app-nav {
   .navbar-menu {

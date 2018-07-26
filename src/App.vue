@@ -2,12 +2,12 @@
   <div id="app" class="app-container">
 
     <header class="app-header">
-      <app-nav class="app-section"></app-nav>
+      <app-header />
     </header>
 
-    <aside class="app-sidebar">
+    <nav class="app-nav">
       <nav-sidebar/>
-    </aside>
+    </nav>
 
     <main class="app-content">
         <div class="">
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import AppNav from '@/components/AppNav.vue';
+import AppHeader from '@/components/AppHeader.vue';
 import NavSidebar from '@/components/NavSidebar.vue';
 import InfoBar from '@/components/bar/InfoBar.vue';
 import QuickActions from '@/components/QuickActions.vue';
@@ -41,7 +41,7 @@ import errorHandler from '@/mixins/errorHandler';
 export default {
   name: 'App',
   components: {
-    AppNav,
+    AppHeader,
     NavSidebar,
     InfoBar,
     QuickActions,
