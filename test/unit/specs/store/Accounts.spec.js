@@ -81,11 +81,6 @@ describe('accounts store', () => {
     expect(state.balance).toBe('20');
   });
 
-  it('should set price', () => {
-    mutations.setPrice(state, '20');
-    expect(state.price).toBe('20');
-  });
-
   it('should set new settings', () => {
     expect(state.settings).not.toBe(2);
     mutations.setSettings(state, 2);

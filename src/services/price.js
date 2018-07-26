@@ -7,6 +7,9 @@ export default {
   getPrice(symbol, currencys) {
     let throttlePromice = new Promise((res, rej) => {
       throttle(() => {
+        if (symbol === 'ETH-TEST') {
+          res(0);
+        }
         axios
           .get(`https://min-api.cryptocompare.com/data/price`, {
             params: {
