@@ -3,7 +3,6 @@
 
     <header class="app-header">
       <info-bar class="app-section"></info-bar>
-      <app-header />
     </header>
 
     <nav class="app-nav">
@@ -32,7 +31,6 @@
 </template>
 
 <script>
-import AppHeader from '@/components/AppHeader.vue';
 import NavSidebar from '@/components/NavSidebar.vue';
 import InfoBar from '@/components/bar/InfoBar.vue';
 import QuickActions from '@/components/QuickActions.vue';
@@ -41,7 +39,6 @@ import errorHandler from '@/mixins/errorHandler';
 export default {
   name: 'App',
   components: {
-    AppHeader,
     NavSidebar,
     InfoBar,
     QuickActions,

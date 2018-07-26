@@ -6,6 +6,7 @@ html,body {
 }
 .app-container {
   height: 100vh;
+  width: 100vw;
 
   display: grid;
   // grid-template-rows: 40px 300px auto minmax(auto, 60px);
@@ -43,10 +44,10 @@ html,body {
 
 }
 
-// Responsive layout on mobile
-@media screen and (max-width: 768px) {
+// Responsive layout on mobile/tablet
+@media screen and (max-width: 1023px) {
   .app-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: 100%;
     grid-template-rows: 2fr 2fr auto 1fr;
     grid-template-areas:
       "nav"
@@ -122,4 +123,11 @@ html,body {
 }
 .no-margin-left {
   margin-left: 0!important;
+}
+
+.is-full-height {
+  height: 100%;
+}
+.is-full-width {
+  width: 100%;
 }

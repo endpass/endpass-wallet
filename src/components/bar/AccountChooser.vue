@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="account-chooser field has-addons">
-    <div v-if="hdWallet" class="control">
+    <div v-if="hdWallet" class="control is-expanded">
 
       <multiselect
                          :options="Object.keys(wallets)"
@@ -26,7 +26,7 @@
         {{address |truncateAddr}}
     </div>
     <div v-if="hdWallet" class="new-account control">
-      <a class="button is-primary" @click="openNewAccountModal">&plus;</a>
+      <a class="button is-primary is-medium is-fullheight" @click="openNewAccountModal">&plus;</a>
     </div>
     <new-account-modal @close="closeNewAccountModal"
       v-if="newAccountModalOpen"/>
