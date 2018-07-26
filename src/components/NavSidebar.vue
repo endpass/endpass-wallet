@@ -98,6 +98,7 @@ export default {
 
 <style lang="scss">
 .nav-sidebar {
+  height: 100%;
   background-color: $white;
   .menu-inner, .menu-list {
     width: 100%;

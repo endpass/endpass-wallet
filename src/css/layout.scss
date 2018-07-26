@@ -13,9 +13,9 @@ html,body {
   grid-template-rows: auto 1fr auto;
 
   grid-template-areas:
-    "header header"
+    "sidebar header"
     "sidebar main"
-    "footer footer";
+    "sidebar footer";
 
   background: $light-grey;
   overflow-x: hidden;
@@ -41,6 +41,18 @@ html,body {
   .app-section {
   }
 
+}
+
+// Responsive layout on mobile
+@media screen and (max-width: 768px) {
+  .app-container {
+    grid-template-columns: 40px 1fr;
+    grid-template-rows: 4fr auto 1fr;
+    grid-template-areas:
+      "sidebar header"
+      "main main"
+      "footer footer";
+  }
 }
 
 // Container for a single page in the app
