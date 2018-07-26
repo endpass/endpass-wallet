@@ -14,12 +14,12 @@
                          placeholder="Select account"
                          >
 
-                         <template slot="singleLabel" slot-scope="props">
-                           <account :address="address" :size="width" />
-                         </template>
-                         <template slot="option" slot-scope="props">
-                           <account :address="props.option" :size="width" />
-                         </template>
+                         <span class="multiselect-single" slot="singleLabel" slot-scope="props">
+                           <account :class="singleClass" :address="address" :size="width" />
+                         </span>
+                         <span class="multiselect-option" slot="option" slot-scope="props">
+                           <account :class="optionClass" :address="props.option" :size="width" />
+                         </span>
       </multiselect>
     </div>
     <div v-else-if="address" class="control">
@@ -54,7 +54,15 @@ export default {
     height: {
       type: Number,
       default: 32,
-    }
+    },
+    // Classes to set on selected single account
+    singleClass: {
+      type: Object,
+    },
+    // Classes to set on non selected options
+    optionClass: {
+      type: Object,
+    },
   },
   computed: {
     ...mapState({

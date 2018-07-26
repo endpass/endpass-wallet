@@ -51,6 +51,8 @@ export default {
     addressFmt() {
       if (this.address.length <= this.size) {
         return this.address;
+      } else if (this.size === 0) {
+        return '';
       } else {
         return '...' + this.address.substr(this.address.length - this.size);
       }
@@ -65,6 +67,18 @@ export default {
     font-size: 1.25rem;
     margin: 0;
     max-height: 32px;
+  }
+
+  &.small {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    .media-left, .media-right {
+      margin: 0;
+    }
+    .media-content {
+      display: none;
+    }
   }
 }
 
