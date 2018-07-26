@@ -2,16 +2,15 @@
   <div id="app" class="app-container">
 
     <header class="app-header">
-      <p>header</p>
+      <app-nav class="app-section"></app-nav>
     </header>
 
-    <div class="app-content">
-      <div class="columns">
-        <div class="column is-narrow no-padding-right">
-          <nav-sidebar/>
-        </div>
-        <div class="column no-padding-left">
-          <app-nav class="app-section"></app-nav>
+    <aside class="app-sidebar">
+      <nav-sidebar/>
+    </aside>
+
+    <main class="app-content">
+        <div class="">
           <info-bar class="app-section"></info-bar>
           <notifications position="top center" width="100%" :speed="500"
                                                :duration="5000" classes="app-notification"/>
@@ -21,11 +20,13 @@
             <router-view/>
           </div>
         </div>
-      </div>
-    </div>
+    </main>
 
     <footer class="app-footer">
       <quick-actions class="is-hidden-desktop"/>
+      <div class="footer-inner container is-hidden-touch">
+        <p class="small">&copy; 2018 Endpass, Inc</p>
+      </div>
     </footer>
   </div>
 </template>

@@ -53,7 +53,7 @@ export default {
 
 <style lang="scss">
 .quick-actions {
-  flex: 1;
+  //flex: 1;
 
   .navbar {
     background: $white;

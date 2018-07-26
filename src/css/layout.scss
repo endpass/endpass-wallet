@@ -5,25 +5,40 @@ html,body {
   height: 100%;
 }
 .app-container {
-  height: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  height: 100vh;
+
+  display: grid;
+  // grid-template-rows: 40px 300px auto minmax(auto, 60px);
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: auto 1fr auto;
+
+  grid-template-areas:
+    "header header"
+    "sidebar main"
+    "footer footer";
+
   background: $light-grey;
   overflow-x: hidden;
 
   // Direct child of app container, a major element
-  &>.app-section {
-    flex: 0 1 auto;
+  &>.app-header {
+    grid-area: header;
+  }
+
+  &>.app-sidebar {
+    grid-area: sidebar;
   }
 
   &>.app-content {
-    flex: 1 0 auto;
+    grid-area: main;
   }
 
   &>.app-footer {
-    position: relative;
-    margin-top: auto;
+    grid-area: footer;
+  }
+
+
+  .app-section {
   }
 
 }
