@@ -46,7 +46,7 @@ html,body {
 // Responsive layout on mobile
 @media screen and (max-width: 768px) {
   .app-container {
-    grid-template-columns: auto;
+    grid-template-columns: 100%;
     grid-template-rows: 2fr 2fr auto 1fr;
     grid-template-areas:
       "nav"

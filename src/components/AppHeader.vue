@@ -1,27 +1,31 @@
 <template>
-  <div class="app-header-inner">
-        <div class="nav-item" v-if="!address">
-          <router-link :to="{name: 'NewWallet'}" class="button
-          is-primary">Create Wallet</router-link>
-        </div>
+  <div class="level is-mobile">
+    <div class="level-left">
+      <div class="level-item" v-if="!address">
+        <router-link :to="{name: 'NewWallet'}" class="button
+        is-primary">Create Wallet</router-link>
+      </div>
 
-        <div class="nav-item">
-          <account-chooser v-if="address" :width="4"/>
-        </div>
-        <router-link class="nav-item button"
-                      v-if="!email"
-                      :to="{name:'LoginPage'}"
-                      >
-          <span class="icon is-small"
-                v-html="require('@/img/account-login.svg')"></span>Login
-        </router-link>
-        <a class="nav-item button"
-                     v-else
-                     to=""
-                     @click.prevent="logout()">
-          <span class="icon is-small"
-                v-html="require('@/img/account-logout.svg')"></span>Logout
-        </a>
+      <div class="level-item">
+        <account-chooser v-if="address" :width="4"/>
+      </div>
+    </div>
+    <div class="level-right">
+      <router-link class="level-item button"
+                   v-if="!email"
+                   :to="{name:'LoginPage'}"
+                   >
+                   <span class="icon is-small"
+                         v-html="require('@/img/account-login.svg')"></span>Login
+      </router-link>
+      <a class="level-item button"
+         v-else
+         to=""
+         @click.prevent="logout()">
+        <span class="icon is-small"
+              v-html="require('@/img/account-logout.svg')"></span>Logout
+      </a>
+    </div>
   </div>
 </template>
 
@@ -52,12 +56,6 @@ export default {
 </script>
 
 <style lang="scss">
-
-.app-header-inner {
-    display:grid;
-    grid-template-columns: 3fr 1fr;
-    grid-gap: 1rem;
-}
 
 // Navbar
 .app-nav {
