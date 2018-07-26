@@ -98,8 +98,8 @@ export default {
 
 <style lang="scss">
 .nav-sidebar {
-  background-color: #fff;
-  .menu-list {
+  background-color: $white;
+  .menu-inner, .menu-list {
     width: 100%;
   }
   .menu-label {
