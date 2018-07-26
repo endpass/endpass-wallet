@@ -6,9 +6,6 @@
         is-primary">Create Wallet</router-link>
       </div>
 
-      <div class="level-item">
-        <account-chooser v-if="address" :width="4"/>
-      </div>
     </div>
     <div class="level-right">
       <router-link class="level-item button"
@@ -31,7 +28,6 @@
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
-import AccountChooser from '@/components/bar/AccountChooser.vue';
 
 export default {
   data() {
@@ -48,9 +44,6 @@ export default {
   },
   methods: {
     ...mapActions('accounts', ['logout']),
-  },
-  components: {
-    AccountChooser,
   },
 };
 </script>

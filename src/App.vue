@@ -2,6 +2,7 @@
   <div id="app" class="app-container">
 
     <header class="app-header">
+      <info-bar class="app-section"></info-bar>
       <app-header />
     </header>
 
@@ -11,7 +12,6 @@
 
     <main class="app-content">
         <div class="">
-          <info-bar class="app-section"></info-bar>
           <notifications position="top center" width="100%" :speed="500"
                                                :duration="5000" classes="app-notification"/>
 
