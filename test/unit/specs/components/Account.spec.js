@@ -27,7 +27,7 @@ describe('Account', () => {
 
       wrapper.setProps(props);
 
-      expect(wrapper.find('.address .code').text()).toBe(address);
+      expect(wrapper.find('.address').text()).toBe(address);
     });
   });
 });
