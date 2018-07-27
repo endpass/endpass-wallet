@@ -43,7 +43,9 @@ export default {
       color: $white;
     }
     .modal-card-foot {
-      padding: 0;
+      background-color: $white;
+      padding: 2rem 1rem;
+      text-align: center;
       //border-radius: 0;
       // Full width buttons
       .buttons {

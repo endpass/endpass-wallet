@@ -54,14 +54,10 @@
       <template slot="footer">
         <div class="buttons">
           <a v-if="!providerAdded"
-             class="button is-primary"
+             class="button is-primary is-medium"
              :class="{'is-loading' : isLoading }"
              :disabled="!isFormValid"
              @click="addNewProvider">Create New Provider</a>
-          <a class="button"
-             :disabled="isLoading"
-             :class="{ 'is-primary': providerAdded }"
-             @click="close">Cancel</a>
         </div>
       </template>
 

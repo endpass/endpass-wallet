@@ -131,6 +131,7 @@ export default {
 
 .label {
   color: $medium-grey;
+  font-family: $heading-font-family;
 }
 
 .help {

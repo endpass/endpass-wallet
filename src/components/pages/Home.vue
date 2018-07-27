@@ -33,12 +33,13 @@
               <h1 class="title">Welcome</h1>
               <p class="subtitle">Get started by generating or importing an
               Ethereum wallet.</p>
-              <div class="buttons is-centered">
+              <div class="is-centered">
                 <router-link :to="{name: 'NewWallet'}" class="button
-                is-primary is-medium">Create New Wallet</router-link>
-                <router-link :to="{name: 'ImportWallet'}"
-                class="has-text-link
-              ">Import an existing wallet</router-link>
+                is-primary is-cta">Create New Wallet</router-link>
+                <div>
+                  <router-link :to="{name: 'ImportWallet'}"
+                  class="has-text-link">Import an existing wallet</router-link>
+                </div>
               </div>
             </div>
             </div>

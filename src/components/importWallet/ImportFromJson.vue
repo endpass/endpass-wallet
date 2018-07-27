@@ -34,7 +34,7 @@
              placeholder="V3 JSON keystore password"
              required />
 
-    <v-button className="is-primary is-medium"
+    <v-button className="is-primary is-cta"
               :loading="isCreating"
               @click.prevent="parseJson">Import</v-button>
   </v-form>
