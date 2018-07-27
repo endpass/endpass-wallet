@@ -47,6 +47,11 @@ describe('price store', async () => {
       null,
       {
         rootState: {
+          web3: {
+            activeCurrency: {
+              name: 'ETH',
+            },
+          },
           accounts: {
             settings: {
               fiatCurrency: 'USD',

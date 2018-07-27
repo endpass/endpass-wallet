@@ -9,9 +9,10 @@
                 <h1 class="card-header-title">Your Endpass Wallet</h1>
                 <div class="address box">
                   <div class="columns">
-                    <account 
+                    <account
                       :address="address"
                       :balance="balance"
+                      :currency="activeCurrency.name"
                     />
                     <div class="column" v-if="!isPublicAccount">
                       <p class="heading">Actions</p>
@@ -64,6 +65,7 @@ export default {
       balance: 'balance',
     }),
     ...mapState({
+      activeCurrency: state => state.web3.activeCurrency,
       address: state =>
         state.accounts.address && state.accounts.address.getAddressString(),
     }),

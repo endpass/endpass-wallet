@@ -7,7 +7,7 @@
       </p>
     </div>
     <div class="column">
-      <balance :amount="balance" />
+      <balance :amount="balance" :currency="currency" />
     </div>
   </div>
 </template>
@@ -23,6 +23,10 @@ export default {
     address: {
       type: String,
       required: true,
+    },
+    currency: {
+      type: String,
+      default: 'ETH'
     },
     balance: {
       type: String,

@@ -34,10 +34,10 @@
             </div>
           </div>
           <div class="level-item" v-if="balance !== null">
-            <balance :amount="balance" class="level-stat" />
+            <balance :amount="balance" class="level-stat" :currency="activeCurrency.name" />
           </div>
           <div class="level-item" v-if="price !== null && balance !== null">
-            <balance :amount="balance" :price="price" :decimals="2" currency="USD" v-on:update="updatePrice" class="level-stat" />
+            <balance :amount="balance" :price="price" :decimals="2" :currency="fiatCurrency" v-on:update="updatePrice" class="level-stat" />
           </div>
         </div>
       </div>
@@ -57,6 +57,8 @@ import net from '@/mixins/net';
 export default {
   computed: {
     ...mapState({
+      fiatCurrency: state => state.accounts.settings.fiatCurrency,
+      activeCurrency: state => state.web3.activeCurrency,
       price: state => state.price.price,
       address: state =>
         state.accounts.address && state.accounts.address.getAddressString(),

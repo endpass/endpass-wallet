@@ -17,7 +17,8 @@ export default {
   },
   actions: {
     updatePrice({ commit, dispatch, rootState }) {
-      let price = priceService.getEthPrice(
+      let price = priceService.getPrice(
+        rootState.web3.activeCurrency.name,
         rootState.accounts.settings.fiatCurrency,
       );
       price

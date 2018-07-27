@@ -48,6 +48,9 @@ describe('Send', () => {
         },
         web3: {
           web3: web3Instance,
+          activeCurrency: {
+            name: 'ETH',
+          },
         },
         tokens: {
           activeTokens: [
@@ -96,7 +99,6 @@ describe('Send', () => {
 
     await wrapper.vm.$validator.validateAll();
 
-    expect(errors.first('address').includes('required')).toBeTruthy();
     expect(errors.first('gasPrice').includes('between')).toBeTruthy();
     expect(errors.first('gasLimit').includes('between')).toBeTruthy();
     expect(errors.first('price').includes('between')).toBeTruthy();
@@ -119,7 +121,6 @@ describe('Send', () => {
 
     await wrapper.vm.$validator.validateAll();
 
-    expect(errors.any('address')).toBeFalsy();
     expect(errors.has('gasPrice')).toBeFalsy();
     expect(errors.has('gasLimit')).toBeFalsy();
     expect(errors.has('price')).toBeFalsy();
@@ -138,7 +139,6 @@ describe('Send', () => {
 
     await wrapper.vm.$validator.validateAll();
 
-    expect(errors.first('address').includes('not a valid')).toBeTruthy();
     expect(errors.first('gasPrice').includes('numeric')).toBeTruthy();
     expect(errors.first('gasLimit').includes('numeric')).toBeTruthy();
     expect(errors.first('price').includes('between')).toBeTruthy();

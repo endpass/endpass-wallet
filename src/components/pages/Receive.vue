@@ -9,6 +9,7 @@
           <div class="card-content">
             <p>Your Wallet Address:</p>
             <account
+              :currency="activeCurrency.name"
               :address="address"
               :balance="balance"
             />
@@ -52,6 +53,7 @@ export default {
   },
   computed: {
     ...mapState({
+      activeCurrency: state => state.web3.activeCurrency,
       address: state =>
         state.accounts.address && state.accounts.address.getAddressString(),
     }),
