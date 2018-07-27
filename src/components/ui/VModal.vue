@@ -1,6 +1,7 @@
 <template lang="html">
   <div class="modal is-active">
     <div class="modal-background" @click="close"></div>
+    <div class="modal-logo"></div>
     <div class="modal-card">
       <div class="modal-card-head">
         <h3 class="modal-card-title">
@@ -80,6 +81,22 @@ export default {
     &:hover,&.is-hoevered {
       background-color: lighten($purple, 5%);
       transition: background-color .2s ease-in;
+    }
+  }
+
+  .modal-logo {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 240px;
+    height: 80px;
+    background-size: cover;
+    background-image: url("/static/logo-dark.png");
+  }
+  @media screen and (max-width: 1023px) {
+    .modal-logo {
+      width: 144px;
+      height: 48px;
     }
   }
 }

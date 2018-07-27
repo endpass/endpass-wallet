@@ -27,7 +27,7 @@
         </div>
 
         <div class="section" v-else>
-          <div class="container has-text-centered">
+          <div class="has-text-centered">
             <div class="card app-card main-app-card">
             <div class="card-content">
               <h1 class="title">Welcome</h1>
@@ -36,8 +36,9 @@
               <div class="buttons is-centered">
                 <router-link :to="{name: 'NewWallet'}" class="button
                 is-primary is-medium">Create New Wallet</router-link>
-                <router-link :to="{name: 'ImportWallet'}" class="button
-              is-light is-medium">Import an existing wallet</router-link>
+                <router-link :to="{name: 'ImportWallet'}"
+                class="has-text-link
+              ">Import an existing wallet</router-link>
               </div>
             </div>
             </div>
