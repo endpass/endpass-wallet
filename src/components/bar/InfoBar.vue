@@ -1,36 +1,23 @@
 <template>
   <div class="section info-bar" :class="networkClass">
-    <div class="container">
-      <div class="level">
-        <div class="level-left">
-          <div class="level-item">
-            <div class="level-control">
-              <p class="heading">Currency</p>
-              <currency-select/>
-            </div>
-          </div>
-          <div class="level-item">
-            <div class="level-control">
-              <p class="heading">Network</p>
-              <provider-select/>
-            </div>
-          </div>
-          <div class="level-item">
-            <div class="level-control">
-              <sync-status/>
-            </div>
-          </div>
-        </div>
+    <div class="info-item">
+      <p class="heading">Currency</p>
+      <currency-select/>
+    </div>
+    <div class="info-item">
+      <p class="heading">Network</p>
+      <provider-select/>
+    </div>
+    <div class="info-item">
+      <sync-status/>
+    </div>
 
-        <div class="level-right">
-          <div class="level-item" v-if="balance !== null">
-            <balance :amount="balance" class="level-stat" :currency="activeCurrency.name" />
-          </div>
-          <div class="level-item" v-if="price !== null && balance !== null">
-            <balance :amount="balance" :price="price" :decimals="2" :currency="fiatCurrency" v-on:update="updatePrice" class="level-stat" />
-          </div>
-        </div>
-      </div>
+    <div class="info-item" v-if="balance !== null">
+      <balance :amount="balance" class="level-stat" :currency="activeCurrency.name" />
+    </div>
+    <div class="info-item" v-if="price !== null && balance !== null">
+      <balance :amount="balance" :price="price" :decimals="2"
+      :currency="fiatCurrency" v-on:update="updatePrice" class="level-stat" />
     </div>
   </div>
 </template>
@@ -73,8 +60,16 @@ export default {
 
 <style lang="scss">
 .info-bar {
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: 1em;
+  grid-template-columns: repeat(auto-fill, minmax(100px,1fr));
+  justify-content: center;
+  align-items: center;
+
   padding: 0.25rem 1rem;
   color: $white;
+
   &.mainnet {
     background-color: $dark-blue;
   }
@@ -87,5 +82,10 @@ export default {
   .title {
     color: $white;
   }
+}
+
+.info-bar-item {
+  min-width: 0;
+  white-space: nowrap;
 }
 </style>
