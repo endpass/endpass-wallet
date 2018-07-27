@@ -1,11 +1,8 @@
 <template>
-	<div>
-		<p class="heading">Block</p>
-		<div class="tags has-addons">
-		  <span class="tag">{{blockNumber}}</span>
-			<span class="tag" :class="'is-'+appStatus"></span>
-		</div>
-	</div>
+  <div class="sync-status">
+    <p class="heading">Block</p>
+    <span class="tag" :class="'is-'+appStatus">{{blockNumber}}</span>
+  </div>
 </template>
 <script>
 import { mapState, mapGetters } from 'vuex';
@@ -21,5 +18,10 @@ export default {
   },
 };
 </script>
-<style>
+
+<style lang="scss">
+.sync-status .tag {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
 </style>

@@ -1,12 +1,18 @@
 <template>
   <div class="section info-bar" :class="networkClass">
     <div class="info-item">
-      <p class="heading">Currency</p>
-      <currency-select/>
+      <div class="field">
+        <p class="heading">Currency</p>
+        <div class="control is-expanded">
+          <currency-select/>
+        </div>
+      </div>
     </div>
     <div class="info-item">
-      <p class="heading">Network</p>
-      <provider-select/>
+      <div class="field">
+        <p class="heading">Network</p>
+        <provider-select/>
+      </div>
     </div>
     <div class="info-item">
       <sync-status/>
@@ -61,11 +67,10 @@ export default {
 <style lang="scss">
 .info-bar {
   display: grid;
-  grid-auto-flow: column;
   grid-gap: 1em;
   grid-template-columns: repeat(auto-fill, minmax(100px,1fr));
+  grid-template-rows: 1fr;
   justify-content: center;
-  align-items: center;
 
   padding: 0.25rem 1rem;
   color: $white;
