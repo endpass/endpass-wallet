@@ -68,5 +68,19 @@ export default {
   &:not(.is-multiple):not(.is-loading)::after {
     border-color: $primary;
   }
+  .field .is-naked &, form .is-naked &, .modal .is-naked & {
+    select {
+      background-color: transparent;
+      color: $white;
+      border: none;
+      &.is-active,&:active,&.is-focused,&:focus {
+        border: 1px solid $white;
+        box-shadow: none;
+      }
+    }
+    &::after, &:hover::after {
+      border-color: $white;
+    }
+  }
 }
 </style>

@@ -161,5 +161,14 @@ export default {
     border-bottom: 1px solid $danger;
     box-shadow: 0 1px 0 0 $danger;
   }
+
+  .field .is-naked &, form .is-naked &, .modal .is-naked & {
+    background-color: transparent;
+    border-bottom-width: 2px;
+    border-bottom-color: $white;
+    &::placeholder {
+      color: $medium-grey;
+    }
+  }
 }
 </style>

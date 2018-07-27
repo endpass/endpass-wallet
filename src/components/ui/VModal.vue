@@ -57,4 +57,51 @@ export default {
     }
   }
 }
+
+.modal.is-dark {
+  .modal-background {
+    background-color: $purple;
+  }
+
+  .modal-card {
+    .modal-card-head {
+      background-color: white;
+      border-bottom: 1px solid $purple;
+      color: $purple;
+    }
+
+    .modal-card-title {
+      color: $purple;
+    }
+  }
+
+  .delete {
+    background-color: $purple;
+    &:hover,&.is-hoevered {
+      background-color: lighten($purple, 5%);
+      transition: background-color .2s ease-in;
+    }
+  }
+}
+
+.modal.is-naked {
+  .modal-card {
+    .modal-card-head, .modal-card-foot, .modal-card-body {
+      background-color: transparent;
+      color: $white;
+    }
+    .modal-card-title {
+      color: $white;
+    }
+
+    .modal-card-body {
+      .label {
+        color: $white;
+      }
+    }
+  }
+  .delete {
+    background-color: transparent;
+  }
+}
 </style>
