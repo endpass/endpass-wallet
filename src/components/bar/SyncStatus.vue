@@ -1,6 +1,5 @@
 <template>
   <div class="sync-status">
-    <p class="heading">Block</p>
     <span class="tag" :class="'is-'+appStatus">{{blockNumber}}</span>
   </div>
 </template>
@@ -20,8 +19,11 @@ export default {
 </script>
 
 <style lang="scss">
-.sync-status .tag {
-  font-weight: 600;
-  font-size: 0.9rem;
+.sync-status {
+  display: inline-block;
+	.tag {
+		font-weight: 600;
+		font-size: 0.9rem;
+	}
 }
 </style>

@@ -11,17 +11,26 @@
     <div class="info-item">
       <div class="field">
         <p class="heading">Network</p>
-        <provider-select/>
+        <div class="control is-expanded">
+					<provider-select/>
+				</div>
       </div>
     </div>
     <div class="info-item">
-      <sync-status/>
+      <div class="field">
+				<p class="heading">Block</p>
+				<div class="control is-expanded">
+					<sync-status/>
+				</div>
+      </div>
     </div>
 
     <div class="info-item" v-if="balance !== null">
+			<p class="heading">Balance</p>
       <balance :amount="balance" class="level-stat" :currency="activeCurrency.name" />
     </div>
     <div class="info-item" v-if="price !== null && balance !== null">
+			<p class="heading">Value</p>
       <balance :amount="balance" :price="price" :decimals="2"
       :currency="fiatCurrency" v-on:update="updatePrice" class="level-stat" />
     </div>
@@ -71,6 +80,7 @@ export default {
   grid-template-columns: repeat(auto-fill, minmax(100px,1fr));
   grid-template-rows: 1fr;
   justify-content: center;
+  align-items: stretch;
 
   padding: 0.25rem 1rem;
   color: $white;
