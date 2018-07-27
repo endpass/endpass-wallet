@@ -75,6 +75,11 @@ html,body {
   }
 }
 
+// Make containers responsive by default
+.container {
+  width: 100%;
+}
+
 // Narrower containers
 .container.is-narrow {
   max-width: 600px;
