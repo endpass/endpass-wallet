@@ -111,6 +111,8 @@ export default {
             type: 'is-warning',
           });
           dispatch('errors/emitError', error, { root: true });
+
+          return [];
         });
     },
     removeTokenFromSubscription({ commit, getters, state, dispatch }, token) {
@@ -168,20 +170,22 @@ export default {
     },
     createTokenSubscription(
       { state, commit, getters, rootState },
-      nonZerotokens,
+      nonZeroTokens,
     ) {
+      commit('saveActiveTokens', []);
+
       const address = rootState.accounts.address.getAddressString();
       //remove repetitive tokens
-      const filteredSavedTokensTokens = getters.savedActiveTokens.filter(
+      const filteredSavedTokens = getters.savedActiveTokens.filter(
         savedToken =>
-          !nonZerotokens.find(
+          !nonZeroTokens.find(
             nonZeroToken =>
               nonZeroToken.tokenInfo.address === savedToken.address,
           ),
       );
 
-      const tokensToWatch = filteredSavedTokensTokens.concat(
-        nonZerotokens.map(nonZeroToken => ({
+      const tokensToWatch = filteredSavedTokens.concat(
+        nonZeroTokens.map(nonZeroToken => ({
           address: nonZeroToken.tokenInfo.address,
         })),
       );
@@ -206,7 +210,7 @@ export default {
     },
     getNonZeroTokens({ rootState, dispatch }) {
       const address = rootState.accounts.address.getAddressString();
-      let promise = ethplorerService.getTransactions(address);
+      const promise = ethplorerService.getTransactions(address);
       promise
         .then(() => {
           dispatch(

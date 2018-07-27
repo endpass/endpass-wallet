@@ -14,6 +14,7 @@ localVue.use(Notifications);
 describe('TokensPage', () => {
   let wrapper;
   let actions;
+  let getters;
   let store;
   let options;
   let tokens;
@@ -39,6 +40,10 @@ describe('TokensPage', () => {
       getAllTokens: jest.fn(() => tokens),
     };
 
+    getters = {
+      savedActiveTokens: () => [{}],
+    };
+
     store = new Vuex.Store({
       modules: {
         accounts: {
@@ -56,6 +61,7 @@ describe('TokensPage', () => {
             prices: null,
           },
           actions,
+          getters,
         },
         price: {
           namespaced: true,

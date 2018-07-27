@@ -24,8 +24,9 @@
                     <search-input v-model="search" />
                   </div>
                   <v-spinner
+                    :is-loading="isLoading"
                     class="spinner-block"
-                    :is-loading="!activeTokens.length"/>
+                  />
                   <div class="scroller">
                     <a
                       v-for="(token, index) in userTokenList"
@@ -90,7 +91,7 @@ import Balance from '@/components/Balance';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/AddTokenModal';
 import VSpinner from '@/components/ui/VSpinner';
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'tokens-page',
@@ -111,6 +112,10 @@ export default {
       ethPrice: state => state.price.price,
       currency: state => state.accounts.settings.fiatCurrency,
     }),
+    ...mapGetters('tokens', ['savedActiveTokens']),
+    isLoading() {
+      return this.savedActiveTokens.length > this.activeTokens.length;
+    },
     filteredTokens() {
       return this.tokens.filter(
         token =>
@@ -179,7 +184,7 @@ export default {
     },
   },
   created() {
-    this.getAllTokens().then(tokens => {
+    this.getAllTokens().then((tokens = []) => {
       this.tokens = tokens;
     });
   },
