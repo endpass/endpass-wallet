@@ -44,6 +44,11 @@ export default {
     QuickActions,
   },
   mixins: [errorHandler],
+  mounted() {
+    this.$intercom.boot();
+    // TODO configure and enable
+    //this.$intercom.show();
+  },
 };
 </script>
 
