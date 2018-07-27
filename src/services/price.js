@@ -1,14 +1,16 @@
 import axios from 'axios';
 import throttledQueue from 'throttled-queue';
 import { serviceThrottleTimeout } from '@/config';
-let throttle = throttledQueue(1, serviceThrottleTimeout);
+let throttle = throttledQueue(3, serviceThrottleTimeout);
 
 export default {
   getPrice(symbol, currencys) {
     let throttlePromice = new Promise((res, rej) => {
       throttle(() => {
         if (symbol === 'ETH-TEST') {
-          res(0);
+          let resp = {};
+          resp[currencys] = 0;
+          res(resp);
         }
         axios
           .get(`https://min-api.cryptocompare.com/data/price`, {

@@ -39,7 +39,8 @@ export default {
       validatingEns: false,
       getNameTimeout: null,
       pendingEns: false,
-      ens
+      ens,
+      value: ''
     }
   },
   name: 'v-input',
@@ -47,10 +48,6 @@ export default {
     id: {
       type: String,
       default: null,
-    },
-    value: {
-      type: String,
-      default: '',
     },
     required: {
       type: Boolean,

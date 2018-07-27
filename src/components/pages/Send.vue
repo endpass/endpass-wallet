@@ -42,7 +42,7 @@
                            required>
                     <span class="select" slot="addon">
                       <select v-model="transaction.tokenInfo">
-                        <option :value="undefined">ETH</option>
+                        <option :value="undefined">{{activeCurrency.name}}</option>
                         <option
                               :value="token"
                               v-for="token in tokens"
@@ -182,7 +182,7 @@
                       <label class="label">Data</label>
                     </div>
                     <div class="field-body">
-                      <v-input v-show="selectedToken === 'ETH'"
+                      <v-input v-show="!transaction.tokenInfo"
                                v-model="transaction.data"
                                name="data"
                                validator="required|hex"
@@ -254,7 +254,6 @@ const defaultTnx = {
 
 export default {
   data: () => ({
-    selectedToken: 'ETH',
     isSending: false,
     transaction: new Transaction(defaultTnx),
     estimateGasCost: 0,
@@ -272,6 +271,7 @@ export default {
       balance: state => state.accounts.balance,
       address: state => state.accounts.address.getAddressString(),
       tokens: state => state.tokens.activeTokens,
+      activeCurrency: state => state.web3.activeCurrency,
       web3: state => state.web3.web3,
       isSyncing: state => !!state.web3.isSyncing,
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
@@ -462,7 +462,7 @@ export default {
         }
       },
     },
-    selectedToken() {
+    'transaction.tokenInfo'() {
       this.updateEstimateGasCost();
     },
   },
