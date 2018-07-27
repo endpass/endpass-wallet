@@ -4,7 +4,7 @@
       <template slot="header">Add New Provider</template>
 
       <div v-if="!providerAdded">
-	      <v-form>
+	      <v-form :submitHandler="addNewProvider">
 
           <v-input v-model="provider.name"
                    v-validate="'required'"
@@ -57,6 +57,7 @@
              class="button is-primary is-medium"
              :class="{'is-loading' : isLoading }"
              :disabled="!isFormValid"
+             type="button"
              @click="addNewProvider">Create New Provider</a>
         </div>
       </template>

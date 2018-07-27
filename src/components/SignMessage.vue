@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-form id="signing-message-form">
+    <v-form id="signing-message-form" :sumbmitHandler="togglePasswordModal">
       <v-textarea
         v-model="message"
         label="Message"
@@ -8,8 +8,7 @@
       />
       <v-button
         className="is-primary is-medium"
-        :disabled="!message"
-        @click.prevent="togglePasswordModal">Sign message</v-button>
+        :disabled="!message">Sign message</v-button>
       <v-textarea
         v-if="signedMessage"
         v-model="getSignedMessage"

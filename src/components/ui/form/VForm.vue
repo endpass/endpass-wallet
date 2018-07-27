@@ -1,5 +1,5 @@
 <template>
-  <form :id="id">
+  <form :id="id" @submit.prevent="submit">
     <slot />
   </form>
 </template>
@@ -12,6 +12,10 @@ export default {
       type: String,
       default: null,
     },
+    submitHandler: {
+      type: Function,
+      default: null
+    }
   },
   inject: ['$validator'],
   provide() {
@@ -46,6 +50,16 @@ export default {
     },
   },
   methods: {
+    submit() {
+      if (this.isFormValid) {
+        this.submitHandler();
+      }
+      this.$notify({
+        title: 'Form invalid',
+        text: 'Please correct errors.',
+        type: 'is-warning',
+      });
+    },
     validateFrom() {
       this.$emit('formValid', this.isFormValid());
     },

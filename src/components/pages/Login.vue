@@ -2,7 +2,7 @@
   <base-page>
     <template slot="title">Login/Register</template>
 
-    <v-form id="login" v-if="!isSuccess">
+    <v-form id="login" :sumbmitHandler="handleLogin" v-if="!isSuccess">
 
       <v-input v-model="email"
                label="Email"
@@ -19,8 +19,7 @@
         and <a href="https://endpass.com/privacy/" target="_blank">Privacy Policy</a>
       </v-checkbox>
 
-      <v-button @click.prevent="handleLogin"
-                id="send-button"
+      <v-button id="send-button"
                 className="is-primary is-medium"
                 :disabled="!termsAccepted"
                 :loading="isSending">Send</v-button>

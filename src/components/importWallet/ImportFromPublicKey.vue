@@ -1,5 +1,5 @@
 <template>
-  <v-form>
+  <v-form :submitHandler="addWalletWithAddress">
     <v-input v-model="address"
              label="Address"
              id="address"
@@ -12,8 +12,7 @@
              required />
 
     <v-button className="is-primary is-cta"
-              :loading="isCreating"
-              @click.prevent="addWalletWithAddress">Import</v-button>
+              :loading="isCreating">Import</v-button>
   </v-form>
 </template>
 

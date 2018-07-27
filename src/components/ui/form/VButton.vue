@@ -1,13 +1,13 @@
 <template>
   <div class="field">
     <div class="control">
-      <a :id="id"
+      <button :id="id"
          :disabled="!form.isFormValid || disabled"
          class="button"
-         :class="[...classes, {'is-loading' : loading }]"
-         @click.prevent="processClick">
+         :type="type"
+         :class="[...classes, {'is-loading' : loading }]">
         <slot />
-      </a>
+      </button>
     </div>
   </div>
 </template>
@@ -32,6 +32,10 @@ export default {
       type: String,
       default: '',
     },
+    type: {
+      type: String,
+      default: 'submit'
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -45,20 +49,7 @@ export default {
     classes() {
       return this.className.split(' ');
     },
-  },
-  methods: {
-    processClick($event) {
-      if (this.form.isFormValid) {
-        this.$emit('click', $event);
-        return;
-      }
-      this.$notify({
-        title: 'Form invalid',
-        text: 'Please correct errors.',
-        type: 'is-warning',
-      });
-    },
-  },
+  }
 };
 </script>
 

@@ -2,7 +2,7 @@
   <base-page class="settings-page">
     <template slot="title">Settings</template>
 
-    <v-form id="save-settings" class="save-settings">
+    <v-form id="save-settings" class="save-settings" :sumbmitHandler="updateSettings">
       <v-select v-model="newSettings.fiatCurrency"
                 label="Fiat Currency"
                 name='fiatCurrency'
@@ -10,8 +10,7 @@
 
       <v-button id="save-button"
                 className="is-primary is-medium"
-                :disabled="!isSettingsChange"
-                @click.prevent="updateSettings(newSettings)">Save</v-button>
+                :disabled="!isSettingsChange">Save</v-button>
     </v-form>
     <two-factor-auth-settings/>
   </base-page>
@@ -43,8 +42,8 @@ export default {
     ...mapActions('accounts', {
       updateSettingsInStore: 'updateSettings',
     }),
-    updateSettings(settings) {
-      this.updateSettingsInStore(settings).then(() => {
+    updateSettings() {
+      this.updateSettingsInStore(this.newSettings).then(() => {
         this.$notify({
           title: 'Successful',
           text: 'Settings was saved',

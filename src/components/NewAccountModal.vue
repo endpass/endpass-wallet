@@ -8,7 +8,7 @@
         <strong>{{wallets.length}}</strong> active addresses in your wallet.</p>
         <p class="subtitle">Click the button below to create an additional
       address you can use to receive Ethereum and tokens.</p>
-        <v-form>
+        <v-form :sumbmitHandler="createNewAccount">
         <v-input v-model="currentWalletPassword"
                  label="Current wallet password"
                  name="currentWalletPassword"
@@ -28,8 +28,7 @@
                  placeholder="New wallet password"
                  required></v-input>
          <v-button :loading="createdingAccount"
-                   className="is-primary is-medium"
-                   @click.prevent="createNewAccount">Create address</v-button>
+                   className="is-primary is-medium">Create address</v-button>
         </v-form>
       </div>
       <div v-else>
