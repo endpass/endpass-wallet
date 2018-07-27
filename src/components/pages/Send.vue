@@ -268,6 +268,7 @@ export default {
   }),
   computed: {
     ...mapState({
+      tokenPrices: state => state.tokens.prices,
       balance: state => state.accounts.balance,
       address: state => state.accounts.address.getAddressString(),
       tokens: state => state.tokens.activeTokens,
@@ -283,8 +284,9 @@ export default {
 
         if (this.lastInputPrice === 'fiat' && value > 0) {
           const { price, ethPrice, decimal } = this;
+          let tokenPrice = this.actualPrice;
           return BigNumber(price)
-            .div(ethPrice)
+            .div(tokenPrice)
             .toFixed(decimal);
         }
 
@@ -293,8 +295,9 @@ export default {
       set(newValue) {
         this.transaction.value = newValue;
         this.lastInputPrice = 'amount';
+        let price = this.actualPrice;
         this.priceInFiat = BigNumber(newValue || '0')
-          .times(this.ethPrice)
+          .times(price)
           .toFixed(2);
 
         this.$nextTick(() => this.$validator.validate('price'));
@@ -304,8 +307,9 @@ export default {
       get() {
         if (this.lastInputPrice === 'amount' && this.priceInFiat > 0) {
           const { value, ethPrice } = this;
+          let price = this.actualPrice;
           return BigNumber(value)
-            .times(ethPrice)
+            .times(price)
             .toFixed(2);
         }
 
@@ -314,12 +318,23 @@ export default {
       set(newValue) {
         this.priceInFiat = newValue;
         this.lastInputPrice = 'fiat';
+        let price = this.actualPrice;
         this.transaction.value = BigNumber(newValue || '0')
-          .div(this.ethPrice)
+          .div(price)
           .toFixed(newValue > 0 ? this.decimal : 0);
 
         this.$nextTick(() => this.$validator.validate('value'));
       },
+    },
+    actualPrice() {
+      let price;
+      if(this.transaction.tokenInfo) {
+        price = this.tokenPrices[this.transaction.tokenInfo.symbol] && this.tokenPrices[this.transaction.tokenInfo.symbol][this.activeCurrency.name] ?
+        BigNumber(this.tokenPrices[this.transaction.tokenInfo.symbol][this.activeCurrency.name]).times(this.ethPrice) : 0;
+      } else {
+        price = this.ethPrice;
+      }
+      return price.toFixed();
     },
     maxAmount() {
       if (this.transaction.tokenInfo) {
