@@ -30,6 +30,7 @@ global.localStorage = localStorageMock;
 
 //Fake action from antoher storage
 store.actions['tokens/subscribeOnTokenUpdates'] = jest.fn();
+store.actions['errors/emitError'] = jest.fn();
 
 const { state, mutations, actions } = store;
 
@@ -147,18 +148,20 @@ describe('accounts store', () => {
 
   it('should call mutation from update settings action', async () => {
     const commit = jest.fn();
+    const dispatch = jest.fn();
     const state = {};
 
-    await actions.updateSettings({ commit, state }, '123');
+    await actions.updateSettings({ commit, state, dispatch }, '123');
 
     expect(commit.mock.calls[0]).toEqual(['setSettings', '123']);
   });
 
   it('should update storage from update settings action', async () => {
     const commit = jest.fn();
+    const dispatch = jest.fn();
     const state = {};
 
-    await actions.updateSettings({ commit, state }, '123');
+    await actions.updateSettings({ commit, state, dispatch }, '123');
 
     const { settings } = localStorageMock.store;
 
