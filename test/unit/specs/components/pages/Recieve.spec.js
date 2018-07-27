@@ -24,6 +24,9 @@ describe('ReceivePage', () => {
       state: {
         web3: {
           web3,
+          activeCurrency: {
+            name: 'ETH',
+          },
         },
       },
       actions,
