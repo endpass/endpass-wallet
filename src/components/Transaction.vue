@@ -1,65 +1,70 @@
 <template lang="html">
-  <div class="transaction" :class="'is-'+transaction.state">
+  <div class="transaction" :class="statusClass">
     <div class="card">
       <div class="card-header">
-        <p class="card-header-title">
-        {{transaction.hash}}
-        </p>
-        <div class="card-header-icon" :title="transaction.state">
-          <span v-if="transaction.state === 'success'"
-                class="icon has-text-success is-medium"
-                v-html="require('@/img/circle-check.svg')"></span>
-          <span v-else-if="transaction.state === 'canceled'"
-                class="icon has-text-danger is-medium"
-                v-html="require('@/img/ban.svg')"></span>
-          <span v-else-if="transaction.state === 'pending'" class="icon is-medium"
-                v-html="require('@/img/ellipses.svg')"></span>
-          <span v-else-if="transaction.state === 'error'"
-                class="icon has-text-danger is-medium"
-                v-html="require('@/img/warning.svg')"></span>
-        </div>
+          <a @click="toggleExpanded" class="card-header-link level is-mobile">
+            <div class="level-item">
+            {{transaction.hash | truncateHash}}
+            </div>
+
+            <div class="level-item" :class="{'has-text-success': recieve,
+            'has-text-danger': !recieve}">
+              <span class="is-size-4" v-text="recieve ? '+' : '-'"></span>
+              <balance :amount="transaction.value" :currency="symbol"></balance>
+            </div>
+          </a>
+
+          <div class="level is-mobile">
+            <div class="level-item">
+              <p class="received" title="Received" v-if="recieve">
+                <span class="icon is-medium"
+                      v-html="require('@/img/arrow-thick-right.svg')"></span>
+              </p>
+              <span v-if="recieve" class="heading">Received</span>
+              <p class="sent" title="Sent" v-else>
+                <span class="icon is-medium"
+                      v-html="require('@/img/arrow-thick-left.svg')"></span>
+              </p>
+              <span v-if="!recieve" class="heading">Sent</span>
+            </div>
+
+            <p class="date level-item">{{date.fromNow()}}</p>
+          </div>
       </div>
-      <div class="card-content">
-        <div class="columns">
-          <div class="column">
-            <span class="heading">{{transaction.state}}</span>
-            <p v-if="transaction.date">
-              <span class="text-label">Date</span>
-              <span class="date">{{transaction.date.toLocaleString()}}</span>
-            </p>
+      <div class="card-content" v-if="isExpanded">
+        <div v-if="transaction.hash.length">
+          <span class="text-label">Txid</span>
+          <p class="code">{{transaction.hash}}</p>
+        </div>
+        <div>
+          <span class="heading status-text">{{transaction.state}}</span>
+        </div>
 
-            <p v-if="recieve">
-              <span class="text-label">From</span>
-              <span class="address">{{transaction.from}}</span>
-            </p>
-            <p v-else>
-              <span class="text-label">To</span>
-              <span class="address">{{transaction.to}}</span>
-            </p>
-            <p v-if="transaction.nonce">
-              <span class="text-label">Nonce</span>
-              <span class="address">{{transaction.nonce}}</span>
-            </p>
-            <p v-if="transaction.data">
-              {{parseData(transaction.data)}}
-            </p>
-          </div>
+        <div v-if="date">
+          <span class="text-label">Date</span>
+          <p class="date">{{date.format("YYYY-MM-DD H:mm")}}</p>
+        </div>
 
-          <div class="column is-one-third">
-            <p>
-              <balance :amount="transaction.value" :currency="(transaction.tokenInfo && transaction.tokenInfo.symbol) || 'ETH'"></balance>
-            </p>
-            <p class="received" v-if="recieve">
-              <span class="icon is-medium"
-                    v-html="require('@/img/arrow-thick-right.svg')"></span>
-              <span class="heading">Received</span>
-            </p>
-            <p class="sent" v-else>
-              <span class="icon is-medium"
-                    v-html="require('@/img/arrow-thick-left.svg')"></span>
-              <span class="heading">Sent</span>
-            </p>
-          </div>
+        <div v-if="recieve">
+          <span class="text-label">From</span>
+          <p class="code address">{{transaction.from}}</p>
+        </div>
+
+        <div v-else>
+          <span class="text-label">To</span>
+          <p class="code address">{{transaction.to}}</p>
+        </div>
+
+        <div>
+          <span class="text-label">Nonce</span>
+          <span class="">{{transaction.nonce}}</span>
+        </div>
+
+        <div v-if="transaction.data">
+          <span class="text-label">Data</span>
+          <span class="code">
+            {{parseData(transaction.data)}}
+          </span>
         </div>
       </div>
       <div v-if="transaction.state === 'pending'  && !isPublicAccount" class="card-footer">
@@ -89,13 +94,16 @@ import ResendModal from './ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import error from '@/mixins/error';
+import moment from 'moment';
 window.web3 = web3
+
 export default {
   props: ['transaction'],
   data() {
     return {
       resendModalOpen: false,
       passwordModalOpen: false,
+      isExpanded: false, // details are expanded
       transactionToSend: null,
       state: null,
     };
@@ -110,6 +118,32 @@ export default {
     ...mapGetters('accounts', ['isPublicAccount']),
     recieve() {
       return this.transaction.to === this.address;
+    },
+    isSuccess() {
+      return this.transaction.state === 'success';
+    },
+    isError() {
+      return this.transaction.state === 'error'
+      || this.state === 'error'
+      || this.state === 'canceled';
+    },
+    isPending() {
+      return this.transaction.state === 'pending';
+    },
+    // Dynamic class based on transaction status
+    statusClass() {
+      return {
+        'is-success': this.isSuccess,
+        'is-warning': this.isPending,
+        'is-danger': this.isError,
+      }
+    },
+    symbol() {
+      return (this.transaction.tokenInfo && this.transaction.tokenInfo.symbol) || 'ETH'
+    },
+    // Returns date as a moment.js object
+    date() {
+      return moment(this.transaction.date);
     },
   },
   methods: {
@@ -149,6 +183,9 @@ export default {
       this.transactionToSend = transaction;
       this.requestPassword();
     },
+    toggleExpanded() {
+      this.isExpanded = !this.isExpanded;
+    },
     closeResendModal() {
       this.resendModalOpen = false;
     },
@@ -167,6 +204,13 @@ export default {
       return web3.utils.hexToString(dataString);
     },
   },
+  filters: {
+    truncateHash(value) {
+      if (!value) return '';
+      value = value.toString();
+      return `${value.substr(0, 4)}...${value.substr(value.length - 8)}`;
+    },
+  },
   components: {
     Balance,
     ResendModal,
@@ -183,31 +227,32 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  &.is-cancelled .card {
+  &.is-danger .card {
     border-top-color: $danger;
-    .card-header-icon .icon svg {
-      fill: $danger;
-    }
     .status-text {
       color: $danger;
     }
   }
-  &.is-pending .card {
+  &.is-warning .card {
     border-top-color: $warning;
-    .card-header-icon .icon svg {
-      fill: $warning;
-    }
     .status-text {
       color: $warning;
     }
   }
-  &.is-confirmed .card {
+  &.is-success .card {
     border-top-color: $success;
-    .card-header-icon .icon svg {
-      fill: $success;
-    }
     .status-text {
       color: $success;
+    }
+  }
+
+  .card-header {
+    flex-direction: column;
+    .card-header-link {
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(75, 4, 114, .2);
+      }
     }
   }
 
@@ -225,6 +270,12 @@ export default {
   .text-label {
     color: lighten($dark-grey, 20%);
     margin-right: 0.2em;
+  }
+
+  .card-header-title {
+    * {
+      margin-left: 0.5rem;
+    }
   }
 }
 </style>

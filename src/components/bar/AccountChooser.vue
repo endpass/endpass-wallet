@@ -1,20 +1,32 @@
 <template lang="html">
   <div class="account-chooser field has-addons">
-    <div v-if="hdWallet" class="control">
-      <div class="select">
-        <select v-model="activeAddress">
-          <option value="" v-for="(wallet, key, index) in wallets"
-                  :value="key">
-          {{index}}. {{key |truncateAddr}}
-          </option>
-        </select>
-      </div>
+    <div v-if="hdWallet" class="control is-expanded">
+
+      <multiselect
+                         :options="Object.keys(wallets)"
+                         label="Account"
+                         :option-height="height"
+                         :searchable="false"
+                         :show-labels="false"
+                         :allow-empty="false"
+                         :value="activeAddress"
+                         @select="selectWallet"
+                         placeholder="Select account"
+                         >
+
+                         <span class="multiselect-single" slot="singleLabel" slot-scope="props">
+                           <account :class="singleClass" :address="address" :size="width" />
+                         </span>
+                         <span class="multiselect-option" slot="option" slot-scope="props">
+                           <account :class="optionClass" :address="props.option" :size="width" />
+                         </span>
+      </multiselect>
     </div>
     <div v-else-if="address" class="control">
         {{address |truncateAddr}}
     </div>
     <div v-if="hdWallet" class="new-account control">
-      <a class="button is-primary" @click="openNewAccountModal">&plus;</a>
+      <a class="button is-primary is-medium is-fullheight" @click="openNewAccountModal">&plus;</a>
     </div>
     <new-account-modal @close="closeNewAccountModal"
       v-if="newAccountModalOpen"/>
@@ -22,7 +34,9 @@
 </template>
 
 <script>
+import Multiselect from 'vue-multiselect';
 import { mapState, mapActions } from 'vuex';
+import Account from '@/components/Account';
 import NewAccountModal from '@/components/NewAccountModal';
 
 export default {
@@ -30,6 +44,25 @@ export default {
     return {
       newAccountModalOpen: false,
     };
+  },
+  props: {
+    // Maximum width of address
+    width: {
+      type: Number,
+      default: 50,
+    },
+    height: {
+      type: Number,
+      default: 32,
+    },
+    // Classes to set on selected single account
+    singleClass: {
+      type: Object,
+    },
+    // Classes to set on non selected options
+    optionClass: {
+      type: Object,
+    },
   },
   computed: {
     ...mapState({
@@ -65,7 +98,13 @@ export default {
     },
   },
   components: {
+    Multiselect,
+    Account,
     NewAccountModal,
   },
 };
 </script>
+
+
+<style lang="scss">
+</style>

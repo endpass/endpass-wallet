@@ -3,7 +3,7 @@
     <v-form>
 
       <v-button :loading="exportingJson"
-                className="is-primary is-medium"
+                className="is-primary is-cta"
                 @click.prevent="openPasswordModal">Export</v-button>
 
     </v-form>

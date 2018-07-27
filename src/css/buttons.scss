@@ -9,7 +9,7 @@ a {
 
 .button {
   font-family: $heading-font-family;
-  text-transform: uppercase;
+  //text-transform: uppercase;
   font-weight: 600;
 
   border-radius: 0;
@@ -19,7 +19,7 @@ a {
 
     &.is-hovered, &:hover {
       background-color: lighten($purple, 5%);
-      transition: background-color .2s ease-in-out;
+      transition: background-color .2s ease-in;
     }
     &.is-active, &:active {
       background-color: $purple;
@@ -72,4 +72,10 @@ a {
   white-space: unset;
   height: auto;
   flex-direction: column;
+}
+
+// Primary call to action buttons
+.button.is-cta {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
 }

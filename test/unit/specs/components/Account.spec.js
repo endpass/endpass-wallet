@@ -19,18 +19,15 @@ describe('Account', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
-    it('should render component', () => {
-      expect(wrapper.element).toMatchSnapshot();
-    });
-
     it('should render props', () => {
+      const address = '0x9eceefdf3554e178a6549006f2c02163e63c9fd8';
       const props = {
-        address: '0x9eceefdf3554e178a6549006f2c02163e63c9fd8',
+        address,
       };
 
       wrapper.setProps(props);
 
-      expect(wrapper.element).toMatchSnapshot();
+      expect(wrapper.find('.address').text()).toBe(address);
     });
   });
 });

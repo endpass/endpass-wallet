@@ -1,6 +1,7 @@
 <template lang="html">
   <div class="modal is-active">
     <div class="modal-background" @click="close"></div>
+    <div class="modal-logo"></div>
     <div class="modal-card">
       <div class="modal-card-head">
         <h3 class="modal-card-title">
@@ -42,7 +43,9 @@ export default {
       color: $white;
     }
     .modal-card-foot {
-      padding: 0;
+      background-color: $white;
+      padding: 2rem 1rem;
+      text-align: center;
       //border-radius: 0;
       // Full width buttons
       .buttons {
@@ -55,6 +58,69 @@ export default {
         }
       }
     }
+  }
+}
+
+.modal.is-dark {
+  .modal-background {
+    background-color: $purple;
+  }
+
+  .modal-card {
+    .modal-card-head {
+      background-color: white;
+      border-bottom: 1px solid $purple;
+      color: $purple;
+    }
+
+    .modal-card-title {
+      color: $purple;
+    }
+  }
+
+  .delete {
+    background-color: $purple;
+    &:hover,&.is-hoevered {
+      background-color: lighten($purple, 5%);
+      transition: background-color .2s ease-in;
+    }
+  }
+
+  .modal-logo {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 240px;
+    height: 80px;
+    background-size: cover;
+    background-image: url("/static/logo-dark.png");
+  }
+  @media screen and (max-width: 1023px) {
+    .modal-logo {
+      width: 144px;
+      height: 48px;
+    }
+  }
+}
+
+.modal.is-naked {
+  .modal-card {
+    .modal-card-head, .modal-card-foot, .modal-card-body {
+      background-color: transparent;
+      color: $white;
+    }
+    .modal-card-title {
+      color: $white;
+    }
+
+    .modal-card-body {
+      .label {
+        color: $white;
+      }
+    }
+  }
+  .delete {
+    background-color: transparent;
   }
 }
 </style>

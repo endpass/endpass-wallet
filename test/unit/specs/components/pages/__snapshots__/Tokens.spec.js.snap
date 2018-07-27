@@ -11,7 +11,7 @@ exports[`TokensPage render should render component 1`] = `
       class="container"
     >
       <div
-        class="columns"
+        class="columns is-reverse-mobile"
       >
         <div
           class="column is-half"
@@ -20,29 +20,21 @@ exports[`TokensPage render should render component 1`] = `
             class="card app-card"
           >
             <div
-              class="card-content"
+              class="card-header"
+            >
+              <p
+                class="card-header-title"
+              >
+                Your Tokens
+              </p>
+            </div>
+             
+            <div
+              class="card-content is-narrow"
             >
               <nav
                 class="panel"
               >
-                <p
-                  class="panel-heading"
-                >
-                  
-                  Your Tokens
-                  
-                  <button
-                    class="button is-primary"
-                    name="button"
-                  >
-                    <span
-                      class="icon panel-icon is-small"
-                    >
-                      {}
-                    </span>
-                  </button>
-                </p>
-                 
                 <div
                   class="panel-block"
                 >
@@ -73,14 +65,16 @@ exports[`TokensPage render should render component 1`] = `
                      
                     <balance
                       amount="NaN"
+                      class="is-small is-inline-block"
                       currency=""
                     />
                      
                     <!---->
                      
                     <span
-                      class="icon has-text-danger is-medium"
+                      class="icon has-text-danger is-small is-pulled-right"
                       id="remove-token-0"
+                      title="Remove Token"
                     >
                       {}
                     </span>
@@ -102,14 +96,16 @@ exports[`TokensPage render should render component 1`] = `
                      
                     <balance
                       amount="NaN"
+                      class="is-small is-inline-block"
                       currency=""
                     />
                      
                     <!---->
                      
                     <span
-                      class="icon has-text-danger is-medium"
+                      class="icon has-text-danger is-small is-pulled-right"
                       id="remove-token-1"
+                      title="Remove Token"
                     >
                       {}
                     </span>
@@ -123,13 +119,39 @@ exports[`TokensPage render should render component 1`] = `
         <div
           class="column is-half"
         >
-          <h4
-            class="title is-4"
+          <div
+            class="card"
           >
-            Add token
-          </h4>
-           
-          <!---->
+            <div
+              class="card-header"
+            >
+              <div
+                class="card-header-title"
+              >
+                
+                Add Token
+              
+              </div>
+               
+              <div
+                class="card-header-icon"
+              >
+                <a
+                  class="button is-outlined is-info is-small"
+                >
+                  
+                  Add Custom Token
+                
+                </a>
+              </div>
+            </div>
+             
+            <div
+              class="card-content"
+            >
+              <!---->
+            </div>
+          </div>
         </div>
       </div>
     </div>

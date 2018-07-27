@@ -1,46 +1,38 @@
 <template>
   <div class="section info-bar" :class="networkClass">
-    <div class="container">
-      <div class="level">
-        <div class="level-left">
-          <div class="level-item">
-            <div class="level-control">
-              <p class="heading">Current Network</p>
-              <provider-select/>
-            </div>
-          </div>
-          <div class="level-item">
-            <div class="level-control">
-              <p class="heading">Currency</p>
-              <currency-select/>
-            </div>
-          </div>
-          <div class="level-item">
-            <div class="level-control">
-              <sync-status/>
-            </div>
-          </div>
-        </div>
-
-        <div class="level-right">
-          <div class="level-item">
-            <div class="level-control">
-              <span  v-if="address">
-                <p class="heading">Current Account</p>
-                <account-chooser/>
-              </span>
-              <router-link :to="{name: 'NewWallet'}" class="button
-              is-primary" v-else>Create Wallet</router-link>
-            </div>
-          </div>
-          <div class="level-item" v-if="balance !== null">
-            <balance :amount="balance" class="level-stat" :currency="activeCurrency.name" />
-          </div>
-          <div class="level-item" v-if="price !== null && balance !== null">
-            <balance :amount="balance" :price="price" :decimals="2" :currency="fiatCurrency" v-on:update="updatePrice" class="level-stat" />
-          </div>
+    <div class="info-item">
+      <div class="field">
+        <p class="heading">Currency</p>
+        <div class="control is-expanded">
+          <currency-select/>
         </div>
       </div>
+    </div>
+    <div class="info-item">
+      <div class="field">
+        <p class="heading">Network</p>
+        <div class="control is-expanded">
+					<provider-select/>
+				</div>
+      </div>
+    </div>
+    <div class="info-item">
+      <div class="field">
+				<p class="heading">Block</p>
+				<div class="control is-expanded">
+					<sync-status/>
+				</div>
+      </div>
+    </div>
+
+    <div class="info-item" v-if="balance !== null">
+			<p class="heading">Balance</p>
+      <balance :amount="balance" class="level-stat" :currency="activeCurrency.name" />
+    </div>
+    <div class="info-item" v-if="price !== null && balance !== null">
+			<p class="heading">Value</p>
+      <balance :amount="balance" :price="price" :decimals="2"
+      :currency="fiatCurrency" v-on:update="updatePrice" class="level-stat" />
     </div>
   </div>
 </template>
@@ -83,8 +75,16 @@ export default {
 
 <style lang="scss">
 .info-bar {
+  display: grid;
+  grid-gap: 1em;
+  grid-template-columns: repeat(auto-fill, minmax(100px,1fr));
+  grid-template-rows: 1fr;
+  justify-content: center;
+  align-items: stretch;
+
   padding: 0.25rem 1rem;
   color: $white;
+
   &.mainnet {
     background-color: $dark-blue;
   }
@@ -97,5 +97,10 @@ export default {
   .title {
     color: $white;
   }
+}
+
+.info-bar-item {
+  min-width: 0;
+  white-space: nowrap;
 }
 </style>

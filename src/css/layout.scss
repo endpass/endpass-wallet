@@ -5,22 +5,55 @@ html,body {
   height: 100%;
 }
 .app-container {
-  height: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+
+  display: grid;
+  // grid-template-rows: 40px 300px auto minmax(auto, 60px);
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr auto;
+
+  grid-template-areas:
+    "nav header"
+    "nav main"
+    "nav footer";
+
+  background: $light-grey;
+  overflow-x: hidden;
 
   // Direct child of app container, a major element
-  &>.app-section {
-    flex: 0 1 auto;
+  &>.app-header {
+    grid-area: header;
   }
 
-  // Stick info bar to bottom on mobile
-  @media screen and (max-width: 1023px) {
-    .info-bar {
-      order:2;
-      margin-top: auto;
-    }
+  &>.app-nav {
+    grid-area: nav;
+
+  }
+
+  &>.app-content {
+    grid-area: main;
+  }
+
+  &>.app-footer {
+    grid-area: footer;
+  }
+
+  .app-section {
+  }
+
+}
+
+// Responsive layout on mobile/tablet
+@media screen and (max-width: 1023px) {
+  .app-container {
+    grid-template-columns: 100%;
+    grid-template-rows: 2fr 2fr auto 1fr;
+    grid-template-areas:
+      "nav"
+      "header"
+      "main"
+      "footer";
   }
 }
 
@@ -42,6 +75,11 @@ html,body {
   }
 }
 
+// Make containers responsive by default
+.container {
+  width: 100%;
+}
+
 // Narrower containers
 .container.is-narrow {
   max-width: 600px;
@@ -49,4 +87,56 @@ html,body {
 
 .section.is-narrow {
   padding: 1rem 1.5rem;
+}
+
+.card-content.is-narrow {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+// Reverse direction on mobile
+@media screen and (max-width: 768px) {
+  .is-reverse-mobile {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}
+
+// Layout Helpers
+
+.no-padding-top {
+  padding-top: 0!important;
+}
+.no-padding-right {
+  padding-right: 0!important;
+}
+.no-padding-bottom {
+  padding-bottom: 0!important;
+}
+.no-padding-left {
+  padding-left: 0!important;
+}
+
+.no-margin-top {
+  margin-top: 0!important;
+}
+.no-margin-right {
+  margin-right: 0!important;
+}
+.no-margin-bottom {
+  margin-bottom: 0!important;
+}
+.no-margin-left {
+  margin-left: 0!important;
+}
+
+.is-full-height {
+  height: 100%;
+}
+.is-full-width {
+  width: 100%;
+}
+
+.control {
+  white-space: nowrap;
 }
