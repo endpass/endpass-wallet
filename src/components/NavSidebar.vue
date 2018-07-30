@@ -189,7 +189,13 @@ export default {
     width: 100%;
     padding: 0;
     .menu-list {
+      font-family: $heading-font-family;
+      font-size: 1.2em;
       width: 100%;
+
+      a.is-active {
+        background-color: $purple;
+      }
     }
     a.is-active .icon svg {
       fill: $white;
