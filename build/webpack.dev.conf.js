@@ -90,7 +90,7 @@ module.exports = new Promise((resolve, reject) => {
         new FriendlyErrorsPlugin({
           compilationSuccessInfo: {
             messages: [
-              `Your application is running here: http://${
+              `Your application is running here: https://${
                 devWebpackConfig.devServer.host
               }:${port}`,
             ],
