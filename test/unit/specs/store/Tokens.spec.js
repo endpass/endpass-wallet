@@ -25,17 +25,20 @@ describe('tokens', () => {
   let commit;
   let dispatch;
   let stateInstance;
+  let getters;
 
   beforeEach(() => {
     moxios.install();
     commit = jest.fn();
     dispatch = jest.fn();
     stateInstance = tokens.state();
+    getters = { net: 1 };
   });
 
   afterEach(() => {
     moxios.uninstall();
     commit.mockClear();
+    dispatch.mockClear();
   });
 
   it('should get tokens from storage', async () => {
@@ -49,7 +52,7 @@ describe('tokens', () => {
   it('should get tokens from service', async () => {
     endpassService.getTokensList = jest.fn(() => Promise.resolve());
 
-    await actions.getAllTokens({ dispatch });
+    await actions.getAllTokens({ dispatch, getters });
 
     expect(endpassService.getTokensList).toHaveBeenCalledTimes(1);
   });
@@ -57,7 +60,15 @@ describe('tokens', () => {
   it('should return an empty array if an error occurs', async () => {
     endpassService.getTokensList = jest.fn(() => Promise.reject());
 
-    const result = await actions.getAllTokens({ dispatch });
+    const result = await actions.getAllTokens({ dispatch, getters });
+
+    expect(result).toEqual([]);
+  });
+
+  it('should return an empty array if not the main net', async () => {
+    getters = { net: 2 };
+
+    const result = await actions.getAllTokens({ dispatch, getters });
 
     expect(result).toEqual([]);
   });

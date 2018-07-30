@@ -120,7 +120,7 @@ export default {
       ethPrice: state => state.price.price,
       currency: state => state.accounts.settings.fiatCurrency,
     }),
-    ...mapGetters('tokens', ['savedActiveTokens']),
+    ...mapGetters('tokens', ['savedActiveTokens', 'net']),
     isLoading() {
       return this.savedActiveTokens.length > this.activeTokens.length;
     },
@@ -164,6 +164,16 @@ export default {
       );
     },
   },
+  watch: {
+    net: {
+      handler() {
+        this.getAllTokens().then((tokens = []) => {
+          this.tokens = tokens;
+        });
+      },
+      immediate: true,
+    },
+  },
   methods: {
     ...mapActions('tokens', [
       'addTokenToSubscription',
@@ -190,11 +200,6 @@ export default {
     closeAddTokenModal() {
       this.addTokenModalOpen = false;
     },
-  },
-  created() {
-    this.getAllTokens().then((tokens = []) => {
-      this.tokens = tokens;
-    });
   },
   components: {
     SearchInput,
