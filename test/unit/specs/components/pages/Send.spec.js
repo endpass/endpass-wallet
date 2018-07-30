@@ -77,6 +77,8 @@ describe('Send', () => {
   });
 
   it('should validate data', async () => {
+    const getFullPrice = jest.fn().mockResolvedValue('400');
+
     wrapper = mount(Send, {
       store,
       localVue,
@@ -93,6 +95,7 @@ describe('Send', () => {
         gasPrice: '900',
         gasLimit: '2200000000',
         data: 'asdfas',
+        getFullPrice,
       },
       value: '2.222222222222222222222222',
     });
@@ -107,6 +110,7 @@ describe('Send', () => {
 
     wrapper.setData({
       transaction: {
+        ...wrapper.vm.transaction,
         to: '',
         gasPrice: '91',
         gasLimit: '22000',
@@ -129,6 +133,7 @@ describe('Send', () => {
 
     wrapper.setData({
       transaction: {
+        ...wrapper.vm.transaction,
         to: '123',
         gasPrice: '-90',
         gasLimit: '-22000',
