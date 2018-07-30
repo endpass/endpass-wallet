@@ -48,11 +48,19 @@ export default {
     },
   },
   mutations: {
-    addAddress(state, addressString) {
+    setAddress(state, addressString) {
       state.address = new Address(addressString);
     },
-    addWallet(state, { wallet, address }) {
-      state.wallets[address] = wallet;
+    setWallet(state, wallet) {
+      state.wallet = wallet;
+    },
+    addWallet(state, walletV3) {
+      const wallet = new Wallet(walletV3);
+      const { address } = walletV3;
+      state.wallets = {
+        ...state.wallets,
+        [address]: wallet,
+      };
     },
     addHdWallet(state, wallet) {
       state.hdWallet = wallet;
@@ -74,35 +82,33 @@ export default {
     },
   },
   actions: {
-    addWallet({ commit, dispatch }, json) {
-      const wallet = new Wallet(json);
-      commit('addWallet', {
-        wallet,
-        address: json.address,
-      });
-      dispatch('selectWallet', json.address);
-      commit('addAddress', json.address);
-    },
     selectWallet({ commit, state, dispatch }, address) {
-      state.wallet = state.wallets[address];
-      state.address = new Address(address);
+      commit('setWallet', state.wallets[address]);
+      commit('setAddress', address);
       dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true });
     },
-    addWalletAndStore({ commit, dispatch }, json) {
-      return Promise.all([
-        dispatch('addWallet', json),
-        userService.setAccount(json),
-      ]).catch(e => dispatch('errors/emitError', e, { root: true }));
+    addWallet({ commit, dispatch, state }, json) {
+      commit('addWallet', json);
+
+      return userService
+        .setAccount(json)
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
+    },
+    addWalletAndSelect({ dispatch }, json) {
+      return dispatch('addWallet', json)
+        .then(() => dispatch('selectWallet', json.address))
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     addWalletWithV3({ commit, dispatch }, { json, password }) {
       const wallet = EthWallet.fromV3(json, password, true);
       const newJson = wallet.toV3(new Buffer(password), kdfParams);
-      dispatch('addWalletAndStore', newJson);
+      dispatch('addWalletAndSelect', newJson);
     },
     addWalletWithPrivateKey({ commit, dispatch }, { privateKey, password }) {
       const wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));
       const json = wallet.toV3(new Buffer(password), kdfParams);
-      dispatch('addWalletAndStore', json);
+
+      return dispatch('addWalletAndSelect', json);
     },
     generateWallet({ commit, dispatch, state }, password) {
       if (!state.hdWallet) {
@@ -111,7 +117,7 @@ export default {
       let i = Object.keys(state.wallets).length;
       let wallet = state.hdWallet.deriveChild(i).getWallet();
       dispatch(
-        'addWalletAndStore',
+        'addWalletAndSelect',
         wallet.toV3(new Buffer(password), kdfParams),
       );
     },
@@ -121,10 +127,40 @@ export default {
       const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
       const wallet = hdWallet.deriveChild(0).getWallet();
       commit('addHdWallet', hdWallet);
-      dispatch(
-        'addWalletAndStore',
+      return dispatch(
+        'addWalletAndSelect',
         wallet.toV3(new Buffer(password), kdfParams),
       );
+    },
+    async addMultiHdWallet({ commit, dispatch, rootState }, { key, password }) {
+      const seed = Bip39.mnemonicToSeed(key);
+      const hdKey = HDKey.fromMasterSeed(seed);
+      const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
+      commit('addHdWallet', hdWallet);
+
+      /* eslint-disable no-await-in-loop */
+      for (let index = 0; index < 5; index++) {
+        const wallet = hdWallet.deriveChild(index).getWallet();
+        const walletV3 = wallet.toV3(Buffer.from(password), kdfParams);
+        const { address } = walletV3;
+
+        if (index !== 0) {
+          dispatch('addWallet', walletV3);
+        } else {
+          dispatch('addWalletAndSelect', walletV3);
+        }
+
+        try {
+          const balance = await rootState.web3.web3.eth.getBalance(address);
+
+          if (balance === '0') {
+            break;
+          }
+        } catch (e) {
+          break;
+        }
+      }
+      /* eslint-enable no-await-in-loop */
     },
     updateBalance({ commit, dispatch, state, rootState }) {
       if (state.address) {
@@ -197,7 +233,8 @@ export default {
           }
 
           if (accounts && accounts.length) {
-            accounts.forEach(wallet => dispatch('addWallet', wallet));
+            accounts.forEach(wallet => commit('addWallet', wallet));
+            dispatch('selectWallet', accounts[0].address);
           }
         })
         .catch(e => dispatch('errors/emitError', e, { root: true }));

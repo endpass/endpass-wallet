@@ -31,12 +31,12 @@ export default {
     address: '',
   }),
   methods: {
-    ...mapMutations('accounts', ['addAddress']),
+    ...mapMutations('accounts', ['setAddress']),
     async addWalletWithAddress() {
       this.isCreating = true;
       await new Promise(res => setTimeout(res, 20));
       try {
-        this.addAddress(this.address);
+        this.setAddress(this.address);
         router.push('/');
       } catch (e) {
         this.errors.add({
