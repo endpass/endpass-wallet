@@ -41,14 +41,14 @@ export default {
     walletPassword: '',
   }),
   methods: {
-    ...mapActions('accounts', ['addHdWallet']),
+    ...mapActions('accounts', ['addMultiHdWallet']),
     async addWalletWithPhrase() {
       this.isCreating = true;
 
       await new Promise(res => setTimeout(res, 20));
 
       try {
-        this.addHdWallet({
+        this.addMultiHdWallet({
           key: this.hdkeyPhrase,
           password: this.walletPassword,
         });

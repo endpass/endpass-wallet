@@ -2,6 +2,9 @@ import store from '@/store/accounts/accounts';
 import { Address, Wallet } from '@/class';
 import localStorageMock from '../../localStorageMock.js';
 import HDKey from 'ethereumjs-wallet/hdkey';
+import { userService } from '@/services';
+
+jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
 
 const v3json = {
   version: 3,
@@ -24,7 +27,6 @@ const v3json = {
   },
 };
 const v3password = '123123123';
-import { userService } from '@/services';
 
 global.localStorage = localStorageMock;
 
@@ -35,7 +37,6 @@ store.actions['errors/emitError'] = jest.fn();
 const { state, mutations, actions } = store;
 
 const commit = store => (type, payload) => mutations[type](store, payload);
-
 const dispatch = context => (type, payload) => {
   actions[type](context, payload);
 };
@@ -60,17 +61,17 @@ describe('accounts store', () => {
   });
 
   it('should add a new account and set it active', () => {
-    mutations.addWallet(state, {
-      address: '0x3c75226555FC496168d48B88DF83B95F16771F37',
-      wallet: 2,
-    });
-    actions.selectWallet(context, '0x3c75226555FC496168d48B88DF83B95F16771F37');
-    expect(state.wallets['0x3c75226555FC496168d48B88DF83B95F16771F37']).toBe(2);
-    expect(state.wallet).toBe(2);
+    mutations.addWallet(state, v3json);
+    actions.selectWallet(context, '4ce2109f8db1190cd44bc6554e35642214fbe144');
+    expect(
+      state.wallets['4ce2109f8db1190cd44bc6554e35642214fbe144'] instanceof
+        Wallet,
+    ).toBe(true);
+    expect(state.wallet instanceof Wallet).toBe(true);
   });
 
-  it('should add address', () => {
-    mutations.addAddress(state, '0x3c75226555FC496168d48B88DF83B95F16771F37');
+  it('should set address', () => {
+    mutations.setAddress(state, '0x3c75226555FC496168d48B88DF83B95F16771F37');
     expect(state.address instanceof Address).toBe(true);
     expect(state.address.getAddressString().toUpperCase()).toEqual(
       '0x3c75226555FC496168d48B88DF83B95F16771F37'.toUpperCase(),
@@ -96,44 +97,67 @@ describe('accounts store', () => {
     );
   });
 
-  it('shoud create wallet instance with privateKey ', () => {
-    actions.addWalletWithPrivateKey(context, {
-      privateKey:
-        '4daf66f4ffed6d47e75d22e2c962d1f9a36550dc2cfda4bfb5da741bdc97d6ba',
-      password: v3password,
-    });
-    expect(state.wallet instanceof Wallet).toBe(true);
-    expect(state.wallet.getAddressString(v3password)).toBe(v3json.address);
+  it('should call action', () => {
+    const dispatch = jest.fn();
+
+    actions.addWalletWithPrivateKey(
+      { dispatch },
+      {
+        privateKey:
+          '4daf66f4ffed6d47e75d22e2c962d1f9a36550dc2cfda4bfb5da741bdc97d6ba',
+        password: v3password,
+      },
+    );
+
+    expect(dispatch).toBeCalledWith('addWalletAndSelect', expect.any(Object));
   });
 
-  it('shoud create wallet instance with v3Json ', () => {
-    actions.addWalletWithV3(context, {
-      json: v3json,
-      password: v3password,
-    });
-    expect(state.wallet instanceof Wallet).toBe(true);
-    expect(state.wallet.getAddressString(v3password)).toBe(v3json.address);
+  it('should call action', () => {
+    const dispatch = jest.fn();
+
+    actions.addWalletWithV3(
+      { dispatch },
+      {
+        json: v3json,
+        password: v3password,
+      },
+    );
+
+    expect(dispatch).toBeCalledWith('addWalletAndSelect', expect.any(Object));
   });
 
-  it('shoud create wallet instance with seed phrase ', () => {
-    actions.addHdWallet(context, {
-      key:
-        'salt suit force stomach lounge endless soul junk join leg sort aware',
-      password: v3password,
-    });
+  it('should create wallet instance with seed phrase ', async () => {
+    const dispatch = jest.fn();
+
+    await actions.addHdWallet(
+      { ...context, dispatch },
+      {
+        key:
+          'salt suit force stomach lounge endless soul junk join leg sort aware',
+        password: v3password,
+      },
+    );
     expect(state.hdWallet instanceof HDKey).toBe(true);
-    expect(state.wallet instanceof Wallet).toBe(true);
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(dispatch).toBeCalledWith('addWalletAndSelect', expect.any(Object));
+    // expect(state.wallet instanceof Wallet).toBe(true);
   });
 
-  it('shoud generate wallet', () => {
-    actions.generateWallet(context, v3password);
-    expect(state.wallet instanceof Wallet).toBe(true);
-    expect(state.wallets[state.wallet.getAddressString(v3password)]).toBe(
-      state.wallet,
+  it('should generate wallet', async () => {
+    const dispatch = jest.fn();
+
+    await actions.addHdWallet(
+      { ...context, dispatch },
+      {
+        key:
+          'salt suit force stomach lounge endless soul junk join leg sort aware',
+        password: v3password,
+      },
     );
-    expect(state.wallet.getAddressString(v3password).toUpperCase()).toBe(
-      v3json.address.toUpperCase(),
-    );
+    actions.generateWallet({ ...context, dispatch }, v3password);
+
+    expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(dispatch).toBeCalledWith('addWalletAndSelect', expect.any(Object));
   });
 
   it('shoud validate password', () => {
