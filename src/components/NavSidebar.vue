@@ -13,8 +13,18 @@
 
 
     <div class="nav-sidebar-content navbar-menu" :class="{'is-active':navMenuActive}">
-      <div class="nav-sidebar-item" v-if="address">
-        <p class="menu-label">Accounts</p>
+      <div class="nav-sidebar-item section" v-if="address">
+        <div class="columns is-mobile">
+          <div class="column">
+            <p class="menu-label">Accounts</p>
+          </div>
+          <div class="column">
+            <a v-if="hdWallet" class="button is-outlined is-small is-info"
+                               @click="openNewAccountModal">
+              &plus; Add Account
+            </a>
+          </div>
+        </div>
         <account-chooser :width="4"/>
       </div>
       <div class="nav-sidebar-item">
@@ -97,6 +107,8 @@
       </div>
 
     </div>
+    <new-account-modal @close="closeNewAccountModal"
+      v-if="newAccountModalOpen"/>
 
     <login-modal v-if="isLoginModal" @close="toggleLoginModal"/>
   </div>
@@ -107,15 +119,18 @@ import { mapGetters, mapActions, mapState } from 'vuex';
 import AccountChooser from '@/components/bar/AccountChooser.vue';
 import LoginModal from '@/components/modal/LoginModal';
 import modalMixin from '@/mixins/modal';
+import NewAccountModal from '@/components/NewAccountModal';
 
 export default {
   data() {
     return {
       navMenuActive: false,
+      newAccountModalOpen: false,
     };
   },
   computed: {
     ...mapState({
+      hdWallet: state => state.accounts.hdWallet,
       wallet: state => state.accounts.wallet,
       address: state =>
         state.accounts.address && state.accounts.address.getAddressString(),
@@ -131,10 +146,17 @@ export default {
     closeNavMenu() {
       this.navMenuActive = false;
     },
+    openNewAccountModal() {
+      this.newAccountModalOpen = true;
+    },
+    closeNewAccountModal() {
+      this.newAccountModalOpen = false;
+    },
   },
   components: {
     AccountChooser,
     LoginModal,
+    NewAccountModal,
   },
   mixins: [modalMixin],
 };
