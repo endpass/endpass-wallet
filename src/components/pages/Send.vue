@@ -542,4 +542,15 @@ export default {
   pointer-events: none; /* disable user interaction */
   user-select: none; /* disable user selection */
 }
+
+.send-page {
+  .send-amount {
+    margin-top: 2em;
+    margin-bottom: 2em;
+  }
+
+  .field-label {
+    margin-bottom: 0;
+  }
+}
 </style>
