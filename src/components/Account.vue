@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     icon() {
-      const seed = this.address.toLowerCase();
+      const seed = '0x' + this.address.toLowerCase().replace(/^0x/, '');
       return makeBlockie(seed);
     },
     addressFmt() {
