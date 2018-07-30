@@ -14,7 +14,6 @@
             <span class="icon is-small" v-html="require('@/img/account-login.svg')"/>
             Login
           </a>
-
         <a class="button"
            v-else
            to=""
