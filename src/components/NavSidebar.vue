@@ -9,6 +9,23 @@
       <router-link class="logo logo-icon" to="/" exact>
         <img src="@/img/logo-light.png" alt="Endpass Wallet">
       </router-link>
+      <div class="login-control">
+        <router-link class="button"
+                     v-if="!email"
+                     :to="{name:'LoginPage'}"
+                     >
+                     <span class="icon is-small"
+                           v-html="require('@/img/account-login.svg')"></span>Login
+        </router-link>
+
+        <a class="button"
+           v-else
+           to=""
+           @click.prevent="logout()">
+          <span class="icon is-small"
+                v-html="require('@/img/account-logout.svg')"></span>Logout
+        </a>
+      </div>
     </div>
 
 
@@ -44,7 +61,6 @@
           <span class="icon is-small"
                 v-html="require('@/img/account-logout.svg')"></span>Logout
         </a>
-
         </div>
       </div>
 
