@@ -89,10 +89,12 @@ describe('accounts store', () => {
     expect(state.settings).toBe(2);
   });
 
-  it('shoud create wallet instance', () => {
-    actions.addWallet(context, v3json);
-    expect(state.wallet instanceof Wallet).toBe(true);
-    expect(state.wallet.getAddressString().toUpperCase()).toBe(
+  it('should create wallet instance', async () => {
+    await actions.addWallet(context, v3json);
+    const wallet = state.wallets[v3json.address];
+
+    expect(wallet instanceof Wallet).toBe(true);
+    expect(wallet.getAddressString().toUpperCase()).toBe(
       v3json.address.toUpperCase(),
     );
   });
@@ -160,14 +162,16 @@ describe('accounts store', () => {
     expect(dispatch).toBeCalledWith('addWalletAndSelect', expect.any(Object));
   });
 
-  it('shoud validate password', () => {
+  it('should validate password', () => {
+    context.state.wallet = new Wallet(v3json);
     const promise = actions.validatePassword(context, v3password);
     expect(promise).resolves.toBe();
   });
 
-  it('shoud reject wrong password', () => {
+  it('should reject wrong password', () => {
+    context.state.wallet = new Wallet(v3json);
     const promise = actions.validatePassword(context, '');
-    expect(promise).rejects.toMatch('error');
+    expect(promise).rejects.toThrow('wrong passphrase');
   });
 
   it('should call mutation from update settings action', async () => {
