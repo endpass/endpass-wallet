@@ -3,23 +3,22 @@
     <div v-if="hdWallet" class="control is-expanded">
 
       <multiselect
-                         :options="Object.keys(wallets)"
-                         label="Account"
-                         :option-height="height"
-                         :searchable="false"
-                         :show-labels="false"
-                         :allow-empty="false"
-                         :value="activeAddress"
-                         @select="selectWallet"
-                         placeholder="Select account"
-                         >
-
-                         <span class="multiselect-single" slot="singleLabel" slot-scope="props">
-                           <account :class="singleClass" :address="address" :size="width" />
-                         </span>
-                         <span class="multiselect-option" slot="option" slot-scope="props">
-                           <account :class="optionClass" :address="props.option" :size="width" />
-                         </span>
+        :options="walletsAddresses"
+        label="Account"
+        :option-height="height"
+        :searchable="false"
+        :show-labels="false"
+        :allow-empty="false"
+        :value="activeAddress"
+        @select="selectWallet"
+        placeholder="Select account"
+      >
+        <span class="multiselect-single" slot="singleLabel" slot-scope="props">
+          <account :class="singleClass" :address="address" :size="width" />
+        </span>
+        <span class="multiselect-option" slot="option" slot-scope="props">
+          <account :class="optionClass" :address="props.option" :size="width" />
+        </span>
       </multiselect>
     </div>
     <div v-else-if="address" class="control">
@@ -78,6 +77,9 @@ export default {
       set(newValue) {
         this.selectWallet(newValue);
       },
+    },
+    walletsAddresses() {
+      return Object.keys(this.wallets);
     },
   },
   methods: {

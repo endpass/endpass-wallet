@@ -99,7 +99,11 @@ export default {
         state.tokensSubscription.add({ ...token });
       }
     },
-    getAllTokens({ dispatch }) {
+    getAllTokens({ dispatch, getters }) {
+      if (getters.net !== 1) {
+        return [];
+      }
+
       return endpassService
         .getTokensList()
         .then(({ data }) => data)

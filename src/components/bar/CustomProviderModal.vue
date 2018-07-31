@@ -4,7 +4,7 @@
       <template slot="header">Add New Provider</template>
 
       <div v-if="!providerAdded">
-	      <v-form @submit="addNewProvider">
+	      <v-form v-model="isFormValid" @submit="addNewProvider">
 
           <v-input v-model="provider.name"
                    v-validate="'required'"
@@ -76,6 +76,7 @@ export default {
   data() {
     return {
       providerAdded: false,
+      isFormValid: false,
       isLoading: false,
       provider: {
         name: '',

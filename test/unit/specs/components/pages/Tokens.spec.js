@@ -42,6 +42,7 @@ describe('TokensPage', () => {
 
     getters = {
       savedActiveTokens: () => [{}],
+      net: () => 1,
     };
 
     store = new Vuex.Store({
@@ -195,6 +196,22 @@ describe('TokensPage', () => {
           undefined,
         );
       });
+    });
+  });
+
+  describe('props', () => {
+    beforeEach(() => {
+      wrapper = shallow(TokensPage, options);
+    });
+
+    it('should call an action when changing the net id', () => {
+      expect(wrapper.vm.userTokenList).toHaveLength(2);
+
+      wrapper.setComputed({
+        net: 3,
+      });
+
+      expect(actions.getAllTokens).toHaveBeenCalledTimes(2);
     });
   });
 });
