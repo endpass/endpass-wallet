@@ -35,4 +35,49 @@ describe('VSelect', () => {
     wrapper.find('select').trigger('change');
     expect(wrapper.emitted().input).toBeTruthy();
   });
+
+  describe('props', () => {
+    describe('options', () => {
+      describe('options are strings', () => {
+        it('should correctly render options', () => {
+          const options = ['option1', 'option2'];
+
+          wrapper.setProps({ options });
+
+          expect(wrapper.find('select').html()).toMatchSnapshot();
+        });
+      });
+
+      describe('options are objects', () => {
+        it('should correctly render text of options', () => {
+          const options = [{ text: 'text' }, {}];
+
+          wrapper.setProps({ options });
+
+          expect(wrapper.find('select').html()).toMatchSnapshot();
+        });
+
+        it('should correctly render values of options', () => {
+          const options = [{ val: 'val' }, {}];
+
+          wrapper.setProps({ options });
+
+          expect(wrapper.find('select').html()).toMatchSnapshot();
+        });
+      });
+
+      describe('options have different types', () => {
+        it('should correctly render options', () => {
+          const options = [
+            'option',
+            { val: 'option value', text: 'option text' },
+          ];
+
+          wrapper.setProps({ options });
+
+          expect(wrapper.find('select').html()).toMatchSnapshot();
+        });
+      });
+    });
+  });
 });
