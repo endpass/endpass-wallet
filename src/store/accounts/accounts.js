@@ -216,12 +216,8 @@ export default {
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     init({ commit, dispatch }) {
-      return Promise.all([
-        storage.read('settings'),
-        storage.read('email'),
-        userService.getV3Accounts(),
-      ])
-        .then(([settings, email, accounts]) => {
+      return Promise.all([storage.read('settings'), storage.read('email')])
+        .then(([settings, email]) => {
           commit('setEmail', email);
 
           if (settings) {
@@ -232,6 +228,9 @@ export default {
             storage.disableRemote();
           }
 
+          return email ? userService.getV3Accounts() : null;
+        })
+        .then(accounts => {
           if (accounts && accounts.length) {
             accounts.forEach(wallet => commit('addWallet', wallet));
             dispatch('selectWallet', accounts[0].address);
