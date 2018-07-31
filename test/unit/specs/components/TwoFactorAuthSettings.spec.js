@@ -124,21 +124,21 @@ describe('TwoFactorAuthSettings', () => {
   });
 
   describe('methods', () => {
-    describe('handleButtonClick', () => {
+    describe('handleFormSubmit', () => {
       it('should call toggleTwoFactorAuthModal', () => {
         spyOn(wrapper.vm, 'toggleTwoFactorAuthModal');
 
         wrapper.setComputed({
           isButtonDisabled: true,
         });
-        wrapper.vm.handleButtonClick();
+        wrapper.vm.handleFormSubmit();
 
         expect(wrapper.vm.toggleTwoFactorAuthModal).toHaveBeenCalledTimes(0);
 
         wrapper.setComputed({
           isButtonDisabled: false,
         });
-        wrapper.vm.handleButtonClick();
+        wrapper.vm.handleFormSubmit();
 
         expect(wrapper.vm.toggleTwoFactorAuthModal).toHaveBeenCalledTimes(1);
       });
