@@ -41,13 +41,8 @@
                            :disabled="isSending"
                            required>
                     <span class="select" slot="addon">
-                      <select v-model="transaction.tokenInfo">
-                        <option :value="undefined">{{activeCurrency.name}}</option>
-                        <option
-                              :value="token"
-                              v-for="token in tokens"
-                              :key="token.address">{{token.symbol}}</option>
-                      </select>
+                      <v-select v-model="transaction.tokenInfo"
+                                :options="tokenCurrencies"/>
                     </span>
                   </v-input>
                   <v-input v-model="price"
@@ -240,6 +235,7 @@ import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VInputAddress from '@/components/ui/form/VInputAddress.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import VSelect from '@/components/ui/form/VSelect';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 
@@ -370,6 +366,17 @@ export default {
         high: '90'
       }
     },
+    tokenCurrencies() {
+      const currencies = [{
+        val: null,
+        key: this.activeCurrency.name,
+        text: this.activeCurrency.name
+      }];
+
+      this.tokens.forEach(token => currencies.push(token.symbol));
+
+      return currencies;
+    }
   },
   methods: {
     ...mapActions('transactions', [
@@ -497,6 +504,7 @@ export default {
     VButton,
     VInput,
     VInputAddress,
+    VSelect,
     TransactionModal,
     PasswordModal,
   },

@@ -6,8 +6,8 @@
       <select v-model="selected" :name="name"
       :data-vv-as="label || name" v-validate="validator">
         <option v-for="item in options"
-                :key="item.val || item"
-                :value="item.val || item">{{ item.text || item }}</option>
+                :key="item.key || item.val || item"
+                :value="getOptionParameter(item, 'val')">{{ getOptionParameter(item, 'text') }}</option>
       </select>
     </div>
     <p class="help is-danger"
@@ -59,6 +59,9 @@ export default {
         this.$emit('input', newVal);
       },
     },
+  },
+  methods: {
+    getOptionParameter: (item, value) => item instanceof Object ? item[value] : item
   },
 };
 </script>
