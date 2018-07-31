@@ -32,7 +32,7 @@
                     aria-describedby="jsonKeystorePassword"
                     placeholder="wallet password"
                     required />
-          <v-button className="is-primary is-cta"
+          <v-button className="is-success is-cta"
                     :loading="isCreating">Create New Wallet</v-button>
       </v-form>
     </div>

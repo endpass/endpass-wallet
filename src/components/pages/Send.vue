@@ -176,7 +176,7 @@
               <div class="field is-horizontal">
                 <div class="field-label"></div>
                 <div class="field-body">
-                  <v-button className="is-primary is-medium"
+                  <v-button className="is-success is-medium is-cta"
                             :loading="isSending"
                             :disabled="isSyncing">Send</v-button>
                 </div>

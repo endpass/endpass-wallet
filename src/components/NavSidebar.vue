@@ -10,7 +10,7 @@
         <img src="@/img/logo-light.png" alt="Endpass Wallet">
       </router-link>
       <div class="login-control">
-        <router-link class="button"
+        <router-link class="button is-success"
                      v-if="!email"
                      :to="{name:'LoginPage'}"
                      >
@@ -47,7 +47,7 @@
       <div class="nav-sidebar-item">
         <div class="buttons is-centered">
           <router-link v-if="!address" :to="{name: 'NewWallet'}" class="button
-          is-primary">Create Wallet</router-link>
+          is-success">Create Wallet</router-link>
 
           <a class="button" v-if="!email" @click.prevent="isLoginModal = true">
             <span class="icon is-small" v-html="require('@/img/account-login.svg')"/>
