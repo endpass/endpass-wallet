@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="export-json">
-    <v-form :submitHandler="openPasswordModal">
+    <v-form @submit="openPasswordModal">
 
       <v-button :loading="exportingJson"
                 className="is-primary is-cta">Export</v-button>

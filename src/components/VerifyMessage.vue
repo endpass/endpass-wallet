@@ -1,5 +1,5 @@
 <template>
-  <v-form :sumbmitHandler="verifyMessage">
+  <v-form @submit="verifyMessage">
     <v-textarea
       v-model="signedMessageString"
       label="Signature"

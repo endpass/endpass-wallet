@@ -1,5 +1,5 @@
 <template>
-  <v-form :submitHandler="addWallet">
+  <v-form @submit="addWallet">
     <v-input v-model="privateKey"
              label="Private key"
              id="privateKey"

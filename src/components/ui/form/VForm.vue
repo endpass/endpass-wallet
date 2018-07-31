@@ -11,10 +11,6 @@ export default {
     id: {
       type: String,
       default: null,
-    },
-    submitHandler: {
-      type: Function,
-      default: null
     }
   },
   inject: ['$validator'],
@@ -52,13 +48,14 @@ export default {
   methods: {
     submit() {
       if (this.isFormValid) {
-        this.submitHandler();
+        this.$emit('submit');
+      } else {
+        this.$notify({
+          title: 'Form invalid',
+          text: 'Please correct errors.',
+          type: 'is-warning',
+        });
       }
-      this.$notify({
-        title: 'Form invalid',
-        text: 'Please correct errors.',
-        type: 'is-warning',
-      });
     },
     validateFrom() {
       this.$emit('formValid', this.isFormValid());

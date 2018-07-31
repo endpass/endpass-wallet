@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="new-account-modal">
     <v-modal @close="close">
-      <v-form id="sendEther" :sumbmitHandler="confirmResend">
+      <v-form id="sendEther" @submit="confirmResend">
         <v-input v-model="newTransaction.gasPrice"
                  label="Gas price"
                  name="gasPrice"

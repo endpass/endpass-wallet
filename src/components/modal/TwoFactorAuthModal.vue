@@ -2,7 +2,7 @@
   <v-modal @close="close">
     <template slot="header">Two Factor Authentication via OTP</template>
 
-    <v-form :submitHandler="confirm">
+    <v-form @submit="confirm">
       <div class="field" v-if="secret && email">
         <div class="has-text-centered">
           <img :src="qrCodeSrc" />

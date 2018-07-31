@@ -1,5 +1,5 @@
 <template>
-  <v-form :submitHandler="addWalletWithPhraseF">
+  <v-form @submit="addWalletWithPhrase">
     <v-input v-model="hdkeyPhrase"
              label="Seed phrase"
              id="hdkeySeed"

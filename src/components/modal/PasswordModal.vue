@@ -4,7 +4,7 @@
       <template slot="header">Password confirmation required</template>
 
       <div>
-        <v-form>
+        <v-form @submit="confirm">
           <slot></slot>
           <v-input v-model="jsonKeystorePassword"
                    @input="handleInput"
@@ -17,8 +17,7 @@
                    placeholder="V3 JSON keystore password"
                    required></v-input>
           <v-button className="is-primary is-medium"
-                    :loading="proccessingCongirmation"
-                    @click.prevent="confirm">Confirm</v-button>
+                    :loading="proccessingCongirmation">Confirm</v-button>
         </v-form>
       </div>
     </v-modal>

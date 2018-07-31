@@ -1,5 +1,5 @@
 <template>
-  <v-form :sumbmitHandler="handleButtonClick">
+  <v-form @submit="handleButtonClick">
     <label class="label">Two Factor Authentication via OTP</label>
     <v-button className="is-primary is-medium"
               :disabled="isButtonDisabled"

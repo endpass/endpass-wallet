@@ -35,7 +35,7 @@
             <p class="subtitle">Just click the button below to create a new,
             secure Ethereum Wallet. Your wallet can contain multiple addresses
             for storing Ethereum and ERC20 compatible tokens.</p>
-            <v-form :sumbmitHandler="createWallet">
+            <v-form @submit="createWallet">
                <v-input v-model="walletPassword"
                         label="Wallet password"
                         id="jsonKeystorePassword"

@@ -1,16 +1,25 @@
-import { shallow } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
+import VeeValidate from 'vee-validate';
 
+const localVue = createLocalVue();
+
+localVue.use(VeeValidate);
 import VCheckbox from '@/components/ui/form/VCheckbox.vue';
 
+localVue.use(VeeValidate);
 describe('VCheckbox', () => {
   describe('render', () => {
     let wrapper;
 
     beforeAll(() => {
       wrapper = shallow(VCheckbox, {
+        localVue,
         slots: {
           default: '<div/>',
         },
+        provide: () => ({
+          $validator: new VeeValidate.Validator(),
+        }),
       });
     });
 
@@ -28,7 +37,12 @@ describe('VCheckbox', () => {
     let wrapper;
 
     beforeEach(() => {
-      wrapper = shallow(VCheckbox);
+      wrapper = shallow(VCheckbox, {
+        localVue,
+        provide: () => ({
+          $validator: new VeeValidate.Validator(),
+        }),
+      });
     });
 
     describe('value', () => {

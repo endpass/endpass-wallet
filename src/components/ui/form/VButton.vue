@@ -1,7 +1,7 @@
 <template>
   <div class="field">
     <div class="control">
-      <button :id="id"
+      <button :id="id" @click="$emit('click',$event)"
          :disabled="!form.isFormValid || disabled"
          class="button"
          :type="type"

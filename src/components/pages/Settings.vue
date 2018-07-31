@@ -2,7 +2,7 @@
   <base-page class="settings-page">
     <template slot="title">Settings</template>
 
-    <v-form id="save-settings" class="save-settings" :sumbmitHandler="updateSettings">
+    <v-form id="save-settings" class="save-settings" @submit="updateSettings">
       <v-select v-model="newSettings.fiatCurrency"
                 label="Fiat Currency"
                 name='fiatCurrency'

@@ -85,7 +85,7 @@ describe('SettingsPage', () => {
 
   it('should validate settings properly', async () => {
     wrapper = mount(SettingsPage, { store, localVue });
-    const button = wrapper.find('a.button');
+    const button = wrapper.find('button.button');
 
     expect(wrapper.vm.errors.any()).toBeFalsy();
     expect(button.attributes().disabled).toBeTruthy();

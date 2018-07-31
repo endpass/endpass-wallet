@@ -20,7 +20,7 @@ describe('VButton', () => {
   });
 
   it('should render props', () => {
-    const button = wrapper.find('a');
+    const button = wrapper.find('button');
 
     expect(button.attributes().id).toBeFalsy();
     expect(button.classes()).not.toContain('is-loading');
@@ -34,11 +34,11 @@ describe('VButton', () => {
 
     expect(button.attributes().id).toBe('some-id');
     expect(button.classes()).toContain('is-loading');
-    expect(wrapper.contains('a.some-class.some-class-1')).toBeTruthy();
+    expect(wrapper.contains('button.some-class.some-class-1')).toBeTruthy();
   });
 
   it('should emit event if not disabled', async done => {
-    const button = wrapper.find('a');
+    const button = wrapper.find('button');
 
     expect(button.attributes().disabled).toBeFalsy();
 

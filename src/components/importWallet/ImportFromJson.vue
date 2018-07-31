@@ -1,5 +1,5 @@
 <template>
-  <v-form :submitHandler="parseJson">
+  <v-form @submit="parseJson">
     <div class="field">
       <div class="file">
         <label class="file-label">

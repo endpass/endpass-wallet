@@ -4,7 +4,7 @@
       <template slot="header">Add New Provider</template>
 
       <div v-if="!providerAdded">
-	      <v-form :submitHandler="addNewProvider">
+	      <v-form @submit="addNewProvider">
 
           <v-input v-model="provider.name"
                    v-validate="'required'"

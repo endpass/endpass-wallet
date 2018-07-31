@@ -8,7 +8,7 @@
         <strong>{{wallets.length}}</strong> active addresses in your wallet.</p>
         <p class="subtitle">Click the button below to create an additional
       address you can use to receive Ethereum and tokens.</p>
-        <v-form :sumbmitHandler="createNewAccount">
+        <v-form @submit="createNewAccount">
         <v-input v-model="currentWalletPassword"
                  label="Current wallet password"
                  name="currentWalletPassword"

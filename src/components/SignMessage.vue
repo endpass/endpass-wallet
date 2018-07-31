@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-form id="signing-message-form" :sumbmitHandler="togglePasswordModal">
+    <v-form id="signing-message-form" @submit="togglePasswordModal">
       <v-textarea
         v-model="message"
         label="Message"

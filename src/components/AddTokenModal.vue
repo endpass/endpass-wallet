@@ -4,7 +4,7 @@
       <template slot="header">Add custom token</template>
 
       <div v-if="!addedToken">
-        <v-form id="addToken" :submitHandler="createToken">
+        <v-form id="addToken" @submit="createToken">
 
           <v-input v-model="token.address"
                    label="Address"

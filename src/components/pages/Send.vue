@@ -7,7 +7,7 @@
             <h1 class="card-header-title">Send ETH</h1>
           </div>
           <div class="card-content">
-            <v-form id="sendEther" :sumbmitHandler="fetchAddress">
+            <v-form id="sendEther" @submit="fetchAddress">
               <div class="field is-horizontal">
                 <div class="field-label is-normal">
                   <label class="label" for="address">To</label>
@@ -221,7 +221,6 @@
     </div>
     <transaction-modal v-if="isTransactionModal"
                        :transaction="transaction"
-                       :token="selectedToken"
                        @confirm="confirmTransaction"
                        @close="toggleTransactionModal" />
     <password-modal v-if="isPasswordModal"
