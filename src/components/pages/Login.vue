@@ -1,7 +1,7 @@
 <template>
   <base-page>
     <template slot="title">Login/Register</template>
-    <v-form id="login" @submit="handleLogin()" v-if="!isSuccess">
+    <v-form id="login" @submit="handleLogin" v-if="!isSuccess">
 
       <v-input v-model="email"
                label="Email"

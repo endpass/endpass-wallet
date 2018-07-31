@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit="handleButtonClick">
+  <v-form @submit="handleFormSubmit">
     <label class="label">Two Factor Authentication via OTP</label>
     <v-button className="is-primary is-medium"
               :disabled="isButtonDisabled"
@@ -48,7 +48,7 @@ export default {
 
       this.isLoading = false;
     },
-    handleButtonClick() {
+    handleFormSubmit() {
       !this.isButtonDisabled && this.toggleTwoFactorAuthModal();
     }
   },
