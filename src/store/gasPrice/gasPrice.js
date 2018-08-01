@@ -5,7 +5,7 @@ export default {
   namespaced: true,
   state: {},
   actions: {
-    getGasprice() {
+    getGasPrice() {
       return gasPrice.getGasPrice();
     },
   },

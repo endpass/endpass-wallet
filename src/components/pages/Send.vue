@@ -71,7 +71,12 @@
                     :options="suggestedGasPrices"
                     id="priority"
                     v-model="transaction.gasPrice"
+                    v-if="suggestedGasPrices"
                   ></v-radio>
+                  <v-spinner v-else-if="isLoadingGasPrice" :is-loading="isLoadingGasPrice"/>
+                  <p class="help is-danger" v-else>
+                    Unable to load suggested gas price, please set gas price mannualy
+                  </p>
                 </div>
                 <!-- <div class="field-label">
                   <label class="label">Priority</label>
@@ -243,6 +248,7 @@ import web3 from 'web3';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';
 import VInput from '@/components/ui/form/VInput.vue';
+import VSpinner from '@/components/ui/VSpinner';
 import VInputAddress from '@/components/ui/form/VInputAddress.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VSelect from '@/components/ui/form/VSelect';
@@ -267,10 +273,12 @@ export default {
     transactionHash: null,
     nextNonceInBlock: 0,
     userNonce: null,
+    isLoadingGasPrice: true,
     lastInputPrice: 'amount',
     isTransactionModal: false,
     isPasswordModal: false,
     showAdvanced: false,
+    suggestedGasPrices: null
   }),
   computed: {
     ...mapState({
@@ -369,26 +377,6 @@ export default {
     },
     // Suggested gas prices for different priorities
     // TODO dynamically update from API
-    suggestedGasPrices() {
-      return [
-        {
-          val: '10',
-          key: 'Low',
-          help: '10 Gwei'
-        },
-        {
-          val: '40',
-          key: 'Medium',
-          help: '40 Gwei'
-        },
-        {
-          val: '90',
-          key: 'High',
-          help: '90 Gwei'
-        }
-      ]
-
-    },
     tokenCurrencies() {
       const currencies = [{
         val: null,
@@ -406,6 +394,9 @@ export default {
       'sendTransaction',
       'getNextNonce',
       'getNonceInBlock',
+    ]),
+    ...mapActions('gasPrice', [
+      'getGasPrice'
     ]),
     setTrxNonce(nonce) {
       this.transaction.nonce = nonce;
@@ -513,7 +504,25 @@ export default {
   },
   created() {
     this.updateUserNonce();
-
+    this.getGasPrice().then((prices) => {
+      this.suggestedGasPrices = [
+        {
+          val: prices.low,
+          key: 'Low',
+          help: prices.low + ' Gwei'
+        },
+        {
+          val: prices.medium,
+          key: 'Medium',
+          help: prices.medium + ' Gwei'
+        },
+        {
+          val: prices.high,
+          key: 'High',
+          help: prices.high + ' Gwei'
+        }
+      ];
+    });
     this.interval = setInterval(async () => {
       this.nextNonceInBlock = await this.getNonceInBlock();
       this.$validator.validate('nonce')
@@ -526,6 +535,7 @@ export default {
     VForm,
     VButton,
     VRadio,
+    VSpinner,
     VInput,
     VInputAddress,
     VSelect,
