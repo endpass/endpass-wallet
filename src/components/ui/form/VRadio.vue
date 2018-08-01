@@ -1,12 +1,12 @@
 <template lang="html">
-  <div class="field">
+  <div class="field v-radio">
     <div class="control">
       <label class="label"
              v-if="label">{{ label }}</label>
       <template v-for="option in options"
-              :key="item.key || item.val || item">
-        <label class="label" >{{ getOptionParameter(item, 'text') }}</label>
-        <input v-model="selected" :id="id + item.key || item.val || item" type="radio" :name="name" :value="getOptionParameter(option, 'val')">
+              >
+        <label :key="'label' + option.key || option.val || option" class="button is-multiline" :for="id + option.key || option.val || option">{{ getOptionParameter(option, 'key') }}</label>
+        <input :key="'input' +option.key || option.val || option" v-model="selected" :id="id + option.key || option.val || option" type="radio" :name="name" :value="getOptionParameter(option, 'val')">
       </template>
       <p class="help is-danger"
          v-if="error || errors && errors.has(name) ">{{ error || errors && errors.first(name) }}</p>
@@ -20,6 +20,9 @@ export default {
   props: {
     value: {
       default: null,
+    },
+    id: {
+      type: String
     },
     validator: {
       type: String,
@@ -66,4 +69,7 @@ export default {
 </script>
 
 <style lang="css">
+  .v-radio input {
+    display: none;
+  }
 </style>

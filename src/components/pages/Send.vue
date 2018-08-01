@@ -66,6 +66,19 @@
                   <label class="label">Priority</label>
                 </div>
                 <div class="field-body">
+                  <div class="field">
+                    <v-radio
+                      name="priority"
+                      :options="suggestedGasPrices"
+                      id="priority"
+                      v-model="transaction.gasPrice"
+                    ></v-radio>
+                  </div>
+                </div>
+                <!-- <div class="field-label">
+                  <label class="label">Priority</label>
+                </div>
+                <div class="field-body">
                   <div class="field has-addons">
                     <div class="control">
                       <a class="button is-multiline"
@@ -99,7 +112,7 @@
                     </div>
 
                   </div>
-                </div>
+                </div>-->
               </div>
 
 
@@ -230,6 +243,7 @@ import { Transaction } from '@/class';
 import { mapState, mapActions } from 'vuex';
 import web3 from 'web3';
 import VForm from '@/components/ui/form/VForm.vue';
+import VRadio from '@/components/ui/form/VRadio.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VInputAddress from '@/components/ui/form/VInputAddress.vue';
 import VButton from '@/components/ui/form/VButton.vue';
@@ -358,11 +372,21 @@ export default {
     // Suggested gas prices for different priorities
     // TODO dynamically update from API
     suggestedGasPrices() {
-      return {
-        low: '10',
-        medium: '40',
-        high: '90'
-      }
+      return [
+        {
+          val: '10',
+          key: 'low'
+        },
+        {
+          val: '40',
+          key: 'medium'
+        },
+        {
+          val: '90',
+          key: 'high'
+        }
+      ]
+
     },
     tokenCurrencies() {
       const currencies = [{
@@ -500,6 +524,7 @@ export default {
   components: {
     VForm,
     VButton,
+    VRadio,
     VInput,
     VInputAddress,
     VSelect,
