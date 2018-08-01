@@ -522,6 +522,13 @@ export default {
           help: prices.high + ' Gwei'
         }
       ];
+    }).catch(e => {
+      this.isLoadingGasPrice = false;
+      this.$notify({
+        title: 'Failed to get suggested gas price',
+        text: 'An error occurred while retrieving suggested gas price.Please, set mannualy or, try again.',
+        type: 'is-warning',
+      });
     });
     this.interval = setInterval(async () => {
       this.nextNonceInBlock = await this.getNonceInBlock();
