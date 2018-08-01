@@ -1,13 +1,12 @@
 <template>
-  <v-form>
+  <v-form @submit="verifyMessage">
     <v-textarea
       v-model="signedMessageString"
       label="Signature"
     />
     <v-button
       className="is-primary is-medium"
-      :disabled="!signedMessage"
-      @click.prevent="verifyMessage">Verify message</v-button>
+      :disabled="!signedMessage">Verify message</v-button>
     <div class="field" v-if="address">
       <label class="label">Address</label>
       <p>{{address}}</p>

@@ -19,10 +19,9 @@ describe('LoginPage', () => {
   let options;
 
   describe('render', () => {
-    let wrapper;
-
-    beforeAll(() => {
-      wrapper = shallow(LoginPage, {
+    beforeEach(() => {
+      wrapper = mount(LoginPage, {
+        localVue,
         stubs: generateStubs(LoginPage),
       });
     });
@@ -59,12 +58,19 @@ describe('LoginPage', () => {
     });
 
     describe('the send button', () => {
-      it('should change "disable" attribute', () => {
-        wrapper.setData({ termsAccepted: true });
-        expect(wrapper.find('v-button').attributes().disabled).toBeFalsy();
-
+      it('should change "disable" attribute', async () => {
+        wrapper = mount(LoginPage, {
+          store,
+          localVue,
+        });
+        wrapper.setData({
+          email: '123@123.ru',
+          termsAccepted: true,
+        });
+        expect(wrapper.find('#send-button').attributes().disabled).toBeFalsy();
         wrapper.setData({ termsAccepted: false });
-        expect(wrapper.find('v-button').attributes().disabled).toBeTruthy();
+        await wrapper.vm.$validator.validate();
+        expect(wrapper.find('#send-button').attributes().disabled).toBeTruthy();
       });
     });
   });
@@ -218,11 +224,12 @@ describe('LoginPage', () => {
 
     const email = '123@123.com';
 
-    wrapper.setData({ email });
-
-    wrapper.find('a#send-button').trigger('click');
-
-    await new Promise(res => setTimeout(res, 50));
+    wrapper.setData({
+      email,
+      termsAccepted: true,
+    });
+    let button = wrapper.find('form').trigger('submit');
+    await new Promise(res => setTimeout(res, 120));
     expect(actions.login).toHaveBeenCalledTimes(1);
     expect(actions.login).toBeCalledWith(expect.any(Object), email, undefined);
 
@@ -244,7 +251,7 @@ describe('LoginPage', () => {
       email: '',
     });
 
-    await wrapper.vm.$validator.validateAll();
+    await wrapper.vm.$validator.validate();
 
     expect(errors.first('email').includes('required')).toBeTruthy();
 
@@ -252,7 +259,7 @@ describe('LoginPage', () => {
       email: '123@123.com',
     });
 
-    await wrapper.vm.$validator.validateAll();
+    await wrapper.vm.$validator.validate();
 
     expect(errors.has('email')).toBeFalsy();
 
@@ -260,7 +267,7 @@ describe('LoginPage', () => {
       email: '123',
     });
 
-    await wrapper.vm.$validator.validateAll();
+    await wrapper.vm.$validator.validate();
 
     expect(
       errors.first('email').includes('must be a valid email'),

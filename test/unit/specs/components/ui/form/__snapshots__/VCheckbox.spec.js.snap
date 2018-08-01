@@ -8,6 +8,9 @@ exports[`VCheckbox render should render component 1`] = `
     class="checkbox"
   >
     <input
+      class=""
+      data-vv-as="checkbox"
+      name="checkbox"
       type="checkbox"
     />
      

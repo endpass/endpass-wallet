@@ -7,11 +7,10 @@
         <p class="subtitle">You currently have
         <strong>{{ wallets.length }}</strong> active addresses in your wallet.</p>
         <p class="subtitle">Click the button below to create an additional address you can use to receive Ethereum and tokens.</p>
-        <v-form>
+        <v-form @submit="createNewAccount">
           <v-button
             :loading="isCreatingAccount"
             class-name="is-primary is-medium"
-            @click.prevent="createNewAccount"
           >Create address</v-button>
         </v-form>
       </div>

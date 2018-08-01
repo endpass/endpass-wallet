@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="new-account-modal">
     <v-modal @close="close">
-      <v-form id="sendEther">
+      <v-form id="sendEther" @submit="confirmResend">
         <v-input v-model="newTransaction.gasPrice"
                  label="Gas price"
                  name="gasPrice"
@@ -25,8 +25,7 @@
                  placeholder="Gas limit"
                  required />
 
-        <v-button @click.prevent="confirmResend"
-                  className="is-primary is-medium">Send</v-button>
+        <v-button className="is-primary is-medium">Send</v-button>
       </v-form>
     </v-modal>
   </div>

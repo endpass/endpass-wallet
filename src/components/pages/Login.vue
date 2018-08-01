@@ -1,8 +1,7 @@
 <template>
   <base-page>
     <template slot="title">Login/Register</template>
-
-    <v-form id="login" v-if="!isSuccess">
+    <v-form id="login" @submit="handleLogin" v-if="!isSuccess">
 
       <v-input v-model="email"
                label="Email"
@@ -11,19 +10,16 @@
                id="email"
                aria-describedby="email"
                placeholder="Your email"
-               :disabled="isSending"
-               required />
+               :disabled="isSending"/>
 
-      <v-checkbox v-model="termsAccepted">
+      <v-checkbox name="terms" validator="required" v-model="termsAccepted" :disabled="isSending">
         I accept <a href="https://endpass.com/terms/" target="_blank">Terms of Service</a>
         and <a href="https://endpass.com/privacy/" target="_blank">Privacy Policy</a>
       </v-checkbox>
 
-      <v-button @click.prevent="handleLogin"
-                id="send-button"
+      <v-button id="send-button"
                 className="is-primary is-medium"
-                :disabled="!termsAccepted"
-                :loading="isSending">Send</v-button>
+                :loading="isSending" :disabled="isSending">Send</v-button>
 
     </v-form>
     <p id="success-message"

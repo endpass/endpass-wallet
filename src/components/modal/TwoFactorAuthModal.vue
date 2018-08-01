@@ -2,7 +2,7 @@
   <v-modal @close="close">
     <template slot="header">Two Factor Authentication via OTP</template>
 
-    <v-form>
+    <v-form @submit="confirm">
       <div class="field" v-if="secret && email">
         <div class="has-text-centered">
           <img :src="qrCodeSrc" />
@@ -13,8 +13,7 @@
       <v-input v-model="code"
                label="Verification Code"
                validator="required"/>
-      <v-button className="is-primary is-medium"
-                @click.prevent="confirm">Verify</v-button>
+      <v-button className="is-primary is-medium">Verify</v-button>
     </v-form>
   </v-modal>
 </template>

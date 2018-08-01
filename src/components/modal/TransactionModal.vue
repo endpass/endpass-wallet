@@ -17,7 +17,7 @@
             </tr>
             <tr>
               <th>Amount</th>
-              <th>{{ transaction.value }} {{ token }}</th>
+              <th>{{ transaction.value }} {{ transaction.tokenInfo && transaction.tokenInfo.symbol || activeCurrency.name }}</th>
             </tr>
             <tr>
               <th>Gas price</th>
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import VModal from '@/components/ui/VModal';
 
 export default {
@@ -53,11 +53,12 @@ export default {
     transaction: {
       type: Object,
       required: true,
-    },
-    token: {
-      type: String,
-      required: true,
-    },
+    }
+  },
+  computed: {
+    ...mapState({
+      activeCurrency: state => state.web3.activeCurrency
+    })
   },
   methods: {
     confirm() {

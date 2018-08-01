@@ -1,5 +1,5 @@
 <template>
-  <v-form>
+  <v-form @submit="parseJson">
     <div class="field">
       <div class="file">
         <label class="file-label">
@@ -35,8 +35,7 @@
              required />
 
     <v-button className="is-primary is-cta"
-              :loading="isCreating"
-              @click.prevent="parseJson">Import</v-button>
+              :loading="isCreating">Import</v-button>
   </v-form>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-form>
+  <v-form  @submit="addWalletWithPhrase">
     <v-input
       id="hdkeySeed"
       key="hdkeyPhraseUnique"
@@ -24,8 +24,7 @@
               placeholder="wallet password"
               required />
     <v-button className="is-primary is-cta"
-              :loading="isCreating"
-              @click.prevent="addWalletWithPhrase">Import</v-button>
+              :loading="isCreating">Import</v-button>
   </v-form>
 </template>
 

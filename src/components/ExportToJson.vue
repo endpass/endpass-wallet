@@ -1,10 +1,9 @@
 <template lang="html">
   <div class="export-json">
-    <v-form>
+    <v-form @submit="openPasswordModal">
 
       <v-button :loading="exportingJson"
-                className="is-primary is-cta"
-                @click.prevent="openPasswordModal">Export</v-button>
+                className="is-primary is-cta">Export</v-button>
 
     </v-form>
     <password-modal v-if="passwordModalOpen" @confirm="exportJSON" @close="closePasswordModal"></password-modal>

@@ -12,11 +12,13 @@ exports[`LoginPage render should render component 1`] = `
       label="Email"
       name="email"
       placeholder="Your email"
-      required=""
       validator="required|email"
     />
      
-    <v-checkbox>
+    <v-checkbox
+      name="terms"
+      validator="required"
+    >
       
       I accept 
       <a
@@ -37,7 +39,6 @@ exports[`LoginPage render should render component 1`] = `
      
     <v-button
       classname="is-primary is-medium"
-      disabled="true"
       id="send-button"
     >
       Send
@@ -60,11 +61,13 @@ exports[`LoginPage render should show message for successfull login 1`] = `
       label="Email"
       name="email"
       placeholder="Your email"
-      required=""
       validator="required|email"
     />
      
-    <v-checkbox>
+    <v-checkbox
+      name="terms"
+      validator="required"
+    >
       
       I accept 
       <a
@@ -85,7 +88,6 @@ exports[`LoginPage render should show message for successfull login 1`] = `
      
     <v-button
       classname="is-primary is-medium"
-      disabled="true"
       id="send-button"
     >
       Send

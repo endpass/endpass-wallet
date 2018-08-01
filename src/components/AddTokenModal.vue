@@ -4,7 +4,7 @@
       <template slot="header">Add custom token</template>
 
       <div v-if="!addedToken">
-        <v-form id="addToken">
+        <v-form id="addToken" @submit="createToken">
 
           <v-input v-model="token.address"
                    label="Address"
@@ -62,9 +62,11 @@
             <v-button v-if="!loadedToken" @click.prevent="createToken"
                       className="is-primary"
                       :loading="loadingToken"
+                      type="button"
                       :disabled="this.errors.has('address')">Find</v-button>
             <v-button v-else @click.prevent="addToken(token)"
                       className="is-primary"
+                      type="button"
                       :disabled="!isFormValid">Add</v-button>
           </div>
           <div class="is-pulled-right">
