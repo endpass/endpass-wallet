@@ -1,15 +1,18 @@
 <template>
   <v-form @submit="addWallet">
-    <v-input v-model="privateKey"
-             label="Private key"
-             id="privateKey"
-             name="privateKey"
-             validator="required|private_key"
-             data-vv-as="private key"
-             key="privateKeyUnique"
-             aria-describedby="privateKey"
-             placeholder="Private key"
-             required />
+    <v-input
+      id="privateKey"
+      key="privateKeyUnique"
+      v-model="privateKey"
+      label="Private key"
+      name="privateKey"
+      validator="required|private_key"
+      data-vv-as="private key"
+      aria-describedby="privateKey"
+      placeholder="Private key"
+      required
+      @input="handleInput"
+    />
      <v-input v-model="walletPassword"
               label="Wallet password"
               id="jsonKeystorePassword"
@@ -48,7 +51,7 @@ export default {
 
       try {
         this.addWalletWithPrivateKey({
-          privateKey: this.privateKey,
+          privateKey: this.privateKey.replace(/^0x/, ''),
           password: this.walletPassword,
         });
         router.push('/');
@@ -61,6 +64,9 @@ export default {
         console.error(e);
       }
       this.isCreating = false;
+    },
+    handleInput() {
+      this.errors.removeById('wrongPrivateKey');
     },
   },
   components: {

@@ -1,15 +1,18 @@
 <template>
-  <v-form @submit="addWalletWithPhrase">
-    <v-input v-model="hdkeyPhrase"
-             label="Seed phrase"
-             id="hdkeySeed"
-             name="hdkeyPhrase"
-             validator="required|seed_phrase"
-             data-vv-as="seed phrase"
-             key="hdkeyPhraseUnique"
-             aria-describedby="hdkeyPhrase"
-             placeholder="Seed phrase"
-             required />
+  <v-form  @submit="addWalletWithPhrase">
+    <v-input
+      id="hdkeySeed"
+      key="hdkeyPhraseUnique"
+      v-model="hdkeyPhrase"
+      label="Seed phrase"
+      name="hdkeyPhrase"
+      validator="required|seed_phrase"
+      data-vv-as="seed phrase"
+      aria-describedby="hdkeyPhrase"
+      placeholder="Seed phrase"
+      required
+      @input="handleInput"
+    />
      <v-input v-model="walletPassword"
               label="Wallet password"
               id="jsonKeystorePassword"
@@ -62,6 +65,9 @@ export default {
       }
 
       this.isCreating = false;
+    },
+    handleInput() {
+      this.errors.removeById('wrongPhrase');
     },
   },
   components: {

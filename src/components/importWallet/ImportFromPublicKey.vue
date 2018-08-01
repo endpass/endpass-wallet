@@ -1,16 +1,18 @@
 <template>
   <v-form @submit="addWalletWithAddress">
-    <v-input v-model="address"
-             label="Address"
-             id="address"
-             name="address"
-             validator="required|address"
-             data-vv-as="private key"
-             key="publicKeyUnique"
-             aria-describedby="address"
-             placeholder="0x...."
-             required />
-
+    <v-input
+      id="address"
+      key="publicKeyUnique"
+      v-model="address"
+      label="Address"
+      name="address"
+      validator="required|address"
+      data-vv-as="private key"
+      aria-describedby="address"
+      placeholder="0x...."
+      required
+      @input="handleInput"
+    />
     <v-button className="is-primary is-cta"
               :loading="isCreating">Import</v-button>
   </v-form>
@@ -46,6 +48,9 @@ export default {
         console.error(e);
       }
       this.isCreating = false;
+    },
+    handleInput() {
+      this.errors.removeById('wrongAddress');
     },
   },
   components: {
