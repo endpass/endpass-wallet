@@ -1,16 +1,19 @@
 <template lang="html">
-  <div class="field v-radio">
-    <div class="control">
-      <label class="label"
-             v-if="label">{{ label }}</label>
-      <template v-for="option in options"
-              >
-        <label :key="'label' + option.key || option.val || option" class="button is-multiline" :for="id + option.key || option.val || option">{{ getOptionParameter(option, 'key') }}</label>
-        <input :key="'input' +option.key || option.val || option" v-model="selected" :id="id + option.key || option.val || option" type="radio" :name="name" :value="getOptionParameter(option, 'val')">
-      </template>
-      <p class="help is-danger"
-         v-if="error || errors && errors.has(name) ">{{ error || errors && errors.first(name) }}</p>
+  <div class="field is-horizontal has-addons v-radio">
+    <label class="label"
+           v-if="label">{{ label }}</label>
+    <div class="control" :key="'label' + option.key || option.val || option"  v-for="option in options">
+      <label
+        :class="{'is-info is-selected': getOptionParameter(option, 'val') === value}"
+        class="button is-multiline" :for="id + option.key || option.val || option"
+      >
+          {{ getOptionParameter(option, 'key') }}
+          <span v-if="option.help" class="help">{{option.help}}</span>
+      </label>
+      <input v-model="selected" :id="id + option.key || option.val || option" type="radio" :name="name" :value="getOptionParameter(option, 'val')">
     </div>
+    <p class="help is-danger"
+       v-if="error || errors && errors.has(name) ">{{ error || errors && errors.first(name) }}</p>
   </div>
 </template>
 

@@ -66,14 +66,12 @@
                   <label class="label">Priority</label>
                 </div>
                 <div class="field-body">
-                  <div class="field">
-                    <v-radio
-                      name="priority"
-                      :options="suggestedGasPrices"
-                      id="priority"
-                      v-model="transaction.gasPrice"
-                    ></v-radio>
-                  </div>
+                  <v-radio
+                    name="priority"
+                    :options="suggestedGasPrices"
+                    id="priority"
+                    v-model="transaction.gasPrice"
+                  ></v-radio>
                 </div>
                 <!-- <div class="field-label">
                   <label class="label">Priority</label>
@@ -375,15 +373,18 @@ export default {
       return [
         {
           val: '10',
-          key: 'low'
+          key: 'Low',
+          help: '10 Gwei'
         },
         {
           val: '40',
-          key: 'medium'
+          key: 'Medium',
+          help: '40 Gwei'
         },
         {
           val: '90',
-          key: 'high'
+          key: 'High',
+          help: '90 Gwei'
         }
       ]
 
