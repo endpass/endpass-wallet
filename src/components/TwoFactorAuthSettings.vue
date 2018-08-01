@@ -58,7 +58,16 @@ export default {
     TwoFactorAuthModal
   },
   mounted() {
-    this.getOtpSettings();
+    // make sure we have an email address (a proxy to see if we're logged in),
+    // before attempting to get Otp settings
+    // TODO: we should have a better mechanism for checking if we're logged in,
+    // or least a simple abstraction func, which would make the code more
+    // easily manageable, ie, when we want to change the logged in trigger from
+    // checking an email address to another attribute, we would only need to do
+    // it in one place
+    if (this.email) {
+      this.getOtpSettings();
+    }
   },
   mixins: [modalMixin],
 };
