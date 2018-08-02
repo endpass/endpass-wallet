@@ -15,7 +15,8 @@ cache:
   - "~/.cache"
 install: yarn install --frozen-lockfile
 before_script:
-- yarn run dev &
+  - yarn run dev &
+  - sleep 5
 script:
 - yarn run $TEST_SUITE
 - yarn build
