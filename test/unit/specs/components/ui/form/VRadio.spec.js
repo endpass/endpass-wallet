@@ -37,6 +37,7 @@ describe('VSelect', () => {
       value: 'option2',
       label: 'Some Label',
     });
+    wrapper.find('input').trigger('click');
     expect(wrapper.emitted().input).toBeTruthy();
   });
 
