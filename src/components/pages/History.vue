@@ -42,9 +42,14 @@ export default {
     ...mapState({
       address: state =>
         state.accounts.address && state.accounts.address.getAddressString(),
+      activeNet: state => state.web3.activeNet,
       pendingTransactions: state => state.transactions.pendingTransactions,
+
     }),
     processedTransactions() {
+      if(this.activeNet.id !== 1) {
+        return this.pendingTransactions;
+      }
       const fullTransactions = this.transactions.concat(
         this.pendingTransactions,
       );
@@ -56,8 +61,8 @@ export default {
     },
     // Whether history is supported on this network
     historyAvailable() {
-      let activeNet = this.$store.state.web3.activeNet.name;
-      return activeNet === 'Main';
+      let activeNet = this.activeNet.id;
+      return activeNet === 1;
     },
   },
   methods: {

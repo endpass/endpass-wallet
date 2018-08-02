@@ -16,6 +16,7 @@ export class Transaction {
     state = 'success',
     timestamp,
     to = '',
+    networkId = 1,
     tokenInfo = undefined,
     transactionHash,
     value = '0',
@@ -29,6 +30,7 @@ export class Transaction {
 
     this.data = data || input;
     this.from = from;
+    this.networkId = networkId;
     this.gasPrice = gasPrice;
     this.gasLimit = gasLimit;
     this.hash = hash || transactionHash;
@@ -168,6 +170,7 @@ export class Transaction {
       gasLimit: this.gasLimit,
       data: this.data,
       nonce: this.nonce,
+      networkId: this.networkId,
       hash: this.hash,
     };
 

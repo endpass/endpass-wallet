@@ -250,6 +250,7 @@ export default {
         state.tokens.activeTokens.filter(token => token.balance > 0),
       activeCurrency: state => state.web3.activeCurrency,
       web3: state => state.web3.web3,
+      activeNet: state => state.web3.activeNet,
       isSyncing: state => !!state.web3.isSyncing,
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
       ethPrice: state => state.price.price,
@@ -400,6 +401,7 @@ export default {
       this.isSending = true;
       this.transaction.from = this.address;
       this.togglePasswordModal();
+      this.transaction.networkId = this.activeNet.id;
       this.sendTransaction({ transaction: this.transaction, password })
         .then(hash => {
           this.transactionHash = hash;
