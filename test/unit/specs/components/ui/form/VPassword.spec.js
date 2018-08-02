@@ -45,4 +45,12 @@ describe('VPassword', () => {
     expect(input.props().type).toBe('text');
     expect(inputEl.attributes().type).toBe('text');
   });
+
+  it('should emit event', () => {
+    wrapper.find('input').trigger('input');
+    wrapper.find('input').trigger('blur');
+
+    expect(wrapper.emitted().input).toBeTruthy();
+    expect(wrapper.emitted().blur).toBeTruthy();
+  });
 });

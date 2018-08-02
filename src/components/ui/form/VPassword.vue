@@ -1,6 +1,8 @@
 <template>
   <v-input :type="inputType" autocomplete="current-password" v-bind="$attrs"
-    :value="value" @input="$emit('input', $event)">
+    :value="value"
+    @input="$emit('input', $event)"
+    @blur="$emit('blur', $event)">
     <a slot="icon" @click="toggleVisible">
       <span class="icon is-small is-right" v-html="require('@/img/eye.svg')">
       </span>
@@ -44,3 +46,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.control {
+  &.has-icons-left,
+  &.has-icons-right {
+    .icon {
+      pointer-events: initial;
+    }
+  }
+}
+</style>
