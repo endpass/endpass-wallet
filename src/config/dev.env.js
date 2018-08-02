@@ -1,5 +1,6 @@
 const identityAPIUrl = '/identity/api/v1';
 const tokenInfoAPIUrl = '/tokeninfo/api/v1';
+const cryptoDataAPIUrl = '/gasprice/api/v1';
 
 // Parameters for cipher encrypting wallet
 const kdfParams = {
@@ -8,6 +9,7 @@ const kdfParams = {
 };
 
 export default {
+  cryptoDataAPIUrl,
   identityAPIUrl,
   tokenInfoAPIUrl,
   kdfParams,

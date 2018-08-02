@@ -22,6 +22,7 @@ export const {
   serviceThrottleTimeout,
   subscriptionsAPIInterval,
   subscriptionsBlockchainInterval,
+  cryptoDataAPIUrl,
   identityAPIUrl,
   tokenInfoAPIUrl,
   kdfParams,

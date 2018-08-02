@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { NotificationError } from '@/class';
+import { cryptoDataAPIUrl } from '@/config';
 
 export default {
   getGasPrice(address) {
     return axios
-      .get(`https://cryptodata-dev.endpass.com/api/v1/gas/price`)
+      .get(`${cryptoDataAPIUrl}/gas/price`)
       .then(resp => resp.data)
       .catch(e => {
         throw new NotificationError({

@@ -19,10 +19,17 @@ module.exports = {
         cookieDomainRewrite: 'localhost',
       },
       '/tokeninfo/api/v1': {
-        target: 'https://tokeninfo-dev.endpass.com/',
+        target: 'https://tokeninfo-dev.endpass.com',
         changeOrigin: true,
         pathRewrite: {
           '^/tokeninfo/api/v1': '/api/v1',
+        },
+      },
+      '/gasprice/api/v1': {
+        target: 'https://cryptodata-dev.endpass.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/gasprice/api/v1': '/api/v1',
         },
       },
     },
