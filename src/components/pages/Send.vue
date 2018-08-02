@@ -41,7 +41,7 @@
                            :disabled="isSending"
                            required>
                     <span class="select" slot="addon">
-                      <v-select name="currencys" v-model="transaction.tokenInfo"
+                      <v-select name="currencies" v-model="transaction.tokenInfo"
                                 :options="tokenCurrencies"/>
                     </span>
                   </v-input>
