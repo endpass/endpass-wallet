@@ -2,6 +2,7 @@ export default {
   data: () => ({
     isPasswordModal: false,
     isTwoFactorAuthModal: false,
+    isLoginModal: false,
   }),
   methods: {
     togglePasswordModal() {
@@ -9,6 +10,9 @@ export default {
     },
     toggleTwoFactorAuthModal() {
       this.isTwoFactorAuthModal = !this.isTwoFactorAuthModal;
+    },
+    toggleLoginModal() {
+      this.isLoginModal = !this.isLoginModal;
     },
   },
 };
