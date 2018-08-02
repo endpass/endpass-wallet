@@ -1,5 +1,9 @@
 <template>
   <v-input :type="inputType" autocomplete="current-password" v-bind="$attrs">
+    <a @click="toggleVisible">
+      <span slot="icon" class="icon is-small is-right" v-html="require('@/img/eye.svg')">
+    </a>
+    </span>
   </v-input>
 </template>
 
