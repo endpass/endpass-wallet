@@ -9,6 +9,7 @@
            :class="{'is-expanded': $slots.addon,
            'is-loading': pendingEns }">
         <input v-model="innerValue"
+               :name="name"
                v-validate="'required|ensOrAddress'"
                :data-vv-as="label || name"
                class="input"

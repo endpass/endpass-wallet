@@ -41,7 +41,7 @@
                            :disabled="isSending"
                            required>
                     <span class="select" slot="addon">
-                      <v-select v-model="transaction.tokenInfo"
+                      <v-select name="currencys" v-model="transaction.tokenInfo"
                                 :options="tokenCurrencies"/>
                     </span>
                   </v-input>
@@ -78,44 +78,6 @@
                     Unable to load suggested gas price, please set gas price mannualy
                   </p>
                 </div>
-                <!-- <div class="field-label">
-                  <label class="label">Priority</label>
-                </div>
-                <div class="field-body">
-                  <div class="field has-addons">
-                    <div class="control">
-                      <a class="button is-multiline"
-                         :class="{'is-info': transaction.gasPrice ===
-                         suggestedGasPrices.low, 'is-selected': transaction.gasPrice ===
-                         suggestedGasPrices.low}"
-                         @click="setSuggestedGasPrice('low')">
-                        Low
-                        <span class="help">{{suggestedGasPrices.low}} Gwei</span>
-                      </a>
-                    </div>
-                    <div class="control">
-                      <a class="button is-multiline"
-                         :class="{'is-info': transaction.gasPrice ===
-                         suggestedGasPrices.medium, 'is-selected': transaction.gasPrice ===
-                         suggestedGasPrices.medium}"
-                         @click="setSuggestedGasPrice('medium')">
-                        Medium
-                        <span class="help">{{suggestedGasPrices.medium}} Gwei</span>
-                      </a>
-                    </div>
-                    <div class="control">
-                      <a class="button is-multiline"
-                         :class="{'is-info': transaction.gasPrice ===
-                         suggestedGasPrices.high, 'is-selected': transaction.gasPrice ===
-                         suggestedGasPrices.high}"
-                         @click="setSuggestedGasPrice('high')">
-                        High
-                        <span class="help">{{suggestedGasPrices.high}} Gwei</span>
-                      </a>
-                    </div>
-
-                  </div>
-                </div>-->
               </div>
 
 
@@ -401,9 +363,6 @@ export default {
     setTrxNonce(nonce) {
       this.transaction.nonce = nonce;
     },
-    setSuggestedGasPrice(priority) {
-      this.transaction.gasPrice = this.suggestedGasPrices[priority] || '1';
-    },
     async resetForm() {
       this.$validator.pause();
       await this.$nextTick();
@@ -507,17 +466,17 @@ export default {
     this.getGasPrice().then((prices) => {
       this.suggestedGasPrices = [
         {
-          val: prices.low,
+          val: prices.low.toString(),
           key: 'Low',
           help: prices.low + ' Gwei'
         },
         {
-          val: prices.medium,
+          val: prices.medium.toString(),
           key: 'Medium',
           help: prices.medium + ' Gwei'
         },
         {
-          val: prices.high,
+          val: prices.high.toString(),
           key: 'High',
           help: prices.high + ' Gwei'
         }
