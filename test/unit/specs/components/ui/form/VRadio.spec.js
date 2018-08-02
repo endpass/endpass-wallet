@@ -49,7 +49,7 @@ describe('VRadio', () => {
 
           wrapper.setProps({ options });
 
-          expect(wrapper.find('.v-radio').html()).toMatchSnapshot();
+          expect(wrapper.html()).toMatchSnapshot();
         });
       });
 
