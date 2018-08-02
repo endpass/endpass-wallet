@@ -5,7 +5,7 @@ import VSelect from '@/components/ui/form/VRadio.vue';
 
 const localVue = createLocalVue();
 
-describe('VSelect', () => {
+describe('VRadio', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -59,7 +59,7 @@ describe('VSelect', () => {
 
           wrapper.setProps({ options });
 
-          expect(wrapper.find('.v-radio').html()).toMatchSnapshot();
+          expect(wrapper.html()).toMatchSnapshot();
         });
 
         it('should correctly render values of options', () => {

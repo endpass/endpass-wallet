@@ -4,8 +4,10 @@ export default {
   namespaced: true,
   state: {},
   actions: {
-    getGasPrice() {
-      return gasPrice.getGasPrice();
+    getGasPrice({ dispatch }) {
+      return gasPrice.getGasPrice().catch(e => {
+        dispatch('errors/emitError', e, { root: true });
+      });
     },
   },
 };

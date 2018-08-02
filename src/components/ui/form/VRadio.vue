@@ -2,15 +2,15 @@
   <div class="field is-horizontal has-addons v-radio">
     <label class="label"
            v-if="label">{{ label }}</label>
-    <div class="control" :key="'label' + option.key || option.val || option"  v-for="option in options">
+    <div class="control" :key="'label' + getKeyString(option)"  v-for="option in options">
       <label
         :class="{'is-info is-selected': getOptionParameter(option, 'val') === value}"
-        class="button is-multiline" :for="id + option.key || option.val || option"
+        class="button is-multiline" :for="id + getKeyString(option)"
       >
           {{ getOptionParameter(option, 'key') }}
           <span v-if="option.help" class="help">{{option.help}}</span>
       </label>
-      <input v-model="selected" :id="id + option.key || option.val || option" type="radio" :name="name" :value="getOptionParameter(option, 'val')">
+      <input v-model="selected" :id="id + getKeyString(option)" type="radio" :name="name" :value="getOptionParameter(option, 'val')">
     </div>
     <p class="help is-danger"
        v-if="error || errors && errors.has(name) ">{{ error || errors && errors.first(name) }}</p>
@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import getOptionParameter from '@/utils/get-option-parameter'
 export default {
   name: 'v-radio',
   props: {
@@ -66,7 +67,8 @@ export default {
     },
   },
   methods: {
-    getOptionParameter: (item, value) => item instanceof Object ? item[value] : item
+    getOptionParameter,
+    getKeyString: (item) => item.key || item.val || item
   },
 };
 </script>

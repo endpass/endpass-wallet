@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import getOptionParameter from '@/utils/get-option-parameter'
 export default {
   name: 'v-select',
   props: {
@@ -61,7 +62,7 @@ export default {
     },
   },
   methods: {
-    getOptionParameter: (item, value) => item instanceof Object ? item[value] : item
+    getOptionParameter
   },
 };
 </script>
