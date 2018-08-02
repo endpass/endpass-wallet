@@ -1,14 +1,16 @@
-<template>
-  <div class="field">
+<template lang="html">
+  <div class="field is-horizontal has-addons v-radio">
     <label class="label"
            v-if="label">{{ label }}</label>
-    <div class="control select">
-      <select v-model="selected" :name="name"
-      :data-vv-as="label || name" v-validate="validator">
-        <option v-for="item in options"
-                :key="item.key || item.val || item"
-                :value="getOptionParameter(item, 'val')">{{ getOptionParameter(item, 'text') }}</option>
-      </select>
+    <div class="control" :key="'label' + getKeyString(option)"  v-for="option in options">
+      <label
+        :class="{'is-info is-selected': getOptionParameter(option, 'val') === value}"
+        class="button is-multiline" :for="id + getKeyString(option)"
+      >
+          {{ getOptionParameter(option, 'key') }}
+          <span v-if="option.help" class="help">{{option.help}}</span>
+      </label>
+      <input v-model="selected" :id="id + getKeyString(option)" type="radio" :name="name" :value="getOptionParameter(option, 'val')">
     </div>
     <p class="help is-danger"
        v-if="error || errors && errors.has(name) ">{{ error || errors && errors.first(name) }}</p>
@@ -18,10 +20,13 @@
 <script>
 import getOptionParameter from '@/utils/get-option-parameter'
 export default {
-  name: 'v-select',
+  name: 'v-radio',
   props: {
     value: {
       default: null,
+    },
+    id: {
+      type: String
     },
     validator: {
       type: String,
@@ -62,29 +67,14 @@ export default {
     },
   },
   methods: {
-    getOptionParameter
+    getOptionParameter,
+    getKeyString: (item) => item.key || item.val || item
   },
 };
 </script>
 
-<style lang="scss">
-.select {
-  &:not(.is-multiple):not(.is-loading)::after {
-    border-color: $primary;
+<style lang="css">
+  .v-radio input {
+    display: none;
   }
-  .field .is-naked &, form .is-naked &, .modal .is-naked & {
-    select {
-      background-color: transparent;
-      color: $white;
-      border: none;
-      &.is-active,&:active,&.is-focused,&:focus {
-        border: 1px solid $white;
-        box-shadow: none;
-      }
-    }
-    &::after, &:hover::after {
-      border-color: $white;
-    }
-  }
-}
 </style>

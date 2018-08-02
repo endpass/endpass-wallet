@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VRadio props options options are objects should correctly render text of options 1`] = `
+<div class="field is-horizontal has-addons v-radio">
+    <!---->
+    <div class="control">
+        <label for="undefined[object Object]" class="button is-multiline">
+
+            <!---->
+        </label>
+        <input id="undefined[object Object]" type="radio" name="" value="">
+    </div>
+    <div class="control">
+        <label for="undefined[object Object]" class="button is-multiline">
+
+            <!---->
+        </label>
+        <input id="undefined[object Object]" type="radio" name="" value="">
+    </div>
+    <!---->
+</div>
+`;
+
+exports[`VRadio props options options are objects should correctly render values of options 1`] = `
+<div class="field is-horizontal has-addons v-radio">
+    <!---->
+    <div class="control">
+        <label for="undefinedval" class="button is-multiline">
+
+            <!---->
+        </label>
+        <input id="undefinedval" type="radio" name="" value="val">
+    </div>
+    <div class="control">
+        <label for="undefined[object Object]" class="button is-multiline">
+
+            <!---->
+        </label>
+        <input id="undefined[object Object]" type="radio" name="" value="">
+    </div>
+    <!---->
+</div>
+`;
+
+exports[`VRadio props options options are strings should correctly render options 1`] = `
+<div class="field is-horizontal has-addons v-radio">
+    <!---->
+    <div class="control">
+        <label for="undefinedoption1" class="button is-multiline">
+            option1
+            <!---->
+        </label>
+        <input id="undefinedoption1" type="radio" name="" value="option1">
+    </div>
+    <div class="control">
+        <label for="undefinedoption2" class="button is-multiline">
+            option2
+            <!---->
+        </label>
+        <input id="undefinedoption2" type="radio" name="" value="option2">
+    </div>
+    <!---->
+</div>
+`;
+
+exports[`VRadio props options options have different types should correctly render options 1`] = `
+<div class="field is-horizontal has-addons v-radio">
+    <!---->
+    <div class="control">
+        <label for="undefinedoption" class="button is-multiline">
+            option
+            <!---->
+        </label>
+        <input id="undefinedoption" type="radio" name="" value="option">
+    </div>
+    <div class="control">
+        <label for="undefinedoption value" class="button is-multiline">
+
+            <!---->
+        </label>
+        <input id="undefinedoption value" type="radio" name="" value="option value">
+    </div>
+    <!---->
+</div>
+`;

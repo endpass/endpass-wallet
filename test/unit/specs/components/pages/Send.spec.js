@@ -64,6 +64,20 @@ describe('Send', () => {
       },
       actions,
       modules: {
+        gasPrice: {
+          namespaced: true,
+          actions: {
+            getGasPrice() {
+              return new Promise(res =>
+                res({
+                  low: '1',
+                  medium: '2',
+                  high: '3',
+                }),
+              );
+            },
+          },
+        },
         transactions: {
           namespaced: true,
           actions: {
