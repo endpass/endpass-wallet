@@ -20,6 +20,7 @@ export class Transaction {
     tokenInfo = undefined,
     transactionHash,
     value = '0',
+    success,
   }) {
     if (tokenInfo) {
       this.tokenInfo = tokenInfo;
@@ -35,7 +36,7 @@ export class Transaction {
     this.gasLimit = gasLimit;
     this.hash = hash || transactionHash;
     this.nonce = nonce;
-    this.state = state;
+    this.state = success === false ? 'error' : state;
     this.to = to;
     if (timestamp) {
       this.date = new Date(timestamp * 1000);
