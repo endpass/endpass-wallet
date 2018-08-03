@@ -9,8 +9,9 @@ const infuraConf = {
 const serviceThrottleTimeout = 2000;
 const subscriptionsAPIInterval = 5000;
 const subscriptionsBlockchainInterval = 3000;
-const identityAPIUrl = 'http://user-url-for-prod.com';
-const tokenInfoAPIUrl = 'http://user-url-for-prod.com';
+const identityAPIUrl = 'https://identity.endpass.com/api/v1';
+const tokenInfoAPIUrl = 'https://tokeninfo.endpass.com/api/v1';
+const cryptoDataAPIUrl = 'https://cryptodata.endpass.com/api/v1';
 
 // Parameters for cipher encrypting wallet
 const kdfParams = {
@@ -24,6 +25,7 @@ export default {
   serviceThrottleTimeout,
   subscriptionsAPIInterval,
   subscriptionsBlockchainInterval,
+  cryptoDataAPIUrl,
   identityAPIUrl,
   tokenInfoAPIUrl,
   kdfParams,

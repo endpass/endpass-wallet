@@ -12,6 +12,11 @@ describe('TwoFactorAuthModal', () => {
   });
 
   describe('render', () => {
+    it('should be a Vue component', () => {
+      expect(wrapper.name()).toBe('two-factor-auth-modal');
+      expect(wrapper.isVueInstance()).toBeTruthy();
+    });
+
     it('should render without secret and QR code', () => {
       expect(wrapper.element).toMatchSnapshot();
 
@@ -37,6 +42,22 @@ describe('TwoFactorAuthModal', () => {
       });
 
       expect(wrapper.element).toMatchSnapshot();
+    });
+  });
+
+  describe('props', () => {
+    describe('isLoading', () => {
+      it('should correctly change button "loading" property', () => {
+        wrapper.setProps({
+          isLoading: false,
+        });
+        expect(wrapper.find('v-button').attributes().loading).toBeFalsy();
+
+        wrapper.setProps({
+          isLoading: true,
+        });
+        expect(wrapper.find('v-button').attributes().loading).toBeTruthy();
+      });
     });
   });
 });

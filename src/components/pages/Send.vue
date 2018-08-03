@@ -41,7 +41,7 @@
                            :disabled="isSending"
                            required>
                     <span class="select" slot="addon">
-                      <v-select v-model="transaction.tokenInfo"
+                      <v-select name="currencies" v-model="transaction.tokenInfo"
                                 :options="tokenCurrencies"/>
                     </span>
                   </v-input>
@@ -66,39 +66,17 @@
                   <label class="label">Priority</label>
                 </div>
                 <div class="field-body">
-                  <div class="field has-addons">
-                    <div class="control">
-                      <a class="button is-multiline"
-                         :class="{'is-info': transaction.gasPrice ===
-                         suggestedGasPrices.low, 'is-selected': transaction.gasPrice ===
-                         suggestedGasPrices.low}"
-                         @click="setSuggestedGasPrice('low')">
-                        Low
-                        <span class="help">{{suggestedGasPrices.low}} Gwei</span>
-                      </a>
-                    </div>
-                    <div class="control">
-                      <a class="button is-multiline"
-                         :class="{'is-info': transaction.gasPrice ===
-                         suggestedGasPrices.medium, 'is-selected': transaction.gasPrice ===
-                         suggestedGasPrices.medium}"
-                         @click="setSuggestedGasPrice('medium')">
-                        Medium
-                        <span class="help">{{suggestedGasPrices.medium}} Gwei</span>
-                      </a>
-                    </div>
-                    <div class="control">
-                      <a class="button is-multiline"
-                         :class="{'is-info': transaction.gasPrice ===
-                         suggestedGasPrices.high, 'is-selected': transaction.gasPrice ===
-                         suggestedGasPrices.high}"
-                         @click="setSuggestedGasPrice('high')">
-                        High
-                        <span class="help">{{suggestedGasPrices.high}} Gwei</span>
-                      </a>
-                    </div>
-
-                  </div>
+                  <v-radio
+                    name="priority"
+                    :options="suggestedGasPrices"
+                    id="priority"
+                    v-model="transaction.gasPrice"
+                    v-if="suggestedGasPrices"
+                  ></v-radio>
+                  <v-spinner v-else-if="isLoadingGasPrice" :is-loading="isLoadingGasPrice"/>
+                  <p class="help is-danger" v-else>
+                    Unable to load suggested gas price, please set gas price mannualy
+                  </p>
                 </div>
               </div>
 
@@ -230,7 +208,9 @@ import { Transaction } from '@/class';
 import { mapState, mapActions } from 'vuex';
 import web3 from 'web3';
 import VForm from '@/components/ui/form/VForm.vue';
+import VRadio from '@/components/ui/form/VRadio.vue';
 import VInput from '@/components/ui/form/VInput.vue';
+import VSpinner from '@/components/ui/VSpinner';
 import VInputAddress from '@/components/ui/form/VInputAddress.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VSelect from '@/components/ui/form/VSelect';
@@ -255,10 +235,12 @@ export default {
     transactionHash: null,
     nextNonceInBlock: 0,
     userNonce: null,
+    isLoadingGasPrice: true,
     lastInputPrice: 'amount',
     isTransactionModal: false,
     isPasswordModal: false,
     showAdvanced: false,
+    suggestedGasPrices: null
   }),
   computed: {
     ...mapState({
@@ -358,13 +340,6 @@ export default {
     },
     // Suggested gas prices for different priorities
     // TODO dynamically update from API
-    suggestedGasPrices() {
-      return {
-        low: '10',
-        medium: '40',
-        high: '90'
-      }
-    },
     tokenCurrencies() {
       const currencies = [{
         val: null,
@@ -383,11 +358,11 @@ export default {
       'getNextNonce',
       'getNonceInBlock',
     ]),
+    ...mapActions('gasPrice', [
+      'getGasPrice'
+    ]),
     setTrxNonce(nonce) {
       this.transaction.nonce = nonce;
-    },
-    setSuggestedGasPrice(priority) {
-      this.transaction.gasPrice = this.suggestedGasPrices[priority] || '1';
     },
     async resetForm() {
       this.$validator.pause();
@@ -490,7 +465,27 @@ export default {
   },
   created() {
     this.updateUserNonce();
-
+    this.getGasPrice().then((prices) => {
+      this.suggestedGasPrices = [
+        {
+          val: prices.low.toString(),
+          key: 'Low',
+          help: prices.low + ' Gwei'
+        },
+        {
+          val: prices.medium.toString(),
+          key: 'Medium',
+          help: prices.medium + ' Gwei'
+        },
+        {
+          val: prices.high.toString(),
+          key: 'High',
+          help: prices.high + ' Gwei'
+        }
+      ];
+    }).catch(e => {
+      this.isLoadingGasPrice = false;
+    });
     this.interval = setInterval(async () => {
       this.nextNonceInBlock = await this.getNonceInBlock();
       this.$validator.validate('nonce')
@@ -502,6 +497,8 @@ export default {
   components: {
     VForm,
     VButton,
+    VRadio,
+    VSpinner,
     VInput,
     VInputAddress,
     VSelect,

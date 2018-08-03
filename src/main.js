@@ -4,6 +4,7 @@ import router from './router';
 import store from './store';
 import validation from './validation';
 import App from './App';
+import './directives';
 
 Vue.config.productionTip = false;
 

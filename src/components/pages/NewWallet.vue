@@ -36,11 +36,10 @@
             secure Ethereum Wallet. Your wallet can contain multiple addresses
             for storing Ethereum and ERC20 compatible tokens.</p>
             <v-form @submit="createWallet">
-               <v-input v-model="walletPassword"
+               <v-password v-model="walletPassword"
                         label="Wallet password"
                         id="jsonKeystorePassword"
                         name="walletPassword"
-                        type="password"
                         validator="required|min:8"
                         data-vv-as="password"
                         aria-describedby="jsonKeystorePassword"
@@ -62,7 +61,7 @@ import Bip39 from 'bip39';
 import VueTimers from 'vue-timers/mixin';
 import { mapActions, mapState } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
-import VInput from '@/components/ui/form/VInput.vue';
+import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 const SEED_PHRASE_TIMEOUT_SEC = 10;
@@ -131,7 +130,7 @@ export default {
   },
   components: {
     VForm,
-    VInput,
+    VPassword,
     VButton,
   },
 };

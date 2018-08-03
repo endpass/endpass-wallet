@@ -6,16 +6,15 @@
       <div>
         <v-form @submit="confirm">
           <slot></slot>
-          <v-input v-model="jsonKeystorePassword"
+          <v-password v-model="jsonKeystorePassword"
                    @input="handleInput"
                    label="V3 JSON keystore password"
                    name="jsonKeystorePassword"
-                   type="password"
                    validator="required"
                    data-vv-as="password"
                    aria-describedby="jsonKeystorePassword"
                    placeholder="V3 JSON keystore password"
-                   required></v-input>
+                   required />
           <v-button className="is-primary is-medium"
                     :loading="proccessingCongirmation">Confirm</v-button>
         </v-form>
@@ -28,7 +27,7 @@
 import { mapActions } from 'vuex';
 import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm.vue';
-import VInput from '@/components/ui/form/VInput.vue';
+import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
@@ -69,7 +68,7 @@ export default {
   components: {
     VModal,
     VForm,
-    VInput,
+    VPassword,
     VButton,
   },
 };
