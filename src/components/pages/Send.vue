@@ -15,7 +15,6 @@
                 <div class="field-body">
                   <v-input-address v-model="transaction.to"
                            ref="address"
-                           label="To"
                            name="address"
                            id="address"
                            aria-describedby="address"
