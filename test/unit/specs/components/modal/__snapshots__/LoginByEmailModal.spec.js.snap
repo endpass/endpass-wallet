@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoginByEmailModal render should render component 1`] = `
+<v-modal>
+   
+  <v-form>
+    <v-input
+      label="Email"
+      name="email"
+      placeholder="Your email"
+      validator="required|email"
+    />
+     
+    <v-checkbox>
+      
+      I accept 
+      <a
+        href="https://endpass.com/terms/"
+        target="_blank"
+      >
+        Terms of Service
+      </a>
+      
+      and 
+      <a
+        href="https://endpass.com/privacy/"
+        target="_blank"
+      >
+        Privacy Policy
+      </a>
+    </v-checkbox>
+     
+    <v-button
+      classname="is-primary is-medium"
+      disabled="true"
+    >
+      Send
+    </v-button>
+  </v-form>
+</v-modal>
+`;

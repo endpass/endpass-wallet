@@ -13,7 +13,7 @@
       <v-input v-model="code"
                label="Verification Code"
                validator="required"/>
-      <v-button className="is-primary is-medium">Verify</v-button>
+      <v-button className="is-primary is-medium" :loading="isLoading">Verify</v-button>
     </v-form>
   </v-modal>
 </template>
@@ -41,7 +41,11 @@ export default {
   },
   props: {
     secret: String,
-    email: String
+    email: String,
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     confirm() {

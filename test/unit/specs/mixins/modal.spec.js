@@ -7,6 +7,7 @@ describe('Modal mixin', () => {
       const expected = {
         isPasswordModal: false,
         isTwoFactorAuthModal: false,
+        isLoginModal: false,
       };
 
       expect(data).toEqual(expected);
@@ -41,6 +42,21 @@ describe('Modal mixin', () => {
 
         toggleTwoFactorAuthModal.call(context);
         expect(context.isTwoFactorAuthModal).toBeFalsy();
+      });
+    });
+
+    describe('toggleLoginModal', () => {
+      it('should toggle modal window for login', () => {
+        const { toggleLoginModal } = modalMixin.methods;
+        const context = {
+          isLoginModal: false,
+        };
+
+        toggleLoginModal.call(context);
+        expect(context.isLoginModal).toBeTruthy();
+
+        toggleLoginModal.call(context);
+        expect(context.isLoginModal).toBeFalsy();
       });
     });
   });
