@@ -22,13 +22,10 @@
           <router-link v-if="!address" :to="{name: 'NewWallet'}" class="button
           is-primary">Create Wallet</router-link>
 
-        <router-link class="button"
-                     v-if="!email"
-                     :to="{name:'LoginPage'}"
-                     >
-                     <span class="icon is-small"
-                           v-html="require('@/img/account-login.svg')"></span>Login
-        </router-link>
+          <a class="button" v-if="!email" @click.prevent="isLoginModal = true">
+            <span class="icon is-small" v-html="require('@/img/account-login.svg')"/>
+            Login
+          </a>
 
         <a class="button"
            v-else
@@ -101,12 +98,15 @@
 
     </div>
 
+    <login-modal v-if="isLoginModal" @close="toggleLoginModal"/>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
 import AccountChooser from '@/components/bar/AccountChooser.vue';
+import LoginModal from '@/components/modal/LoginModal';
+import modalMixin from '@/mixins/modal';
 
 export default {
   data() {
@@ -132,7 +132,9 @@ export default {
   },
   components: {
     AccountChooser,
+    LoginModal,
   },
+  mixins: [modalMixin],
 }
 </script>
 
