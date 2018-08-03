@@ -8,6 +8,15 @@ export default {
     pendingTransactions: [],
   },
   getters: {
+    accountTransactions(state, getters, rootState) {
+      const address = rootState.accounts.address.getAddressString();
+      return state.pendingTransactions.filter(trx => {
+        return (
+          trx.from === address ||
+          (trx.to === address && trx.status === 'success')
+        );
+      });
+    },
     pendingBalance(state) {
       return state.pendingTransactions
         .filter(tnx => tnx.state === 'pending')
@@ -167,7 +176,9 @@ export default {
     },
     handleSendingError({ dispatch }, { err = '', receipt, transaction }) {
       const cause =
-        receipt || err.includes('out of gas') ? ', because out of gas' : '';
+        receipt || (err.message || err).includes('out of gas')
+          ? ', because out of gas'
+          : '';
       const { hash } = transaction;
       const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`;
       const error = new NotificationError({
