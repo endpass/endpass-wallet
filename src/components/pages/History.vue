@@ -8,7 +8,7 @@
           </div>
           <div class="card-content">
             <ul v-if="processedTransactions.length" class="transactions">
-              <li v-for="transaction in processedTransactions"
+              <li v-for="transaction in processedTransactions" v-if="transaction.networkId === activeNet.id"
               :key="transaction.hash">
                 <app-transaction :transaction="transaction"></app-transaction>
               </li>
@@ -42,13 +42,13 @@ export default {
     ...mapState({
       address: state =>
         state.accounts.address && state.accounts.address.getAddressString(),
-      activeNet: state => state.web3.activeNet
+      activeNet: state => state.web3.activeNet,
     }),
     ...mapGetters({
-      accountTransactions: 'transactions/accountTransactions'
+      accountTransactions: 'transactions/accountTransactions',
     }),
     processedTransactions() {
-      if(this.activeNet.id !== 1) {
+      if (this.activeNet.id !== 1) {
         return this.accountTransactions;
       }
       const fullTransactions = this.transactions.concat(
@@ -104,7 +104,7 @@ export default {
   },
   components: {
     appTransaction,
-    VSpinner
+    VSpinner,
   },
 };
 </script>
