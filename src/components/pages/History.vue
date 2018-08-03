@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import VSpinner from '@/components/ui/VSpinner';
 import appTransaction from '@/components/Transaction';
 import EthplorerService from '@/services/ethplorer';
@@ -43,15 +43,16 @@ export default {
       address: state =>
         state.accounts.address && state.accounts.address.getAddressString(),
       activeNet: state => state.web3.activeNet,
-      pendingTransactions: state => state.transactions.pendingTransactions,
-
+    }),
+    ...mapGetters({
+      accountTransactions: 'transactions/accountTransactions',
     }),
     processedTransactions() {
-      if(this.activeNet.id !== 1) {
-        return this.pendingTransactions;
+      if (this.activeNet.id !== 1) {
+        return this.accountTransactions;
       }
       const fullTransactions = this.transactions.concat(
-        this.pendingTransactions,
+        this.accountTransactions,
       );
       return fullTransactions.sort((trx1, trx2) => {
         if (typeof trx2.timestamp === 'undefined') return 1;
