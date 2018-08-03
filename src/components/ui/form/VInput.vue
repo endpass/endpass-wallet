@@ -7,7 +7,7 @@
     <div class="field"
          :class="{'has-addons': $slots.addon }">
       <div class="control"
-           :class="{'is-expanded': $slots.addon }">
+           :class="{'is-expanded': $slots.addon, 'has-icons-right': $slots.icon }">
         <input v-model="innerValue"
                v-validate="validator"
                :data-vv-as="label || name"
@@ -15,6 +15,7 @@
                class="input"
                :class="{'is-danger': error || errors.has(name) }"
                v-bind="props">
+        <slot name="icon"></slot>
       </div>
       <div class="control"
            v-if="$slots.addon">
@@ -116,13 +117,14 @@ export default {
 .field.has-addons {
   margin-bottom: 0;
   .control:last-child {
-    .button.is-static, .input, .select select {
+    .button.is-static,
+    .input,
+    .select select {
       border: none;
       outline: none;
       //border-bottom: 1px solid $dark-grey;
     }
   }
-
 }
 
 .field > .field {
@@ -139,31 +141,43 @@ export default {
   margin-top: 0.15rem;
 }
 
-.input, .textarea {
+.input,
+.textarea {
   box-shadow: none;
   border: none;
   outline: none;
   border-radius: 0;
   padding: 0;
   border-bottom: 1px solid $dark-grey;
-  transition: box-shadow .4s, border .4s;
+  transition: box-shadow 0.4s, border 0.4s;
 
-  &:hover, &.is-hovered {
+  &:hover,
+  &.is-hovered {
     border-bottom: 1px solid $primary;
     box-shadow: 0 1px 0 0 $primary;
   }
 
-  &:focus,&.is-focused,&:active,&.is-active {
+  &:focus,
+  &.is-focused,
+  &:active,
+  &.is-active {
     border-bottom: 1px solid $primary;
     box-shadow: 0 1px 0 0 $primary;
     font-weight: 700;
   }
-  &.is-danger:focus,&.is-danger.is-focused,&.is-danger:active,&.is-danger.is-active,&.is-danger:hover,&.is-danger.is-hovered {
+  &.is-danger:focus,
+  &.is-danger.is-focused,
+  &.is-danger:active,
+  &.is-danger.is-active,
+  &.is-danger:hover,
+  &.is-danger.is-hovered {
     border-bottom: 1px solid $danger;
     box-shadow: 0 1px 0 0 $danger;
   }
 
-  .field .is-naked &, form .is-naked &, .modal .is-naked & {
+  .field .is-naked &,
+  form .is-naked &,
+  .modal .is-naked & {
     background-color: transparent;
     border-bottom-width: 2px;
     border-bottom-color: $white;

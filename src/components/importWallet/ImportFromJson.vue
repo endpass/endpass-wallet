@@ -22,11 +22,10 @@
          class="help is-danger">{{ errors.first('fileName') }}</p>
     </div>
 
-    <v-input v-model="jsonKeystorePassword"
+    <v-password v-model="jsonKeystorePassword"
              label="V3 JSON keystore password"
              id="jsonKeystorePassword"
              name="jsonKeystorePassword"
-             type="password"
              validator="required|min:8"
              data-vv-as="password"
              key="jsonKeystorePasswordUnique"
@@ -44,7 +43,7 @@ import EthWallet from 'ethereumjs-wallet';
 import router from '@/router';
 import { mapActions, mapMutations } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
-import VInput from '@/components/ui/form/VInput.vue';
+import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
@@ -124,7 +123,7 @@ export default {
   },
   components: {
     VForm,
-    VInput,
+    VPassword,
     VButton,
   },
 };

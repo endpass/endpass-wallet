@@ -1,6 +1,6 @@
 <template>
   <v-form @submit="addWallet">
-    <v-input
+    <v-password
       id="privateKey"
       key="privateKeyUnique"
       v-model="privateKey"
@@ -13,11 +13,10 @@
       required
       @input="handleInput"
     />
-     <v-input v-model="walletPassword"
+     <v-password v-model="walletPassword"
               label="Wallet password"
               id="jsonKeystorePassword"
               name="walletPassword"
-              type="password"
               validator="required|min:8"
               data-vv-as="password"
               aria-describedby="jsonKeystorePassword"
@@ -32,7 +31,7 @@
 import router from '@/router';
 import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
-import VInput from '@/components/ui/form/VInput.vue';
+import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
@@ -71,7 +70,7 @@ export default {
   },
   components: {
     VForm,
-    VInput,
+    VPassword,
     VButton,
   },
 };
