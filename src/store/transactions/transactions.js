@@ -165,14 +165,17 @@ export default {
           }),
       );
     },
-    handleSendingError({ dispatch }, { err = '', receipt, transaction }) {
+    handleSendingError({ dispatch }, { err, receipt, transaction }) {
+      const { err: errorMessage = '' } = err;
       const cause =
-        receipt || err.includes('out of gas') ? ', because out of gas' : '';
+        receipt || errorMessage.includes('out of gas')
+          ? ', because out of gas'
+          : '';
       const { hash } = transaction;
-      const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`;
+      const shortHash = hash ? `${hash.slice(0, 4)}...${hash.slice(-4)} ` : '';
       const error = new NotificationError({
         title: 'Error sending transaction',
-        text: `Transaction ${shortHash} was not sent${cause}`,
+        text: `Transaction ${shortHash}was not sent${cause}`,
         type: 'is-danger',
       });
       dispatch('errors/emitError', error, { root: true });

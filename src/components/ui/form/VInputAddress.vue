@@ -11,7 +11,8 @@
         <input v-model="innerValue"
                :name="name"
                v-validate="'required|ensOrAddress'"
-               :data-vv-as="label || name"
+               :data-vv-as="label || 'To' || name"
+               data-vv-validate-on="input"
                class="input"
                :class="{'is-danger': error || errors.has(name)}"
                :disabled="disabled || pendingEns"
@@ -32,27 +33,21 @@
 <script>
 import { ENSResolver } from '@/class';
 import { mapState } from 'vuex';
-import  web3 from 'web3';
+import web3 from 'web3';
 export default {
   data() {
     const ens = new ENSResolver(this.$store.state.web3.web3);
     return {
-      validatingEns: false,
-      getNameTimeout: null,
       pendingEns: false,
       ens,
-      value: ''
-    }
+      tempValue: '',
+    };
   },
-  name: 'v-input',
+  name: 'v-input-address',
   props: {
     id: {
       type: String,
       default: null,
-    },
-    required: {
-      type: Boolean,
-      default: true,
     },
     name: {
       type: String,
@@ -61,6 +56,10 @@ export default {
     label: {
       type: String,
       default: null,
+    },
+    value: {
+      type: String,
+      default: '',
     },
     placeholder: {
       type: String,
@@ -81,97 +80,72 @@ export default {
     error: {
       type: String,
       default: null,
-    }
+    },
   },
   inject: {
     $validator: '$validator',
   },
   methods: {
     camelToKebab: str => str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`),
-    clearFiledTimeout() {
-      if(this.getNameTimeout) {
-        clearTimeout(this.getNameTimeout)
+    async updateENS() {
+      if (!this.innerValue.match(/^.+\.(eth|etc)$/)) return;
+
+      const { name } = this;
+      const field = this.$validator.fields.find({ name });
+
+      if (!field) return;
+
+      this.pendingEns = true;
+
+      await this.$nextTick();
+      this.$validator.flag(name, {
+        invalid: true,
+        valid: false,
+        pending: true,
+      });
+
+      try {
+        const address = await this.ens.getAddress(this.innerValue);
+        this.$validator.flag(name, {
+          valid: true,
+          invalid: false,
+          pending: false,
+        });
+        this.$emit('input', address);
+      } catch (e) {
+        this.$validator.errors.add({
+          id: field.id,
+          field: name,
+          msg: e.message,
+          scope: this.$options.scope,
+        });
+      } finally {
+        this.pendingEns = false;
       }
     },
-    async updateENS() {
-      if(this.innerValue.match(/^.+\.eth$/) || this.innerValue.match(/^.+\.etc$/)) {
-        const field = this.$validator.fields.find({ name: this.name, });
-        if (!field) return;
-        this.pendingEns = true;
-        this.$validator.errors.remove(this.name);
-        this.$validator.flag(this.name,{
-          invalid: true,
-          valid: false,
-          pending: true
-        });
-        try{
-          const address = await this.ens.getAddress(this.innerValue);
-          this.$validator.flag(this.name,{
-            valid: true,
-            invalid: false,
-            pending:false
-          });
-          this.$emit('input', address);
-        } catch (e) {
-          this.$validator.errors.remove(this.name);
-          this.$validator.errors.add({
-            id: field.id,
-            field: this.name,
-            msg: e.message,
-            scope: this.$options.scope,
-          });
-          throw e
-        } finally {
-          this.pendingEns = false;
-        }
-      }
-    }
   },
   computed: {
     innerValue: {
       get() {
-        return this.value;
+        if (this.value === '') {
+          return this.value;
+        }
+
+        return this.tempValue;
       },
       set(newVal) {
-        const field = this.$validator.fields.find({ name: this.name, });
+        const { name } = this;
+        const field = this.$validator.fields.find({ name });
+
         if (!field) return;
-        const zeroAddressRegex = /^0x0+$/;
-        const isHashKey = web3.utils.isAddress(newVal);
-        const isZeroKey = newVal.match(zeroAddressRegex);
-        const message = isZeroKey
-          ? 'This is a zero address'
-          : 'This is not a valid address';
-        if(newVal.match(/^.+\.eth$/) || newVal.match(/^.+\.etc$/)) {
-          this.value = newVal;
-          this.$validator.flag(this.name,{
-            valid: true,
-            invalid: false,
-            pending:false
-          });
-          this.$validator.errors.remove(this.name);
-        } else if(isHashKey && !isZeroKey) {
-          this.$validator.flag(this.name,{
-            valid: true,
-            invalid: false,
-            pending:false
-          });
-          this.$validator.errors.remove(this.name);
-          this.value = newVal;
-          this.$emit('input', newVal);
+
+        this.$validator.errors.remove(name);
+        this.tempValue = newVal;
+
+        if (newVal.match(/^.+\.(eth|etc)$/)) {
+          this.updateENS();
         } else {
-          this.value = newVal;
-          this.$validator.errors.remove(this.name);
-          this.$validator.flag(this.name,{
-            invalid: true,
-            valid: false,
-            pending: true
-          });
-          this.$validator.errors.add({
-            id: field.id,
-            field: this.name,
-            msg: message,
-            scope: this.$options.scope,
-          });
+          this.$emit('input', newVal);
         }
       },
     },
@@ -184,7 +158,7 @@ export default {
         {},
       );
     },
-  }
+  },
 };
 </script>
 
