@@ -13,7 +13,7 @@ export default {
       return state.pendingTransactions.filter(trx => {
         return (
           trx.from === address ||
-          (trx.to === address && trx.status === 'success')
+          (trx.to === address && trx.state === 'success')
         );
       });
     },
