@@ -4,7 +4,7 @@
 
 Lightweight, easy to use Ethereum wallet.
 
-### This project is still undergoing active development and is not ready for production use.
+### The "release" branch is the stable version of the wallet.
 
 ## Developer Instructions
 
