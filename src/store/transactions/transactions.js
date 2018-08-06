@@ -18,11 +18,16 @@ export default {
       });
     },
     pendingBalance(state, getters, rootState) {
-      if (!rootState.accounts.address) return;
       const address = rootState.accounts.address.getAddressString(),
         networkId = rootState.web3.activeNet.id;
       return state.pendingTransactions
-        .filter(tnx => tnx.state === 'pending')
+        .filter(tnx => {
+          return (
+            tnx.state === 'pending' &&
+            tnx.from === address &&
+            tnx.networkId === networkId
+          );
+        })
         .map(tnx => {
           const tnxValue = tnx.token === 'ETH' ? tnx.valueWei : '0';
 

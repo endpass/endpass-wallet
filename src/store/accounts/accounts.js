@@ -36,10 +36,9 @@ export default {
       );
     },
     balance(state, getters, rootState, rootGetters) {
-      const pendingBalance = rootGetters['transactions/pendingBalance'];
-
       if (state.balance === null) return null;
 
+      const pendingBalance = rootGetters['transactions/pendingBalance'];
       const balanceWei = BigNumber(state.balance || '0')
         .minus(pendingBalance)
         .toFixed();
