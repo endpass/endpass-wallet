@@ -18,6 +18,7 @@ export default {
       });
     },
     pendingBalance(state, getters, rootState) {
+      if (!rootState.accounts.address) return;
       const address = rootState.accounts.address.getAddressString(),
         networkId = rootState.web3.activeNet.id;
       return state.pendingTransactions
