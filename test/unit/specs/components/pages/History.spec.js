@@ -31,17 +31,8 @@ describe('HistoryPage', () => {
             },
           },
         },
-        web3: {
-          activeNet: {
-            name: 'Main',
-            id: 1,
-          },
-        },
-      },
-      actions,
-      getters: {
-        'transactions/accountTransactions'() {
-          return [
+        transactions: {
+          pendingTransactions: [
             {
               timestamp: 1524505925,
               from: '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b',
@@ -52,9 +43,15 @@ describe('HistoryPage', () => {
               input: '0x',
               success: true,
             },
-          ];
+          ],
+        },
+        web3: {
+          activeNet: {
+            name: 'Main',
+          },
         },
       },
+      actions,
     });
   });
 
@@ -128,7 +125,7 @@ describe('HistoryPage', () => {
         expect(elems.length).toBe(3);
         expect(elems[2].from).toBe(wrapper.vm.address);
         expect(elems[2].timestamp).toBe(
-          store.getters['transactions/accountTransactions'][0].timestamp,
+          store.state.transactions.pendingTransactions[0].timestamp,
         );
         done();
       });
