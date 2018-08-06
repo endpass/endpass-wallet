@@ -10,13 +10,10 @@
         <img src="@/img/logo-light.png" alt="Endpass Wallet">
       </router-link>
       <div class="login-control">
-        <router-link class="button is-success"
-                     v-if="!email"
-                     :to="{name:'LoginPage'}"
-                     >
-                     <span class="icon is-small"
-                           v-html="require('@/img/account-login.svg')"></span>Login
-        </router-link>
+          <a class="button is-success" v-if="!email" @click.prevent="isLoginModal = true">
+            <span class="icon is-small" v-html="require('@/img/account-login.svg')"/>
+            Login
+          </a>
 
         <a class="button"
            v-else
