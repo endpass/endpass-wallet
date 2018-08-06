@@ -19,7 +19,7 @@ describe('transactions store', async () => {
     stateInstance.pendingTransactions = [
       {
         to: '0x0',
-        status: 'success',
+        state: 'success',
       },
       {
         from: '0x0',
@@ -47,12 +47,12 @@ describe('transactions store', async () => {
   });
 
   it('should get pending balance correctly', () => {
-    [
+    stateInstance.pendingTransactions = [
       {
         from: '0x0',
         token: 'ETH',
         networkId: 1,
-        status: 'pending',
+        state: 'pending',
         valueWei: '1',
         gasCost: '6',
       },
@@ -60,7 +60,7 @@ describe('transactions store', async () => {
         from: '0x0',
         token: 'ETH',
         networkId: 1,
-        status: 'success',
+        state: 'success',
         valueWei: '1',
         gasCost: '6',
       },
@@ -68,7 +68,7 @@ describe('transactions store', async () => {
         from: '0x0',
         token: 'ETH',
         networkId: 2,
-        status: 'success',
+        state: 'success',
         valueWei: '2',
         gasCost: '5',
       },
@@ -76,7 +76,7 @@ describe('transactions store', async () => {
         to: '0x1',
         token: 'ETH',
         networkId: 1,
-        status: 'success',
+        state: 'success',
         valueWei: '3',
         gasCost: '4',
         from: '0x2',
