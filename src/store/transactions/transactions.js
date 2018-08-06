@@ -22,13 +22,7 @@ export default {
       const address = rootState.accounts.address.getAddressString(),
         networkId = rootState.web3.activeNet.id;
       return state.pendingTransactions
-        .filter(tnx => {
-          return (
-            tnx.state === 'pending' &&
-            tnx.from === address &&
-            tnx.networkId === networkId
-          );
-        })
+        .filter(tnx => tnx.state === 'pending')
         .map(tnx => {
           const tnxValue = tnx.token === 'ETH' ? tnx.valueWei : '0';
 
