@@ -30,7 +30,7 @@
                 </div>
                 <div class="field-body">
                   <v-input v-model="value"
-                           type="number"
+                           type="text"
                            name="value"
                            :validator="`required|decimal:${decimal}|between:0,${maxAmount}`"
                            data-vv-as="amount"
@@ -239,16 +239,18 @@ export default {
     isTransactionModal: false,
     isPasswordModal: false,
     showAdvanced: false,
-    suggestedGasPrices: null
+    suggestedGasPrices: null,
   }),
   computed: {
     ...mapState({
       tokenPrices: state => state.tokens.prices,
       balance: state => state.accounts.balance,
       address: state => state.accounts.address.getAddressString(),
-      tokens: state => state.tokens.activeTokens.filter(token => token.balance > 0),
+      tokens: state =>
+        state.tokens.activeTokens.filter(token => token.balance > 0),
       activeCurrency: state => state.web3.activeCurrency,
       web3: state => state.web3.web3,
+      activeNet: state => state.web3.activeNet,
       isSyncing: state => !!state.web3.isSyncing,
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
       ethPrice: state => state.price.price,
@@ -303,9 +305,18 @@ export default {
     },
     actualPrice() {
       let price;
-      if(this.transaction.tokenInfo) {
-        price = this.tokenPrices[this.transaction.tokenInfo.symbol] && this.tokenPrices[this.transaction.tokenInfo.symbol][this.activeCurrency.name] ?
-        BigNumber(this.tokenPrices[this.transaction.tokenInfo.symbol][this.activeCurrency.name]).times(this.ethPrice) : 0;
+      if (this.transaction.tokenInfo) {
+        price =
+          this.tokenPrices[this.transaction.tokenInfo.symbol] &&
+          this.tokenPrices[this.transaction.tokenInfo.symbol][
+            this.activeCurrency.name
+          ]
+            ? BigNumber(
+                this.tokenPrices[this.transaction.tokenInfo.symbol][
+                  this.activeCurrency.name
+                ],
+              ).times(this.ethPrice)
+            : 0;
       } else {
         price = this.ethPrice;
       }
@@ -339,16 +350,18 @@ export default {
     // Suggested gas prices for different priorities
     // TODO dynamically update from API
     tokenCurrencies() {
-      const currencies = [{
-        val: null,
-        key: this.activeCurrency.name,
-        text: this.activeCurrency.name
-      }];
+      const currencies = [
+        {
+          val: null,
+          key: this.activeCurrency.name,
+          text: this.activeCurrency.name,
+        },
+      ];
 
       this.tokens.forEach(token => currencies.push(token.symbol));
 
       return currencies;
-    }
+    },
   },
   methods: {
     ...mapActions('transactions', [
@@ -356,9 +369,7 @@ export default {
       'getNextNonce',
       'getNonceInBlock',
     ]),
-    ...mapActions('gasPrice', [
-      'getGasPrice'
-    ]),
+    ...mapActions('gasPrice', ['getGasPrice']),
     setTrxNonce(nonce) {
       this.transaction.nonce = nonce;
     },
@@ -390,6 +401,7 @@ export default {
       this.isSending = true;
       this.transaction.from = this.address;
       this.togglePasswordModal();
+      this.transaction.networkId = this.activeNet.id;
       this.sendTransaction({ transaction: this.transaction, password })
         .then(hash => {
           this.transactionHash = hash;
@@ -462,30 +474,32 @@ export default {
   },
   created() {
     this.updateUserNonce();
-    this.getGasPrice().then((prices) => {
-      this.suggestedGasPrices = [
-        {
-          val: prices.low.toString(),
-          key: 'Low',
-          help: prices.low + ' Gwei'
-        },
-        {
-          val: prices.medium.toString(),
-          key: 'Medium',
-          help: prices.medium + ' Gwei'
-        },
-        {
-          val: prices.high.toString(),
-          key: 'High',
-          help: prices.high + ' Gwei'
-        }
-      ];
-    }).catch(e => {
-      this.isLoadingGasPrice = false;
-    });
+    this.getGasPrice()
+      .then(prices => {
+        this.suggestedGasPrices = [
+          {
+            val: prices.low.toString(),
+            key: 'Low',
+            help: prices.low + ' Gwei',
+          },
+          {
+            val: prices.medium.toString(),
+            key: 'Medium',
+            help: prices.medium + ' Gwei',
+          },
+          {
+            val: prices.high.toString(),
+            key: 'High',
+            help: prices.high + ' Gwei',
+          },
+        ];
+      })
+      .catch(e => {
+        this.isLoadingGasPrice = false;
+      });
     this.interval = setInterval(async () => {
       this.nextNonceInBlock = await this.getNonceInBlock();
-      this.$validator.validate('nonce')
+      this.$validator.validate('nonce');
     }, 2000);
   },
   beforeDestroy() {
@@ -509,14 +523,14 @@ export default {
 .advanced-options-container {
 }
 .advanced-options {
-  overflow:hidden;
-  height:auto;
+  overflow: hidden;
+  height: auto;
   max-height: 1000px;
 
   display: inherit !important; /* override v-show display: none */
-  transition:max-height 0.3s ease-in-out;
+  transition: max-height 0.3s ease-in-out;
 }
-.advanced-options[style*="display: none;"] {
+.advanced-options[style*='display: none;'] {
   max-height: 0;
   pointer-events: none; /* disable user interaction */
   user-select: none; /* disable user selection */

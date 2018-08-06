@@ -8,7 +8,7 @@
           </div>
           <div class="card-content">
             <ul v-if="processedTransactions.length" class="transactions">
-              <li v-for="transaction in processedTransactions"
+              <li v-for="transaction in processedTransactions" v-if="transaction.networkId === activeNet.id"
               :key="transaction.hash">
                 <app-transaction :transaction="transaction"></app-transaction>
               </li>
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import VSpinner from '@/components/ui/VSpinner';
 import appTransaction from '@/components/Transaction';
 import EthplorerService from '@/services/ethplorer';
@@ -42,11 +42,17 @@ export default {
     ...mapState({
       address: state =>
         state.accounts.address && state.accounts.address.getAddressString(),
-      pendingTransactions: state => state.transactions.pendingTransactions,
+      activeNet: state => state.web3.activeNet,
+    }),
+    ...mapGetters({
+      accountTransactions: 'transactions/accountTransactions',
     }),
     processedTransactions() {
+      if (this.activeNet.id !== 1) {
+        return this.accountTransactions;
+      }
       const fullTransactions = this.transactions.concat(
-        this.pendingTransactions,
+        this.accountTransactions,
       );
       return fullTransactions.sort((trx1, trx2) => {
         if (typeof trx2.timestamp === 'undefined') return 1;
@@ -56,8 +62,8 @@ export default {
     },
     // Whether history is supported on this network
     historyAvailable() {
-      let activeNet = this.$store.state.web3.activeNet.name;
-      return activeNet === 'Main';
+      let activeNet = this.activeNet.id;
+      return activeNet === 1;
     },
   },
   created() {
@@ -98,7 +104,7 @@ export default {
   },
   components: {
     appTransaction,
-    VSpinner
+    VSpinner,
   },
 };
 </script>
