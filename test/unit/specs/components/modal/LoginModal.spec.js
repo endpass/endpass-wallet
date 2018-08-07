@@ -64,6 +64,12 @@ describe('LoginModal', () => {
 
     beforeEach(() => {
       const localVue = createLocalVue();
+      const $router = {
+        push: jest.fn(),
+      };
+      const $route = {
+        query: {},
+      };
 
       localVue.use(Vuex);
       localVue.use(Notifications);
@@ -77,7 +83,11 @@ describe('LoginModal', () => {
         },
       });
 
-      wrapper = shallow(LoginModal, { store, localVue });
+      wrapper = shallow(LoginModal, {
+        store,
+        localVue,
+        mocks: { $route, $router },
+      });
     });
 
     afterEach(() => {
@@ -169,6 +179,25 @@ describe('LoginModal', () => {
         expect(wrapper.vm.emitError).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.emitError).toHaveBeenCalledWith(error);
         expect(wrapper.emitted().close).toBeUndefined();
+      });
+
+      it('should redirect after login', async () => {
+        const regirectUri = '/some-page';
+
+        wrapper.vm.$route.query.redirect_uri = regirectUri;
+
+        await wrapper.vm.handleTwoFactorAuthModalConfirm(code);
+
+        expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          path: regirectUri,
+        });
+      });
+
+      it('should not redirect after login', async () => {
+        await wrapper.vm.handleTwoFactorAuthModalConfirm(code);
+
+        expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(0);
       });
     });
   });

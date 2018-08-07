@@ -48,6 +48,7 @@ export default {
 
       return loginViaOTP({ code, email })
         .then(handleSuccessfulLogin)
+        .then(this.redirectPage)
         .catch(handleFailedLogin);
     },
     handleClose() {
@@ -74,6 +75,15 @@ export default {
     },
     close() {
       this.$emit('close');
+    },
+    redirectPage() {
+      const regirectUri = this.$route.query.redirect_uri;
+
+      if (regirectUri) {
+        this.$router.push({
+          path: regirectUri,
+        });
+      }
     },
   },
   components: {
