@@ -29,6 +29,10 @@ export default {
       });
   },
 
+  logout() {
+    return Promise.resolve({ success: true });
+  },
+
   getSettings() {
     return Promise.resolve({
       id: 'abcd-1234',

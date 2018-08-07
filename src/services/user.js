@@ -44,33 +44,37 @@ export default {
       });
   },
 
+  logout() {
+    return axios.post(`${identityAPIUrl}/logout`).catch(() => {
+      throw new NotificationError({
+        title: 'Log out error',
+        text: 'Failed to log out. Please, try again',
+        type: 'is-danger',
+      });
+    });
+  },
+
   getSettings() {
-    return axios.get(`${identityAPIUrl}/user`).then(res => res.data);
+    return axios.get(`${identityAPIUrl}/user`).then(({ data }) => data);
   },
 
   setSettings(settings) {
     return axios
-      .post(`${identityAPIUrl}/user`, {
-        ...settings,
-        settings: {
-          ...settings.settings,
-          currency: settings.settings.fiatCurrency,
-        },
-      })
-      .then(res => res.data);
+      .post(`${identityAPIUrl}/user`, settings)
+      .then(({ data }) => data);
   },
 
-  removeSettings(propsArr) {
-    return Promise.resolve({
-      success: true,
-    });
+  // removeSettings(propsArr) {
+  //   return Promise.resolve({
+  //     success: true,
+  //   });
 
-    // return axios
-    //   .delete(`${identityAPIUrl}/user`, propsArr)
-    //   .then(res => res.data)
-    //   .then(console.log)
-    //   .catch(console.log);
-  },
+  //   return axios
+  //     .delete(`${identityAPIUrl}/user`, propsArr)
+  //     .then(res => res.data)
+  //     .then(console.log)
+  //     .catch(console.log);
+  // },
 
   getAccounts() {
     return axios.get(`${identityAPIUrl}/accounts`).then(res => res.data);
@@ -78,7 +82,7 @@ export default {
 
   setAccount(account) {
     return axios
-      .post(`${identityAPIUrl}/accounts`, account)
+      .post(`${identityAPIUrl}/accounts/${account.address}`, account)
       .then(res => res.data);
   },
 
