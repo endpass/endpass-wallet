@@ -24,11 +24,6 @@
     <div v-else-if="address" class="control">
         {{address |truncateAddr}}
     </div>
-    <div v-if="hdWallet" class="new-account control">
-      <a class="button is-primary is-medium is-fullheight" @click="openNewAccountModal">&plus;</a>
-    </div>
-    <new-account-modal @close="closeNewAccountModal"
-      v-if="newAccountModalOpen"/>
   </div>
 </template>
 
@@ -36,7 +31,6 @@
 import Multiselect from 'vue-multiselect';
 import { mapState, mapActions } from 'vuex';
 import Account from '@/components/Account';
-import NewAccountModal from '@/components/NewAccountModal';
 
 export default {
   data() {
@@ -84,12 +78,6 @@ export default {
   },
   methods: {
     ...mapActions('accounts', ['selectWallet']),
-    openNewAccountModal() {
-      this.newAccountModalOpen = true;
-    },
-    closeNewAccountModal() {
-      this.newAccountModalOpen = false;
-    },
   },
   filters: {
     // Truncate an address to the first 4 and last 4 characters
@@ -102,7 +90,6 @@ export default {
   components: {
     Multiselect,
     Account,
-    NewAccountModal,
   },
 };
 </script>
