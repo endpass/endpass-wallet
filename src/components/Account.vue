@@ -32,7 +32,7 @@ export default {
     },
     currency: {
       type: String,
-      default: 'ETH'
+      default: 'ETH',
     },
     balance: {
       type: String,
@@ -41,7 +41,7 @@ export default {
     size: {
       type: Number,
       default: 50,
-    }
+    },
   },
   computed: {
     icon() {
@@ -63,6 +63,11 @@ export default {
 
 <style lang="scss">
 .account {
+  .media-content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .address {
     font-size: 1.25rem;
     margin: 0;
@@ -73,7 +78,8 @@ export default {
     align-items: center;
     justify-content: center;
     text-align: center;
-    .media-left, .media-right {
+    .media-left,
+    .media-right {
       margin: 0;
     }
     .media-content {

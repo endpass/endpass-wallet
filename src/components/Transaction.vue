@@ -2,7 +2,7 @@
   <div class="transaction" :class="statusClass">
     <div class="transaction-header">
       <account :address="txAddress" :balance="transaction.value.toString()"
-        :currency="symbol" :size="8">
+        :currency="symbol" >
       <div class="transaction-actions level is-mobile">
         <div class="level-left">
           <div class="level-item">
