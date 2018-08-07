@@ -92,7 +92,19 @@ describe('HistoryPage', () => {
       done();
     });
   });
-
+  it('updates transactions on account change', done => {
+    const wrapper = shallow(HistoryPage, { store, localVue });
+    const watcher = jest.spyOn(wrapper.vm, 'getMainHistory');
+    store.state.accounts.address = {
+      getAddressString() {
+        return '0x0';
+      },
+    };
+    wrapper.vm.$nextTick(() => {
+      expect(watcher).toHaveBeenCalled();
+      done();
+    });
+  });
   it('concats transactions', done => {
     moxios.stubRequest(/api\.ethplorer\.io\/getAddressTransactions/, {
       status: 200,
