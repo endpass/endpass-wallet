@@ -30,7 +30,7 @@
                 </div>
                 <div class="field-body">
                   <v-input v-model="value"
-                           type="text"
+                           type="number"
                            name="value"
                            :validator="`required|decimal:${decimal}|between:0,${maxAmount}`"
                            data-vv-as="amount"
