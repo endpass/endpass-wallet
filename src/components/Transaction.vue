@@ -5,23 +5,29 @@
         :currency="symbol" :size="8">
       <div class="transaction-actions level is-mobile">
         <div class="level-left">
-          <a class="level-item" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="resend" :disabled="isSyncing">
-            <span class="icon is-small"
-                  v-html="require('@/img/loop.svg')"></span>Resend
-          </a>
-          <a class="level-item has-text-danger" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="cancel" :disabled="isSyncing" >
-            <span class="icon is-small"
-                  v-html="require('@/img/ban.svg')"></span>Cancel
-          </a>
-        </div>
-        <div class="level-right">
           <div class="level-item">
             <span class="date">{{date.fromNow()}}</span>
           </div>
-          <a @click="toggleExpanded" class="level-item">
+        </div>
+        <div class="level-right">
+          <a class="level-item has-text-info"
+            title="Resend" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="resend" :disabled="isSyncing">
+            <span class="icon is-small"
+                  v-html="require('@/img/loop.svg')"></span>
+            <span class="caption is-hidden-mobile">Resend</span>
+          </a>
+          <a class="level-item has-text-danger"
+            title="Cancel" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="cancel" :disabled="isSyncing" >
+            <span class="icon is-small"
+                  v-html="require('@/img/ban.svg')"></span>
+            <span class="caption is-hidden-mobile">Cancel</span>
+          </a>
+          <a @click="toggleExpanded" title="Details" class="level-item has-text-info">
             <span class="icon is-small"
                   v-html="require('@/img/ellipses.svg')"></span>
-            Details</a>
+
+            <span class="caption is-hidden-mobile">Details</span>
+          </a>
         </div>
       </div>
       </account>
