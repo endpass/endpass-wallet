@@ -1,20 +1,8 @@
 <template lang="html">
   <div class="transaction" :class="statusClass">
     <div class="transaction-header">
-      <account :address="txAddress" :balance="transaction.value"
+      <account :address="txAddress" :balance="transaction.value.toString()"
         :currency="symbol" :size="8">
-      <p v-if="recieve">
-        Received
-        <span class="icon status-icon is-small"
-              v-html="require('@/img/arrow-thick-right.svg')"></span>
-        <span class="date">{{date.fromNow()}}</span>
-      </p>
-      <p v-else>
-        Sent
-        <span class="icon status-icon is-small"
-              v-html="require('@/img/arrow-thick-left.svg')"></span>
-        <span class="date">{{date.fromNow()}}</span>
-      </p>
       <div class="transaction-actions level is-mobile">
         <div class="level-left">
           <a class="level-item" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="resend" :disabled="isSyncing">
@@ -27,6 +15,9 @@
           </a>
         </div>
         <div class="level-right">
+          <div class="level-item">
+            <span class="date">{{date.fromNow()}}</span>
+          </div>
           <a @click="toggleExpanded" class="level-item">
             <span class="icon is-small"
                   v-html="require('@/img/ellipses.svg')"></span>
@@ -262,6 +253,10 @@ export default {
     }
   }
   &.is-received {
+    .balance::before {
+      content: '+';
+      color: $success;
+    }
     .status-icon svg {
       fill: $success;
     }
@@ -270,12 +265,37 @@ export default {
     }
   }
   &.is-sent {
+    .balance::before {
+      content: '-';
+      color: $danger;
+    }
     .status-icon svg {
       fill: $danger;
     }
     .amount {
       color: $danger;
     }
+  }
+
+  .account {
+    .media-right {
+      margin-left: 0;
+    }
+    .balance {
+      line-height: normal;
+    }
+    .amount {
+      font-size: 1.2em;
+    }
+    .currency {
+      font-size: 0.8em;
+    }
+  }
+
+  .date {
+    color: $dark-grey;
+    font-size: 0.9em;
+    font-style: italic;
   }
 
   .card-header {
