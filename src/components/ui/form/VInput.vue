@@ -31,6 +31,7 @@
 <script>
 export default {
   name: 'v-input',
+  //TODO get rid of this and use $attrs instead
   props: {
     value: {
       type: [String, Number],
@@ -81,6 +82,10 @@ export default {
       default: null,
     },
     autocomplete: {
+      type: String,
+      default: null,
+    },
+    step: {
       type: String,
       default: null,
     },
