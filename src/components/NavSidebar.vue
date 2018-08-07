@@ -26,6 +26,26 @@
 
 
     <div class="nav-sidebar-content navbar-menu" :class="{'is-active':navMenuActive}">
+      <div class="nav-sidebar-item network-options">
+        <div class="level is-mobile">
+          <div class="level-item">
+            <div class="field">
+              <p class="heading">Chain</p>
+              <div class="control is-expanded">
+                <currency-select/>
+              </div>
+            </div>
+          </div>
+          <div class="level-item">
+            <div class="field">
+              <p class="heading">Network</p>
+              <div class="control is-expanded">
+                <provider-select/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="nav-sidebar-item section" v-if="address">
         <div class="columns is-mobile">
           <div class="column">
@@ -40,6 +60,7 @@
         </div>
         <account-chooser :width="4"/>
       </div>
+
       <div class="nav-sidebar-item">
         <div class="buttons is-centered">
           <router-link v-if="!address" :to="{name: 'NewWallet'}" class="button
@@ -128,6 +149,8 @@
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
+import ProviderSelect from '@/components/bar/ProviderSelect.vue';
+import CurrencySelect from '@/components/bar/CurrencySelect.vue';
 import AccountChooser from '@/components/bar/AccountChooser.vue';
 import LoginModal from '@/components/modal/LoginModal';
 import modalMixin from '@/mixins/modal';
@@ -166,6 +189,8 @@ export default {
     },
   },
   components: {
+    ProviderSelect,
+    CurrencySelect,
     AccountChooser,
     LoginModal,
     NewAccountModal,
@@ -233,6 +258,11 @@ export default {
   .nav-sidebar-content {
     flex-direction: column;
     align-items: center;
+  }
+
+  .network-options {
+    //background-color: $dark-blue;
+    //color: $white;
   }
 }
 </style>
