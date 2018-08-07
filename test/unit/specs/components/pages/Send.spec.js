@@ -199,5 +199,8 @@ describe('Send', () => {
     priceInput.trigger('input');
 
     expect(wrapper.vm.value).toBe('3.000000000000000000');
+
+    wrapper.vm.setMaxAmount();
+    expect(wrapper.vm.value).toBe(wrapper.vm.maxAmount.toString());
   });
 });
