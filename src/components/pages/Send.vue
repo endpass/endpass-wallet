@@ -43,6 +43,11 @@
                       <v-select name="currencies" v-model="transaction.tokenInfo"
                                 :options="tokenCurrencies"/>
                     </span>
+                    <a slot="icon" title="Send entire balance" @click="setMaxAmount">
+                      <span class="icon is-small is-right"
+                        v-html="require('@/img/arrow-thick-top.svg')">
+                      </span>
+                    </a>
                   </v-input>
                   <v-input v-model="price"
                            type="number"
@@ -346,8 +351,6 @@ export default {
       const { tokenInfo } = this.transaction;
       return (tokenInfo && tokenInfo.decimals) || 18;
     },
-    // Suggested gas prices for different priorities
-    // TODO dynamically update from API
     tokenCurrencies() {
       const currencies = [
         {
@@ -442,6 +445,10 @@ export default {
       this.getNextNonce().then(nonce => {
         this.userNonce = nonce;
       });
+    },
+    // Sets transaction value to the maximum amount
+    setMaxAmount() {
+      this.value = this.maxAmount;
     },
   },
   watch: {
