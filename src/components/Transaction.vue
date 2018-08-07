@@ -1,84 +1,81 @@
 <template lang="html">
   <div class="transaction" :class="statusClass">
-    <div class="card">
-      <div class="card-header">
-          <a @click="toggleExpanded" class="card-header-link level is-mobile">
-            <div class="level-item">
-            {{transaction.hash | truncateHash}}
-            </div>
-
-            <div class="level-item" :class="{'has-text-success': recieve,
-            'has-text-danger': !recieve}">
-              <span class="is-size-4" v-text="recieve ? '+' : '-'"></span>
-              <balance :amount="transaction.value" :currency="symbol"></balance>
-            </div>
+    <div class="transaction-header">
+      <account :address="txAddress" :balance="transaction.value"
+        :currency="symbol" :size="8">
+      <p v-if="recieve">
+        Received
+        <span class="icon status-icon is-small"
+              v-html="require('@/img/arrow-thick-right.svg')"></span>
+        <span class="date">{{date.fromNow()}}</span>
+      </p>
+      <p v-else>
+        Sent
+        <span class="icon status-icon is-small"
+              v-html="require('@/img/arrow-thick-left.svg')"></span>
+        <span class="date">{{date.fromNow()}}</span>
+      </p>
+      <div class="transaction-actions level is-mobile">
+        <div class="level-left">
+          <a class="level-item" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="resend" :disabled="isSyncing">
+            <span class="icon is-small"
+                  v-html="require('@/img/loop.svg')"></span>Resend
           </a>
-
-          <div class="level is-mobile">
-            <div class="level-item">
-              <p class="received" title="Received" v-if="recieve">
-                <span class="icon is-medium"
-                      v-html="require('@/img/arrow-thick-right.svg')"></span>
-              </p>
-              <span v-if="recieve" class="heading">Received</span>
-              <p class="sent" title="Sent" v-else>
-                <span class="icon is-medium"
-                      v-html="require('@/img/arrow-thick-left.svg')"></span>
-              </p>
-              <span v-if="!recieve" class="heading">Sent</span>
-            </div>
-
-            <p class="date level-item">{{date.fromNow()}}</p>
-          </div>
-      </div>
-      <div class="card-content" v-if="isExpanded">
-        <div v-if="transaction.hash.length">
-          <span class="text-label">Txid</span>
-          <p class="code">{{transaction.hash}}</p>
+          <a class="level-item has-text-danger" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="cancel" :disabled="isSyncing" >
+            <span class="icon is-small"
+                  v-html="require('@/img/ban.svg')"></span>Cancel
+          </a>
         </div>
-        <div>
-          <span class="heading status-text">{{transaction.state}}</span>
-        </div>
-
-        <div v-if="date">
-          <span class="text-label">Date</span>
-          <p class="date">{{date.format("YYYY-MM-DD H:mm")}}</p>
-        </div>
-
-        <div v-if="recieve">
-          <span class="text-label">From</span>
-          <p class="code address">{{transaction.from}}</p>
-        </div>
-
-        <div v-else>
-          <span class="text-label">To</span>
-          <p class="code address">{{transaction.to}}</p>
-        </div>
-
-        <div>
-          <span class="text-label">Nonce</span>
-          <span class="">{{transaction.nonce}}</span>
-        </div>
-
-        <div v-if="transaction.data">
-          <span class="text-label">Data</span>
-          <span class="code">
-            {{parseData(transaction.data)}}
-          </span>
+        <div class="level-right">
+          <a @click="toggleExpanded" class="level-item">
+            <span class="icon is-small"
+                  v-html="require('@/img/ellipses.svg')"></span>
+            Details</a>
         </div>
       </div>
-      <div v-if="transaction.state === 'pending'  && !isPublicAccount" class="card-footer">
-        <a class="card-footer-item" @click="resend" :disabled="isSyncing">
-          <span class="icon is-medium"
-                v-html="require('@/img/loop.svg')"></span>Resend
-        </a>
-        <a class="card-footer-item has-text-danger" @click="cancel" :disabled="isSyncing"
-         type="button" name="button">
-          <span class="icon is-medium"
-                v-html="require('@/img/ban.svg')"></span>Cancel
-        </a>
+      </account>
+    </div>
+
+    <div class="transaction-detail" v-if="isExpanded">
+      <div v-if="transaction.hash.length">
+        <span class="text-label">Txid</span>
+        <p class="code">{{transaction.hash}}</p>
+      </div>
+      <div>
+        <span class="heading status-text">{{transaction.state}}</span>
+      </div>
+
+      <div v-if="date">
+        <span class="text-label">Date</span>
+        <p class="date">{{date.format("YYYY-MM-DD H:mm")}}</p>
+      </div>
+
+      <div v-if="recieve">
+        <span class="text-label">From</span>
+        <p class="code address">{{transaction.from}}</p>
+      </div>
+
+      <div v-else>
+        <span class="text-label">To</span>
+        <p class="code address">{{transaction.to}}</p>
+      </div>
+
+      <div>
+        <span class="text-label">Nonce</span>
+        <span class="">{{transaction.nonce}}</span>
+      </div>
+
+      <div v-if="transaction.data">
+        <span class="text-label">Data</span>
+        <span class="code">
+          {{parseData(transaction.data)}}
+        </span>
       </div>
     </div>
+
+
+
+
 
     <resend-modal :transaction="transactionToSend" v-if="resendModalOpen" @close="closeResendModal" @confirm="confirmResend"/>
     <password-modal v-if="passwordModalOpen" @close="closePassword" @confirm="confirmPassword"/>
@@ -86,7 +83,7 @@
 </template>
 
 <script>
-import Balance from '@/components/Balance';
+import Account from '@/components/Account';
 import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import { Transaction } from '@/class';
@@ -95,10 +92,14 @@ import PasswordModal from '@/components/modal/PasswordModal';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import error from '@/mixins/error';
 import moment from 'moment';
-window.web3 = web3
+window.web3 = web3;
 
 export default {
-  props: ['transaction'],
+  props: {
+    transaction: {
+      required: true,
+    },
+  },
   data() {
     return {
       resendModalOpen: false,
@@ -123,9 +124,11 @@ export default {
       return this.transaction.state === 'success';
     },
     isError() {
-      return this.transaction.state === 'error'
-      || this.state === 'error'
-      || this.state === 'canceled';
+      return (
+        this.transaction.state === 'error' ||
+        this.state === 'error' ||
+        this.state === 'canceled'
+      );
     },
     isPending() {
       return this.transaction.state === 'pending';
@@ -136,14 +139,27 @@ export default {
         'is-success': this.isSuccess,
         'is-warning': this.isPending,
         'is-danger': this.isError,
-      }
+        'is-received': this.recieve,
+        'is-sent': !this.recieve,
+      };
     },
     symbol() {
-      return (this.transaction.tokenInfo && this.transaction.tokenInfo.symbol) || 'ETH'
+      return (
+        (this.transaction.tokenInfo && this.transaction.tokenInfo.symbol) ||
+        'ETH'
+      );
     },
     // Returns date as a moment.js object
     date() {
       return moment(this.transaction.date);
+    },
+    // To/from address of transaction
+    txAddress() {
+      if (this.recieve) {
+        return this.transaction.from;
+      } else {
+        return this.transaction.to;
+      }
     },
   },
   methods: {
@@ -212,7 +228,7 @@ export default {
     },
   },
   components: {
-    Balance,
+    Account,
     ResendModal,
     PasswordModal,
   },
@@ -245,25 +261,30 @@ export default {
       color: $success;
     }
   }
+  &.is-received {
+    .status-icon svg {
+      fill: $success;
+    }
+    .amount {
+      color: $success;
+    }
+  }
+  &.is-sent {
+    .status-icon svg {
+      fill: $danger;
+    }
+    .amount {
+      color: $danger;
+    }
+  }
 
   .card-header {
     flex-direction: column;
     .card-header-link {
       cursor: pointer;
       &:hover {
-        background-color: rgba(75, 4, 114, .2);
+        background-color: rgba(75, 4, 114, 0.2);
       }
-    }
-  }
-
-  .received {
-    .icon svg {
-      fill: $success;
-    }
-  }
-  .sent {
-    .icon svg {
-      fill: $danger;
     }
   }
 
