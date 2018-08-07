@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { mount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import ImportWallet from '@/components/pages/ImportWallet.vue';
@@ -26,7 +26,7 @@ describe('ImportWallet', () => {
       },
       actions,
     });
-    wrapper = shallow(ImportWallet, { store, localVue });
+    wrapper = mount(ImportWallet, { store, localVue });
   });
 
   it('defaults to import by seed phrase', () => {
