@@ -46,7 +46,7 @@ export default {
   },
 
   logout() {
-    return axios.post(`${identityAPIUrl}/logout`).catch(() => {
+    return http.post(`${identityAPIUrl}/logout`).catch(() => {
       throw new NotificationError({
         title: 'Log out error',
         text: 'Failed to log out. Please, try again',
