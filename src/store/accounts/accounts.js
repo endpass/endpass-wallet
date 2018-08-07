@@ -188,8 +188,8 @@ export default {
         dispatch('errors/emitError', e, { root: true }),
       );
     },
-    loginViaOTP({}, { code }) {
-      return userService.loginViaOTP(code);
+    loginViaOTP({}, { code, email }) {
+      return userService.loginViaOTP(code, email);
     },
     getOtpSettings({ commit, dispatch }) {
       return userService

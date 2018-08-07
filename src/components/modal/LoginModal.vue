@@ -18,11 +18,13 @@ export default {
   data: () => ({
     currentModal: LoginByEmailModal.name,
     isLoading: false,
+    email: null,
   }),
   methods: {
     ...mapActions('accounts', ['login', 'loginViaOTP']),
     handleLoginByEmailModalConfirm(email) {
       this.isLoading = true;
+      this.email = email;
 
       return this.login(email)
         .then(challengeType => {
@@ -37,8 +39,9 @@ export default {
     },
     handleTwoFactorAuthModalConfirm(code) {
       this.isLoading = true;
+      const { email } = this;
 
-      return this.loginViaOTP({ code })
+      return this.loginViaOTP({ code, email })
         .then(this.handleSuccessfulLogin)
         .catch(this.handleFailedLogin);
     },
@@ -46,8 +49,10 @@ export default {
       this.close();
     },
     handleSuccessfulLogin() {
-      const text = this.currentModal === LoginByEmailModal.name ?
-        'Click the link in your email to log in' : 'Authorization was successful';
+      const text =
+        this.currentModal === LoginByEmailModal.name
+          ? 'Click the link in your email to log in'
+          : 'Authorization was successful';
 
       this.isLoading = false;
       this.close();
