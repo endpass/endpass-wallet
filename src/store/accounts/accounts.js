@@ -184,10 +184,9 @@ export default {
     },
     logout({ commit, dispatch }) {
       commit('setEmail', null);
-      return storage
-        .clear()
-        .then(() => (window.location = '/logout'))
-        .catch(e => dispatch('errors/emitError', e, { root: true }));
+      return Promise.all([storage.clear(), userService.logout()]).catch(e =>
+        dispatch('errors/emitError', e, { root: true }),
+      );
     },
     loginViaOTP({}, { code }) {
       return userService.loginViaOTP(code);

@@ -10,15 +10,15 @@ export default {
     networkType() {
       return this.activeNet.networkType;
     },
-    networkCurrncy() {
+    networkCurrency() {
       return this.activeNet.currency;
     },
     networkClass() {
       return {
         mainnet: this.networkType === 'main',
         privatenet: this.networkType === 'private',
-        testnet: this.networkCurrncy === 2,
-        classic: this.networkCurrncy === 3,
+        testnet: this.networkCurrency === 2,
+        classic: this.networkCurrency === 3,
       };
     },
   },
