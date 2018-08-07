@@ -44,6 +44,16 @@ export default {
       });
   },
 
+  logout() {
+    return axios.post(`${identityAPIUrl}/logout`).catch(() => {
+      throw new NotificationError({
+        title: 'Log out error',
+        text: 'Failed to log out. Please, try again',
+        type: 'is-danger',
+      });
+    });
+  },
+
   getSettings() {
     return axios.get(`${identityAPIUrl}/user`).then(({ data }) => data);
   },

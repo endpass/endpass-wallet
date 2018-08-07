@@ -117,12 +117,14 @@ export default {
   computed: {
     ...mapState({
       wallet: state => state.accounts.wallet,
-      address: state => state.accounts.address && state.accounts.address.getAddressString(),
+      address: state =>
+        state.accounts.address && state.accounts.address.getAddressString(),
       email: state => state.accounts.email,
     }),
     ...mapGetters('accounts', ['isPublicAccount']),
   },
   methods: {
+    ...mapActions('accounts', ['logout']),
     toggleNavMenu() {
       this.navMenuActive = !this.navMenuActive;
     },
@@ -135,7 +137,7 @@ export default {
     LoginModal,
   },
   mixins: [modalMixin],
-}
+};
 </script>
 
 <style lang="scss">
@@ -158,15 +160,15 @@ export default {
 
   .nav-sidebar-item {
     display: block;
-    padding: .5em .75em;
+    padding: 0.5em 0.75em;
   }
 
   .buttons .button {
-    margin-right: .5em;
+    margin-right: 0.5em;
   }
 
   .menu-label {
-    padding: 0 .75em;
+    padding: 0 0.75em;
   }
 
   .nav-sidebar-header {
@@ -192,6 +194,5 @@ export default {
     flex-direction: column;
     align-items: center;
   }
-
 }
 </style>
