@@ -8,7 +8,7 @@
           </div>
           <div class="card-content">
             <ul v-if="processedTransactions.length" class="transactions">
-              <li v-for="transaction in processedTransactions"
+              <li v-for="transaction in processedTransactions" v-if="transaction.networkId === activeNet.id"
               :key="transaction.hash">
                 <app-transaction :transaction="transaction"></app-transaction>
               </li>
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import VSpinner from '@/components/ui/VSpinner';
 import appTransaction from '@/components/Transaction';
 import EthplorerService from '@/services/ethplorer';
@@ -42,11 +42,17 @@ export default {
     ...mapState({
       address: state =>
         state.accounts.address && state.accounts.address.getAddressString(),
-      pendingTransactions: state => state.transactions.pendingTransactions,
+      activeNet: state => state.web3.activeNet,
+    }),
+    ...mapGetters({
+      accountTransactions: 'transactions/accountTransactions',
     }),
     processedTransactions() {
+      if (this.activeNet.id !== 1) {
+        return this.accountTransactions;
+      }
       const fullTransactions = this.transactions.concat(
-        this.pendingTransactions,
+        this.accountTransactions,
       );
       return fullTransactions.sort((trx1, trx2) => {
         if (typeof trx2.timestamp === 'undefined') return 1;
@@ -56,45 +62,55 @@ export default {
     },
     // Whether history is supported on this network
     historyAvailable() {
-      let activeNet = this.$store.state.web3.activeNet.name;
-      return activeNet === 'Main';
+      const mainNetId = 1;
+      let activeNet = this.activeNet.id;
+      return activeNet === mainNetId;
+    },
+  },
+  methods: {
+    getMainHistory() {
+      const historyPromise = EthplorerService.getHistory(this.address);
+      const transactionsPromise = EthplorerService.getInfo(this.address);
+      Promise.all([transactionsPromise, historyPromise])
+        .then(values => {
+          this.transactions = values[0].data
+            .concat(values[1].data.operations)
+            .map(trx => new Transaction(trx));
+          this.$store.dispatch(
+            'connectionStatus/updateApiErrorStatus',
+            {
+              id: 'ethplorer',
+              status: true,
+            },
+            { root: true },
+          );
+        })
+        .catch(e => {
+          this.$notify({
+            title: 'Failed to get transaction information',
+            text:
+              'An error occurred while retrieving transaction information. Please try again.',
+            type: 'is-warning',
+          });
+          console.error(e);
+          e.apiError = {
+            id: 'ethplorer',
+            status: false,
+          };
+          this.$store.dispatch('errors/emitError', e, { root: true });
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
     },
   },
   created() {
-    const historyPromise = EthplorerService.getHistory(this.address);
-    const transactionsPromise = EthplorerService.getInfo(this.address);
-
-    Promise.all([transactionsPromise, historyPromise])
-      .then(values => {
-        this.transactions = values[0].data
-          .concat(values[1].data.operations)
-          .map(trx => new Transaction(trx));
-        this.$store.dispatch(
-          'connectionStatus/updateApiErrorStatus',
-          {
-            id: 'ethplorer',
-            status: true,
-          },
-          { root: true },
-        );
-      })
-      .catch(e => {
-        this.$notify({
-          title: 'Failed to get transaction information',
-          text:
-            'An error occurred while retrieving transaction information. Please try again.',
-          type: 'is-warning',
-        });
-        console.error(e);
-        e.apiError = {
-          id: 'ethplorer',
-          status: false,
-        };
-        this.$store.dispatch('errors/emitError', e, { root: true });
-      })
-      .finally(() => {
-        this.isLoading = false;
-      });
+    this.getMainHistory();
+  },
+  watch: {
+    address() {
+      this.getMainHistory();
+    },
   },
   components: {
     appTransaction,
