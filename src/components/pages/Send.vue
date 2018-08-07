@@ -346,8 +346,6 @@ export default {
       const { tokenInfo } = this.transaction;
       return (tokenInfo && tokenInfo.decimals) || 18;
     },
-    // Suggested gas prices for different priorities
-    // TODO dynamically update from API
     tokenCurrencies() {
       const currencies = [
         {
