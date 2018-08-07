@@ -98,7 +98,7 @@ export default {
   },
   components: {
     appTransaction,
-    VSpinner
+    VSpinner,
   },
 };
 </script>
