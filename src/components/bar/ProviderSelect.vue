@@ -2,43 +2,46 @@
   <div class="provider-select">
     <div class="net-select">
       <multiselect
-         :options="networkOptions"
-         track-by="id" label="name"
-                       :show-labels="false"
-                       :allow-empty="false"
-                       :value="activeNet"
-                       @select="selectNet"
-                       placeholder="Select network"
-                       />
+        :allow-empty="false"
+        :options="networkOptions"
+        :show-labels="false"
+        :value="activeNet"
+        track-by="id" 
+        label="name"
+        placeholder="Select network"
+        @select="selectNet"
+      />
     </div>
-    <custom-provider-modal @close="closeCustomProviderModal"
-              v-if="customProviderModalOpen"/>
+    <custom-provider-modal
+      v-if="customProviderModalOpen"
+      @close="closeCustomProviderModal"
+    />
   </div>
 </template>
 
 <script>
 import Multiselect from 'vue-multiselect';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import CustomProviderModal from '@/components/bar/CustomProviderModal.vue';
-import net from '@/mixins/net';
-import storage from '@/mixins/storage';
 
 export default {
+  name: 'ProviderSelect',
   data() {
     return {
       customProviderModalOpen: false,
     };
   },
   computed: {
+    ...mapState('web3', ['activeNet']),
+    ...mapGetters('web3', ['networks']),
     networkOptions() {
       // Options that dispatch methods
-      let actions = [{ id: -1, name: 'Add Custom Network' }];
+      const actions = [{ id: -1, name: 'Add Custom Network' }];
       return this.networks.concat(actions);
     },
   },
   methods: {
     ...mapActions('web3', ['changeNetwork']),
-    // Triggers when a network is selected
     selectNet(net) {
       if (net.id === -1) {
         this.openCustomProviderModal();
@@ -60,7 +63,6 @@ export default {
     Multiselect,
     CustomProviderModal,
   },
-  mixins: [net, storage],
 };
 </script>
 
