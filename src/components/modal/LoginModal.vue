@@ -24,11 +24,11 @@ export default {
     ...mapActions('accounts', ['login', 'loginViaOTP']),
     handleLoginByEmailModalConfirm(email) {
       this.isLoading = true;
-      this.email = email;
 
       return this.login(email)
         .then(challengeType => {
           if (challengeType === 'otp') {
+            this.email = email;
             this.currentModal = TwoFactorAuthModal.name;
             this.isLoading = false;
           } else {
@@ -39,11 +39,16 @@ export default {
     },
     handleTwoFactorAuthModalConfirm(code) {
       this.isLoading = true;
-      const { email } = this;
+      const {
+        email,
+        handleFailedLogin,
+        handleSuccessfulLogin,
+        loginViaOTP,
+      } = this;
 
-      return this.loginViaOTP({ code, email })
-        .then(this.handleSuccessfulLogin)
-        .catch(this.handleFailedLogin);
+      return loginViaOTP({ code, email })
+        .then(handleSuccessfulLogin)
+        .catch(handleFailedLogin);
     },
     handleClose() {
       this.close();

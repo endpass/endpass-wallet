@@ -67,6 +67,7 @@ describe('User service', () => {
 
   describe('loginViaOTP', () => {
     const code = 'code';
+    const email = '123@email.com';
     const expectedError = new NotificationError({
       title: 'Auth error',
       text: 'Invalid or missing one time password. Please, try again',
@@ -85,7 +86,7 @@ describe('User service', () => {
         });
       });
 
-      expect(userService.loginViaOTP(code)).resolves.toBeUndefined(
+      expect(userService.loginViaOTP(code, email)).resolves.toBeUndefined(
         expectedError,
       );
     });
@@ -102,7 +103,9 @@ describe('User service', () => {
         });
       });
 
-      expect(userService.loginViaOTP(code)).rejects.toThrow(expectedError);
+      expect(userService.loginViaOTP(code, email)).rejects.toThrow(
+        expectedError,
+      );
     });
 
     it('should handle rejected POST /token request', () => {
@@ -114,7 +117,9 @@ describe('User service', () => {
         });
       });
 
-      expect(userService.loginViaOTP(code)).rejects.toThrow(expectedError);
+      expect(userService.loginViaOTP(code, email)).rejects.toThrow(
+        expectedError,
+      );
     });
   });
 
