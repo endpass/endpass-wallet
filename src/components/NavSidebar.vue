@@ -171,6 +171,9 @@ export default {
         state.accounts.address && state.accounts.address.getAddressString(),
       email: state => state.accounts.email,
     }),
+    ...mapGetters({
+      isLoggedOut: 'user/isLoggedOut',
+    }),
     ...mapGetters('accounts', ['isPublicAccount']),
   },
   methods: {
@@ -186,6 +189,13 @@ export default {
     },
     closeNewAccountModal() {
       this.newAccountModalOpen = false;
+    },
+  },
+  watch: {
+    isLoggedOut: function(value) {
+      if (value) {
+        this.isLoginModal = true;
+      }
     },
   },
   components: {

@@ -13,7 +13,13 @@ import ExportWallet from '@/components/pages/ExportWallet';
 import SettingsPage from '@/components/pages/Settings';
 import MessagePage from '@/components/pages/Message';
 
-import store from '../store';
+import {
+  hasLoginGuard,
+  hasWalletGuard,
+  privateWalletGuard,
+  noWalletGuard,
+} from './guards';
+
 Vue.use(Router);
 
 export default new Router({
@@ -27,78 +33,63 @@ export default new Router({
       path: '/send',
       name: 'SendPage',
       component: SendPage,
-      beforeEnter: multiguard([hasWalletGuard, privateWalletGuard]),
+      beforeEnter: multiguard([
+        hasLoginGuard,
+        hasWalletGuard,
+        privateWalletGuard,
+      ]),
     },
     {
       path: '/tokens',
       name: 'TokensPage',
       component: TokensPage,
-      beforeEnter: hasWalletGuard,
+      beforeEnter: multiguard([hasLoginGuard, hasWalletGuard]),
     },
     {
       path: '/history',
       name: 'HistoryPage',
       component: HistoryPage,
-      beforeEnter: hasWalletGuard,
+      beforeEnter: multiguard([hasLoginGuard, hasWalletGuard]),
     },
     {
       path: '/receive',
       name: 'ReceivePage',
       component: ReceivePage,
-      beforeEnter: hasWalletGuard,
+      beforeEnter: multiguard([hasLoginGuard, hasWalletGuard]),
     },
     {
       path: '/new',
       name: 'NewWallet',
       component: NewWallet,
-      beforeEnter: noWalletGuard,
+      beforeEnter: multiguard([hasLoginGuard, noWalletGuard]),
     },
     {
       path: '/import',
       name: 'ImportWallet',
       component: ImportWallet,
-      beforeEnter: noWalletGuard,
+      beforeEnter: multiguard([hasLoginGuard, noWalletGuard]),
     },
     {
       path: '/export',
       name: 'ExportWallet',
       component: ExportWallet,
-      beforeEnter: multiguard([hasWalletGuard, privateWalletGuard]),
+      beforeEnter: multiguard([
+        hasLoginGuard,
+        hasWalletGuard,
+        privateWalletGuard,
+      ]),
     },
     {
       path: '/settings',
       name: 'SettingsPage',
       component: SettingsPage,
-      beforeEnter: multiguard([hasWalletGuard]),
+      beforeEnter: multiguard([hasLoginGuard, hasWalletGuard]),
     },
     {
       path: '/message',
       name: 'MessagePage',
       component: MessagePage,
-      beforeEnter: multiguard([hasWalletGuard]),
+      beforeEnter: multiguard([hasLoginGuard, hasWalletGuard]),
     },
   ],
 });
-function hasWalletGuard(to, from, next) {
-  if (store.state.accounts.address) {
-    next();
-  } else {
-    next(from.fullPath);
-  }
-}
-
-function noWalletGuard(to, from, next) {
-  if (!store.state.accounts.address) {
-    next();
-  } else {
-    next(from.fullPath);
-  }
-}
-
-function privateWalletGuard(to, from, next) {
-  if (store.state.accounts.wallet) {
-    next();
-  } else {
-    next(from.fullPath);
-  }
-}
