@@ -62,15 +62,15 @@ export default {
     },
     // Whether history is supported on this network
     historyAvailable() {
+      const mainNetId = 1;
       let activeNet = this.activeNet.id;
-      return activeNet === 1;
+      return activeNet === mainNetId;
     },
   },
   methods: {
     getMainHistory() {
       const historyPromise = EthplorerService.getHistory(this.address);
       const transactionsPromise = EthplorerService.getInfo(this.address);
-      console.log('call');
       Promise.all([transactionsPromise, historyPromise])
         .then(values => {
           this.transactions = values[0].data
