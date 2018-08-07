@@ -66,41 +66,51 @@ export default {
       return activeNet === 1;
     },
   },
-  created() {
-    const historyPromise = EthplorerService.getHistory(this.address);
-    const transactionsPromise = EthplorerService.getInfo(this.address);
-
-    Promise.all([transactionsPromise, historyPromise])
-      .then(values => {
-        this.transactions = values[0].data
-          .concat(values[1].data.operations)
-          .map(trx => new Transaction(trx));
-        this.$store.dispatch(
-          'connectionStatus/updateApiErrorStatus',
-          {
+  methods: {
+    getMainHistory() {
+      const historyPromise = EthplorerService.getHistory(this.address);
+      const transactionsPromise = EthplorerService.getInfo(this.address);
+      console.log('call');
+      Promise.all([transactionsPromise, historyPromise])
+        .then(values => {
+          this.transactions = values[0].data
+            .concat(values[1].data.operations)
+            .map(trx => new Transaction(trx));
+          this.$store.dispatch(
+            'connectionStatus/updateApiErrorStatus',
+            {
+              id: 'ethplorer',
+              status: true,
+            },
+            { root: true },
+          );
+        })
+        .catch(e => {
+          this.$notify({
+            title: 'Failed to get transaction information',
+            text:
+              'An error occurred while retrieving transaction information. Please try again.',
+            type: 'is-warning',
+          });
+          console.error(e);
+          e.apiError = {
             id: 'ethplorer',
-            status: true,
-          },
-          { root: true },
-        );
-      })
-      .catch(e => {
-        this.$notify({
-          title: 'Failed to get transaction information',
-          text:
-            'An error occurred while retrieving transaction information. Please try again.',
-          type: 'is-warning',
+            status: false,
+          };
+          this.$store.dispatch('errors/emitError', e, { root: true });
+        })
+        .finally(() => {
+          this.isLoading = false;
         });
-        console.error(e);
-        e.apiError = {
-          id: 'ethplorer',
-          status: false,
-        };
-        this.$store.dispatch('errors/emitError', e, { root: true });
-      })
-      .finally(() => {
-        this.isLoading = false;
-      });
+    },
+  },
+  created() {
+    this.getMainHistory();
+  },
+  watch: {
+    address() {
+      this.getMainHistory();
+    },
   },
   components: {
     appTransaction,

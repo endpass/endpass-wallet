@@ -31,17 +31,8 @@ describe('HistoryPage', () => {
             },
           },
         },
-        web3: {
-          activeNet: {
-            name: 'Main',
-            id: 1,
-          },
-        },
-      },
-      actions,
-      getters: {
-        'transactions/accountTransactions'() {
-          return [
+        transactions: {
+          pendingTransactions: [
             {
               timestamp: 1524505925,
               from: '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b',
@@ -52,9 +43,15 @@ describe('HistoryPage', () => {
               input: '0x',
               success: true,
             },
-          ];
+          ],
+        },
+        web3: {
+          activeNet: {
+            name: 'Main',
+          },
         },
       },
+      actions,
     });
   });
 
@@ -95,7 +92,19 @@ describe('HistoryPage', () => {
       done();
     });
   });
-
+  it('updates transactions on account change', done => {
+    const wrapper = shallow(HistoryPage, { store, localVue });
+    const watcher = jest.spyOn(wrapper.vm, 'getMainHistory');
+    store.state.accounts.address = {
+      getAddressString() {
+        return '0x0';
+      },
+    };
+    wrapper.vm.$nextTick(() => {
+      expect(watcher).toHaveBeenCalled();
+      done();
+    });
+  });
   it('concats transactions', done => {
     moxios.stubRequest(/api\.ethplorer\.io\/getAddressTransactions/, {
       status: 200,
@@ -128,7 +137,7 @@ describe('HistoryPage', () => {
         expect(elems.length).toBe(3);
         expect(elems[2].from).toBe(wrapper.vm.address);
         expect(elems[2].timestamp).toBe(
-          store.getters['transactions/accountTransactions'][0].timestamp,
+          store.state.transactions.pendingTransactions[0].timestamp,
         );
         done();
       });
