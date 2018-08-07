@@ -83,7 +83,8 @@
                   ></v-radio>
                   <v-spinner v-else-if="isLoadingGasPrice" :is-loading="isLoadingGasPrice"/>
                   <p class="help is-danger" v-else>
-                    Unable to load suggested gas price, please set gas price mannualy
+                    Unable to load suggested gas price, please set gas price
+                    manually.
                   </p>
                 </div>
               </div>
@@ -192,17 +193,18 @@
                             :disabled="isSyncing">Send</v-button>
                 </div>
               </div>
-
-              <div class="field is-horizontal" v-if="transactionHash">
-                <div class="field-label">
-                  <label class="label">Transaction Id</label>
-                </div>
-                <div class="field-body">
-                  <p>{{ transactionHash }}</p>
-                </div>
-              </div>
-
             </v-form>
+
+            <div class="transaction-status message is-success" v-if="transactionHash">
+              <div class="message-header">
+                <p>Transaction Sent!</p>
+              </div>
+              <div class="message-body">
+                <p>Your transaction has been broadcast to the network. It may take a few minutes before the transaction is confirmed.</p>
+                <p class="label">Transaction Id</p>
+                <p class="code">{{ transactionHash }}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -423,8 +425,8 @@ export default {
           this.resetForm();
           const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`;
           this.$notify({
-            title: 'Successful',
-            text: `Transaction ${shortHash} was sent`,
+            title: 'Transaction Sent',
+            text: `Transaction ${shortHash} sent`,
             type: 'is-info',
           });
         })
