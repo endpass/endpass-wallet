@@ -9,25 +9,32 @@ export default {
   },
   getters: {
     accountTransactions(state, getters, rootState) {
+      if (!rootState.accounts.address) {
+        return [];
+      }
+
       const address = rootState.accounts.address.getAddressString();
-      return state.pendingTransactions.filter(trx => {
-        return (
+      return state.pendingTransactions.filter(
+        trx =>
           trx.from === address ||
-          (trx.to === address && trx.state === 'success')
-        );
-      });
+          (trx.to === address && trx.state === 'success'),
+      );
     },
     pendingBalance(state, getters, rootState) {
-      const address = rootState.accounts.address.getAddressString(),
-        networkId = rootState.web3.activeNet.id;
+      if (!rootState.accounts.address) {
+        return '0';
+      }
+
+      const address = rootState.accounts.address.getAddressString();
+      const networkId = rootState.web3.activeNet.id;
+
       return state.pendingTransactions
-        .filter(tnx => {
-          return (
+        .filter(
+          tnx =>
             tnx.state === 'pending' &&
             tnx.from === address &&
-            tnx.networkId === networkId
-          );
-        })
+            tnx.networkId === networkId,
+        )
         .map(tnx => {
           const tnxValue = tnx.token === 'ETH' ? tnx.valueWei : '0';
 
