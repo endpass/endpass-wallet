@@ -6,7 +6,6 @@
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js --https",
-    "prod": "webpack-dev-server --inline --progress --config build/webpack.prod.conf.js --https",
     "start": "npm run dev",
     "unit": "jest --config test/unit/jest.conf.js",
     "test": "npm run unit",
