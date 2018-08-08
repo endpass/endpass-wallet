@@ -1,17 +1,19 @@
 <template>
-  <v-form @submit="handleFormSubmit">
-    <label class="label">Two Factor Authentication via OTP</label>
-    <v-button className="is-primary is-medium"
-              :disabled="isButtonDisabled"
-              :loading="isLoading">
-      {{otpSettings.secret ? 'Enable' : 'Disable'}} Two Factor Auth
-    </v-button>
+  <div>
+    <v-form @submit="handleFormSubmit">
+      <label class="label">Two Factor Authentication via OTP</label>
+      <v-button className="is-primary is-medium"
+                :disabled="isButtonDisabled"
+                :loading="isLoading">
+        {{otpSettings.secret ? 'Enable' : 'Disable'}} Two Factor Auth
+      </v-button>
+    </v-form>
     <two-factor-auth-modal v-if="isTwoFactorAuthModal"
                            @close="toggleTwoFactorAuthModal"
                            @confirm="handleConfirmTwoFactorAuthModal"
                            v-bind:secret="otpSettings.secret"
                            v-bind:email="email"/>
-  </v-form>
+  </div>
 </template>
 
 <script>
@@ -30,10 +32,14 @@ export default {
     ...mapState('accounts', ['email', 'otpSettings']),
     isButtonDisabled() {
       return !this.otpSettings.secret && !this.otpSettings.status;
-    }
+    },
   },
   methods: {
-    ...mapActions('accounts', ['getOtpSettings', 'setOtpSettings', 'deleteOtpSettings']),
+    ...mapActions('accounts', [
+      'getOtpSettings',
+      'setOtpSettings',
+      'deleteOtpSettings',
+    ]),
     async handleConfirmTwoFactorAuthModal(code) {
       const { secret } = this.otpSettings;
 
@@ -50,12 +56,12 @@ export default {
     },
     handleFormSubmit() {
       !this.isButtonDisabled && this.toggleTwoFactorAuthModal();
-    }
+    },
   },
   components: {
     VForm,
     VButton,
-    TwoFactorAuthModal
+    TwoFactorAuthModal,
   },
   mounted() {
     this.getOtpSettings();

@@ -232,13 +232,14 @@ describe('accounts store', () => {
     describe('loginViaOTP', () => {
       it('should call userService.loginViaOTP', () => {
         const code = '123456';
+        const email = 'email@email.com';
 
         userService.loginViaOTP = jest.fn();
 
-        actions.loginViaOTP({}, { code });
+        actions.loginViaOTP({}, { code, email });
 
         expect(userService.loginViaOTP).toHaveBeenCalledTimes(1);
-        expect(userService.loginViaOTP).toHaveBeenCalledWith(code);
+        expect(userService.loginViaOTP).toHaveBeenCalledWith(code, email);
       });
     });
 

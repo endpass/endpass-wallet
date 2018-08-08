@@ -9,18 +9,62 @@
       <router-link class="logo logo-icon" to="/" exact>
         <img src="@/img/logo-light.png" alt="Endpass Wallet">
       </router-link>
+      <div class="login-control">
+          <a class="button is-success" v-if="!email" @click.prevent="isLoginModal = true">
+            <span class="icon is-small" v-html="require('@/img/account-login.svg')"/>
+            Login
+          </a>
+        <a class="button"
+           v-else
+           to=""
+           @click.prevent="logout()">
+          <span class="icon is-small"
+                v-html="require('@/img/account-logout.svg')"></span>Logout
+        </a>
+      </div>
     </div>
 
 
     <div class="nav-sidebar-content navbar-menu" :class="{'is-active':navMenuActive}">
-      <div class="nav-sidebar-item" v-if="address">
-        <p class="menu-label">Accounts</p>
+      <div class="nav-sidebar-item network-options">
+        <div class="level is-mobile">
+          <div class="level-item">
+            <div class="field">
+              <p class="heading">Chain</p>
+              <div class="control is-expanded">
+                <currency-select/>
+              </div>
+            </div>
+          </div>
+          <div class="level-item">
+            <div class="field">
+              <p class="heading">Network</p>
+              <div class="control is-expanded">
+                <provider-select/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-sidebar-item section" v-if="address">
+        <div class="columns is-mobile">
+          <div class="column">
+            <p class="menu-label">Accounts</p>
+          </div>
+          <div class="column">
+            <a v-if="hdWallet" class="button is-outlined is-small is-info"
+                               @click="openNewAccountModal">
+              &plus; Add Account
+            </a>
+          </div>
+        </div>
         <account-chooser :width="4"/>
       </div>
+
       <div class="nav-sidebar-item">
         <div class="buttons is-centered">
           <router-link v-if="!address" :to="{name: 'NewWallet'}" class="button
-          is-primary">Create Wallet</router-link>
+          is-success">Create Wallet</router-link>
 
           <a class="button" v-if="!email" @click.prevent="isLoginModal = true">
             <span class="icon is-small" v-html="require('@/img/account-login.svg')"/>
@@ -34,7 +78,6 @@
           <span class="icon is-small"
                 v-html="require('@/img/account-logout.svg')"></span>Logout
         </a>
-
         </div>
       </div>
 
@@ -97,6 +140,8 @@
       </div>
 
     </div>
+    <new-account-modal @close="closeNewAccountModal"
+      v-if="newAccountModalOpen"/>
 
     <login-modal v-if="isLoginModal" @close="toggleLoginModal"/>
   </div>
@@ -104,22 +149,30 @@
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
+import ProviderSelect from '@/components/bar/ProviderSelect.vue';
+import CurrencySelect from '@/components/bar/CurrencySelect.vue';
 import AccountChooser from '@/components/bar/AccountChooser.vue';
 import LoginModal from '@/components/modal/LoginModal';
 import modalMixin from '@/mixins/modal';
+import NewAccountModal from '@/components/NewAccountModal';
 
 export default {
   data() {
     return {
       navMenuActive: false,
+      newAccountModalOpen: false,
     };
   },
   computed: {
     ...mapState({
+      hdWallet: state => state.accounts.hdWallet,
       wallet: state => state.accounts.wallet,
       address: state =>
         state.accounts.address && state.accounts.address.getAddressString(),
       email: state => state.accounts.email,
+    }),
+    ...mapGetters({
+      isLoggedOut: 'user/isLoggedOut',
     }),
     ...mapGetters('accounts', ['isPublicAccount']),
   },
@@ -131,10 +184,26 @@ export default {
     closeNavMenu() {
       this.navMenuActive = false;
     },
+    openNewAccountModal() {
+      this.newAccountModalOpen = true;
+    },
+    closeNewAccountModal() {
+      this.newAccountModalOpen = false;
+    },
+  },
+  watch: {
+    isLoggedOut: function(value) {
+      if (value) {
+        this.isLoginModal = true;
+      }
+    },
   },
   components: {
+    ProviderSelect,
+    CurrencySelect,
     AccountChooser,
     LoginModal,
+    NewAccountModal,
   },
   mixins: [modalMixin],
 };
@@ -151,7 +220,13 @@ export default {
     width: 100%;
     padding: 0;
     .menu-list {
+      font-family: $heading-font-family;
+      font-size: 1.2em;
       width: 100%;
+
+      a.is-active {
+        background-color: $purple;
+      }
     }
     a.is-active .icon svg {
       fill: $white;
@@ -193,6 +268,11 @@ export default {
   .nav-sidebar-content {
     flex-direction: column;
     align-items: center;
+  }
+
+  .network-options {
+    //background-color: $dark-blue;
+    //color: $white;
   }
 }
 </style>

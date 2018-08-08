@@ -12,6 +12,7 @@
       </div>
       <v-input v-model="code"
                label="Verification Code"
+               name="verificationCode"
                validator="required"/>
       <v-button className="is-primary is-medium" :loading="isLoading">Verify</v-button>
     </v-form>
@@ -24,20 +25,21 @@ import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
 
-
 export default {
   name: 'two-factor-auth-modal',
   data() {
     return {
-      code: null
+      code: null,
     };
   },
   computed: {
     qrCodeSrc() {
-      const otpAuthUri = `otpauth://totp/Endpass:${this.email}?secret=${this.secret}`;
+      const otpAuthUri = `otpauth://totp/Endpass:${this.email}?secret=${
+        this.secret
+      }`;
 
       return `https://chart.googleapis.com/chart?chs=166x166&chld=L|0&cht=qr&chl=${otpAuthUri}`;
-    }
+    },
   },
   props: {
     secret: String,

@@ -31,6 +31,8 @@
                 <div class="field-body">
                   <v-input v-model="value"
                            type="number"
+                           min="0"
+                           step="any"
                            name="value"
                            :validator="`required|decimal:${decimal}|between:0,${maxAmount}`"
                            data-vv-as="amount"
@@ -51,6 +53,8 @@
                   </v-input>
                   <v-input v-model="price"
                            type="number"
+                           min="0"
+                           step="0.01"
                            name="price"
                            :validator="`required|decimal:2|between:0,${maxPrice}`"
                            id="price"
@@ -79,7 +83,8 @@
                   ></v-radio>
                   <v-spinner v-else-if="isLoadingGasPrice" :is-loading="isLoadingGasPrice"/>
                   <p class="help is-danger" v-else>
-                    Unable to load suggested gas price, please set gas price mannualy
+                    Unable to load suggested gas price, please set gas price
+                    manually.
                   </p>
                 </div>
               </div>
@@ -104,7 +109,10 @@
                       <v-input v-model="transaction.gasPrice"
                                name="gasPrice"
                                type="number"
-                               validator="required|numeric|integer|between:0,100"
+                               min="1"
+                               max="100"
+                               step="1"
+                               validator="required|numeric|integer|between:1,100"
                                id="gasPrice"
                                aria-describedby="gasPrice"
                                placeholder="Gas price"
@@ -125,6 +133,9 @@
                       <v-input v-model="transaction.gasLimit"
                                name="gasLimit"
                                type="number"
+                               min="21000"
+                               max="4000000"
+                               step="1000"
                                validator="required|numeric|integer|between:21000,4000000"
                                id="gasLimit"
                                aria-describedby="gasLimit"
@@ -144,6 +155,7 @@
                                @input="setTrxNonce"
                                name="nonce"
                                type="number"
+                               step="1"
                                :validator="`required|numeric|integer|min_value:${nextNonceInBlock}`"
                                id="nonce"
                                aria-describedby="nonce"
@@ -176,22 +188,23 @@
               <div class="field is-horizontal">
                 <div class="field-label"></div>
                 <div class="field-body">
-                  <v-button className="is-primary is-medium"
+                  <v-button className="is-success is-medium is-cta"
                             :loading="isSending"
                             :disabled="isSyncing">Send</v-button>
                 </div>
               </div>
-
-              <div class="field is-horizontal" v-if="transactionHash">
-                <div class="field-label">
-                  <label class="label">Transaction Id</label>
-                </div>
-                <div class="field-body">
-                  <p>{{ transactionHash }}</p>
-                </div>
-              </div>
-
             </v-form>
+
+            <div class="transaction-status message is-success" v-if="transactionHash">
+              <div class="message-header">
+                <p>Transaction Sent!</p>
+              </div>
+              <div class="message-body">
+                <p>Your transaction has been broadcast to the network. It may take a few minutes before the transaction is confirmed.</p>
+                <p class="label">Transaction Id</p>
+                <p class="code">{{ transactionHash }}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -412,8 +425,8 @@ export default {
           this.resetForm();
           const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`;
           this.$notify({
-            title: 'Successful',
-            text: `Transaction ${shortHash} was sent`,
+            title: 'Transaction Sent',
+            text: `Transaction ${shortHash} sent`,
             type: 'is-info',
           });
         })
@@ -541,5 +554,16 @@ export default {
   max-height: 0;
   pointer-events: none; /* disable user interaction */
   user-select: none; /* disable user selection */
+}
+
+.send-page {
+  .send-amount {
+    margin-top: 2em;
+    margin-bottom: 2em;
+  }
+
+  .field-label {
+    margin-bottom: 0;
+  }
 }
 </style>
