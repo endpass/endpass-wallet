@@ -9,6 +9,7 @@ import price from './price/price';
 import transactions from './transactions/transactions';
 import errors from './errors/errors';
 import connectionStatus from './connection-status/connection-status';
+import userModule from './user';
 
 Vue.use(Vuex);
 const store = new Vuex.Store({
@@ -30,6 +31,7 @@ const store = new Vuex.Store({
     transactions,
     errors,
     connectionStatus,
+    user: userModule,
   },
 });
 
