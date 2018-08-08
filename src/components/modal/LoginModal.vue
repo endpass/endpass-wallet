@@ -18,6 +18,7 @@ export default {
   data: () => ({
     currentModal: LoginByEmailModal.name,
     isLoading: false,
+    email: null,
   }),
   methods: {
     ...mapActions('accounts', ['login', 'loginViaOTP']),
@@ -27,6 +28,7 @@ export default {
       return this.login(email)
         .then(challengeType => {
           if (challengeType === 'otp') {
+            this.email = email;
             this.currentModal = TwoFactorAuthModal.name;
             this.isLoading = false;
           } else {
@@ -37,17 +39,25 @@ export default {
     },
     handleTwoFactorAuthModalConfirm(code) {
       this.isLoading = true;
+      const {
+        email,
+        handleFailedLogin,
+        handleSuccessfulLogin,
+        loginViaOTP,
+      } = this;
 
-      return this.loginViaOTP({ code })
-        .then(this.handleSuccessfulLogin)
-        .catch(this.handleFailedLogin);
+      return loginViaOTP({ code, email })
+        .then(handleSuccessfulLogin)
+        .catch(handleFailedLogin);
     },
     handleClose() {
       this.close();
     },
     handleSuccessfulLogin() {
-      const text = this.currentModal === LoginByEmailModal.name ?
-        'Click the link in your email to log in' : 'Authorization was successful';
+      const text =
+        this.currentModal === LoginByEmailModal.name
+          ? 'Click the link in your email to log in'
+          : 'Authorization was successful';
 
       this.isLoading = false;
       this.close();

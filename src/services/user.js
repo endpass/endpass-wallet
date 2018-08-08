@@ -24,11 +24,12 @@ export default {
       });
   },
 
-  loginViaOTP(code) {
+  loginViaOTP(code, email) {
     return axios
       .post(`${identityAPIUrl}/token`, {
         challenge_type: 'otp',
         code,
+        email,
       })
       .then(({ data: { success } }) => {
         if (!success) {
