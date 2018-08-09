@@ -60,7 +60,7 @@
                            id="price"
                            aria-describedby="price"
                            placeholder="Price"
-                           :disabled="isSending"
+                           :disabled="isSending || !ethPrice"
                            required>
                     <div class="control" slot="addon">
                       <a class="button is-static">{{fiatCurrency}}</a>
@@ -271,7 +271,7 @@ export default {
       activeNet: state => state.web3.activeNet,
       isSyncing: state => !!state.web3.isSyncing,
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
-      ethPrice: state => state.price.price,
+      ethPrice: state => state.price.price || 0,
     }),
     value: {
       get() {
