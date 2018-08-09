@@ -80,6 +80,20 @@ export class Transaction {
   get gasPrice() {
     return this._gasPrice;
   }
+  set to(to) {
+    this._to = web3.utils.isAddress(to) ? web3.utils.toChecksumAddress(to) : to;
+  }
+  get to() {
+    return this._to;
+  }
+  set from(from) {
+    this._from = web3.utils.isAddress(from)
+      ? web3.utils.toChecksumAddress(from)
+      : from;
+  }
+  get from() {
+    return this._from;
+  }
   get gasPriceWei() {
     if (!isNumeric(this.gasPrice)) return '0';
 

@@ -20,10 +20,6 @@ export class Address {
   }
 
   getAddressString() {
-    return ethUtil.bufferToHex(this.address);
-  }
-
-  getChecksumAddressString() {
-    return ethUtil.toChecksumAddress(this.getAddressString());
+    return ethUtil.toChecksumAddress(ethUtil.bufferToHex(this.address));
   }
 }

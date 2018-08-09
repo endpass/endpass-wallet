@@ -52,8 +52,6 @@ export default {
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
       activeCurrency: state => state.web3.activeCurrency,
       price: state => state.price.price,
-      address: state =>
-        state.accounts.address && state.accounts.address.getAddressString(),
     }),
     ...mapGetters('accounts', {
       balance: 'balance',
@@ -77,7 +75,7 @@ export default {
 .info-bar {
   display: grid;
   grid-gap: 1em;
-  grid-template-columns: repeat(auto-fill, minmax(100px,1fr));
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   grid-template-rows: 1fr;
   justify-content: center;
   align-items: stretch;
