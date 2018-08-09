@@ -488,7 +488,7 @@ export default {
         }
       },
     },
-    'transaction.tokenInfo'() {
+    'transaction.tokenInfo': () => {
       this.updateEstimateGasCost();
     },
   },
@@ -514,13 +514,29 @@ export default {
           },
         ];
       })
-      .catch(e => {
+      .catch(() => {
         this.isLoadingGasPrice = false;
       });
+
     this.interval = setInterval(async () => {
       this.nextNonceInBlock = await this.getNonceInBlock();
       this.$validator.validate('nonce');
     }, 2000);
+
+    this.$watch(
+      vm => [vm.balance, vm.$data.estimateGasCost].join(),
+      () => {
+        if (BigNumber(this.estimateGasCost).gt(this.balance)) {
+          this.errors.add({
+            field: 'value',
+            msg: 'Insufficient funds for the transaction commission',
+            id: 'insufficientBalance',
+          });
+        } else {
+          this.errors.removeById('insufficientBalance');
+        }
+      },
+    );
   },
   beforeDestroy() {
     clearInterval(this.interval);
