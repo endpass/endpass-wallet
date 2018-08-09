@@ -1,23 +1,29 @@
 <template>
-  <v-modal @close="handleClose">
-    <template slot="header">Login/Register</template>
+  <v-modal class="is-dark" @close="handleClose">
+    <template slot="header">Log In or Sign Up</template>
+
+    <p class="subtitle">Please enter your email address below to access your
+    wallet or create a new one.</p>
 
     <v-form @submit="handleSubmit">
       <v-input v-model="email"
                label="Email"
+               help="Your email address may be used to help recover your
+               wallet in case you lose access."
                name="email"
                validator="required|email"
                placeholder="Your email"
                :disabled="isLoading" />
 
       <v-checkbox v-model="termsAccepted">
-        I accept <a href="https://endpass.com/terms/" target="_blank">Terms of Service</a>
-        and <a href="https://endpass.com/privacy/" target="_blank">Privacy Policy</a>
+        I accept the <a href="https://endpass.com/terms/" target="_blank">Terms of Service</a>
+        and <a href="https://endpass.com/privacy/" target="_blank">Privacy
+          Policy</a>.
       </v-checkbox>
 
       <v-button className="is-primary is-medium"
                 :disabled="!termsAccepted"
-                :loading="isLoading">Send</v-button>
+                :loading="isLoading">Continue</v-button>
     </v-form>
   </v-modal>
 </template>
@@ -37,9 +43,9 @@ export default {
       default: false,
     },
   },
-  data:() => ({
+  data: () => ({
     email: '',
-    termsAccepted: false,
+    termsAccepted: true,
   }),
   methods: {
     handleSubmit() {

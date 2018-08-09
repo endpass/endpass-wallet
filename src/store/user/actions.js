@@ -15,7 +15,7 @@ const setAuthorizationStatus = (
       type: 'is-danger',
     });
 
-    dispatch('errors/emitError', notificationError, { root: true });
+    //dispatch('errors/emitError', notificationError, { root: true });
   }
 };
 
