@@ -168,6 +168,26 @@ describe('Send', () => {
       expect(errors.first('gasLimit').includes('numeric')).toBeTruthy();
       expect(errors.first('price').includes('between')).toBeTruthy();
       expect(errors.first('value').includes('between')).toBeTruthy();
+
+      wrapper.setComputed({
+        balance: '0',
+      });
+
+      wrapper.setData({
+        estimateGasCost: '1000000000000000',
+      });
+
+      expect(errors.firstById('insufficientBalance')).toBeTruthy();
+
+      wrapper.setComputed({
+        balance: '1000000000000000000',
+      });
+
+      wrapper.setData({
+        estimateGasCost: '1000000000000000',
+      });
+
+      expect(errors.firstById('insufficientBalance')).toBeFalsy();
     });
 
     it('should allow empty string in input', () => {
