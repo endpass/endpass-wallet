@@ -11,7 +11,7 @@ export default {
         throw new NotificationError({
           title: 'Failed to get suggested gas price',
           text:
-            'An error occurred while retrieving suggested gas price.Please, set mannualy or, try again.',
+            'An error occurred while retrieving suggested gas price. Please, set manually or, try again.',
           type: 'is-warning',
         });
       });

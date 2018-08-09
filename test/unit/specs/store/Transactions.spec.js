@@ -15,92 +15,140 @@ describe('transactions store', async () => {
       pendingTransactions: [],
     };
   });
-  it('should get account transactions correctly', () => {
-    stateInstance.pendingTransactions = [
-      {
-        to: '0x0',
-        state: 'success',
-      },
-      {
-        from: '0x0',
-      },
-      {
-        to: '0x1',
-        from: '0x2',
-      },
-    ];
-    let transactions = state.getters.accountTransactions(
-      stateInstance,
-      {},
-      {
-        accounts: {
-          address: {
-            getAddressString() {
-              return '0x0';
+
+  describe('getters', () => {
+    it('should get account transactions correctly', () => {
+      stateInstance.pendingTransactions = [
+        {
+          to: '0x0',
+          state: 'success',
+        },
+        {
+          from: '0x0',
+        },
+        {
+          to: '0x1',
+          from: '0x2',
+        },
+      ];
+      let transactions = state.getters.accountTransactions(
+        stateInstance,
+        {},
+        {
+          accounts: {
+            address: {
+              getAddressString() {
+                return '0x0';
+              },
             },
           },
         },
-      },
-    );
-    expect(transactions.length).toBe(2);
-    expect(transactions[0]).toBe(stateInstance.pendingTransactions[0]);
-  });
+      );
+      expect(transactions.length).toBe(2);
+      expect(transactions[0]).toBe(stateInstance.pendingTransactions[0]);
+    });
 
-  it('should get pending balance correctly', () => {
-    stateInstance.pendingTransactions = [
-      {
-        from: '0x0',
-        token: 'ETH',
-        networkId: 1,
-        state: 'pending',
-        valueWei: '1',
-        gasCost: '6',
-      },
-      {
-        from: '0x0',
-        token: 'ETH',
-        networkId: 1,
-        state: 'success',
-        valueWei: '1',
-        gasCost: '6',
-      },
-      {
-        from: '0x0',
-        token: 'ETH',
-        networkId: 2,
-        state: 'success',
-        valueWei: '2',
-        gasCost: '5',
-      },
-      {
-        to: '0x1',
-        token: 'ETH',
-        networkId: 1,
-        state: 'success',
-        valueWei: '3',
-        gasCost: '4',
-        from: '0x2',
-      },
-    ];
+    it('should return an empty array with a nullable address', () => {
+      stateInstance.pendingTransactions = [
+        {
+          to: '0x0',
+          state: 'success',
+        },
+      ];
 
-    let pendingBalance = state.getters.pendingBalance(
-      stateInstance,
-      {},
-      {
-        accounts: {
-          address: {
-            getAddressString() {
-              return '0x0';
+      const transactions = state.getters.accountTransactions(
+        stateInstance,
+        {},
+        {
+          accounts: {
+            address: null,
+          },
+        },
+      );
+
+      expect(transactions).toEqual([]);
+    });
+
+    it('should get pending balance correctly', () => {
+      stateInstance.pendingTransactions = [
+        {
+          from: '0x0',
+          token: 'ETH',
+          networkId: 1,
+          state: 'pending',
+          valueWei: '1',
+          gasCost: '6',
+        },
+        {
+          from: '0x0',
+          token: 'ETH',
+          networkId: 1,
+          state: 'success',
+          valueWei: '1',
+          gasCost: '6',
+        },
+        {
+          from: '0x0',
+          token: 'ETH',
+          networkId: 2,
+          state: 'success',
+          valueWei: '2',
+          gasCost: '5',
+        },
+        {
+          to: '0x1',
+          token: 'ETH',
+          networkId: 1,
+          state: 'success',
+          valueWei: '3',
+          gasCost: '4',
+          from: '0x2',
+        },
+      ];
+
+      let pendingBalance = state.getters.pendingBalance(
+        stateInstance,
+        {},
+        {
+          accounts: {
+            address: {
+              getAddressString() {
+                return '0x0';
+              },
+            },
+          },
+          web3: {
+            activeNet: {
+              id: 1,
             },
           },
         },
-        web3: {
-          activeNet: {
-            id: 1,
+      );
+      expect(pendingBalance).toBe('7');
+    });
+
+    it('should return zero pending balance with a nullable address', () => {
+      stateInstance.pendingTransactions = [
+        {
+          from: '0x0',
+          token: 'ETH',
+          networkId: 1,
+          state: 'pending',
+          valueWei: '1',
+          gasCost: '6',
+        },
+      ];
+
+      const pendingBalance = state.getters.pendingBalance(
+        stateInstance,
+        {},
+        {
+          accounts: {
+            address: null,
           },
         },
-      },
-    );
-    expect(pendingBalance).toBe('7');
+      );
+      expect(pendingBalance).toBe('0');
+    });
   });
 });
