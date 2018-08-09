@@ -44,7 +44,7 @@ export default {
       }
     },
     saveJSON(data) {
-      const filename = `endpass_wallet_${address}.json`;
+      const filename = `endpass_wallet_${this.address}.json`;
       const blob = new Blob([data], { type: 'text/json' });
       const e = document.createEvent('MouseEvents');
       const a = document.createElement('a');
