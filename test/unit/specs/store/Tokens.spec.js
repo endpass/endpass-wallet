@@ -77,7 +77,7 @@ describe('tokens', () => {
     expect(stateInstance.savedTokens['3']).toBeFalsy();
 
     tokens.mutations.addToken(stateInstance, {
-      token: { address: '0x2' },
+      token: { address: '0x4ce2109f8db1190cd44bc6554e35642214fbe144' },
       net: 3,
     });
     expect(stateInstance.savedTokens['3'].length).toBe(1);

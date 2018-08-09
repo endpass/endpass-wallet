@@ -1,4 +1,5 @@
 import web3 from 'web3';
+import { Token } from './Token';
 import { BigNumber } from 'bignumber.js';
 import erc20ABI from '@/abi/erc20.json';
 
@@ -23,10 +24,7 @@ export class Transaction {
     success,
   }) {
     if (tokenInfo) {
-      this.tokenInfo = tokenInfo;
-      this.tokenInfo.address = web3.utils.toChecksumAddress(
-        this.tokenInfo.address,
-      );
+      this.tokenInfo = new Token(tokenInfo);
       this.valueWei = value;
     } else {
       this.value = value;

@@ -95,6 +95,7 @@
 <script>
 import Multiselect from 'vue-multiselect';
 import { BigNumber } from 'bignumber.js';
+import web3 from 'web3';
 import Balance from '@/components/Balance';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/AddTokenModal';
@@ -128,7 +129,9 @@ export default {
       return this.tokens.filter(
         token =>
           !this.activeTokens.some(
-            activeToken => activeToken.address === token.address,
+            activeToken =>
+              activeToken.address ===
+              web3.utils.toChecksumAddress(token.address),
           ),
       );
     },

@@ -26,7 +26,7 @@ describe('transactions store', async () => {
       },
       {
         to: '0x1',
-        from: '0x2',
+        from: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
       },
     ];
     let transactions = state.getters.accountTransactions(
@@ -79,7 +79,7 @@ describe('transactions store', async () => {
         state: 'success',
         valueWei: '3',
         gasCost: '4',
-        from: '0x2',
+        from: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
       },
     ];
 
