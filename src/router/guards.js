@@ -1,22 +1,6 @@
 import store from '../store';
 import storage from '@/services/storage';
 
-export function hasWalletGuard(to, from, next) {
-  if (store.state.accounts.address) {
-    next();
-  } else {
-    next(from.fullPath);
-  }
-}
-
-export function noWalletGuard(to, from, next) {
-  if (!store.state.accounts.address) {
-    next();
-  } else {
-    next(from.fullPath);
-  }
-}
-
 export function privateWalletGuard(to, from, next) {
   if (store.state.accounts.wallet) {
     next();
