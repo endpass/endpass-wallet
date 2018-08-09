@@ -46,6 +46,27 @@ describe('transactions store', async () => {
     expect(transactions[0]).toBe(stateInstance.pendingTransactions[0]);
   });
 
+  it('should return an empty array with a nullable address', () => {
+    stateInstance.pendingTransactions = [
+      {
+        to: '0x0',
+        state: 'success',
+      },
+    ];
+
+    const transactions = state.getters.accountTransactions(
+      stateInstance,
+      {},
+      {
+        accounts: {
+          address: null,
+        },
+      },
+    );
+
+    expect(transactions).toEqual([]);
+  });
+
   it('should get pending balance correctly', () => {
     stateInstance.pendingTransactions = [
       {
@@ -79,7 +100,7 @@ describe('transactions store', async () => {
         state: 'success',
         valueWei: '3',
         gasCost: '4',
-        from: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+        from: '0x2',
       },
     ];
 
@@ -102,5 +123,29 @@ describe('transactions store', async () => {
       },
     );
     expect(pendingBalance).toBe('7');
+  });
+
+  it('should return zero pending balance with a nullable address', () => {
+    stateInstance.pendingTransactions = [
+      {
+        from: '0x0',
+        token: 'ETH',
+        networkId: 1,
+        state: 'pending',
+        valueWei: '1',
+        gasCost: '6',
+      },
+    ];
+
+    const pendingBalance = state.getters.pendingBalance(
+      stateInstance,
+      {},
+      {
+        accounts: {
+          address: null,
+        },
+      },
+    );
+    expect(pendingBalance).toBe('0');
   });
 });

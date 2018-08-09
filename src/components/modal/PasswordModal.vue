@@ -5,18 +5,22 @@
 
       <div>
         <v-form @submit="confirm">
-          <slot></slot>
-          <v-password v-model="jsonKeystorePassword"
-                   @input="handleInput"
-                   label="V3 JSON keystore password"
-                   name="jsonKeystorePassword"
-                   validator="required"
-                   data-vv-as="password"
-                   aria-describedby="jsonKeystorePassword"
-                   placeholder="V3 JSON keystore password"
-                   required />
-          <v-button className="is-primary is-medium"
-                    :loading="proccessingCongirmation">Confirm</v-button>
+          <slot />
+          <v-password
+            v-model="jsonKeystorePassword"
+            label="V3 JSON keystore password"
+            name="jsonKeystorePassword"
+            validator="required"
+            data-vv-as="password"
+            aria-describedby="jsonKeystorePassword"
+            placeholder="V3 JSON keystore password"
+            required
+            @input="handleInput"
+          />
+          <v-button
+            :loading="processingConfirmation"
+            class-name="is-primary is-medium"
+          >Confirm</v-button>
         </v-form>
       </div>
     </v-modal>
@@ -31,26 +35,26 @@ import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
-  name: 'password-modal',
+  name: 'PasswordModal',
   data() {
     return {
       jsonKeystorePassword: '',
-      proccessingCongirmation: false,
+      processingConfirmation: false,
     };
   },
   methods: {
     ...mapActions('accounts', ['validatePassword']),
     confirm() {
-      this.proccessingCongirmation = true;
+      this.processingConfirmation = true;
       const { jsonKeystorePassword: password } = this;
 
       this.validatePassword(password)
         .then(() => {
-          this.proccessingCongirmation = false;
+          this.processingConfirmation = false;
           this.$emit('confirm', password);
         })
         .catch(() => {
-          this.proccessingCongirmation = false;
+          this.processingConfirmation = false;
           this.errors.add({
             field: 'jsonKeystorePassword',
             msg: 'Password is invalid',
