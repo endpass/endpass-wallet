@@ -1,62 +1,47 @@
 <template>
-  <div class="new-wallet app-page">
-    <div class="section" v-if="hdWallet">
-      <div class="container has-text-centered is-narrow">
-        <div class="card app-card">
-          <div class="card-content">
-            <h1 class="title">Wallet Created</h1>
-            <p class="subtitle">Your wallet has been created successfully.
-            Please <strong>write down the 12 word recovery phrase below</strong>
-            and store it in a safe place. You will not be able to recover your
-            wallet without it.</p>
-            <div class="box">
-              <p>Your wallet recovery phrase</p>
-              <p class="code" data-test="seed-phrase">{{key}}</p>
-            </div>
-            <router-link
-              to="/"
-              class="button is-primary"
-              :disabled="!!remainingSeedPhraseTimeout"
-            >
-              I have written down my seed phrase {{getRemainingSeedPhraseTimeout}}
-            </router-link>
-          </div>
-        </div>
+  <base-page class="new-wallet">
+    <template slot="title">{{ hdWallet ? "Wallet Created" : "Create Wallet" }}</template>
+    <div v-if="hdWallet" class="container has-text-centered is-narrow">
+      <p class="subtitle">Your wallet has been created successfully.
+        Please <strong>write down the 12 word recovery phrase below</strong>
+        and store it in a safe place. You will not be able to recover your
+        wallet without it.</p>
+      <div class="box">
+        <p>Your wallet recovery phrase</p>
+        <p class="code" data-test="seed-phrase">{{key}}</p>
       </div>
+      <router-link
+        to="/"
+        class="button is-primary"
+        :disabled="!!remainingSeedPhraseTimeout"
+        >
+        I have written down my seed phrase {{getRemainingSeedPhraseTimeout}}
+      </router-link>
     </div>
-    <div class="section" v-else>
-      <div class="container has-text-centered is-narrow">
-        <div class="card app-card">
-          <div class="card-header">
-            <h1 class="card-header-title">Create Wallet</h1>
-          </div>
-          <div class="card-content">
-            <a @click="$router.go(-1)">&lt; Back</a>
-            <p class="subtitle">Just click the button below to create a new,
-            secure Ethereum Wallet. Your wallet can contain multiple addresses
-            for storing Ethereum and ERC20 compatible tokens.</p>
-            <v-form @submit="createWallet">
-               <v-password v-model="walletPassword"
-                        label="Wallet password"
-                        id="jsonKeystorePassword"
-                        name="walletPassword"
-                        validator="required|min:8"
-                        data-vv-as="password"
-                        aria-describedby="jsonKeystorePassword"
-                        placeholder="wallet password"
-                        required />
-              <v-button className="is-primary is-cta"
-                        :loading="isCreating">Create New Wallet</v-button>
-            </v-form>
-          </div>
-        </div>
-      </div>
+    <div v-else class="container has-text-centered is-narrow">
+      <p class="subtitle">Just click the button below to create a new,
+        secure Ethereum Wallet. Your wallet can contain multiple addresses
+        for storing Ethereum and ERC20 compatible tokens.</p>
+      <v-form @submit="createWallet">
+        <v-password v-model="walletPassword"
+                    label="Wallet password"
+                    id="jsonKeystorePassword"
+                    name="walletPassword"
+                    validator="required|min:8"
+                    data-vv-as="password"
+                    aria-describedby="jsonKeystorePassword"
+                    placeholder="wallet password"
+                    required />
+          <v-button className="is-success is-cta"
+                    :loading="isCreating">Create New Wallet</v-button>
+      </v-form>
     </div>
-  </div>
+  </base-page>
 </template>
 
 <script>
 import router from '@/router';
+import BasePage from '@/components/pages/Base';
 import Bip39 from 'bip39';
 import VueTimers from 'vue-timers/mixin';
 import { mapActions, mapState } from 'vuex';
@@ -129,6 +114,7 @@ export default {
     },
   },
   components: {
+    BasePage,
     VForm,
     VPassword,
     VButton,

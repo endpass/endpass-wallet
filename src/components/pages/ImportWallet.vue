@@ -1,38 +1,28 @@
 <template>
-  <div class="import-wallet app-page">
-    <div class="section">
-      <div class="container">
-        <div class="card app-card">
-          <div class="card-header">
-            <h1 class="card-header-title">Import Existing Wallet</h1>
-          </div>
-          <div class="card-content">
-            <a @click="$router.go(-1)">&lt; Back</a>
-            <p class="subtitle">Select the type of wallet you would like to
-            import.</p>
-            <div class="columns">
+  <base-page class="import-wallet">
+    <template slot="title">Import Existing Wallet</template>
+    <p class="subtitle">Select the type of wallet you would like to
+      import.</p>
+    <div class="columns">
 
-              <div class="column is-one-third">
-                <v-list v-model="importType"
-                        label="Import Type"
-                        :list="menu"/>
-              </div>
+      <div class="column is-one-third">
+        <v-list v-model="importType"
+                label="Import Type"
+                :list="menu"/>
+      </div>
 
-              <div class="column">
-                <div class="import-wallet">
-                  <component :is="importComponent"></component>
-                </div>
-              </div>
-
-            </div>
-          </div>
+      <div class="column">
+        <div class="import-wallet">
+          <component :is="importComponent"></component>
         </div>
       </div>
+
     </div>
-  </div>
+  </base-page>
 </template>
 
 <script>
+import BasePage from '@/components/pages/Base';
 import VList from '@/components/ui/VList.vue';
 import ImportFromSeed from '@/components/importWallet/ImportFromSeed';
 import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
@@ -67,6 +57,7 @@ export default {
     },
   },
   components: {
+    BasePage,
     VList,
     ImportFromSeed,
     ImportFromPrivateKey,

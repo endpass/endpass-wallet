@@ -35,7 +35,7 @@
               Ethereum wallet.</p>
               <div class="is-centered">
                 <router-link :to="{name: 'NewWallet'}" class="button
-                is-primary is-cta">Create New Wallet</router-link>
+                is-success is-cta">Create New Wallet</router-link>
                 <div>
                   <router-link :to="{name: 'ImportWallet'}"
                   class="has-text-link">Import an existing wallet</router-link>

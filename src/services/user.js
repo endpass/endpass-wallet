@@ -1,10 +1,10 @@
-import axios from 'axios';
 import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
+import { http } from '@/utils';
 
 export default {
   login(email) {
-    return axios
+    return http
       .post(`${identityAPIUrl}/auth`, {
         email,
       })
@@ -24,11 +24,12 @@ export default {
       });
   },
 
-  loginViaOTP(code) {
-    return axios
+  loginViaOTP(code, email) {
+    return http
       .post(`${identityAPIUrl}/token`, {
         challenge_type: 'otp',
         code,
+        email,
       })
       .then(({ data: { success } }) => {
         if (!success) {
@@ -45,7 +46,7 @@ export default {
   },
 
   logout() {
-    return axios.post(`${identityAPIUrl}/logout`).catch(() => {
+    return http.post(`${identityAPIUrl}/logout`).catch(() => {
       throw new NotificationError({
         title: 'Log out error',
         text: 'Failed to log out. Please, try again',
@@ -55,11 +56,11 @@ export default {
   },
 
   getSettings() {
-    return axios.get(`${identityAPIUrl}/user`).then(({ data }) => data);
+    return http.get(`${identityAPIUrl}/user`).then(({ data }) => data);
   },
 
   setSettings(settings) {
-    return axios
+    return http
       .post(`${identityAPIUrl}/user`, settings)
       .then(({ data }) => data);
   },
@@ -69,7 +70,7 @@ export default {
   //     success: true,
   //   });
 
-  //   return axios
+  //   return http
   //     .delete(`${identityAPIUrl}/user`, propsArr)
   //     .then(res => res.data)
   //     .then(console.log)
@@ -77,17 +78,17 @@ export default {
   // },
 
   getAccounts() {
-    return axios.get(`${identityAPIUrl}/accounts`).then(res => res.data);
+    return http.get(`${identityAPIUrl}/accounts`).then(res => res.data);
   },
 
   setAccount(account) {
-    return axios
+    return http
       .post(`${identityAPIUrl}/accounts/${account.address}`, account)
       .then(res => res.data);
   },
 
   getAccount(account) {
-    return axios
+    return http
       .get(`${identityAPIUrl}/account/${account}`)
       .then(res => res.data)
       .catch(() => {
@@ -126,7 +127,7 @@ export default {
   },
 
   getOtpSettings() {
-    return axios
+    return http
       .get(`${identityAPIUrl}/otp`)
       .then(res => res.data)
       .catch(() => {
@@ -139,7 +140,7 @@ export default {
   },
 
   setOtpSettings(secret, code) {
-    return axios
+    return http
       .post(`${identityAPIUrl}/otp`, { secret, code })
       .then(({ data: { success, message } }) => {
         if (!success) {
@@ -157,7 +158,7 @@ export default {
   },
 
   deleteOtpSettings(code) {
-    return axios
+    return http
       .delete(`${identityAPIUrl}/otp`, {
         data: { code },
       })

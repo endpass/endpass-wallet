@@ -2,22 +2,6 @@
   <div class="section info-bar" :class="networkClass">
     <div class="info-item">
       <div class="field">
-        <p class="heading">Currency</p>
-        <div class="control is-expanded">
-          <currency-select/>
-        </div>
-      </div>
-    </div>
-    <div class="info-item">
-      <div class="field">
-        <p class="heading">Network</p>
-        <div class="control is-expanded">
-					<provider-select/>
-				</div>
-      </div>
-    </div>
-    <div class="info-item">
-      <div class="field">
 				<p class="heading">Block</p>
 				<div class="control is-expanded">
 					<sync-status/>
@@ -40,8 +24,6 @@
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
 import AccountChooser from '@/components/bar/AccountChooser.vue';
-import ProviderSelect from '@/components/bar/ProviderSelect.vue';
-import CurrencySelect from '@/components/bar/CurrencySelect.vue';
 import SyncStatus from '@/components/bar/SyncStatus.vue';
 import Balance from '@/components/Balance';
 import net from '@/mixins/net';
@@ -62,10 +44,8 @@ export default {
   },
   components: {
     AccountChooser,
-    ProviderSelect,
     SyncStatus,
     Balance,
-    CurrencySelect,
   },
   mixins: [net],
 };
@@ -75,7 +55,7 @@ export default {
 .info-bar {
   display: grid;
   grid-gap: 1em;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   grid-template-rows: 1fr;
   justify-content: center;
   align-items: stretch;
@@ -97,7 +77,7 @@ export default {
   }
 }
 
-.info-bar-item {
+.info-item {
   min-width: 0;
   white-space: nowrap;
 }

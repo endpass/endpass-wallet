@@ -4,7 +4,6 @@ import moxios from 'moxios';
 import { mount, shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import HistoryPage from '@/components/pages/History.vue';
-import Web3 from 'web3';
 import { infuraConf } from '@/config';
 import ethereumWalletMock from '../../../ethereumWalletMock.js';
 import { generateStubs } from '@/utils/testUtils';
@@ -27,7 +26,7 @@ describe('HistoryPage', () => {
         accounts: {
           address: {
             getAddressString() {
-              return '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b';
+              return '0x4BD5C3E7e4d6b3Df23e9DA5b42e5E4daa3D2579b';
             },
           },
         },
@@ -44,7 +43,7 @@ describe('HistoryPage', () => {
           return [
             {
               timestamp: 1524505925,
-              from: '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b',
+              from: '0x4BD5C3E7e4d6b3Df23e9DA5b42e5E4daa3D2579b',
               to: '0x7c59542b20002ed255598172cab48b86d865dfbb',
               hash:
                 '0x7fcb1e71def6d0d353251831f46d60401e6321b5e0b0b135085be4688ca2a9b1',

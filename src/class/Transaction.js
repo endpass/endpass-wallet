@@ -24,6 +24,9 @@ export class Transaction {
   }) {
     if (tokenInfo) {
       this.tokenInfo = tokenInfo;
+      this.tokenInfo.address = web3.utils.toChecksumAddress(
+        this.tokenInfo.address,
+      );
       this.valueWei = value;
     } else {
       this.value = value;

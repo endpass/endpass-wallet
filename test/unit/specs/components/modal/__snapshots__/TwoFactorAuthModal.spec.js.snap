@@ -27,6 +27,7 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
      
     <v-input
       label="Verification Code"
+      name="verificationCode"
       validator="required"
     />
      
@@ -47,6 +48,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
      
     <v-input
       label="Verification Code"
+      name="verificationCode"
       validator="required"
     />
      
@@ -67,6 +69,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
      
     <v-input
       label="Verification Code"
+      name="verificationCode"
       validator="required"
     />
      
@@ -87,6 +90,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 3`] 
      
     <v-input
       label="Verification Code"
+      name="verificationCode"
       validator="required"
     />
      
