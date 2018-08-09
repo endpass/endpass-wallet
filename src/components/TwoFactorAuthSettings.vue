@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-form @submit="handleFormSubmit">
-      <label class="label">Two Factor Authentication via OTP</label>
+      <label class="label">Two Factor Authentication</label>
       <v-button className="is-primary is-medium"
                 :disabled="isButtonDisabled"
                 :loading="isLoading">
