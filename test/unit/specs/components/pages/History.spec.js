@@ -42,7 +42,7 @@ describe('HistoryPage', () => {
         'transactions/accountTransactions'() {
           return [
             {
-              timestamp: 1524505925,
+              date: new Date('01/01/2007'),
               from: '0x4BD5C3E7e4d6b3Df23e9DA5b42e5E4daa3D2579b',
               to: '0x7c59542b20002ed255598172cab48b86d865dfbb',
               hash:
@@ -67,7 +67,7 @@ describe('HistoryPage', () => {
       response: [
         {
           id: '1',
-          to: wallet.getChecksumAddressString(),
+          to: wallet.getAddressString(),
         },
       ],
     });
@@ -78,7 +78,7 @@ describe('HistoryPage', () => {
         operations: [
           {
             id: '2',
-            from: wallet.getChecksumAddressString(),
+            from: wallet.getAddressString(),
           },
         ],
       },
@@ -90,7 +90,7 @@ describe('HistoryPage', () => {
     moxios.wait(() => {
       let elems = wrapper.vm.transactions;
       expect(elems.length).toBe(2);
-      expect(elems[0].to).toBe(wallet.getChecksumAddressString());
+      expect(elems[0].to).toBe(wallet.getAddressString());
       done();
     });
   });
@@ -107,13 +107,27 @@ describe('HistoryPage', () => {
       done();
     });
   });
+  it('sort transactions by date', () => {
+    const wrapper = shallow(HistoryPage, { store, localVue });
+    const trx1 = {
+      date: new Date('01/01/2010'),
+    };
+    const trx2 = {
+      date: new Date('01/01/2001'),
+    };
+    const trx3 = {};
+    wrapper.vm.transactions = [trx1, trx2, trx3];
+    const result = wrapper.vm.processedTransactions;
+    expect(result[0]).toBe(trx3);
+    expect(result[1]).toBe(trx1);
+  });
   it('concats transactions', done => {
     moxios.stubRequest(/api\.ethplorer\.io\/getAddressTransactions/, {
       status: 200,
       response: [
         {
           id: '1',
-          to: wallet.getChecksumAddressString(),
+          to: wallet.getAddressString(),
         },
       ],
     });
@@ -124,7 +138,7 @@ describe('HistoryPage', () => {
         operations: [
           {
             id: '2',
-            from: wallet.getChecksumAddressString(),
+            from: wallet.getAddressString(),
           },
         ],
       },
