@@ -10,7 +10,7 @@ export default {
         if (symbol === 'ETH-TEST') {
           let resp = {};
           resp[currencys] = 0;
-          res(resp);
+          return res(resp);
         }
         axios
           .get(`https://min-api.cryptocompare.com/data/price`, {
@@ -25,17 +25,26 @@ export default {
     });
     return throttlePromice;
   },
-  getEthPrice(currencys) {
-    return this.getPrice('ETH', currencys);
+  getEthPrice(currencies) {
+    return this.getPrice('ETH', currencies);
   },
-  getPrices(symbols, currencys) {
+  getPrices(symbols, currency) {
     let throttlePromice = new Promise((res, rej) => {
+      if (currency === 'ETH-TEST') {
+        let resp = {};
+        symbols.map(symbol => {
+          resp[currency] = {
+            [symbol]: 0,
+          };
+        });
+        return res(resp);
+      }
       throttle(() => {
         axios
           .get(`https://min-api.cryptocompare.com/data/pricemulti`, {
             params: {
               fsyms: symbols,
-              tsyms: currencys,
+              tsyms: currency,
             },
           })
           .then(resp => res(resp.data))
