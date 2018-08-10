@@ -37,13 +37,35 @@ export default {
     return keythereum.recover(password, keystore);
   },
 
-  // Encode to Base58Check
+  // Encode a buffer to Base58Check
+  // If already a string, silently return it
   encodeBase58(key) {
+    if (typeof key === 'string') {
+      return key;
+    }
     return bs58check.encode(key);
   },
 
-  // Decode from Base58Check
+  // Decode from Base58Check string
+  // If not a string, silently return it
   decodeBase58(key) {
+    if (typeof key !== 'string') {
+      return key;
+    }
     return bs58check.decode(key);
+  },
+
+  // Returns true if the key is an extended public key (xpub)
+  // Accepts string or buffer
+  isExtendedPublicKey(key) {
+    let keyString = this.encodeBase58(key);
+    return keyString.slice(0, 4) === 'xpub';
+  },
+
+  // Returns true if the key is an extended private key (xprv)
+  // Accepts string or buffer
+  isExtendedPrivateKey(key) {
+    let keyString = this.encodeBase58(key);
+    return keyString.slice(0, 4) === 'xprv';
   },
 };

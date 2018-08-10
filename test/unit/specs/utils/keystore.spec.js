@@ -25,4 +25,18 @@ describe('keystore', () => {
     let xPrvOutString = keystore.encodeBase58(xPrv);
     expect(xPrvOutString).toBe(xPrvString);
   });
+
+  it('detects an extended public key', () => {
+    let xPub = keystore.decodeBase58(xPubString);
+    expect(keystore.isExtendedPublicKey(xPubString)).toBeTruthy();
+    expect(keystore.isExtendedPublicKey(xPrvString)).toBeFalsy();
+    expect(keystore.isExtendedPublicKey(xPub)).toBeTruthy();
+  });
+
+  it('detects an extended private key', () => {
+    let xPrv = keystore.decodeBase58(xPrvString);
+    expect(keystore.isExtendedPrivateKey(xPrvString)).toBeTruthy();
+    expect(keystore.isExtendedPrivateKey(xPubString)).toBeFalsy();
+    expect(keystore.isExtendedPrivateKey(xPrv)).toBeTruthy();
+  });
 });
