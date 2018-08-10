@@ -2,6 +2,7 @@ import axios from 'axios';
 import moxios from 'moxios';
 
 import gasPrice from '@/services/gas-price';
+import { cryptoDataAPIUrl } from '@/config';
 
 describe('gas price service', () => {
   beforeEach(() => {
@@ -12,18 +13,17 @@ describe('gas price service', () => {
     moxios.uninstall();
   });
 
-  it('should get gas prices', () => {
+  it('should get gas prices', done => {
     const response = {
       low: 1,
     };
-    moxios.wait(() => {
-      const request = moxios.requests.mostRecent();
-      request.respondWith({
-        status: 200,
-        response,
-      });
+    moxios.stubRequest(`${cryptoDataAPIUrl}/gas/price`, {
+      status: 200,
+      response,
     });
-
-    expect(gasPrice.getGasPrice()).resolves.toBe(response);
+    moxios.wait(() => {
+      expect(gasPrice.getGasPrice()).resolves.toBe(response);
+      done();
+    });
   });
 });
