@@ -57,26 +57,30 @@ describe('axios instance', () => {
       });
 
       describe('rejected', () => {
-        it('should dispatch action', () => {
+        it('should dispatch action', async () => {
           const response = { status: 401 };
           const config = { url: identityAPIUrl };
 
-          rejected({ response, config });
-
-          expect(store.dispatch).toHaveBeenCalledTimes(1);
-          expect(store.dispatch).toHaveBeenCalledWith({
-            type: 'user/setAuthorizationStatus',
-            authorizationStatus: false,
-          });
+          try {
+            await rejected({ response, config });
+          } catch (error) {
+            expect(store.dispatch).toHaveBeenCalledTimes(1);
+            expect(store.dispatch).toHaveBeenCalledWith({
+              type: 'user/setAuthorizationStatus',
+              authorizationStatus: false,
+            });
+          }
         });
 
-        it('should not dispatch action', () => {
+        it('should not dispatch action', async () => {
           const response = { status: 400 };
           const config = { url: 'url' };
 
-          rejected({ response, config });
-
-          expect(store.dispatch).toHaveBeenCalledTimes(0);
+          try {
+            await rejected({ response, config });
+          } catch (error) {
+            expect(store.dispatch).toHaveBeenCalledTimes(0);
+          }
         });
       });
     });
