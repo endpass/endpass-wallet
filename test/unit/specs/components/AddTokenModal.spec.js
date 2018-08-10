@@ -2,7 +2,6 @@ import { mount, shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import AddTokenModal from '@/components/AddTokenModal.vue';
-import web3 from 'web3';
 import { infuraConf } from '@/config';
 import ethereumWalletMock from '../../ethereumWalletMock.js';
 

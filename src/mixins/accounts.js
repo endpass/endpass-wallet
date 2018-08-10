@@ -7,7 +7,7 @@ export default {
       return this.$store.state.accounts.activeAccount;
     },
     address() {
-      return this.activeAccount.getAddressString();
+      return this.activeAccount.getChecksumAddressString();
     },
     balance() {
       return this.$store.state.accounts.balance === null

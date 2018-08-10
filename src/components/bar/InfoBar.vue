@@ -34,8 +34,6 @@ export default {
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
       activeCurrency: state => state.web3.activeCurrency,
       price: state => state.price.price,
-      address: state =>
-        state.accounts.address && state.accounts.address.getAddressString(),
     }),
     ...mapGetters('accounts', {
       balance: 'balance',

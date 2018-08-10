@@ -55,7 +55,7 @@ describe('ReceivePage', () => {
       response: [
         {
           id: '1',
-          to: wallet.getAddressString(),
+          to: wallet.getChecksumAddressString(),
         },
       ],
     });

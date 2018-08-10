@@ -86,6 +86,7 @@ export default {
       dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true });
     },
     addWallet({ commit, dispatch, state }, json) {
+      json.address = web3.utils.toChecksumAddress(json.address);
       commit('addWallet', json);
 
       return userService
@@ -94,7 +95,9 @@ export default {
     },
     addWalletAndSelect({ dispatch }, json) {
       return dispatch('addWallet', json)
-        .then(() => dispatch('selectWallet', json.address))
+        .then(() =>
+          dispatch('selectWallet', web3.utils.toChecksumAddress(json.address)),
+        )
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     addWalletWithV3({ commit, dispatch }, { json, password }) {
@@ -162,7 +165,7 @@ export default {
     },
     updateBalance({ commit, dispatch, state, rootState }) {
       if (state.address) {
-        const address = state.address.getAddressString();
+        const address = state.address.getChecksumAddressString();
 
         return rootState.web3.web3.eth
           .getBalance(address)

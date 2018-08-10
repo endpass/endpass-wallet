@@ -263,7 +263,7 @@ export default {
     ...mapState({
       tokenPrices: state => state.tokens.prices,
       balance: state => state.accounts.balance,
-      address: state => state.accounts.address.getAddressString(),
+      address: state => state.accounts.address.getChecksumAddressString(),
       tokens: state =>
         state.tokens.activeTokens.filter(token => token.balance > 0),
       activeCurrency: state => state.web3.activeCurrency,

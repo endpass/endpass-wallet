@@ -24,12 +24,12 @@ describe('TokensPage', () => {
       {
         name: 'First Token',
         symbol: 'FST',
-        address: '0xFST',
+        address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
       },
       {
         name: 'second token',
         symbol: '$SCdT',
-        address: '0x$SCdT',
+        address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
       },
     ];
 
@@ -152,12 +152,12 @@ describe('TokensPage', () => {
             {
               name: 'Third Token',
               symbol: 'TTKN',
-              address: '0xTTKN',
+              address: '0x687422eEA2cB73B5d3e242bA5456b782919AFc85',
             },
             {
               name: 'fours token',
               symbol: 'FurT',
-              address: '0xFurT',
+              address: '0xAb54DE61A908583e6332a1282c7bFcA39f899B4f',
             },
           ],
         });

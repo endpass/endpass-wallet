@@ -55,7 +55,8 @@ export default {
     ...mapState({
       activeCurrency: state => state.web3.activeCurrency,
       address: state =>
-        state.accounts.address && state.accounts.address.getAddressString(),
+        state.accounts.address &&
+        state.accounts.address.getChecksumAddressString(),
     }),
     ...mapGetters('accounts', {
       balance: 'balance',

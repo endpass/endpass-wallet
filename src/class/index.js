@@ -5,3 +5,4 @@ export { NotificationError } from './error';
 export { Address } from './address';
 export { Wallet } from './wallet';
 export { ENSResolver } from './ens';
+export { Token } from './Token';

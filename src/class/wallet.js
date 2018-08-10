@@ -15,7 +15,7 @@ export class Wallet {
         kdfParams,
       );
     };
-    this.getAddressString = function() {
+    this.getChecksumAddressString = function() {
       return v3.address;
     };
     this.validatePassword = function(password) {

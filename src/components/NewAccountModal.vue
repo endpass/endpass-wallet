@@ -69,7 +69,8 @@ export default {
     ...mapState({
       wallet: state => state.accounts.wallet,
       address: state =>
-        state.accounts.address && state.accounts.address.getAddressString(),
+        state.accounts.address &&
+        state.accounts.address.getChecksumAddressString(),
       wallets: state => state.accounts.wallets,
     }),
   },
