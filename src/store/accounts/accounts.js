@@ -90,7 +90,7 @@ export default {
       commit('addWallet', json);
 
       return userService
-        .setAccount(json)
+        .setAccount(json.address, json)
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     addWalletAndSelect({ dispatch }, json) {

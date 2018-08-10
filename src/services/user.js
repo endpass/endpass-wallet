@@ -81,9 +81,9 @@ export default {
     return http.get(`${identityAPIUrl}/accounts`).then(res => res.data);
   },
 
-  setAccount(account) {
+  setAccount(address, keystore) {
     return http
-      .post(`${identityAPIUrl}/accounts/${account.address}`, account)
+      .post(`${identityAPIUrl}/accounts/${address}`, keystore)
       .then(res => res.data);
   },
 
