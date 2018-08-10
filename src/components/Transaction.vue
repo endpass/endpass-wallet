@@ -111,7 +111,8 @@ export default {
       isSyncing: state => state.web3.isSyncing,
       web3: state => state.web3.web3,
       address: state =>
-        state.accounts.address && state.accounts.address.getAddressString(),
+        state.accounts.address &&
+        state.accounts.address.getChecksumAddressString(),
     }),
     ...mapGetters('accounts', ['isPublicAccount']),
     recieve() {

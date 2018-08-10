@@ -1,4 +1,5 @@
 import TokenTracker from 'eth-token-tracker';
+import { Token } from '@/class';
 import { endpassService, ethplorerService } from '@/services';
 import price from '@/services/price';
 import storage from '@/services/storage';
@@ -29,7 +30,7 @@ export default {
   mutations: {
     addToken({ savedTokens }, { token, net }) {
       savedTokens[net] = savedTokens[net] || [];
-      savedTokens[net].push(token);
+      savedTokens[net].push(new Token(token));
     },
     removeToken(
       { tokensSubscription, savedTokens, activeTokens },
@@ -63,7 +64,7 @@ export default {
     },
     saveActiveTokens(state, tokens = []) {
       // TODO check for errors here, activeTokens is undefined
-      state.activeTokens = tokens;
+      state.activeTokens = tokens.map(token => new Token(token));
     },
     setTokenPrices(state, prices) {
       state.prices = prices;
@@ -178,7 +179,7 @@ export default {
     ) {
       commit('saveActiveTokens', []);
 
-      const address = rootState.accounts.address.getAddressString();
+      const address = rootState.accounts.address.getChecksumAddressString();
       //remove repetitive tokens
       const filteredSavedTokens = getters.savedActiveTokens.filter(
         savedToken =>
@@ -213,7 +214,7 @@ export default {
       commit('saveSubscription', subscription);
     },
     getNonZeroTokens({ rootState, dispatch }) {
-      const address = rootState.accounts.address.getAddressString();
+      const address = rootState.accounts.address.getChecksumAddressString();
       const promise = ethplorerService.getTransactions(address);
       promise
         .then(() => {

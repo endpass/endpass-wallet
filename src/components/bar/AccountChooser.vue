@@ -62,7 +62,8 @@ export default {
       hdWallet: state => state.accounts.hdWallet,
       wallets: state => state.accounts.wallets,
       address: state =>
-        state.accounts.address && state.accounts.address.getAddressString(),
+        state.accounts.address &&
+        state.accounts.address.getChecksumAddressString(),
     }),
     activeAddress: {
       get() {

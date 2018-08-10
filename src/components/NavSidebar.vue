@@ -168,7 +168,8 @@ export default {
       hdWallet: state => state.accounts.hdWallet,
       wallet: state => state.accounts.wallet,
       address: state =>
-        state.accounts.address && state.accounts.address.getAddressString(),
+        state.accounts.address &&
+        state.accounts.address.getChecksumAddressString(),
       email: state => state.accounts.email,
     }),
     ...mapGetters({

@@ -13,7 +13,7 @@ export default {
         return [];
       }
 
-      const address = rootState.accounts.address.getAddressString();
+      const address = rootState.accounts.address.getChecksumAddressString();
       return state.pendingTransactions.filter(
         trx =>
           trx.from === address ||
@@ -25,7 +25,7 @@ export default {
         return '0';
       }
 
-      const address = rootState.accounts.address.getAddressString();
+      const address = rootState.accounts.address.getChecksumAddressString();
       const networkId = rootState.web3.activeNet.id;
 
       return state.pendingTransactions
@@ -51,7 +51,7 @@ export default {
   },
   actions: {
     async getNonceInBlock({ rootState }) {
-      const address = rootState.accounts.address.getAddressString();
+      const address = rootState.accounts.address.getChecksumAddressString();
       const eth = rootState.web3.web3.eth;
       return await eth.getTransactionCount(address);
     },

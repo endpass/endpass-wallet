@@ -1,3 +1,5 @@
+import web3 from 'web3';
+
 const privKey = Uint8Array.from([
   252,
   66,
@@ -137,8 +139,10 @@ class EthereumWalletMock {
     return address;
   }
 
-  getAddressString() {
-    return `0x${Buffer.from(this.getAddress()).toString('hex')}`;
+  getChecksumAddressString() {
+    return web3.utils.toChecksumAddress(
+      `0x${Buffer.from(this.getAddress()).toString('hex')}`,
+    );
   }
 
   getPrivateKey() {

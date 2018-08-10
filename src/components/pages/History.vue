@@ -41,7 +41,8 @@ export default {
   computed: {
     ...mapState({
       address: state =>
-        state.accounts.address && state.accounts.address.getAddressString(),
+        state.accounts.address &&
+        state.accounts.address.getChecksumAddressString(),
       activeNet: state => state.web3.activeNet,
     }),
     ...mapGetters({

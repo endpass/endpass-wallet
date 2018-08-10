@@ -30,7 +30,7 @@ describe('Send', () => {
         },
         accounts: {
           address: {
-            getAddressString() {
+            getChecksumAddressString() {
               return '0x9eceefdf3554e178a6549006f2c02163e63c9fd8';
             },
           },
