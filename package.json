@@ -11,7 +11,8 @@
     "test": "npm run unit",
     "e2e": "cypress run",
     "e2e:open": "cypress open",
-    "build": "node build/build.js",
+    "build": "NODE_ENV=production node build/build.js",
+    "dev-build": "node build/build.js",
     "pre-commit": "lint-staged",
     "lint": "eslint '**/*.{js,vue,json}' --quiet",
     "format": "prettier --write '**/*.{js,vue,json}'"
