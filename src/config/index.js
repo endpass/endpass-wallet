@@ -8,12 +8,12 @@ switch (process.env.NODE_ENV) {
   case 'production':
     env = prodEnv;
     break;
-  // case 'testing':
-  //   env = {
-  //     ...prodEnv,
-  //     ...testEnv,
-  //   };
-  //   break;
+  case 'testing':
+    env = {
+      ...prodEnv,
+      ...testEnv,
+    };
+    break;
 
   default:
     env = {
