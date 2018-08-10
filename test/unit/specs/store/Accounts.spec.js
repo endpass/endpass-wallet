@@ -141,8 +141,8 @@ describe('accounts store', () => {
     );
     expect(state.hdWallet instanceof HDKey).toBe(true);
     expect(dispatch).toHaveBeenCalledTimes(2);
-    expect(dispatch).nthCalledWith(1, 'addWalletAndSelect', expect.any(Object));
-    expect(dispatch).nthCalledWith(2, 'saveHdWallet', v3password);
+    expect(dispatch).nthCalledWith(1, 'saveHdWallet', v3password);
+    expect(dispatch).nthCalledWith(2, 'generateWallet', v3password);
     // expect(state.wallet instanceof Wallet).toBe(true);
   });
 
