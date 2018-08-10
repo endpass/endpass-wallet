@@ -56,9 +56,9 @@ export default {
         this.accountTransactions,
       );
       return fullTransactions.sort((trx1, trx2) => {
-        if (typeof trx2.timestamp === 'undefined') return 1;
-        if (typeof trx1.timestamp === 'undefined') return -1;
-        return trx2.timestamp - trx1.timestamp;
+        if (typeof trx2.date === 'undefined') return 1;
+        if (typeof trx1.date === 'undefined') return -1;
+        return trx2.date - trx1.date;
       });
     },
     // Whether history is supported on this network
