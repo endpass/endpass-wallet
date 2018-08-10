@@ -25,7 +25,7 @@ describe('HistoryPage', () => {
       state: {
         accounts: {
           address: {
-            getAddressString() {
+            getChecksumAddressString() {
               return '0x4BD5C3E7e4d6b3Df23e9DA5b42e5E4daa3D2579b';
             },
           },
@@ -67,7 +67,7 @@ describe('HistoryPage', () => {
       response: [
         {
           id: '1',
-          to: wallet.getAddressString(),
+          to: wallet.getChecksumAddressString(),
         },
       ],
     });
@@ -78,7 +78,7 @@ describe('HistoryPage', () => {
         operations: [
           {
             id: '2',
-            from: wallet.getAddressString(),
+            from: wallet.getChecksumAddressString(),
           },
         ],
       },
@@ -90,7 +90,7 @@ describe('HistoryPage', () => {
     moxios.wait(() => {
       let elems = wrapper.vm.transactions;
       expect(elems.length).toBe(2);
-      expect(elems[0].to).toBe(wallet.getAddressString());
+      expect(elems[0].to).toBe(wallet.getChecksumAddressString());
       done();
     });
   });
@@ -98,7 +98,7 @@ describe('HistoryPage', () => {
     const wrapper = shallow(HistoryPage, { store, localVue });
     const watcher = jest.spyOn(wrapper.vm, 'getMainHistory');
     store.state.accounts.address = {
-      getAddressString() {
+      getChecksumAddressString() {
         return '0x0';
       },
     };
@@ -113,7 +113,7 @@ describe('HistoryPage', () => {
       response: [
         {
           id: '1',
-          to: wallet.getAddressString(),
+          to: wallet.getChecksumAddressString(),
         },
       ],
     });
@@ -124,7 +124,7 @@ describe('HistoryPage', () => {
         operations: [
           {
             id: '2',
-            from: wallet.getAddressString(),
+            from: wallet.getChecksumAddressString(),
           },
         ],
       },

@@ -139,7 +139,7 @@ class EthereumWalletMock {
     return address;
   }
 
-  getAddressString() {
+  getChecksumAddressString() {
     return web3.utils.toChecksumAddress(
       `0x${Buffer.from(this.getAddress()).toString('hex')}`,
     );

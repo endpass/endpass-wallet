@@ -35,7 +35,7 @@ describe('transactions store', async () => {
       {
         accounts: {
           address: {
-            getAddressString() {
+            getChecksumAddressString() {
               return '0x0';
             },
           },
@@ -110,7 +110,7 @@ describe('transactions store', async () => {
       {
         accounts: {
           address: {
-            getAddressString() {
+            getChecksumAddressString() {
               return '0x0';
             },
           },

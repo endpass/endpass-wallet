@@ -106,7 +106,7 @@ describe('tokens', () => {
         rootState: {
           accounts: {
             address: {
-              getAddressString() {
+              getChecksumAddressString() {
                 return '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b';
               },
             },
@@ -151,7 +151,7 @@ describe('tokens', () => {
         rootState: {
           accounts: {
             address: {
-              getAddressString() {
+              getChecksumAddressString() {
                 return '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b';
               },
             },
@@ -177,7 +177,7 @@ describe('tokens', () => {
         rootState: {
           accounts: {
             address: {
-              getAddressString() {
+              getChecksumAddressString() {
                 return '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b';
               },
             },

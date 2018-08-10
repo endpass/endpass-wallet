@@ -11,7 +11,7 @@ class mockAccount {
     this.address = address;
   }
 
-  getAddressString() {
+  getChecksumAddressString() {
     return this.address;
   }
 }

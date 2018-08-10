@@ -24,12 +24,12 @@ describe('TokensPage', () => {
       {
         name: 'First Token',
         symbol: 'FST',
-        address: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+        address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
       },
       {
         name: 'second token',
         symbol: '$SCdT',
-        address: '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b',
+        address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
       },
     ];
 
@@ -144,7 +144,7 @@ describe('TokensPage', () => {
       });
 
       it('should correctly find tokens in list', async () => {
-        expect(wrapper.vm.searchTokenList).toHaveLength(2);
+        expect(wrapper.vm.searchTokenList).toHaveLength(0);
 
         wrapper.setData({
           tokens: [
@@ -152,12 +152,12 @@ describe('TokensPage', () => {
             {
               name: 'Third Token',
               symbol: 'TTKN',
-              address: '0x687422eea2cb73b5d3e242ba5456b782919afc85',
+              address: '0x687422eEA2cB73B5d3e242bA5456b782919AFc85',
             },
             {
               name: 'fours token',
               symbol: 'FurT',
-              address: '0xab54de61a908583e6332a1282c7bfca39f899b4f',
+              address: '0xAb54DE61A908583e6332a1282c7bFcA39f899B4f',
             },
           ],
         });
@@ -174,7 +174,7 @@ describe('TokensPage', () => {
           searchToken: '',
         });
 
-        expect(wrapper.vm.searchTokenList).toHaveLength(4);
+        expect(wrapper.vm.searchTokenList).toHaveLength(2);
 
         wrapper.setData({
           searchToken: 'hir',

@@ -179,7 +179,7 @@ export default {
     ) {
       commit('saveActiveTokens', []);
 
-      const address = rootState.accounts.address.getAddressString();
+      const address = rootState.accounts.address.getChecksumAddressString();
       //remove repetitive tokens
       const filteredSavedTokens = getters.savedActiveTokens.filter(
         savedToken =>
@@ -214,7 +214,7 @@ export default {
       commit('saveSubscription', subscription);
     },
     getNonZeroTokens({ rootState, dispatch }) {
-      const address = rootState.accounts.address.getAddressString();
+      const address = rootState.accounts.address.getChecksumAddressString();
       const promise = ethplorerService.getTransactions(address);
       promise
         .then(() => {

@@ -165,7 +165,7 @@ export default {
     },
     updateBalance({ commit, dispatch, state, rootState }) {
       if (state.address) {
-        const address = state.address.getAddressString();
+        const address = state.address.getChecksumAddressString();
 
         return rootState.web3.web3.eth
           .getBalance(address)
