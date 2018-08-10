@@ -117,7 +117,7 @@ export default {
       }
       let i = Object.keys(state.wallets).length;
       let wallet = state.hdWallet.deriveChild(i).getWallet();
-      dispatch(
+      return dispatch(
         'addWalletAndSelect',
         wallet.toV3(new Buffer(password), kdfParams),
       );
@@ -126,12 +126,10 @@ export default {
       const seed = Bip39.mnemonicToSeed(key);
       const hdKey = HDKey.fromMasterSeed(seed);
       const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
-      const wallet = hdWallet.deriveChild(0).getWallet();
       commit('addHdWallet', hdWallet);
-      return dispatch(
-        'addWalletAndSelect',
-        wallet.toV3(new Buffer(password), kdfParams),
-      );
+
+      // Generate the first child wallet
+      return dispatch('generateWallet', password);
     },
     async addMultiHdWallet({ commit, dispatch, rootState }, { key, password }) {
       const seed = Bip39.mnemonicToSeed(key);
