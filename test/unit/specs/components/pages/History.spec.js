@@ -67,7 +67,7 @@ describe('HistoryPage', () => {
       response: [
         {
           id: '1',
-          to: wallet.getAddressString(),
+          to: wallet.getChecksumAddressString(),
         },
       ],
     });
@@ -78,7 +78,7 @@ describe('HistoryPage', () => {
         operations: [
           {
             id: '2',
-            from: wallet.getAddressString(),
+            from: wallet.getChecksumAddressString(),
           },
         ],
       },
@@ -90,7 +90,7 @@ describe('HistoryPage', () => {
     moxios.wait(() => {
       let elems = wrapper.vm.transactions;
       expect(elems.length).toBe(2);
-      expect(elems[0].to).toBe(wallet.getAddressString());
+      expect(elems[0].to).toBe(wallet.getChecksumAddressString());
       done();
     });
   });
@@ -127,7 +127,7 @@ describe('HistoryPage', () => {
       response: [
         {
           id: '1',
-          to: wallet.getAddressString(),
+          to: wallet.getChecksumAddressString(),
         },
       ],
     });
@@ -138,7 +138,7 @@ describe('HistoryPage', () => {
         operations: [
           {
             id: '2',
-            from: wallet.getAddressString(),
+            from: wallet.getChecksumAddressString(),
           },
         ],
       },
