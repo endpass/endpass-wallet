@@ -129,7 +129,7 @@ describe('accounts store', () => {
   });
 
   it('should create wallet instance with seed phrase ', async () => {
-    const dispatch = jest.fn();
+    const dispatch = jest.fn(() => Promise.resolve({}));
 
     await actions.addHdWallet(
       { ...context, dispatch },
@@ -140,13 +140,14 @@ describe('accounts store', () => {
       },
     );
     expect(state.hdWallet instanceof HDKey).toBe(true);
-    expect(dispatch).toHaveBeenCalledTimes(1);
-    expect(dispatch).toBeCalledWith('addWalletAndSelect', expect.any(Object));
+    expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(dispatch).nthCalledWith(1, 'addWalletAndSelect', expect.any(Object));
+    expect(dispatch).nthCalledWith(2, 'saveHdWallet', v3password);
     // expect(state.wallet instanceof Wallet).toBe(true);
   });
 
   it('should generate wallet', async () => {
-    const dispatch = jest.fn();
+    const dispatch = jest.fn(() => Promise.resolve({}));
 
     await actions.addHdWallet(
       { ...context, dispatch },
@@ -158,7 +159,7 @@ describe('accounts store', () => {
     );
     actions.generateWallet({ ...context, dispatch }, v3password);
 
-    expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(dispatch).toHaveBeenCalledTimes(3);
     expect(dispatch).toBeCalledWith('addWalletAndSelect', expect.any(Object));
   });
 

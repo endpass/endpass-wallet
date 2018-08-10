@@ -7,6 +7,7 @@ import { hdKeyMnemonic, kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
 import { Wallet, Address } from '@/class';
 import { BigNumber } from 'bignumber.js';
+import keystore from '@/utils/keystore';
 
 export default {
   namespaced: true,
@@ -122,14 +123,25 @@ export default {
         wallet.toV3(new Buffer(password), kdfParams),
       );
     },
+    // Saves HD wallet's extended keys on the server
+    saveHdWallet({ commit, dispatch, state }, password) {
+      // Encrypt and save the wallet's extended key
+      let xPrv = state.hdWallet.privateExtendedKey;
+      let xPub = state.hdWallet.publicExtendedKey;
+      let json = keystore.encrypt(password, xPrv);
+
+      return userService.setAccount(xPub, json);
+    },
     addHdWallet({ commit, dispatch }, { key, password }) {
       const seed = Bip39.mnemonicToSeed(key);
       const hdKey = HDKey.fromMasterSeed(seed);
       const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
       commit('addHdWallet', hdWallet);
 
-      // Generate the first child wallet
-      return dispatch('generateWallet', password);
+      // Save HD keys and generate the first child wallet
+      return dispatch('saveHdWallet', password)
+        .then(() => dispatch('generateWallet', password))
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     async addMultiHdWallet({ commit, dispatch, rootState }, { key, password }) {
       const seed = Bip39.mnemonicToSeed(key);

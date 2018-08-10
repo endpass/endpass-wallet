@@ -416,7 +416,7 @@ describe('User service', () => {
     let servicePromise;
 
     beforeEach(() => {
-      servicePromise = userService.setAccount(account);
+      servicePromise = userService.setAccount(account.address, account);
     });
 
     it('should make correct request', done => {
