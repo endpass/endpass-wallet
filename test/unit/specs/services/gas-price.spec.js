@@ -1,29 +1,24 @@
 import axios from 'axios';
-import moxios from 'moxios';
+import MockAdapter from 'axios-mock-adapter';
 
 import gasPrice from '@/services/gas-price';
 import { cryptoDataAPIUrl } from '@/config';
 
 describe('gas price service', () => {
+  let mock;
   beforeEach(() => {
-    moxios.install();
+    mock = new MockAdapter(axios);
   });
 
   afterEach(() => {
-    moxios.uninstall();
+    mock.reset();
   });
 
-  it('should get gas prices', done => {
+  it('should get gas prices', () => {
     const response = {
       low: 1,
     };
-    moxios.stubRequest(`${cryptoDataAPIUrl}/gas/price`, {
-      status: 200,
-      response,
-    });
-    moxios.wait(() => {
-      expect(gasPrice.getGasPrice()).resolves.toBe(response);
-      done();
-    });
+    mock.onGet(`${cryptoDataAPIUrl}/gas/price`).reply(200, response);
+    return expect(gasPrice.getGasPrice()).resolves.toEqual(response);
   });
 });
