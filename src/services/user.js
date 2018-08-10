@@ -87,12 +87,16 @@ export default {
       .then(res => res.data);
   },
 
-  getAccount(account) {
+  getAccount(address) {
     return http
-      .get(`${identityAPIUrl}/account/${account}`)
-      .then(res => res.data)
+      .get(`${identityAPIUrl}/account/${address}`)
+      .then(res => {
+        let account = res.data;
+        account.address = address;
+        return account;
+      })
       .catch(() => {
-        const shortAcc = account.replace(/^(.{5}).+/, '$1…');
+        const shortAcc = address.replace(/^(.{5}).+/, '$1…');
 
         throw new NotificationError({
           title: 'Account request error',
