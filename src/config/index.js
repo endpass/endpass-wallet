@@ -1,6 +1,6 @@
 import devEnv from './dev.env';
 import prodEnv from './prod.env';
-// import testEnv from './test.env';
+import testEnv from './test.env';
 
 let env;
 
