@@ -8,6 +8,7 @@ switch (process.env.NODE_ENV) {
   case 'production':
     env = prodEnv;
     break;
+  case 'test': // set by Jest
   case 'testing':
     env = {
       ...prodEnv,
