@@ -15,7 +15,10 @@ const env =
   process.env.NODE_ENV === 'testing'
     ? require('../config/test.env')
     : require('../config/prod.env');
-
+const buildConf =
+  process.env.NODE_ENV === 'testing'
+    ? require('../config/build.test')
+    : require('../config/build.prod');
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({
@@ -24,10 +27,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       usePostCSS: true,
     }),
   },
-  entry: {
-    rollbar: './static/rollbar.js',
-    app: './src/main.js',
-  },
+  entry: buildConf.entry,
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
     path: config.build.assetsRoot,
@@ -72,7 +72,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         process.env.NODE_ENV === 'testing' ? 'index.html' : config.build.index,
       template: 'index.html',
       inject: true,
-      chunks: ['manifest', 'vendor', 'rollbar', 'app'],
+      chunks: buildConf.chunks,
       chunksSortMode: 'manual',
       minify: {
         removeComments: true,
