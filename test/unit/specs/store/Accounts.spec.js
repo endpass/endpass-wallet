@@ -94,12 +94,11 @@ describe('accounts store', () => {
     const wallet = state.wallets[v3json.address];
 
     expect(wallet instanceof Wallet).toBe(true);
-    expect(wallet.getAddressString().toUpperCase()).toBe(
-      v3json.address.toUpperCase(),
-    );
+    let address = await wallet.getAddressString();
+    expect(address.toUpperCase()).toBe(v3json.address.toUpperCase());
   });
 
-  it('should call action', () => {
+  it('should add wallet with private key', () => {
     const dispatch = jest.fn();
 
     actions.addWalletWithPrivateKey(
@@ -114,10 +113,10 @@ describe('accounts store', () => {
     expect(dispatch).toBeCalledWith('addWalletAndSelect', expect.any(Object));
   });
 
-  it('should call action', () => {
+  it('should add wallet with v3 keystore', async () => {
     const dispatch = jest.fn();
 
-    actions.addWalletWithV3(
+    await actions.addWalletWithV3(
       { dispatch },
       {
         json: v3json,
@@ -125,7 +124,10 @@ describe('accounts store', () => {
       },
     );
 
-    expect(dispatch).toBeCalledWith('addWalletAndSelect', expect.any(Object));
+    expect(dispatch).toBeCalledWith(
+      'addWalletWithPrivateKey',
+      expect.any(Object),
+    );
   });
 
   it('should create wallet instance with seed phrase ', async () => {
@@ -167,16 +169,16 @@ describe('accounts store', () => {
     expect(dispatch).toBeCalledWith('addWalletAndSelect', expect.any(Object));
   });
 
-  it('should validate password', () => {
+  it('should validate password', async () => {
     context.state.wallet = new Wallet(v3json);
-    const promise = actions.validatePassword(context, v3password);
-    expect(promise).resolves.toBe();
+    const isValid = await actions.validatePassword(context, v3password);
+    expect(isValid).toBe(true);
   });
 
-  it('should reject wrong password', () => {
+  it('should reject wrong password', async () => {
     context.state.wallet = new Wallet(v3json);
     const promise = actions.validatePassword(context, '');
-    expect(promise).rejects.toThrow('wrong passphrase');
+    await expect(promise).rejects.toThrow('Invalid password');
   });
 
   it('should call mutation from update settings action', async () => {

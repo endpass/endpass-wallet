@@ -113,13 +113,20 @@ export default {
         )
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    // Import HD wallet from keystore
-    addWalletWithV3({ commit, dispatch }, { json, password }) {
-      const wallet = EthWallet.fromV3(json, password, true);
-      const newJson = wallet.toV3(Buffer.from(password), kdfParams);
-      return dispatch('addWalletAndSelect', newJson);
+    // Import wallet from json V3 keystore
+    async addWalletWithV3({ commit, dispatch }, { json, password }) {
+      try {
+        const wallet = new Wallet(json);
+        let privateKey = await wallet.getPrivateKey(password);
+        return dispatch('addWalletWithPrivateKey', privateKey);
+      } catch (e) {
+        return dispatch('errors/emitError', e, { root: true });
+      }
     },
-    addWalletWithPrivateKey({ commit, dispatch }, { privateKey, password }) {
+    async addWalletWithPrivateKey(
+      { commit, dispatch },
+      { privateKey, password },
+    ) {
       const wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));
       const json = keystore.encryptWallet(password, wallet);
 

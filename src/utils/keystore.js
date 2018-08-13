@@ -36,6 +36,12 @@ export default {
 
   // Decrypts a V3 keystore object into a private key Buffer
   decrypt(password, json) {
+    if (!password) {
+      throw new Error('Password is empty');
+    }
+    if (!this.isV3(json)) {
+      throw new Error('Wallet is not in keystore V3 format!');
+    }
     return keythereum.recover(password, json);
   },
 
@@ -97,5 +103,10 @@ export default {
   isExtendedPrivateKey(key) {
     let keyString = this.encodeBase58(key);
     return keyString.slice(0, 4) === 'xprv';
+  },
+
+  // Simple sanity check to ensure a valid V3 keystore
+  isV3(json) {
+    return json && json.crypto && json.crypto.ciphertext;
   },
 };
