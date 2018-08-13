@@ -19,15 +19,19 @@ before_script:
   - sleep 5
 script:
 - yarn run $TEST_SUITE
-- yarn build
-deploy:
-- provider: s3
-  access_key_id: "$AWS_ACCESS_KEY_DEV"
-  secret_access_key: "$AWS_SECRET_KEY_DEV"
-  bucket: "$AWS_S3_BUCKET"
-  region: "$AWS_REGION"
-  skip_cleanup: true
-  local_dir: dist
+jobs:
+  include:
+  - stage: build
+    script: yarn dev-build
+  - stage: deploy
+    deploy:
+    - provider: s3
+      access_key_id: "$AWS_ACCESS_KEY_DEV"
+      secret_access_key: "$AWS_SECRET_KEY_DEV"
+      bucket: "$AWS_S3_BUCKET"
+      region: "$AWS_REGION"
+      skip_cleanup: true
+      local_dir: dist
 notifications:
   slack:
     secure: kZwDmcoc5inpJsMal9hhqynyfRBF1HcbToZm9ihDWZ6+AIRa+YRdziwWxXajeax7JBYUuqzaOKWnx/TnliZJcacIHxTplHQAsQspT0QwXzhiA9Stxb4/Xw21pmbp+3fcgNroCUlHY76olwpOLOa4yoMn7Y1DasT6sxbk4EqgKHxT1jXL32MECE+3XTdW9LhQHfhUbqQlpcW89bkaFJ8yPapp2p6FoA0nt+fYdRYhXIvPThXiEz+o+oOsBsnl7Xct5a5um8eh5I8lqJFjXlSMXnQP2+Yu+IawHgScW98BBjQaRjDSQx7sAhC2+ZRfTzk4C5jU2unhhrOpnVexJrlieLs9B1vuf5Qq4uZisIhrIhOxBGkehrA47hnaMVxgADMH1Tg8zDOaxAJ4qqXAG/oCAjSR/a7jR25+NPH4QFNyEGP674pwFyO9QlgytLwW7WCk9Yyk8CC9JvVS88wjWo7UIao/t/P2++PN+NM716cJBaQAcG9AUT1TXVx88HIFttCOPMLeM5DTU3BYljk7fAmAVgMDzO07Dnidq0uzxGxiW1cALKD8ooCAPxdQ1agybE3AF1a80X7Ou5AJvLLoHC2WwnosG3mOMbdsjd4T0MnUBoJmxTDgHFmMttAdfcQS2YadHi0kDQgJe5pqcEmgPXNUU8p8iauDRvI8mqHQSkBhNYU=

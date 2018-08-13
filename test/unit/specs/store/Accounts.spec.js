@@ -73,7 +73,7 @@ describe('accounts store', () => {
   it('should set address', () => {
     mutations.setAddress(state, '0x3c75226555FC496168d48B88DF83B95F16771F37');
     expect(state.address instanceof Address).toBe(true);
-    expect(state.address.getChecksumAddressString().toUpperCase()).toEqual(
+    expect(state.address.getAddressString().toUpperCase()).toEqual(
       '0x3c75226555FC496168d48B88DF83B95F16771F37'.toUpperCase(),
     );
   });
@@ -94,7 +94,7 @@ describe('accounts store', () => {
     const wallet = state.wallets[v3json.address];
 
     expect(wallet instanceof Wallet).toBe(true);
-    expect(wallet.getChecksumAddressString().toUpperCase()).toBe(
+    expect(wallet.getAddressString().toUpperCase()).toBe(
       v3json.address.toUpperCase(),
     );
   });
