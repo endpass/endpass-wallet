@@ -1,14 +1,19 @@
 import keystore from '@/utils/keystore';
 import { kdfParams } from '@/config';
+import EthWallet from 'ethereumjs-wallet';
+import HDKey from 'ethereumjs-wallet/hdkey';
 
 describe('keystore', () => {
-  // Extended keys to ecnrypt and decrypt
-  let xPrvString =
+  // Extended keys
+  const xPrvString =
     'xprv9s21ZrQH143K3DAahVuXkkfZxprW7emgvd19zzSEb2zBxR9mWnMFtzGCwmYCq8YQh21ZqFAcPWtWJXz9sbEXaN9LUSe2cjsw9LkAtwmoWsc';
-  let xPubString =
+  const xPubString =
     'xpub661MyMwAqRbcFhF3oXSY7tcJWrgzX7VYHqvkoNqr9NXAqDUv4KfWSnago4BMD4yty2cX6f6jLeQefve3nKriVY6c18NLzCmHdKqWeN8VHkJ';
+  const privateKey =
+    'efca4cdd31923b50f4214af5d2ae10e7ac45a5019e9431cc195482d707485378';
+  const address = '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c';
 
-  let password = 'password123';
+  const password = 'password123';
 
   it('encrypts and decrypts an extended key', () => {
     let xPrv = keystore.decodeBase58(xPrvString);
@@ -24,6 +29,26 @@ describe('keystore', () => {
 
     let xPrvOutString = keystore.encodeBase58(xPrv);
     expect(xPrvOutString).toBe(xPrvString);
+  });
+
+  it('encrypts and decrypts a regular wallet', () => {
+    let wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));
+    let json = keystore.encryptWallet(password, wallet);
+    expect(json.crypto).toBeTruthy();
+    expect(json.address).toBe(address);
+
+    let decryptedWallet = keystore.decryptWallet(password, json);
+    expect(decryptedWallet.getPrivateKeyString()).toEqual('0x' + privateKey);
+  });
+
+  it('encrypts and decrypts an HD wallet', () => {
+    let wallet = HDKey.fromExtendedKey(xPrvString);
+    let json = keystore.encryptHDWallet(password, wallet);
+    expect(json.crypto).toBeTruthy();
+    expect(json.address).toBe(xPubString);
+
+    let decryptedWallet = keystore.decryptHDWallet(password, json);
+    expect(decryptedWallet.privateExtendedKey()).toEqual(xPrvString);
   });
 
   it('detects an extended public key', () => {
