@@ -259,5 +259,19 @@ describe('Send', () => {
 
       expect(inputElem.attributes().disabled).toBeFalsy();
     });
+
+    it('should update user nonce when changing the network', async () => {
+      wrapper.vm.getNextNonce = jest.fn().mockResolvedValueOnce('2');
+      wrapper.setComputed({ activeNet: 1 });
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.$data.userNonce).toBe('2');
+
+      wrapper.vm.getNextNonce.mockResolvedValueOnce('5');
+      wrapper.setComputed({ activeNet: 2 });
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.$data.userNonce).toBe('5');
+    });
   });
 });

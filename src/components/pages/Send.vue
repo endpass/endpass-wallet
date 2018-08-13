@@ -467,6 +467,9 @@ export default {
     },
   },
   watch: {
+    activeNet() {
+      this.updateUserNonce();
+    },
     'transaction.to': {
       async handler() {
         await this.$nextTick();
