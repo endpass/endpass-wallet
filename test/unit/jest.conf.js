@@ -4,6 +4,7 @@ module.exports = {
   rootDir: path.resolve(__dirname, '../../'),
   moduleFileExtensions: ['js', 'json', 'vue', 'ts', 'tsx', 'jsx', 'node'],
   moduleNameMapper: {
+    '^fixtures/(.*)$': '<rootDir>/test/unit/fixtures/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   testMatch: ['<rootDir>/(test/unit/**/*.spec.js|**/__tests__/*.js)'],

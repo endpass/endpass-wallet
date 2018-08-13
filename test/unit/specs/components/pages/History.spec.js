@@ -5,7 +5,7 @@ import { mount, shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import HistoryPage from '@/components/pages/History.vue';
 import { infuraConf } from '@/config';
-import ethereumWalletMock from '../../../ethereumWalletMock.js';
+import ethereumWalletMock from '../../../fixtures/wallet.js';
 import { generateStubs } from '@/utils/testUtils';
 
 const wallet = ethereumWalletMock;

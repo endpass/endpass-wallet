@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import AddTokenModal from '@/components/AddTokenModal.vue';
 import { infuraConf } from '@/config';
-import ethereumWalletMock from '../../ethereumWalletMock.js';
+import ethereumWalletMock from '../../fixtures/wallet.js';
 
 const wallet = ethereumWalletMock;
 
