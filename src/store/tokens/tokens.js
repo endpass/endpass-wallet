@@ -160,7 +160,7 @@ export default {
       const symbols = state.activeTokens.map(token => token.symbol);
 
       return price
-        .getPrices(symbols.toString(), rootState.web3.activeCurrency.name)
+        .getPrices(symbols, rootState.web3.activeCurrency.name)
         .then(resp => commit('setTokenPrices', resp));
     },
     updateTokenPrice({ commit }, symbol) {

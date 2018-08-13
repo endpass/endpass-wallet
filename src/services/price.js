@@ -8,9 +8,7 @@ export default {
   getPrice(symbol, currencies) {
     let throttlePromice = new Promise((res, rej) => {
       if (symbol === 'ETH-TEST') {
-        let resp = {};
-        resp[currencies] = 0;
-        return res(resp);
+        return res({ [currencies]: 0 });
       }
       throttle(() => {
         axios
@@ -44,7 +42,7 @@ export default {
         axios
           .get(fiatPriceMultiAPIUrl, {
             params: {
-              fsyms: symbols,
+              fsyms: symbols.toString(),
               tsyms: currency,
             },
           })
