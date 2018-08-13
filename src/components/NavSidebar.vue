@@ -150,7 +150,7 @@
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
 import ProviderSelect from '@/components/bar/ProviderSelect.vue';
-import CurrencySelect from '@/components/bar/CurrencySelect.vue';
+import currencyselect from '@/components/bar/currencyselect.vue';
 import AccountChooser from '@/components/bar/AccountChooser.vue';
 import LoginModal from '@/components/modal/LoginModal';
 import modalMixin from '@/mixins/modal';
@@ -201,7 +201,7 @@ export default {
   },
   components: {
     ProviderSelect,
-    CurrencySelect,
+    currencieselect,
     AccountChooser,
     LoginModal,
     NewAccountModal,

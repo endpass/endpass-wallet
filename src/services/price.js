@@ -1,22 +1,23 @@
 import axios from 'axios';
+import { fiatPriceAPIUrl, fiatPriceMultiAPIUrl } from '@/config';
 import throttledQueue from 'throttled-queue';
 import { serviceThrottleTimeout } from '@/config';
 let throttle = throttledQueue(3, serviceThrottleTimeout);
 
 export default {
-  getPrice(symbol, currencys) {
+  getPrice(symbol, currencies) {
     let throttlePromice = new Promise((res, rej) => {
+      if (symbol === 'ETH-TEST') {
+        let resp = {};
+        resp[currencies] = 0;
+        return res(resp);
+      }
       throttle(() => {
-        if (symbol === 'ETH-TEST') {
-          let resp = {};
-          resp[currencys] = 0;
-          return res(resp);
-        }
         axios
-          .get(`https://min-api.cryptocompare.com/data/price`, {
+          .get(fiatPriceAPIUrl, {
             params: {
               fsym: symbol,
-              tsyms: currencys,
+              tsyms: currencies,
             },
           })
           .then(resp => res(resp.data))
@@ -41,7 +42,7 @@ export default {
       }
       throttle(() => {
         axios
-          .get(`https://min-api.cryptocompare.com/data/pricemulti`, {
+          .get(fiatPriceMultiAPIUrl, {
             params: {
               fsyms: symbols,
               tsyms: currency,

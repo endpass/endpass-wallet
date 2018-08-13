@@ -89,7 +89,7 @@ export default {
   computed: {
     ...mapState({
       currencies: state =>
-        state.web3.currencys.map(currency => ({
+        state.web3.currencies.map(currency => ({
           val: currency.id,
           text: currency.name,
         })),

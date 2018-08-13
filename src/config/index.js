@@ -29,6 +29,8 @@ export const {
   serviceThrottleTimeout,
   subscriptionsAPIInterval,
   subscriptionsBlockchainInterval,
+  fiatPriceAPIUrl,
+  fiatPriceMultiAPIUrl,
   cryptoDataAPIUrl,
   identityAPIUrl,
   tokenInfoAPIUrl,
