@@ -64,4 +64,8 @@ describe('keystore', () => {
     expect(keystore.isExtendedPrivateKey(xPubString)).toBeFalsy();
     expect(keystore.isExtendedPrivateKey(xPrv)).toBeTruthy();
   });
+
+  it('detects an invalid v3 wallet', () => {
+    expect(keystore.isV3({})).toBeFalsy();
+  });
 });
