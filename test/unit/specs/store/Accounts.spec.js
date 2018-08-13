@@ -4,29 +4,9 @@ import localStorageMock from '../../localStorageMock.js';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { userService } from '@/services';
 
-jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
+import accountsFixture from 'fixtures/accounts';
 
-const v3json = {
-  version: 3,
-  id: '9322350b-903d-49ab-bfec-25cec7fe7334',
-  address: '4ce2109f8db1190cd44bc6554e35642214fbe144',
-  crypto: {
-    ciphertext:
-      '5655777529d7da80e96b3ccba57bac1a3c503aebb93e4a20671a1d7cf0b00a98',
-    cipherparams: { iv: 'e96a3446554e4b40bbc4040641a1b12e' },
-    cipher: 'aes-128-ctr',
-    kdf: 'scrypt',
-    kdfparams: {
-      dklen: 32,
-      salt: '7e930fe09f597c46a450ed60a0183f5508137c9c4ef0e4f8743a11b55c634505',
-      n: 262144,
-      r: 8,
-      p: 1,
-    },
-    mac: '64ba0f0cc1f3b5b3760dabc6d027bc3abbfcbd020f2144106a4434fed76e0b7e',
-  },
-};
-const v3password = '123123123';
+jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
 
 global.localStorage = localStorageMock;
 
@@ -40,6 +20,8 @@ const commit = store => (type, payload) => mutations[type](store, payload);
 const dispatch = context => (type, payload) => {
   actions[type](context, payload);
 };
+
+const { v3, v3password } = accountsFixture;
 
 const context = {
   commit: commit(state),
@@ -60,13 +42,10 @@ describe('accounts store', () => {
     expect(state.wallet).toBe(1);
   });
 
-  it('should add a new account and set it active', () => {
-    mutations.addWallet(state, v3json);
-    actions.selectWallet(context, '4ce2109f8db1190cd44bc6554e35642214fbe144');
-    expect(
-      state.wallets['4ce2109f8db1190cd44bc6554e35642214fbe144'] instanceof
-        Wallet,
-    ).toBe(true);
+  it('should add a new account and set it active', async () => {
+    mutations.addWallet(state, v3);
+    await actions.selectWallet(context, v3.address);
+    expect(state.wallets[v3.address] instanceof Wallet).toBe(true);
     expect(state.wallet instanceof Wallet).toBe(true);
   });
 
@@ -90,12 +69,12 @@ describe('accounts store', () => {
   });
 
   it('should create wallet instance', async () => {
-    await actions.addWallet(context, v3json);
-    const wallet = state.wallets[v3json.address];
+    await actions.addWallet(context, v3);
+    const wallet = state.wallets[v3.address];
 
     expect(wallet instanceof Wallet).toBe(true);
     let address = await wallet.getAddressString();
-    expect(address.toUpperCase()).toBe(v3json.address.toUpperCase());
+    expect(address.toUpperCase()).toBe(v3.address.toUpperCase());
   });
 
   it('should add wallet with private key', () => {
@@ -119,7 +98,7 @@ describe('accounts store', () => {
     await actions.addWalletWithV3(
       { dispatch },
       {
-        json: v3json,
+        json: v3,
         password: v3password,
       },
     );
@@ -170,13 +149,13 @@ describe('accounts store', () => {
   });
 
   it('should validate password', async () => {
-    context.state.wallet = new Wallet(v3json);
+    context.state.wallet = new Wallet(v3);
     const isValid = await actions.validatePassword(context, v3password);
     expect(isValid).toBe(true);
   });
 
   it('should reject wrong password', async () => {
-    context.state.wallet = new Wallet(v3json);
+    context.state.wallet = new Wallet(v3);
     const promise = actions.validatePassword(context, '');
     await expect(promise).rejects.toThrow('Invalid password');
   });

@@ -5,7 +5,7 @@ import MockAdapter from 'axios-mock-adapter';
 import Vuex from 'vuex';
 import ReceivePage from '@/components/pages/Receive.vue';
 import web3 from 'web3';
-import ethereumWalletMock from '../../../ethereumWalletMock.js';
+import ethereumWalletMock from '../../../fixtures/wallet.js';
 
 const wallet = ethereumWalletMock;
 
