@@ -283,6 +283,29 @@ describe('User service', () => {
     });
   });
 
+  describe('HD Accounts', () => {
+    const addrs = ['0x123', 'xpubabcde', '0x456'];
+
+    it('should return keystores for regular accounts only', async () => {
+      mock.onGet(`${identityAPIUrl}/accounts`).reply(200, addrs);
+      mock.onGet(new RegExp(`${identityAPIUrl}/account/.+`)).reply(200, {});
+
+      let accounts = await userService.getV3Accounts();
+      expect(accounts.length).toBe(2);
+      expect(accounts[0]).toEqual({ address: '0x123' });
+      expect(accounts[1]).toEqual({ address: '0x456' });
+    });
+
+    it('should return the HD key if it exists', async () => {
+      mock.onGet(`${identityAPIUrl}/accounts`).reply(200, addrs);
+      mock.onGet(new RegExp(`${identityAPIUrl}/account/.+`)).reply(200, {});
+
+      let account = await userService.getHDKey();
+      expect(account).toBeTruthy();
+      expect(account.address).toBe('xpubabcde');
+    });
+  });
+
   describe('getOtpSettings', () => {
     const url = `${identityAPIUrl}/otp`;
     const successResp = {
