@@ -139,9 +139,13 @@ describe('accounts store', () => {
         password: v3password,
       },
     );
-    expect(state.hdWallet instanceof HDKey).toBe(true);
+    expect(state.hdKey.crypto).toBeTruthy();
     expect(dispatch).toHaveBeenCalledTimes(2);
-    expect(dispatch).nthCalledWith(1, 'saveHdWallet', v3password);
+    expect(dispatch).nthCalledWith(
+      1,
+      'saveHdWallet',
+      expect.objectContaining({ version: 3 }),
+    );
     expect(dispatch).nthCalledWith(2, 'generateWallet', v3password);
     // expect(state.wallet instanceof Wallet).toBe(true);
   });

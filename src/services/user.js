@@ -1,6 +1,7 @@
 import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
 import { http } from '@/utils';
+import keyUtil from '@/utils/keystore';
 
 export default {
   login(email) {
@@ -77,16 +78,19 @@ export default {
   //     .catch(console.log);
   // },
 
+  // Returns addresses of all of the user's accounts
   getAccounts() {
     return http.get(`${identityAPIUrl}/accounts`).then(res => res.data);
   },
 
-  setAccount(address, keystore) {
+  // Saves the encrypted keystore for an account
+  setAccount(address, account) {
     return http
-      .post(`${identityAPIUrl}/accounts/${address}`, keystore)
+      .post(`${identityAPIUrl}/accounts/${address}`, account)
       .then(res => res.data);
   },
 
+  // Returns the encrypted keystore for a single account
   getAccount(address) {
     return http
       .get(`${identityAPIUrl}/account/${address}`)
@@ -106,10 +110,14 @@ export default {
       });
   },
 
+  // Returns encrypted keystores for all non HD accounts
+  // TODO refactor to remove this method and only get accounts as needed
   getV3Accounts() {
     return this.getAccounts()
       .then(accounts => {
-        const allAcc = accounts.map(this.getAccount);
+        const allAcc = accounts
+          .filter(acc => !keyUtil.isExtendedPublicKey(acc))
+          .map(this.getAccount);
         return Promise.all(allAcc);
       })
       .catch(() => {
@@ -119,6 +127,19 @@ export default {
           type: 'is-danger',
         });
       });
+  },
+
+  // Returns the encrypted keystore for the user's HD wallet, if any
+  // Right now, uses the first HD address found as a key
+  getHDKey() {
+    return this.getAccounts().then(accounts => {
+      let hdAccounts = accounts.filter(acc => keyUtil.isExtendedPublicKey(acc));
+      if (hdAccounts.length) {
+        return this.getAccount(hdAccounts[0]);
+      } else {
+        return Promise.resolve();
+      }
+    });
   },
 
   getFullUserInfo() {
