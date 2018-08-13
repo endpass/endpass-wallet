@@ -1,5 +1,12 @@
 import moxios from 'moxios';
 import axios from 'axios';
+jest.mock('throttled-queue', function() {
+  return function() {
+    return function(callback) {
+      callback();
+    };
+  };
+});
 
 import {
   fiatPriceAPIUrl,
@@ -23,11 +30,9 @@ describe('Price service', () => {
       const watcher = jest.fn();
       priceService.getPrice(symbol);
       moxios.wait(() => {
-        setTimeout(() => {
-          const request = moxios.requests.mostRecent();
-          expect(request).toBe(undefined);
-          done();
-        }, serviceThrottleTimeout);
+        const request = moxios.requests.mostRecent();
+        expect(request).toBe(undefined);
+        done();
       });
     });
     it('should make correct request', done => {
@@ -55,11 +60,9 @@ describe('Price service', () => {
         currencies = ['KEK', 'CHPOK'];
       priceService.getPrices(currencies, symbol);
       moxios.wait(() => {
-        setTimeout(() => {
-          const request = moxios.requests.mostRecent();
-          expect(request).toBe(undefined);
-          done();
-        }, serviceThrottleTimeout);
+        const request = moxios.requests.mostRecent();
+        expect(request).toBe(undefined);
+        done();
       });
     });
 
