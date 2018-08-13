@@ -2,7 +2,7 @@
   <div class="provider-select">
     <div class="net-select">
       <multiselect
-         :options="currencys"
+         :options="currencies"
          track-by="id" label="name"
                        :show-labels="false"
                        :allow-empty="true"
@@ -22,14 +22,14 @@ export default {
   computed: {
     ...mapState({
       activeCurrency: state => state.web3.activeCurrency,
-      currencys: state => state.web3.currencys
-    })
+      currencies: state => state.web3.currencies,
+    }),
   },
   methods: {
     ...mapActions('web3', ['changeCurrency']),
     selectCurrency(currency) {
       this.changeCurrency(currency.id);
-    }
+    },
   },
   components: {
     Multiselect,
