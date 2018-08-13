@@ -1,5 +1,7 @@
 import keythereum from 'keythereum';
 import bs58check from 'bs58check';
+import EthWallet from 'ethereumjs-wallet';
+import HDKey from 'ethereumjs-wallet/hdkey';
 import { kdfParams } from '@/config';
 
 // Monkey patch keythereum to skip generating address for private keys
@@ -33,8 +35,36 @@ export default {
   },
 
   // Decrypts a V3 keystore object into a private key Buffer
-  decrypt(password, keystore) {
-    return keythereum.recover(password, keystore);
+  decrypt(password, json) {
+    return keythereum.recover(password, json);
+  },
+
+  // Encrypts an ethereumjs Wallet
+  encryptWallet(password, wallet) {
+    let json = this.encrypt(password, wallet.getPrivateKey());
+    json.address = wallet.getChecksumAddressString();
+    return json;
+  },
+
+  // Decrypts a keystore into an ethereumjs Wallet
+  decryptWallet(password, json) {
+    let privateKey = this.decrypt(password, json);
+    return EthWallet.fromPrivateKey(privateKey);
+  },
+
+  // Encrypts an ethereumjs Wallet
+  encryptHDWallet(password, wallet) {
+    let xPrv = this.decodeBase58(wallet.privateExtendedKey());
+    let json = this.encrypt(password, xPrv);
+    json.address = wallet.publicExtendedKey();
+    return json;
+  },
+
+  // Decrypts a keystore into an ethereumjs Wallet
+  decryptHDWallet(password, json) {
+    let xPrv = this.decrypt(password, json);
+    let xPrvString = this.encodeBase58(xPrv);
+    return HDKey.fromExtendedKey(xPrvString);
   },
 
   // Encode a buffer to Base58Check
