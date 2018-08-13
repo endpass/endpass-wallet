@@ -149,6 +149,7 @@ export default {
     },
     // Returns date as a moment.js object
     date() {
+      console.log(this.transaction.date, this.transaction);
       return moment(this.transaction.date);
     },
     // To/from address of transaction

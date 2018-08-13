@@ -118,6 +118,7 @@ export default {
             sendEvent.once('transactionHash', hash => {
               transaction.state = 'pending';
               transaction.hash = hash;
+              transaction.date = new Date();
               commit('addTransaction', transaction);
               res(hash);
             });

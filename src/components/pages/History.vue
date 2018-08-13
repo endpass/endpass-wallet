@@ -70,6 +70,7 @@ export default {
   },
   methods: {
     getMainHistory() {
+      if (!this.address) return;
       const historyPromise = EthplorerService.getHistory(this.address);
       const transactionsPromise = EthplorerService.getInfo(this.address);
       Promise.all([transactionsPromise, historyPromise])
