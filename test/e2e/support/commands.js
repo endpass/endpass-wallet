@@ -38,15 +38,17 @@ Cypress.Commands.add('login', () => {
     '/identity/api/v1/accounts',
     'fixture:keystore/accounts.json',
   ).as('keystoreAccounts');
+  // Regular account
   cy.route(
     'GET',
     '/identity/api/v1/account/0x*',
-    'fixture:keystore/account_0.json',
+    'fixture:keystore/account_1.json',
   ).as('keystoreAccount');
+  // HD account
   cy.route(
     'GET',
     '/identity/api/v1/account/xpub*',
-    'fixture:keystore/account_1.json',
+    'fixture:keystore/account_0.json',
   ).as('keystoreHdAccount');
   cy.route(
     'POST',
