@@ -52,8 +52,10 @@
             <p class="menu-label">Accounts</p>
           </div>
           <div class="column">
-            <a v-if="hdKey" class="button is-outlined is-small is-info"
-                               @click="openNewAccountModal">
+            <a
+              class="button is-outlined is-small is-info"
+              @click="openNewAccountModal"
+            >
               &plus; Add Account
             </a>
           </div>
@@ -154,7 +156,7 @@ import CurrencySelect from '@/components/bar/CurrencySelect.vue';
 import AccountChooser from '@/components/bar/AccountChooser.vue';
 import LoginModal from '@/components/modal/LoginModal';
 import modalMixin from '@/mixins/modal';
-import NewAccountModal from '@/components/NewAccountModal';
+import NewAccountModal from '@/components/modal/NewAccountModal';
 
 export default {
   data() {
