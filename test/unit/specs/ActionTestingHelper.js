@@ -35,7 +35,7 @@ export default (
         expect(musationsCount).toBe(expectedMutations.length);
         expect(actionsCount).toBe(expectedActions.length);
         done();
-      }, 500);
+      });
     });
   } else {
     expect(musationsCount).toBe(expectedMutations.length);
