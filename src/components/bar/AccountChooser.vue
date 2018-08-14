@@ -1,5 +1,5 @@
 <template lang="html">
-  <div v-if="wallets.length" class="account-chooser field has-addons">
+  <div v-if="walletsAddresses.length" class="account-chooser field has-addons">
     <div class="control is-expanded">
 
       <multiselect
