@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="account-chooser field has-addons">
-    <div v-if="hdWallet" class="control is-expanded">
+  <div v-if="walletsAddresses.length" class="account-chooser field has-addons">
+    <div class="control is-expanded">
 
       <multiselect
         :options="walletsAddresses"
@@ -20,9 +20,6 @@
           <account :class="optionClass" :address="props.option" :size="width" />
         </span>
       </multiselect>
-    </div>
-    <div v-else-if="address" class="control">
-        {{address |truncateAddr}}
     </div>
   </div>
 </template>
@@ -59,7 +56,6 @@ export default {
   },
   computed: {
     ...mapState({
-      hdWallet: state => state.accounts.hdWallet,
       wallets: state => state.accounts.wallets,
       address: state =>
         state.accounts.address &&

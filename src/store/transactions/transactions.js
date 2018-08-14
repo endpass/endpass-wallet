@@ -85,7 +85,7 @@ export default {
         }
 
         const tx = new Tx(transaction.getApiObject(eth));
-        wallet.signTransaction(tx, password);
+        await wallet.signTransaction(tx, password);
         const serializedTx = tx.serialize();
         const preparedTrx = `0x${serializedTx.toString('hex')}`;
         const eventEmitter = new EventEmitter();

@@ -1,35 +1,41 @@
-import EthWallet from 'ethereumjs-wallet';
 import { kdfParams } from '@/config';
+import keyUtil from '@/utils/keystore';
+import ethUtil from 'ethereumjs-util';
 
+// A Wallet represents a single Ethereum account that can send transactions
+// All methods are async and return promises
 export class Wallet {
-  constructor(v3) {
-    this.getPrivateKey = function(password) {
-      return EthWallet.fromV3(v3, password, true).getPrivateKey();
-    };
-    this.getPrivateKeyString = function(password) {
-      return EthWallet.fromV3(v3, password, true).getPrivateKeyString();
-    };
-    this.exportToJSON = function(password, exportedV3Password) {
-      return EthWallet.fromV3(v3, password, true).toV3String(
-        exportedV3Password,
-        kdfParams,
-      );
-    };
-    this.getAddressString = function() {
-      return v3.address;
-    };
-    this.validatePassword = function(password) {
-      return new Promise((res, rej) => {
-        try {
-          EthWallet.fromV3(v3, password, true);
-          res();
-        } catch (e) {
-          rej(e);
-        }
-      });
-    };
+  constructor(v3Keystore) {
+    this.v3 = v3Keystore;
   }
-  signTransaction(transaction, password) {
+
+  async getPrivateKey(password) {
+    return keyUtil.decrypt(password, this.v3);
+  }
+
+  async getPrivateKeyString(password) {
+    let privateKey = await this.getPrivateKey(password);
+    return ethUtil.bufferToHex(privateKey);
+  }
+
+  async exportToJSON(password) {
+    return this.v3;
+  }
+
+  async getAddressString() {
+    return this.v3.address;
+  }
+
+  async validatePassword(password) {
+    try {
+      await this.getPrivateKey(password);
+      return true;
+    } catch (e) {
+      throw new Error('Invalid password');
+    }
+  }
+
+  async signTransaction(transaction, password) {
     return transaction.sign(this.getPrivateKey(password));
   }
 }

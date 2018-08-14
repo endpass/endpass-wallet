@@ -1,4 +1,5 @@
-import moxios from 'moxios';
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
 import Web3 from 'web3';
 import testAction from '../ActionTestingHelper';
 import tokens from '@/store/tokens/tokens';
@@ -26,9 +27,10 @@ describe('tokens', () => {
   let dispatch;
   let stateInstance;
   let getters;
+  let mock;
 
   beforeEach(() => {
-    moxios.install();
+    mock = new MockAdapter(axios);
     commit = jest.fn();
     dispatch = jest.fn();
     stateInstance = tokens.state();
@@ -36,7 +38,7 @@ describe('tokens', () => {
   });
 
   afterEach(() => {
-    moxios.uninstall();
+    mock.reset();
     commit.mockClear();
     dispatch.mockClear();
   });
@@ -135,15 +137,12 @@ describe('tokens', () => {
   });
 
   it('gets non zero tokens', done => {
-    moxios.stubRequest(/api\.ethplorer\.io\/getAddressInfo/, {
-      status: 200,
-      response: [
-        {
-          id: '1',
-          to: '0x0',
-        },
-      ],
-    });
+    mock.onGet(/api\.ethplorer\.io\/getAddressInfo/).reply(200, [
+      {
+        id: '1',
+        to: '0x0',
+      },
+    ]);
     testAction(
       tokens.actions.getNonZeroTokens,
       null,

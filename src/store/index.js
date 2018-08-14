@@ -33,6 +33,8 @@ const store = new Vuex.Store({
     connectionStatus,
     user: userModule,
   },
+  //TODO enable strict
+  //strict: process.env.NODE_ENV !== 'production',
 });
 
 store.dispatch('init', Object.keys(store._actions));
