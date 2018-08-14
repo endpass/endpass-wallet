@@ -1,6 +1,6 @@
 <template>
   <base-page class="new-wallet">
-    <template slot="title">{{ hdWallet ? "Wallet Created" : "Create Wallet" }}</template>
+    <template slot="title">{{ hdKey ? "Wallet Created" : "Create Wallet" }}</template>
     <div v-if="hdKey" class="container has-text-centered is-narrow">
       <p class="subtitle">Your wallet has been created successfully.
         Please <strong>write down the 12 word recovery phrase below</strong>
