@@ -128,20 +128,27 @@ export default {
       { commit, dispatch },
       { privateKey, password },
     ) {
-      const wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));
-      const json = keystore.encryptWallet(password, wallet);
-
-      return dispatch('addWalletAndSelect', json);
+      try {
+        const wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));
+        const json = keystore.encryptWallet(password, wallet);
+        return dispatch('addWalletAndSelect', json);
+      } catch (e) {
+        return dispatch('errors/emitError', e, { root: true });
+      }
     },
     generateWallet({ commit, dispatch, state }, password) {
       if (!state.hdKey) {
         return;
       }
-      const hdWallet = keystore.decryptHDWallet(password, state.hdKey);
-      let i = Object.keys(state.wallets).length;
-      let wallet = hdWallet.deriveChild(i).getWallet();
-      let json = keystore.encryptWallet(password, wallet);
-      return dispatch('addWalletAndSelect', json);
+      try {
+        const hdWallet = keystore.decryptHDWallet(password, state.hdKey);
+        let i = Object.keys(state.wallets).length;
+        let wallet = hdWallet.deriveChild(i).getWallet();
+        let json = keystore.encryptWallet(password, wallet);
+        return dispatch('addWalletAndSelect', json);
+      } catch (e) {
+        return dispatch('errors/emitError', e, { root: true });
+      }
     },
     // Saves HD wallet's extended keys on the server
     saveHdWallet({ commit, dispatch, state }, json) {
