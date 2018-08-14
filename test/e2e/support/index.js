@@ -29,3 +29,6 @@ Cypress.Server.defaults({
     );
   },
 });
+
+// Return the Vuex store
+const store = () => cy.window().its('app.$store');
