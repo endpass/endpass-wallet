@@ -4,6 +4,7 @@ import Notifications from 'vue-notification';
 
 import LoginModal from '@/components/modal/LoginModal';
 import LoginByEmailModal from '@/components/modal/LoginByEmailModal';
+import ConfirmEmailModal from '@/components/modal/ConfirmEmailModal';
 import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
 import { generateStubs } from '@/utils/testUtils';
 
@@ -23,6 +24,14 @@ describe('LoginModal', () => {
     });
 
     it('should render LoginByEmailModal component', () => {
+      wrapper.setData({
+        currentModal: LoginByEmailModal.name,
+      });
+
+      expect(wrapper.is(LoginByEmailModal.name)).toBeTruthy();
+    });
+
+    it('should render ConfirmEmailModal component', () => {
       wrapper.setData({
         currentModal: LoginByEmailModal.name,
       });
@@ -103,17 +112,12 @@ describe('LoginModal', () => {
       });
 
       it('should login user via emeil_link challenge type', async () => {
+        actions.login.mockResolvedValueOnce('email_link');
         await wrapper.vm.handleLoginByEmailModalConfirm(email);
 
         expect(wrapper.vm.isLoading).toBeFalsy();
-        expect(wrapper.vm.currentModal).toBe(LoginByEmailModal.name);
-        expect(wrapper.vm.$notify).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$notify).toHaveBeenCalledWith({
-          title: 'Success',
-          text: 'Click the link in your email to log in',
-          type: 'is-info',
-        });
-        expect(wrapper.emitted().close).toEqual([[]]);
+        expect(wrapper.vm.currentModal).toBe(ConfirmEmailModal.name);
+        expect(wrapper.emitted().close).toBeUndefined();
       });
 
       it('should login user via OTP challenge type', async () => {
@@ -161,7 +165,7 @@ describe('LoginModal', () => {
         expect(wrapper.vm.$notify).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$notify).toHaveBeenCalledWith({
           title: 'Success',
-          text: 'Authorization was successful',
+          text: 'Logged In',
           type: 'is-info',
         });
         expect(wrapper.emitted().close).toEqual([[]]);
