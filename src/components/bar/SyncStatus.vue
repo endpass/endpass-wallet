@@ -1,6 +1,6 @@
 <template>
   <div class="sync-status">
-    <span class="tag" :class="'is-'+appStatus">{{blockNumber}}</span>
+    <span class="tag" :title="'synced to block '+ blockNumber" :class="statusClass">{{appStatus}}</span>
   </div>
 </template>
 <script>
@@ -10,6 +10,16 @@ export default {
     return {};
   },
   computed: {
+    statusClass() {
+      switch (this.appStatus) {
+        case 'failed':
+          return 'is-danger';
+        case 'syncing':
+          return 'is-warning';
+        case 'ready':
+          return 'is-success';
+      }
+    },
     ...mapState({
       blockNumber: state => state.web3.blockNumber,
     }),
@@ -21,9 +31,9 @@ export default {
 <style lang="scss">
 .sync-status {
   display: inline-block;
-	.tag {
-		font-weight: 600;
-		font-size: 0.9rem;
-	}
+  .tag {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
 }
 </style>
