@@ -2,7 +2,7 @@
   <div v-if="walletsAddresses.length" class="account-chooser field has-addons">
     <div class="control is-expanded">
 
-      <multiselect
+      <vue-multiselect
         :options="walletsAddresses"
         label="Account"
         :option-height="height"
@@ -19,22 +19,18 @@
         <span class="multiselect-option" slot="option" slot-scope="props">
           <account :class="optionClass" :address="props.option" :size="width" />
         </span>
-      </multiselect>
+      </vue-multiselect>
     </div>
   </div>
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect';
+import VueMultiselect from 'vue-multiselect';
 import { mapState, mapActions } from 'vuex';
 import Account from '@/components/Account';
 
 export default {
-  data() {
-    return {
-      newAccountModalOpen: false,
-    };
-  },
+  name: 'AccountChooser',
   props: {
     // Maximum width of address
     width: {
@@ -85,7 +81,7 @@ export default {
     },
   },
   components: {
-    Multiselect,
+    VueMultiselect,
     Account,
   },
 };
