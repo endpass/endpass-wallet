@@ -63,26 +63,6 @@
         <account-chooser :width="4"/>
       </div>
 
-      <div class="nav-sidebar-item">
-        <div class="buttons is-centered">
-          <router-link v-if="!address" :to="{name: 'NewWallet'}" class="button
-          is-success">Create Wallet</router-link>
-
-          <a class="button" v-if="!email" @click.prevent="isLoginModal = true">
-            <span class="icon is-small" v-html="require('@/img/account-login.svg')"/>
-            Login
-          </a>
-
-        <a class="button"
-           v-else
-           to=""
-           @click.prevent="logout()">
-          <span class="icon is-small"
-                v-html="require('@/img/account-logout.svg')"></span>Logout
-        </a>
-        </div>
-      </div>
-
       <div class="nav-sidebar-item menu" @click="closeNavMenu">
         <p class="menu-label" v-if="wallet">Wallet</p>
         <ul class="menu-list">
