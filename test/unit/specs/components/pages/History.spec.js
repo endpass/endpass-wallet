@@ -126,6 +126,23 @@ describe('HistoryPage', () => {
     expect(result[0]).toBe(trx3);
     expect(result[1]).toBe(trx1);
   });
+  it('filters transactions by network', () => {
+    const wrapper = shallow(HistoryPage, { store, localVue });
+    const trx1 = {
+      date: new Date('01/01/2010'),
+      networkId: 1,
+    };
+    const trx2 = {
+      date: new Date('01/01/2001'),
+      networkId: 1,
+    };
+    const trx3 = {
+      networkId: 3,
+    };
+    wrapper.vm.transactions = [trx1, trx2, trx3];
+    const result = wrapper.vm.processedTransactions;
+    expect(result).not.toContain(trx3);
+  });
   it('concats transactions', done => {
     moxios.stubRequest(/api\.ethplorer\.io\/getAddressTransactions/, {
       status: 200,
