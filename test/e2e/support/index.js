@@ -18,3 +18,17 @@ import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+// Global Server Configuration
+Cypress.Server.defaults({
+  whitelist: xhr => {
+    return (
+      (xhr.method === 'GET' && /\.(jsx?|html|css)(\?.*)?$/.test(xhr.url)) ||
+      // Ignore requests to ethereum node
+      (xhr.method === 'POST' && /infura\.io/.test(xhr.url))
+    );
+  },
+});
+
+// Return the Vuex store
+const store = () => cy.window().its('app.$store');

@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import axios from 'axios';
-import moxios from 'moxios';
+import MockAdapter from 'axios-mock-adapter';
 import { mount, shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import HistoryPage from '@/components/pages/History.vue';
 import { infuraConf } from '@/config';
-import ethereumWalletMock from '../../../ethereumWalletMock.js';
+import ethereumWalletMock from '../../../fixtures/wallet.js';
 import { generateStubs } from '@/utils/testUtils';
 
 const wallet = ethereumWalletMock;
@@ -19,9 +19,22 @@ describe('HistoryPage', () => {
   };
   let store;
   let wrapper;
-  let accountTransactions;
+  let mock;
   beforeEach(() => {
-    moxios.install();
+    mock = new MockAdapter(axios);
+    mock
+      .onGet(/api\.ethplorer\.io\/getAddressTransactions/)
+      .reply(200, [{ id: '1', to: wallet.getChecksumAddressString() }]);
+
+    mock.onGet(/api\.ethplorer\.io\/getAddressHistory/).reply(200, {
+      operations: [
+        {
+          id: '2',
+          from: wallet.getChecksumAddressString(),
+        },
+      ],
+    });
+
     store = new Vuex.Store({
       state: {
         accounts: {
@@ -71,43 +84,19 @@ describe('HistoryPage', () => {
   });
 
   afterEach(() => {
-    moxios.uninstall();
+    mock.reset();
   });
 
-  it('downloads transaction history', done => {
-    moxios.stubRequest(/api\.ethplorer\.io\/getAddressTransactions/, {
-      status: 200,
-      response: [
-        {
-          id: '1',
-          to: wallet.getChecksumAddressString(),
-        },
-      ],
-    });
-
-    moxios.stubRequest(/api\.ethplorer\.io\/getAddressHistory/, {
-      status: 200,
-      response: {
-        operations: [
-          {
-            id: '2',
-            from: wallet.getChecksumAddressString(),
-          },
-        ],
-      },
-    });
-
-    // new wrapper must be initialized in each test AFTER moxios.stubRequest
+  it('downloads transaction history', async () => {
     const wrapper = shallow(HistoryPage, { store, localVue });
+    await flushPromises();
 
-    moxios.wait(() => {
-      let elems = wrapper.vm.transactions;
-      expect(elems.length).toBe(2);
-      expect(elems[0].to).toBe(wallet.getChecksumAddressString());
-      done();
-    });
+    let elems = wrapper.vm.transactions;
+    expect(elems.length).toBe(2);
+    expect(elems[0].to).toBe(wallet.getChecksumAddressString());
   });
-  it('updates transactions on account change', done => {
+
+  it('updates transactions on account change', async () => {
     const wrapper = shallow(HistoryPage, { store, localVue });
     const watcher = jest.spyOn(wrapper.vm, 'getMainHistory');
     store.state.accounts.address = {
@@ -115,11 +104,10 @@ describe('HistoryPage', () => {
         return '0x0';
       },
     };
-    wrapper.vm.$nextTick(() => {
-      expect(watcher).toHaveBeenCalled();
-      done();
-    });
+    await wrapper.vm.$nextTick();
+    expect(watcher).toHaveBeenCalled();
   });
+
   it('sort transactions by date', () => {
     const wrapper = shallow(HistoryPage, { store, localVue });
     const trx1 = {
@@ -224,19 +212,16 @@ describe('HistoryPage', () => {
     });
 
     // new wrapper must be initialized in each test AFTER moxios.stubRequest
+  it('concats transactions', async () => {
     const wrapper = shallow(HistoryPage, { store, localVue });
+    await flushPromises();
 
-    moxios.wait(() => {
-      wrapper.vm.$nextTick(() => {
-        let elems = wrapper.vm.processedTransactions;
-        expect(elems.length).toBe(3);
-        expect(elems[2].from).toBe(wrapper.vm.address);
-        expect(elems[2].timestamp).toBe(
-          store.getters['transactions/accountTransactions'][0].timestamp,
-        );
-        done();
-      });
-    });
+    let elems = wrapper.vm.processedTransactions;
+    expect(elems.length).toBe(3);
+    expect(elems[2].from).toBe(wrapper.vm.address);
+    expect(elems[2].timestamp).toBe(
+      store.getters['transactions/accountTransactions'][0].timestamp,
+    );
   });
 
   describe('render', () => {

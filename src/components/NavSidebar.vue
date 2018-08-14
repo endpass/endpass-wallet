@@ -52,7 +52,7 @@
             <p class="menu-label">Accounts</p>
           </div>
           <div class="column">
-            <a v-if="hdWallet" class="button is-outlined is-small is-info"
+            <a v-if="hdKey" class="button is-outlined is-small is-info"
                                @click="openNewAccountModal">
               &plus; Add Account
             </a>
@@ -165,7 +165,7 @@ export default {
   },
   computed: {
     ...mapState({
-      hdWallet: state => state.accounts.hdWallet,
+      hdKey: state => state.accounts.hdKey,
       wallet: state => state.accounts.wallet,
       address: state =>
         state.accounts.address &&

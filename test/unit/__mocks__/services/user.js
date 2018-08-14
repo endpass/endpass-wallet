@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { NotificationError } from '@/class';
+import accountsFixture from 'fixtures/accounts';
 
-const api = 'https://endpass.com/api/v1';
+const { addresses, v3, hdv3 } = accountsFixture;
 
 export default {
   login(email) {
@@ -42,8 +43,7 @@ export default {
         {
           id: 5,
           name: 'asdfa',
-          url:
-            'https://mail.yandexru/?msid=1526891347.96404.20950.49223&m_pssp=domik',
+          url: 'https://web3.example.com/rpc',
         },
       ],
       settings: {
@@ -83,9 +83,7 @@ export default {
   },
 
   getAccounts() {
-    return Promise.resolve([
-      '0x9eceefdf3554e178a6549006f2c02163e63c9fd8',
-    ]).catch(() => {
+    return Promise.resolve(addresses).catch(() => {
       throw new NotificationError({
         title: 'Accounts request error',
         text: 'Failed to get user accounts. Please, reload page',
@@ -101,27 +99,14 @@ export default {
   },
 
   getAccount(account) {
-    return Promise.resolve({
-      version: 3,
-      id: '70534c78-ceb7-4e7e-b805-106504a880c9',
-      address: '9eceefdf3554e178a6549006f2c02163e63c9fd8',
-      crypto: {
-        ciphertext:
-          '73041b43d5952ab3177282b8c3df935b60c99c7fc13c77bc602d6be9b421ea2d',
-        cipherparams: { iv: 'acb168461a9850642c2b490cf4ed29eb' },
-        cipher: 'aes-128-ctr',
-        kdf: 'scrypt',
-        kdfparams: {
-          dklen: 32,
-          salt:
-            '14770d04f812b80db04b14e6d132e917ff2047aa814c3a9b103f7d4849a48a2c',
-          n: 262144,
-          r: 8,
-          p: 1,
-        },
-        mac: '4543eebe2f1ca245547be1bba36b7107f13b8e44ef166c7bf7452b4a4461ed4e',
-      },
-    }).catch(() => {
+    let json;
+    if (account.slice(0, 4) === 'xpub') {
+      //is an extended key
+      json = hdv3;
+    } else {
+      json = v3;
+    }
+    return Promise.resolve(json).catch(() => {
       const shortAcc = account.replace(/^(.{5}).+/, '$1…');
 
       throw new NotificationError({
@@ -133,7 +118,7 @@ export default {
   },
 
   getV3Accounts() {
-    return Promise.resolve(['0x9eceefdf3554e178a6549006f2c02163e63c9fd8'])
+    return Promise.resolve(addresses)
       .then(accounts => {
         const allAcc = accounts.map(this.getAccount);
         return Promise.all(allAcc);

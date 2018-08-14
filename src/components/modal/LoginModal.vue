@@ -1,5 +1,7 @@
 <template>
   <component
+    class="login-modal"
+    data-test="login-modal"
     :is="currentModal"
     :is-loading="isLoading"
     v-dynamic-events="['confirm', 'close']"
