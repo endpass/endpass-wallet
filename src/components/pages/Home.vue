@@ -29,19 +29,24 @@
         <div class="section" v-else>
           <div class="has-text-centered">
             <div class="card app-card main-app-card">
-            <div class="card-content">
-              <h1 class="title">Welcome</h1>
-              <p class="subtitle">Get started by generating or importing an
-              Ethereum wallet.</p>
-              <div class="is-centered">
-                <router-link :to="{name: 'NewWallet'}" class="button
-                is-success is-cta">Create New Wallet</router-link>
-                <div>
-                  <router-link :to="{name: 'ImportWallet'}"
-                  class="has-text-link">Import an existing wallet</router-link>
+              <div class="card-content">
+
+                <div v-if="isLoggedIn">
+                  <h1 class="title">Welcome</h1>
+                  <p class="subtitle">Get started by generating an
+                    Ethereum wallet.</p>
+                  <div class="is-centered">
+                    <router-link  :to="{name: 'NewWallet'}" class="button
+                    is-success is-cta">Create New Wallet</router-link>
+                  </div>
                 </div>
+
+                <div v-else>
+                  <p class="subtitle">Please log in to continue.</p>
+                </div>
+
+
               </div>
-            </div>
             </div>
           </div>
         </div>
@@ -60,10 +65,7 @@ export default {
     return {};
   },
   computed: {
-    ...mapGetters('accounts', {
-      isPublicAccount: 'isPublicAccount',
-      balance: 'balance',
-    }),
+    ...mapGetters('accounts', ['isPublicAccount', 'isLoggedIn', 'balance']),
     ...mapState({
       activeCurrency: state => state.web3.activeCurrency,
       address: state =>

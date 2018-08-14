@@ -12,6 +12,7 @@ import keystore from '@/utils/keystore';
 export default {
   namespaced: true,
   state: {
+    // TODO move to user store?
     email: null,
     // The encrypted xprv key for the user's hd wallet as a V3 keystore
     // object. All accounts are direct child accounts.
@@ -38,6 +39,10 @@ export default {
       return (
         state.address instanceof Address && !(state.wallet instanceof Wallet)
       );
+    },
+    // TODO move to user store?
+    isLoggedIn(state) {
+      return !!state.email;
     },
     balance(state, getters, rootState, rootGetters) {
       if (state.balance === null) return null;
