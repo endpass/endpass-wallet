@@ -145,7 +145,6 @@ describe('accounts store', () => {
     actions.generateWallet({ ...context, dispatch }, v3password);
 
     expect(dispatch).toHaveBeenCalledTimes(3);
-    expect(dispatch).toBeCalledWith('addWalletAndSelect', expect.any(Object));
   });
 
   it('should validate password', async () => {

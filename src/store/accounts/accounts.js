@@ -154,8 +154,8 @@ export default {
     saveHdWallet({ commit, dispatch, state }, json) {
       return userService.setAccount(json.address, json);
     },
-    addHdWallet({ commit, dispatch }, { mnemonic, password }) {
-      const seed = Bip39.mnemonicToSeed(mnemonic);
+    addHdWallet({ commit, dispatch }, { key, password }) {
+      const seed = Bip39.mnemonicToSeed(key);
       const hdKey = HDKey.fromMasterSeed(seed);
       const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
       // Encrypt extended private key
