@@ -60,7 +60,7 @@ export default {
         .sort((trx1, trx2) => {
           if (typeof trx2.date === 'undefined') return 1;
           if (typeof trx1.date === 'undefined') return -1;
-          return trx1.date - trx2.date;
+          return trx2.date - trx1.date;
         });
     },
     // Whether history is supported on this network

@@ -48,6 +48,7 @@ describe('HistoryPage', () => {
               hash:
                 '0x7fcb1e71def6d0d353251831f46d60401e6321b5e0b0b135085be4688ca2a9b1',
               value: 0.009979,
+              networkId: 1,
               input: '0x',
               success: true,
             },
@@ -111,11 +112,15 @@ describe('HistoryPage', () => {
     const wrapper = shallow(HistoryPage, { store, localVue });
     const trx1 = {
       date: new Date('01/01/2010'),
+      networkId: 1,
     };
     const trx2 = {
       date: new Date('01/01/2001'),
+      networkId: 1,
     };
-    const trx3 = {};
+    const trx3 = {
+      networkId: 1,
+    };
     wrapper.vm.transactions = [trx1, trx2, trx3];
     const result = wrapper.vm.processedTransactions;
     expect(result[0]).toBe(trx3);
