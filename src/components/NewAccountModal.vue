@@ -91,8 +91,8 @@ export default {
       await new Promise(res => setTimeout(res, 20));
 
       try {
-        this.generateWallet(password);
-        this.privateKey = this.wallet.getPrivateKeyString(password);
+        await this.generateWallet(password);
+        this.privateKey = await this.wallet.getPrivateKeyString(password);
         this.isCreatingAccount = false;
         this.isAccountCreated = true;
       } catch (e) {

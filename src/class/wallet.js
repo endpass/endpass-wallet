@@ -10,12 +10,12 @@ export class Wallet {
   }
 
   async getPrivateKey(password) {
-    return await keyUtil.decrypt(password, this.v3);
+    return keyUtil.decrypt(password, this.v3);
   }
 
   async getPrivateKeyString(password) {
     let privateKey = await this.getPrivateKey(password);
-    return ethUtil.bufferToHex(this.getPrivateKey());
+    return ethUtil.bufferToHex(privateKey);
   }
 
   async exportToJSON(password) {
