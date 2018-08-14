@@ -22,7 +22,7 @@ describe('NewAccountModal', () => {
               getChecksumAddressString: () => null,
             },
             wallet: {},
-            wallets: [],
+            wallets: {},
           },
           actions: {
             generateWallet: () => {},

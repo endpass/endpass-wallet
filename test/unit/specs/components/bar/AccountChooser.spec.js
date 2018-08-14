@@ -28,7 +28,7 @@ describe('AccountChooser', () => {
       state: {
         accounts: {
           hdWallet: null,
-          wallets: [],
+          wallets: {},
           wallet: null,
           balance: null,
           address: {
@@ -44,7 +44,7 @@ describe('AccountChooser', () => {
 
   describe('behavior', () => {
     it('should starts with no accounts', () => {
-      expect(wrapper.vm.wallets.length).toBe(0);
+      expect(Object.keys(wrapper.vm.wallets)).toHaveLength(0);
       expect(wrapper.vm.selectedAccount).toBeUndefined();
     });
 
