@@ -178,10 +178,10 @@ describe('HistoryPage', () => {
       },
     });
     const wrapper = shallow(HistoryPage, { store, localVue });
+    wrapper.vm.isLoading = false;
+    await Vue.nextTick();
     expect(wrapper.contains('ul.transactions')).toBeFalsy();
-    expect(wrapper.html()).toContain(
-      'Transaction history is only supported on the main network',
-    );
+    expect(wrapper.html()).toContain('This account has no transactions');
   });
   it('filters transactions by network', () => {
     const wrapper = shallow(HistoryPage, { store, localVue });
