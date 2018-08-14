@@ -17,6 +17,15 @@ module.exports = {
           '^/identity/api/v1': '/api/v1',
         },
         cookieDomainRewrite: 'localhost',
+        onProxyRes: proxyResponse => {
+          // Remove Secure flag from response cookies
+          if (proxyResponse.headers['set-cookie']) {
+            const cookies = proxyResponse.headers['set-cookie'].map(cookie =>
+              cookie.replace(/; secure/gi, ''),
+            );
+            proxyResponse.headers['set-cookie'] = cookies;
+          }
+        },
       },
       '/tokeninfo/api/v1': {
         target: 'https://tokeninfo-dev.endpass.com',
