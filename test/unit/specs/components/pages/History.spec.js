@@ -19,6 +19,7 @@ describe('HistoryPage', () => {
   };
   let store;
   let wrapper;
+  let accountTransactions;
   beforeEach(() => {
     moxios.install();
     store = new Vuex.Store({
@@ -49,6 +50,17 @@ describe('HistoryPage', () => {
                 '0x7fcb1e71def6d0d353251831f46d60401e6321b5e0b0b135085be4688ca2a9b1',
               value: 0.009979,
               networkId: 1,
+              input: '0x',
+              success: true,
+            },
+            {
+              date: new Date('01/01/2003'),
+              from: '0x7c59542b20002ed255598172cab48b86d865dfbb',
+              to: '0x4BD5C3E7e4d6b3Df23e9DA5b42e5E4daa3D2579b',
+              hash:
+                '0x7fcb1e71def6d0d353251831f46d67392e6321b5e0b0b135085be4688ca2a9b1',
+              value: 0.0079,
+              networkId: 2,
               input: '0x',
               success: true,
             },
@@ -125,6 +137,51 @@ describe('HistoryPage', () => {
     const result = wrapper.vm.processedTransactions;
     expect(result[0]).toBe(trx3);
     expect(result[1]).toBe(trx1);
+  });
+  it('displays correct body', async () => {
+    const wrapper = shallow(HistoryPage, { store, localVue });
+    expect(wrapper.contains('ul.transactions')).toBeTruthy();
+    expect(wrapper.findAll('ul.transactions li').length).toBe(1);
+    store.state.web3.activeNet.id = 2;
+    await Vue.nextTick();
+    expect(wrapper.contains('ul.transactions')).toBeTruthy();
+    expect(wrapper.findAll('ul.transactions li').length).toBe(1);
+    store.state.web3.activeNet.id = 3;
+    await Vue.nextTick();
+    expect(wrapper.contains('ul.transactions')).toBeFalsy();
+    expect(wrapper.html()).toContain(
+      'Transaction history is only supported on the main network',
+    );
+  });
+  it('displays no transactions message', async () => {
+    const store = new Vuex.Store({
+      state: {
+        accounts: {
+          address: {
+            getChecksumAddressString() {
+              return '0x4BD5C3E7e4d6b3Df23e9DA5b42e5E4daa3D2579b';
+            },
+          },
+        },
+        web3: {
+          activeNet: {
+            name: 'Main',
+            id: 1,
+          },
+        },
+      },
+      actions,
+      getters: {
+        'transactions/accountTransactions'() {
+          return [];
+        },
+      },
+    });
+    const wrapper = shallow(HistoryPage, { store, localVue });
+    expect(wrapper.contains('ul.transactions')).toBeFalsy();
+    expect(wrapper.html()).toContain(
+      'Transaction history is only supported on the main network',
+    );
   });
   it('filters transactions by network', () => {
     const wrapper = shallow(HistoryPage, { store, localVue });

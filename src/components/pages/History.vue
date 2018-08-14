@@ -13,8 +13,7 @@
                 <app-transaction :transaction="transaction"></app-transaction>
               </li>
             </ul>
-            <p v-else-if="!historyAvailable">Transaction history is only
-            supported on the main network.</p>
+            <p v-else-if="!historyAvailable">Transaction history is only supported on the main network.</p>
             <v-spinner v-else-if="isLoading" :is-loading="isLoading"/>
             <p v-else>This account has no transactions.</p>
           </div>
