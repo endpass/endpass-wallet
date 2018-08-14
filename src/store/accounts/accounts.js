@@ -171,8 +171,6 @@ export default {
       const seed = Bip39.mnemonicToSeed(key);
       const hdKey = HDKey.fromMasterSeed(seed);
       const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
-      const json = keystore.encryptHDWallet(password, hdWallet);
-      commit('setHdKey', json);
 
       /* eslint-disable no-await-in-loop */
       for (let index = 0; index < 5; index++) {
