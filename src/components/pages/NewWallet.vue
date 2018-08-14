@@ -1,7 +1,7 @@
 <template>
   <base-page class="new-wallet">
     <template slot="title">{{ hdWallet ? "Wallet Created" : "Create Wallet" }}</template>
-    <div v-if="hdWallet" class="container has-text-centered is-narrow">
+    <div v-if="hdKey" class="container has-text-centered is-narrow">
       <p class="subtitle">Your wallet has been created successfully.
         Please <strong>write down the 12 word recovery phrase below</strong>
         and store it in a safe place. You will not be able to recover your
@@ -63,7 +63,7 @@ export default {
   },
   computed: {
     ...mapState({
-      hdWallet: state => state.accounts.hdWallet,
+      hdKey: state => state.accounts.hdKey,
     }),
     getRemainingSeedPhraseTimeout() {
       return this.remainingSeedPhraseTimeout > 0
