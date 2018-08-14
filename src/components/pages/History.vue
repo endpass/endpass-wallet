@@ -8,7 +8,7 @@
           </div>
           <div class="card-content">
             <ul v-if="processedTransactions.length" class="transactions">
-              <li v-for="transaction in processedTransactions" v-if="transaction.networkId === activeNet.id"
+              <li v-for="transaction in processedTransactions"
               :key="transaction.hash">
                 <app-transaction :transaction="transaction"></app-transaction>
               </li>
@@ -49,17 +49,19 @@ export default {
       accountTransactions: 'transactions/accountTransactions',
     }),
     processedTransactions() {
+      let fullTransactions;
       if (this.activeNet.id !== 1) {
-        return this.accountTransactions;
+        fullTransactions = this.accountTransactions;
+      } else {
+        fullTransactions = this.transactions.concat(this.accountTransactions);
       }
-      const fullTransactions = this.transactions.concat(
-        this.accountTransactions,
-      );
-      return fullTransactions.sort((trx1, trx2) => {
-        if (typeof trx2.date === 'undefined') return 1;
-        if (typeof trx1.date === 'undefined') return -1;
-        return trx2.date - trx1.date;
-      });
+      return fullTransactions
+        .filter(trx => trx.networkId === this.activeNet.id)
+        .sort((trx1, trx2) => {
+          if (typeof trx2.date === 'undefined') return 1;
+          if (typeof trx1.date === 'undefined') return -1;
+          return trx1.date - trx2.date;
+        });
     },
     // Whether history is supported on this network
     historyAvailable() {
