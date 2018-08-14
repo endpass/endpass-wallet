@@ -19,14 +19,7 @@ describe('Log In To an Existing Account', () => {
   });
 
   it('should not show login modal if already logged in', () => {
-    cy.server();
-    // Logged in
-    cy.route({
-      method: 'GET',
-      url: '/identity/api/v1/*',
-      response: {},
-      status: 200,
-    });
+    cy.login();
 
     cy.visit('#/');
     cy.get('[data-test=login-modal]').should('not.exist');
