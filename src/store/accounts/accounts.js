@@ -16,7 +16,6 @@ export default {
     // The encrypted xprv key for the user's hd wallet as a V3 keystore
     // object. All accounts are direct child accounts.
     hdKey: null,
-    hdWallet: null, // TODO remove
     wallets: {},
     wallet: null,
     address: null,
