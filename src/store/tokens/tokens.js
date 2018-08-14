@@ -154,13 +154,13 @@ export default {
           dispatch('errors/emitError', error, { root: true });
         });
     },
-    updateTokenPrices({ state, commit }) {
+    updateTokenPrices({ state, commit, rootState }) {
       if (state.activeTokens.length === 0) return;
 
       const symbols = state.activeTokens.map(token => token.symbol);
 
       return price
-        .getPrices(symbols.toString(), 'ETH')
+        .getPrices(symbols, rootState.web3.activeCurrency.name)
         .then(resp => commit('setTokenPrices', resp));
     },
     updateTokenPrice({ commit }, symbol) {
