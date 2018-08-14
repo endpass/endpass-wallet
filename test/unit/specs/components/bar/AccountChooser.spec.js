@@ -31,6 +31,9 @@ describe('AccountChooser', () => {
           wallets: [],
           wallet: null,
           balance: null,
+          address: {
+            getChecksumAddressString: () => '0xkdjkj',
+          },
         },
       },
       actions,
@@ -53,15 +56,6 @@ describe('AccountChooser', () => {
 
       wrapper.setComputed({
         address: '0xkjdf',
-        wallets: {
-          '0xkjdf': {},
-        },
-      });
-
-      expect(wrapper.vm.walletsAddresses).toHaveLength(1);
-      expect(wrapper.find('vue-multiselect').exists()).toBeFalsy();
-
-      wrapper.setComputed({
         wallets: {
           '0xkjdf': {},
           '0x1123': {},
