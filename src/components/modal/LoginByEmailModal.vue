@@ -1,6 +1,6 @@
 <template>
   <v-modal class="is-dark" @close="handleClose">
-    <template slot="header">Log In or Sign Up</template>
+    <template slot="header">Get Started</template>
 
     <p class="subtitle">Please enter your email address below to access your
     wallet or create a new one.</p>
