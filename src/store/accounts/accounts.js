@@ -136,12 +136,12 @@ export default {
         return dispatch('errors/emitError', e, { root: true });
       }
     },
-    generateWallet({ commit, dispatch, state }, password) {
+    generateWallet({ commit, dispatch, state, getters }, password) {
       if (!state.hdKey) {
         return;
       }
       try {
-        const hdWallet = keystore.decryptHDWallet(password, state.hdKey);
+        let hdWallet = getters.hdWallet(password);
         let i = Object.keys(state.wallets).length;
         let wallet = hdWallet.deriveChild(i).getWallet();
         let json = keystore.encryptWallet(password, wallet);
