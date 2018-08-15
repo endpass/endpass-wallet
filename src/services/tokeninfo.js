@@ -9,7 +9,7 @@ export default {
   }),
 
   getTokensList() {
-    return this._getTokens().map(this._parseToken);
+    return this._getTokens().then(tokens => tokens.map(this._parseToken));
   },
 
   // Get list of all tokens with infos

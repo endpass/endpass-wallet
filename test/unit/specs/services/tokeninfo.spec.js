@@ -30,4 +30,13 @@ describe('token info service', () => {
     parsedToken = tokenInfo._parseToken(tokens[1]);
     expect(parsedToken.logo).toBeFalsy();
   });
+
+  it('return parsed list of tokens', async () => {
+    mock.onGet(`${tokenInfoAPIUrl}/tokens`).reply(200, tokens);
+    let tokensList = await tokenInfo.getTokensList();
+    expect(tokensList).toHaveLength(tokens.length);
+    expect(tokensList[0].symbol).toBe(tokens[0].symbol);
+    // Not equal because they are parsed
+    expect(tokensList[0].logo).not.toBe(tokens[0].logo);
+  });
 });
