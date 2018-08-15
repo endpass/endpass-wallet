@@ -2,6 +2,7 @@ import { shallow, createLocalVue, mount } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
 import validation from '@/validation';
+import tokensFixture from 'fixtures/tokens';
 
 import TokensPage from '@/components/pages/Tokens.vue';
 import { generateStubs } from '@/utils/testUtils';
@@ -20,18 +21,7 @@ describe('TokensPage', () => {
   let tokens;
 
   beforeEach(() => {
-    tokens = [
-      {
-        name: 'First Token',
-        symbol: 'FST',
-        address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
-      },
-      {
-        name: 'second token',
-        symbol: '$SCdT',
-        address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
-      },
-    ];
+    tokens = tokensFixture.tokens;
 
     actions = {
       updateTokenPrice: jest.fn(),

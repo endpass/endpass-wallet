@@ -2,32 +2,19 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import TokenList from '@/components/TokenList';
 import { Token } from '@/class/Token';
+import tokensFixture from 'fixtures/tokens';
 
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
 
 describe('TokenList', () => {
-  let tokens;
   let actions;
   let getters;
   let wrapper;
   let store;
 
   beforeEach(() => {
-    tokens = [
-      {
-        name: 'First Token',
-        symbol: 'FST',
-        address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
-      },
-      {
-        name: 'second token',
-        symbol: '$SCdT',
-        address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
-      },
-    ];
-
     actions = {
       updateTokenPrice: jest.fn(),
     };
@@ -45,7 +32,7 @@ describe('TokenList', () => {
         tokens: {
           namespaced: true,
           state: {
-            activeTokens: tokens,
+            activeTokens: tokensFixture.tokens,
             prices: {
               FST: 2, // price of token in ETH
             },
@@ -76,7 +63,7 @@ describe('TokenList', () => {
   });
 
   it('fetches token prices on mount', async () => {
-    let numTokens = tokens.length;
+    let numTokens = tokensFixture.tokens.length;
     expect(wrapper.vm.tokens.length).toBe(numTokens);
     await flushPromises();
     expect(actions.updateTokenPrice).toHaveBeenCalledTimes(numTokens);
