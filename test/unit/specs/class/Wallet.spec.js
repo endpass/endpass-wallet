@@ -1,7 +1,7 @@
 import { Wallet } from '@/class';
 import accountsFixture from 'fixtures/accounts';
 
-const { v3, v3password } = accountsFixture;
+const { v3, v3password, privateKey } = accountsFixture;
 
 describe('Wallet Class', () => {
   it('should create instance with API format', () => {
@@ -14,7 +14,7 @@ describe('Wallet Class', () => {
       it('should call sign function with private key', async () => {
         const wallet = new Wallet(v3);
         const transaction = { sign: jest.fn() };
-        const privateKey = await wallet.getPrivateKey(v3password);
+        wallet.getPrivateKey = jest.fn().mockResolvedValue(privateKey);
 
         await wallet.signTransaction(transaction, v3password);
 
