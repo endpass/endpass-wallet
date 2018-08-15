@@ -11,6 +11,7 @@ const subscriptionsAPIInterval = 5000;
 const subscriptionsBlockchainInterval = 3000;
 const identityAPIUrl = 'https://identity.endpass.com/api/v1';
 const tokenInfoAPIUrl = 'https://tokeninfo.endpass.com/api/v1';
+const tokenImageUrl = 'https://tokeninfo.endpass.com';
 const cryptoDataAPIUrl = 'https://cryptodata.endpass.com/api/v1';
 const fiatPriceAPIUrl = 'https://min-api.cryptocompare.com/data/price';
 const fiatPriceMultiAPIUrl =
@@ -31,6 +32,7 @@ export default {
   fiatPriceMultiAPIUrl,
   cryptoDataAPIUrl,
   identityAPIUrl,
+  tokenImageUrl,
   tokenInfoAPIUrl,
   fiatPriceAPIUrl,
   kdfParams,

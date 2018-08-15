@@ -1,6 +1,6 @@
 import TokenTracker from 'eth-token-tracker';
 import { Token } from '@/class';
-import { endpassService, ethplorerService } from '@/services';
+import { tokenInfoService, ethplorerService } from '@/services';
 import price from '@/services/price';
 import storage from '@/services/storage';
 import { subscriptionsAPIInterval } from '@/config';
@@ -102,7 +102,7 @@ export default {
         return [];
       }
 
-      return endpassService
+      return tokenInfoService
         .getTokensList()
         .then(({ data }) => data)
         .catch(() => {
