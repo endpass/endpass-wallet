@@ -8,7 +8,7 @@
       <v-token v-else
         :token="token"
         :currency="currency"
-        :price="tokenPrices[token.symbol]"
+        :price="getTokenPrice(tokenPrices[token.symbol])"
       />
     </li>
   </ul>
@@ -18,7 +18,7 @@
 import { Token } from '@/class/Token';
 import VToken from '@/components/VToken';
 import VSpinner from '@/components/ui/VSpinner';
-import { mapState, mapGetters, mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { BigNumber } from 'bignumber.js';
 import error from '@/mixins/error';
 
@@ -27,7 +27,6 @@ export default {
   data() {
     return {
       isLoading: true,
-      tokenPrices: {},
     };
   },
   computed: {
@@ -38,16 +37,16 @@ export default {
     },
     ...mapState({
       activeTokens: state => state.tokens.activeTokens,
+      tokenPrices: state => state.tokens.prices,
       ethPrice: state => state.price.price,
       currency: state => state.accounts.settings.fiatCurrency,
     }),
-    ...mapGetters('tokens', ['tokenEthPrice']),
   },
   methods: {
     ...mapActions('tokens', ['updateTokenPrice']),
     // Return value of tokens in fiat
     getTokenPrice(symbol) {
-      return new BigNumber(this.tokenEthPrice(symbol))
+      return new BigNumber(this.tokenPrices[symbol] || 0)
         .times(this.ethPrice)
         .toString();
     },

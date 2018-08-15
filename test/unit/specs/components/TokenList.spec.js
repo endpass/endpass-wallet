@@ -32,10 +32,6 @@ describe('TokenList', () => {
       updateTokenPrice: jest.fn(),
     };
 
-    getters = {
-      tokenEthPrice: jest.fn(() => 1),
-    };
-
     store = new Vuex.Store({
       modules: {
         accounts: {
@@ -50,15 +46,16 @@ describe('TokenList', () => {
           namespaced: true,
           state: {
             activeTokens: tokens,
-            prices: {},
+            prices: {
+              FST: 2, // price of token in ETH
+            },
           },
           actions,
-          getters,
         },
         price: {
           namespaced: true,
           state: {
-            price: 0,
+            price: 1, //Ethereum price
           },
         },
         errors: {
@@ -79,8 +76,14 @@ describe('TokenList', () => {
   });
 
   it('fetches token prices on mount', async () => {
-    expect(wrapper.vm.tokens.length).toBe(2);
+    let numTokens = tokens.length;
+    expect(wrapper.vm.tokens.length).toBe(numTokens);
     await flushPromises();
-    expect(actions.updateTokenPrice).toHaveBeenCalledTimes(2);
+    expect(actions.updateTokenPrice).toHaveBeenCalledTimes(numTokens);
+  });
+
+  it('correctly calculates token fiat price', () => {
+    expect(wrapper.vm.getTokenPrice('FST')).toBe('2');
+    expect(wrapper.vm.getTokenPrice('BADSYMBOL')).toBe('0');
   });
 });

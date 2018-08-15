@@ -4,7 +4,7 @@ export class Token {
     this.decimals = decimals;
     this.logo = logo;
     this.name = name;
-    this.symbol = symbol;
+    this.symbol = (symbol || '').toUpperCase();
     this.balance = balance;
     this.address = web3.utils.toChecksumAddress(address);
   }
