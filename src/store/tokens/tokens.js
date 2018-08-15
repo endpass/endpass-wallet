@@ -14,7 +14,7 @@ export default {
       activeTokens: [],
       //tokens from localStorage
       savedTokens: {},
-      prices: null,
+      prices: {},
       tokensSubscription: null,
       tokensSerializeInterval: null,
     };
@@ -25,6 +25,12 @@ export default {
     },
     savedActiveTokens(state, { net }) {
       return state.savedTokens[net] || [];
+    },
+    // Returns the most recent price in ETH of the token with the given
+    // symbol
+    tokenEthPrice: state => symbol => {
+      let price = state.prices[symbol.toUpperCase()];
+      return price ? price['ETH'] : null;
     },
   },
   mutations: {
@@ -70,9 +76,6 @@ export default {
       state.prices = prices;
     },
     setTokenPrice(state, symbol, price) {
-      if (!state.prices) {
-        state.prices = {};
-      }
       state.prices[symbol] = price;
     },
     saveInterval(state, interval) {
