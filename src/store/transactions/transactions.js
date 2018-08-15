@@ -190,7 +190,10 @@ export default {
           }),
       );
     },
-    handleSendingError({ dispatch }, { err, receipt, transaction }) {
+    handleSendingError(
+      { dispatch },
+      { err = {}, receipt, transaction = {} } = {},
+    ) {
       const { err: errorMessage = '' } = err;
       const cause =
         receipt || errorMessage.includes('out of gas')

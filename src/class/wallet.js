@@ -14,11 +14,11 @@ export class Wallet {
   }
 
   async getPrivateKeyString(password) {
-    let privateKey = await this.getPrivateKey(password);
+    const privateKey = await this.getPrivateKey(password);
     return ethUtil.bufferToHex(privateKey);
   }
 
-  async exportToJSON(password) {
+  async exportToJSON() {
     return this.v3;
   }
 
@@ -36,6 +36,7 @@ export class Wallet {
   }
 
   async signTransaction(transaction, password) {
-    return transaction.sign(this.getPrivateKey(password));
+    const privateKey = await this.getPrivateKey(password);
+    return transaction.sign(privateKey);
   }
 }
