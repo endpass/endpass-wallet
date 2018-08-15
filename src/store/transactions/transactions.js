@@ -104,6 +104,7 @@ export default {
           .once('error', (err, receipt) => {
             dispatch('handleSendingError', { err, receipt, transaction });
             eventEmitter.emit('error', err);
+            console.error(err);
           });
 
         return eventEmitter;
