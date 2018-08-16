@@ -7,6 +7,7 @@
       </div>
       <div class="spinner-dot spinner-dot-3">
       </div>
+      <p class="spinner-caption">Please wait...</p>
     </div>
   </div>
 </template>
@@ -15,10 +16,9 @@
 // Loading indicator that covers the entire page
 export default {
   name: 'page-loader',
-  props: {
-    isLoading: {
-      type: Boolean,
-      default: false,
+  computed: {
+    isLoading() {
+      return this.$store.state.isPageLoading;
     },
   },
 };

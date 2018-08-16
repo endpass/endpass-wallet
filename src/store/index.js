@@ -13,8 +13,17 @@ import userModule from './user';
 
 Vue.use(Vuex);
 const store = new Vuex.Store({
-  state: {},
-  mutations: {},
+  state: {
+    isPageLoading: false, //global page loading
+  },
+  mutations: {
+    startPageLoading(state) {
+      state.isPageLoading = true;
+    },
+    stopPageLoading(state) {
+      state.isPageLoading = false;
+    },
+  },
   actions: {
     init({ dispatch }, actions) {
       actions
