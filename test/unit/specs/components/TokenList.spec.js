@@ -14,6 +14,8 @@ describe('TokenList', () => {
   let wrapper;
   let store;
 
+  let numTokens = tokensFixture.tokens.length;
+
   beforeEach(() => {
     actions = {
       updateTokenPrice: jest.fn(),
@@ -63,7 +65,6 @@ describe('TokenList', () => {
   });
 
   it('fetches token prices on mount', async () => {
-    let numTokens = tokensFixture.tokens.length;
     expect(wrapper.vm.tokens.length).toBe(numTokens);
     await flushPromises();
     expect(actions.updateTokenPrice).toHaveBeenCalledTimes(numTokens);
@@ -72,5 +73,12 @@ describe('TokenList', () => {
   it('correctly calculates token fiat price', () => {
     expect(wrapper.vm.getTokenPrice('FST')).toBe('2');
     expect(wrapper.vm.getTokenPrice('BADSYMBOL')).toBe('0');
+  });
+
+  it('maps token prices', () => {
+    let priceMap = wrapper.vm.prices;
+    expect(priceMap.size).toBe(numTokens);
+    expect(priceMap).toBeInstanceOf(Map);
+    expect(priceMap.get('FST')).toBe('2');
   });
 });

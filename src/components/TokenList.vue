@@ -8,7 +8,7 @@
       <v-token v-else
         :token="token"
         :currency="currency"
-        :price="getTokenPrice(tokenPrices[token.symbol])"
+        :price="prices.get(token.symbol)"
       />
     </li>
   </ul>
@@ -35,6 +35,15 @@ export default {
         return new Token(token);
       });
     },
+    // Returns a Map of token symbol to price
+    prices() {
+      return new Map(
+        this.tokens.map(token => [
+          token.symbol,
+          this.getTokenPrice(token.symbol),
+        ]),
+      );
+    },
     ...mapState({
       activeTokens: state => state.tokens.activeTokens,
       tokenPrices: state => state.tokens.prices,
@@ -56,12 +65,7 @@ export default {
       return Promise.all(
         this.tokens.map(token => this.updateTokenPrice(token.symbol)),
       )
-        .then(() => {
-          this.tokenPrices = this.tokens.map(token =>
-            this.getTokenPrice(token.symbol),
-          );
-          this.isLoading = false;
-        })
+        .then(() => (this.isLoading = false))
         .catch(e => this.emitError(e));
     },
   },
