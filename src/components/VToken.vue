@@ -2,7 +2,8 @@
   <div class="media token">
     <div class="media-left">
       <p class="image token-logo is-32x32">
-        <img :src="token.logo">
+        <img :src="token.logo" :alt="token.name" v-if="token.logo">
+        <span class="icon missing" v-html="require('@/img/compass.svg')" :alt="token.name" v-else></span>
       </p>
     </div>
     <div class="media-content">
@@ -73,6 +74,11 @@ export default {
 
 <style lang="scss">
 .token {
+  .token-logo {
+    .missing {
+      opacity: 0.6;
+    }
+  }
   .token-title {
     .token-symbol {
       font-weight: 600;
