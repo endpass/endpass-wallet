@@ -467,9 +467,6 @@ export default {
     },
   },
   watch: {
-    activeNet() {
-      this.updateUserNonce();
-    },
     'transaction.to': {
       async handler() {
         await this.$nextTick();
@@ -540,6 +537,8 @@ export default {
         }
       },
     );
+
+    this.$watch(vm => [vm.activeNet, vm.address].join(), this.updateUserNonce);
   },
   beforeDestroy() {
     clearInterval(this.interval);

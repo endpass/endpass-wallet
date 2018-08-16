@@ -1,6 +1,8 @@
 import state from '@/store/transactions/transactions';
 import testAction from '../ActionTestingHelper';
 
+const { actions } = state;
+
 const commit = state => (type, payload) =>
   state.mutations[type](state, payload);
 
@@ -147,5 +149,33 @@ describe('transactions store', async () => {
       },
     );
     expect(pendingBalance).toBe('0');
+  });
+
+  describe('actions', () => {
+    describe('handleSendingError', () => {
+      it('should handle errors with undefined param', () => {
+        const dispatch = jest.fn();
+
+        actions.handleSendingError({ dispatch });
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+      });
+
+      it('should handle errors with undefined err param', () => {
+        const dispatch = jest.fn();
+
+        actions.handleSendingError({ dispatch }, { err: undefined });
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+      });
+
+      it('should handle errors with undefined transaction param', () => {
+        const dispatch = jest.fn();
+
+        actions.handleSendingError({ dispatch }, { transaction: undefined });
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+      });
+    });
   });
 });
