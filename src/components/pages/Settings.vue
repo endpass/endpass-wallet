@@ -14,11 +14,9 @@
       <v-select v-model="newSettings.fiatCurrency"
                 label="Fiat Currency"
                 name='fiatCurrency'
+                @input="updateSettings"
                 :options="availableCurrencies" />
 
-      <v-button id="save-button"
-                className="is-primary is-medium"
-                :disabled="!isSettingsChange">Save</v-button>
     </v-form>
     <two-factor-auth-settings/>
   </base-page>
@@ -53,8 +51,8 @@ export default {
     updateSettings() {
       this.updateSettingsInStore(this.newSettings).then(() => {
         this.$notify({
-          title: 'Successful',
-          text: 'Settings was saved',
+          title: 'Settings Saved',
+          text: 'Your settings have been saved.',
           type: 'is-info',
         });
       });
