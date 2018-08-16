@@ -7,6 +7,7 @@ import App from './App';
 import './directives';
 
 Vue.config.productionTip = false;
+Vue.config.performance = true;
 
 Vue.use(Notifications);
 
