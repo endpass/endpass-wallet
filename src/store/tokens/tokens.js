@@ -102,17 +102,20 @@ export default {
         return [];
       }
 
-      return tokenInfoService.getTokensList().catch(() => {
-        const error = new NotificationError({
-          title: 'Failed to get list of tokens',
-          text:
-            'An error occurred while retrieving the list of tokens. Please try again.',
-          type: 'is-warning',
-        });
-        dispatch('errors/emitError', error, { root: true });
+      return tokenInfoService
+        .getTokensList()
+        .then(tokens => tokens.map(token => new Token(token)))
+        .catch(() => {
+          const error = new NotificationError({
+            title: 'Failed to get list of tokens',
+            text:
+              'An error occurred while retrieving the list of tokens. Please try again.',
+            type: 'is-warning',
+          });
+          dispatch('errors/emitError', error, { root: true });
 
-        return [];
-      });
+          return [];
+        });
     },
     removeTokenFromSubscription({ commit, getters, state, dispatch }, token) {
       const { net } = getters;

@@ -68,16 +68,21 @@
               </div>
               <div class="card-content">
                 <multiselect
-                   :allow-empty="false"
-                   :internal-search="false"
-                   :options="searchTokenList"
-                   :show-labels="false"
-                   track-by="address"
-                   label="name"
-                   placeholder="Select token"
-                   @search-change="setSearchToken"
-                   @select="addTokenToSubscription"
-                   />
+                  :allow-empty="false"
+                  :internal-search="false"
+                  :options="searchTokenList"
+                  :optionsLimit="10"
+                  :show-labels="false"
+                  track-by="address"
+                  label="name"
+                  placeholder="Select token"
+                  @search-change="setSearchToken"
+                  @select="addTokenToSubscription"
+                  >
+                  <span class="multiselect-option" slot="option" slot-scope="props">
+                    <v-token :token="props.option" />
+                  </span>
+                </multiselect>
               </div>
             </div>
           </div>
@@ -97,6 +102,7 @@ import Multiselect from 'vue-multiselect';
 import { BigNumber } from 'bignumber.js';
 import web3 from 'web3';
 import Balance from '@/components/Balance';
+import VToken from '@/components/VToken';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/AddTokenModal';
 import VSpinner from '@/components/ui/VSpinner';
@@ -210,6 +216,7 @@ export default {
     AddTokenModal,
     Multiselect,
     VSpinner,
+    VToken,
   },
 };
 </script>
