@@ -12,6 +12,7 @@
 import { mapActions } from 'vuex';
 
 import LoginByEmailModal from '@/components/modal/LoginByEmailModal';
+import ConfirmEmailModal from '@/components/modal/ConfirmEmailModal';
 import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
 import error from '@/mixins/error';
 
@@ -32,6 +33,9 @@ export default {
           if (challengeType === 'otp') {
             this.email = email;
             this.currentModal = TwoFactorAuthModal.name;
+            this.isLoading = false;
+          } else if (challengeType === 'email_link') {
+            this.currentModal = ConfirmEmailModal.name;
             this.isLoading = false;
           } else {
             this.handleSuccessfulLogin();
@@ -57,18 +61,13 @@ export default {
       this.close();
     },
     handleSuccessfulLogin() {
-      const text =
-        this.currentModal === LoginByEmailModal.name
-          ? 'Click the link in your email to log in'
-          : 'Authorization was successful';
-
       this.isLoading = false;
       this.close();
 
       this.$notify({
         title: 'Success',
         type: 'is-info',
-        text,
+        text: 'Logged In',
       });
     },
     handleFailedLogin(error) {
@@ -90,6 +89,7 @@ export default {
   },
   components: {
     LoginByEmailModal,
+    ConfirmEmailModal,
     TwoFactorAuthModal,
   },
   mixins: [error],

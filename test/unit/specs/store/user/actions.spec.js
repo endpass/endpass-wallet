@@ -21,29 +21,6 @@ describe('user actions', () => {
       );
     });
 
-    it('should emit error', () => {
-      const commit = jest.fn();
-      const dispatch = jest.fn();
-      const getters = {
-        isLoggedOut: true,
-      };
-      const notificationError = new NotificationError({
-        title: 'Auth error',
-        text:
-          'You are not an authorized user. In order to continue using the wallet, please log in.',
-        type: 'is-danger',
-      });
-
-      actions.setAuthorizationStatus({ commit, dispatch, getters }, {});
-
-      expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toHaveBeenCalledWith(
-        'errors/emitError',
-        notificationError,
-        { root: true },
-      );
-    });
-
     it('should not emit error', () => {
       const commit = jest.fn();
       const dispatch = jest.fn();

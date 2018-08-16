@@ -85,10 +85,8 @@ describe('SettingsPage', () => {
 
   it('should validate settings properly', async () => {
     wrapper = mount(SettingsPage, { store, localVue });
-    const button = wrapper.find('button.button');
 
     expect(wrapper.vm.errors.any()).toBeFalsy();
-    expect(button.attributes().disabled).toBeTruthy();
 
     wrapper.setData({
       newSettings: {
@@ -99,7 +97,6 @@ describe('SettingsPage', () => {
     await wrapper.vm.$validator.validateAll();
 
     expect(wrapper.vm.errors.any()).toBeFalsy();
-    expect(button.attributes().disabled).toBeFalsy();
 
     wrapper.setData({
       newSettings: {
@@ -110,6 +107,5 @@ describe('SettingsPage', () => {
     await wrapper.vm.$validator.validateAll();
 
     expect(wrapper.vm.errors.any()).toBeFalsy();
-    expect(button.attributes().disabled).toBeTruthy();
   });
 });

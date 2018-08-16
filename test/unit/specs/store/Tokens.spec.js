@@ -3,7 +3,7 @@ import MockAdapter from 'axios-mock-adapter';
 import Web3 from 'web3';
 import testAction from '../ActionTestingHelper';
 import tokens from '@/store/tokens/tokens';
-import { endpassService } from '@/services';
+import { tokenInfoService } from '@/services';
 import localStorageMock from '../../localStorageMock';
 
 global.localStorage = localStorageMock;
@@ -52,15 +52,15 @@ describe('tokens', () => {
   });
 
   it('should get tokens from service', async () => {
-    endpassService.getTokensList = jest.fn(() => Promise.resolve());
+    tokenInfoService.getTokensList = jest.fn(() => Promise.resolve());
 
     await actions.getAllTokens({ dispatch, getters });
 
-    expect(endpassService.getTokensList).toHaveBeenCalledTimes(1);
+    expect(tokenInfoService.getTokensList).toHaveBeenCalledTimes(1);
   });
 
   it('should return an empty array if an error occurs', async () => {
-    endpassService.getTokensList = jest.fn(() => Promise.reject());
+    tokenInfoService.getTokensList = jest.fn(() => Promise.reject());
 
     const result = await actions.getAllTokens({ dispatch, getters });
 

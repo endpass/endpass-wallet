@@ -18,35 +18,12 @@
                     class="spinner-block"
                   />
                   <div class="scroller">
-                    <a
-                      v-for="(token, index) in userTokenList"
-                      :key="token.address + 'sub'"
-                      class="panel-block is-clearfix is-block"
+                    <token-list
+                      :tokens="userTokenList"
+                      :has-remove="true"
+                      :item-class="'panel-block is-clearfix is-block'"
                     >
-                      <span class="token-symbol">{{ token.symbol }}</span>
-                      <span class="token-name">{{ token.name }}</span>
-                      <balance
-                        class="is-small is-inline-block"
-                        :amount="getTokenAmount(token)"
-                        :currency="''"
-                      />
-                      <balance
-                        v-if="prices && prices[token.symbol]"
-                        class="is-small is-inline-block"
-                        :amount="getTokenAmount(token)"
-                        :currency="currency"
-                        :decimals="2"
-                        :price="getTokenPrice(token.symbol)"
-                        @update="updateTokenPrice(token.symbol)"
-                      />
-                      <span
-                        :id="`remove-token-${index}`"
-                        class="icon has-text-danger is-small is-pulled-right"
-                        title="Remove Token"
-                        @click.prevent="removeTokenFromSubscription(token)"
-                        v-html="require('@/img/ban.svg')"
-                      />
-                    </a>
+                    </token-list>
                   </div>
                 </nav>
                 <p v-else class="small">You have no tokens on this network. Add
@@ -68,16 +45,21 @@
               </div>
               <div class="card-content">
                 <multiselect
-                   :allow-empty="false"
-                   :internal-search="false"
-                   :options="searchTokenList"
-                   :show-labels="false"
-                   track-by="address"
-                   label="name"
-                   placeholder="Select token"
-                   @search-change="setSearchToken"
-                   @select="addTokenToSubscription"
-                   />
+                  :allow-empty="false"
+                  :internal-search="false"
+                  :options="searchTokenList"
+                  :optionsLimit="10"
+                  :show-labels="false"
+                  track-by="address"
+                  label="name"
+                  placeholder="Type to search tokens..."
+                  @search-change="setSearchToken"
+                  @select="addTokenToSubscription"
+                  >
+                  <span class="multiselect-option" slot="option" slot-scope="props">
+                    <v-token :token="props.option" />
+                  </span>
+                </multiselect>
               </div>
             </div>
           </div>
@@ -97,6 +79,8 @@ import Multiselect from 'vue-multiselect';
 import { BigNumber } from 'bignumber.js';
 import web3 from 'web3';
 import Balance from '@/components/Balance';
+import VToken from '@/components/VToken';
+import TokenList from '@/components/TokenList';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/AddTokenModal';
 import VSpinner from '@/components/ui/VSpinner';
@@ -178,22 +162,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('tokens', [
-      'addTokenToSubscription',
-      'updateTokenPrice',
-      'removeTokenFromSubscription',
-      'getAllTokens',
-    ]),
-    getTokenAmount(token) {
-      let balanceBn = new BigNumber(token.balance);
-      let decimalsBn = new BigNumber(10).pow(token.decimals);
-      return balanceBn.div(decimalsBn);
-    },
-    getTokenPrice(symbol) {
-      return new BigNumber(this.prices[symbol]['ETH'])
-        .times(this.ethPrice)
-        .toString();
-    },
+    ...mapActions('tokens', ['addTokenToSubscription', 'getAllTokens']),
     setSearchToken(query) {
       this.searchToken = query;
     },
@@ -210,6 +179,8 @@ export default {
     AddTokenModal,
     Multiselect,
     VSpinner,
+    VToken,
+    TokenList,
   },
 };
 </script>

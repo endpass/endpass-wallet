@@ -10,7 +10,7 @@
         <img src="@/img/logo-light.png" alt="Endpass Wallet">
       </router-link>
       <div class="login-control">
-          <a class="button is-success" v-if="!email" @click.prevent="isLoginModal = true">
+          <a class="button is-success" v-if="!isLoggedIn" @click.prevent="isLoginModal = true">
             <span class="icon is-small" v-html="require('@/img/account-login.svg')"/>
             Login
           </a>
@@ -61,26 +61,6 @@
           </div>
         </div>
         <account-chooser :width="4"/>
-      </div>
-
-      <div class="nav-sidebar-item">
-        <div class="buttons is-centered">
-          <router-link v-if="!address" :to="{name: 'NewWallet'}" class="button
-          is-success">Create Wallet</router-link>
-
-          <a class="button" v-if="!email" @click.prevent="isLoginModal = true">
-            <span class="icon is-small" v-html="require('@/img/account-login.svg')"/>
-            Login
-          </a>
-
-        <a class="button"
-           v-else
-           to=""
-           @click.prevent="logout()">
-          <span class="icon is-small"
-                v-html="require('@/img/account-logout.svg')"></span>Logout
-        </a>
-        </div>
       </div>
 
       <div class="nav-sidebar-item menu" @click="closeNavMenu">
@@ -177,7 +157,7 @@ export default {
     ...mapGetters({
       isLoggedOut: 'user/isLoggedOut',
     }),
-    ...mapGetters('accounts', ['isPublicAccount']),
+    ...mapGetters('accounts', ['isPublicAccount', 'isLoggedIn']),
   },
   methods: {
     ...mapActions('accounts', ['logout']),

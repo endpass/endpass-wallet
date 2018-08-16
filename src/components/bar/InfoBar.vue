@@ -2,7 +2,7 @@
   <div class="section info-bar" :class="networkClass">
     <div class="info-item">
       <div class="field">
-				<p class="heading">Block</p>
+				<p class="heading">Status</p>
 				<div class="control is-expanded">
 					<sync-status/>
 				</div>

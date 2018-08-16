@@ -1,6 +1,6 @@
 import TokenTracker from 'eth-token-tracker';
 import { Token } from '@/class';
-import { endpassService, ethplorerService } from '@/services';
+import { tokenInfoService, ethplorerService } from '@/services';
 import price from '@/services/price';
 import storage from '@/services/storage';
 import { subscriptionsAPIInterval } from '@/config';
@@ -14,7 +14,7 @@ export default {
       activeTokens: [],
       //tokens from localStorage
       savedTokens: {},
-      prices: null,
+      prices: {},
       tokensSubscription: null,
       tokensSerializeInterval: null,
     };
@@ -70,9 +70,6 @@ export default {
       state.prices = prices;
     },
     setTokenPrice(state, symbol, price) {
-      if (!state.prices) {
-        state.prices = {};
-      }
       state.prices[symbol] = price;
     },
     saveInterval(state, interval) {
@@ -105,9 +102,9 @@ export default {
         return [];
       }
 
-      return endpassService
+      return tokenInfoService
         .getTokensList()
-        .then(({ data }) => data)
+        .then(tokens => tokens.map(token => new Token(token)))
         .catch(() => {
           const error = new NotificationError({
             title: 'Failed to get list of tokens',

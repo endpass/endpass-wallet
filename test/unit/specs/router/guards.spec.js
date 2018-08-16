@@ -66,7 +66,7 @@ describe('privateWalletGuard', () => {
     expect(next).toHaveBeenCalledWith(undefined);
   });
 
-  it('should not redirect', async () => {
+  it('should redirect to new wallet page', async () => {
     const next = jest.fn();
 
     store.state.accounts.wallet = null;
@@ -74,6 +74,6 @@ describe('privateWalletGuard', () => {
     await privateWalletGuard(to, from, next);
 
     expect(next).toHaveBeenCalledTimes(1);
-    expect(next).toHaveBeenCalledWith(from.fullPath);
+    expect(next).toHaveBeenCalledWith({ name: 'NewWallet' });
   });
 });

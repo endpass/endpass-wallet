@@ -6,7 +6,7 @@ exports[`TwoFactorAuthSettings render should render the initial state of the com
     <label
       class="label"
     >
-      Two Factor Authentication via OTP
+      Two Factor Authentication
     </label>
      
     <v-button
@@ -29,7 +29,7 @@ exports[`TwoFactorAuthSettings render should show modal window for two factor au
     <label
       class="label"
     >
-      Two Factor Authentication via OTP
+      Two Factor Authentication
     </label>
      
     <v-button

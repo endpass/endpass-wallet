@@ -34,6 +34,7 @@ export const {
   fiatPriceMultiAPIUrl,
   cryptoDataAPIUrl,
   identityAPIUrl,
+  tokenImageUrl,
   tokenInfoAPIUrl,
   kdfParams,
 } = env;
