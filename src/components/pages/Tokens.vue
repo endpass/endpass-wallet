@@ -18,35 +18,29 @@
                     class="spinner-block"
                   />
                   <div class="scroller">
-                    <a
+                    <div
                       v-for="(token, index) in userTokenList"
                       :key="token.address + 'sub'"
                       class="panel-block is-clearfix is-block"
                     >
-                      <span class="token-symbol">{{ token.symbol }}</span>
-                      <span class="token-name">{{ token.name }}</span>
-                      <balance
-                        class="is-small is-inline-block"
-                        :amount="getTokenAmount(token)"
-                        :currency="''"
-                      />
-                      <balance
-                        v-if="prices && prices[token.symbol]"
-                        class="is-small is-inline-block"
-                        :amount="getTokenAmount(token)"
-                        :currency="currency"
-                        :decimals="2"
-                        :price="getTokenPrice(token.symbol)"
-                        @update="updateTokenPrice(token.symbol)"
-                      />
-                      <span
+                    <v-token
+                      :token="token"
+                      :currency="currency"
+                      :price="getTokenPrice(token.symbol)"
+                      >
+                      <a
+                        slot="right"
                         :id="`remove-token-${index}`"
-                        class="icon has-text-danger is-small is-pulled-right"
                         title="Remove Token"
-                        @click.prevent="removeTokenFromSubscription(token)"
-                        v-html="require('@/img/ban.svg')"
-                      />
-                    </a>
+                        @click="removeTokenFromSubscription(token)"
+                        >
+                        <span
+                          class="icon has-text-danger is-small is-pulled-right"
+                          v-html="require('@/img/ban.svg')"
+                          />
+                      </a>
+                    </v-token>
+                    </div>
                   </div>
                 </nav>
                 <p v-else class="small">You have no tokens on this network. Add

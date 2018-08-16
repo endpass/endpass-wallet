@@ -30,6 +30,7 @@
         :decimals="2"
         :price="price"
       />
+      <slot name="right"></slot>
     </div>
   </div>
 </template>
