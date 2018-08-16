@@ -65,7 +65,7 @@ describe('TokenList', () => {
   });
 
   it('fetches token prices on mount', async () => {
-    expect(wrapper.vm.tokens.length).toBe(numTokens);
+    expect(wrapper.vm.selectedTokens.length).toBe(numTokens);
     await flushPromises();
     expect(actions.updateTokenPrice).toHaveBeenCalledTimes(numTokens);
   });
@@ -80,5 +80,11 @@ describe('TokenList', () => {
     expect(priceMap.size).toBe(numTokens);
     expect(priceMap).toBeInstanceOf(Map);
     expect(priceMap.get('FST')).toBe('2');
+  });
+
+  it('allows setting custom token list', () => {
+    wrapper.setProps({ tokens: tokensFixture.tokens.slice(0, 1) });
+    expect(wrapper.vm.selectedTokens).toHaveLength(1);
+    expect(wrapper.vm.selectedTokens[0]).toBeInstanceOf(Token);
   });
 });

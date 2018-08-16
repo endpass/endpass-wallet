@@ -70,7 +70,7 @@
                   :show-labels="false"
                   track-by="address"
                   label="name"
-                  placeholder="Select token"
+                  placeholder="Type to search tokens..."
                   @search-change="setSearchToken"
                   @select="addTokenToSubscription"
                   >

@@ -1,6 +1,6 @@
 <template>
   <ul class="tokens-list">
-    <li v-for="token in tokens" :key="token.address">
+    <li v-for="token in selectedTokens" :key="token.address">
       <v-spinner v-if="isLoading"
         :is-loading="isLoading"
         class="spinner"
@@ -24,21 +24,28 @@ import error from '@/mixins/error';
 
 // List of the user's active tokens
 export default {
+  props: {
+    tokens: {
+      type: Array,
+      default: null,
+    },
+  },
   data() {
     return {
       isLoading: true,
     };
   },
   computed: {
-    tokens() {
-      return this.activeTokens.map(token => {
+    selectedTokens() {
+      let activeTokens = this.tokens ? this.tokens : this.activeTokens;
+      return activeTokens.map(token => {
         return new Token(token);
       });
     },
     // Returns a Map of token symbol to price
     prices() {
       return new Map(
-        this.tokens.map(token => [
+        this.selectedTokens.map(token => [
           token.symbol,
           this.getTokenPrice(token.symbol),
         ]),
@@ -63,7 +70,7 @@ export default {
     updateTokenPrices() {
       // Promises to get prices of all tokens
       return Promise.all(
-        this.tokens.map(token => this.updateTokenPrice(token.symbol)),
+        this.activeTokens.map(token => this.updateTokenPrice(token.symbol)),
       )
         .then(() => (this.isLoading = false))
         .catch(e => this.emitError(e));
