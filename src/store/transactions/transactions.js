@@ -169,13 +169,20 @@ export default {
               trx => transaction.hash === trx.hash,
             );
 
-            sendEvent.once('transactionHash', () => {
-              const shortTnx = trxInList.hash.slice(0, 10);
-              const error = new NotificationError({
-                title: 'Try to cancel the transaction',
-                text: `The cancellation ${shortTnx}... was started`,
-              });
-              dispatch('errors/emitError', error, { root: true });
+            sendEvent.once('transactionHash', async () => {
+              const nonceInBlock = await dispatch('getNonceInBlock');
+
+              if (trxInList.nonce == nonceInBlock) {
+                const shortTnx = trxInList.hash.slice(0, 10);
+                const error = new NotificationError({
+                  title: 'Try to cancel the transaction',
+                  text: `The cancellation ${shortTnx}... was started`,
+                });
+                dispatch('errors/emitError', error, { root: true });
+              } else {
+                // if a transaction with an too high nonce is canceled
+                sendEvent.emit('confirmation');
+              }
             });
 
             sendEvent.once('confirmation', () => {
