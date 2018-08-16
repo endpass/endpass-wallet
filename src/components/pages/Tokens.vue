@@ -30,13 +30,14 @@
                       >
                       <a
                         slot="right"
+                        class="is-inline-block"
                         :id="`remove-token-${index}`"
                         title="Remove Token"
                         @click="removeTokenFromSubscription(token)"
                         >
                         <span
                           class="icon has-text-danger is-small is-pulled-right"
-                          v-html="require('@/img/ban.svg')"
+                          v-html="require('@/img/x.svg')"
                           />
                       </a>
                     </v-token>
