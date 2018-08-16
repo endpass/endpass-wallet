@@ -14,7 +14,7 @@ export default {
 
   // Get list of all tokens with infos
   _getTokens() {
-    return this.http.get(`${tokenInfoAPIUrl}/tokens`).then(resp => resp.data);
+    return this.http.get(`/tokens`).then(resp => resp.data);
   },
   // formats a token
   _parseToken(token) {

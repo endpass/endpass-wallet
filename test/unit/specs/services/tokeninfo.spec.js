@@ -5,6 +5,7 @@ import tokensFixture from 'fixtures/tokens';
 
 describe('token info service', () => {
   const tokens = tokensFixture.tokens;
+  const tokensURL = `${tokenInfoAPIUrl}/tokens`;
 
   let mock;
   beforeEach(() => {
@@ -15,8 +16,18 @@ describe('token info service', () => {
     mock.reset();
   });
 
+  it('should make correct request', async () => {
+    mock.onGet(tokensURL).reply(config => {
+      expect(config.method).toBe('get');
+      expect(config.baseURL).toBe(tokenInfoAPIUrl);
+      expect(config.url).toBe('/tokens');
+      return [200, tokens];
+    });
+    await tokenInfo.getTokensList();
+  });
+
   it('should get list of tokens', async () => {
-    mock.onGet(`${tokenInfoAPIUrl}/tokens`).reply(200, tokens);
+    mock.onGet(tokensURL).reply(200, tokens);
     let tokensList = await tokenInfo._getTokens();
     expect(tokensList).toEqual(tokens);
   });
@@ -32,7 +43,7 @@ describe('token info service', () => {
   });
 
   it('return parsed list of tokens', async () => {
-    mock.onGet(`${tokenInfoAPIUrl}/tokens`).reply(200, tokens);
+    mock.onGet(tokensURL).reply(200, tokens);
     let tokensList = await tokenInfo.getTokensList();
     expect(tokensList).toHaveLength(tokens.length);
     expect(tokensList[0].symbol).toBe(tokens[0].symbol);
