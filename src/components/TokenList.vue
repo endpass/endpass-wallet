@@ -1,6 +1,6 @@
 <template>
   <ul class="tokens-list">
-    <li v-for="token in selectedTokens" :key="token.address">
+    <li v-for="token in selectedTokens" :class="itemClass" :key="token.address">
       <v-spinner v-if="isLoading"
         :is-loading="isLoading"
         class="spinner"
@@ -9,7 +9,20 @@
         :token="token"
         :currency="currency"
         :price="prices.get(token.symbol)"
-      />
+      >
+        <a
+          slot="right"
+          v-if="hasRemove"
+          class="is-inline-block remove-token-button"
+          title="Remove Token"
+          @click="removeTokenFromSubscription(token)"
+          >
+            <span
+              class="icon has-text-danger is-small is-pulled-right"
+              v-html="require('@/img/x.svg')"
+            ></span>
+        </a>
+      </v-token>
     </li>
   </ul>
 </template>
@@ -28,6 +41,15 @@ export default {
     tokens: {
       type: Array,
       default: null,
+    },
+    // Show remove token button
+    hasRemove: {
+      type: Boolean,
+      default: false,
+    },
+    // Classes to set on token
+    itemClass: {
+      type: [Object, Array, String],
     },
   },
   data() {
@@ -59,7 +81,10 @@ export default {
     }),
   },
   methods: {
-    ...mapActions('tokens', ['updateTokenPrice']),
+    ...mapActions('tokens', [
+      'updateTokenPrice',
+      'removeTokenFromSubscription',
+    ]),
     // Return value of tokens in fiat
     getTokenPrice(symbol) {
       return new BigNumber(this.tokenPrices[symbol] || 0)

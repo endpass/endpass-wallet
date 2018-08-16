@@ -1,4 +1,4 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { mount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import TokenList from '@/components/TokenList';
 import { Token } from '@/class/Token';
@@ -19,6 +19,7 @@ describe('TokenList', () => {
   beforeEach(() => {
     actions = {
       updateTokenPrice: jest.fn(),
+      removeTokenFromSubscription: jest.fn(),
     };
 
     store = new Vuex.Store({
@@ -58,7 +59,7 @@ describe('TokenList', () => {
       },
     });
 
-    wrapper = shallow(TokenList, {
+    wrapper = mount(TokenList, {
       store,
       localVue,
     });
@@ -86,5 +87,21 @@ describe('TokenList', () => {
     wrapper.setProps({ tokens: tokensFixture.tokens.slice(0, 1) });
     expect(wrapper.vm.selectedTokens).toHaveLength(1);
     expect(wrapper.vm.selectedTokens[0]).toBeInstanceOf(Token);
+  });
+
+  it('should not show remove token button by default', () => {
+    expect(wrapper.find('.remove-token-button').exists()).toBeFalsy();
+  });
+
+  it('should call remove action', () => {
+    wrapper.setProps({ hasRemove: true });
+    wrapper.find('.remove-token-button').trigger('click');
+
+    expect(actions.removeTokenFromSubscription).toHaveBeenCalledTimes(1);
+    expect(actions.removeTokenFromSubscription).toBeCalledWith(
+      expect.any(Object),
+      wrapper.vm.selectedTokens[0],
+      undefined,
+    );
   });
 });

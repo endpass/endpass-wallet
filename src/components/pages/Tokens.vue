@@ -18,30 +18,12 @@
                     class="spinner-block"
                   />
                   <div class="scroller">
-                    <div
-                      v-for="(token, index) in userTokenList"
-                      :key="token.address + 'sub'"
-                      class="panel-block is-clearfix is-block"
+                    <token-list
+                      :tokens="userTokenList"
+                      :has-remove="true"
+                      :item-class="'panel-block is-clearfix is-block'"
                     >
-                    <v-token
-                      :token="token"
-                      :currency="currency"
-                      :price="getTokenPrice(token.symbol)"
-                      >
-                      <a
-                        slot="right"
-                        class="is-inline-block"
-                        :id="`remove-token-${index}`"
-                        title="Remove Token"
-                        @click="removeTokenFromSubscription(token)"
-                        >
-                        <span
-                          class="icon has-text-danger is-small is-pulled-right"
-                          v-html="require('@/img/x.svg')"
-                          />
-                      </a>
-                    </v-token>
-                    </div>
+                    </token-list>
                   </div>
                 </nav>
                 <p v-else class="small">You have no tokens on this network. Add
@@ -98,6 +80,7 @@ import { BigNumber } from 'bignumber.js';
 import web3 from 'web3';
 import Balance from '@/components/Balance';
 import VToken from '@/components/VToken';
+import TokenList from '@/components/TokenList';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/AddTokenModal';
 import VSpinner from '@/components/ui/VSpinner';
@@ -179,22 +162,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('tokens', [
-      'addTokenToSubscription',
-      'updateTokenPrice',
-      'removeTokenFromSubscription',
-      'getAllTokens',
-    ]),
-    getTokenAmount(token) {
-      let balanceBn = new BigNumber(token.balance);
-      let decimalsBn = new BigNumber(10).pow(token.decimals);
-      return balanceBn.div(decimalsBn);
-    },
-    getTokenPrice(symbol) {
-      return new BigNumber(this.prices[symbol]['ETH'])
-        .times(this.ethPrice)
-        .toString();
-    },
+    ...mapActions('tokens', ['addTokenToSubscription', 'getAllTokens']),
     setSearchToken(query) {
       this.searchToken = query;
     },
@@ -212,6 +180,7 @@ export default {
     Multiselect,
     VSpinner,
     VToken,
+    TokenList,
   },
 };
 </script>

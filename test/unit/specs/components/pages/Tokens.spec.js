@@ -173,20 +173,6 @@ describe('TokensPage', () => {
         expect(wrapper.vm.searchTokenList).toHaveLength(1);
       });
     });
-
-    describe('user token', () => {
-      it('should call remove action', () => {
-        const button = wrapper.find('span#remove-token-1');
-        button.trigger('click');
-
-        expect(actions.removeTokenFromSubscription).toHaveBeenCalledTimes(1);
-        expect(actions.removeTokenFromSubscription).toBeCalledWith(
-          expect.any(Object),
-          tokens[1],
-          undefined,
-        );
-      });
-    });
   });
 
   describe('props', () => {
