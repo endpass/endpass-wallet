@@ -1,15 +1,15 @@
 <template>
-	<div class="balance">
+	<div class="balance has-spinner">
     <span class="title amount" :title="balanceString"
       :class="{'long-number': balance.length > 6}">{{ balanceStringShort }}</span>
     <span class="currency">
       {{currency}}
     </span>
-    <a class="button is-small" :class="{isLoading: isLoading}" v-if="hasUpdate" @click.prevent="update()">
+    <a class="button is-small" :class="{'is-loading': isLoading}" v-if="hasUpdate" @click.prevent="update()">
     	<span class="icon is-small"
                 v-html="require('@/img/reload.svg')"></span>
     </a>
-    <v-spinner :is-loading="isLoading"></v-spinner>
+    <v-spinner class="is-transparent" :is-loading="isLoading"></v-spinner>
 	</div>
 </template>
 <script>
