@@ -11,7 +11,7 @@ jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
 global.localStorage = localStorageMock;
 
 //Fake action from antoher storage
-store.actions['tokens/subscribeOnTokenUpdates'] = jest.fn();
+store.actions['tokens/subscribeOnTokensBalancesUpdates'] = jest.fn();
 store.actions['errors/emitError'] = jest.fn();
 
 const { state, mutations, actions } = store;

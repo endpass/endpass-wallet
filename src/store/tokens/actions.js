@@ -1,4 +1,19 @@
-import mutationsTypes from './mutations-types';
+import {
+  SAVE_TOKEN,
+  SAVE_TOKENS,
+  DELETE_TOKEN,
+  SAVE_TOKENS_PRICES,
+  SAVE_TOKEN_PRICE,
+  SAVE_TRACKED_TOKENS,
+  SAVE_SERIALISATION_INTERVAL,
+  SAVE_TOKEN_TRACKER_INSTANCE,
+} from './mutations-types';
+import TokenTracker from 'eth-token-tracker';
+import { Token } from '@/class';
+import { tokenInfoService, ethplorerService, priceService } from '@/services';
+import storage from '@/services/storage';
+import { subscriptionsAPIInterval } from '@/config';
+import { NotificationError } from '@/class';
 
 const saveTokenAndSubscribe = (
   { state, commit, dispatch, rootState },
@@ -10,7 +25,7 @@ const saveTokenAndSubscribe = (
   );
 
   if (!tokenExist) {
-    commit(mutationsTypes.SAVE_TOKEN, {
+    commit(SAVE_TOKEN, {
       token,
       net: rootState.web3.activeNet.id,
     });
@@ -30,7 +45,7 @@ const deleteTokenAndUnsubscribe = (
 ) => {
   const { net } = getters;
 
-  commit(mutationsTypes.DELETE_TOKEN, { token, net });
+  commit(DELETE_TOKEN, { token, net });
 
   //TODO refactor to new service & async/await call mutation in callback
   return storage
@@ -44,9 +59,8 @@ const getAllTokens = async ({ dispatch, getters }) => {
   }
   let tokens = [];
   try {
-    tokens = await tokenInfoService
-      .getTokensList()
-      .map(token => new Token(token));
+    tokens = await tokenInfoService.getTokensList();
+    tokens = tokens.map(token => new Token(token));
   } catch (e) {
     const error = new NotificationError({
       title: 'Failed to get list of tokens',
@@ -59,7 +73,11 @@ const getAllTokens = async ({ dispatch, getters }) => {
     return tokens;
   }
 };
-const subscribeOnTokenUpdates = async ({ dispatch, state, rootState }) => {
+const subscribeOnTokensBalancesUpdates = async ({
+  dispatch,
+  state,
+  rootState,
+}) => {
   if (!rootState.accounts.address) {
     return;
   }
@@ -70,7 +88,7 @@ const subscribeOnTokenUpdates = async ({ dispatch, state, rootState }) => {
   }
   try {
     const tokensWithBalance = await dispatch('getTokensWithBalance');
-    await dispatch('subscribeOnTokensBalancesUpdates', tokensWithBalance);
+    dispatch('createTokenTracker', tokensWithBalance);
   } catch (e) {
     const error = new NotificationError({
       title: 'Failed token subscription',
@@ -88,9 +106,8 @@ const getTokensWithBalance = async ({ rootState, dispatch }) => {
   const address = rootState.accounts.address.getChecksumAddressString();
   let tokensWithBalance = [];
   try {
-    tokensWithBalance = await ethplorerService
-      .getTransactions(address)
-      .data.tokens.map(token => token.tokeninfo);
+    tokensWithBalance = await ethplorerService.getTokensWithBalance(address);
+    tokensWithBalance = tokensWithBalance.map(token => token.tokenInfo);
     dispatch(
       'connectionStatus/updateApiErrorStatus',
       {
@@ -117,15 +134,15 @@ const updateTokensPrices = async ({ state, commit, rootState }) => {
     symbols,
     rootState.web3.activeCurrency.name,
   );
-  commit(mutationsTypes.SAVE_TOKENS_PRICES, prices);
+  commit(SAVE_TOKENS_PRICES, prices);
   return prices;
 };
-const updateTokenPrice = async ({ commit }, symbol) => {
+const updateTokenPrice = async ({ commit, rootState }, symbol) => {
   const price = await priceService.getPrice(
     symbol,
     rootState.web3.activeCurrency.name,
   );
-  commit(mutationsTypes.SAVE_TOKEN_PRICE, symbol, price);
+  commit(SAVE_TOKEN_PRICE, symbol, price);
   return price;
 };
 const subscribeOnTokensPricesUpdates = ({ dispatch }, tokensToSubscribe) => {
@@ -134,11 +151,11 @@ const subscribeOnTokensPricesUpdates = ({ dispatch }, tokensToSubscribe) => {
   }, subscriptionsAPIInterval);
 };
 
-const subscribeOnTokensBalancesUpdates = (
+const createTokenTracker = (
   { state, commit, getters, rootState },
   tokensWithBalance,
 ) => {
-  commit(mutationsTypes.SAVE_TRACKED_TOKENS, []);
+  commit(SAVE_TRACKED_TOKENS, []);
 
   const address = rootState.accounts.address.getChecksumAddressString();
 
@@ -164,28 +181,30 @@ const subscribeOnTokensBalancesUpdates = (
       const balances = state.tokenTracker.serialize();
       // TODO check for errors here
       if (balances.length && typeof balances[0].symbol !== 'undefined')
-        commit(mutationsTypes.SAVE_TRACKED_TOKENS, balances);
+        commit(SAVE_TRACKED_TOKENS, balances);
     }
   }, subscriptionsAPIInterval);
-  commit(mutationsTypes.SAVE_SERIALISATION_INTERVAL, serialisationInterval);
-  commit(mutationsTypes.SAVE_TOKEN_TRACKER_INSTANCE, tokenTracker);
+  commit(SAVE_SERIALISATION_INTERVAL, serialisationInterval);
+  commit(SAVE_TOKEN_TRACKER_INSTANCE, tokenTracker);
 };
 
 const init = ({ commit, dispatch }) => {
   dispatch('subscribeOnTokensPricesUpdates');
   return storage
     .read('tokens')
-    .then(tokens => commit(mutationsTypes.SAVE_TOKENS, tokens || {}))
+    .then(tokens => commit(SAVE_TOKENS, tokens || {}))
     .catch(e => dispatch('errors/emitError', e, { root: true }));
 };
 
 export default {
+  getAllTokens,
   saveTokenAndSubscribe,
   deleteTokenAndUnsubscribe,
   getTokensWithBalance,
   updateTokensPrices,
   updateTokenPrice,
-  subscribeOnTokensPricesUpdates,
   subscribeOnTokensBalancesUpdates,
+  subscribeOnTokensPricesUpdates,
+  createTokenTracker,
   init,
 };

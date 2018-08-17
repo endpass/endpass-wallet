@@ -102,7 +102,11 @@ export default {
     selectWallet({ commit, state, dispatch }, address) {
       commit('setWallet', state.wallets[address]);
       commit('setAddress', address);
-      return dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true });
+      return dispatch(
+        'tokens/subscribeOnTokensBalancesUpdates',
+        {},
+        { root: true },
+      );
     },
     addWallet({ commit, dispatch, state }, json) {
       json.address = web3.utils.toChecksumAddress(json.address);

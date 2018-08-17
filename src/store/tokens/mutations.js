@@ -8,6 +8,7 @@ import {
   SAVE_TOKEN_TRACKER_INSTANCE,
   SAVE_SERIALISATION_INTERVAL,
 } from './mutations-types';
+import { Token } from '@/class';
 
 const saveToken = ({ savedTokens }, { token, net }) => {
   savedTokens[net] = savedTokens[net] || [];
@@ -52,7 +53,7 @@ const saveTrackedTokens = (state, tokens = []) => {
   state.trackedTokens = tokens.map(token => new Token(token));
 };
 
-const setTokenPrice = (state, tokenSymbol, price) => {
+const saveTokenPrice = (state, tokenSymbol, price) => {
   state.prices[tokenSymbol] = price;
 };
 
@@ -61,11 +62,11 @@ const saveTokensPrices = (state, prices) => {
 };
 
 const saveTokenTrackerInstance = (state, interval) => {
-  state.tokensSerializeInterval = interval;
+  state.tokenTracker = interval;
 };
 
 const saveSerialisationInterval = (state, tokenTracker) => {
-  state.tokenTracker = tokenTracker;
+  state.tokensSerializeInterval = tokenTracker;
 };
 
 export default {

@@ -126,7 +126,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('tokens', ['addTokenToSubscription']),
+    ...mapActions('tokens', ['saveTokenAndSubscribe']),
     addMore() {
       this.token = {
         addres: '',
@@ -142,7 +142,7 @@ export default {
       this.addedToken = false;
     },
     addToken() {
-      this.addTokenToSubscription(this.token);
+      this.saveTokenAndSubscribe(this.token);
       this.loadingToken = false;
       this.addedToken = true;
     },

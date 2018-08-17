@@ -99,7 +99,7 @@ describe('AddTokenModal', () => {
         tokens: {
           namespaced: true,
           actions: {
-            addTokenToSubscription() {},
+            saveTokenAndSubscribe() {},
           },
         },
       },
@@ -144,7 +144,7 @@ describe('AddTokenModal', () => {
   });
 
   it('adds token', () => {
-    let spy = jest.spyOn(wrapper.vm, 'addTokenToSubscription');
+    let spy = jest.spyOn(wrapper.vm, 'saveTokenAndSubscribe');
     wrapper.vm.addToken();
     expect(spy).toBeCalledWith(wrapper.vm.token);
   });

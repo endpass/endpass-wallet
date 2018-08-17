@@ -20,7 +20,7 @@
 
 <script>
 import router from '@/router';
-import { mapActions, mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
@@ -32,12 +32,12 @@ export default {
     address: '',
   }),
   methods: {
-    ...mapMutations('accounts', ['setAddress']),
+    ...mapActions('accounts', ['addWalletWithAddress']),
     async addWalletWithAddress() {
       this.isCreating = true;
       await new Promise(res => setTimeout(res, 20));
       try {
-        this.setAddress(this.address);
+        this.importWalletAddress(this.address);
         router.push('/');
       } catch (e) {
         this.errors.add({

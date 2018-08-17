@@ -265,7 +265,7 @@ export default {
       balance: state => state.accounts.balance,
       address: state => state.accounts.address.getChecksumAddressString(),
       tokens: state =>
-        state.tokens.activeTokens.filter(token => token.balance > 0),
+        state.tokens.trackedTokens.filter(token => token.balance > 0),
       activeCurrency: state => state.web3.activeCurrency,
       web3: state => state.web3.web3,
       activeNet: state => state.web3.activeNet,
