@@ -23,34 +23,32 @@ export default {
     },
   },
   actions: {
-    updatePrice({ commit, dispatch, rootState }) {
-      commit('startLoading');
-      let price = priceService.getPrice(
-        rootState.web3.activeCurrency.name,
-        rootState.accounts.settings.fiatCurrency,
-      );
-      price
-        .then(resp => {
-          commit('setPrice', resp[rootState.accounts.settings.fiatCurrency]);
-          commit('setUpdateTime', new Date().time);
-          dispatch(
-            'connectionStatus/updateApiErrorStatus',
-            {
-              id: 'price',
-              status: true,
-            },
-            { root: true },
-          );
-        })
-        .catch(e => {
-          e.apiError = {
+    async updatePrice({ commit, dispatch, rootState }) {
+      try {
+        commit('startLoading');
+        let price = await priceService.getPrice(
+          rootState.web3.activeCurrency.name,
+          rootState.accounts.settings.fiatCurrency,
+        );
+        commit('setPrice', price[rootState.accounts.settings.fiatCurrency]);
+        commit('setUpdateTime', new Date().time);
+        dispatch(
+          'connectionStatus/updateApiErrorStatus',
+          {
             id: 'price',
-            status: false,
-          };
-          dispatch('errors/emitError', e, { root: true });
-        });
-      commit('stopLoading');
-      return price;
+            status: true,
+          },
+          { root: true },
+        );
+      } catch (e) {
+        e.apiError = {
+          id: 'price',
+          status: false,
+        };
+        dispatch('errors/emitError', e, { root: true });
+      } finally {
+        commit('stopLoading');
+      }
     },
     subsctibeOnPriceUpdates(context) {
       setInterval(() => {
