@@ -1,4 +1,5 @@
 const identityAPIUrl = '/identity/api/v1';
+const tokenImageUrl = 'https://tokeninfo-dev.endpass.com';
 const tokenInfoAPIUrl = '/tokeninfo/api/v1';
 const cryptoDataAPIUrl = '/gasprice/api/v1';
 
@@ -11,6 +12,7 @@ const kdfParams = {
 export default {
   cryptoDataAPIUrl,
   identityAPIUrl,
+  tokenImageUrl,
   tokenInfoAPIUrl,
   kdfParams,
 };
