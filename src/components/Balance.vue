@@ -5,7 +5,7 @@
     <span class="currency">
       {{currency}}
     </span>
-    <a v-if="hasUpdate" @click.prevent="update()">
+    <a class="button is-small" :class="{isLoading: isLoading}" v-if="hasUpdate" @click.prevent="update()">
     	<span class="icon is-small"
                 v-html="require('@/img/reload.svg')"></span>
     </a>
@@ -30,6 +30,10 @@ export default {
     },
     round: {
       default: 4,
+    },
+    isLoading: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
