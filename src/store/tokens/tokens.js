@@ -21,7 +21,7 @@ export default {
   },
   getters: {
     net(state, getters, rootState) {
-      return rootState.web3.activeNet.id;
+      return;
     },
     savedActiveTokens(state, { net }) {
       return state.savedTokens[net] || [];
