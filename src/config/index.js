@@ -28,7 +28,7 @@ export const {
   hdKeyMnemonic,
   infuraConf,
   serviceThrottleTimeout,
-  subscriptionsBlockchainInterval,
+  blockUpdateInterval,
   priceUpdateInterval,
   tokenUpdateInterval,
   fiatPriceAPIUrl,

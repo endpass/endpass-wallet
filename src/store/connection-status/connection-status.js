@@ -1,4 +1,4 @@
-import { subscriptionsBlockchainInterval } from '@/config';
+import { blockUpdateInterval } from '@/config';
 
 export default {
   namespaced: true,
@@ -63,7 +63,7 @@ export default {
             commit('setWeb3ConnectionStatus', true);
             setTimeout(() => {
               dispatch('subscribeOnSyncStatus');
-            }, subscriptionsBlockchainInterval);
+            }, blockUpdateInterval);
           } else {
             dispatch('subscribeOnSyncStatus');
           }
@@ -73,7 +73,7 @@ export default {
           dispatch('errors/emitError', e, { root: true });
           setTimeout(() => {
             dispatch('subscribeOnSyncStatus');
-          }, subscriptionsBlockchainInterval);
+          }, blockUpdateInterval);
         });
     },
     init({ commit, dispatch, state }) {

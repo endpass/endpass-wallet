@@ -7,7 +7,9 @@ const infuraConf = {
   key: 'zU4GTAQ0LjJNKddbyztc',
 };
 const serviceThrottleTimeout = 2000;
-const subscriptionsBlockchainInterval = 3000;
+
+// Polling interval for web3
+const blockUpdateInterval = 15 * 1000;
 
 const identityAPIUrl = 'https://identity.endpass.com/api/v1';
 const cryptoDataAPIUrl = 'https://cryptodata.endpass.com/api/v1';
@@ -33,7 +35,7 @@ export default {
   hdKeyMnemonic,
   infuraConf,
   serviceThrottleTimeout,
-  subscriptionsBlockchainInterval,
+  blockUpdateInterval,
   tokenUpdateInterval,
   priceUpdateInterval,
   fiatPriceAPIUrl,
