@@ -102,8 +102,13 @@ export default {
             }
           })
           .once('error', (err, receipt) => {
-            dispatch('handleSendingError', { err, receipt, transaction });
-            eventEmitter.emit('error', err);
+            const ignoreError = 'Transaction was not mined within750 seconds';
+
+            if (!err.message.includes(ignoreError)) {
+              dispatch('handleSendingError', { err, receipt, transaction });
+              eventEmitter.emit('error', err);
+            }
+
             console.error(err);
           });
 
