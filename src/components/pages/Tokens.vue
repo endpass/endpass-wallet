@@ -82,7 +82,7 @@ import Balance from '@/components/Balance';
 import VToken from '@/components/VToken';
 import TokenList from '@/components/TokenList';
 import SearchInput from '@/components/SearchInput.vue';
-import AddTokenModal from '@/components/AddTokenModal';
+import AddTokenModal from '@/components/modal/AddTokenModal';
 import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapActions, mapGetters } from 'vuex';
 
