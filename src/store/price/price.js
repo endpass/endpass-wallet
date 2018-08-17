@@ -5,7 +5,7 @@ export default {
   namespaced: true,
   state: {
     price: null,
-    updated: null,
+    updateTime: null,
   },
   mutations: {
     setPrice(state, price) {
