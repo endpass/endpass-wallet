@@ -1,5 +1,8 @@
 <template>
   <div v-if="isLoading" class="page-loader modal is-active">
+    <div class="page-loader-logo">
+      <img src="/static/logo-dark.png" alt="Endpass">
+    </div>
     <div class="spinner">
       <div class="spinner-dot spinner-dot-1">
       </div>
@@ -28,6 +31,13 @@ export default {
 .page-loader {
   background-color: $purple;
 
+  .page-loader-logo img {
+    height: auto;
+    width: auto;
+    margin: auto;
+    max-height: 6rem;
+  }
+
   .spinner {
     color: $white;
 
@@ -45,9 +55,6 @@ export default {
       animation-delay: -0.32s;
     }
     .spinner-dot-2 {
-      animation-delay: -0.32s;
-    }
-    .spinner-dot-3 {
       animation-delay: -0.16s;
     }
   }
