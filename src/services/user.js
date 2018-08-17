@@ -57,13 +57,57 @@ export default {
   },
 
   getSettings() {
-    return http.get(`${identityAPIUrl}/user`).then(({ data }) => data);
+    return http
+      .get(`${identityAPIUrl}/user`)
+      .then(({ data }) => data.user || {})
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error in server storage',
+          text: "Can't read data from server storage. Please, reload page",
+          type: 'is-warning',
+        });
+      });
+  },
+
+  getSetting(setting) {
+    return http
+      .get(`${identityAPIUrl}/user`)
+      .then(({ data }) => {
+        return data.user[setting];
+      })
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error in server storage',
+          text:
+            "Can't read data from server storage, maybe it is not available",
+          type: 'is-warning',
+        });
+      });
   },
 
   setSettings(settings) {
     return http
       .post(`${identityAPIUrl}/user`, settings)
-      .then(({ data }) => data);
+      .then(({ data }) => data)
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error in server storage',
+          text: "Can't save data to server storage, maybe it is not available",
+          type: 'is-warning',
+        });
+      });
+  },
+  setSetting(prop, data) {
+    return http
+      .post(`${identityAPIUrl}/user`, { [prop]: data })
+      .then(({ data }) => data)
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error in server storage',
+          text: "Can't save data to server storage, maybe it is not available",
+          type: 'is-warning',
+        });
+      });
   },
 
   // removeSettings(propsArr) {

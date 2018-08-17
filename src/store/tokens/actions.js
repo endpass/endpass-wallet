@@ -11,11 +11,11 @@ import {
 import TokenTracker from 'eth-token-tracker';
 import { Token } from '@/class';
 import { tokenInfoService, ethplorerService, priceService } from '@/services';
-import storage from '@/services/storage';
+import { userService } from '@/services';
 import { subscriptionsAPIInterval } from '@/config';
 import { NotificationError } from '@/class';
 
-const saveTokenAndSubscribe = (
+const saveTokenAndSubscribe = async (
   { state, commit, dispatch, rootState },
   token,
 ) => {
@@ -25,32 +25,38 @@ const saveTokenAndSubscribe = (
   );
 
   if (!tokenExist) {
-    commit(SAVE_TOKEN, {
-      token,
-      net: rootState.web3.activeNet.id,
-    });
+    try {
+      await userService.setSetting('tokens', state.savedTokens);
 
-    //TODO refactor to new service & async/await call mutation in callback
-    storage
-      .write('tokens', state.savedTokens)
-      .catch(e => dispatch('errors/emitError', e, { root: true }));
+      commit(SAVE_TOKEN, {
+        token,
+        net: rootState.web3.activeNet.id,
+      });
 
-    state.tokenTracker.add({ ...token });
+      state.tokenTracker.add({ ...token });
+    } catch (e) {
+      dispatch('errors/emitError', e, { root: true });
+    }
   }
 };
 
-const deleteTokenAndUnsubscribe = (
+const deleteTokenAndUnsubscribe = async (
   { commit, getters, state, dispatch },
   token,
 ) => {
   const { net } = getters;
 
-  commit(DELETE_TOKEN, { token, net });
-
-  //TODO refactor to new service & async/await call mutation in callback
-  return storage
-    .write('tokens', state.savedTokens)
-    .catch(e => dispatch('errors/emitError', e, { root: true }));
+  try {
+    commit(DELETE_TOKEN, { token, net });
+    await userService.setSetting('tokens', state.savedTokens);
+  } catch (e) {
+    commit(SAVE_TOKEN, {
+      token,
+      net,
+    });
+    state.tokenTracker.add({ ...token });
+    dispatch('errors/emitError', e, { root: true });
+  }
 };
 
 const getAllTokens = async ({ dispatch, getters }) => {
