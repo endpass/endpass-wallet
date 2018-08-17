@@ -10,12 +10,12 @@ export default {
   namespaced: true,
   state() {
     return {
-      // tokens from subscribtipn
-      activeTokens: [],
+      // tokens from subscription
+      trackedTokens: [],
       //tokens from localStorage
       savedTokens: {},
       prices: {},
-      tokensSubscription: null,
+      tokenTracker: null,
       tokensSerializeInterval: null,
     };
   },
