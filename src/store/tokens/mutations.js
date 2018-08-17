@@ -61,12 +61,12 @@ const saveTokensPrices = (state, prices) => {
   state.prices = prices;
 };
 
-const saveTokenTrackerInstance = (state, interval) => {
-  state.tokenTracker = interval;
+const saveTokenTrackerInstance = (state, tokenTracker) => {
+  state.tokenTracker = tokenTracker;
 };
 
-const saveSerialisationInterval = (state, tokenTracker) => {
-  state.tokensSerializeInterval = tokenTracker;
+const saveSerialisationInterval = (state, interval) => {
+  state.tokensSerializeInterval = interval;
 };
 
 export default {
