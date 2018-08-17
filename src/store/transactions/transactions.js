@@ -102,8 +102,14 @@ export default {
             }
           })
           .once('error', (err, receipt) => {
-            dispatch('handleSendingError', { err, receipt, transaction });
-            eventEmitter.emit('error', err);
+            const ignoreError = 'Transaction was not mined within750 seconds';
+
+            if (!err.message.includes(ignoreError)) {
+              dispatch('handleSendingError', { err, receipt, transaction });
+              eventEmitter.emit('error', err);
+            }
+
+            console.error(err);
           });
 
         return eventEmitter;
@@ -168,13 +174,20 @@ export default {
               trx => transaction.hash === trx.hash,
             );
 
-            sendEvent.once('transactionHash', () => {
-              const shortTnx = trxInList.hash.slice(0, 10);
-              const error = new NotificationError({
-                title: 'Try to cancel the transaction',
-                text: `The cancellation ${shortTnx}... was started`,
-              });
-              dispatch('errors/emitError', error, { root: true });
+            sendEvent.once('transactionHash', async () => {
+              const nonceInBlock = await dispatch('getNonceInBlock');
+
+              if (trxInList.nonce == nonceInBlock) {
+                const shortTnx = trxInList.hash.slice(0, 10);
+                const error = new NotificationError({
+                  title: 'Try to cancel the transaction',
+                  text: `The cancellation ${shortTnx}... was started`,
+                });
+                dispatch('errors/emitError', error, { root: true });
+              } else {
+                // if a transaction with an too high nonce is canceled
+                sendEvent.emit('confirmation');
+              }
             });
 
             sendEvent.once('confirmation', () => {
