@@ -10,5 +10,7 @@ exports[`VSpinner props isLoading should render component 1`] = `
     color="#4b0472"
     status="true"
   />
+   
+  <!---->
 </div>
 `;
