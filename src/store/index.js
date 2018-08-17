@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import accounts from './accounts/accounts';
-import tokens from './tokens/tokens';
+import tokens from './tokens';
 import web3 from './web3/web3';
 import gasPrice from './gas-price/gas-price';
 import price from './price/price';
