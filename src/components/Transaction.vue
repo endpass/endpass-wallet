@@ -10,18 +10,27 @@
           </div>
         </div>
         <div class="level-right">
-          <a class="level-item has-text-info"
-            title="Resend" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="resend" :disabled="isSyncing">
+          <v-spinner
+            v-if="isHavePendingRelatedTransaction && transaction.state === 'pending'"
+            class="level-item has-text-info actions-loader"
+            :is-loading="isHavePendingRelatedTransaction"
+            :label="pendingActionText"
+          />
+          <template v-else>
+            <a class="level-item has-text-info"
+               title="Resend" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="resend" :disabled="isSyncing">
             <span class="icon is-small"
                   v-html="require('@/img/loop.svg')"></span>
             <span class="caption is-hidden-mobile">Resend</span>
           </a>
           <a class="level-item has-text-danger"
-            title="Cancel" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="cancel" :disabled="isSyncing" >
+             title="Cancel" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="cancel" :disabled="isSyncing" >
             <span class="icon is-small"
                   v-html="require('@/img/ban.svg')"></span>
             <span class="caption is-hidden-mobile">Cancel</span>
           </a>
+          </template>
+
           <a @click="toggleExpanded" title="Details" class="level-item has-text-info">
             <span class="icon is-small"
                   v-html="require('@/img/ellipses.svg')"></span>
@@ -86,6 +95,7 @@ import Tx from 'ethereumjs-tx';
 import { Transaction } from '@/class';
 import ResendModal from './ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
+import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import error from '@/mixins/error';
 import moment from 'moment';
@@ -131,6 +141,24 @@ export default {
     isPending() {
       return this.transaction.state === 'pending';
     },
+    pendingActionText() {
+      let text = '';
+
+      if (this.isHavePendingRelatedTransaction) {
+        if (this.state === 'canceled') {
+          text = 'Canceling...';
+        } else if (this.state === 'resent') {
+          text = 'Resending...';
+        }
+      }
+
+      return text;
+    },
+    isHavePendingRelatedTransaction() {
+      return (
+        this.transactionToSend && this.transactionToSend.state === 'pending'
+      );
+    },
     // Dynamic class based on transaction status
     statusClass() {
       return {
@@ -164,6 +192,7 @@ export default {
     ...mapActions('transactions', ['resendTransaction', 'cancelTransaction']),
     resend() {
       this.transactionToSend = this.transaction.clone();
+      this.transactionToSend.state = null;
       this.resendModalOpen = true;
       this.state = 'resent';
     },
@@ -182,6 +211,7 @@ export default {
           ? this.cancelTransaction
           : this.resendTransaction;
 
+      this.transactionToSend.state = 'pending';
       sendTransaction({ transaction: this.transactionToSend, password })
         .then(() => {
           this.$notify({
@@ -189,6 +219,7 @@ export default {
             text: `Transaction was ${this.state}`,
             type: 'is-info',
           });
+          this.transactionToSend = null;
           this.state = null;
         })
         .catch(() => {});
@@ -204,13 +235,14 @@ export default {
       this.resendModalOpen = false;
     },
     cancel() {
-      if (this.transaction.date) return;
+      if (this.transaction.state !== 'pending') return;
 
       this.state = 'canceled';
       this.transactionToSend = this.transaction.clone();
       this.transactionToSend.value = '0';
       this.transactionToSend.to = this.address;
       this.transactionToSend.gasPrice = this.transactionToSend.getUpGasPrice();
+      this.transactionToSend.state = null;
       this.requestPassword();
     },
     parseData() {
@@ -229,6 +261,7 @@ export default {
     Account,
     ResendModal,
     PasswordModal,
+    VSpinner,
   },
 };
 </script>
@@ -324,6 +357,11 @@ export default {
     * {
       margin-left: 0.5rem;
     }
+  }
+
+  .actions-loader .sl-spinner {
+    width: 16px !important;
+    height: 16px !important;
   }
 }
 </style>
