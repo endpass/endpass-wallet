@@ -1,16 +1,18 @@
 <template>
   <div v-if="isLoading" class="page-loader modal is-active">
-    <div class="page-loader-logo">
-      <img src="/static/logo-dark.png" alt="Endpass">
-    </div>
-    <div class="spinner">
-      <div class="spinner-dot spinner-dot-1">
+    <div class="modal-content">
+      <div class="page-loader-logo">
+        <img src="/static/logo-dark.png" alt="Endpass">
       </div>
-      <div class="spinner-dot spinner-dot-2">
+      <div class="spinner">
+        <div class="spinner-dot spinner-dot-1">
+        </div>
+        <div class="spinner-dot spinner-dot-2">
+        </div>
+        <div class="spinner-dot spinner-dot-3">
+        </div>
       </div>
-      <div class="spinner-dot spinner-dot-3">
-      </div>
-      <p class="spinner-caption">Please wait...</p>
+      <p class="spinner-caption">Loading...</p>
     </div>
   </div>
 </template>
@@ -29,17 +31,26 @@ export default {
 
 <style lang="scss">
 .page-loader {
+  color: $white;
   background-color: $purple;
 
-  .page-loader-logo img {
-    height: auto;
-    width: auto;
-    margin: auto;
-    max-height: 6rem;
+  .page-loader-logo {
+    margin: 0 auto;
+    text-align: center;
+    img {
+      height: auto;
+      width: auto;
+      max-height: 6rem;
+    }
   }
-
+  .spinner-caption {
+    text-align: center;
+    margin: 0 auto;
+  }
   .spinner {
-    color: $white;
+    margin: 1rem auto 0;
+    width: 70px;
+    text-align: center;
 
     .spinner-dot {
       width: 18px;

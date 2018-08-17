@@ -254,6 +254,7 @@ export default {
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     async init({ commit, dispatch }) {
+      commit('startPageLoading', null, { root: true });
       let [settings, email] = await Promise.all([
         storage.read('settings'),
         storage.read('email'),
@@ -284,6 +285,8 @@ export default {
         }
       } catch (e) {
         await dispatch('errors/emitError', e, { root: true });
+      } finally {
+        commit('stopPageLoading', null, { root: true });
       }
     },
   },
