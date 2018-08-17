@@ -9,10 +9,13 @@
     	<span class="icon is-small"
                 v-html="require('@/img/reload.svg')"></span>
     </a>
+    <v-spinner :is-loading="isLoading"></v-spinner>
 	</div>
 </template>
 <script>
 import { BigNumber } from 'bignumber.js';
+import VSpinner from '@/components/ui/VSpinner';
+
 export default {
   props: {
     amount: {
@@ -76,6 +79,9 @@ export default {
     update() {
       this.$emit('update');
     },
+  },
+  components: {
+    VSpinner,
   },
 };
 </script>

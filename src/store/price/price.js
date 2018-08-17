@@ -6,6 +6,7 @@ export default {
   state: {
     price: null,
     updateTime: null,
+    isLoading: false,
   },
   mutations: {
     setPrice(state, price) {
@@ -14,9 +15,16 @@ export default {
     setUpdateTime(state, updateTime) {
       state.updateTime = updateTime;
     },
+    startLoading(state) {
+      state.isLoading = true;
+    },
+    stopLoading(state) {
+      state.isLoading = false;
+    },
   },
   actions: {
     updatePrice({ commit, dispatch, rootState }) {
+      commit('startLoading');
       let price = priceService.getPrice(
         rootState.web3.activeCurrency.name,
         rootState.accounts.settings.fiatCurrency,
@@ -41,6 +49,7 @@ export default {
           };
           dispatch('errors/emitError', e, { root: true });
         });
+      commit('stopLoading');
       return price;
     },
     subsctibeOnPriceUpdates(context) {
