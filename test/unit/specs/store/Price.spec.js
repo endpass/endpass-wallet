@@ -60,10 +60,16 @@ describe('price store', async () => {
       },
       [
         {
+          type: 'startLoading',
+        },
+        {
           type: 'setPrice',
         },
         {
           type: 'setUpdateTime',
+        },
+        {
+          type: 'stopLoading',
         },
       ],
       [

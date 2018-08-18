@@ -9,13 +9,13 @@
       </div>
     </div>
 
-    <div class="info-item" v-if="balance !== null">
+    <div class="info-item">
 			<p class="heading">Balance</p>
-      <balance :amount="balance" class="level-stat" :currency="activeCurrency.name" />
+      <balance :amount="balance || 0" class="level-stat" :currency="activeCurrency.name" />
     </div>
-    <div class="info-item" v-if="price !== null && balance !== null">
+    <div class="info-item">
 			<p class="heading">Value</p>
-      <balance :amount="balance" :price="price" :decimals="2"
+      <balance :is-loading="priceLoading" :amount="balance || 0" :price="price || 0" :decimals="2"
       :currency="fiatCurrency" v-on:update="updatePrice" class="level-stat" />
     </div>
   </div>
@@ -34,6 +34,7 @@ export default {
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
       activeCurrency: state => state.web3.activeCurrency,
       price: state => state.price.price,
+      priceLoading: state => state.price.isLoading,
     }),
     ...mapGetters('accounts', {
       balance: 'balance',

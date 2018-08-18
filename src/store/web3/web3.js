@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import EthBlockTracker from 'eth-block-tracker';
 import storage from '@/services/storage';
-import { infuraConf, subscriptionsBlockchainInterval } from '@/config';
+import { infuraConf, blockUpdateInterval } from '@/config';
 import { providerFactory } from '@/class';
 
 const activeNet = {
@@ -170,7 +170,7 @@ export default {
       }
       state.blockSubscribtion = new EthBlockTracker({
         provider: state.web3.currentProvider,
-        pollingInterval: subscriptionsBlockchainInterval,
+        pollingInterval: blockUpdateInterval,
       });
       state.blockSubscribtion.on('latest', block => {
         dispatch('accounts/updateBalance', {}, { root: true });

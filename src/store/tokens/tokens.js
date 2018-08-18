@@ -3,7 +3,7 @@ import { Token } from '@/class';
 import { tokenInfoService, ethplorerService } from '@/services';
 import price from '@/services/price';
 import storage from '@/services/storage';
-import { subscriptionsAPIInterval } from '@/config';
+import { tokenUpdateInterval } from '@/config';
 import { NotificationError } from '@/class';
 
 export default {
@@ -126,7 +126,7 @@ export default {
         .write('tokens', state.savedTokens)
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    subscribeOnTokenUpdates({ dispatch, state, rootState }) {
+    subscribeOnTokenUpdates({ dispatch, commit, state, rootState }) {
       // destroy old subscription and recreate new one (in case of address/provider change)
       if (!rootState.accounts.address) {
         return Promise.resolve();
@@ -134,12 +134,13 @@ export default {
 
       if (state.tokensSerializeInterval) {
         clearInterval(state.tokensSerializeInterval);
+        commit('saveInterval', null);
         state.tokensSubscription.stop();
       }
       // get tokens with balances
       return dispatch('getNonZeroTokens')
         .then(resp => {
-          dispatch('subsctibeOnTokenPriceUpdates', resp.data.tokens || []);
+          dispatch('subscribeOnTokenPriceUpdates', resp.data.tokens || []);
           return dispatch('createTokenSubscription', resp.data.tokens || []);
         })
         .catch(() => {
@@ -165,10 +166,10 @@ export default {
         commit('setTokenPrice', symbol, resp);
       });
     },
-    subsctibeOnTokenPriceUpdates({ dispatch }) {
+    subscribeOnTokenPriceUpdates({ dispatch }) {
       setInterval(() => {
         dispatch('updateTokenPrices');
-      }, subscriptionsAPIInterval);
+      }, tokenUpdateInterval);
     },
     createTokenSubscription(
       { state, commit, getters, rootState },
