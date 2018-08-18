@@ -47,6 +47,9 @@ export default {
     PageLoader,
   },
   mixins: [errorHandler],
+  created() {
+    this.$store.dispatch('init');
+  },
 };
 </script>
 
