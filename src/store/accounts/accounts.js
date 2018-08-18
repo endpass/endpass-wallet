@@ -255,22 +255,22 @@ export default {
     },
     async init({ commit, dispatch }) {
       commit('startPageLoading', null, { root: true });
-      let [settings, email] = await Promise.all([
-        storage.read('settings'),
-        storage.read('email'),
-      ]);
-      commit('setEmail', email);
-
-      if (settings) {
-        commit('setSettings', settings);
-      }
-
-      if (!email) {
-        storage.disableRemote();
-        return null;
-      }
-
       try {
+        let [settings, email] = await Promise.all([
+          storage.read('settings'),
+          storage.read('email'),
+        ]);
+        commit('setEmail', email);
+
+        if (settings) {
+          commit('setSettings', settings);
+        }
+
+        if (!email) {
+          storage.disableRemote();
+          return null;
+        }
+
         // Fetch and save HD wallet
         let hdKey = await userService.getHDKey();
         if (hdKey) {
