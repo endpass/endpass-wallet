@@ -14,22 +14,30 @@ import { Token } from '@/class';
 describe('tokens mutations', () => {
   it('saves token', () => {
     const token = {
-      address: '0x0',
-      symbol: 'Zero',
+      address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+      symbol: 'ZERO',
+      balance: 1,
+      decimals: 1,
+      logo: 'kek.jpg',
+      name: 'Zero token',
     };
     const net = 1;
     let state = {
       savedTokens: {},
     };
 
-    mutations[SAVE_TOKEN](state, token, net);
+    mutations[SAVE_TOKEN](state, { token, net });
 
-    expect(state.saveTokens[net]).toBe(token);
+    expect(state.savedTokens[net][0]).toMatchObject(token);
   });
   it('deletes token', () => {
     const token = {
-      address: '0x0',
-      symbol: 'Zero',
+      address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+      symbol: 'ZERO',
+      balance: 1,
+      decimals: 1,
+      logo: 'kek.jpg',
+      name: 'Zero token',
     };
     const net = 1;
     let tokenTracker = {
@@ -43,17 +51,22 @@ describe('tokens mutations', () => {
       tokenTracker,
     };
 
-    mutations[DELETE_TOKEN](state, token, net);
+    mutations[DELETE_TOKEN](state, { token, net });
 
     expect(state.savedTokens[net]).not.toContain(token);
     expect(state.tokenTracker.tokens).not.toContain(token);
-    expect(trackedTokens).not.toContain(token);
+    expect(state.trackedTokens).not.toContain(token);
   });
 
   it('saves tracked tokens as Token objects', () => {
     const tokens = [
       {
-        address: '0x0',
+        address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+        symbol: 'ZERO',
+        balance: 1,
+        decimals: 1,
+        logo: 'kek.jpg',
+        name: 'Zero token',
       },
     ];
     let state = {};
@@ -61,8 +74,8 @@ describe('tokens mutations', () => {
     mutations[SAVE_TRACKED_TOKENS](state, tokens);
 
     expect(state.trackedTokens.length).toBe(1);
-    expect(state.trackedTokens[0]).toMatch(tokens[0]);
-    expect(Token instanceof state.trackedTokens[0]).toBe(true);
+    expect(state.trackedTokens[0]).toMatchObject(tokens[0]);
+    expect(state.trackedTokens[0] instanceof Token).toBe(true);
   });
 
   it('saves tokens prices', () => {
@@ -79,7 +92,7 @@ describe('tokens mutations', () => {
   });
 
   it('saves token price', () => {
-    const prices = [
+    const price = [
       {
         price: '100',
       },
@@ -87,7 +100,7 @@ describe('tokens mutations', () => {
     const symbol = 'kek';
     let state = {};
 
-    mutations[SAVE_TOKEN_PRICE](state, price, symbol);
+    mutations[SAVE_TOKEN_PRICE](state, { price, symbol });
 
     expect(state.prices[symbol]).toBe(price);
   });
@@ -113,7 +126,7 @@ describe('tokens mutations', () => {
     ];
     let state = {};
 
-    mutations[SAVE_SERIALISATION_INTERVAL](state, tracker);
+    mutations[SAVE_SERIALISATION_INTERVAL](state, interval);
 
     expect(state.tokensSerializeInterval).toBe(interval);
   });

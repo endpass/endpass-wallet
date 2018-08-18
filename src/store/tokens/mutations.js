@@ -53,8 +53,9 @@ const saveTrackedTokens = (state, tokens = []) => {
   state.trackedTokens = tokens.map(token => new Token(token));
 };
 
-const saveTokenPrice = (state, tokenSymbol, price) => {
-  state.prices[tokenSymbol] = price;
+const saveTokenPrice = (state, { symbol, price }) => {
+  state.prices = state.prices || {};
+  state.prices[symbol] = price;
 };
 
 const saveTokensPrices = (state, prices) => {

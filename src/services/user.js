@@ -70,19 +70,9 @@ export default {
   },
 
   getSetting(setting) {
-    return http
-      .get(`${identityAPIUrl}/user`)
-      .then(({ data }) => {
-        return data.user[setting];
-      })
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Error in server storage',
-          text:
-            "Can't read data from server storage, maybe it is not available",
-          type: 'is-warning',
-        });
-      });
+    return this.getSettings().then(({ user }) => {
+      return user[setting];
+    });
   },
 
   setSettings(settings) {
@@ -97,17 +87,11 @@ export default {
         });
       });
   },
+
   setSetting(prop, data) {
-    return http
-      .post(`${identityAPIUrl}/user`, { [prop]: data })
-      .then(({ data }) => data)
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Error in server storage',
-          text: "Can't save data to server storage, maybe it is not available",
-          type: 'is-warning',
-        });
-      });
+    return this.setSettings({
+      [prop]: data,
+    });
   },
 
   // removeSettings(propsArr) {

@@ -9,32 +9,37 @@ import {
   SAVE_TOKEN_TRACKER_INSTANCE,
 } from './mutations-types';
 import TokenTracker from 'eth-token-tracker';
-import { Token } from '@/class';
-import { tokenInfoService, ethplorerService, priceService } from '@/services';
-import { userService } from '@/services';
+import { Token, NotificationError } from '@/class';
+import {
+  tokenInfoService,
+  ethplorerService,
+  priceService,
+  userService,
+} from '@/services';
 import { subscriptionsAPIInterval } from '@/config';
-import { NotificationError } from '@/class';
 
-const saveTokenAndSubscribe = async (
-  { state, commit, dispatch, rootState },
-  token,
-) => {
+const saveTokenAndSubscribe = async ({ state, commit, getters }, token) => {
+  const { net } = getters;
+
   // Check if already subscribed to token
-  const tokenExist = state.tokenTracker.tokens.find(
-    subscriptionToken => subscriptionToken.address === token.address,
-  );
-
+  const tokenExist =
+    state.tokenTracker &&
+    state.tokenTracker.tokens &&
+    state.tokenTracker.tokens.find(
+      subscriptionToken => subscriptionToken.address === token.address,
+    );
   if (!tokenExist) {
     try {
-      await userService.setSetting('tokens', state.savedTokens);
-
       commit(SAVE_TOKEN, {
         token,
-        net: rootState.web3.activeNet.id,
+        net: net,
       });
+
+      await userService.setSetting('tokens', state.savedTokens);
 
       state.tokenTracker.add({ ...token });
     } catch (e) {
+      commit(DELETE_TOKEN, { token, net });
       dispatch('errors/emitError', e, { root: true });
     }
   }
@@ -148,7 +153,7 @@ const updateTokenPrice = async ({ commit, rootState }, symbol) => {
     symbol,
     rootState.web3.activeCurrency.name,
   );
-  commit(SAVE_TOKEN_PRICE, symbol, price);
+  commit(SAVE_TOKEN_PRICE, { symbol, price });
   return price;
 };
 const subscribeOnTokensPricesUpdates = ({ dispatch }, tokensToSubscribe) => {
@@ -196,8 +201,8 @@ const createTokenTracker = (
 
 const init = ({ commit, dispatch }) => {
   dispatch('subscribeOnTokensPricesUpdates');
-  return storage
-    .read('tokens')
+  return userService
+    .getSetting('tokens')
     .then(tokens => commit(SAVE_TOKENS, tokens || {}))
     .catch(e => dispatch('errors/emitError', e, { root: true }));
 };
