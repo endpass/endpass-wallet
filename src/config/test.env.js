@@ -1,4 +1,5 @@
 const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1';
+const tokenImageUrl = 'https://tokeninfo-dev.endpass.com';
 const tokenInfoAPIUrl = 'https://tokeninfo-dev.endpass.com/api/v1';
 const cryptoDataAPIUrl = 'https://cryptodata-dev.endpass.com/api/v1';
 
@@ -9,6 +10,7 @@ const kdfParams = {
 
 export default {
   identityAPIUrl,
+  tokenImageUrl,
   tokenInfoAPIUrl,
   cryptoDataAPIUrl,
   kdfParams,
