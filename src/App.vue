@@ -27,6 +27,7 @@
         <p class="small">&copy; 2018 Endpass, Inc</p>
       </div>
     </footer>
+    <page-loader />
   </div>
 </template>
 
@@ -35,6 +36,7 @@ import NavSidebar from '@/components/NavSidebar.vue';
 import InfoBar from '@/components/bar/InfoBar.vue';
 import QuickActions from '@/components/QuickActions.vue';
 import errorHandler from '@/mixins/errorHandler';
+import PageLoader from '@/components/ui/PageLoader';
 
 export default {
   name: 'App',
@@ -42,8 +44,12 @@ export default {
     NavSidebar,
     InfoBar,
     QuickActions,
+    PageLoader,
   },
   mixins: [errorHandler],
+  created() {
+    this.$store.dispatch('init');
+  },
 };
 </script>
 

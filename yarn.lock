@@ -9339,20 +9339,9 @@ vue-router-multiguard@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/vue-router-multiguard/-/vue-router-multiguard-1.0.3.tgz#f700991719b40642fb22d5dd0baed6777cfecfaa"
 
-vue-router@^2.4.0:
-  version "2.8.1"
-  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-2.8.1.tgz#9833c9ee57ac83beb0269056fefee71713f20695"
-
 vue-router@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.0.1.tgz#d9b05ad9c7420ba0f626d6500d693e60092cc1e9"
-
-vue-spinner-component@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/vue-spinner-component/-/vue-spinner-component-1.0.5.tgz#c2647b2c05fa716bcffadf5f2c462496d706049b"
-  dependencies:
-    vue "^2.2.1"
-    vue-router "^2.4.0"
 
 vue-style-loader@^3.0.0, vue-style-loader@^3.0.1:
   version "3.1.2"
@@ -9376,7 +9365,7 @@ vue-timers@^1.7.3:
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/vue-timers/-/vue-timers-1.7.3.tgz#e18504bb6ad5dd0a3126d712f71d934f004bf785"
 
-vue@^2.2.1, vue@^2.5.2:
+vue@^2.5.2:
   version "2.5.16"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.16.tgz#07edb75e8412aaeed871ebafa99f4672584a0085"
 

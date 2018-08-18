@@ -258,22 +258,23 @@ export default {
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     async init({ commit, dispatch }) {
-      let [settings, email] = await Promise.all([
-        storage.read('settings'),
-        storage.read('email'),
-      ]);
-      commit('setEmail', email);
-
-      if (settings) {
-        commit('setSettings', settings);
-      }
-
-      if (!email) {
-        storage.disableRemote();
-        return null;
-      }
-
+      commit('startPageLoading', null, { root: true });
       try {
+        let [settings, email] = await Promise.all([
+          storage.read('settings'),
+          storage.read('email'),
+        ]);
+        commit('setEmail', email);
+
+        if (settings) {
+          commit('setSettings', settings);
+        }
+
+        if (!email) {
+          storage.disableRemote();
+          return null;
+        }
+
         // Fetch and save HD wallet
         let hdKey = await userService.getHDKey();
         if (hdKey) {
@@ -288,6 +289,8 @@ export default {
         }
       } catch (e) {
         await dispatch('errors/emitError', e, { root: true });
+      } finally {
+        commit('stopPageLoading', null, { root: true });
       }
     },
   },

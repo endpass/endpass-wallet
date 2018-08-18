@@ -14,7 +14,14 @@ global.localStorage = localStorageMock;
 store.actions['tokens/subscribeOnTokensBalancesUpdates'] = jest.fn();
 store.actions['errors/emitError'] = jest.fn();
 
-const { state, mutations, actions } = store;
+const { state, actions } = store;
+
+// Mock root mutations
+const mutations = {
+  startPageLoading: jest.fn(),
+  stopPageLoading: jest.fn(),
+  ...store.mutations,
+};
 
 const commit = store => (type, payload) => mutations[type](store, payload);
 const dispatch = context => (type, payload) => {
@@ -32,6 +39,11 @@ const context = {
 describe('accounts store', () => {
   beforeEach(async () => {
     await actions.init(context);
+  });
+
+  it('should have shown page loading indicator', () => {
+    expect(mutations.startPageLoading).toHaveBeenCalledTimes(1);
+    expect(mutations.stopPageLoading).toHaveBeenCalledTimes(1);
   });
 
   it('should select wallet value', () => {

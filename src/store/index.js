@@ -13,13 +13,26 @@ import userModule from './user';
 
 Vue.use(Vuex);
 const store = new Vuex.Store({
-  state: {},
-  mutations: {},
+  state: {
+    isPageLoading: false, //global page loading
+  },
+  mutations: {
+    startPageLoading(state) {
+      state.isPageLoading = true;
+    },
+    stopPageLoading(state) {
+      state.isPageLoading = false;
+    },
+  },
   actions: {
-    init({ dispatch }, actions) {
-      actions
-        .filter(act => act.includes('/init'))
-        .forEach(action => dispatch(action));
+    // Dispatch all Vuex init() actions
+    init({ dispatch }) {
+      dispatch('errors/init');
+      dispatch('accounts/init');
+      dispatch('web3/init');
+      dispatch('tokens/init');
+      dispatch('price/init');
+      dispatch('connectionStatus/init');
     },
   },
   modules: {
@@ -36,7 +49,5 @@ const store = new Vuex.Store({
   //TODO enable strict
   //strict: process.env.NODE_ENV !== 'production',
 });
-
-store.dispatch('init', Object.keys(store._actions));
 
 export default store;

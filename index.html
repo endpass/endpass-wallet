@@ -6,9 +6,87 @@
     <title>Endpass Wallet</title>
     <link rel="stylesheet" href="/static/bulma.0.7.1.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
+    <style>
+      .v-cloak {
+        background-color: #4b0472;
+        color: #fff;
+        display: none;
+        align-items: center;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+        position: fixed;
+        height: 100vh;
+        width: 100vw;
+        z-index: 100;
+      }
+      [v-cloak].v-cloak { display:flex; }
+      .page-loader-logo img {
+        height: auto;
+        width: auto;
+        margin: auto;
+        max-height: 6rem;
+      }
+      .v-cloak .spinner {
+        margin: 1rem auto 0;
+        width: 70px;
+        text-align: center;
+      }
+			.v-cloak .spinner > .spinner-dot {
+				width: 18px;
+				height: 18px;
+				background-color: #fff;
+
+				border-radius: 100%;
+				display: inline-block;
+				-webkit-animation: bouncedelay 1.4s infinite ease-in-out both;
+				animation: bouncedelay 1.4s infinite ease-in-out both;
+			}
+			.v-cloak .spinner .spinner-dot-1 {
+				-webkit-animation-delay: -0.32s;
+				animation-delay: -0.32s;
+			}
+
+			.v-cloak .spinner .spinner-dot-2 {
+				-webkit-animation-delay: -0.16s;
+				animation-delay: -0.16s;
+			}
+
+			@-webkit-keyframes bouncedelay {
+				0%, 80%, 100% { -webkit-transform: scale(0) }
+				40% { -webkit-transform: scale(1.0) }
+			}
+
+			@keyframes bouncedelay {
+				0%, 80%, 100% {
+					-webkit-transform: scale(0);
+					transform: scale(0);
+				} 40% {
+					-webkit-transform: scale(1.0);
+					transform: scale(1.0);
+				}
+			}
+    </style>
   </head>
   <body>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
+    <div id="app">
+      <div v-cloak class="v-cloak">
+        <div class="page-loader">
+          <div class="page-loader-logo">
+            <img src="/static/logo-dark.png" alt="Endpass">
+          </div>
+          <div class="spinner">
+            <div class="spinner-dot spinner-dot-1">
+            </div>
+            <div class="spinner-dot spinner-dot-2">
+            </div>
+            <div class="spinner-dot spinner-dot-3">
+            </div>
+            <p class="spinner-caption">Loading...</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

@@ -4,11 +4,12 @@ exports[`VSpinner props isLoading should not render component 1`] = `<!---->`;
 
 exports[`VSpinner props isLoading should render component 1`] = `
 <div
-  class="spinner"
+  class="v-spinner is-overlay"
 >
-  <spinner
-    color="#4b0472"
-    status="true"
+  <div
+    class="spinner loader"
   />
+   
+  <!---->
 </div>
 `;

@@ -56,6 +56,9 @@ describe('Send', () => {
           activeCurrency: {
             name: 'ETH',
           },
+          activeNet: {
+            id: 1,
+          },
         },
         tokens: {
           trackedTokens: [
@@ -260,18 +263,30 @@ describe('Send', () => {
       expect(inputElem.attributes().disabled).toBeFalsy();
     });
 
-    it('should update user nonce when changing the network or address', async () => {
+    it('should update user nonce when changing the network', async () => {
       wrapper.vm.getNextNonce = jest.fn().mockResolvedValueOnce('2');
-      wrapper.setComputed({ activeNet: 1 });
+      wrapper.setComputed({
+        activeNet: { id: 2 },
+      });
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.$data.userNonce).toBe('2');
 
       wrapper.vm.getNextNonce.mockResolvedValueOnce('5');
-      wrapper.setComputed({ activeNet: 2 });
+      wrapper.setComputed({
+        activeNet: { id: 3 },
+      });
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.$data.userNonce).toBe('5');
+    });
+
+    it('should update user nonce when changing the address', async () => {
+      wrapper.vm.getNextNonce = jest.fn().mockResolvedValueOnce('2');
+      wrapper.setComputed({ address: '0xddddd' });
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.$data.userNonce).toBe('2');
 
       wrapper.vm.getNextNonce.mockResolvedValueOnce('7');
       wrapper.setComputed({ address: '0xkdjf' });

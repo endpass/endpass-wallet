@@ -538,7 +538,10 @@ export default {
       },
     );
 
-    this.$watch(vm => [vm.activeNet, vm.address].join(), this.updateUserNonce);
+    this.$watch(
+      vm => [vm.activeNet.id, vm.address].join(),
+      this.updateUserNonce,
+    );
   },
   beforeDestroy() {
     clearInterval(this.interval);

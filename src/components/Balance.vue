@@ -1,18 +1,21 @@
 <template>
-	<div class="balance">
+	<div class="balance has-spinner">
     <span class="title amount" :title="balanceString"
       :class="{'long-number': balance.length > 6}">{{ balanceStringShort }}</span>
     <span class="currency">
       {{currency}}
     </span>
-    <a v-if="hasUpdate" @click.prevent="update()">
+    <a class="button is-small" :class="{'is-loading': isLoading}" v-if="hasUpdate" @click.prevent="update()">
     	<span class="icon is-small"
                 v-html="require('@/img/reload.svg')"></span>
     </a>
+    <v-spinner class="is-transparent" :is-loading="isLoading"></v-spinner>
 	</div>
 </template>
 <script>
 import { BigNumber } from 'bignumber.js';
+import VSpinner from '@/components/ui/VSpinner';
+
 export default {
   props: {
     amount: {
@@ -30,6 +33,10 @@ export default {
     },
     round: {
       default: 4,
+    },
+    isLoading: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -72,6 +79,9 @@ export default {
     update() {
       this.$emit('update');
     },
+  },
+  components: {
+    VSpinner,
   },
 };
 </script>
