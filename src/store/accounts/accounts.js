@@ -259,7 +259,6 @@ export default {
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     async init({ commit, dispatch }) {
-      commit('startPageLoading', null, { root: true });
       try {
         let [settings, email] = await Promise.all([
           userService.getSettings(),
@@ -291,9 +290,7 @@ export default {
           await dispatch('selectWallet', accounts[0].address);
         }
       } catch (e) {
-        await dispatch('errors/emitError', e, { root: true });
-      } finally {
-        commit('stopPageLoading', null, { root: true });
+        return dispatch('errors/emitError', e, { root: true });
       }
     },
   },
