@@ -195,10 +195,13 @@ describe('accounts store', () => {
 
   it('should call mutation from logout action', async () => {
     const commit = jest.fn();
+    const dispatch = jest.fn();
     const state = {};
+    userService.logout = jest.fn();
 
-    await actions.logout({ commit, state });
+    await actions.logout({ commit, dispatch, state });
 
+    expect(userService.logout).toHaveBeenCalledTimes(1);
     expect(commit).toHaveBeenCalledTimes(1);
     expect(commit.mock.calls[0]).toEqual(['setEmail', null]);
   });
