@@ -225,9 +225,9 @@ export default {
     },
     logout({ commit, dispatch }) {
       commit('setEmail', null);
-      return Promise.all([storage.clear(), userService.logout()]).catch(e =>
-        dispatch('errors/emitError', e, { root: true }),
-      );
+      return Promise.all([storage.clear(), userService.logout()])
+        .then(() => window.location.reload())
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     loginViaOTP({}, { code, email }) {
       return userService.loginViaOTP(code, email);
