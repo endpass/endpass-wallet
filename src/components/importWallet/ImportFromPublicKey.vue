@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit="addWalletWithAddress">
+  <v-form @submit="submitWalletImportForm">
     <v-input
       id="address"
       key="publicKeyUnique"
@@ -20,7 +20,7 @@
 
 <script>
 import router from '@/router';
-import { mapActions } from 'vuex';
+import { mapMutations } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
@@ -32,12 +32,12 @@ export default {
     address: '',
   }),
   methods: {
-    ...mapActions('accounts', ['addWalletWithAddress']),
-    async addWalletWithAddress() {
+    ...mapMutations('accounts', ['setAddress']),
+    async submitWalletImportForm() {
       this.isCreating = true;
       await new Promise(res => setTimeout(res, 20));
       try {
-        this.addWalletWithAddress(this.address);
+        this.setAddress(this.address);
         router.push('/');
       } catch (e) {
         this.errors.add({
