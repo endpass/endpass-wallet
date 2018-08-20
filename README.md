@@ -14,7 +14,7 @@ You'll need to have `yarn` installed.
 
 ### Install
 
-To install and start the local dev server on *https://localhost:8080*
+To install and start the local dev server on *http://localhost:8080*
 
 ```sh
 git clone https://github.com/endpass/endpass-wallet

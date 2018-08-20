@@ -1,10 +1,11 @@
-import axios from 'axios';
 import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
+import { http } from '@/utils';
+import keyUtil from '@/utils/keystore';
 
 export default {
   login(email) {
-    return axios
+    return http
       .post(`${identityAPIUrl}/auth`, {
         email,
       })
@@ -24,11 +25,12 @@ export default {
       });
   },
 
-  loginViaOTP(code) {
-    return axios
+  loginViaOTP(code, email) {
+    return http
       .post(`${identityAPIUrl}/token`, {
         challenge_type: 'otp',
         code,
+        email,
       })
       .then(({ data: { success } }) => {
         if (!success) {
@@ -44,50 +46,61 @@ export default {
       });
   },
 
+  logout() {
+    return http.post(`${identityAPIUrl}/logout`).catch(() => {
+      throw new NotificationError({
+        title: 'Log out error',
+        text: 'Failed to log out. Please, try again',
+        type: 'is-danger',
+      });
+    });
+  },
+
   getSettings() {
-    return axios.get(`${identityAPIUrl}/user`).then(res => res.data);
+    return http.get(`${identityAPIUrl}/user`).then(({ data }) => data);
   },
 
   setSettings(settings) {
-    return axios
-      .post(`${identityAPIUrl}/user`, {
-        ...settings,
-        settings: {
-          ...settings.settings,
-          currency: settings.settings.fiatCurrency,
-        },
-      })
-      .then(res => res.data);
+    return http
+      .post(`${identityAPIUrl}/user`, settings)
+      .then(({ data }) => data);
   },
 
-  removeSettings(propsArr) {
-    return Promise.resolve({
-      success: true,
-    });
+  // removeSettings(propsArr) {
+  //   return Promise.resolve({
+  //     success: true,
+  //   });
 
-    // return axios
-    //   .delete(`${identityAPIUrl}/user`, propsArr)
-    //   .then(res => res.data)
-    //   .then(console.log)
-    //   .catch(console.log);
-  },
+  //   return http
+  //     .delete(`${identityAPIUrl}/user`, propsArr)
+  //     .then(res => res.data)
+  //     .then(console.log)
+  //     .catch(console.log);
+  // },
 
+  // Returns addresses of all of the user's accounts
   getAccounts() {
-    return axios.get(`${identityAPIUrl}/accounts`).then(res => res.data);
+    return http.get(`${identityAPIUrl}/accounts`).then(res => res.data);
   },
 
-  setAccount(account) {
-    return axios
-      .post(`${identityAPIUrl}/accounts`, account)
+  // Saves the encrypted keystore for an account
+  setAccount(address, account) {
+    return http
+      .post(`${identityAPIUrl}/accounts/${address}`, account)
       .then(res => res.data);
   },
 
-  getAccount(account) {
-    return axios
-      .get(`${identityAPIUrl}/account/${account}`)
-      .then(res => res.data)
+  // Returns the encrypted keystore for a single account
+  getAccount(address) {
+    return http
+      .get(`${identityAPIUrl}/account/${address}`)
+      .then(res => {
+        let account = res.data;
+        account.address = address;
+        return account;
+      })
       .catch(() => {
-        const shortAcc = account.replace(/^(.{5}).+/, '$1…');
+        const shortAcc = address.replace(/^(.{5}).+/, '$1…');
 
         throw new NotificationError({
           title: 'Account request error',
@@ -97,10 +110,14 @@ export default {
       });
   },
 
+  // Returns encrypted keystores for all non HD accounts
+  // TODO refactor to remove this method and only get accounts as needed
   getV3Accounts() {
     return this.getAccounts()
       .then(accounts => {
-        const allAcc = accounts.map(this.getAccount);
+        const allAcc = accounts
+          .filter(acc => !keyUtil.isExtendedPublicKey(acc))
+          .map(this.getAccount);
         return Promise.all(allAcc);
       })
       .catch(() => {
@@ -110,6 +127,19 @@ export default {
           type: 'is-danger',
         });
       });
+  },
+
+  // Returns the encrypted keystore for the user's HD wallet, if any
+  // Right now, uses the first HD address found as a key
+  getHDKey() {
+    return this.getAccounts().then(accounts => {
+      let hdAccounts = accounts.filter(acc => keyUtil.isExtendedPublicKey(acc));
+      if (hdAccounts.length) {
+        return this.getAccount(hdAccounts[0]);
+      } else {
+        return Promise.resolve();
+      }
+    });
   },
 
   getFullUserInfo() {
@@ -122,7 +152,7 @@ export default {
   },
 
   getOtpSettings() {
-    return axios
+    return http
       .get(`${identityAPIUrl}/otp`)
       .then(res => res.data)
       .catch(() => {
@@ -135,7 +165,7 @@ export default {
   },
 
   setOtpSettings(secret, code) {
-    return axios
+    return http
       .post(`${identityAPIUrl}/otp`, { secret, code })
       .then(({ data: { success, message } }) => {
         if (!success) {
@@ -153,7 +183,7 @@ export default {
   },
 
   deleteOtpSettings(code) {
-    return axios
+    return http
       .delete(`${identityAPIUrl}/otp`, {
         data: { code },
       })

@@ -5,14 +5,8 @@
 
       <div v-if="!isAccountCreated">
         <p class="subtitle">You currently have
-        <strong>{{ wallets.length }}</strong> active addresses in your wallet.</p>
-        <p class="subtitle">Click the button below to create an additional address you can use to receive Ethereum and tokens.</p>
-        <v-form @submit="createNewAccount">
-          <v-button
-            :loading="isCreatingAccount"
-            class-name="is-primary is-medium"
-          >Create address</v-button>
-        </v-form>
+        <strong>{{ Object.keys(wallets).length }}</strong> active addresses in your wallet.</p>
+        <p class="subtitle">Click the button below to create or import an additional address you can use to receive Ethereum and tokens.</p>
       </div>
       <div v-else>
         <p class="subtitle">New Address Created</p>
@@ -39,6 +33,24 @@
         </div>
 
       </div>
+
+      <div
+        v-if="!isAccountCreated"
+        slot="footer"
+        class="buttons"
+      >
+        <v-form @submit="createNewAccount">
+          <v-button
+            :loading="isCreatingAccount"
+            class-name="is-primary is-medium"
+          >Create address</v-button>
+        </v-form>
+        <v-form @submit="importNewAccount">
+          <v-button
+            class-name="is-primary is-medium"
+          >Import address</v-button>
+        </v-form>
+      </div>
     </v-modal>
     <password-modal
       v-if="isPasswordModal"
@@ -57,6 +69,7 @@ import VButton from '@/components/ui/form/VButton.vue';
 import PasswordModal from '@/components/modal/PasswordModal';
 
 export default {
+  name: 'NewAccountModal',
   data() {
     return {
       isAccountCreated: null,
@@ -69,12 +82,17 @@ export default {
     ...mapState({
       wallet: state => state.accounts.wallet,
       address: state =>
-        state.accounts.address && state.accounts.address.getAddressString(),
+        state.accounts.address &&
+        state.accounts.address.getChecksumAddressString(),
       wallets: state => state.accounts.wallets,
     }),
   },
   methods: {
     ...mapActions('accounts', ['generateWallet', 'validatePassword']),
+    importNewAccount() {
+      this.$router.push('import');
+      this.close();
+    },
     // Create the next account derived from the HD wallet seed
     // TODO consider gap limit if multiple hd accounts are already used
     createNewAccount() {
@@ -90,8 +108,8 @@ export default {
       await new Promise(res => setTimeout(res, 20));
 
       try {
-        this.generateWallet(password);
-        this.privateKey = this.wallet.getPrivateKeyString(password);
+        await this.generateWallet(password);
+        this.privateKey = await this.wallet.getPrivateKeyString(password);
         this.isCreatingAccount = false;
         this.isAccountCreated = true;
       } catch (e) {

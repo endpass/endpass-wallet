@@ -1,8 +1,9 @@
 import TokenTracker from 'eth-token-tracker';
-import { endpassService, ethplorerService } from '@/services';
+import { Token } from '@/class';
+import { tokenInfoService, ethplorerService } from '@/services';
 import price from '@/services/price';
 import storage from '@/services/storage';
-import { subscriptionsAPIInterval } from '@/config';
+import { tokenUpdateInterval } from '@/config';
 import { NotificationError } from '@/class';
 
 export default {
@@ -13,7 +14,7 @@ export default {
       activeTokens: [],
       //tokens from localStorage
       savedTokens: {},
-      prices: null,
+      prices: {},
       tokensSubscription: null,
       tokensSerializeInterval: null,
     };
@@ -29,7 +30,7 @@ export default {
   mutations: {
     addToken({ savedTokens }, { token, net }) {
       savedTokens[net] = savedTokens[net] || [];
-      savedTokens[net].push(token);
+      savedTokens[net].push(new Token(token));
     },
     removeToken(
       { tokensSubscription, savedTokens, activeTokens },
@@ -63,15 +64,12 @@ export default {
     },
     saveActiveTokens(state, tokens = []) {
       // TODO check for errors here, activeTokens is undefined
-      state.activeTokens = tokens;
+      state.activeTokens = tokens.map(token => new Token(token));
     },
     setTokenPrices(state, prices) {
       state.prices = prices;
     },
     setTokenPrice(state, symbol, price) {
-      if (!state.prices) {
-        state.prices = {};
-      }
       state.prices[symbol] = price;
     },
     saveInterval(state, interval) {
@@ -104,9 +102,9 @@ export default {
         return [];
       }
 
-      return endpassService
+      return tokenInfoService
         .getTokensList()
-        .then(({ data }) => data)
+        .then(tokens => tokens.map(token => new Token(token)))
         .catch(() => {
           const error = new NotificationError({
             title: 'Failed to get list of tokens',
@@ -128,7 +126,7 @@ export default {
         .write('tokens', state.savedTokens)
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    subscribeOnTokenUpdates({ dispatch, state, rootState }) {
+    subscribeOnTokenUpdates({ dispatch, commit, state, rootState }) {
       // destroy old subscription and recreate new one (in case of address/provider change)
       if (!rootState.accounts.address) {
         return Promise.resolve();
@@ -136,12 +134,13 @@ export default {
 
       if (state.tokensSerializeInterval) {
         clearInterval(state.tokensSerializeInterval);
+        commit('saveInterval', null);
         state.tokensSubscription.stop();
       }
       // get tokens with balances
       return dispatch('getNonZeroTokens')
         .then(resp => {
-          dispatch('subsctibeOnTokenPriceUpdates', resp.data.tokens || []);
+          dispatch('subscribeOnTokenPriceUpdates', resp.data.tokens || []);
           return dispatch('createTokenSubscription', resp.data.tokens || []);
         })
         .catch(() => {
@@ -153,13 +152,13 @@ export default {
           dispatch('errors/emitError', error, { root: true });
         });
     },
-    updateTokenPrices({ state, commit }) {
+    updateTokenPrices({ state, commit, rootState }) {
       if (state.activeTokens.length === 0) return;
 
       const symbols = state.activeTokens.map(token => token.symbol);
 
       return price
-        .getPrices(symbols.toString(), 'ETH')
+        .getPrices(symbols, rootState.web3.activeCurrency.name)
         .then(resp => commit('setTokenPrices', resp));
     },
     updateTokenPrice({ commit }, symbol) {
@@ -167,10 +166,10 @@ export default {
         commit('setTokenPrice', symbol, resp);
       });
     },
-    subsctibeOnTokenPriceUpdates({ dispatch }) {
+    subscribeOnTokenPriceUpdates({ dispatch }) {
       setInterval(() => {
         dispatch('updateTokenPrices');
-      }, subscriptionsAPIInterval);
+      }, tokenUpdateInterval);
     },
     createTokenSubscription(
       { state, commit, getters, rootState },
@@ -178,7 +177,7 @@ export default {
     ) {
       commit('saveActiveTokens', []);
 
-      const address = rootState.accounts.address.getAddressString();
+      const address = rootState.accounts.address.getChecksumAddressString();
       //remove repetitive tokens
       const filteredSavedTokens = getters.savedActiveTokens.filter(
         savedToken =>
@@ -213,7 +212,7 @@ export default {
       commit('saveSubscription', subscription);
     },
     getNonZeroTokens({ rootState, dispatch }) {
-      const address = rootState.accounts.address.getAddressString();
+      const address = rootState.accounts.address.getChecksumAddressString();
       const promise = ethplorerService.getTransactions(address);
       promise
         .then(() => {

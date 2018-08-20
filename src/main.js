@@ -7,13 +7,20 @@ import App from './App';
 import './directives';
 
 Vue.config.productionTip = false;
+Vue.config.performance = true;
 
 Vue.use(Notifications);
 
 /* eslint-disable no-new */
-export default new Vue({
+const app = new Vue({
   el: '#app',
   router,
   store,
   render: h => h(App),
 });
+
+if (process.env.NODE_ENV !== 'production') {
+  window.app = app;
+}
+
+export default app;

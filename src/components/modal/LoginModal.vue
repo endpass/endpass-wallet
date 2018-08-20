@@ -1,5 +1,7 @@
 <template>
   <component
+    class="login-modal"
+    data-test="login-modal"
     :is="currentModal"
     :is-loading="isLoading"
     v-dynamic-events="['confirm', 'close']"
@@ -10,6 +12,7 @@
 import { mapActions } from 'vuex';
 
 import LoginByEmailModal from '@/components/modal/LoginByEmailModal';
+import ConfirmEmailModal from '@/components/modal/ConfirmEmailModal';
 import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
 import error from '@/mixins/error';
 
@@ -18,6 +21,7 @@ export default {
   data: () => ({
     currentModal: LoginByEmailModal.name,
     isLoading: false,
+    email: null,
   }),
   methods: {
     ...mapActions('accounts', ['login', 'loginViaOTP']),
@@ -27,7 +31,11 @@ export default {
       return this.login(email)
         .then(challengeType => {
           if (challengeType === 'otp') {
+            this.email = email;
             this.currentModal = TwoFactorAuthModal.name;
+            this.isLoading = false;
+          } else if (challengeType === 'email_link') {
+            this.currentModal = ConfirmEmailModal.name;
             this.isLoading = false;
           } else {
             this.handleSuccessfulLogin();
@@ -37,25 +45,29 @@ export default {
     },
     handleTwoFactorAuthModalConfirm(code) {
       this.isLoading = true;
+      const {
+        email,
+        handleFailedLogin,
+        handleSuccessfulLogin,
+        loginViaOTP,
+      } = this;
 
-      return this.loginViaOTP({ code })
-        .then(this.handleSuccessfulLogin)
-        .catch(this.handleFailedLogin);
+      return loginViaOTP({ code, email })
+        .then(handleSuccessfulLogin)
+        .then(this.redirectPage)
+        .catch(handleFailedLogin);
     },
     handleClose() {
       this.close();
     },
     handleSuccessfulLogin() {
-      const text = this.currentModal === LoginByEmailModal.name ?
-        'Click the link in your email to log in' : 'Authorization was successful';
-
       this.isLoading = false;
       this.close();
 
       this.$notify({
         title: 'Success',
         type: 'is-info',
-        text,
+        text: 'Logged In',
       });
     },
     handleFailedLogin(error) {
@@ -65,9 +77,19 @@ export default {
     close() {
       this.$emit('close');
     },
+    redirectPage() {
+      const regirectUri = this.$route.query.redirect_uri;
+
+      if (regirectUri) {
+        this.$router.push({
+          path: regirectUri,
+        });
+      }
+    },
   },
   components: {
     LoginByEmailModal,
+    ConfirmEmailModal,
     TwoFactorAuthModal,
   },
   mixins: [error],

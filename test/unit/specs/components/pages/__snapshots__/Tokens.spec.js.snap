@@ -48,68 +48,11 @@ exports[`TokensPage render should render component 1`] = `
                 <div
                   class="scroller"
                 >
-                  <a
-                    class="panel-block is-clearfix is-block"
-                  >
-                    <span
-                      class="token-symbol"
-                    >
-                      FST
-                    </span>
-                     
-                    <span
-                      class="token-name"
-                    >
-                      First Token
-                    </span>
-                     
-                    <balance
-                      amount="NaN"
-                      class="is-small is-inline-block"
-                      currency=""
-                    />
-                     
-                    <!---->
-                     
-                    <span
-                      class="icon has-text-danger is-small is-pulled-right"
-                      id="remove-token-0"
-                      title="Remove Token"
-                    >
-                      {}
-                    </span>
-                  </a>
-                  <a
-                    class="panel-block is-clearfix is-block"
-                  >
-                    <span
-                      class="token-symbol"
-                    >
-                      $SCdT
-                    </span>
-                     
-                    <span
-                      class="token-name"
-                    >
-                      second token
-                    </span>
-                     
-                    <balance
-                      amount="NaN"
-                      class="is-small is-inline-block"
-                      currency=""
-                    />
-                     
-                    <!---->
-                     
-                    <span
-                      class="icon has-text-danger is-small is-pulled-right"
-                      id="remove-token-1"
-                      title="Remove Token"
-                    >
-                      {}
-                    </span>
-                  </a>
+                  <token-list
+                    has-remove="true"
+                    item-class="panel-block is-clearfix is-block"
+                    tokens="[object Object],[object Object]"
+                  />
                 </div>
               </nav>
             </div>

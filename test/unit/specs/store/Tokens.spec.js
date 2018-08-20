@@ -1,8 +1,9 @@
-import moxios from 'moxios';
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
 import Web3 from 'web3';
 import testAction from '../ActionTestingHelper';
 import tokens from '@/store/tokens/tokens';
-import { endpassService } from '@/services';
+import { tokenInfoService } from '@/services';
 import localStorageMock from '../../localStorageMock';
 
 global.localStorage = localStorageMock;
@@ -26,9 +27,10 @@ describe('tokens', () => {
   let dispatch;
   let stateInstance;
   let getters;
+  let mock;
 
   beforeEach(() => {
-    moxios.install();
+    mock = new MockAdapter(axios);
     commit = jest.fn();
     dispatch = jest.fn();
     stateInstance = tokens.state();
@@ -36,7 +38,7 @@ describe('tokens', () => {
   });
 
   afterEach(() => {
-    moxios.uninstall();
+    mock.reset();
     commit.mockClear();
     dispatch.mockClear();
   });
@@ -50,15 +52,15 @@ describe('tokens', () => {
   });
 
   it('should get tokens from service', async () => {
-    endpassService.getTokensList = jest.fn(() => Promise.resolve());
+    tokenInfoService.getTokensList = jest.fn(() => Promise.resolve());
 
     await actions.getAllTokens({ dispatch, getters });
 
-    expect(endpassService.getTokensList).toHaveBeenCalledTimes(1);
+    expect(tokenInfoService.getTokensList).toHaveBeenCalledTimes(1);
   });
 
   it('should return an empty array if an error occurs', async () => {
-    endpassService.getTokensList = jest.fn(() => Promise.reject());
+    tokenInfoService.getTokensList = jest.fn(() => Promise.reject());
 
     const result = await actions.getAllTokens({ dispatch, getters });
 
@@ -77,7 +79,7 @@ describe('tokens', () => {
     expect(stateInstance.savedTokens['3']).toBeFalsy();
 
     tokens.mutations.addToken(stateInstance, {
-      token: { address: '0x2' },
+      token: { address: '0x4ce2109f8db1190cd44bc6554e35642214fbe144' },
       net: 3,
     });
     expect(stateInstance.savedTokens['3'].length).toBe(1);
@@ -106,7 +108,7 @@ describe('tokens', () => {
         rootState: {
           accounts: {
             address: {
-              getAddressString() {
+              getChecksumAddressString() {
                 return '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b';
               },
             },
@@ -135,15 +137,12 @@ describe('tokens', () => {
   });
 
   it('gets non zero tokens', done => {
-    moxios.stubRequest(/api\.ethplorer\.io\/getAddressInfo/, {
-      status: 200,
-      response: [
-        {
-          id: '1',
-          to: '0x0',
-        },
-      ],
-    });
+    mock.onGet(/api\.ethplorer\.io\/getAddressInfo/).reply(200, [
+      {
+        id: '1',
+        to: '0x0',
+      },
+    ]);
     testAction(
       tokens.actions.getNonZeroTokens,
       null,
@@ -151,7 +150,7 @@ describe('tokens', () => {
         rootState: {
           accounts: {
             address: {
-              getAddressString() {
+              getChecksumAddressString() {
                 return '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b';
               },
             },
@@ -177,7 +176,7 @@ describe('tokens', () => {
         rootState: {
           accounts: {
             address: {
-              getAddressString() {
+              getChecksumAddressString() {
                 return '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b';
               },
             },

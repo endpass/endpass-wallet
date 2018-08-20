@@ -23,6 +23,7 @@ import PasswordModal from '@/components/modal/PasswordModal';
 import { mapState } from 'vuex';
 
 export default {
+  name: 'ExportToPrivateKey',
   data() {
     return {
       privateKey: null,
@@ -48,7 +49,7 @@ export default {
         this.exportingKey = true;
         await new Promise(res => setTimeout(res, 20));
         try {
-          this.privateKey = this.wallet.getPrivateKeyString(password);
+          this.privateKey = await this.wallet.getPrivateKeyString(password);
         } catch (e) {
           this.exportError(e);
         }

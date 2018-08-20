@@ -7,18 +7,23 @@ import { hdKeyMnemonic, kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
 import { Wallet, Address } from '@/class';
 import { BigNumber } from 'bignumber.js';
+import keystore from '@/utils/keystore';
 
 export default {
   namespaced: true,
   state: {
+    // TODO move to user store?
     email: null,
-    hdWallet: null,
+    // The encrypted xprv key for the user's hd wallet as a V3 keystore
+    // object. All accounts are direct child accounts.
+    hdKey: null,
+    // The user's wallets, keyed by address
     wallets: {},
+    // The currently selected wallet
     wallet: null,
     address: null,
     balance: null,
     price: null,
-    pendingTransactions: [],
     // prettier-ignore
     availableCurrencies: ['USD', 'AUD', 'BRL', 'CAD', 'CHF', 'CLP', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PKR', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'ZAR'],
     settings: {
@@ -35,16 +40,26 @@ export default {
         state.address instanceof Address && !(state.wallet instanceof Wallet)
       );
     },
+    // TODO move to user store?
+    isLoggedIn(state) {
+      return !!state.email;
+    },
     balance(state, getters, rootState, rootGetters) {
-      const pendingBalance = rootGetters['transactions/pendingBalance'];
-
       if (state.balance === null) return null;
 
+      const pendingBalance = rootGetters['transactions/pendingBalance'];
       const balanceWei = BigNumber(state.balance || '0')
         .minus(pendingBalance)
         .toFixed();
 
       return web3.utils.fromWei(balanceWei);
+    },
+    // Returns a decrypted HD Wallet
+    hdWallet: state => password => {
+      if (!state.hdKey) {
+        return null;
+      }
+      return keystore.decryptHDWallet(password, state.hdKey);
     },
   },
   mutations: {
@@ -62,8 +77,10 @@ export default {
         [address]: wallet,
       };
     },
-    addHdWallet(state, wallet) {
-      state.hdWallet = wallet;
+    // Saves the encrypted HD wallet key in V3 keystore format
+    // Formerly addHdWallet
+    setHdKey(state, key) {
+      state.hdKey = key;
     },
     setBalance(state, balance) {
       state.balance = balance;
@@ -85,58 +102,80 @@ export default {
     selectWallet({ commit, state, dispatch }, address) {
       commit('setWallet', state.wallets[address]);
       commit('setAddress', address);
-      dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true });
+      return dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true });
     },
     addWallet({ commit, dispatch, state }, json) {
+      json.address = web3.utils.toChecksumAddress(json.address);
       commit('addWallet', json);
 
       return userService
-        .setAccount(json)
+        .setAccount(json.address, json)
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     addWalletAndSelect({ dispatch }, json) {
       return dispatch('addWallet', json)
-        .then(() => dispatch('selectWallet', json.address))
+        .then(() =>
+          dispatch('selectWallet', web3.utils.toChecksumAddress(json.address)),
+        )
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    addWalletWithV3({ commit, dispatch }, { json, password }) {
-      const wallet = EthWallet.fromV3(json, password, true);
-      const newJson = wallet.toV3(new Buffer(password), kdfParams);
-      dispatch('addWalletAndSelect', newJson);
+    // Import wallet from json V3 keystore
+    async addWalletWithV3({ commit, dispatch }, { json, password }) {
+      try {
+        const wallet = new Wallet(json);
+        let privateKey = await wallet.getPrivateKey(password);
+        return dispatch('addWalletWithPrivateKey', privateKey);
+      } catch (e) {
+        return dispatch('errors/emitError', e, { root: true });
+      }
     },
-    addWalletWithPrivateKey({ commit, dispatch }, { privateKey, password }) {
-      const wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));
-      const json = wallet.toV3(new Buffer(password), kdfParams);
-
-      return dispatch('addWalletAndSelect', json);
+    async addWalletWithPrivateKey(
+      { commit, dispatch },
+      { privateKey, password },
+    ) {
+      try {
+        const wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));
+        const json = keystore.encryptWallet(password, wallet);
+        return dispatch('addWalletAndSelect', json);
+      } catch (e) {
+        return dispatch('errors/emitError', e, { root: true });
+      }
     },
-    generateWallet({ commit, dispatch, state }, password) {
-      if (!state.hdWallet) {
+    generateWallet({ commit, dispatch, state, getters }, password) {
+      if (!state.hdKey) {
         return;
       }
-      let i = Object.keys(state.wallets).length;
-      let wallet = state.hdWallet.deriveChild(i).getWallet();
-      dispatch(
-        'addWalletAndSelect',
-        wallet.toV3(new Buffer(password), kdfParams),
-      );
+      try {
+        let hdWallet = getters.hdWallet(password);
+        let i = Object.keys(state.wallets).length;
+        let wallet = hdWallet.deriveChild(i).getWallet();
+        let json = keystore.encryptWallet(password, wallet);
+        return dispatch('addWalletAndSelect', json);
+      } catch (e) {
+        return dispatch('errors/emitError', e, { root: true });
+      }
+    },
+    // Saves HD wallet's extended keys on the server
+    saveHdWallet({ commit, dispatch, state }, json) {
+      return userService.setAccount(json.address, json);
     },
     addHdWallet({ commit, dispatch }, { key, password }) {
       const seed = Bip39.mnemonicToSeed(key);
       const hdKey = HDKey.fromMasterSeed(seed);
       const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
-      const wallet = hdWallet.deriveChild(0).getWallet();
-      commit('addHdWallet', hdWallet);
-      return dispatch(
-        'addWalletAndSelect',
-        wallet.toV3(new Buffer(password), kdfParams),
-      );
+      // Encrypt extended private key
+      const json = keystore.encryptHDWallet(password, hdWallet);
+      commit('setHdKey', json);
+
+      // Save HD keys and generate the first child wallet
+      return dispatch('saveHdWallet', json)
+        .then(() => dispatch('generateWallet', password))
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     async addMultiHdWallet({ commit, dispatch, rootState }, { key, password }) {
       const seed = Bip39.mnemonicToSeed(key);
       const hdKey = HDKey.fromMasterSeed(seed);
       const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
-      commit('addHdWallet', hdWallet);
 
       /* eslint-disable no-await-in-loop */
       for (let index = 0; index < 5; index++) {
@@ -164,7 +203,7 @@ export default {
     },
     updateBalance({ commit, dispatch, state, rootState }) {
       if (state.address) {
-        const address = state.address.getAddressString();
+        const address = state.address.getChecksumAddressString();
 
         return rootState.web3.web3.eth
           .getBalance(address)
@@ -186,13 +225,12 @@ export default {
     },
     logout({ commit, dispatch }) {
       commit('setEmail', null);
-      return storage
-        .clear()
-        .then(() => (window.location = '/logout'))
+      return Promise.all([storage.clear(), userService.logout()])
+        .then(() => window.location.reload())
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    loginViaOTP({}, { code }) {
-      return userService.loginViaOTP(code);
+    loginViaOTP({}, { code, email }) {
+      return userService.loginViaOTP(code, email);
     },
     getOtpSettings({ commit, dispatch }) {
       return userService
@@ -215,28 +253,41 @@ export default {
         })
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    init({ commit, dispatch }) {
-      return Promise.all([storage.read('settings'), storage.read('email')])
-        .then(([settings, email]) => {
-          commit('setEmail', email);
+    async init({ commit, dispatch }) {
+      commit('startPageLoading', null, { root: true });
+      try {
+        let [settings, email] = await Promise.all([
+          storage.read('settings'),
+          storage.read('email'),
+        ]);
+        commit('setEmail', email);
 
-          if (settings) {
-            commit('setSettings', settings);
-          }
+        if (settings) {
+          commit('setSettings', settings);
+        }
 
-          if (!email) {
-            storage.disableRemote();
-          }
+        if (!email) {
+          storage.disableRemote();
+          return null;
+        }
 
-          return email ? userService.getV3Accounts() : null;
-        })
-        .then(accounts => {
-          if (accounts && accounts.length) {
-            accounts.forEach(wallet => commit('addWallet', wallet));
-            dispatch('selectWallet', accounts[0].address);
-          }
-        })
-        .catch(e => dispatch('errors/emitError', e, { root: true }));
+        // Fetch and save HD wallet
+        let hdKey = await userService.getHDKey();
+        if (hdKey) {
+          commit('setHdKey', hdKey);
+        }
+
+        // Fetch and save regular accounts
+        let accounts = await userService.getV3Accounts();
+        if (accounts && accounts.length) {
+          accounts.forEach(wallet => commit('addWallet', wallet));
+          await dispatch('selectWallet', accounts[0].address);
+        }
+      } catch (e) {
+        await dispatch('errors/emitError', e, { root: true });
+      } finally {
+        commit('stopPageLoading', null, { root: true });
+      }
     },
   },
 };

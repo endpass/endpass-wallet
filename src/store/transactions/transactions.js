@@ -8,9 +8,33 @@ export default {
     pendingTransactions: [],
   },
   getters: {
-    pendingBalance(state) {
+    accountTransactions(state, getters, rootState) {
+      if (!rootState.accounts.address) {
+        return [];
+      }
+
+      const address = rootState.accounts.address.getChecksumAddressString();
+      return state.pendingTransactions.filter(
+        trx =>
+          trx.from === address ||
+          (trx.to === address && trx.state === 'success'),
+      );
+    },
+    pendingBalance(state, getters, rootState) {
+      if (!rootState.accounts.address) {
+        return '0';
+      }
+
+      const address = rootState.accounts.address.getChecksumAddressString();
+      const networkId = rootState.web3.activeNet.id;
+
       return state.pendingTransactions
-        .filter(tnx => tnx.state === 'pending')
+        .filter(
+          tnx =>
+            tnx.state === 'pending' &&
+            tnx.from === address &&
+            tnx.networkId === networkId,
+        )
         .map(tnx => {
           const tnxValue = tnx.token === 'ETH' ? tnx.valueWei : '0';
 
@@ -27,7 +51,7 @@ export default {
   },
   actions: {
     async getNonceInBlock({ rootState }) {
-      const address = rootState.accounts.address.getAddressString();
+      const address = rootState.accounts.address.getChecksumAddressString();
       const eth = rootState.web3.web3.eth;
       return await eth.getTransactionCount(address);
     },
@@ -61,7 +85,7 @@ export default {
         }
 
         const tx = new Tx(transaction.getApiObject(eth));
-        wallet.signTransaction(tx, password);
+        await wallet.signTransaction(tx, password);
         const serializedTx = tx.serialize();
         const preparedTrx = `0x${serializedTx.toString('hex')}`;
         const eventEmitter = new EventEmitter();
@@ -78,8 +102,14 @@ export default {
             }
           })
           .once('error', (err, receipt) => {
-            dispatch('handleSendingError', { err, receipt, transaction });
-            eventEmitter.emit('error', err);
+            const ignoreError = 'Transaction was not mined within750 seconds';
+
+            if (!err.message.includes(ignoreError)) {
+              dispatch('handleSendingError', { err, receipt, transaction });
+              eventEmitter.emit('error', err);
+            }
+
+            console.error(err);
           });
 
         return eventEmitter;
@@ -94,6 +124,7 @@ export default {
             sendEvent.once('transactionHash', hash => {
               transaction.state = 'pending';
               transaction.hash = hash;
+              transaction.date = new Date();
               commit('addTransaction', transaction);
               res(hash);
             });
@@ -143,13 +174,20 @@ export default {
               trx => transaction.hash === trx.hash,
             );
 
-            sendEvent.once('transactionHash', () => {
-              const shortTnx = trxInList.hash.slice(0, 10);
-              const error = new NotificationError({
-                title: 'Try to cancel the transaction',
-                text: `The cancellation ${shortTnx}... was started`,
-              });
-              dispatch('errors/emitError', error, { root: true });
+            sendEvent.once('transactionHash', async () => {
+              const nonceInBlock = await dispatch('getNonceInBlock');
+
+              if (trxInList.nonce == nonceInBlock) {
+                const shortTnx = trxInList.hash.slice(0, 10);
+                const error = new NotificationError({
+                  title: 'Try to cancel the transaction',
+                  text: `The cancellation ${shortTnx}... was started`,
+                });
+                dispatch('errors/emitError', error, { root: true });
+              } else {
+                // if a transaction with an too high nonce is canceled
+                sendEvent.emit('confirmation');
+              }
             });
 
             sendEvent.once('confirmation', () => {
@@ -165,7 +203,10 @@ export default {
           }),
       );
     },
-    handleSendingError({ dispatch }, { err, receipt, transaction }) {
+    handleSendingError(
+      { dispatch },
+      { err = {}, receipt, transaction = {} } = {},
+    ) {
       const { err: errorMessage = '' } = err;
       const cause =
         receipt || errorMessage.includes('out of gas')

@@ -7,6 +7,9 @@
             <h1 class="card-header-title">
               <slot name="title"></slot>
             </h1>
+            <a class="card-header-icon" @click="$router.back()">
+              &lt; Back
+            </a>
           </div>
           <div class="card-content">
             <slot/>

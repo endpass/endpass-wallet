@@ -1,8 +1,8 @@
 <template lang="html">
-  <div class="account-chooser field has-addons">
-    <div v-if="hdWallet" class="control is-expanded">
+  <div v-if="walletsAddresses.length" class="account-chooser field has-addons">
+    <div class="control is-expanded">
 
-      <multiselect
+      <vue-multiselect
         :options="walletsAddresses"
         label="Account"
         :option-height="height"
@@ -19,31 +19,18 @@
         <span class="multiselect-option" slot="option" slot-scope="props">
           <account :class="optionClass" :address="props.option" :size="width" />
         </span>
-      </multiselect>
+      </vue-multiselect>
     </div>
-    <div v-else-if="address" class="control">
-        {{address |truncateAddr}}
-    </div>
-    <div v-if="hdWallet" class="new-account control">
-      <a class="button is-primary is-medium is-fullheight" @click="openNewAccountModal">&plus;</a>
-    </div>
-    <new-account-modal @close="closeNewAccountModal"
-      v-if="newAccountModalOpen"/>
   </div>
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect';
+import VueMultiselect from 'vue-multiselect';
 import { mapState, mapActions } from 'vuex';
 import Account from '@/components/Account';
-import NewAccountModal from '@/components/NewAccountModal';
 
 export default {
-  data() {
-    return {
-      newAccountModalOpen: false,
-    };
-  },
+  name: 'AccountChooser',
   props: {
     // Maximum width of address
     width: {
@@ -65,10 +52,10 @@ export default {
   },
   computed: {
     ...mapState({
-      hdWallet: state => state.accounts.hdWallet,
       wallets: state => state.accounts.wallets,
       address: state =>
-        state.accounts.address && state.accounts.address.getAddressString(),
+        state.accounts.address &&
+        state.accounts.address.getChecksumAddressString(),
     }),
     activeAddress: {
       get() {
@@ -84,12 +71,6 @@ export default {
   },
   methods: {
     ...mapActions('accounts', ['selectWallet']),
-    openNewAccountModal() {
-      this.newAccountModalOpen = true;
-    },
-    closeNewAccountModal() {
-      this.newAccountModalOpen = false;
-    },
   },
   filters: {
     // Truncate an address to the first 4 and last 4 characters
@@ -100,9 +81,8 @@ export default {
     },
   },
   components: {
-    Multiselect,
+    VueMultiselect,
     Account,
-    NewAccountModal,
   },
 };
 </script>

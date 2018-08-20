@@ -1,4 +1,5 @@
 import web3 from 'web3';
+import { Token } from './Token';
 import { BigNumber } from 'bignumber.js';
 import erc20ABI from '@/abi/erc20.json';
 
@@ -16,12 +17,14 @@ export class Transaction {
     state = 'success',
     timestamp,
     to = '',
+    networkId = 1,
     tokenInfo = undefined,
     transactionHash,
     value = '0',
+    success,
   }) {
     if (tokenInfo) {
-      this.tokenInfo = tokenInfo;
+      this.tokenInfo = new Token(tokenInfo);
       this.valueWei = value;
     } else {
       this.value = value;
@@ -29,11 +32,12 @@ export class Transaction {
 
     this.data = data || input;
     this.from = from;
+    this.networkId = networkId;
     this.gasPrice = gasPrice;
     this.gasLimit = gasLimit;
     this.hash = hash || transactionHash;
     this.nonce = nonce;
-    this.state = state;
+    this.state = success === false ? 'error' : state;
     this.to = to;
     if (timestamp) {
       this.date = new Date(timestamp * 1000);
@@ -76,6 +80,20 @@ export class Transaction {
   }
   get gasPrice() {
     return this._gasPrice;
+  }
+  set to(to) {
+    this._to = web3.utils.isAddress(to) ? web3.utils.toChecksumAddress(to) : to;
+  }
+  get to() {
+    return this._to;
+  }
+  set from(from) {
+    this._from = web3.utils.isAddress(from)
+      ? web3.utils.toChecksumAddress(from)
+      : from;
+  }
+  get from() {
+    return this._from;
   }
   get gasPriceWei() {
     if (!isNumeric(this.gasPrice)) return '0';
@@ -168,6 +186,7 @@ export class Transaction {
       gasLimit: this.gasLimit,
       data: this.data,
       nonce: this.nonce,
+      networkId: this.networkId,
       hash: this.hash,
     };
 

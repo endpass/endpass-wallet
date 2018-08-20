@@ -4,6 +4,7 @@ module.exports = {
   rootDir: path.resolve(__dirname, '../../'),
   moduleFileExtensions: ['js', 'json', 'vue', 'ts', 'tsx', 'jsx', 'node'],
   moduleNameMapper: {
+    '^fixtures/(.*)$': '<rootDir>/test/unit/fixtures/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   testMatch: ['<rootDir>/(test/unit/**/*.spec.js|**/__tests__/*.js)'],
@@ -13,9 +14,7 @@ module.exports = {
     '.+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2|svg)$':
       'jest-transform-stub',
   },
-  transformIgnorePatterns: [
-    'node_modules/(?!vue-timers|vue-spinner-component)',
-  ],
+  transformIgnorePatterns: ['node_modules/(?!vue-timers)'],
   snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
   setupFiles: ['<rootDir>/test/unit/setup', 'jest-canvas-mock'],
 };

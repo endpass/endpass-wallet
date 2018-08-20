@@ -28,7 +28,7 @@
                    required />
 
          <v-select v-model="provider.currency"
-                  :options="currencys"
+                  :options="currencies"
                   v-validate="'required'"
                   name="currency"
                   label="Provider currency"
@@ -66,13 +66,14 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VSelect from '@/components/ui/form/VSelect';
 
 export default {
+  name: 'CustomProviderModal',
   data() {
     return {
       providerAdded: false,
@@ -81,17 +82,21 @@ export default {
       provider: {
         name: '',
         url: '',
+        currency: 1,
       },
     };
   },
   computed: {
     ...mapState({
-      currencys: state => state.web3.currencys.map(currency => {return {val: currency.id, text: currency.name}})
+      currencies: state =>
+        state.web3.currencies.map(currency => ({
+          val: currency.id,
+          text: currency.name,
+        })),
     }),
+    ...mapGetters('web3', ['networks']),
     providersLinks() {
-      return this.$store.getters['web3/networks']
-        .map(net => net.url)
-        .toString();
+      return this.networks.map(net => net.url).toString();
     },
   },
   methods: {

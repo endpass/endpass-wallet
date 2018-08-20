@@ -3,14 +3,20 @@
     <template slot="title">Settings</template>
 
     <v-form id="save-settings" class="save-settings" @submit="updateSettings">
+      <div class="field">
+        <label class="label">Email Address</label>
+        <div class="control">
+          <input class="input is-static" type="email" :value="email" readonly>
+        </div>
+        <p class="help">Contact support if you need to change your email
+          address.</p>
+      </div>
       <v-select v-model="newSettings.fiatCurrency"
                 label="Fiat Currency"
                 name='fiatCurrency'
+                @input="updateSettings"
                 :options="availableCurrencies" />
 
-      <v-button id="save-button"
-                className="is-primary is-medium"
-                :disabled="!isSettingsChange">Save</v-button>
     </v-form>
     <two-factor-auth-settings/>
   </base-page>
@@ -33,7 +39,7 @@ export default {
     },
   }),
   computed: {
-    ...mapState('accounts', ['settings', 'availableCurrencies']),
+    ...mapState('accounts', ['settings', 'availableCurrencies', 'email']),
     isSettingsChange() {
       return JSON.stringify(this.settings) !== JSON.stringify(this.newSettings);
     },
@@ -45,8 +51,8 @@ export default {
     updateSettings() {
       this.updateSettingsInStore(this.newSettings).then(() => {
         this.$notify({
-          title: 'Successful',
-          text: 'Settings was saved',
+          title: 'Settings Saved',
+          text: 'Your settings have been saved.',
           type: 'is-info',
         });
       });
@@ -57,7 +63,7 @@ export default {
     VForm,
     VSelect,
     VButton,
-    TwoFactorAuthSettings
+    TwoFactorAuthSettings,
   },
   mounted() {
     try {
@@ -71,7 +77,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .save-settings .field:last-child {
-    margin-bottom: .75rem;
-  }
+.save-settings .field:last-child {
+  margin-bottom: 0.75rem;
+}
 </style>

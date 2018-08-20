@@ -1,5 +1,6 @@
 import { Transaction } from '@/class';
 import { BigNumber } from 'bignumber.js';
+import web3 from 'web3';
 
 const apiResponse = {
   from: '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b',
@@ -52,8 +53,10 @@ describe('Transaction Class', () => {
     expect(transaction.valueWei).toBe(
       (apiResponse.value * Math.pow(10, 18)).toString(),
     );
-    expect(transaction.from).toBe(apiResponse.from);
-    expect(transaction.to).toBe(apiResponse.to);
+    expect(transaction.from).toBe(
+      web3.utils.toChecksumAddress(apiResponse.from),
+    );
+    expect(transaction.to).toBe(web3.utils.toChecksumAddress(apiResponse.to));
     expect(transaction.data).toBe(apiResponse.input);
     expect(transaction.date.getFullYear()).toBe(2018);
     expect(transaction.state).toBe('success');
@@ -65,8 +68,12 @@ describe('Transaction Class', () => {
     let valueBN = _valueBN.div(new BigNumber('10').pow(18));
     expect(transaction.value).toBe(valueBN.toString());
     expect(transaction.valueWei).toBe(_valueBN.toString());
-    expect(transaction.from).toBe(apiTokenResponse.from);
-    expect(transaction.to).toBe(apiTokenResponse.to);
+    expect(transaction.from).toBe(
+      web3.utils.toChecksumAddress(apiTokenResponse.from),
+    );
+    expect(transaction.to).toBe(
+      web3.utils.toChecksumAddress(apiTokenResponse.to),
+    );
     expect(transaction.data).toBe(apiTokenResponse.input);
     expect(transaction.date.getFullYear()).toBe(2018);
     expect(transaction.state).toBe('success');

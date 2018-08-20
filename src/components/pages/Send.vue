@@ -31,6 +31,8 @@
                 <div class="field-body">
                   <v-input v-model="value"
                            type="number"
+                           min="0"
+                           step="any"
                            name="value"
                            :validator="`required|decimal:${decimal}|between:0,${maxAmount}`"
                            data-vv-as="amount"
@@ -43,15 +45,22 @@
                       <v-select name="currencies" v-model="transaction.tokenInfo"
                                 :options="tokenCurrencies"/>
                     </span>
+                    <a slot="icon" title="Send entire balance" @click="setMaxAmount">
+                      <span class="icon is-small is-right"
+                        v-html="require('@/img/arrow-thick-top.svg')">
+                      </span>
+                    </a>
                   </v-input>
                   <v-input v-model="price"
                            type="number"
+                           min="0"
+                           step="0.01"
                            name="price"
                            :validator="`required|decimal:2|between:0,${maxPrice}`"
                            id="price"
                            aria-describedby="price"
                            placeholder="Price"
-                           :disabled="isSending"
+                           :disabled="isSending || !ethPrice"
                            required>
                     <div class="control" slot="addon">
                       <a class="button is-static">{{fiatCurrency}}</a>
@@ -74,7 +83,8 @@
                   ></v-radio>
                   <v-spinner v-else-if="isLoadingGasPrice" :is-loading="isLoadingGasPrice"/>
                   <p class="help is-danger" v-else>
-                    Unable to load suggested gas price, please set gas price mannualy
+                    Unable to load suggested gas price, please set gas price
+                    manually.
                   </p>
                 </div>
               </div>
@@ -99,7 +109,10 @@
                       <v-input v-model="transaction.gasPrice"
                                name="gasPrice"
                                type="number"
-                               validator="required|numeric|integer|between:0,100"
+                               min="1"
+                               max="100"
+                               step="1"
+                               validator="required|numeric|integer|between:1,100"
                                id="gasPrice"
                                aria-describedby="gasPrice"
                                placeholder="Gas price"
@@ -120,6 +133,9 @@
                       <v-input v-model="transaction.gasLimit"
                                name="gasLimit"
                                type="number"
+                               min="21000"
+                               max="4000000"
+                               step="1000"
                                validator="required|numeric|integer|between:21000,4000000"
                                id="gasLimit"
                                aria-describedby="gasLimit"
@@ -139,6 +155,7 @@
                                @input="setTrxNonce"
                                name="nonce"
                                type="number"
+                               step="1"
                                :validator="`required|numeric|integer|min_value:${nextNonceInBlock}`"
                                id="nonce"
                                aria-describedby="nonce"
@@ -171,22 +188,23 @@
               <div class="field is-horizontal">
                 <div class="field-label"></div>
                 <div class="field-body">
-                  <v-button className="is-primary is-medium"
+                  <v-button className="is-success is-medium is-cta"
                             :loading="isSending"
                             :disabled="isSyncing">Send</v-button>
                 </div>
               </div>
-
-              <div class="field is-horizontal" v-if="transactionHash">
-                <div class="field-label">
-                  <label class="label">Transaction Id</label>
-                </div>
-                <div class="field-body">
-                  <p>{{ transactionHash }}</p>
-                </div>
-              </div>
-
             </v-form>
+
+            <div class="transaction-status message is-success" v-if="transactionHash">
+              <div class="message-header">
+                <p>Transaction Sent!</p>
+              </div>
+              <div class="message-body">
+                <p>Your transaction has been broadcast to the network. It may take a few minutes before the transaction is confirmed.</p>
+                <p class="label">Transaction Id</p>
+                <p class="code">{{ transactionHash }}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -239,19 +257,21 @@ export default {
     isTransactionModal: false,
     isPasswordModal: false,
     showAdvanced: false,
-    suggestedGasPrices: null
+    suggestedGasPrices: null,
   }),
   computed: {
     ...mapState({
       tokenPrices: state => state.tokens.prices,
       balance: state => state.accounts.balance,
-      address: state => state.accounts.address.getAddressString(),
-      tokens: state => state.tokens.activeTokens.filter(token => token.balance > 0),
+      address: state => state.accounts.address.getChecksumAddressString(),
+      tokens: state =>
+        state.tokens.activeTokens.filter(token => token.balance > 0),
       activeCurrency: state => state.web3.activeCurrency,
       web3: state => state.web3.web3,
+      activeNet: state => state.web3.activeNet,
       isSyncing: state => !!state.web3.isSyncing,
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
-      ethPrice: state => state.price.price,
+      ethPrice: state => state.price.price || 0,
     }),
     value: {
       get() {
@@ -303,9 +323,18 @@ export default {
     },
     actualPrice() {
       let price;
-      if(this.transaction.tokenInfo) {
-        price = this.tokenPrices[this.transaction.tokenInfo.symbol] && this.tokenPrices[this.transaction.tokenInfo.symbol][this.activeCurrency.name] ?
-        BigNumber(this.tokenPrices[this.transaction.tokenInfo.symbol][this.activeCurrency.name]).times(this.ethPrice) : 0;
+      if (this.transaction.tokenInfo) {
+        price =
+          this.tokenPrices[this.transaction.tokenInfo.symbol] &&
+          this.tokenPrices[this.transaction.tokenInfo.symbol][
+            this.activeCurrency.name
+          ]
+            ? BigNumber(
+                this.tokenPrices[this.transaction.tokenInfo.symbol][
+                  this.activeCurrency.name
+                ],
+              ).times(this.ethPrice)
+            : 0;
       } else {
         price = this.ethPrice;
       }
@@ -336,19 +365,19 @@ export default {
       const { tokenInfo } = this.transaction;
       return (tokenInfo && tokenInfo.decimals) || 18;
     },
-    // Suggested gas prices for different priorities
-    // TODO dynamically update from API
     tokenCurrencies() {
-      const currencies = [{
-        val: null,
-        key: this.activeCurrency.name,
-        text: this.activeCurrency.name
-      }];
+      const currencies = [
+        {
+          val: null,
+          key: this.activeCurrency.name,
+          text: this.activeCurrency.name,
+        },
+      ];
 
       this.tokens.forEach(token => currencies.push(token.symbol));
 
       return currencies;
-    }
+    },
   },
   methods: {
     ...mapActions('transactions', [
@@ -356,9 +385,7 @@ export default {
       'getNextNonce',
       'getNonceInBlock',
     ]),
-    ...mapActions('gasPrice', [
-      'getGasPrice'
-    ]),
+    ...mapActions('gasPrice', ['getGasPrice']),
     setTrxNonce(nonce) {
       this.transaction.nonce = nonce;
     },
@@ -390,6 +417,7 @@ export default {
       this.isSending = true;
       this.transaction.from = this.address;
       this.togglePasswordModal();
+      this.transaction.networkId = this.activeNet.id;
       this.sendTransaction({ transaction: this.transaction, password })
         .then(hash => {
           this.transactionHash = hash;
@@ -397,8 +425,8 @@ export default {
           this.resetForm();
           const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`;
           this.$notify({
-            title: 'Successful',
-            text: `Transaction ${shortHash} was sent`,
+            title: 'Transaction Sent',
+            text: `Transaction ${shortHash} sent`,
             type: 'is-info',
           });
         })
@@ -433,6 +461,10 @@ export default {
         this.userNonce = nonce;
       });
     },
+    // Sets transaction value to the maximum amount
+    setMaxAmount() {
+      this.value = this.maxAmount;
+    },
   },
   watch: {
     'transaction.to': {
@@ -456,37 +488,60 @@ export default {
         }
       },
     },
-    'transaction.tokenInfo'() {
+    'transaction.tokenInfo': () => {
       this.updateEstimateGasCost();
     },
   },
   created() {
     this.updateUserNonce();
-    this.getGasPrice().then((prices) => {
-      this.suggestedGasPrices = [
-        {
-          val: prices.low.toString(),
-          key: 'Low',
-          help: prices.low + ' Gwei'
-        },
-        {
-          val: prices.medium.toString(),
-          key: 'Medium',
-          help: prices.medium + ' Gwei'
-        },
-        {
-          val: prices.high.toString(),
-          key: 'High',
-          help: prices.high + ' Gwei'
-        }
-      ];
-    }).catch(e => {
-      this.isLoadingGasPrice = false;
-    });
+    this.getGasPrice()
+      .then(prices => {
+        this.suggestedGasPrices = [
+          {
+            val: prices.low.toString(),
+            key: 'Low',
+            help: prices.low + ' Gwei',
+          },
+          {
+            val: prices.medium.toString(),
+            key: 'Medium',
+            help: prices.medium + ' Gwei',
+          },
+          {
+            val: prices.high.toString(),
+            key: 'High',
+            help: prices.high + ' Gwei',
+          },
+        ];
+      })
+      .catch(() => {
+        this.isLoadingGasPrice = false;
+      });
+
     this.interval = setInterval(async () => {
       this.nextNonceInBlock = await this.getNonceInBlock();
-      this.$validator.validate('nonce')
+      this.$validator.validate('nonce');
     }, 2000);
+
+    this.$watch(
+      vm => [vm.balance, vm.$data.estimateGasCost].join(),
+      () => {
+        if (BigNumber(this.estimateGasCost).gt(this.balance)) {
+          this.errors.add({
+            field: 'value',
+            msg: 'Insufficient funds for the transaction commission',
+            id: 'insufficientBalance',
+          });
+        } else {
+          this.errors.removeById('insufficientBalance');
+        }
+      },
+    );
+
+    this.$watch(
+      vm => [vm.activeNet.id, vm.address].join(),
+      this.updateUserNonce,
+    );
   },
   beforeDestroy() {
     clearInterval(this.interval);
@@ -509,16 +564,27 @@ export default {
 .advanced-options-container {
 }
 .advanced-options {
-  overflow:hidden;
-  height:auto;
+  overflow: hidden;
+  height: auto;
   max-height: 1000px;
 
   display: inherit !important; /* override v-show display: none */
-  transition:max-height 0.3s ease-in-out;
+  transition: max-height 0.3s ease-in-out;
 }
-.advanced-options[style*="display: none;"] {
+.advanced-options[style*='display: none;'] {
   max-height: 0;
   pointer-events: none; /* disable user interaction */
   user-select: none; /* disable user selection */
+}
+
+.send-page {
+  .send-amount {
+    margin-top: 2em;
+    margin-bottom: 2em;
+  }
+
+  .field-label {
+    margin-bottom: 0;
+  }
 }
 </style>

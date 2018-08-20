@@ -2,6 +2,7 @@ import { shallow, createLocalVue, mount } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
 import validation from '@/validation';
+import tokensFixture from 'fixtures/tokens';
 
 import TokensPage from '@/components/pages/Tokens.vue';
 import { generateStubs } from '@/utils/testUtils';
@@ -20,18 +21,7 @@ describe('TokensPage', () => {
   let tokens;
 
   beforeEach(() => {
-    tokens = [
-      {
-        name: 'First Token',
-        symbol: 'FST',
-        address: '0xFST',
-      },
-      {
-        name: 'second token',
-        symbol: '$SCdT',
-        address: '0x$SCdT',
-      },
-    ];
+    tokens = tokensFixture.tokens;
 
     actions = {
       updateTokenPrice: jest.fn(),
@@ -152,12 +142,12 @@ describe('TokensPage', () => {
             {
               name: 'Third Token',
               symbol: 'TTKN',
-              address: '0xTTKN',
+              address: '0x687422eEA2cB73B5d3e242bA5456b782919AFc85',
             },
             {
               name: 'fours token',
               symbol: 'FurT',
-              address: '0xFurT',
+              address: '0xAb54DE61A908583e6332a1282c7bFcA39f899B4f',
             },
           ],
         });
@@ -181,20 +171,6 @@ describe('TokensPage', () => {
         });
 
         expect(wrapper.vm.searchTokenList).toHaveLength(1);
-      });
-    });
-
-    describe('user token', () => {
-      it('should call remove action', () => {
-        const button = wrapper.find('span#remove-token-1');
-        button.trigger('click');
-
-        expect(actions.removeTokenFromSubscription).toHaveBeenCalledTimes(1);
-        expect(actions.removeTokenFromSubscription).toBeCalledWith(
-          expect.any(Object),
-          tokens[1],
-          undefined,
-        );
       });
     });
   });

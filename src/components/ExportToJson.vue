@@ -18,12 +18,16 @@ import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
 
 export default {
+  name: 'ExportToJson',
   data: () => ({
     exportingJson: false,
     passwordModalOpen: false,
   }),
   computed: {
     ...mapState({
+      address: state =>
+        state.accounts.address &&
+        state.accounts.address.getChecksumAddressString(),
       wallet: state => state.accounts.wallet,
     }),
   },
@@ -34,7 +38,8 @@ export default {
         this.exportingJson = true;
         await new Promise(res => setTimeout(res, 20));
         try {
-          this.saveJSON(this.wallet.exportToJSON(password, password));
+          const v3 = await this.wallet.exportToJSON(password);
+          this.saveJSON(v3);
         } catch (e) {
           this.exportError(e);
         }
@@ -42,8 +47,7 @@ export default {
       }
     },
     saveJSON(data) {
-      const address = this.wallet.getAddressString();
-      const filename = `endpass_wallet_${address}.json`;
+      const filename = `endpass_wallet_${this.address}.json`;
       const blob = new Blob([data], { type: 'text/json' });
       const e = document.createEvent('MouseEvents');
       const a = document.createElement('a');

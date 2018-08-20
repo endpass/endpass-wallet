@@ -9,19 +9,38 @@ exports[`SettingsPage render should render the initial state of the component 1`
     class="save-settings"
     id="save-settings"
   >
+    <div
+      class="field"
+    >
+      <label
+        class="label"
+      >
+        Email Address
+      </label>
+       
+      <div
+        class="control"
+      >
+        <input
+          class="input is-static"
+          readonly="readonly"
+          type="email"
+        />
+      </div>
+       
+      <p
+        class="help"
+      >
+        Contact support if you need to change your email
+        address.
+      </p>
+    </div>
+     
     <v-select
       label="Fiat Currency"
       name="fiatCurrency"
       options="USD,AUD,BRL"
     />
-     
-    <v-button
-      classname="is-primary is-medium"
-      disabled="true"
-      id="save-button"
-    >
-      Save
-    </v-button>
   </v-form>
    
   <two-factor-auth-settings />

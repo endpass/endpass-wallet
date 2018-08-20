@@ -1,10 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LoginByEmailModal render should render component 1`] = `
-<v-modal>
+<v-modal
+  class="is-dark"
+>
+   
+  <p
+    class="subtitle"
+  >
+    Please enter your email address below to access your
+  wallet or create a new one.
+  </p>
    
   <v-form>
     <v-input
+      help="Your email address may be used to help recover your
+             wallet in case you lose access."
       label="Email"
       name="email"
       placeholder="Your email"
@@ -13,7 +24,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
      
     <v-checkbox>
       
-      I accept 
+      I accept the 
       <a
         href="https://endpass.com/terms/"
         target="_blank"
@@ -26,15 +37,17 @@ exports[`LoginByEmailModal render should render component 1`] = `
         href="https://endpass.com/privacy/"
         target="_blank"
       >
-        Privacy Policy
+        Privacy
+        Policy
       </a>
+      .
+    
     </v-checkbox>
      
     <v-button
       classname="is-primary is-medium"
-      disabled="true"
     >
-      Send
+      Continue
     </v-button>
   </v-form>
 </v-modal>

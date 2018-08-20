@@ -40,17 +40,18 @@
 import { mapGetters, mapState } from 'vuex';
 export default {
   data() {
-    return {
-    }
+    return {};
   },
   computed: {
     ...mapState({
       wallet: state => state.accounts.wallet,
-      address: state => state.accounts.address && state.accounts.address.getAddressString()
+      address: state =>
+        state.accounts.address &&
+        state.accounts.address.getChecksumAddressString(),
     }),
     ...mapGetters('accounts', ['isPublicAccount']),
   },
-}
+};
 </script>
 
 <style lang="scss">

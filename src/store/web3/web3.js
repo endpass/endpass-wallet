@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import EthBlockTracker from 'eth-block-tracker';
 import storage from '@/services/storage';
-import { infuraConf, subscriptionsBlockchainInterval } from '@/config';
+import { infuraConf, blockUpdateInterval } from '@/config';
 import { providerFactory } from '@/class';
 
 const activeNet = {
@@ -49,7 +49,7 @@ export default {
           url: 'https://etc-geth.0xinfra.com',
         },
       ],
-      currencys: [
+      currencies: [
         {
           name: 'ETH',
           id: 1,
@@ -127,7 +127,7 @@ export default {
       ]).catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     changeCurrency({ commit, dispatch, getters, state }, currencyId) {
-      const currency = state.currencys.find(
+      const currency = state.currencies.find(
         currency => currency.id === currencyId,
       );
       commit('changeCurrency', currency);
@@ -170,7 +170,7 @@ export default {
       }
       state.blockSubscribtion = new EthBlockTracker({
         provider: state.web3.currentProvider,
-        pollingInterval: subscriptionsBlockchainInterval,
+        pollingInterval: blockUpdateInterval,
       });
       state.blockSubscribtion.on('latest', block => {
         dispatch('accounts/updateBalance', {}, { root: true });
@@ -196,7 +196,7 @@ export default {
             state.defaultNetworks.find(net => net.id === cachedNet) ||
             storedNetworks.find(net => net.id === cachedNet);
           const activeCurrency =
-            state.currencys.find(
+            state.currencies.find(
               currency => activeNet.currency === currency.id,
             ) || activeCurrency;
           commit('setProviders', storedNetworks || []);
