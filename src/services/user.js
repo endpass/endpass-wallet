@@ -61,8 +61,8 @@ export default {
   },
 
   getSetting(setting) {
-    return this.getSettings().then(({ user }) => {
-      return user[setting];
+    return this.getSettings().then(data => {
+      return data[setting];
     });
   },
 
