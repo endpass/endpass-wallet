@@ -31,7 +31,10 @@ const kdfParams = {
   n: 8192,
 };
 
+const allowedDomain = 'https://wallet.endpass.com';
+
 export default {
+  allowedDomain,
   hdKeyMnemonic,
   infuraConf,
   serviceThrottleTimeout,

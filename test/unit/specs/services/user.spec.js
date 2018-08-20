@@ -2,7 +2,7 @@ import { http } from '@/utils';
 import MockAdapter from 'axios-mock-adapter';
 
 import { NotificationError } from '@/class';
-import { identityAPIUrl } from '@/config';
+import { allowedDomain, identityAPIUrl } from '@/config';
 import userService from '@/services/user';
 
 describe('User service', () => {
@@ -18,6 +18,7 @@ describe('User service', () => {
   describe('login', () => {
     const url = `${identityAPIUrl}/auth`;
     const email = '123@email.com';
+    const currentRoute = '/route';
 
     const successResp = {
       success: true,
@@ -36,11 +37,14 @@ describe('User service', () => {
       mock.onPost(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
-        expect(config.data).toBe(JSON.stringify({ email }));
+        expect(JSON.parse(config.data)).toEqual({
+          email,
+          redirect_uri: `${allowedDomain}${currentRoute}`,
+        });
 
         return [200, successResp];
       });
-      await userService.login(email);
+      await userService.login({ email, currentRoute });
     });
 
     it('should handle successfull POST /auth request', async () => {

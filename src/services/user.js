@@ -1,13 +1,16 @@
 import { NotificationError } from '@/class';
-import { identityAPIUrl } from '@/config';
+import { allowedDomain, identityAPIUrl } from '@/config';
 import { http } from '@/utils';
 import keyUtil from '@/utils/keystore';
 
 export default {
-  login(email) {
+  login({ email, currentRoute }) {
+    const fullRoute = `${allowedDomain}${currentRoute}`;
+
     return http
       .post(`${identityAPIUrl}/auth`, {
         email,
+        redirect_uri: fullRoute,
       })
       .then(({ data: { success, challenge } }) => {
         if (!success) {

@@ -220,8 +220,8 @@ export default {
     validatePassword({ state }, password) {
       return state.wallet.validatePassword(password);
     },
-    login({ commit, dispatch }, email) {
-      return userService.login(email);
+    login({ commit, dispatch }, payload) {
+      return userService.login(payload);
     },
     logout({ commit, dispatch }) {
       commit('setEmail', null);
