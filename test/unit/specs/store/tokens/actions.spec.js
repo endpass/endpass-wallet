@@ -18,7 +18,6 @@ import {
   priceService,
 } from '@/services';
 
-userService.setSetting = jest.fn();
 jest.useFakeTimers();
 
 describe('tokens actions', () => {
@@ -36,20 +35,25 @@ describe('tokens actions', () => {
         net: 1,
       };
       state = {
+        savedTokens: {
+          1: [],
+        },
         tokenTracker: {
+          serialize: () => [],
           add: jest.fn(),
         },
       };
     });
     it('should try to save token with service and SAVE_TOKEN ', async () => {
-      await actions.saveTokenAndSubscribe({ commit, state, getters }, token);
+      await actions.saveTokenAndSubscribe(
+        { commit, state, getters, dispatch },
+        { token },
+      );
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toHaveBeenCalledWith(SAVE_TOKEN, {
         net: getters.net,
         token,
       });
-      expect(state.tokenTracker.add).toHaveBeenCalledTimes(1);
-      expect(state.tokenTracker.add).toHaveBeenCalledWith({ ...token });
       expect(userService.setSetting).toHaveBeenCalledTimes(1);
       expect(userService.setSetting).toHaveBeenCalledWith(
         'tokens',
@@ -65,18 +69,8 @@ describe('tokens actions', () => {
       userService.setSetting.mockRejectedValue(error);
       await actions.saveTokenAndSubscribe(
         { commit, state, getters, dispatch },
-        token,
+        { token },
       );
-      expect(commit).toHaveBeenCalledTimes(2);
-      expect(commit).toHaveBeenNthCalledWith(1, SAVE_TOKEN, {
-        net: getters.net,
-        token,
-      });
-      expect(commit).toHaveBeenNthCalledWith(2, DELETE_TOKEN, {
-        net: getters.net,
-        token,
-      });
-      expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -91,7 +85,11 @@ describe('tokens actions', () => {
         net: 1,
       };
       state = {
+        savedTokens: {
+          1: [],
+        },
         tokenTracker: {
+          serialize: () => [],
           add: jest.fn(),
         },
       };
@@ -99,7 +97,7 @@ describe('tokens actions', () => {
     it('should try to delete token with service and DELETE_TOKEN ', async () => {
       await actions.deleteTokenAndUnsubscribe(
         { commit, state, getters },
-        token,
+        { token },
       );
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toHaveBeenCalledWith(DELETE_TOKEN, {
@@ -120,17 +118,9 @@ describe('tokens actions', () => {
       userService.setSetting.mockRejectedValue(error);
       await actions.deleteTokenAndUnsubscribe(
         { commit, state, getters, dispatch },
-        token,
+        { token },
       );
-      expect(commit).toHaveBeenCalledTimes(2);
-      expect(commit).toHaveBeenNthCalledWith(1, DELETE_TOKEN, {
-        net: getters.net,
-        token,
-      });
-      expect(commit).toHaveBeenNthCalledWith(2, SAVE_TOKEN, {
-        net: getters.net,
-        token,
-      });
+      expect(commit).toHaveBeenCalledTimes(0);
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
@@ -159,8 +149,8 @@ describe('tokens actions', () => {
     });
 
     it('should emit error and return empty array if failed to fetch data', async () => {
-      tokenInfoService.getTokensList = () =>
-        new Promise((res, rej) => rej(error));
+      tokenInfoService.getTokensList = jest.fn();
+      tokenInfoService.getTokensList.mockRejectedValueOnce();
       const result = await actions.getAllTokens({ dispatch, getters });
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(result.length).toBe(0);
@@ -181,12 +171,12 @@ describe('tokens actions', () => {
       };
     });
     it('should get tokens with balance and create tracker with them', async () => {
-      const tokensWithBalanceMock = [
+      const tokensWithBalance = [
         {
           token,
         },
       ];
-      dispatch.mockReturnValueOnce(tokensWithBalanceMock);
+      dispatch.mockReturnValueOnce(tokensWithBalance);
       await actions.subscribeOnTokensBalancesUpdates({
         dispatch,
         getters,
@@ -194,11 +184,9 @@ describe('tokens actions', () => {
         commit,
       });
       expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenNthCalledWith(
-        2,
-        'createTokenTracker',
-        tokensWithBalanceMock,
-      );
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'createTokenTracker', {
+        tokensWithBalance,
+      });
     });
     it('should reset interval', async () => {
       state.tokensSerializeInterval = setInterval(() => {});
@@ -212,7 +200,7 @@ describe('tokens actions', () => {
       expect(clearInterval).toHaveBeenCalledWith(state.tokensSerializeInterval);
       expect(state.tokenTracker.stop).toHaveBeenCalledTimes(1);
     });
-    it('should emit emit error if failed', async () => {
+    it('should emit error if failed', async () => {
       dispatch.mockRejectedValue();
       await actions.subscribeOnTokensBalancesUpdates({
         dispatch,
@@ -221,6 +209,7 @@ describe('tokens actions', () => {
         commit,
       });
       expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch.mock.calls[1][0]).toBe('errors/emitError');
     });
   });
   describe('getTokensWithBalance', () => {
@@ -288,7 +277,10 @@ describe('tokens actions', () => {
     it('gets tokens prices and saves them with mutation', async () => {
       const price = {};
       priceService.getPrice.mockReturnValueOnce(price);
-      await actions.updateTokenPrice({ commit, getters }, token.symbol);
+      await actions.updateTokenPrice(
+        { commit, getters },
+        { symbol: token.symbol },
+      );
       expect(priceService.getPrice).toHaveBeenCalledTimes(1);
       expect(priceService.getPrice).toHaveBeenCalledWith(
         token.symbol,
@@ -327,9 +319,10 @@ describe('tokens actions', () => {
         pollingInterval: tokenUpdateInterval,
         tokens: [token],
       });
-      actions.createTokenTracker({ commit, dispatch, getters, rootState }, [
-        token,
-      ]);
+      actions.createTokenTracker(
+        { commit, dispatch, getters, rootState },
+        { tokensWithBalance: [token] },
+      );
       expect(commit.mock.calls[0][0]).toBe(SAVE_TOKEN_TRACKER_INSTANCE);
       expect(commit.mock.calls[0][1].userAddress).toBe(getters.address);
       expect(commit.mock.calls[0][1].tokens).toMatchObject([token]);
@@ -337,25 +330,11 @@ describe('tokens actions', () => {
   });
   describe('init', () => {
     beforeEach(() => {
-      commit = jest.fn();
       dispatch = jest.fn();
-      userService.getSetting = jest.fn();
-    });
-    it('trys to det users tokens, and store them', async () => {
-      userService.getSetting.mockResolvedValueOnce([token]);
-      await actions.init({ commit, dispatch });
-      expect(commit).toHaveBeenCalledWith(SAVE_TOKENS, [token]);
     });
     it('subscribes on prive updates', async () => {
-      userService.getSetting.mockResolvedValueOnce([token]);
-      await actions.init({ commit, dispatch });
+      actions.init({ dispatch });
       expect(dispatch).toHaveBeenCalledWith('subscribeOnTokensPricesUpdates');
-    });
-
-    it('emits error when failed', async () => {
-      userService.getSetting.mockRejectedValueOnce();
-      await actions.init({ commit, dispatch });
-      expect(dispatch.mock.calls[0][0]).toBe('errors/emitError');
     });
   });
 });

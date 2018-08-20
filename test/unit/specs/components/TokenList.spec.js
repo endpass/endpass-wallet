@@ -100,7 +100,7 @@ describe('TokenList', () => {
     expect(actions.deleteTokenAndUnsubscribe).toHaveBeenCalledTimes(1);
     expect(actions.deleteTokenAndUnsubscribe).toBeCalledWith(
       expect.any(Object),
-      wrapper.vm.selectedTokens[0],
+      { token: wrapper.vm.selectedTokens[0] },
       undefined,
     );
   });

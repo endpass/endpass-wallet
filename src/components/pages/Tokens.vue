@@ -54,7 +54,7 @@
                   label="name"
                   placeholder="Type to search tokens..."
                   @search-change="setSearchToken"
-                  @select="saveTokenAndSubscribe"
+                  @select="saveTokenAndSubscribe({token: $event.token })"
                   >
                   <span class="multiselect-option" slot="option" slot-scope="props">
                     <v-token :token="props.option" />

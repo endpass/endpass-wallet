@@ -24,10 +24,13 @@ describe('tokens mutations', () => {
     const net = 1;
     let state = {
       savedTokens: {},
+      tokenTracker: {
+        add: jest.fn(),
+      },
     };
 
     mutations[SAVE_TOKEN](state, { token, net });
-
+    expect(state.tokenTracker.add).toHaveBeenCalledWith({ ...token });
     expect(state.savedTokens[net][0]).toMatchObject(token);
   });
   it('deletes token', () => {

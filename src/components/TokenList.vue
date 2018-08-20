@@ -15,7 +15,7 @@
           v-if="hasRemove"
           class="is-inline-block remove-token-button"
           title="Remove Token"
-          @click="deleteTokenAndUnsubscribe(token)"
+          @click="deleteTokenAndUnsubscribe({token})"
           >
             <span
               class="icon has-text-danger is-small is-pulled-right"

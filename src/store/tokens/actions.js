@@ -20,28 +20,30 @@ import { tokenUpdateInterval } from '@/config';
 
 const saveTokenAndSubscribe = async (
   { state, commit, getters, dispatch },
-  token,
+  { token },
 ) => {
   const { net } = getters;
 
   // Check if already subscribed to token
   const tokenExist =
     state.tokenTracker &&
-    state.tokenTracker.tokens &&
-    state.tokenTracker.tokens.find(
-      subscriptionToken => subscriptionToken.address === token.address,
-    );
+    state.tokenTracker.serialize() &&
+    state.tokenTracker
+      .serialize()
+      .includes(
+        subscriptionToken => subscriptionToken.address === token.address,
+      );
+  console.log(!tokenExist);
   if (!tokenExist) {
     try {
+      const newTokensData = Object.assign({}, state.savedTokens);
+      newTokensData[net].push(token);
+      await userService.setSetting('tokens', newTokensData);
       commit(SAVE_TOKEN, {
         token,
         net: net,
       });
-
-      await userService.setSetting('tokens', state.savedTokens);
-      state.tokenTracker.add({ ...token });
     } catch (e) {
-      commit(DELETE_TOKEN, { token, net });
       dispatch('errors/emitError', e, { root: true });
     }
   }
@@ -49,19 +51,22 @@ const saveTokenAndSubscribe = async (
 
 const deleteTokenAndUnsubscribe = async (
   { commit, getters, state, dispatch },
-  token,
+  { token },
 ) => {
   const { net } = getters;
 
   try {
+    const newTokensData = Object.assign({}, state.savedTokens);
+    const deletionTokenIndex = newTokensData[net].findIndex(
+      savedToken => saveToken.address === token.address,
+    );
+    newTokensData[net] = newTokensData[net].slice(
+      deletionTokenIndex,
+      deletionTokenIndex + 1,
+    );
+    await userService.setSetting('tokens', newTokensData);
     commit(DELETE_TOKEN, { token, net });
-    await userService.setSetting('tokens', state.savedTokens);
   } catch (e) {
-    commit(SAVE_TOKEN, {
-      token,
-      net,
-    });
-    state.tokenTracker.add({ ...token });
     dispatch('errors/emitError', e, { root: true });
   }
 };
@@ -103,14 +108,13 @@ const subscribeOnTokensBalancesUpdates = async ({
   }
   try {
     const tokensWithBalance = await dispatch('getTokensWithBalance');
-    const tracker = dispatch('createTokenTracker', tokensWithBalance);
+    dispatch('createTokenTracker', { tokensWithBalance });
+    // TokenTracker update event doesent work
     const serialisationInterval = setInterval(() => {
-      if (state.tokenTracker) {
-        const balances = state.tokenTracker.serialize();
-        // TODO check for errors here
-        if (balances.length && typeof balances[0].symbol !== 'undefined')
-          commit(SAVE_TRACKED_TOKENS, balances);
-      }
+      const balances = state.tokenTracker.serialize();
+      // TODO check for errors here
+      if (balances.length && typeof balances[0].symbol !== 'undefined')
+        commit(SAVE_TRACKED_TOKENS, balances);
     }, tokenUpdateInterval);
     commit(SAVE_SERIALISATION_INTERVAL, serialisationInterval);
   } catch (e) {
@@ -159,11 +163,11 @@ const updateTokensPrices = async ({ state, commit, getters }) => {
   );
   commit(SAVE_TOKENS_PRICES, prices);
 };
-const updateTokenPrice = async ({ commit, getters }, symbol) => {
+const updateTokenPrice = async ({ commit, getters }, { symbol }) => {
   const price = await priceService.getPrice(symbol, getters.activeCurrencyName);
   commit(SAVE_TOKEN_PRICE, { symbol, price });
 };
-const subscribeOnTokensPricesUpdates = ({ dispatch }, tokensToSubscribe) => {
+const subscribeOnTokensPricesUpdates = ({ dispatch }) => {
   setInterval(() => {
     dispatch('updateTokensPrices');
   }, tokenUpdateInterval);
@@ -171,7 +175,7 @@ const subscribeOnTokensPricesUpdates = ({ dispatch }, tokensToSubscribe) => {
 
 const createTokenTracker = (
   { state, commit, getters, rootState },
-  tokensWithBalance,
+  { tokensWithBalance },
 ) => {
   const { address } = getters;
 
@@ -195,14 +199,8 @@ const createTokenTracker = (
   commit(SAVE_TOKEN_TRACKER_INSTANCE, tokenTracker);
 };
 
-const init = async ({ commit, dispatch }) => {
-  try {
-    const tokens = await userService.getSetting('tokens');
-    dispatch('subscribeOnTokensPricesUpdates');
-    commit(SAVE_TOKENS, tokens || {});
-  } catch (e) {
-    dispatch('errors/emitError', e, { root: true });
-  }
+const init = async ({ dispatch }) => {
+  dispatch('subscribeOnTokensPricesUpdates');
 };
 
 export default {

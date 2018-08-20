@@ -37,7 +37,7 @@ export default {
       this.isCreating = true;
       await new Promise(res => setTimeout(res, 20));
       try {
-        this.importWalletAddress(this.address);
+        this.addWalletWithAddress(this.address);
         router.push('/');
       } catch (e) {
         this.errors.add({

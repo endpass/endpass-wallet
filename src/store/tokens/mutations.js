@@ -10,9 +10,10 @@ import {
 } from './mutations-types';
 import { Token } from '@/class';
 
-const saveToken = ({ savedTokens }, { token, net }) => {
+const saveToken = ({ savedTokens, tokenTracker }, { token, net }) => {
   savedTokens[net] = savedTokens[net] || [];
   savedTokens[net].push(new Token(token));
+  tokenTracker.add(token);
 };
 
 // Delete token from saved tokens and subscription

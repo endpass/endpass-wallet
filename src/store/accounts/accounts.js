@@ -5,6 +5,7 @@ import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { hdKeyMnemonic, kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
+import { SAVE_TOKENS } from '@/store/tokens/mutations-types';
 import { Wallet, Address } from '@/class';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
@@ -261,9 +262,11 @@ export default {
       commit('startPageLoading', null, { root: true });
       try {
         let [settings, email] = await Promise.all([
-          storage.read('settings'),
+          userService.getSettings(),
           storage.read('email'),
         ]);
+
+        commit(`tokens/${SAVE_TOKENS}`, settings.tokens || {}, { root: true });
         commit('setEmail', email);
 
         if (settings) {
