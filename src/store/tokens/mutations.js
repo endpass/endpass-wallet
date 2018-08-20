@@ -47,7 +47,6 @@ const deleteToken = (
 
 const saveTokens = (state, tokens = {}) => {
   state.savedTokens = tokens;
-  console.log(tokens);
 };
 
 //Save token tracker response with balances
