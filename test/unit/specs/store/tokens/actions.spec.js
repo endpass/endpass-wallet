@@ -294,6 +294,7 @@ describe('tokens actions', () => {
     });
   });
   describe('createTokenTracker', () => {
+    const currentProvider = new Web3.providers.HttpProvider();
     beforeEach(() => {
       commit = jest.fn();
       dispatch = jest.fn();
@@ -305,17 +306,15 @@ describe('tokens actions', () => {
       rootState = {
         web3: {
           web3: {
-            currentProvider: new Web3.providers.HttpProvider(),
+            currentProvider,
           },
         },
       };
     });
-    it('creates right token tracker', () => {
-      const provider = new Web3.providers.HttpProvider();
-      rootState.web3.web3.currentProvider = provider;
+    it('should creates right token tracker', () => {
       const tokenTrackerMock = new TokenTracker({
         userAddress: getters.address,
-        provider,
+        provider: currentProvider,
         pollingInterval: tokenUpdateInterval,
         tokens: [token],
       });

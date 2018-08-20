@@ -33,7 +33,6 @@ const saveTokenAndSubscribe = async (
       .includes(
         subscriptionToken => subscriptionToken.address === token.address,
       );
-  console.log(!tokenExist);
   if (!tokenExist) {
     try {
       const newTokensData = Object.assign({}, state.savedTokens);
