@@ -10,6 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const gitCommitHash = utils.getCommitHash();
 
 const env =
   process.env.NODE_ENV === 'testing'
@@ -38,6 +39,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': env,
+      GIT_COMMIT_HASH: JSON.stringify(gitCommitHash),
     }),
     new UglifyJsPlugin({
       uglifyOptions: {
@@ -84,7 +86,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       // chunksSortMode: 'dependency',
       meta: {
-        build: utils.getCommitHash(),
+        build: gitCommitHash,
       },
     }),
     // keep module.id stable when vendor modules does not change
