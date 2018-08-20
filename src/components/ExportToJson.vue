@@ -18,6 +18,7 @@ import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
 
 export default {
+  name: 'ExportToJson',
   data: () => ({
     exportingJson: false,
     passwordModalOpen: false,
@@ -37,7 +38,8 @@ export default {
         this.exportingJson = true;
         await new Promise(res => setTimeout(res, 20));
         try {
-          this.saveJSON(this.wallet.exportToJSON(password, password));
+          const v3 = await this.wallet.exportToJSON(password);
+          this.saveJSON(v3);
         } catch (e) {
           this.exportError(e);
         }
