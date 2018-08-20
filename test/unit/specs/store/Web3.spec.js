@@ -9,7 +9,7 @@ const commit = state => (type, payload) =>
   store.mutations[type](state, payload);
 
 //Fake action from antoher storage
-store.actions['tokens/subscribeOnTokenUpdates'] = jest.fn();
+store.actions['tokens/subscribeOnTokensBalancesUpdates'] = jest.fn();
 
 const dispatch = context => type => {
   store.actions[type](context);
@@ -115,7 +115,7 @@ describe('web3 store', async () => {
       [
         { type: 'fetchNetworkType' },
         { type: 'subscribeOnBlockUpdates' },
-        { type: 'tokens/subscribeOnTokenUpdates' },
+        { type: 'tokens/subscribeOnTokensBalancesUpdates' },
       ],
       done,
     );

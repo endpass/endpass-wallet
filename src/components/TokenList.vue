@@ -15,7 +15,7 @@
           v-if="hasRemove"
           class="is-inline-block remove-token-button"
           title="Remove Token"
-          @click="removeTokenFromSubscription(token)"
+          @click="deleteTokenAndUnsubscribe({token})"
           >
             <span
               class="icon has-text-danger is-small is-pulled-right"
@@ -59,8 +59,8 @@ export default {
   },
   computed: {
     selectedTokens() {
-      let activeTokens = this.tokens ? this.tokens : this.activeTokens;
-      return activeTokens.map(token => {
+      let trackedTokens = this.tokens ? this.tokens : this.trackedTokens;
+      return trackedTokens.map(token => {
         return new Token(token);
       });
     },
@@ -74,17 +74,14 @@ export default {
       );
     },
     ...mapState({
-      activeTokens: state => state.tokens.activeTokens,
+      trackedTokens: state => state.tokens.trackedTokens,
       tokenPrices: state => state.tokens.prices,
       ethPrice: state => state.price.price,
       currency: state => state.accounts.settings.fiatCurrency,
     }),
   },
   methods: {
-    ...mapActions('tokens', [
-      'updateTokenPrice',
-      'removeTokenFromSubscription',
-    ]),
+    ...mapActions('tokens', ['updateTokenPrice', 'deleteTokenAndUnsubscribe']),
     // Return value of tokens in fiat
     getTokenPrice(symbol) {
       return new BigNumber(this.tokenPrices[symbol] || 0)
@@ -95,7 +92,7 @@ export default {
     updateTokenPrices() {
       // Promises to get prices of all tokens
       return Promise.all(
-        this.activeTokens.map(token => this.updateTokenPrice(token.symbol)),
+        this.trackedTokens.map(token => this.updateTokenPrice(token.symbol)),
       )
         .then(() => (this.isLoading = false))
         .catch(e => this.emitError(e));

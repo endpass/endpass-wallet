@@ -87,7 +87,7 @@ describe('tokens', () => {
 
   it('saves Tokens', () => {
     tokens.mutations.saveActiveTokens(stateInstance, [1, 2, 3]);
-    expect(stateInstance.activeTokens.length).toBe(3);
+    expect(stateInstance.trackedTokens.length).toBe(3);
   });
 
   it('saves Interval', () => {
@@ -102,7 +102,7 @@ describe('tokens', () => {
 
   it('adds Token To Subscription', done => {
     testAction(
-      tokens.actions.addTokenToSubscription,
+      tokens.actions.saveTokenAndSubscribe,
       { address: '0x0' },
       {
         rootState: {
@@ -187,7 +187,7 @@ describe('tokens', () => {
         },
         state: {
           savedTokens: stateInstance.savedTokens,
-          activeTokens: stateInstance.activeTokens,
+          trackedTokens: stateInstance.trackedTokens,
           tokensSubscription: {
             count: 0,
             add() {
@@ -196,7 +196,7 @@ describe('tokens', () => {
           },
         },
         getters: {
-          savedActiveTokens: [
+          savedCurrentNetworkTokens: [
             {
               address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
               decimals: 18,
@@ -236,7 +236,7 @@ describe('tokens', () => {
         savedTokens: {
           '3': [...tokensForSubscription],
         },
-        activeTokens: [...tokensForSubscription],
+        trackedTokens: [...tokensForSubscription],
       };
       getters = { net: 3 };
       token = { address: 'address2' };
@@ -246,15 +246,15 @@ describe('tokens', () => {
       mutations.removeToken(state, { token, net: 3 });
       mutations.removeToken(state, { token, net: 3 });
 
-      const { activeTokens, savedTokens, tokensSubscription } = state;
+      const { trackedTokens, savedTokens, tokensSubscription } = state;
 
       expect(tokensSubscription.tokens).toHaveLength(1);
       expect(savedTokens['3']).toHaveLength(1);
-      expect(activeTokens).toHaveLength(1);
+      expect(trackedTokens).toHaveLength(1);
     });
 
     it('should call remove mutation', async () => {
-      await actions.removeTokenFromSubscription(
+      await actions.deleteTokenAndUnsubscribe(
         { commit, state, getters },
         token,
       );

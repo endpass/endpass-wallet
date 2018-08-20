@@ -25,13 +25,13 @@ describe('TokensPage', () => {
 
     actions = {
       updateTokenPrice: jest.fn(),
-      addTokenToSubscription: jest.fn(),
-      removeTokenFromSubscription: jest.fn(),
+      saveTokenAndSubscribe: jest.fn(),
+      deleteTokenAndUnsubscribe: jest.fn(),
       getAllTokens: jest.fn(() => tokens),
     };
 
     getters = {
-      savedActiveTokens: () => [{}],
+      savedCurrentNetworkTokens: () => [{}],
       net: () => 1,
     };
 
@@ -48,7 +48,7 @@ describe('TokensPage', () => {
         tokens: {
           namespaced: true,
           state: {
-            activeTokens: tokens,
+            trackedTokens: tokens,
             prices: null,
           },
           actions,
@@ -71,8 +71,8 @@ describe('TokensPage', () => {
 
   afterEach(() => {
     actions.updateTokenPrice.mockClear();
-    actions.addTokenToSubscription.mockClear();
-    actions.removeTokenFromSubscription.mockClear();
+    actions.saveTokenAndSubscribe.mockClear();
+    actions.deleteTokenAndUnsubscribe.mockClear();
     actions.getAllTokens.mockClear();
   });
 
@@ -96,7 +96,7 @@ describe('TokensPage', () => {
     describe('v-spinner', () => {
       // it('should render v-spinner', () => {
       //   wrapper.setComputed({
-      //     activeTokens: [],
+      //     trackedTokens: [],
       //   });
       //
       //   expect(wrapper.find('v-spinner').attributes()).toEqual({
@@ -107,7 +107,7 @@ describe('TokensPage', () => {
 
       it('should not render v-spinner', () => {
         wrapper.setComputed({
-          activeTokens: [{}, {}],
+          trackedTokens: [{}, {}],
         });
 
         expect(wrapper.find('v-spinner').attributes()).toEqual({
