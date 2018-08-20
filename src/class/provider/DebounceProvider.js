@@ -27,6 +27,12 @@ export default class DebounceProvider {
     } else {
       const send = (...args) => {
         this.parent[method](args[0], (e, result) => {
+          if (
+            !(this.cache && this.cache[cacheKey] && this.cache[cacheKey].buffer)
+          ) {
+            return;
+          }
+
           const dfdArr = [...this.cache[cacheKey].buffer];
           this.cache[cacheKey].buffer = [];
           dfdArr.forEach(([payload, callback]) => {
@@ -35,7 +41,11 @@ export default class DebounceProvider {
           });
         });
       };
-      const func = debounce(send, 1000, { maxWait: 1000 });
+      const func = debounce(send, 1000, {
+        maxWait: 1000,
+        leading: true,
+        trailing: false,
+      });
 
       this.cache[cacheKey] = {
         date: new Date(),
@@ -78,6 +88,7 @@ export default class DebounceProvider {
   }
 
   destroy() {
+    this.cache = null;
     clearInterval(this.interval);
   }
 }
