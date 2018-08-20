@@ -9,7 +9,8 @@ export default {
           apiKey: 'freekey',
         },
       })
-      .then(resp => resp.data.tokens || []);
+      .then(resp => resp.data.tokens || [])
+      .map(token => token.tokenInfo);
   },
   getHistory(address) {
     return axios.get(`https://api.ethplorer.io/getAddressHistory/${address}`, {

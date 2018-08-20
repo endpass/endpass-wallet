@@ -57,16 +57,7 @@ export default {
   },
 
   getSettings() {
-    return http
-      .get(`${identityAPIUrl}/user`)
-      .then(({ data }) => data.user || {})
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Error in server storage',
-          text: "Can't read data from server storage. Please, reload page",
-          type: 'is-warning',
-        });
-      });
+    return http.get(`${identityAPIUrl}/user`).then(({ data }) => data);
   },
 
   getSetting(setting) {
