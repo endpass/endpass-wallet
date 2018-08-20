@@ -1,13 +1,13 @@
 // List of account addresses
-const addresses = [
+export const addresses = [
   'xpub661MyMwAqRbcFhF3oXSY7tcJWrgzX7VYHqvkoNqr9NXAqDUv4KfWSnago4BMD4yty2cX6f6jLeQefve3nKriVY6c18NLzCmHdKqWeN8VHkJ',
   '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c',
 ];
 
-const v3password = 'password123';
+export const v3password = 'password123';
 
 // Encrypted keystore for a normal account
-const v3 = {
+export const v3 = {
   crypto: {
     cipher: 'aes-128-ctr',
     ciphertext:
@@ -29,7 +29,7 @@ const v3 = {
 };
 
 // Encrypted keystore for an hd account
-const hdv3 = {
+export const hdv3 = {
   crypto: {
     cipher: 'aes-128-ctr',
     ciphertext:
@@ -53,7 +53,10 @@ const hdv3 = {
 
 // Private key buffer for v3
 // prettier-ignore
-const privateKey = {"data": [239, 202, 76, 221, 49, 146, 59, 80, 244, 33, 74, 245, 210, 174, 16, 231, 172, 69, 165, 1, 158, 148, 49, 204, 25, 84, 130, 215, 7, 72, 83, 120], "type": "Buffer"};
+export const privateKey = {"data": [239, 202, 76, 221, 49, 146, 59, 80, 244, 33, 74, 245, 210, 174, 16, 231, 172, 69, 165, 1, 158, 148, 49, 204, 25, 84, 130, 215, 7, 72, 83, 120], "type": "Buffer"};
+
+export const privateKeyString =
+  '0xefca4cdd31923b50f4214af5d2ae10e7ac45a5019e9431cc195482d707485378';
 
 export default {
   addresses,
@@ -61,4 +64,5 @@ export default {
   hdv3,
   v3password,
   privateKey,
+  privateKeyString,
 };
