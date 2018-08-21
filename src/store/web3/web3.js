@@ -123,7 +123,7 @@ export default {
         storage.write('net', network.id),
         dispatch('fetchNetworkType'),
         dispatch('subscribeOnBlockUpdates'),
-        dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true }),
+        dispatch('tokens/subscribeOnTokensBalancesUpdates', {}, { root: true }),
       ]).catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     changeCurrency({ commit, dispatch, getters, state }, currencyId) {
@@ -205,7 +205,11 @@ export default {
             commit('changeCurrency', activeCurrency);
           }
           Promise.all([
-            dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true }),
+            dispatch(
+              'tokens/subscribeOnTokensBalancesUpdates',
+              {},
+              { root: true },
+            ),
             dispatch('subscribeOnBlockUpdates'),
           ]).catch(e => dispatch('errors/emitError', e, { root: true }));
         })

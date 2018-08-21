@@ -60,10 +60,29 @@ export default {
     return http.get(`${identityAPIUrl}/user`).then(({ data }) => data);
   },
 
+  getSetting(setting) {
+    return this.getSettings().then(data => {
+      return data[setting];
+    });
+  },
+
   setSettings(settings) {
     return http
       .post(`${identityAPIUrl}/user`, settings)
-      .then(({ data }) => data);
+      .then(({ data }) => data)
+      .catch(() => {
+        throw new NotificationError({
+          title: 'Error in server storage',
+          text: "Can't save data to server storage, maybe it is not available",
+          type: 'is-warning',
+        });
+      });
+  },
+
+  setSetting(prop, data) {
+    return this.setSettings({
+      [prop]: data,
+    });
   },
 
   // removeSettings(propsArr) {
