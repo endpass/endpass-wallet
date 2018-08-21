@@ -102,9 +102,6 @@ export default {
       currency: state => state.accounts.settings.fiatCurrency,
     }),
     ...mapGetters('tokens', ['savedCurrentNetworkTokens', 'net']),
-    isLoading() {
-      return this.savedCurrentNetworkTokens.length > this.trackedTokens.length;
-    },
     filteredTokens() {
       return this.tokens.filter(
         token =>

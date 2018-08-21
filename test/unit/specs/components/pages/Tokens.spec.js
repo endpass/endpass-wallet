@@ -93,28 +93,28 @@ describe('TokensPage', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
 
-    describe('v-spinner', () => {
-      // it('should render v-spinner', () => {
-      //   wrapper.setComputed({
-      //     trackedTokens: [],
-      //   });
-      //
-      //   expect(wrapper.find('v-spinner').attributes()).toEqual({
-      //     'is-loading': 'true',
-      //     class: 'spinner-block',
-      //   });
-      // });
+    // describe('v-spinner', () => {
+    // it('should render v-spinner', () => {
+    //   wrapper.setComputed({
+    //     trackedTokens: [],
+    //   });
+    //
+    //   expect(wrapper.find('v-spinner').attributes()).toEqual({
+    //     'is-loading': 'true',
+    //     class: 'spinner-block',
+    //   });
+    // });
 
-      it('should not render v-spinner', () => {
-        wrapper.setComputed({
-          trackedTokens: [{}, {}],
-        });
-
-        expect(wrapper.find('v-spinner').attributes()).toEqual({
-          class: 'spinner-block',
-        });
-      });
-    });
+    //   it('should not render v-spinner', () => {
+    //     wrapper.setComputed({
+    //       trackedTokens: [{}, {}],
+    //     });
+    //
+    //     expect(wrapper.find('v-spinner').attributes()).toEqual({
+    //       class: 'spinner-block',
+    //     });
+    //   });
+    // });
   });
 
   describe('behavior', () => {
