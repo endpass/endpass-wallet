@@ -35,9 +35,7 @@ describe('tokens actions', () => {
         net: 1,
       };
       state = {
-        savedTokens: {
-          1: [],
-        },
+        savedTokens: {},
         tokenTracker: {
           serialize: () => [],
           add: jest.fn(),
@@ -55,10 +53,9 @@ describe('tokens actions', () => {
         token,
       });
       expect(userService.setSetting).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'tokens',
-        state.savedTokens,
-      );
+      expect(userService.setSetting).toHaveBeenCalledWith('tokens', {
+        [getters.net]: [token],
+      });
     });
 
     it('should emit error and dont change state if failed to fetch data', async () => {
