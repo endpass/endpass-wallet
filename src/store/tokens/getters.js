@@ -13,9 +13,24 @@ const address = (state, getters, { accounts }) => {
   return accounts.address && accounts.address.getChecksumAddressString();
 };
 
+const isTrackedTokensLoaded = state => {
+  return state.trackedTokens !== null;
+};
+
+const trackedTokens = state => {
+  return state.trackedTokens || [];
+};
+
+const tokensWithBalance = (state, { trackedTokens }) => {
+  return trackedTokens.filter(token => token.balance > 0);
+};
+
 export default {
   net,
   address,
   activeCurrencyName,
   savedCurrentNetworkTokens,
+  isTrackedTokensLoaded,
+  tokensWithBalance,
+  trackedTokens,
 };

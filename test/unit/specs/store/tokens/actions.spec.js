@@ -83,7 +83,7 @@ describe('tokens actions', () => {
       };
       state = {
         savedTokens: {
-          1: [],
+          1: [token],
         },
         tokenTracker: {
           serialize: () => [],
@@ -102,10 +102,9 @@ describe('tokens actions', () => {
         token,
       });
       expect(userService.setSetting).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'tokens',
-        state.savedTokens,
-      );
+      expect(userService.setSetting).toHaveBeenCalledWith('tokens', {
+        1: [],
+      });
     });
     it('should emit error and dont change state if failed to fetch data', async () => {
       const error = new NotificationError({

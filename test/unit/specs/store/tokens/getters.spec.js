@@ -25,6 +25,36 @@ describe('user getters', () => {
       expect(getters.address(1, 1, rootState)).toBe(1);
     });
   });
+  describe('tokensWithBalance', () => {
+    it('should filter tokens withut balance', () => {
+      const tokenWithBlance = {
+        balance: 1,
+      };
+      const tokenWithoutBlance = {
+        balance: 0,
+      };
+      let mockGetters = {
+        trackedTokens: [tokenWithBlance, tokenWithoutBlance],
+      };
+      expect(getters.tokensWithBalance(1, mockGetters)).toMatchObject([
+        tokenWithBlance,
+      ]);
+    });
+  });
+  describe('trackedTokens', () => {
+    it('should return empty array if trackedTokens is null', () => {
+      let state = {
+        trackedTokens: null,
+      };
+      expect(getters.trackedTokens(state)).toMatchObject([]);
+    });
+    it('should return trackedTokens if it is an array', () => {
+      let state = {
+        trackedTokens: [{}, {}],
+      };
+      expect(getters.trackedTokens(state)).toMatchObject(state.trackedTokens);
+    });
+  });
   describe('activeCurrencyName', () => {
     it('should return currency name from web3', () => {
       let rootState = {

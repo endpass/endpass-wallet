@@ -222,7 +222,7 @@
 <script>
 import { BigNumber } from 'bignumber.js';
 import { Transaction } from '@/class';
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import web3 from 'web3';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';
@@ -264,8 +264,6 @@ export default {
       tokenPrices: state => state.tokens.prices,
       balance: state => state.accounts.balance,
       address: state => state.accounts.address.getChecksumAddressString(),
-      tokens: state =>
-        state.tokens.trackedTokens.filter(token => token.balance > 0),
       activeCurrency: state => state.web3.activeCurrency,
       web3: state => state.web3.web3,
       activeNet: state => state.web3.activeNet,
@@ -273,6 +271,7 @@ export default {
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
       ethPrice: state => state.price.price || 0,
     }),
+    ...mapGetters('tokens', ['tokensWithBalance']),
     value: {
       get() {
         const { value } = this.transaction;
@@ -374,7 +373,7 @@ export default {
         },
       ];
 
-      this.tokens.forEach(token => currencies.push(token.symbol));
+      this.tokensWithBalance.forEach(token => currencies.push(token.symbol));
 
       return currencies;
     },

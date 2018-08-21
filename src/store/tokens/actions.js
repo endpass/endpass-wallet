@@ -27,12 +27,10 @@ const saveTokenAndSubscribe = async (
   // Check if already subscribed to token
   const tokenExist =
     state.tokenTracker &&
-    state.tokenTracker.serialize() &&
-    state.tokenTracker
-      .serialize()
-      .includes(
-        subscriptionToken => subscriptionToken.address === token.address,
-      );
+    state.tokenTracker.tokens &&
+    state.tokenTracker.tokens.includes(
+      subscriptionToken => subscriptionToken.address === token.address,
+    );
   if (!tokenExist) {
     try {
       const newTokensData = Object.assign({}, state.savedTokens);
@@ -60,10 +58,8 @@ const deleteTokenAndUnsubscribe = async (
     const deletionTokenIndex = newTokensData[net].findIndex(
       savedToken => savedToken.address === token.address,
     );
-    newTokensData[net] = newTokensData[net].slice(
-      deletionTokenIndex,
-      deletionTokenIndex + 1,
-    );
+    newTokensData[net] = newTokensData[net].slice(0);
+    newTokensData[net].splice(deletionTokenIndex, 1);
     await userService.setSetting('tokens', newTokensData);
     commit(DELETE_TOKEN, { token, net });
   } catch (e) {
@@ -100,7 +96,7 @@ const subscribeOnTokensBalancesUpdates = async ({
   if (!getters.address) {
     return;
   }
-  commit(SAVE_TRACKED_TOKENS, []);
+  commit(SAVE_TRACKED_TOKENS, null);
   // destroy old subscription and recreate new one (in case of address/provider change)
   if (state.tokensSerializeInterval) {
     clearInterval(state.tokensSerializeInterval);
@@ -154,7 +150,7 @@ const getTokensWithBalance = async ({ getters, dispatch }) => {
   }
 };
 const updateTokensPrices = async ({ state, commit, getters }) => {
-  if (state.trackedTokens.length === 0) return;
+  if (state.trackedTokens === null || state.trackedTokens.length === 0) return;
   const symbols = state.trackedTokens.map(token => token.symbol);
 
   const prices = await priceService.getPrices(
