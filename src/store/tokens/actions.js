@@ -57,7 +57,7 @@ const deleteTokenAndUnsubscribe = async (
   try {
     const newTokensData = Object.assign({}, state.savedTokens);
     const deletionTokenIndex = newTokensData[net].findIndex(
-      savedToken => saveToken.address === token.address,
+      savedToken => savedToken.address === token.address,
     );
     newTokensData[net] = newTokensData[net].slice(
       deletionTokenIndex,

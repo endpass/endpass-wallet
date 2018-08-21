@@ -13,10 +13,6 @@
                   <div class="panel-block">
                     <search-input v-model="search" />
                   </div>
-                  <v-spinner
-                    :is-loading="isLoading"
-                    class="spinner-block"
-                  />
                   <div class="scroller">
                     <token-list
                       :tokens="userTokenList"
@@ -54,7 +50,7 @@
                   label="name"
                   placeholder="Type to search tokens..."
                   @search-change="setSearchToken"
-                  @select="saveTokenAndSubscribe({token: $event.token })"
+                  @select="saveTokenAndSubscribe({token: $event })"
                   >
                   <span class="multiselect-option" slot="option" slot-scope="props">
                     <v-token :token="props.option" />
