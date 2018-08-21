@@ -27,12 +27,10 @@ const saveTokenAndSubscribe = async (
   // Check if already subscribed to token
   const tokenExist =
     state.tokenTracker &&
-    state.tokenTracker.serialize() &&
-    state.tokenTracker
-      .serialize()
-      .includes(
-        subscriptionToken => subscriptionToken.address === token.address,
-      );
+    state.tokenTracker.tokens &&
+    state.tokenTracker.tokens.includes(
+      subscriptionToken => subscriptionToken.address === token.address,
+    );
   if (!tokenExist) {
     try {
       const newTokensData = Object.assign({}, state.savedTokens);
