@@ -36,6 +36,7 @@ const saveTokenAndSubscribe = async (
   if (!tokenExist) {
     try {
       const newTokensData = Object.assign({}, state.savedTokens);
+      newTokensData[net] = newTokensData[net] || [];
       newTokensData[net].push(token);
       await userService.setSetting('tokens', newTokensData);
       commit(SAVE_TOKEN, {
@@ -57,7 +58,7 @@ const deleteTokenAndUnsubscribe = async (
   try {
     const newTokensData = Object.assign({}, state.savedTokens);
     const deletionTokenIndex = newTokensData[net].findIndex(
-      savedToken => saveToken.address === token.address,
+      savedToken => savedToken.address === token.address,
     );
     newTokensData[net] = newTokensData[net].slice(
       deletionTokenIndex,

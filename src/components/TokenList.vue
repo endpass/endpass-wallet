@@ -81,7 +81,10 @@ export default {
     }),
   },
   methods: {
-    ...mapActions('tokens', ['updateTokenPrice', 'deleteTokenAndUnsubscribe']),
+    ...mapActions('tokens', [
+      'updateTokensPrices',
+      'deleteTokenAndUnsubscribe',
+    ]),
     // Return value of tokens in fiat
     getTokenPrice(symbol) {
       return new BigNumber(this.tokenPrices[symbol] || 0)
@@ -89,17 +92,13 @@ export default {
         .toString();
     },
     // Get token prices for all tokens
-    updateTokenPrices() {
-      // Promises to get prices of all tokens
-      return Promise.all(
-        this.trackedTokens.map(token => this.updateTokenPrice(token.symbol)),
-      )
-        .then(() => (this.isLoading = false))
-        .catch(e => this.emitError(e));
+    async updateTokenPrice() {
+      await this.updateTokensPrices();
+      this.isLoading = false;
     },
   },
   mounted() {
-    this.updateTokenPrices();
+    this.updateTokenPrice();
   },
   components: {
     VToken,

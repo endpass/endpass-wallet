@@ -41,10 +41,6 @@ exports[`TokensPage render should render component 1`] = `
                   <search-input />
                 </div>
                  
-                <v-spinner
-                  class="spinner-block"
-                />
-                 
                 <div
                   class="scroller"
                 >
