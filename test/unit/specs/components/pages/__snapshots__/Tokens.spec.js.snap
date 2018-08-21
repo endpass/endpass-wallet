@@ -28,7 +28,7 @@ exports[`TokensPage render should render component 1`] = `
                 Your Tokens
               </p>
             </div>
-             
+
             <div
               class="card-content is-narrow"
             >
@@ -40,12 +40,12 @@ exports[`TokensPage render should render component 1`] = `
                 >
                   <search-input />
                 </div>
-                 
+
                 <v-spinner
                   class="spinner-block"
                   is-loading="true"
                 />
-                 
+
                 <div
                   class="scroller"
                 >
@@ -59,7 +59,7 @@ exports[`TokensPage render should render component 1`] = `
             </div>
           </div>
         </div>
-         
+
         <div
           class="column is-half"
         >
@@ -72,24 +72,24 @@ exports[`TokensPage render should render component 1`] = `
               <div
                 class="card-header-title"
               >
-                
+
                 Add Token
-              
+
               </div>
-               
+
               <div
                 class="card-header-icon"
               >
                 <a
                   class="button is-outlined is-info is-small"
                 >
-                  
+
                   Add Custom Token
-                
+
                 </a>
               </div>
             </div>
-             
+
             <div
               class="card-content"
             >
@@ -100,7 +100,7 @@ exports[`TokensPage render should render component 1`] = `
       </div>
     </div>
   </div>
-   
+
   <!---->
 </div>
 `;
