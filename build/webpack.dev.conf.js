@@ -62,6 +62,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       filename: 'index.html',
       template: 'index.html',
       inject: true,
+      meta: {
+        build: utils.getCommitHash(),
+      },
     }),
     // copy custom static assets
     new CopyWebpackPlugin([
