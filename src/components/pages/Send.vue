@@ -271,8 +271,7 @@ export default {
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
       ethPrice: state => state.price.price || 0,
     }),
-    ...mapGetters('tokens', ['trackedTokens']),
-    tokens: () => this.trackedTokens.filter(token => token.balance > 0),
+    ...mapGetters('tokens', ['tokensWithBalance']),
     value: {
       get() {
         const { value } = this.transaction;
@@ -374,7 +373,7 @@ export default {
         },
       ];
 
-      this.tokens.forEach(token => currencies.push(token.symbol));
+      this.tokensWithBalance.forEach(token => currencies.push(token.symbol));
 
       return currencies;
     },

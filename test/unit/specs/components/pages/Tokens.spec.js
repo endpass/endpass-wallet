@@ -32,6 +32,8 @@ describe('TokensPage', () => {
 
     getters = {
       savedCurrentNetworkTokens: () => [{}],
+      trackedTokens: state => state.trackedTokens || [],
+      isTrackedTokensLoaded: state => state.trackedTokens === null,
       net: () => 1,
     };
 
@@ -93,28 +95,28 @@ describe('TokensPage', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
 
-    // describe('v-spinner', () => {
-    // it('should render v-spinner', () => {
-    //   wrapper.setComputed({
-    //     trackedTokens: [],
-    //   });
-    //
-    //   expect(wrapper.find('v-spinner').attributes()).toEqual({
-    //     'is-loading': 'true',
-    //     class: 'spinner-block',
-    //   });
-    // });
+    describe('v-spinner', () => {
+      it('should render v-spinner', () => {
+        wrapper.setComputed({
+          isTrackedTokensLoaded: false,
+        });
 
-    //   it('should not render v-spinner', () => {
-    //     wrapper.setComputed({
-    //       trackedTokens: [{}, {}],
-    //     });
-    //
-    //     expect(wrapper.find('v-spinner').attributes()).toEqual({
-    //       class: 'spinner-block',
-    //     });
-    //   });
-    // });
+        expect(wrapper.find('v-spinner').attributes()).toEqual({
+          'is-loading': 'true',
+          class: 'spinner-block',
+        });
+      });
+
+      it('should not render v-spinner', () => {
+        wrapper.setComputed({
+          isTrackedTokensLoaded: true,
+        });
+
+        expect(wrapper.find('v-spinner').attributes()).toEqual({
+          class: 'spinner-block',
+        });
+      });
+    });
   });
 
   describe('behavior', () => {

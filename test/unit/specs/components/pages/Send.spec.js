@@ -60,15 +60,6 @@ describe('Send', () => {
             id: 1,
           },
         },
-        tokens: {
-          trackedTokens: [
-            {
-              symbol: 'AAA',
-              address: '0xB6eD7644C69416d67B522e20bC294A9a9B405B31',
-              decimals: 8,
-            },
-          ],
-        },
       },
       actions,
       modules: {
@@ -83,6 +74,20 @@ describe('Send', () => {
                   high: '3',
                 }),
               );
+            },
+          },
+        },
+        tokens: {
+          namespaced: true,
+          getters: {
+            tokensWithBalance: () => {
+              return [
+                {
+                  symbol: 'AAA',
+                  address: '0xB6eD7644C69416d67B522e20bC294A9a9B405B31',
+                  decimals: 8,
+                },
+              ];
             },
           },
         },
