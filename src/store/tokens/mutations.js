@@ -49,9 +49,13 @@ const saveTokens = (state, tokens = {}) => {
   state.savedTokens = tokens;
 };
 
-//Save token tracker response with balances
+//Save token tracker response with balances or nullify before update
 const saveTrackedTokens = (state, tokens = []) => {
-  state.trackedTokens = tokens.map(token => new Token(token));
+  if (tokens === null) {
+    state.trackedTokens = null;
+  } else {
+    state.trackedTokens = tokens.map(token => new Token(token));
+  }
 };
 
 const saveTokenPrice = (state, { symbol, price }) => {

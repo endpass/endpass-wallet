@@ -98,7 +98,7 @@ const subscribeOnTokensBalancesUpdates = async ({
   if (!getters.address) {
     return;
   }
-  commit(SAVE_TRACKED_TOKENS, []);
+  commit(SAVE_TRACKED_TOKENS, null);
   // destroy old subscription and recreate new one (in case of address/provider change)
   if (state.tokensSerializeInterval) {
     clearInterval(state.tokensSerializeInterval);
@@ -152,7 +152,7 @@ const getTokensWithBalance = async ({ getters, dispatch }) => {
   }
 };
 const updateTokensPrices = async ({ state, commit, getters }) => {
-  if (state.trackedTokens.length === 0) return;
+  if (state.trackedTokens === null || state.trackedTokens.length === 0) return;
   const symbols = state.trackedTokens.map(token => token.symbol);
 
   const prices = await priceService.getPrices(
