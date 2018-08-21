@@ -60,10 +60,8 @@ const deleteTokenAndUnsubscribe = async (
     const deletionTokenIndex = newTokensData[net].findIndex(
       savedToken => savedToken.address === token.address,
     );
-    newTokensData[net] = newTokensData[net].slice(
-      deletionTokenIndex,
-      deletionTokenIndex + 1,
-    );
+    newTokensData[net] = newTokensData[net].slice(0);
+    newTokensData[net].splice(deletionTokenIndex, 1);
     await userService.setSetting('tokens', newTokensData);
     commit(DELETE_TOKEN, { token, net });
   } catch (e) {
