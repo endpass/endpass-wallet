@@ -36,6 +36,7 @@ const saveTokenAndSubscribe = async (
   if (!tokenExist) {
     try {
       const newTokensData = Object.assign({}, state.savedTokens);
+      newTokensData[net] = [] || newTokensData[net];
       newTokensData[net].push(token);
       await userService.setSetting('tokens', newTokensData);
       commit(SAVE_TOKEN, {
