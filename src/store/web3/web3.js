@@ -138,7 +138,9 @@ export default {
     addNewProvider({ state, commit, dispatch, getters }, network) {
       network.id =
         getters.networks.reduce(
-          (max, next) => (max.id > next.id ? max.id : next.id),
+          (maxId, currentNetwork) =>
+            maxId > currentNetwork.id ? maxId : currentNetwork.id,
+          0,
         ) + 1;
       commit('addNewProvider', network);
 
