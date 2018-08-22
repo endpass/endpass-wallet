@@ -111,6 +111,7 @@ const subscribeOnTokensBalancesUpdates = async ({
       // TODO check for errors here
       if (balances.length && typeof balances[0].symbol !== 'undefined')
         commit(SAVE_TRACKED_TOKENS, balances);
+      else commit(SAVE_TRACKED_TOKENS, []);
     }, tokenUpdateInterval);
     commit(SAVE_SERIALISATION_INTERVAL, serialisationInterval);
   } catch (e) {

@@ -35,10 +35,12 @@ describe('TokenList', () => {
         tokens: {
           namespaced: true,
           state: {
-            trackedTokens: tokensFixture.tokens,
             prices: {
               FST: 2, // price of token in ETH
             },
+          },
+          getters: {
+            trackedTokens: () => tokensFixture.tokens,
           },
           actions,
         },
