@@ -22,6 +22,7 @@
       <div class="buttons" slot="footer">
         <v-button
           form="password-form"
+          data-test="submit-password"
           :loading="processingConfirmation"
           class-name="is-primary is-medium"
           >Confirm</v-button>

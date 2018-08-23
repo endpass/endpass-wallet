@@ -26,6 +26,7 @@
     <div class="buttons" slot="footer">
       <v-button className="is-primary is-medium"
                 form="loginByEmail"
+                data-test="submit-login"
                 :disabled="!termsAccepted"
                 :loading="isLoading">Continue</v-button>
     </div>
