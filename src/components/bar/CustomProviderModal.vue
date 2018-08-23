@@ -1,6 +1,6 @@
 <template>
   <div class="new-account-modal">
-    <v-modal class="is-dark" @close="close">
+    <v-modal @close="close">
       <template slot="header">Add New Provider</template>
 
       <div v-if="!providerAdded">

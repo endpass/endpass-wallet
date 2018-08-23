@@ -1,5 +1,5 @@
 <template>
-  <form :id="id" @submit.prevent="submit">
+  <form class="control" @submit.prevent="submit">
     <slot />
   </form>
 </template>
@@ -7,12 +7,6 @@
 <script>
 export default {
   name: 'v-form',
-  props: {
-    id: {
-      type: String,
-      default: null,
-    }
-  },
   inject: ['$validator'],
   provide() {
     const form = {};

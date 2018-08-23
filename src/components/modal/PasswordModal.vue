@@ -1,27 +1,30 @@
 <template lang="html">
-  <div class="password-congirm-modal">
+  <div class="password-modal">
     <v-modal @close="close">
       <template slot="header">Password confirmation required</template>
 
       <div>
-        <v-form @submit="confirm">
+        <p class="subtitle">Please enter your wallet password to
+          continue.</p>
+        <v-form id="password-form" @submit="confirm">
           <slot />
           <v-password
             v-model="jsonKeystorePassword"
-            label="V3 JSON keystore password"
             name="jsonKeystorePassword"
             validator="required"
             data-vv-as="password"
-            aria-describedby="jsonKeystorePassword"
-            placeholder="V3 JSON keystore password"
+            placeholder="Your Wallet Password"
             required
             @input="handleInput"
           />
-          <v-button
-            :loading="processingConfirmation"
-            class-name="is-primary is-medium"
-          >Confirm</v-button>
         </v-form>
+      </div>
+      <div class="buttons" slot="footer">
+        <v-button
+          form="password-form"
+          :loading="processingConfirmation"
+          class-name="is-primary is-medium"
+          >Confirm</v-button>
       </div>
     </v-modal>
   </div>
@@ -79,4 +82,6 @@ export default {
 </script>
 
 <style lang="scss">
+.passsword-modal {
+}
 </style>
