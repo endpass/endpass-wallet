@@ -43,7 +43,9 @@ describe('connection-status getters', () => {
       const currentProvider = {};
       let rootState = {
         web3: {
-          currentProvider,
+          web3: {
+            currentProvider,
+          },
         },
       };
       expect(getters.currentProvider(0, 0, rootState)).toBe(currentProvider);
@@ -54,10 +56,12 @@ describe('connection-status getters', () => {
       const eth = {};
       let rootState = {
         web3: {
-          eth,
+          web3: {
+            eth,
+          },
         },
       };
-      expect(getters.currentProvider(0, 0, rootState)).toBe(eth);
+      expect(getters.eth(0, 0, rootState)).toBe(eth);
     });
   });
 });

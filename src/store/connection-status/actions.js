@@ -24,7 +24,7 @@ const subscribeOnSyncStatus = async ({ state, getters, commit, dispatch }) => {
   const providerCache = getters.currentProvider;
   try {
     const status = await getters.eth.isSyncing();
-    if (providerCache === currentProvider) {
+    if (providerCache === getters.currentProvider) {
       commit(SET_SYNC_STATUS, status);
       commit(SET_WEB3_CONNECTION_STATUS, true);
       setTimeout(() => {
