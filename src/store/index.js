@@ -32,15 +32,17 @@ export const actions = {
     commit('startPageLoading');
 
     await dispatch('errors/init');
+    // Wait for accounts to load first
     await dispatch('accounts/init');
 
     commit('stopPageLoading');
-    // Actions below not hidden by full page load
 
-    dispatch('web3/init');
-    dispatch('tokens/init');
-    dispatch('price/init');
-    dispatch('connectionStatus/init');
+    return Promise.all([
+      dispatch('web3/init'),
+      dispatch('tokens/init'),
+      dispatch('price/init'),
+      dispatch('connectionStatus/init'),
+    ]);
   },
 };
 
