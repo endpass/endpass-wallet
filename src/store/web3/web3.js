@@ -1,5 +1,4 @@
 import Web3 from 'web3';
-import EthBlockTracker from 'eth-block-tracker';
 import storage from '@/services/storage';
 import { infuraConf, blockUpdateInterval } from '@/config';
 import { providerFactory } from '@/class';
@@ -57,6 +56,7 @@ export default {
       isSyncing: false,
       blockNumber: 0,
       activeNet: {},
+      interval: null,
       activeCurrency: {
         name: 'ETH',
         id: 1,
@@ -117,6 +117,9 @@ export default {
     },
     setNetworkType(state, type) {
       state.activeNet.networkType = type;
+    },
+    setInterval(state, interval) {
+      state.interval = interval;
     },
   },
   actions: {
@@ -186,22 +189,30 @@ export default {
 
       return Promise.all([net.getNetworkType(), net.getId()]);
     },
-    subscribeOnBlockUpdates({ state, commit, dispatch, rootState }) {
-      if (state.blockSubscribtion) {
-        state.blockSubscribtion.stop();
+    // Fires on new block found
+    async updateBlockNumber({ dispatch, state, commit }) {
+      const oldBlockNumber = state.blockNumber;
+      const blockNumber = await web3.eth.getBlockNumber();
+      if (blockNumber === oldBlockNumber) {
+        return;
       }
-      state.blockSubscribtion = new EthBlockTracker({
-        provider: web3.currentProvider,
-        pollingInterval: blockUpdateInterval,
-      });
-      state.blockSubscribtion.on('latest', block => {
-        dispatch('accounts/updateBalance', {}, { root: true });
-        dispatch('transactions/handleBlockTransactions', block.transactions, {
-          root: true,
-        });
-        commit('setBlockNumber', web3.utils.hexToNumberString(block.number));
-      });
-      state.blockSubscribtion.start();
+      commit('setBlockNumber', blockNumber);
+      return dispatch('accounts/updateBalance', {}, { root: true });
+    },
+    async subscribeOnBlockUpdates({ state, commit, dispatch }) {
+      await dispatch('unsubscribeOnBlockUpdates');
+
+      const interval = setInterval(() => {
+        dispatch('updateBlockNumber');
+      }, blockUpdateInterval);
+      commit('setInterval', interval);
+    },
+    async unsubscribeOnBlockUpdates({ state, commit }) {
+      if (!state.interval) {
+        return;
+      }
+      clearInterval(state.interval);
+      commit('setInterval', null);
     },
     init({ commit, dispatch, state }) {
       return storage

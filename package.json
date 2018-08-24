@@ -32,7 +32,6 @@
     "bignumber.js": "^7.2.1",
     "bip39": "^2.5.0",
     "bs58check": "^2.1.2",
-    "eth-block-tracker": "^3.0.0",
     "eth-ens-namehash": "^2.0.8",
     "eth-token-tracker": "^1.1.4",
     "ethereum-blockies-base64": "^1.0.2",
