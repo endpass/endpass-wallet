@@ -115,7 +115,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import erc20ABI from '@/abi/erc20.json';
+import { ERC20Token } from '@/class';
 import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
@@ -162,9 +162,12 @@ export default {
       this.loadingToken = true;
 
       try {
-        const contract = new web3.eth.Contract(erc20ABI, this.token.address);
-        await this.checkContractExistence(contract);
-        await this.setTokenData(contract);
+        const contract = new web3.eth.Contract(
+          erc20ABI,
+          this.token.address,
+        );
+        const erc20 = new ERC20Token(this.web3, this.token.address);
+        await this.setTokenData(erc20);
         const { decimals, name, symbol } = this.token;
 
         if (decimals && symbol && name) {
@@ -183,19 +186,14 @@ export default {
         });
       }
     },
-    checkContractExistence(contract) {
-      return contract.methods.balanceOf(this.address).call();
-    },
-    setTokenData(contract) {
-      const tokenData = ['name', 'decimals', 'symbol'].map(async item => {
-        try {
-          this.token[item] = await contract.methods[item]().call();
-        } catch (e) {
-          this.notFound[item] = true;
-        }
-      });
-
-      return Promise.all(tokenData);
+    async setTokenData(erc20) {
+      const tokenInfo = await erc20.getToken(); //Returns Token class
+      this.token = {
+        ...this.token,
+        name: tokenInfo.name,
+        decimals: tokenInfo.decimals,
+        symbol: tokenInfo.symbol,
+      };
     },
     close() {
       this.$emit('close');
