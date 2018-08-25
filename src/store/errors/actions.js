@@ -1,3 +1,4 @@
+import { EventEmitter } from '@/class';
 import { SET_EVENT_EMITTER } from './mutations-types';
 
 const emitError = ({ state, dispatch }, error) => {
