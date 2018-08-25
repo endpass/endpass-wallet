@@ -7,7 +7,7 @@ import web3 from './web3/web3';
 import gasPrice from './gas-price/gas-price';
 import price from './price/price';
 import transactions from './transactions/transactions';
-import errors from './errors/errors';
+import errors from './errors';
 import connectionStatus from './connection-status/connection-status';
 import userModule from './user';
 

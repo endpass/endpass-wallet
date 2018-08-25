@@ -1,0 +1,1 @@
+export const SET_EVENT_EMITTER = 'SET_EVENT_EMITTER';
