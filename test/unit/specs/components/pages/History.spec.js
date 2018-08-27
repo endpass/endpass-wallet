@@ -146,11 +146,24 @@ describe('HistoryPage', () => {
       expect(getHistory).toHaveBeenCalledTimes(1);
     });
 
-    it('should update transactions when the account is changed', () => {
-      const watcher = jest.spyOn(wrapper.vm, 'getHistory');
-      wrapper.setComputed({ address: '0x0' });
+    // FIXME getHistory don't work when $watch in created
+    it('should update history when the account/net is changed', () => {
+      const watcher = jest.spyOn(wrapper.vm, 'getTransactionHistory');
 
-      expect(watcher).toHaveBeenCalled();
+      wrapper.setComputed({ address: '0x0' });
+      wrapper.setComputed({ activeNet: { id: 2 } });
+      wrapper.setComputed({ activeNet: { id: 1 } });
+
+      expect(watcher).toHaveBeenCalledTimes(2);
+    });
+
+    it('should`t update history when the account/net is not valid', () => {
+      const watcher = jest.spyOn(wrapper.vm, 'getTransactionHistory');
+
+      wrapper.setComputed({ address: null, isHistoryAvailable: true });
+      wrapper.setComputed({ address: '0x0', isHistoryAvailable: false });
+
+      expect(watcher).toHaveBeenCalledTimes(0);
     });
   });
 });

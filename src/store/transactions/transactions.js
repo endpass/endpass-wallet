@@ -1,11 +1,11 @@
 import Tx from 'ethereumjs-tx';
 import { BigNumber } from 'bignumber.js';
-import ethUtil from 'ethereumjs-util';
+import web3 from 'web3';
 import { EventEmitter, NotificationError, Transaction } from '@/class';
 import { MAIN_NET_ID } from '@/constants';
 import ethplorerService from '@/services/ethplorer';
 
-const { toChecksumAddress } = ethUtil;
+const { toChecksumAddress } = web3.utils;
 
 export default {
   namespaced: true,
@@ -262,6 +262,7 @@ export default {
       });
       dispatch('errors/emitError', error, { root: true });
     },
+    // Transaction history from ethplorer
     async getTransactionHistory({ commit, dispatch, rootState }) {
       if (!rootState.accounts.address) return;
 
@@ -297,6 +298,43 @@ export default {
           },
         });
         dispatch('errors/emitError', error, { root: true });
+      }
+    },
+    // Show notification of incoming transactions from block
+    handleBlockTransactions({ dispatch, rootState }, transactions) {
+      const { wallets } = rootState.accounts;
+      const userAddresses = Object.keys(wallets).map(wallet =>
+        wallet.toLowerCase(),
+      );
+      const toUserTrx = transactions.filter(trx =>
+        userAddresses.some(address => address === trx.to),
+      );
+
+      toUserTrx.forEach(trx => {
+        const { hash, to } = trx;
+        const shortAddress = `${to.slice(0, 4)}...${to.slice(-4)}`;
+        const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`;
+        const error = new NotificationError({
+          title: 'Incoming transaction',
+          text: `Address ${shortAddress} received transaction ${shortHash}`,
+        });
+
+        dispatch('errors/emitError', error, { root: true });
+      });
+
+      if (!rootState.accounts.address) {
+        return;
+      }
+
+      const address = rootState.accounts.address.getAddressString();
+      const trxAddresses = toUserTrx.map(({ to }) => to);
+      const { id: currentNetID } = rootState.web3.activeNet;
+
+      if (
+        currentNetID === MAIN_NET_ID &&
+        trxAddresses.some(trxAddress => trxAddress === address)
+      ) {
+        dispatch('getTransactionHistory');
       }
     },
   },

@@ -59,7 +59,10 @@ export default {
   methods: {
     ...mapActions('transactions', ['getTransactionHistory']),
     async getHistory() {
-      if (!this.address) return;
+      if (!(this.address && this.isHistoryAvailable)) {
+        this.isLoading = false;
+        return;
+      }
 
       this.isLoading = true;
       await this.getTransactionHistory();
@@ -67,12 +70,9 @@ export default {
     },
   },
   created() {
-    this.getHistory();
-  },
-  watch: {
-    address() {
-      this.getHistory();
-    },
+    this.$watch(vm => [vm.activeNet.id, vm.address].join(), this.getHistory, {
+      immediate: true,
+    });
   },
   components: {
     appTransaction,

@@ -20,16 +20,16 @@ describe('transactions store', () => {
       it('should get account transactions correctly', () => {
         stateInstance.pendingTransactions = [
           {
-            to: '0x0',
-            from: '0x1',
+            to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+            from: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
             state: 'success',
           },
           {
-            to: '0x1',
-            from: '0x0',
+            to: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+            from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
           },
           {
-            to: '0x1',
+            to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
             from: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
           },
         ];
@@ -40,7 +40,7 @@ describe('transactions store', () => {
             accounts: {
               address: {
                 getChecksumAddressString() {
-                  return '0x0';
+                  return '0x1cE2109F8db1190cD44bC6554e35642214fbE144';
                 },
               },
             },
@@ -50,7 +50,7 @@ describe('transactions store', () => {
           },
         );
 
-        expect(transactions.length).toBe(2);
+        expect(transactions).toHaveLength(2);
         expect(transactions).toContainEqual(
           stateInstance.pendingTransactions[0],
         );
@@ -81,8 +81,8 @@ describe('transactions store', () => {
         stateInstance = {
           pendingTransactions: [
             {
-              to: '0x1',
-              from: '0x0',
+              to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
+              from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
             },
           ],
         };
@@ -92,8 +92,8 @@ describe('transactions store', () => {
           {
             filteredHistoryTransactions: [
               {
-                to: '0x2',
-                from: '0x0',
+                to: '0x3ce2109f8db1190cd44bc6554e35642214fbe144',
+                from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
               },
             ],
           },
@@ -101,7 +101,7 @@ describe('transactions store', () => {
             accounts: {
               address: {
                 getChecksumAddressString() {
-                  return '0x0';
+                  return '0x1cE2109F8db1190cD44bC6554e35642214fbE144';
                 },
               },
             },
@@ -116,18 +116,18 @@ describe('transactions store', () => {
 
       it('should sort transactions by date', () => {
         const trx1 = {
-          to: '0x1',
-          from: '0x0',
+          to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
+          from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
           date: new Date('01/01/2001'),
         };
         const trx2 = {
-          to: '0x1',
-          from: '0x0',
+          to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
+          from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
           date: new Date('01/01/2010'),
         };
         const trx3 = {
-          to: '0x1',
-          from: '0x0',
+          to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
+          from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
         };
 
         stateInstance = {
@@ -141,7 +141,7 @@ describe('transactions store', () => {
             accounts: {
               address: {
                 getChecksumAddressString() {
-                  return '0x0';
+                  return '0x1cE2109F8db1190cD44bC6554e35642214fbE144';
                 },
               },
             },
@@ -314,7 +314,14 @@ describe('transactions store', () => {
         accounts: {
           address: {
             getChecksumAddressString: jest.fn(),
+            getAddressString: () => address.toLowerCase(),
           },
+          wallets: {
+            [address]: {},
+          },
+        },
+        web3: {
+          activeNet: { id: 2 },
         },
       };
     });
@@ -364,6 +371,35 @@ describe('transactions store', () => {
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe('errors/emitError');
+      });
+    });
+
+    describe('handleBlockTransactions', () => {
+      it('should show notification of incoming transactions', () => {
+        actions.handleBlockTransactions(
+          { dispatch, rootState },
+          ethplorerTransactions,
+        );
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch.mock.calls[0][0]).toBe('errors/emitError');
+      });
+
+      it('should update transaction history', () => {
+        rootState = {
+          ...rootState,
+          web3: {
+            activeNet: { id: 1 },
+          },
+        };
+
+        actions.handleBlockTransactions(
+          { dispatch, rootState },
+          ethplorerTransactions,
+        );
+
+        expect(dispatch).toHaveBeenCalledTimes(2);
+        expect(dispatch.mock.calls[1][0]).toBe('getTransactionHistory');
       });
     });
   });
