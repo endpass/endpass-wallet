@@ -1,4 +1,5 @@
-import ethUtils from 'ethereumjs-util';
+import web3 from 'web3';
+import secp256k1 from 'secp256k1';
 export default {
   getMessage(field, params, data) {
     return (data && data.message) || 'Something went wrong';
@@ -6,7 +7,7 @@ export default {
   validate(value, args) {
     let isKey;
     try {
-      isKey = ethUtils.isValidPrivate(
+      isKey = secp256k1.privateKeyVerify(
         Buffer.from(value.replace(/^0x/, ''), 'hex'),
       );
     } catch (e) {
