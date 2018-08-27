@@ -1,13 +1,12 @@
+import { EventEmitter } from '@/class';
 import actions from './actions';
-import mutations from './mutations';
 
 const state = {
-  errorEmitter: null,
+  errorEmitter: new EventEmitter(),
 };
 
 export default {
   namespaced: true,
   state,
   actions,
-  mutations,
 };

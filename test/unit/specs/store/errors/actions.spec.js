@@ -1,6 +1,5 @@
 import actions from '@/store/errors/actions';
 import { EventEmitter } from '@/class';
-import { SET_EVENT_EMITTER } from '@/store/errors/mutations-types';
 
 describe('errors store actions', () => {
   let state = {
@@ -28,16 +27,6 @@ describe('errors store actions', () => {
         {
           root: true,
         },
-      );
-    });
-  });
-
-  describe('init', () => {
-    it('should set eventEmitter', () => {
-      actions.init({ commit });
-      expect(commit).toHaveBeenCalledWith(
-        SET_EVENT_EMITTER,
-        expect.any(EventEmitter),
       );
     });
   });
