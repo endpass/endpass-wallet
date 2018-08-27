@@ -1,9 +1,7 @@
 const appStatus = state => {
   if (!state.web3Connection) {
     return 'failed';
-  } else if (state.isSyncing) {
-    return 'syncing';
-  } else if (!state.apiConnection) {
+  } else if (state.isSyncing || !state.apiConnection) {
     return 'syncing';
   } else {
     return 'ready';
