@@ -2,8 +2,7 @@ import gasPrice from '@/services/gas-price';
 
 const getGasPrice = async ({ dispatch }) => {
   try {
-    const price = await gasPrice.getGasPrice();
-    return price;
+    return await gasPrice.getGasPrice();
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
   }
