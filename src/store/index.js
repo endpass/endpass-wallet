@@ -8,7 +8,7 @@ import gasPrice from './gas-price/gas-price';
 import price from './price/price';
 import transactions from './transactions/transactions';
 import errors from './errors';
-import connectionStatus from './connection-status/connection-status';
+import connectionStatus from './connection-status';
 import userModule from './user';
 
 Vue.use(Vuex);
