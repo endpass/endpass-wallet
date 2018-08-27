@@ -36,9 +36,9 @@ export const actions = {
     await dispatch('accounts/init');
 
     commit('stopPageLoading');
+    await dispatch('web3/init');
 
     return Promise.all([
-      dispatch('web3/init'),
       dispatch('tokens/init'),
       dispatch('price/init'),
       dispatch('connectionStatus/init'),
