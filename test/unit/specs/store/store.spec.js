@@ -17,6 +17,8 @@ describe('Store', () => {
 
     //Errors should be initialized first
     expect(dispatch).toHaveBeenNthCalledWith(1, 'errors/init');
+    expect(dispatch).toHaveBeenNthCalledWith(2, 'accounts/init');
+    expect(dispatch).toHaveBeenNthCalledWith(3, 'web3/init');
 
     // Initialize all other stores
     expect(dispatch).toHaveBeenCalledWith('accounts/init');
