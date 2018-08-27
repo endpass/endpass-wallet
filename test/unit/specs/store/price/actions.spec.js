@@ -25,6 +25,7 @@ describe('price actions', () => {
   });
   describe('updatePrice', () => {
     it('shoul perform price load with flad setting, set fetched data and update api error status to avalible', async () => {
+      expect.assertions(5);
       const price = 1;
       priceService.getPrice = jest.fn();
       priceService.getPrice.mockResolvedValueOnce({
@@ -47,6 +48,7 @@ describe('price actions', () => {
       );
     });
     it('shoul perform price load with flad setting, set fetched data and update api error status to avalible', async () => {
+      expect.assertions(3);
       const err = {};
       priceService.getPrice = jest.fn();
       priceService.getPrice.mockRejectedValueOnce(err);
@@ -73,6 +75,7 @@ describe('price actions', () => {
 
   describe('init', () => {
     it('should call subscribeOnPriceUpdates', async () => {
+      expect.assertions(1);
       await actions.init({ dispatch });
       expect(dispatch).toHaveBeenCalledWith('subscribeOnPriceUpdates');
     });
