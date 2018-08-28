@@ -4,7 +4,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
 <v-modal
   class="is-dark"
 >
-   
+  Get Started 
   <p
     class="subtitle"
   >
@@ -12,17 +12,22 @@ exports[`LoginByEmailModal render should render component 1`] = `
   wallet or create a new one.
   </p>
    
-  <v-form>
+  <v-form
+    v-on:submit="bound handleSubmit"
+  >
     <v-input
       help="Your email address may be used to help recover your
              wallet in case you lose access."
       label="Email"
       name="email"
       placeholder="Your email"
+      v-model="email"
       validator="required|email"
     />
      
-    <v-checkbox>
+    <v-checkbox
+      v-model="termsAccepted"
+    >
       
       I accept the 
       <a

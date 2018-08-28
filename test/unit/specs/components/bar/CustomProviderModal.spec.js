@@ -1,44 +1,52 @@
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
-import { shallow, createLocalVue, mount } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
 
 import CustomProviderModal from '@/components/bar/CustomProviderModal';
-
-const localVue = createLocalVue();
-
-localVue.use(Vuex);
-localVue.use(VeeValidate);
+import { generateStubs } from '@/utils/testUtils';
 
 describe('CustomProviderModal', () => {
+  const web3Actions = {
+    addNewProvider: jest.fn(),
+    validateNetwork: jest.fn(),
+    updateProvider: jest.fn(),
+  };
+  const web3Getters = {
+    networks: jest.fn(() => [{ url: 'provider url' }]),
+  };
   let wrapper;
-  let store;
-  let options;
+  let componentOptions;
 
   beforeEach(() => {
-    store = new Vuex.Store({
+    const localVue = createLocalVue();
+
+    localVue.use(Vuex);
+    localVue.use(VeeValidate);
+
+    const store = new Vuex.Store({
       modules: {
-        web3: {},
+        web3: {
+          namespaced: true,
+          actions: web3Actions,
+          getters: web3Getters,
+          state: {
+            currencies: [{ id: 1, name: 'ETH' }],
+          },
+        },
       },
     });
 
-    options = {
+    componentOptions = {
       store,
       localVue,
-      computed: {
-        networks: () => [],
-        currencies: () => [],
-      },
-      methods: {
-        addNewProviderToStore: () => null,
-        validateNetwork: () => Promise.resolve(),
-      },
     };
   });
 
   describe('render', () => {
     beforeEach(() => {
       wrapper = shallow(CustomProviderModal, {
-        ...options,
+        ...componentOptions,
+        stubs: generateStubs(CustomProviderModal),
       });
     });
 
@@ -46,39 +54,219 @@ describe('CustomProviderModal', () => {
       expect(wrapper.name()).toBe('CustomProviderModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
+
+    describe('url field', () => {
+      it('should render correctly', () => {
+        expect(wrapper.find('#url').html()).toMatchSnapshot();
+      });
+    });
+
+    describe('header', () => {
+      it('should render header for create new provider', () => {
+        wrapper.setProps({});
+
+        expect(wrapper.find('header').text()).toBe('Add New Provider');
+      });
+
+      it('should render header for update provider', () => {
+        wrapper.setProps({
+          provider: {},
+        });
+
+        expect(wrapper.find('header').text()).toBe('Update Provider');
+      });
+    });
+
+    describe('footer', () => {
+      it('should render button text for create new provider', () => {
+        wrapper.setProps({});
+
+        expect(wrapper.find('a.button').text()).toBe('Create New Provider');
+      });
+
+      it('should render button text for update provider', () => {
+        wrapper.setProps({
+          provider: {},
+        });
+
+        expect(wrapper.find('a.button').text()).toBe('Update Provider');
+      });
+    });
+  });
+
+  describe('computed', () => {
+    beforeEach(() => {
+      wrapper = shallow(CustomProviderModal, componentOptions);
+    });
+
+    describe('providersLinks', () => {
+      const providerUrl1 = 'provider url 1';
+      const providerUrl2 = 'provider url 2';
+
+      it('should return provider links when creating a new provider', () => {
+        let expected;
+
+        wrapper.setProps({});
+        wrapper.setComputed({
+          networks: [{ url: providerUrl1 }],
+        });
+        expected = providerUrl1;
+
+        expect(wrapper.vm.providersLinks).toBe(expected);
+
+        wrapper.setComputed({
+          networks: [{ url: providerUrl1 }, { url: providerUrl2 }],
+        });
+        expected = `${providerUrl1},${providerUrl2}`;
+
+        expect(wrapper.vm.providersLinks).toBe(expected);
+      });
+
+      it('should return provider links when provider updates', () => {
+        let expected;
+
+        wrapper.setProps({
+          provider: {
+            url: providerUrl1,
+          },
+        });
+        wrapper.setComputed({
+          networks: [{ url: providerUrl1 }],
+        });
+        expected = '';
+
+        expect(wrapper.vm.providersLinks).toBe(expected);
+
+        wrapper.setComputed({
+          networks: [{ url: providerUrl1 }, { url: providerUrl2 }],
+        });
+        expected = providerUrl2;
+
+        expect(wrapper.vm.providersLinks).toBe(expected);
+      });
+    });
+  });
+
+  describe('methods', () => {
+    beforeEach(() => {
+      wrapper = shallow(CustomProviderModal, componentOptions);
+    });
+
+    describe('handleButtonClick', () => {
+      const provider = {
+        name: 'provider url',
+        url: 'provider url',
+        currency: 1,
+      };
+      const error = {
+        field: 'url',
+        msg: 'Provider is invalid',
+        id: 'wrongUrl',
+      };
+
+      describe('creating a new provider', () => {
+        beforeEach(() => {
+          wrapper.setProps({});
+          wrapper.setData({
+            innerProvider: provider,
+          });
+        });
+
+        it('should create new provider', async () => {
+          wrapper.setMethods({
+            addNewProvider: jest.fn(),
+            validateNetwork: jest.fn().mockResolvedValue(),
+          });
+
+          expect.assertions(6);
+
+          await wrapper.vm.handleButtonClick();
+
+          expect(wrapper.vm.validateNetwork).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.validateNetwork).toHaveBeenCalledWith(provider);
+
+          expect(wrapper.vm.addNewProvider).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.addNewProvider).toHaveBeenCalledWith({
+            network: provider,
+          });
+
+          expect(wrapper.vm.isLoading).toBeFalsy();
+          expect(wrapper.vm.providerAdded).toBeTruthy();
+        });
+
+        it('should handle the validation error of the network', async () => {
+          wrapper.setMethods({
+            validateNetwork: jest.fn().mockRejectedValue(),
+          });
+          spyOn(wrapper.vm.errors, 'add');
+
+          expect.assertions(5);
+
+          await wrapper.vm.handleButtonClick();
+
+          expect(wrapper.vm.validateNetwork).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.validateNetwork).toHaveBeenCalledWith(provider);
+          expect(wrapper.vm.isLoading).toBeFalsy();
+          expect(wrapper.vm.errors.add).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.errors.add).toHaveBeenCalledWith(error);
+        });
+      });
+
+      describe('provider update', () => {
+        beforeEach(() => {
+          wrapper.setProps({
+            provider,
+          });
+          wrapper.setData({
+            innerProvider: provider,
+          });
+        });
+
+        it('should update provider', async () => {
+          wrapper.setMethods({
+            updateProvider: jest.fn(),
+            validateNetwork: jest.fn().mockResolvedValue(),
+          });
+
+          expect.assertions(6);
+
+          await wrapper.vm.handleButtonClick();
+
+          expect(wrapper.vm.validateNetwork).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.validateNetwork).toHaveBeenCalledWith(provider);
+
+          expect(wrapper.vm.updateProvider).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.updateProvider).toHaveBeenCalledWith({
+            network: provider,
+          });
+
+          expect(wrapper.vm.isLoading).toBeFalsy();
+          expect(wrapper.vm.providerAdded).toBeTruthy();
+        });
+
+        it('should handle the validation error of the network', async () => {
+          wrapper.setMethods({
+            validateNetwork: jest.fn().mockRejectedValue(),
+          });
+          spyOn(wrapper.vm.errors, 'add');
+
+          expect.assertions(5);
+
+          await wrapper.vm.handleButtonClick();
+
+          expect(wrapper.vm.validateNetwork).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.validateNetwork).toHaveBeenCalledWith(provider);
+          expect(wrapper.vm.isLoading).toBeFalsy();
+          expect(wrapper.vm.errors.add).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.errors.add).toHaveBeenCalledWith(error);
+        });
+      });
+    });
   });
 
   describe('behavior', () => {
     beforeEach(() => {
-      wrapper = shallow(CustomProviderModal, {
-        ...options,
-      });
-    });
-
-    it('should return comma-separated links of providers', () => {
-      expect(wrapper.vm.providersLinks).toBe('');
-
-      wrapper.setComputed({
-        networks: [{ url: '123' }, { url: '456' }],
-      });
-
-      expect(wrapper.vm.providersLinks).toBe('123,456');
-    });
-
-    it('should call an action to validate the network', () => {
-      const spy = jest.spyOn(wrapper.vm, 'validateNetwork');
-
-      wrapper.vm.addNewProvider();
-
-      expect(spy).toBeCalled();
-    });
-
-    it('should call an action to add the network', async () => {
-      const spy = jest.spyOn(wrapper.vm, 'addNewProviderToStore');
-
-      await wrapper.vm.addNewProvider();
-
-      expect(spy).toBeCalled();
+      wrapper = shallow(CustomProviderModal, componentOptions);
     });
 
     it('should emit close event when not loading', () => {
@@ -91,15 +279,6 @@ describe('CustomProviderModal', () => {
       wrapper.vm.close();
 
       expect(wrapper.emitted().close.length).toBe(1);
-    });
-
-    it('should add an error when validation fails', async () => {
-      wrapper.vm.validateNetwork = () => Promise.reject();
-
-      await wrapper.vm.addNewProvider();
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.errors.has('url')).toBeTruthy();
     });
 
     it('should remove an error when entering a new value', () => {
