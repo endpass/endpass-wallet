@@ -7,7 +7,7 @@ import web3 from './web3/web3';
 import gasPrice from './gas-price';
 import price from './price';
 import transactions from './transactions/transactions';
-import errors from './errors/errors';
+import errors from './errors';
 import connectionStatus from './connection-status';
 import userModule from './user';
 
@@ -27,7 +27,6 @@ const store = new Vuex.Store({
   actions: {
     // Dispatch all Vuex init() actions
     init({ dispatch }) {
-      dispatch('errors/init');
       dispatch('accounts/init');
       dispatch('web3/init');
       dispatch('tokens/init');
