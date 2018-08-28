@@ -1,6 +1,6 @@
 import getters from '@/store/tokens/getters';
 
-describe('user getters', () => {
+describe('tokens getters', () => {
   describe('net', () => {
     it('should return net from web3', () => {
       let rootState = {
