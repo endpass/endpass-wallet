@@ -18,8 +18,8 @@ describe('TokenList', () => {
 
   beforeEach(() => {
     actions = {
-      updateTokenPrice: jest.fn(),
-      removeTokenFromSubscription: jest.fn(),
+      updateTokensPrices: jest.fn(),
+      deleteTokenAndUnsubscribe: jest.fn(),
     };
 
     store = new Vuex.Store({
@@ -35,10 +35,12 @@ describe('TokenList', () => {
         tokens: {
           namespaced: true,
           state: {
-            activeTokens: tokensFixture.tokens,
             prices: {
               FST: 2, // price of token in ETH
             },
+          },
+          getters: {
+            trackedTokens: () => tokensFixture.tokens,
           },
           actions,
         },
@@ -68,7 +70,7 @@ describe('TokenList', () => {
   it('fetches token prices on mount', async () => {
     expect(wrapper.vm.selectedTokens.length).toBe(numTokens);
     await flushPromises();
-    expect(actions.updateTokenPrice).toHaveBeenCalledTimes(numTokens);
+    expect(actions.updateTokensPrices).toHaveBeenCalledTimes(1);
   });
 
   it('correctly calculates token fiat price', () => {
@@ -97,10 +99,10 @@ describe('TokenList', () => {
     wrapper.setProps({ hasRemove: true });
     wrapper.find('.remove-token-button').trigger('click');
 
-    expect(actions.removeTokenFromSubscription).toHaveBeenCalledTimes(1);
-    expect(actions.removeTokenFromSubscription).toBeCalledWith(
+    expect(actions.deleteTokenAndUnsubscribe).toHaveBeenCalledTimes(1);
+    expect(actions.deleteTokenAndUnsubscribe).toBeCalledWith(
       expect.any(Object),
-      wrapper.vm.selectedTokens[0],
+      { token: wrapper.vm.selectedTokens[0] },
       undefined,
     );
   });

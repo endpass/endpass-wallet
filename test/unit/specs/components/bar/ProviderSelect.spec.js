@@ -1,42 +1,52 @@
 import Vuex from 'vuex';
-import { shallow, createLocalVue, mount } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
 
 import ProviderSelect from '@/components/bar/ProviderSelect';
-
-const localVue = createLocalVue();
-
-localVue.use(Vuex);
+import { generateStubs } from '@/utils/testUtils';
 
 describe('ProviderSelect', () => {
+  const activeNet = {
+    name: 'Main',
+    id: 1,
+  };
+  const web3Actions = {
+    changeNetwork: jest.fn(),
+    deleteProvider: jest.fn(),
+  };
+  const web3Getters = {
+    networks: jest.fn(() => [activeNet]),
+    isCustomNetwork: jest.fn(() => false),
+  };
   let wrapper;
-  let store;
-  let options;
+  let componentOptions;
 
   beforeEach(() => {
-    store = new Vuex.Store({
+    const localVue = createLocalVue();
+
+    localVue.use(Vuex);
+
+    const store = new Vuex.Store({
       modules: {
-        web3: {},
+        web3: {
+          namespaced: true,
+          actions: web3Actions,
+          getters: web3Getters,
+          state: {
+            activeNet,
+          },
+        },
       },
     });
 
-    options = {
+    componentOptions = {
       store,
       localVue,
-      computed: {
-        networks: () => [],
-        activeNet: () => null,
-      },
-      methods: {
-        changeNetwork: () => null,
-      },
     };
   });
 
   describe('render', () => {
     beforeEach(() => {
-      wrapper = shallow(ProviderSelect, {
-        ...options,
-      });
+      wrapper = shallow(ProviderSelect, componentOptions);
     });
 
     it('should be a Vue component', () => {
@@ -47,13 +57,11 @@ describe('ProviderSelect', () => {
 
   describe('behavior', () => {
     beforeEach(() => {
-      wrapper = shallow(ProviderSelect, {
-        ...options,
-      });
+      wrapper = shallow(ProviderSelect, componentOptions);
     });
 
     it('should unite providers and option for adding a provider', () => {
-      expect(wrapper.vm.networkOptions).toHaveLength(1);
+      expect(wrapper.vm.networkOptions).toHaveLength(2);
 
       wrapper.setComputed({
         networks: [{}, {}],

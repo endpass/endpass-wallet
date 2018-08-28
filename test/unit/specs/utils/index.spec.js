@@ -29,7 +29,25 @@ describe('kebabToCamel', () => {
     text = 'oneword';
 
     expect(utils.kebabToCamel(text)).toBe(text);
-    ``;
+  });
+});
+
+describe('camelToKebab', () => {
+  it('should replace camel notation to kebab notation', () => {
+    const received = 'replaceToKebabNotation';
+    const expected = 'replace-to-kebab-notation';
+
+    expect(utils.camelToKebab(received)).toBe(expected);
+  });
+
+  it('should not do anything', () => {
+    let text = 'text-in-kebab-notation';
+
+    expect(utils.camelToKebab(text)).toBe(text);
+
+    text = 'oneword';
+
+    expect(utils.camelToKebab(text)).toBe(text);
   });
 });
 

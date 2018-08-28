@@ -1,26 +1,45 @@
 <template>
   <div class="provider-select">
     <div class="net-select">
-      <multiselect
+      <vue-multiselect
         :allow-empty="false"
         :options="networkOptions"
         :show-labels="false"
         :value="activeNet"
-        track-by="id" 
+        track-by="id"
         label="name"
         placeholder="Select network"
         @select="selectNet"
-      />
+      >
+        <template slot="option" slot-scope="props">
+          <div class="multiselect-option">
+            {{ props.option.name }}
+            <span class="right" v-if="isCustomNetwork(props.option)">
+              <span
+                class="icon is-small"
+                v-html="require('@/img/pencil.svg')"
+                @click.stop="handleEditProvider(props.option)"
+              />
+              <span
+                class="icon is-small"
+                v-html="require('@/img/x.svg')"
+                @click.stop="handleDeleteProvider(props.option)"
+              />
+            </span>
+          </div>
+        </template>
+      </vue-multiselect>
     </div>
     <custom-provider-modal
       v-if="customProviderModalOpen"
       @close="closeCustomProviderModal"
+      :provider="selectedProvider"
     />
   </div>
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect';
+import VueMultiselect from 'vue-multiselect';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import CustomProviderModal from '@/components/bar/CustomProviderModal.vue';
 
@@ -29,11 +48,12 @@ export default {
   data() {
     return {
       customProviderModalOpen: false,
+      selectedProvider: null,
     };
   },
   computed: {
     ...mapState('web3', ['activeNet']),
-    ...mapGetters('web3', ['networks']),
+    ...mapGetters('web3', ['networks', 'isCustomNetwork']),
     networkOptions() {
       // Options that dispatch methods
       const actions = [{ id: -1, name: 'Add Custom Network' }];
@@ -41,7 +61,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('web3', ['changeNetwork']),
+    ...mapActions('web3', ['changeNetwork', 'deleteProvider']),
     selectNet(net) {
       if (net.id === -1) {
         this.openCustomProviderModal();
@@ -52,15 +72,22 @@ export default {
     setNetwork(id) {
       this.changeNetwork(id);
     },
-    openCustomProviderModal() {
+    openCustomProviderModal(network) {
+      this.selectedProvider = network;
       this.customProviderModalOpen = true;
     },
     closeCustomProviderModal() {
       this.customProviderModalOpen = false;
     },
+    handleEditProvider(network) {
+      this.openCustomProviderModal(network);
+    },
+    handleDeleteProvider(network) {
+      this.deleteProvider({ network });
+    },
   },
   components: {
-    Multiselect,
+    VueMultiselect,
     CustomProviderModal,
   },
 };
@@ -74,6 +101,11 @@ export default {
     max-width: 100%;
     position: relative;
     vertical-align: top;
+  }
+}
+.multiselect-option {
+  .right {
+    float: right;
   }
 }
 </style>

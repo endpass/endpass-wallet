@@ -18,8 +18,9 @@ export class Wallet {
     return ethUtil.bufferToHex(privateKey);
   }
 
+  // () => Promise<String>
   async exportToJSON() {
-    return this.v3;
+    return JSON.stringify(this.v3);
   }
 
   async getAddressString() {
