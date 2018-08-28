@@ -27,7 +27,6 @@ const store = new Vuex.Store({
   actions: {
     // Dispatch all Vuex init() actions
     init({ dispatch }) {
-      dispatch('errors/init');
       dispatch('accounts/init');
       dispatch('web3/init');
       dispatch('tokens/init');
