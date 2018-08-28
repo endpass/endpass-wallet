@@ -31,7 +31,6 @@ export const actions = {
   async init({ dispatch, commit }) {
     commit('startPageLoading');
 
-    await dispatch('errors/init');
     // Wait for accounts to load first
     await dispatch('accounts/init');
 
