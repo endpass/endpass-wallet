@@ -1,5 +1,6 @@
+import Web3 from 'web3';
+
 import store from '@/store/web3/web3';
-import LocalStorageMock from '../../localStorageMock.js';
 import testAction from '../ActionTestingHelper';
 import storage from '@/services/storage';
 
@@ -9,38 +10,10 @@ jest.mock('@/services/storage', () => ({
 }));
 
 jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
-global.localStorage = LocalStorageMock;
-
-const commit = state => (type, payload) =>
-  store.mutations[type](state, payload);
-
-//Fake action from antoher storage
-store.actions['tokens/subscribeOnTokensBalancesUpdates'] = jest.fn();
-
-const dispatch = context => type => {
-  store.actions[type](context);
-};
 
 const stateInstance = store.state();
 
-describe('web3 store', async () => {
-  beforeEach(async () => {
-    localStorage.setItem('net', 1);
-    localStorage.setItem(
-      'networks',
-      JSON.stringify([
-        { name: 'TestNet', id: 4, url: 'https://testnet.infura.io/' },
-      ]),
-    );
-
-    store.state = stateInstance;
-    await store.actions.init({
-      commit: commit(stateInstance),
-      dispatch: dispatch({ state: stateInstance, commit, dispatch }),
-      state: stateInstance,
-    });
-  });
-
+describe('web3 store', () => {
   afterEach(() => {
     storage.write.mockClear();
   });
