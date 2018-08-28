@@ -219,6 +219,9 @@ export default {
       });
       state.blockSubscribtion.on('latest', block => {
         dispatch('accounts/updateBalance', {}, { root: true });
+        dispatch('transactions/handleBlockTransactions', block.transactions, {
+          root: true,
+        });
         commit(
           'setBlockNumber',
           state.web3.utils.hexToNumberString(block.number),
