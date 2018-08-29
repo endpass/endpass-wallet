@@ -8,4 +8,7 @@ export default {
   getInfo(address) {
     return Promise.resolve();
   },
+  tokenIsNotSpam(token) {
+    return true;
+  },
 };
