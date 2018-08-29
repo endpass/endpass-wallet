@@ -84,7 +84,7 @@ export default {
       return network =>
         network.id > 0 &&
         !state.defaultNetworks.find(
-          defaultNetwork => defaultNetwork.id === network.id,
+          defaultNetwork => defaultNetwork.url === network.url,
         );
     },
   },
@@ -158,13 +158,7 @@ export default {
         dispatch('changeNetwork', getters.networks[0].id);
       }
     },
-    addNewProvider({ state, commit, dispatch, getters }, { network }) {
-      network.id =
-        getters.networks.reduce(
-          (maxId, currentNetwork) =>
-            maxId > currentNetwork.id ? maxId : currentNetwork.id,
-          0,
-        ) + 1;
+    addNewProvider({ state, commit, dispatch }, { network }) {
       commit('addNewProvider', network);
 
       return Promise.all([
@@ -203,11 +197,12 @@ export default {
         .then(resp => commit('setNetworkType', resp))
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    validateNetwork(ctx, network) {
+    validateNetwork(ctx, { network }) {
       const providerTemp = providerFactory(network.url);
       const web3Temp = new Web3(providerTemp);
+      const { net } = web3Temp.eth;
 
-      return web3Temp.eth.net.getNetworkType();
+      return Promise.all([net.getNetworkType(), net.getId()]);
     },
     subscribeOnBlockUpdates({ state, commit, dispatch, rootState }) {
       if (state.blockSubscribtion) {
