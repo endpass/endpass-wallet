@@ -64,8 +64,11 @@ export default {
     },
   },
   mutations: {
-    setAddress(state, addressString) {
-      state.address = new Address(addressString);
+    setAddress(state, address) {
+      if (!(address instanceof Address)) {
+        address = new Address(address);
+      }
+      state.address = address;
     },
     setWallet(state, wallet) {
       state.wallet = wallet;
@@ -76,6 +79,13 @@ export default {
       state.wallets = {
         ...state.wallets,
         [address]: wallet,
+      };
+    },
+    // Adds an empty wallet in order to view a public key
+    addAddress(state, address) {
+      state.wallets = {
+        ...state.wallets,
+        [address]: null,
       };
     },
     // Saves the encrypted HD wallet key in V3 keystore format
@@ -142,6 +152,17 @@ export default {
         const wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));
         const json = keystore.encryptWallet(password, wallet);
         return dispatch('addWalletAndSelect', json);
+      } catch (e) {
+        return dispatch('errors/emitError', e, { root: true });
+      }
+    },
+    async addWalletWithPublicKey({ commit, dispatch }, publicKeyOrAddress) {
+      // TODO convert public key to address, accept xPub key
+      try {
+        let address = web3.utils.toChecksumAddress(publicKeyOrAddress);
+        await userService.setAccount(address, null);
+        commit('addAddress', address);
+        return dispatch('selectWallet', address);
       } catch (e) {
         return dispatch('errors/emitError', e, { root: true });
       }
@@ -285,7 +306,15 @@ export default {
         // Fetch and save regular accounts
         const accounts = await userService.getV3Accounts();
         if (accounts && accounts.length) {
-          accounts.forEach(wallet => commit('addWallet', wallet));
+          accounts.forEach(account => {
+            if (keystore.isV3(account)) {
+              // Encrypted private key
+              commit('addWallet', account);
+            } else {
+              // Read-only public key
+              commit('addAddress', account.address);
+            }
+          });
           await dispatch('selectWallet', accounts[0].address);
         }
       } catch (e) {

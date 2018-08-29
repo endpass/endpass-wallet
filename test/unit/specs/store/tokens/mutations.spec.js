@@ -72,13 +72,17 @@ describe('tokens mutations', () => {
         name: 'Zero token',
       },
     ];
-    let state = {};
+    let token = tokens[0];
+    let state = {
+      allTokens: {
+        [token.address]: token,
+      },
+    };
 
     mutations[SAVE_TRACKED_TOKENS](state, tokens);
 
     expect(state.trackedTokens.length).toBe(1);
     expect(state.trackedTokens[0]).toMatchObject(tokens[0]);
-    expect(state.trackedTokens[0] instanceof Token).toBe(true);
   });
 
   it('saves tokens prices', () => {

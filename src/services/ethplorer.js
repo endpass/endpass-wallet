@@ -12,7 +12,9 @@ export default {
       },
     );
 
-    return (data.tokens || []).map(token => token.tokenInfo);
+    return (data.tokens || [])
+      .filter(this.tokenIsNotSpam)
+      .map(token => token.tokenInfo);
   },
   async getHistory(address) {
     const { data } = await axios.get(
@@ -39,5 +41,10 @@ export default {
     );
 
     return data || [];
+  },
+
+  // Filter out spam balances of tokens
+  tokenIsNotSpam(token) {
+    return token && token.tokenInfo && token.tokenInfo.price;
   },
 };

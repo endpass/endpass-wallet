@@ -41,7 +41,7 @@ Cypress.Commands.add('login', () => {
   // Regular account
   cy.route(
     'GET',
-    '/identity/api/v1/account/0x*',
+    '/identity/api/v1/account/0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c',
     'fixture:keystore/account_1.json',
   ).as('keystoreAccount');
   // HD account
@@ -50,6 +50,12 @@ Cypress.Commands.add('login', () => {
     '/identity/api/v1/account/xpub*',
     'fixture:keystore/account_0.json',
   ).as('keystoreHdAccount');
+  // Read only account
+  cy.route(
+    'GET',
+    '/identity/api/v1/account/0x6bBf1DEa0d21eaFd232e281A196E6f11906054df',
+    {},
+  ).as('publicAccount');
   cy.route(
     'POST',
     '/identity/api/v1/accounts/*',
