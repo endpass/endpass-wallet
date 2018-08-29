@@ -307,7 +307,15 @@ export default {
         // Fetch and save regular accounts
         let accounts = await userService.getV3Accounts();
         if (accounts && accounts.length) {
-          accounts.forEach(wallet => commit('addWallet', wallet));
+          accounts.forEach(account => {
+            if (keystore.isV3(account)) {
+              // Encrypted private key
+              commit('addWallet', account);
+            } else {
+              // Read-only public key
+              commit('addAddress', account.address);
+            }
+          });
           await dispatch('selectWallet', accounts[0].address);
         }
       } catch (e) {
