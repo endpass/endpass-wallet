@@ -22,6 +22,7 @@
         :amount="amount"
         :currency="token.symbol"
         :decimals="token.decimals"
+        :round="4"
       />
 
       <balance
@@ -30,6 +31,7 @@
         :amount="amount"
         :currency="currency"
         :decimals="2"
+        :round="2"
         :price="price"
       />
       <slot name="right"></slot>
