@@ -114,6 +114,18 @@ describe('accounts store', () => {
     );
   });
 
+  it('should add wallet with public key', async () => {
+    const dispatch = jest.fn();
+    const commit = jest.fn();
+    let address = '0x3c75226555FC496168d48B88DF83B95F16771F37';
+    userService.setAccount = jest.fn();
+    await actions.addWalletWithPublicKey({ dispatch, commit }, address);
+
+    expect(userService.setAccount).toHaveBeenCalledWith(address, null);
+    expect(commit).toHaveBeenCalledWith('addAddress', address);
+    expect(dispatch).toHaveBeenCalledWith('selectWallet', address);
+  });
+
   it('should create wallet instance with seed phrase ', async () => {
     const dispatch = jest.fn(() => Promise.resolve({}));
 
