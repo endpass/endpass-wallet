@@ -1,4 +1,3 @@
-import ethUtils from 'ethereumjs-util';
 export default {
   getMessage(field, params, data) {
     return (data && data.message) || 'Something went wrong';

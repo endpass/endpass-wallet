@@ -43,6 +43,7 @@ exports[`TokensPage render should render component 1`] = `
                  
                 <v-spinner
                   class="spinner-block"
+                  is-loading="true"
                 />
                  
                 <div

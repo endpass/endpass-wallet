@@ -1,3 +1,6 @@
+// Account address
+export const address = '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c';
+
 // List of account addresses
 export const addresses = [
   'xpub661MyMwAqRbcFhF3oXSY7tcJWrgzX7VYHqvkoNqr9NXAqDUv4KfWSnago4BMD4yty2cX6f6jLeQefve3nKriVY6c18NLzCmHdKqWeN8VHkJ',
@@ -59,6 +62,7 @@ export const privateKeyString =
   '0xefca4cdd31923b50f4214af5d2ae10e7ac45a5019e9431cc195482d707485378';
 
 export default {
+  address,
   addresses,
   v3,
   hdv3,

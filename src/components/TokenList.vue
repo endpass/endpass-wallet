@@ -15,7 +15,7 @@
           v-if="hasRemove"
           class="is-inline-block remove-token-button"
           title="Remove Token"
-          @click="removeTokenFromSubscription(token)"
+          @click="deleteTokenAndUnsubscribe({token})"
           >
             <span
               class="icon has-text-danger is-small is-pulled-right"
@@ -31,7 +31,7 @@
 import { Token } from '@/class/Token';
 import VToken from '@/components/VToken';
 import VSpinner from '@/components/ui/VSpinner';
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import { BigNumber } from 'bignumber.js';
 import error from '@/mixins/error';
 
@@ -59,8 +59,8 @@ export default {
   },
   computed: {
     selectedTokens() {
-      let activeTokens = this.tokens ? this.tokens : this.activeTokens;
-      return activeTokens.map(token => {
+      let trackedTokens = this.tokens ? this.tokens : this.trackedTokens;
+      return trackedTokens.map(token => {
         return new Token(token);
       });
     },
@@ -74,16 +74,16 @@ export default {
       );
     },
     ...mapState({
-      activeTokens: state => state.tokens.activeTokens,
       tokenPrices: state => state.tokens.prices,
       ethPrice: state => state.price.price,
       currency: state => state.accounts.settings.fiatCurrency,
     }),
+    ...mapGetters('tokens', ['trackedTokens']),
   },
   methods: {
     ...mapActions('tokens', [
-      'updateTokenPrice',
-      'removeTokenFromSubscription',
+      'updateTokensPrices',
+      'deleteTokenAndUnsubscribe',
     ]),
     // Return value of tokens in fiat
     getTokenPrice(symbol) {
@@ -92,17 +92,13 @@ export default {
         .toString();
     },
     // Get token prices for all tokens
-    updateTokenPrices() {
-      // Promises to get prices of all tokens
-      return Promise.all(
-        this.activeTokens.map(token => this.updateTokenPrice(token.symbol)),
-      )
-        .then(() => (this.isLoading = false))
-        .catch(e => this.emitError(e));
+    async updateTokenPrice() {
+      await this.updateTokensPrices();
+      this.isLoading = false;
     },
   },
   mounted() {
-    this.updateTokenPrices();
+    this.updateTokenPrice();
   },
   components: {
     VToken,

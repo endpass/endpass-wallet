@@ -5,6 +5,7 @@ import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { hdKeyMnemonic, kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
+import { SAVE_TOKENS } from '@/store/tokens/mutations-types';
 import { Wallet, Address } from '@/class';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
@@ -102,7 +103,11 @@ export default {
     selectWallet({ commit, state, dispatch }, address) {
       commit('setWallet', state.wallets[address]);
       commit('setAddress', address);
-      return dispatch('tokens/subscribeOnTokenUpdates', {}, { root: true });
+      return dispatch(
+        'tokens/subscribeOnTokensBalancesUpdates',
+        {},
+        { root: true },
+      );
     },
     addWallet({ commit, dispatch, state }, json) {
       json.address = web3.utils.toChecksumAddress(json.address);
@@ -254,12 +259,13 @@ export default {
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     async init({ commit, dispatch }) {
-      commit('startPageLoading', null, { root: true });
       try {
         let [settings, email] = await Promise.all([
-          storage.read('settings'),
+          userService.getSettings(),
           storage.read('email'),
         ]);
+
+        commit(`tokens/${SAVE_TOKENS}`, settings.tokens || {}, { root: true });
         commit('setEmail', email);
 
         if (settings) {
@@ -284,9 +290,7 @@ export default {
           await dispatch('selectWallet', accounts[0].address);
         }
       } catch (e) {
-        await dispatch('errors/emitError', e, { root: true });
-      } finally {
-        commit('stopPageLoading', null, { root: true });
+        return dispatch('errors/emitError', e, { root: true });
       }
     },
   },

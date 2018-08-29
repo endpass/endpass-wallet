@@ -3,6 +3,14 @@ import axios from 'axios';
 import { identityAPIUrl } from '@/config';
 import store from '@/store';
 
+const identityConfig = {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
+};
+
 function handleResponseError(error) {
   const { config, response } = error;
 
@@ -32,7 +40,7 @@ function handleResponseSuccess(response) {
 }
 
 function createAxiosInstance() {
-  const instance = axios.create();
+  const instance = axios.create(identityConfig);
 
   instance.interceptors.response.use(
     handleResponseSuccess,

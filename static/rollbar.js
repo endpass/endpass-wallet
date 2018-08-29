@@ -4,6 +4,13 @@ var _rollbarConfig = {
   captureUnhandledRejections: true,
   payload: {
     environment: 'production',
+    client: {
+      javascript: {
+        source_map_enabled: true,
+        code_version: GIT_COMMIT_HASH,
+        guess_uncaught_frames: true,
+      },
+    },
   },
 };
 !(function(r) {

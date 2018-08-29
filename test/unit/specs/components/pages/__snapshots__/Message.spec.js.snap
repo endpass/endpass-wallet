@@ -2,7 +2,7 @@
 
 exports[`Message page render should render the initial state of the page 1`] = `
 <base-page>
-   
+  Message 
   <div
     class="tabs"
   >
@@ -25,17 +25,20 @@ exports[`Message page render should render the initial state of the page 1`] = `
     </ul>
   </div>
    
-  <sign-message />
+  <sign-message
+    v-show="isSignTabActive"
+  />
    
   <verify-message
     style="display: none;"
+    v-show="isVerifyTabActive"
   />
 </base-page>
 `;
 
 exports[`Message page render should set Sign tab 1`] = `
 <base-page>
-   
+  Message 
   <div
     class="tabs"
   >
@@ -58,17 +61,20 @@ exports[`Message page render should set Sign tab 1`] = `
     </ul>
   </div>
    
-  <sign-message />
+  <sign-message
+    v-show="isSignTabActive"
+  />
    
   <verify-message
     style="display: none;"
+    v-show="isVerifyTabActive"
   />
 </base-page>
 `;
 
 exports[`Message page render should set Verify tab 1`] = `
 <base-page>
-   
+  Message 
   <div
     class="tabs"
   >
@@ -93,10 +99,12 @@ exports[`Message page render should set Verify tab 1`] = `
    
   <sign-message
     style="display: none;"
+    v-show="isSignTabActive"
   />
    
   <verify-message
     style=""
+    v-show="isVerifyTabActive"
   />
 </base-page>
 `;

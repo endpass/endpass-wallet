@@ -9,12 +9,12 @@
                 <p class="card-header-title">Your Tokens</p>
               </div>
               <div class="card-content is-narrow">
-                <nav v-if="activeTokens.length" class="panel">
+                <nav v-if="!isTrackedTokensLoaded || trackedTokens.length" class="panel">
                   <div class="panel-block">
                     <search-input v-model="search" />
                   </div>
                   <v-spinner
-                    :is-loading="isLoading"
+                    :is-loading="!isTrackedTokensLoaded"
                     class="spinner-block"
                   />
                   <div class="scroller">
@@ -54,7 +54,7 @@
                   label="name"
                   placeholder="Type to search tokens..."
                   @search-change="setSearchToken"
-                  @select="addTokenToSubscription"
+                  @select="saveTokenAndSubscribe({token: $event })"
                   >
                   <span class="multiselect-option" slot="option" slot-scope="props">
                     <v-token :token="props.option" />
@@ -100,19 +100,17 @@ export default {
   },
   computed: {
     ...mapState({
-      activeTokens: state => state.tokens.activeTokens,
       prices: state => state.tokens.prices,
       ethPrice: state => state.price.price,
       currency: state => state.accounts.settings.fiatCurrency,
+      tokensSubscription: tokensSubscription => state =>
+        state.tokens.tokensSubscription,
     }),
-    ...mapGetters('tokens', ['savedActiveTokens', 'net']),
-    isLoading() {
-      return this.savedActiveTokens.length > this.activeTokens.length;
-    },
+    ...mapGetters('tokens', ['net', 'trackedTokens', 'isTrackedTokensLoaded']),
     filteredTokens() {
       return this.tokens.filter(
         token =>
-          !this.activeTokens.some(
+          !this.trackedTokens.some(
             activeToken =>
               activeToken.address ===
               web3.utils.toChecksumAddress(token.address),
@@ -141,12 +139,12 @@ export default {
       const { search } = this;
 
       if (!search) {
-        return this.activeTokens;
+        return this.trackedTokens;
       }
 
       const searchLC = search.toLowerCase();
 
-      return this.activeTokens.filter(token =>
+      return this.trackedTokens.filter(token =>
         token.symbol.toLowerCase().includes(searchLC),
       );
     },
@@ -162,7 +160,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('tokens', ['addTokenToSubscription', 'getAllTokens']),
+    ...mapActions('tokens', ['saveTokenAndSubscribe', 'getAllTokens']),
     setSearchToken(query) {
       this.searchToken = query;
     },

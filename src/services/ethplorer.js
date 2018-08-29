@@ -1,24 +1,34 @@
 import axios from 'axios';
 
 export default {
-  getTransactions(address) {
-    return axios.get(`https://api.ethplorer.io/getAddressInfo/${address}`, {
-      params: {
-        limit: 50,
-        apiKey: 'freekey',
+  async getTokensWithBalance(address) {
+    const { data } = await axios.get(
+      `https://api.ethplorer.io/getAddressInfo/${address}`,
+      {
+        params: {
+          limit: 50,
+          apiKey: 'freekey',
+        },
       },
-    });
+    );
+
+    return (data.tokens || []).map(token => token.tokenInfo);
   },
-  getHistory(address) {
-    return axios.get(`https://api.ethplorer.io/getAddressHistory/${address}`, {
-      params: {
-        limit: 50,
-        apiKey: 'freekey',
+  async getHistory(address) {
+    const { data } = await axios.get(
+      `https://api.ethplorer.io/getAddressHistory/${address}`,
+      {
+        params: {
+          limit: 50,
+          apiKey: 'freekey',
+        },
       },
-    });
+    );
+
+    return data.operations || [];
   },
-  getInfo(address) {
-    return axios.get(
+  async getInfo(address) {
+    const { data } = await axios.get(
       `https://api.ethplorer.io/getAddressTransactions/${address}`,
       {
         params: {
@@ -27,5 +37,7 @@ export default {
         },
       },
     );
+
+    return data || [];
   },
 };
