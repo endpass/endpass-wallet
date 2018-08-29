@@ -11,11 +11,13 @@
 
     <div class="info-item">
 			<p class="heading">Balance</p>
-      <balance :amount="balance || 0" class="level-stat" :currency="activeCurrency.name" />
+      <balance :amount="balance || 0" class="level-stat"
+      :currency="activeCurrency.name" :round="4" />
     </div>
     <div class="info-item">
 			<p class="heading">Value</p>
-      <balance :is-loading="priceLoading" :amount="balance || 0" :price="price || 0" :decimals="2"
+      <balance :is-loading="priceLoading" :amount="balance || 0"
+        :price="price || 0" :decimals="2" :round="0"
       :currency="fiatCurrency" v-on:update="updatePrice" class="level-stat" />
     </div>
   </div>
