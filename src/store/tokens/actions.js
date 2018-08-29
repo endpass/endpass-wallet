@@ -105,14 +105,10 @@ const subscribeOnTokensBalancesUpdates = async ({
   }
   try {
     const tokensWithBalance = await dispatch('getTokensWithBalance');
-    dispatch('createTokenTracker', { tokensWithBalance });
+    await dispatch('createTokenTracker', { tokensWithBalance });
     // TokenTracker update event doesent work
     const serialisationInterval = setInterval(() => {
-      const balances = state.tokenTracker.serialize();
-      // TODO check for errors here
-      if (balances.length && typeof balances[0].symbol !== 'undefined')
-        commit(SAVE_TRACKED_TOKENS, balances);
-      else commit(SAVE_TRACKED_TOKENS, []);
+      dispatch('updateTokensBalances');
     }, tokenUpdateInterval);
     commit(SAVE_SERIALISATION_INTERVAL, serialisationInterval);
   } catch (e) {
@@ -123,6 +119,7 @@ const subscribeOnTokensBalancesUpdates = async ({
     });
     dispatch('errors/emitError', error, { root: true });
   }
+  return dispatch('updateTokensBalances');
 };
 
 const getTokensWithBalance = async ({ state, getters, dispatch }) => {
@@ -181,7 +178,18 @@ const subscribeOnTokensPricesUpdates = ({ dispatch }) => {
   }, tokenUpdateInterval);
 };
 
-const createTokenTracker = (
+//TODO test
+const updateTokensBalances = async ({ state, commit }) => {
+  const balances = state.tokenTracker.serialize();
+  // TODO check for errors here
+  if (balances.length && typeof balances[0].symbol !== 'undefined') {
+    commit(SAVE_TRACKED_TOKENS, balances);
+  } else {
+    commit(SAVE_TRACKED_TOKENS, []);
+  }
+};
+
+const createTokenTracker = async (
   { state, commit, getters, rootState },
   { tokensWithBalance },
 ) => {
@@ -211,7 +219,7 @@ const createTokenTracker = (
 
 const init = async ({ dispatch }) => {
   await dispatch('getAllTokens');
-  dispatch('subscribeOnTokensPricesUpdates');
+  return dispatch('subscribeOnTokensPricesUpdates');
 };
 
 export default {
@@ -220,6 +228,7 @@ export default {
   deleteTokenAndUnsubscribe,
   getTokensWithBalance,
   updateTokensPrices,
+  updateTokensBalances,
   updateTokenPrice,
   subscribeOnTokensBalancesUpdates,
   subscribeOnTokensPricesUpdates,

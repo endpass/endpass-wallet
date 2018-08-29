@@ -15,8 +15,9 @@ describe('Ethplorer service', () => {
     mock.reset();
   });
 
+  ethplorerService.tokenIsNotSpam = jest.fn(() => true);
+
   describe('getTokensWithBalance', () => {
-    const { getTokensWithBalance } = ethplorerService;
     const url = `${apiUrl}/getAddressInfo/${address}`;
 
     const successTokenResp = {
@@ -31,19 +32,19 @@ describe('Ethplorer service', () => {
         return [200, successTokenResp];
       });
 
-      await getTokensWithBalance(address);
+      await ethplorerService.getTokensWithBalance(address);
     });
 
     it('should handle successfull request', async () => {
       mock.onGet(url).reply(200, successTokenResp);
-      const result = await getTokensWithBalance(address);
+      const result = await ethplorerService.getTokensWithBalance(address);
 
       expect(result).toHaveLength(2);
     });
 
     it('should return empty array with failed request', async () => {
       mock.onGet(url).reply(200, { success: false });
-      const result = await getTokensWithBalance(address);
+      const result = await ethplorerService.getTokensWithBalance(address);
 
       expect(result).toEqual([]);
     });
@@ -51,7 +52,9 @@ describe('Ethplorer service', () => {
     it('should throw exception with rejected request', async () => {
       mock.onGet(url).reply(500, {});
 
-      await expect(getTokensWithBalance(address)).rejects.toThrow();
+      await expect(
+        ethplorerService.getTokensWithBalance(address),
+      ).rejects.toThrow();
     });
   });
 
