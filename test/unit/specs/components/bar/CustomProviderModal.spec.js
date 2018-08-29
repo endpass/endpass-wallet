@@ -173,9 +173,14 @@ describe('CustomProviderModal', () => {
         });
 
         it('should create new provider', async () => {
+          const networkType = 'ropsten';
+          const networkId = 3;
+
           wrapper.setMethods({
             addNewProvider: jest.fn(),
-            validateNetwork: jest.fn().mockResolvedValue(),
+            validateNetwork: jest
+              .fn()
+              .mockResolvedValueOnce([networkType, networkId]),
           });
 
           expect.assertions(6);
@@ -183,11 +188,16 @@ describe('CustomProviderModal', () => {
           await wrapper.vm.handleButtonClick();
 
           expect(wrapper.vm.validateNetwork).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.validateNetwork).toHaveBeenCalledWith(provider);
+          expect(wrapper.vm.validateNetwork).toHaveBeenCalledWith({
+            network: provider,
+          });
 
           expect(wrapper.vm.addNewProvider).toHaveBeenCalledTimes(1);
           expect(wrapper.vm.addNewProvider).toHaveBeenCalledWith({
-            network: provider,
+            network: {
+              ...provider,
+              id: networkId,
+            },
           });
 
           expect(wrapper.vm.isLoading).toBeFalsy();
@@ -205,7 +215,9 @@ describe('CustomProviderModal', () => {
           await wrapper.vm.handleButtonClick();
 
           expect(wrapper.vm.validateNetwork).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.validateNetwork).toHaveBeenCalledWith(provider);
+          expect(wrapper.vm.validateNetwork).toHaveBeenCalledWith({
+            network: provider,
+          });
           expect(wrapper.vm.isLoading).toBeFalsy();
           expect(wrapper.vm.errors.add).toHaveBeenCalledTimes(1);
           expect(wrapper.vm.errors.add).toHaveBeenCalledWith(error);
@@ -223,9 +235,14 @@ describe('CustomProviderModal', () => {
         });
 
         it('should update provider', async () => {
+          const networkType = 'ropsten';
+          const networkId = 3;
+
           wrapper.setMethods({
             updateProvider: jest.fn(),
-            validateNetwork: jest.fn().mockResolvedValue(),
+            validateNetwork: jest
+              .fn()
+              .mockResolvedValue([networkType, networkId]),
           });
 
           expect.assertions(6);
@@ -233,7 +250,9 @@ describe('CustomProviderModal', () => {
           await wrapper.vm.handleButtonClick();
 
           expect(wrapper.vm.validateNetwork).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.validateNetwork).toHaveBeenCalledWith(provider);
+          expect(wrapper.vm.validateNetwork).toHaveBeenCalledWith({
+            network: provider,
+          });
 
           expect(wrapper.vm.updateProvider).toHaveBeenCalledTimes(1);
           expect(wrapper.vm.updateProvider).toHaveBeenCalledWith({
@@ -255,7 +274,9 @@ describe('CustomProviderModal', () => {
           await wrapper.vm.handleButtonClick();
 
           expect(wrapper.vm.validateNetwork).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.validateNetwork).toHaveBeenCalledWith(provider);
+          expect(wrapper.vm.validateNetwork).toHaveBeenCalledWith({
+            network: provider,
+          });
           expect(wrapper.vm.isLoading).toBeFalsy();
           expect(wrapper.vm.errors.add).toHaveBeenCalledTimes(1);
           expect(wrapper.vm.errors.add).toHaveBeenCalledWith(error);

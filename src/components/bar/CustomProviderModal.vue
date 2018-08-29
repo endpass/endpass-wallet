@@ -135,16 +135,21 @@ export default {
     handleButtonClick() {
       this.isLoading = true;
 
-      return this.validateNetwork(this.innerProvider)
-        .then(() => {
+      return this.validateNetwork({ network: this.innerProvider })
+        .then(([networkType, networkId]) => {
           const action = this.needUpdateProvider
             ? this.updateProvider
             : this.addNewProvider;
+          const network = { ...this.innerProvider };
+
+          if (!this.needUpdateProvider) {
+            network.id = networkId;
+          }
 
           this.isLoading = false;
           this.providerAdded = true;
 
-          action({ network: this.innerProvider });
+          action({ network });
         })
         .catch(() => {
           this.isLoading = false;

@@ -114,11 +114,14 @@ describe('web3 store', () => {
 
   describe('getters', () => {
     describe('isCustomNetwork', () => {
-      const defaultNetworks = [{ id: 1 }, { id: 2 }];
+      const defaultNetworks = [{ url: 'url 1' }, { url: 'url 2' }];
       const { isCustomNetwork } = store.getters;
 
       it('should return true', () => {
-        const network = { id: 5 };
+        const network = {
+          id: 5,
+          url: 'url 5',
+        };
 
         expect(isCustomNetwork({ defaultNetworks })(network)).toBeTruthy();
       });
@@ -128,7 +131,10 @@ describe('web3 store', () => {
 
         expect(isCustomNetwork({ defaultNetworks })(network)).toBeFalsy();
 
-        network = { id: 2 };
+        network = {
+          id: 1,
+          url: 'url 1',
+        };
 
         expect(isCustomNetwork({ defaultNetworks })(network)).toBeFalsy();
       });
@@ -472,6 +478,38 @@ describe('web3 store', () => {
         expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
           root: true,
         });
+      });
+    });
+
+    describe('validateNetwork', () => {
+      const { validateNetwork } = store.actions;
+
+      it('should return network type and network id', async () => {
+        const context = {};
+        const network = {
+          url: 'https://url',
+        };
+        let networkType;
+        let networkId;
+        let result;
+
+        networkType = 'ropsten';
+        networkId = 3;
+        Web3.eth.net.getNetworkType.mockResolvedValueOnce(networkType);
+        Web3.eth.net.getId.mockResolvedValueOnce(networkId);
+
+        result = await validateNetwork(context, { network });
+
+        expect(result).toEqual([networkType, networkId]);
+
+        networkType = 'main';
+        networkId = 1;
+        Web3.eth.net.getNetworkType.mockResolvedValueOnce(networkType);
+        Web3.eth.net.getId.mockResolvedValueOnce(networkId);
+
+        result = await validateNetwork(context, { network });
+
+        expect(result).toEqual([networkType, networkId]);
       });
     });
   });
