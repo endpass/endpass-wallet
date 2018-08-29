@@ -7,6 +7,7 @@ import {
   SAVE_TOKENS_PRICES,
   SAVE_TOKEN_TRACKER_INSTANCE,
   SAVE_SERIALISATION_INTERVAL,
+  SAVE_TOKEN_INFO,
 } from './mutations-types';
 import { Token } from '@/class';
 
@@ -67,6 +68,19 @@ const saveTokensPrices = (state, prices) => {
   state.prices = prices;
 };
 
+// Save info like name and logo about all tokens
+const saveTokenInfo = (state, tokenInfos = []) => {
+  let allTokens = {};
+  tokenInfos.forEach(tokenInfo => {
+    if (!tokenInfo.address) {
+      return;
+    }
+    let token = new Token(tokenInfo);
+    allTokens[token.address] = token;
+  });
+  state.allTokens = allTokens;
+};
+
 const saveTokenTrackerInstance = (state, tokenTracker) => {
   state.tokenTracker = tokenTracker;
 };
@@ -84,4 +98,5 @@ export default {
   SAVE_TOKENS_PRICES: saveTokensPrices,
   SAVE_TOKEN_TRACKER_INSTANCE: saveTokenTrackerInstance,
   SAVE_SERIALISATION_INTERVAL: saveSerialisationInterval,
+  SAVE_TOKEN_INFO: saveTokenInfo,
 };

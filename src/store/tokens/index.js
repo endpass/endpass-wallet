@@ -9,6 +9,8 @@ const state = {
   savedTokens: {},
   //tokens prices by symbol
   prices: {},
+  // Info about all tokens, by checksum address
+  allTokens: {},
   tokenTracker: null,
   tokensSerializeInterval: null,
 };
