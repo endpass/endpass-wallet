@@ -12,7 +12,7 @@
       </div>
       <router-link
         to="/"
-        class="button is-primary"
+        class="button is-success is-cta"
         :disabled="!!remainingSeedPhraseTimeout"
         >
         Continue {{getRemainingSeedPhraseTimeout}}
