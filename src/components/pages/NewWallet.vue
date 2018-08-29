@@ -15,7 +15,7 @@
         class="button is-primary"
         :disabled="!!remainingSeedPhraseTimeout"
         >
-        I have written down my seed phrase {{getRemainingSeedPhraseTimeout}}
+        Continue {{getRemainingSeedPhraseTimeout}}
       </router-link>
     </div>
     <div v-else class="container has-text-centered is-narrow">
