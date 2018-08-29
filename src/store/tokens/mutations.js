@@ -55,7 +55,9 @@ const saveTrackedTokens = (state, tokens = []) => {
   if (tokens === null) {
     state.trackedTokens = null;
   } else {
-    state.trackedTokens = tokens.map(token => new Token(token));
+    state.trackedTokens = tokens.map(
+      token => state.allTokens[token.address] || {},
+    );
   }
 };
 
