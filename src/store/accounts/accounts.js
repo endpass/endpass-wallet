@@ -110,9 +110,10 @@ export default {
     },
   },
   actions: {
-    selectWallet({ commit, state, dispatch }, address) {
+    async selectWallet({ commit, state, dispatch }, address) {
       commit('setWallet', state.wallets[address]);
       commit('setAddress', address);
+      dispatch('updateBalance');
       return dispatch(
         'tokens/subscribeOnTokensBalancesUpdates',
         {},

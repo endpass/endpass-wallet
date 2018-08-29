@@ -13,6 +13,7 @@ global.localStorage = localStorageMock;
 //Fake action from antoher storage
 store.actions['tokens/subscribeOnTokensBalancesUpdates'] = jest.fn();
 store.actions['errors/emitError'] = jest.fn();
+store.actions['updateBalance'] = jest.fn();
 
 const { state, actions } = store;
 
@@ -52,6 +53,7 @@ describe('accounts store', () => {
     await actions.selectWallet(context, v3.address);
     expect(state.wallets[v3.address] instanceof Wallet).toBe(true);
     expect(state.wallet instanceof Wallet).toBe(true);
+    expect(store.actions['updateBalance']).toHaveBeenCalled();
   });
 
   it('should set address', () => {

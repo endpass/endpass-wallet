@@ -87,9 +87,8 @@ export default {
     ]),
     // Return value of tokens in fiat
     getTokenPrice(symbol) {
-      return new BigNumber(this.tokenPrices[symbol] || 0)
-        .times(this.ethPrice)
-        .toString();
+      let prices = this.tokenPrices[symbol] || {};
+      return new BigNumber(prices['ETH'] || 0).times(this.ethPrice).toString();
     },
     // Get token prices for all tokens
     async updateTokenPrice() {
