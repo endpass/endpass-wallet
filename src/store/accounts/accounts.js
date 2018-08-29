@@ -260,37 +260,36 @@ export default {
     },
     async init({ commit, dispatch }) {
       try {
-        let [settings, email] = await Promise.all([
-          userService.getSettings(),
-          storage.read('email'),
-        ]);
-
-        commit(`tokens/${SAVE_TOKENS}`, settings.tokens || {}, { root: true });
-        commit('setEmail', email);
+        const { settings, email } = await userService.getSettings();
 
         if (settings) {
+          commit(`tokens/${SAVE_TOKENS}`, settings.tokens || {}, {
+            root: true,
+          });
           commit('setSettings', settings);
         }
 
-        if (!email) {
+        if (email) {
+          commit('setEmail', email);
+        } else {
           storage.disableRemote();
-          return null;
+          return;
         }
 
         // Fetch and save HD wallet
-        let hdKey = await userService.getHDKey();
+        const hdKey = await userService.getHDKey();
         if (hdKey) {
           commit('setHdKey', hdKey);
         }
 
         // Fetch and save regular accounts
-        let accounts = await userService.getV3Accounts();
+        const accounts = await userService.getV3Accounts();
         if (accounts && accounts.length) {
           accounts.forEach(wallet => commit('addWallet', wallet));
           await dispatch('selectWallet', accounts[0].address);
         }
       } catch (e) {
-        return dispatch('errors/emitError', e, { root: true });
+        await dispatch('errors/emitError', e, { root: true });
       }
     },
   },
