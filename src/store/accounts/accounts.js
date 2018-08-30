@@ -282,12 +282,15 @@ export default {
     },
     async init({ commit, dispatch }) {
       try {
-        const { settings, email } = await userService.getSettings();
+        const { settings, email, tokens } = await userService.getSettings();
 
-        if (settings) {
-          commit(`tokens/${SAVE_TOKENS}`, settings.tokens || {}, {
+        if (tokens) {
+          commit(`tokens/${SAVE_TOKENS}`, tokens || {}, {
             root: true,
           });
+        }
+
+        if (settings) {
           commit('setSettings', settings);
         }
 
