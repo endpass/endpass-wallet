@@ -2,7 +2,7 @@
 
 exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
 <v-modal>
-   
+  Two Factor Authentication 
   <p
     class="lead"
   >
@@ -23,7 +23,9 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
   also enter the secret manually.
   </p>
    
-  <v-form>
+  <v-form
+    v-on:submit="bound confirm"
+  >
     <div
       class="field"
     >
@@ -63,6 +65,7 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
       name="verificationCode"
       size="6"
       type="number"
+      v-model="code"
       validator="required|digits:6"
     />
      
@@ -77,7 +80,7 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
 
 exports[`TwoFactorAuthModal render should render without secret and QR code 1`] = `
 <v-modal>
-   
+  Two Factor Authentication 
   <p
     class="lead"
   >
@@ -98,7 +101,9 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
   also enter the secret manually.
   </p>
    
-  <v-form>
+  <v-form
+    v-on:submit="bound confirm"
+  >
     <!---->
      
     <p
@@ -113,6 +118,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
       name="verificationCode"
       size="6"
       type="number"
+      v-model="code"
       validator="required|digits:6"
     />
      
@@ -127,7 +133,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
 
 exports[`TwoFactorAuthModal render should render without secret and QR code 2`] = `
 <v-modal>
-   
+  Two Factor Authentication 
   <p
     class="lead"
   >
@@ -148,7 +154,9 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
   also enter the secret manually.
   </p>
    
-  <v-form>
+  <v-form
+    v-on:submit="bound confirm"
+  >
     <!---->
      
     <p
@@ -163,6 +171,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
       name="verificationCode"
       size="6"
       type="number"
+      v-model="code"
       validator="required|digits:6"
     />
      
@@ -177,7 +186,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
 
 exports[`TwoFactorAuthModal render should render without secret and QR code 3`] = `
 <v-modal>
-   
+  Two Factor Authentication 
   <p
     class="lead"
   >
@@ -198,7 +207,9 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 3`] 
   also enter the secret manually.
   </p>
    
-  <v-form>
+  <v-form
+    v-on:submit="bound confirm"
+  >
     <!---->
      
     <p
@@ -213,6 +224,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 3`] 
       name="verificationCode"
       size="6"
       type="number"
+      v-model="code"
       validator="required|digits:6"
     />
      

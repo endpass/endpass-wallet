@@ -5,7 +5,19 @@ exports[`Base page render should render default slot 1`] = `
   class="app-page"
 >
   <div
-    class="section"
+    class="section is-narrow app-page-header"
+  >
+    <div
+      class="container is-narrow"
+    >
+      <h1
+        class="page-title"
+      />
+    </div>
+  </div>
+   
+  <div
+    class="section is-narrow app-page-content"
   >
     <div
       class="container is-narrow"
@@ -16,10 +28,6 @@ exports[`Base page render should render default slot 1`] = `
         <div
           class="card-header"
         >
-          <h1
-            class="card-header-title"
-          />
-           
           <a
             class="card-header-icon"
           >
@@ -47,7 +55,19 @@ exports[`Base page render should render the initial state of the page 1`] = `
   class="app-page"
 >
   <div
-    class="section"
+    class="section is-narrow app-page-header"
+  >
+    <div
+      class="container is-narrow"
+    >
+      <h1
+        class="page-title"
+      />
+    </div>
+  </div>
+   
+  <div
+    class="section is-narrow app-page-content"
   >
     <div
       class="container is-narrow"
@@ -58,10 +78,6 @@ exports[`Base page render should render the initial state of the page 1`] = `
         <div
           class="card-header"
         >
-          <h1
-            class="card-header-title"
-          />
-           
           <a
             class="card-header-icon"
           >
@@ -85,7 +101,21 @@ exports[`Base page render should render title slot 1`] = `
   class="app-page"
 >
   <div
-    class="section"
+    class="section is-narrow app-page-header"
+  >
+    <div
+      class="container is-narrow"
+    >
+      <h1
+        class="page-title"
+      >
+        title
+      </h1>
+    </div>
+  </div>
+   
+  <div
+    class="section is-narrow app-page-content"
   >
     <div
       class="container is-narrow"
@@ -96,12 +126,6 @@ exports[`Base page render should render title slot 1`] = `
         <div
           class="card-header"
         >
-          <h1
-            class="card-header-title"
-          >
-            title
-          </h1>
-           
           <a
             class="card-header-icon"
           >

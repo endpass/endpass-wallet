@@ -13,13 +13,12 @@ global.localStorage = localStorageMock;
 //Fake action from antoher storage
 store.actions['tokens/subscribeOnTokensBalancesUpdates'] = jest.fn();
 store.actions['errors/emitError'] = jest.fn();
+store.actions['updateBalance'] = jest.fn();
 
 const { state, actions } = store;
 
-// Mock root mutations
+// Mock mutations
 const mutations = {
-  startPageLoading: jest.fn(),
-  stopPageLoading: jest.fn(),
   ...store.mutations,
 };
 
@@ -41,11 +40,6 @@ describe('accounts store', () => {
     await actions.init(context);
   });
 
-  it('should have shown page loading indicator', () => {
-    expect(mutations.startPageLoading).toHaveBeenCalledTimes(1);
-    expect(mutations.stopPageLoading).toHaveBeenCalledTimes(1);
-  });
-
   it('should select wallet value', () => {
     state.wallets = {
       '0x3c75226555FC496168d48B88DF83B95F16771F37': 1,
@@ -59,6 +53,7 @@ describe('accounts store', () => {
     await actions.selectWallet(context, v3.address);
     expect(state.wallets[v3.address] instanceof Wallet).toBe(true);
     expect(state.wallet instanceof Wallet).toBe(true);
+    expect(store.actions['updateBalance']).toHaveBeenCalled();
   });
 
   it('should set address', () => {
@@ -119,6 +114,18 @@ describe('accounts store', () => {
       'addWalletWithPrivateKey',
       expect.any(Object),
     );
+  });
+
+  it('should add wallet with public key', async () => {
+    const dispatch = jest.fn();
+    const commit = jest.fn();
+    let address = '0x3c75226555FC496168d48B88DF83B95F16771F37';
+    userService.setAccount = jest.fn();
+    await actions.addWalletWithPublicKey({ dispatch, commit }, address);
+
+    expect(userService.setAccount).toHaveBeenCalledWith(address, null);
+    expect(commit).toHaveBeenCalledWith('addAddress', address);
+    expect(dispatch).toHaveBeenCalledWith('selectWallet', address);
   });
 
   it('should create wallet instance with seed phrase ', async () => {

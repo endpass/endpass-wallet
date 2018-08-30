@@ -20,7 +20,7 @@
 
 <script>
 import router from '@/router';
-import { mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
@@ -32,12 +32,11 @@ export default {
     address: '',
   }),
   methods: {
-    ...mapMutations('accounts', ['setAddress']),
+    ...mapActions('accounts', ['addWalletWithPublicKey']),
     async submitWalletImportForm() {
       this.isCreating = true;
-      await new Promise(res => setTimeout(res, 20));
       try {
-        this.setAddress(this.address);
+        await this.addWalletWithPublicKey(this.address);
         router.push('/');
       } catch (e) {
         this.errors.add({
@@ -46,8 +45,9 @@ export default {
           id: 'wrongAddress',
         });
         console.error(e);
+      } finally {
+        this.isCreating = false;
       }
-      this.isCreating = false;
     },
     handleInput() {
       this.errors.removeById('wrongAddress');

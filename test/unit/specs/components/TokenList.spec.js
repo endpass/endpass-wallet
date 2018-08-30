@@ -36,7 +36,7 @@ describe('TokenList', () => {
           namespaced: true,
           state: {
             prices: {
-              FST: 2, // price of token in ETH
+              FST: { ETH: 2 }, // price of token in ETH
             },
           },
           getters: {

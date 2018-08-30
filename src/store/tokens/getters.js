@@ -1,3 +1,5 @@
+import { BigNumber } from 'bignumber.js';
+
 const net = (state, getters, rootState) => {
   return rootState.web3.activeNet.id;
 };
@@ -17,8 +19,15 @@ const isTrackedTokensLoaded = state => {
   return state.trackedTokens !== null;
 };
 
+// Tokens sorted by balance
 const trackedTokens = state => {
-  return state.trackedTokens || [];
+  let tokens = (state.trackedTokens || []).map(token => {
+    return {
+      ...token,
+      balance: new BigNumber(token.balance || 0),
+    };
+  });
+  return tokens;
 };
 
 const tokensWithBalance = (state, { trackedTokens }) => {

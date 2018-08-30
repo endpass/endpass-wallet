@@ -7,6 +7,7 @@ import {
   SAVE_TOKENS_PRICES,
   SAVE_TOKEN_TRACKER_INSTANCE,
   SAVE_SERIALISATION_INTERVAL,
+  SAVE_TOKEN_INFO,
 } from './mutations-types';
 import { Token } from '@/class';
 
@@ -54,7 +55,14 @@ const saveTrackedTokens = (state, tokens = []) => {
   if (tokens === null) {
     state.trackedTokens = null;
   } else {
-    state.trackedTokens = tokens.map(token => new Token(token));
+    state.trackedTokens = tokens.map(token => {
+      let tokenInfo = state.allTokens[token.address] || {};
+      delete tokenInfo.balance;
+      return {
+        ...token,
+        ...tokenInfo,
+      };
+    });
   }
 };
 
@@ -65,6 +73,19 @@ const saveTokenPrice = (state, { symbol, price }) => {
 
 const saveTokensPrices = (state, prices) => {
   state.prices = prices;
+};
+
+// Save info like name and logo about all tokens
+const saveTokenInfo = (state, tokenInfos = []) => {
+  let allTokens = {};
+  tokenInfos.forEach(tokenInfo => {
+    if (!tokenInfo.address) {
+      return;
+    }
+    let token = new Token(tokenInfo);
+    allTokens[token.address] = token;
+  });
+  state.allTokens = allTokens;
 };
 
 const saveTokenTrackerInstance = (state, tokenTracker) => {
@@ -84,4 +105,5 @@ export default {
   SAVE_TOKENS_PRICES: saveTokensPrices,
   SAVE_TOKEN_TRACKER_INSTANCE: saveTokenTrackerInstance,
   SAVE_SERIALISATION_INTERVAL: saveSerialisationInterval,
+  SAVE_TOKEN_INFO: saveTokenInfo,
 };

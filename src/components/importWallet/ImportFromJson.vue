@@ -41,7 +41,7 @@
 <script>
 import EthWallet from 'ethereumjs-wallet';
 import router from '@/router';
-import { mapActions, mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';

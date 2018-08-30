@@ -7,6 +7,7 @@ import {
   SAVE_TRACKED_TOKENS,
   SAVE_SERIALISATION_INTERVAL,
   SAVE_TOKEN_TRACKER_INSTANCE,
+  SAVE_TOKEN_INFO,
 } from './mutations-types';
 import TokenTracker from 'eth-token-tracker';
 import { Token, NotificationError } from '@/class';
@@ -17,6 +18,7 @@ import {
   userService,
 } from '@/services';
 import { tokenUpdateInterval } from '@/config';
+import web3 from 'web3';
 
 const saveTokenAndSubscribe = async (
   { state, commit, getters, dispatch },
@@ -67,14 +69,13 @@ const deleteTokenAndUnsubscribe = async (
   }
 };
 
-const getAllTokens = async ({ dispatch, getters }) => {
+const getAllTokens = async ({ commit, dispatch, getters }) => {
   if (getters.net !== 1) {
     return [];
   }
   let tokens = [];
   try {
     tokens = await tokenInfoService.getTokensList();
-    tokens = tokens.map(token => new Token(token));
   } catch (e) {
     const error = new NotificationError({
       title: 'Failed to get list of tokens',
@@ -84,7 +85,7 @@ const getAllTokens = async ({ dispatch, getters }) => {
     });
     dispatch('errors/emitError', error, { root: true });
   } finally {
-    return tokens;
+    commit(SAVE_TOKEN_INFO, tokens);
   }
 };
 const subscribeOnTokensBalancesUpdates = async ({
@@ -104,14 +105,10 @@ const subscribeOnTokensBalancesUpdates = async ({
   }
   try {
     const tokensWithBalance = await dispatch('getTokensWithBalance');
-    dispatch('createTokenTracker', { tokensWithBalance });
+    await dispatch('createTokenTracker', { tokensWithBalance });
     // TokenTracker update event doesent work
     const serialisationInterval = setInterval(() => {
-      const balances = state.tokenTracker.serialize();
-      // TODO check for errors here
-      if (balances.length && typeof balances[0].symbol !== 'undefined')
-        commit(SAVE_TRACKED_TOKENS, balances);
-      else commit(SAVE_TRACKED_TOKENS, []);
+      dispatch('updateTokensBalances');
     }, tokenUpdateInterval);
     commit(SAVE_SERIALISATION_INTERVAL, serialisationInterval);
   } catch (e) {
@@ -122,9 +119,10 @@ const subscribeOnTokensBalancesUpdates = async ({
     });
     dispatch('errors/emitError', error, { root: true });
   }
+  return dispatch('updateTokensBalances');
 };
 
-const getTokensWithBalance = async ({ getters, dispatch }) => {
+const getTokensWithBalance = async ({ state, getters, dispatch }) => {
   const { address } = getters;
   if (!address) {
     return [];
@@ -146,9 +144,19 @@ const getTokensWithBalance = async ({ getters, dispatch }) => {
       status: false,
     };
     dispatch('errors/emitError', e, { root: true });
-  } finally {
-    return tokensWithBalance;
   }
+  // Get tokeninfo from addresses
+  const allTokens = state.allTokens;
+  const tokenAddrs = tokensWithBalance
+    .map(tokenInfo => tokenInfo.address)
+    .filter(addr => !!addr)
+    .map(web3.utils.toChecksumAddress);
+  return tokenAddrs
+    .map(addr => {
+      let token = state.allTokens[addr] || {};
+      return { ...token };
+    })
+    .filter(token => !!token.address);
 };
 const updateTokensPrices = async ({ state, commit, getters }) => {
   if (state.trackedTokens === null || state.trackedTokens.length === 0) return;
@@ -170,21 +178,34 @@ const subscribeOnTokensPricesUpdates = ({ dispatch }) => {
   }, tokenUpdateInterval);
 };
 
-const createTokenTracker = (
+//TODO test
+const updateTokensBalances = async ({ state, commit }) => {
+  const balances = state.tokenTracker.serialize();
+  // TODO check for errors here
+  if (balances.length && typeof balances[0].symbol !== 'undefined') {
+    commit(SAVE_TRACKED_TOKENS, balances);
+  } else {
+    commit(SAVE_TRACKED_TOKENS, []);
+  }
+};
+
+const createTokenTracker = async (
   { state, commit, getters, rootState },
   { tokensWithBalance },
 ) => {
   const { address } = getters;
 
   //Merge tokens list by address
-  const tokensToTrack = tokensWithBalance.concat(
-    getters.savedCurrentNetworkTokens.filter(
-      savedToken =>
-        !tokensWithBalance.find(
-          tokenWithBalance => tokenWithBalance.address === savedToken.address,
-        ),
-    ),
-  );
+  const tokensToTrack = tokensWithBalance
+    .concat(
+      getters.savedCurrentNetworkTokens.filter(
+        savedToken =>
+          !tokensWithBalance.find(
+            tokenWithBalance => tokenWithBalance.address === savedToken.address,
+          ),
+      ),
+    )
+    .filter(token => !!token.address); //filter out empty address
 
   const tokenTracker = new TokenTracker({
     userAddress: address,
@@ -197,7 +218,8 @@ const createTokenTracker = (
 };
 
 const init = async ({ dispatch }) => {
-  dispatch('subscribeOnTokensPricesUpdates');
+  await dispatch('getAllTokens');
+  return dispatch('subscribeOnTokensPricesUpdates');
 };
 
 export default {
@@ -206,6 +228,7 @@ export default {
   deleteTokenAndUnsubscribe,
   getTokensWithBalance,
   updateTokensPrices,
+  updateTokensBalances,
   updateTokenPrice,
   subscribeOnTokensBalancesUpdates,
   subscribeOnTokensPricesUpdates,

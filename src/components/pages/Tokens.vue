@@ -93,7 +93,6 @@ export default {
       search: '',
       searchToken: '',
       addTokenModalOpen: false,
-      tokens: [],
       serializeInterval: null,
       subscription: null,
     };
@@ -101,6 +100,7 @@ export default {
   computed: {
     ...mapState({
       prices: state => state.tokens.prices,
+      allTokens: state => state.tokens.allTokens,
       ethPrice: state => state.price.price,
       currency: state => state.accounts.settings.fiatCurrency,
       tokensSubscription: tokensSubscription => state =>
@@ -108,7 +108,7 @@ export default {
     }),
     ...mapGetters('tokens', ['net', 'trackedTokens', 'isTrackedTokensLoaded']),
     filteredTokens() {
-      return this.tokens.filter(
+      return Object.values(this.allTokens).filter(
         token =>
           !this.trackedTokens.some(
             activeToken =>
@@ -149,18 +149,8 @@ export default {
       );
     },
   },
-  watch: {
-    net: {
-      handler() {
-        this.getAllTokens().then((tokens = []) => {
-          this.tokens = tokens;
-        });
-      },
-      immediate: true,
-    },
-  },
   methods: {
-    ...mapActions('tokens', ['saveTokenAndSubscribe', 'getAllTokens']),
+    ...mapActions('tokens', ['saveTokenAndSubscribe']),
     setSearchToken(query) {
       this.searchToken = query;
     },
