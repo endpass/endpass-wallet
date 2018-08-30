@@ -74,10 +74,11 @@ describe('price actions', () => {
   });
 
   describe('init', () => {
-    it('should call subscribeOnPriceUpdates', async () => {
-      expect.assertions(1);
+    it('should update price and subscribe to updates', async () => {
+      expect.assertions(2);
       await actions.init({ dispatch });
-      expect(dispatch).toHaveBeenCalledWith('subscribeOnPriceUpdates');
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'updatePrice');
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'subscribeOnPriceUpdates');
     });
   });
 });
