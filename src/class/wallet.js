@@ -1,5 +1,6 @@
 import { kdfParams } from '@/config';
 import keyUtil from '@/utils/keystore';
+import Web3 from 'web3';
 
 // A Wallet represents a single Ethereum account that can send transactions
 // All methods are async and return promises
@@ -14,7 +15,7 @@ export class Wallet {
 
   async getPrivateKeyString(password) {
     const privateKey = await this.getPrivateKey(password);
-    return web3.utils.bytesToHex(privateKey);
+    return Web3.utils.bytesToHex(privateKey);
   }
 
   // () => Promise<String>

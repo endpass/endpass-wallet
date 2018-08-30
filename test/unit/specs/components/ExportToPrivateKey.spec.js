@@ -36,6 +36,7 @@ describe('ExportToPrivateKey', () => {
   describe('behavior', () => {
     it('should correctly set the private key', async () => {
       await wrapper.vm.getPrivateKey(v3password);
+      console.log(v3password, privateKeyString);
       expect(wrapper.vm.privateKey).toBe(privateKeyString);
     });
   });
