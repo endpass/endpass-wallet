@@ -17,11 +17,25 @@
                placeholder="Your email"
                :disabled="isLoading" />
 
-        <v-checkbox v-model="termsAccepted">
-          I accept the <a href="https://endpass.com/terms/" target="_blank">Terms of Service</a>
-          and <a href="https://endpass.com/privacy/" target="_blank">Privacy
-            Policy</a>.
-        </v-checkbox>
+      <v-select v-model="currentIdentityServerType"
+                label="Identity Server"
+                name="currentIdentityServerType"
+                :options="availableIdentityServerTypes"
+                :disabled="isLoading" />
+
+      <v-input v-model="customIdentityServer"
+               v-if="selectedCustomIdentityServerType"
+               label="Custom Identity Server"
+               id="customIdentityServer"
+               name="customIdentityServer"
+               validator="required|url:require_protocol:true"
+               placeholder="Custom Identity Server"
+               :disabled="isLoading" />
+
+      <v-checkbox v-model="termsAccepted">
+        I accept the <a href="https://endpass.com/terms/" target="_blank">Terms of Service</a>
+        and <a href="https://endpass.com/privacy/" target="_blank">Privacy Policy</a>.
+      </v-checkbox>
     </v-form>
     <div class="buttons" slot="footer">
       <v-button className="is-primary is-medium"
@@ -39,6 +53,13 @@ import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
 import VCheckbox from '@/components/ui/form/VCheckbox';
+import VSelect from '@/components/ui/form/VSelect';
+
+const availableIdentityServerTypes = [
+  'Endpass',
+  'Local Storage',
+  'Custom server',
+];
 
 export default {
   name: 'login-by-email-modal',
@@ -51,10 +72,25 @@ export default {
   data: () => ({
     email: '',
     termsAccepted: true,
+    availableIdentityServerTypes,
+    currentIdentityServerType: availableIdentityServerTypes[0],
+    customIdentityServer: null,
   }),
+  computed: {
+    selectedCustomIdentityServerType() {
+      return this.currentIdentityServerType === 'Custom server';
+    },
+  },
   methods: {
     handleSubmit() {
-      this.$emit('confirm', this.email);
+      const serverSettings = {
+        type: this.currentIdentityServerType,
+        url: this.selectedCustomIdentityServerType
+          ? this.customIdentityServer
+          : undefined,
+      };
+
+      this.$emit('confirm', this.email, serverSettings);
     },
     handleClose() {
       this.$emit('close');
@@ -66,6 +102,7 @@ export default {
     VInput,
     VButton,
     VCheckbox,
+    VSelect,
   },
 };
 </script>

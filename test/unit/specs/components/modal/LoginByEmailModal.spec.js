@@ -21,17 +21,54 @@ describe('LoginByEmailModal', () => {
     it('should render component', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
+
+    it('should display a field for custom identity server', () => {
+      wrapper.setData({
+        currentIdentityServerType: 'Custom server',
+      });
+
+      expect(wrapper.find('#customIdentityServer').html()).toMatchSnapshot();
+    });
   });
 
   describe('methods', () => {
     describe('handleSubmit', () => {
-      it('should trigger "confirm" event', () => {
-        const email = 'email';
+      const email = 'email';
 
-        wrapper.setData({ email });
+      it('should trigger "confirm" event', () => {
+        const currentIdentityServerType = 'Endpass';
+        const expected = [
+          email,
+          {
+            type: currentIdentityServerType,
+          },
+        ];
+
+        wrapper.setData({ email, currentIdentityServerType });
         wrapper.vm.handleSubmit();
 
-        expect(wrapper.emitted().confirm).toEqual([[email]]);
+        expect(wrapper.emitted().confirm).toEqual([expected]);
+      });
+
+      it('should trigger "confirm" event with custom identity server url', () => {
+        const customIdentityServer = 'custom identity server url';
+        const currentIdentityServerType = 'Custom server';
+        const expected = [
+          email,
+          {
+            type: currentIdentityServerType,
+            url: customIdentityServer,
+          },
+        ];
+
+        wrapper.setData({
+          email,
+          currentIdentityServerType,
+          customIdentityServer,
+        });
+        wrapper.vm.handleSubmit();
+
+        expect(wrapper.emitted().confirm).toEqual([expected]);
       });
     });
 
