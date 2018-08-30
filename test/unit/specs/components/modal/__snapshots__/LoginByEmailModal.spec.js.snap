@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`LoginByEmailModal render should display a field for custom identity server 1`] = `<v-input label="Custom Identity Server" id="customIdentityServer" name="customIdentityServer" validator="required|url:require_protocol:true" placeholder="Custom Identity Server" v-model="customIdentityServer"></v-input>`;
+
 exports[`LoginByEmailModal render should render component 1`] = `
 <v-modal
   class="is-dark"
@@ -26,11 +28,20 @@ exports[`LoginByEmailModal render should render component 1`] = `
       validator="required|email"
     />
      
+    <v-select
+      label="Identity Server"
+      name="currentIdentityServerType"
+      options="Endpass,Local Storage,Custom server"
+      v-model="currentIdentityServerType"
+    />
+     
+    <!---->
+     
     <v-checkbox
       v-model="termsAccepted"
     >
       
-        I accept the 
+      I accept the 
       <a
         href="https://endpass.com/terms/"
         target="_blank"
@@ -38,16 +49,15 @@ exports[`LoginByEmailModal render should render component 1`] = `
         Terms of Service
       </a>
       
-        and 
+      and 
       <a
         href="https://endpass.com/privacy/"
         target="_blank"
       >
-        Privacy
-          Policy
+        Privacy Policy
       </a>
       .
-      
+    
     </v-checkbox>
   </v-form>
    
