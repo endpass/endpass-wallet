@@ -22,6 +22,25 @@
         placeholder="Your email"
       />
 
+      <v-select
+        :disabled="isLoading"
+        :options="availableIdentityServerTypes"
+        v-model="currentIdentityServerType"
+        label="Identity Server"
+        name="currentIdentityServerType"
+      />
+
+      <v-input
+        v-if="selectedCustomIdentityServerType"
+        id="customIdentityServer"
+        v-model="customIdentityServer"
+        :disabled="isLoading"
+        label="Custom Identity Server"
+        name="customIdentityServer"
+        validator="required|url:require_protocol:true"
+        placeholder="Custom Identity Server"
+      />
+
       <v-checkbox v-model="termsAccepted">
         I accept the <a
           href="https://endpass.com/terms/"
@@ -61,6 +80,13 @@ import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
 import VCheckbox from '@/components/ui/form/VCheckbox';
+import VSelect from '@/components/ui/form/VSelect';
+
+const availableIdentityServerTypes = [
+  'Endpass',
+  'Local Storage',
+  'Custom server',
+];
 
 export default {
   name: 'LoginByEmailModal',
@@ -73,14 +99,30 @@ export default {
   data: () => ({
     email: '',
     termsAccepted: true,
+    availableIdentityServerTypes,
+    currentIdentityServerType: availableIdentityServerTypes[0],
+    customIdentityServer: null,
   }),
+  computed: {
+    selectedCustomIdentityServerType() {
+      return this.currentIdentityServerType === 'Custom server';
+    },
+  },
   methods: {
     handleSubmit() {
       this.$ga.event({
         eventCategory: 'onboarding',
         eventAction: 'submit_email',
       });
-      this.$emit('confirm', this.email);
+
+      const serverSettings = {
+        type: this.currentIdentityServerType,
+        url: this.selectedCustomIdentityServerType
+          ? this.customIdentityServer
+          : undefined,
+      };
+
+      this.$emit('confirm', this.email, serverSettings);
     },
     handleClose() {
       this.$emit('close');
@@ -92,6 +134,7 @@ export default {
     VInput,
     VButton,
     VCheckbox,
+    VSelect,
   },
 };
 </script>
