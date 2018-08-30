@@ -1,11 +1,17 @@
 import Tx from 'ethereumjs-tx';
 import { BigNumber } from 'bignumber.js';
-import { EventEmitter, NotificationError } from '@/class';
+import web3 from 'web3';
+import { EventEmitter, NotificationError, Transaction } from '@/class';
+import { MAIN_NET_ID } from '@/constants';
+import ethplorerService from '@/services/ethplorer';
+
+const { toChecksumAddress } = web3.utils;
 
 export default {
   namespaced: true,
   state: {
     pendingTransactions: [],
+    transactionHistory: [],
   },
   getters: {
     accountTransactions(state, getters, rootState) {
@@ -13,12 +19,44 @@ export default {
         return [];
       }
 
+      let transactions = state.pendingTransactions;
+      const { id: currentNetID } = rootState.web3.activeNet;
+
+      if (currentNetID === MAIN_NET_ID) {
+        transactions = transactions.concat(getters.filteredHistoryTransactions);
+      }
+
       const address = rootState.accounts.address.getChecksumAddressString();
-      return state.pendingTransactions.filter(
-        trx =>
-          trx.from === address ||
-          (trx.to === address && trx.state === 'success'),
+
+      return transactions
+        .filter(trx => {
+          const { to, from, state: trxStatus } = trx;
+
+          return (
+            toChecksumAddress(from) === address ||
+            (trxStatus === 'success' && toChecksumAddress(to) === address)
+          );
+        })
+        .sort((trx1, trx2) => {
+          if (typeof trx2.date === 'undefined') return 1;
+          if (typeof trx1.date === 'undefined') return -1;
+          return trx2.date - trx1.date;
+        });
+    },
+    // Trx for the current network
+    currentNetTransactions(state, getters, rootState) {
+      const { id: currentNetID } = rootState.web3.activeNet;
+
+      return getters.accountTransactions.filter(
+        ({ networkId }) => networkId === currentNetID,
       );
+    },
+    // Exclude trx that exist in pendingTransactions
+    filteredHistoryTransactions(state) {
+      const isInPending = itemHash =>
+        state.pendingTransactions.some(({ hash }) => hash === itemHash);
+
+      return state.transactionHistory.filter(({ hash }) => !isInPending(hash));
     },
     pendingBalance(state, getters, rootState) {
       if (!rootState.accounts.address) {
@@ -47,6 +85,9 @@ export default {
   mutations: {
     addTransaction(state, transaction) {
       state.pendingTransactions.push(transaction);
+    },
+    setTransactionHistory(state, transactions) {
+      state.transactionHistory = transactions || [];
     },
   },
   actions: {
@@ -220,6 +261,81 @@ export default {
         type: 'is-danger',
       });
       dispatch('errors/emitError', error, { root: true });
+    },
+    // Transaction history from ethplorer
+    async getTransactionHistory({ commit, dispatch, rootState }) {
+      if (!rootState.accounts.address) return;
+
+      try {
+        const address = rootState.accounts.address.getChecksumAddressString();
+        const [transactions, history] = await Promise.all([
+          ethplorerService.getInfo(address),
+          ethplorerService.getHistory(address),
+        ]);
+        const allTrx = transactions
+          .concat(history)
+          .map(trx => new Transaction(trx));
+
+        commit('setTransactionHistory', allTrx);
+        dispatch(
+          'connectionStatus/updateApiErrorStatus',
+          {
+            id: 'ethplorer',
+            status: true,
+          },
+          { root: true },
+        );
+      } catch (e) {
+        const error = new NotificationError({
+          ...e,
+          title: 'Failed to get transaction information',
+          text:
+            'An error occurred while retrieving transaction information. Please try again.',
+          type: 'is-warning',
+          apiError: {
+            id: 'ethplorer',
+            status: false,
+          },
+        });
+        dispatch('errors/emitError', error, { root: true });
+      }
+    },
+    // Show notification of incoming transactions from block
+    handleBlockTransactions({ dispatch, rootState }, transactions) {
+      const { wallets } = rootState.accounts;
+      const userAddresses = Object.keys(wallets).map(wallet =>
+        wallet.toLowerCase(),
+      );
+      const toUserTrx = transactions.filter(trx =>
+        userAddresses.some(address => address === trx.to),
+      );
+
+      toUserTrx.forEach(trx => {
+        const { hash, to } = trx;
+        const shortAddress = `${to.slice(0, 4)}...${to.slice(-4)}`;
+        const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`;
+        const error = new NotificationError({
+          title: 'Incoming transaction',
+          text: `Address ${shortAddress} received transaction ${shortHash}`,
+        });
+
+        dispatch('errors/emitError', error, { root: true });
+      });
+
+      if (!rootState.accounts.address) {
+        return;
+      }
+
+      const address = rootState.accounts.address.getAddressString();
+      const trxAddresses = toUserTrx.map(({ to }) => to);
+      const { id: currentNetID } = rootState.web3.activeNet;
+
+      if (
+        currentNetID === MAIN_NET_ID &&
+        trxAddresses.some(trxAddress => trxAddress === address)
+      ) {
+        dispatch('getTransactionHistory');
+      }
     },
   },
 };

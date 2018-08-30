@@ -1,5 +1,4 @@
-import Vue from 'vue';
-import { mount, shallow, createLocalVue } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import Vuex from 'vuex';
@@ -52,7 +51,7 @@ describe('ReceivePage', () => {
   });
 
   // done callback is required for async tests
-  it('downloads transaction history', async () => {
+  it.only('downloads transaction history', async () => {
     mock
       .onGet(/api\.ethplorer\.io\/getAddressTransactions/)
       .reply(200, [{ id: '1', to: wallet.getChecksumAddressString() }]);

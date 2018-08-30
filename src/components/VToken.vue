@@ -17,10 +17,12 @@
     </div>
     <div class="media-right">
       <balance
-        v-if="token.balance && token.balance.length"
+        v-if="token.balance"
         class="is-inline-block"
         :amount="amount"
+        :currency="token.symbol"
         :decimals="token.decimals"
+        :round="4"
       />
 
       <balance
@@ -29,6 +31,7 @@
         :amount="amount"
         :currency="currency"
         :decimals="2"
+        :round="2"
         :price="price"
       />
       <slot name="right"></slot>
@@ -61,9 +64,14 @@ export default {
   computed: {
     // Return token balance in wei
     amount() {
-      let balanceBn = new BigNumber(this.token.balance);
+      let balanceBn;
+      if (this.token.balance instanceof BigNumber) {
+        balanceBn = this.token.balance;
+      } else {
+        balanceBn = new BigNumber(this.token.balance);
+      }
       let decimalsBn = new BigNumber(10).pow(this.token.decimals);
-      return balanceBn.div(decimalsBn);
+      return balanceBn.div(decimalsBn).toString(10);
     },
   },
   components: {
@@ -81,6 +89,7 @@ export default {
   }
   .token-title {
     .token-symbol {
+      display: none;
       font-weight: 600;
     }
     .token-name {

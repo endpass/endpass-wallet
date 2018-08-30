@@ -1,0 +1,6 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CustomProviderModal render url field should render correctly 1`] = `
+<v-input name="url" label="Provider url" id="url" aria-describedby="url" placeholder="Provider url" data-vv-name="Provider url" v-validate="\`required|url:require_protocol:true|not_in:\${providersLinks}\`" v-on:input="bound handleInput" v-model="innerProvider.url"
+    aria-required="true" aria-invalid="false"></v-input>
+`;

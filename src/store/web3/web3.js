@@ -80,6 +80,13 @@ export default {
         ? networks.filter(net => net.currency === state.activeCurrency.id)
         : networks;
     },
+    isCustomNetwork(state) {
+      return network =>
+        network.id > 0 &&
+        !state.defaultNetworks.find(
+          defaultNetwork => defaultNetwork.url === network.url,
+        );
+    },
   },
   mutations: {
     changeNetwork(state, network) {
@@ -100,6 +107,22 @@ export default {
     },
     addNewProvider(state, network) {
       state.storedNetworks.push(network);
+    },
+    updateProvider(state, network) {
+      const storedNetwork = state.storedNetworks.find(
+        item => item.id === network.id,
+      );
+
+      if (storedNetwork) {
+        storedNetwork.name = network.name;
+        storedNetwork.url = network.url;
+        storedNetwork.currency = network.currency;
+      }
+    },
+    deleteProvider(state, network) {
+      state.storedNetworks = state.storedNetworks.filter(
+        item => item.id !== network.id,
+      );
     },
     setBlockNumber(state, number) {
       state.blockNumber = number;
@@ -135,17 +158,33 @@ export default {
         dispatch('changeNetwork', getters.networks[0].id);
       }
     },
-    addNewProvider({ state, commit, dispatch, getters }, network) {
-      network.id =
-        getters.networks.reduce(
-          (max, next) => (max.id > next.id ? max.id : next.id),
-        ) + 1;
+    addNewProvider({ state, commit, dispatch }, { network }) {
       commit('addNewProvider', network);
 
       return Promise.all([
         storage.write('networks', state.storedNetworks),
         dispatch('changeNetwork', network.id),
       ]).catch(e => dispatch('errors/emitError', e, { root: true }));
+    },
+    updateProvider({ state, commit, dispatch }, { network }) {
+      commit('updateProvider', network);
+
+      return storage
+        .write('networks', state.storedNetworks)
+        .catch(e => dispatch('errors/emitError', e, { root: true }));
+    },
+    deleteProvider({ state, commit, dispatch, getters }, { network }) {
+      commit('deleteProvider', network);
+
+      const promises = [storage.write('networks', state.storedNetworks)];
+
+      if (network.url === state.activeNet.url) {
+        promises.push(dispatch('changeNetwork', getters.networks[0].id));
+      }
+
+      return Promise.all(promises).catch(e =>
+        dispatch('errors/emitError', e, { root: true }),
+      );
     },
     fetchNetworkType({ state, commit, dispatch }) {
       // network type already set, return resolved promise
@@ -158,11 +197,12 @@ export default {
         .then(resp => commit('setNetworkType', resp))
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    validateNetwork(ctx, network) {
+    validateNetwork(ctx, { network }) {
       const providerTemp = providerFactory(network.url);
       const web3Temp = new Web3(providerTemp);
+      const { net } = web3Temp.eth;
 
-      return web3Temp.eth.net.getNetworkType();
+      return Promise.all([net.getNetworkType(), net.getId()]);
     },
     subscribeOnBlockUpdates({ state, commit, dispatch, rootState }) {
       if (state.blockSubscribtion) {
@@ -174,6 +214,9 @@ export default {
       });
       state.blockSubscribtion.on('latest', block => {
         dispatch('accounts/updateBalance', {}, { root: true });
+        dispatch('transactions/handleBlockTransactions', block.transactions, {
+          root: true,
+        });
         commit(
           'setBlockNumber',
           state.web3.utils.hexToNumberString(block.number),

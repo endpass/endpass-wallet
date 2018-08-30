@@ -12,10 +12,10 @@
       </div>
       <router-link
         to="/"
-        class="button is-primary"
+        class="button is-success is-cta"
         :disabled="!!remainingSeedPhraseTimeout"
         >
-        I have written down my seed phrase {{getRemainingSeedPhraseTimeout}}
+        Continue {{getRemainingSeedPhraseTimeout}}
       </router-link>
     </div>
     <div v-else class="container has-text-centered is-narrow">

@@ -4,10 +4,11 @@ exports[`SettingsPage render should render the initial state of the component 1`
 <base-page
   class="settings-page"
 >
-   
+  Settings 
   <v-form
     class="save-settings"
     id="save-settings"
+    v-on:submit="bound updateSettings"
   >
     <div
       class="field"
@@ -40,6 +41,8 @@ exports[`SettingsPage render should render the initial state of the component 1`
       label="Fiat Currency"
       name="fiatCurrency"
       options="USD,AUD,BRL"
+      v-model="newSettings.fiatCurrency"
+      v-on:input="bound updateSettings"
     />
   </v-form>
    

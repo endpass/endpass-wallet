@@ -93,14 +93,16 @@ export default {
     color: inherit;
     display: inline-block;
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.4rem;
+    font-weight: 700;
     vertical-align: bottom;
   }
 
   .currency {
     display: inline-block;
     text-transform: uppercase;
-    font-weight: 700;
+    vertical-align: bottom;
+    line-height: 1.4;
   }
 
   &.is-small {

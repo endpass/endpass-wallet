@@ -4,7 +4,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
 <v-modal
   class="is-dark"
 >
-   
+  Get Started 
   <p
     class="subtitle"
   >
@@ -14,6 +14,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
    
   <v-form
     id="loginByEmail"
+    v-on:submit="bound handleSubmit"
   >
     <v-input
       help="Your email address may be used to help recover your
@@ -21,10 +22,13 @@ exports[`LoginByEmailModal render should render component 1`] = `
       label="Email"
       name="email"
       placeholder="Your email"
+      v-model="email"
       validator="required|email"
     />
      
-    <v-checkbox>
+    <v-checkbox
+      v-model="termsAccepted"
+    >
       
         I accept the 
       <a
@@ -47,5 +51,16 @@ exports[`LoginByEmailModal render should render component 1`] = `
     </v-checkbox>
   </v-form>
    
+  <div
+    class="buttons"
+  >
+    <v-button
+      classname="is-primary is-medium"
+      data-test="submit-login"
+      form="loginByEmail"
+    >
+      Continue
+    </v-button>
+  </div>
 </v-modal>
 `;

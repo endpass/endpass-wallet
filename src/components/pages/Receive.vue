@@ -69,8 +69,8 @@ export default {
   },
   created() {
     EthplorerService.getInfo(this.address)
-      .then(resp => {
-        this.transactions = resp.data.filter(trx => {
+      .then(transactions => {
+        this.transactions = transactions.filter(trx => {
           return trx.to === this.address;
         });
         this.$store.dispatch('connectionStatus/updateApiErrorStatus', {

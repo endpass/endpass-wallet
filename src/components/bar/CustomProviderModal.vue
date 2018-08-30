@@ -1,12 +1,11 @@
 <template>
   <div class="new-account-modal">
     <v-modal @close="close">
-      <template slot="header">Add New Provider</template>
-
+      <header slot="header">{{ headerText }}</header>
       <div v-if="!providerAdded">
 	      <v-form v-model="isFormValid" @submit="addNewProvider">
 
-          <v-input v-model="provider.name"
+          <v-input v-model="innerProvider.name"
                    v-validate="'required'"
                    :disabled="isLoading"
                    name="name"
@@ -14,9 +13,10 @@
                    id="name"
                    aria-describedby="name"
                    placeholder="Network name"
+                   data-vv-name="Network name"
                    required />
 
-          <v-input v-model="provider.url"
+          <v-input v-model="innerProvider.url"
                    v-validate="`required|url:require_protocol:true|not_in:${providersLinks}`"
                    :disabled="isLoading"
                    name="url"
@@ -24,18 +24,20 @@
                    id="url"
                    aria-describedby="url"
                    placeholder="Provider url"
+                   data-vv-name="Provider url"
                    @input="handleInput"
-                   required />
+          />
 
-         <v-select v-model="provider.currency"
-                  :options="currencies"
-                  v-validate="'required'"
-                  name="currency"
-                  label="Provider currency"
-                  id="currency"
-                  aria-describedby="currency"
-                  placeholder="Provider currency"
-                  required />
+          <v-select v-model="innerProvider.currency"
+                    :options="currencies"
+                    v-validate="'required'"
+                    name="currency"
+                    label="Provider currency"
+                    id="currency"
+                    aria-describedby="currency"
+                    placeholder="Provider currency"
+                    data-vv-name="Provider currency"
+                    required />
 	      </v-form>
       </div>
       <div v-else>
@@ -46,8 +48,8 @@
             <p>Provider Address</p>
           </div>
           <div class="message-body">
-            <p>{{provider.name}}</p>
-            <p class="code address">{{provider.url}}</p>
+            <p>{{innerProvider.name}}</p>
+            <p class="code address">{{innerProvider.url}}</p>
           </div>
         </div>
       </div>
@@ -58,7 +60,9 @@
              :class="{'is-loading' : isLoading }"
              :disabled="!isFormValid"
              type="button"
-             @click="addNewProvider">Create New Provider</a>
+             @click="handleButtonClick">
+            {{ buttonText }}
+          </a>
         </div>
       </template>
 
@@ -72,6 +76,12 @@ import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VSelect from '@/components/ui/form/VSelect';
 
+const defaultProvider = {
+  name: '',
+  url: '',
+  currency: 1,
+};
+
 export default {
   name: 'CustomProviderModal',
   data() {
@@ -79,12 +89,14 @@ export default {
       providerAdded: false,
       isFormValid: false,
       isLoading: false,
-      provider: {
-        name: '',
-        url: '',
-        currency: 1,
-      },
+      innerProvider: Object.assign({}, this.provider),
     };
+  },
+  props: {
+    provider: {
+      type: Object,
+      default: () => defaultProvider,
+    },
   },
   computed: {
     ...mapState({
@@ -96,22 +108,48 @@ export default {
     }),
     ...mapGetters('web3', ['networks']),
     providersLinks() {
-      return this.networks.map(net => net.url).toString();
+      const networks = this.needUpdateProvider
+        ? this.networks.filter(net => net.url !== this.provider.url)
+        : this.networks;
+
+      return networks.map(net => net.url).toString();
+    },
+    needUpdateProvider() {
+      return !Object.is(this.$props.provider, defaultProvider);
+    },
+    headerText() {
+      return this.needUpdateProvider ? 'Update Provider' : 'Add New Provider';
+    },
+    buttonText() {
+      return this.needUpdateProvider
+        ? 'Update Provider'
+        : 'Create New Provider';
     },
   },
   methods: {
-    ...mapActions('web3', {
-      addNewProviderToStore: 'addNewProvider',
-      validateNetwork: 'validateNetwork',
-    }),
-    addNewProvider() {
+    ...mapActions('web3', [
+      'addNewProvider',
+      'validateNetwork',
+      'updateProvider',
+    ]),
+    handleButtonClick() {
       this.isLoading = true;
 
-      this.validateNetwork(this.provider)
-        .then(() => {
+      return this.validateNetwork({ network: this.innerProvider })
+        .then(([networkType, networkId]) => {
+          const action = this.needUpdateProvider
+            ? this.updateProvider
+            : this.addNewProvider;
+          const network = { ...this.innerProvider };
+
+          if (!this.needUpdateProvider) {
+            network.id = networkId;
+          }
+
           this.isLoading = false;
-          this.addNewProviderToStore(this.provider);
           this.providerAdded = true;
+
+          action({ network });
         })
         .catch(() => {
           this.isLoading = false;
