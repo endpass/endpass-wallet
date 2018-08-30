@@ -4,12 +4,7 @@ import web3 from 'web3';
 // ethereumjs-wallet when only the address is available
 export class Address {
   constructor(addressString) {
-    if (
-      !web3.utils.isHexStrict(addressString) &&
-      web3.utils.isHex(addressString)
-    ) {
-      addressString = '0x' + addressString;
-    }
+    addressString = '0x' + addressString.replace(/^0x/, '');
     if (!web3.utils.isAddress(addressString)) {
       throw new Error('Not a valid Ethereum address');
     }

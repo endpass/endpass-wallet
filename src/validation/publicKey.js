@@ -1,4 +1,3 @@
-import web3 from 'web3';
 import secp256k1 from 'secp256k1';
 export default {
   getMessage(field, params, data) {
