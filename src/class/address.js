@@ -20,8 +20,7 @@ export class Address {
   }
 
   getAddressString() {
-    const address = web3.utils.bytesToHex(this.address);
-    return address;
+    return web3.utils.bytesToHex(this.address);;
   }
 
   getChecksumAddressString() {
