@@ -136,12 +136,6 @@ export default {
           .once('transactionHash', hash => {
             eventEmitter.emit('transactionHash', hash);
           })
-          .on('confirmation', confNumber => {
-            if (confNumber > 0) {
-              sendEvent.off('confirmation');
-              eventEmitter.emit('confirmation', confNumber);
-            }
-          })
           .once('error', (err, receipt) => {
             const ignoreError = 'Transaction was not mined within750 seconds';
 
@@ -149,8 +143,10 @@ export default {
               dispatch('handleSendingError', { err, receipt, transaction });
               eventEmitter.emit('error', err);
             }
-
             console.error(err);
+          })
+          .then(() => {
+            eventEmitter.emit('confirmation');
           });
 
         return eventEmitter;
