@@ -11,6 +11,9 @@ exports[`VTextarea render should render component 1`] = `
   >
     <textarea
       class="textarea"
+      disabled="disabled"
+      id="id"
+      placeholder="placeholder"
     />
   </div>
 </div>
@@ -31,6 +34,9 @@ exports[`VTextarea render should render component with label 1`] = `
   >
     <textarea
       class="textarea"
+      disabled="disabled"
+      id="id"
+      placeholder="placeholder"
     />
   </div>
 </div>

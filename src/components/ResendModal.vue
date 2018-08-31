@@ -25,8 +25,10 @@
                  placeholder="Gas limit"
                  required />
 
-        <v-button className="is-primary is-medium">Send</v-button>
       </v-form>
+      <div class="buttons" slot="footer">
+        <v-button form="sendEther" className="is-primary is-medium">Send</v-button>
+      </div>
     </v-modal>
   </div>
 </template>

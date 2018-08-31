@@ -3,18 +3,20 @@
     <label class="label"
            :class="{'has-text-danger': error || errors.has(name) }"
            v-if="label"
-           :for="id">{{ label }}</label>
+           :for="$attrs.id">{{ label }}</label>
     <div class="field"
          :class="{'has-addons': $slots.addon }">
       <div class="control"
            :class="{'is-expanded': $slots.addon, 'has-icons-right': $slots.icon }">
-        <input v-model="innerValue"
+        <input :value="innerValue"
                v-validate="validator"
-               :data-vv-as="label || name"
+               :data-vv-as="name"
                @blur="$emit('blur', $event.target.value)"
                class="input"
                :class="{'is-danger': error || errors.has(name) }"
-               v-bind="props">
+               v-bind="$attrs"
+               v-on="listeners"
+               >
         <slot name="icon"></slot>
       </div>
       <div class="control"
@@ -31,22 +33,10 @@
 <script>
 export default {
   name: 'v-input',
-  //TODO get rid of this and use $attrs instead
+  inheritAttrs: false,
   props: {
     value: {
       type: [String, Number],
-      default: null,
-    },
-    id: {
-      type: String,
-      default: null,
-    },
-    type: {
-      type: String,
-      default: 'text',
-    },
-    name: {
-      type: String,
       default: null,
     },
     label: {
@@ -57,44 +47,17 @@ export default {
       type: String,
       default: null,
     },
-    placeholder: {
-      type: String,
-      default: null,
-    },
     validator: {
       type: String,
       default: '',
     },
-    ariaDescribedby: {
-      type: String,
-      default: null,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
     error: {
-      type: String,
-      default: null,
-    },
-    autocomplete: {
-      type: String,
-      default: null,
-    },
-    step: {
       type: String,
       default: null,
     },
   },
   inject: {
     $validator: '$validator',
-  },
-  methods: {
-    camelToKebab: str => str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`),
   },
   computed: {
     innerValue: {
@@ -105,14 +68,14 @@ export default {
         this.$emit('input', newVal);
       },
     },
-    props() {
-      return Object.keys(this.$props).reduce(
-        (res, prop) => ({
-          ...res,
-          [this.camelToKebab(prop)]: this.$props[prop],
-        }),
-        {},
-      );
+    name() {
+      return this.$attrs.name || this.label;
+    },
+    listeners() {
+      return {
+        ...this.$listeners,
+        input: event => this.$emit('input', event.target.value),
+      };
     },
   },
 };
