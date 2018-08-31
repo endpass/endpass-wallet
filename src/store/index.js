@@ -60,8 +60,7 @@ const store = new Vuex.Store({
     connectionStatus,
     user: userModule,
   },
-  //TODO enable strict
-  //strict: process.env.NODE_ENV !== 'production',
+  strict: process.env.NODE_ENV !== 'production',
 });
 
 export default store;
