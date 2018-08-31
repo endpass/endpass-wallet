@@ -13,6 +13,32 @@ describe('tokens getters', () => {
       expect(getters.net(1, 1, rootState)).toBe(1);
     });
   });
+  describe('isTrackedTokensLoaded', () => {
+    it("should return false if some of trackedTokens don't have balance", () => {
+      let state = {
+        trackedTokens: [
+          {
+            balance: 1,
+          },
+          {},
+        ],
+      };
+      expect(getters.isTrackedTokensLoaded(state)).toBe(false);
+    });
+    it('should return true if all of trackedTokens have balance', () => {
+      let state = {
+        trackedTokens: [
+          {
+            balance: 1,
+          },
+          {
+            balance: 0,
+          },
+        ],
+      };
+      expect(getters.isTrackedTokensLoaded(state)).toBe(true);
+    });
+  });
   describe('address', () => {
     it('should return address from accounts', () => {
       let rootState = {
