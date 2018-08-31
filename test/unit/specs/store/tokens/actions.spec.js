@@ -54,9 +54,10 @@ describe('tokens actions', () => {
         token,
       });
       expect(userService.setSetting).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toHaveBeenCalledWith('tokens', {
-        [getters.net]: [token],
-      });
+      expect(userService.setSetting).toHaveBeenCalledWith(
+        'tokens',
+        state.savedTokens,
+      );
     });
 
     it('should emit error and dont change state if failed to fetch data', async () => {
@@ -69,6 +70,15 @@ describe('tokens actions', () => {
         { commit, state, getters, dispatch },
         { token },
       );
+      expect(commit).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenNthCalledWith(1, SAVE_TOKEN, {
+        net: getters.net,
+        token,
+      });
+      expect(commit).toHaveBeenNthCalledWith(2, DELETE_TOKEN, {
+        net: getters.net,
+        token,
+      });
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -103,9 +113,10 @@ describe('tokens actions', () => {
         token,
       });
       expect(userService.setSetting).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toHaveBeenCalledWith('tokens', {
-        1: [],
-      });
+      expect(userService.setSetting).toHaveBeenCalledWith(
+        'tokens',
+        state.savedTokens,
+      );
     });
     it('should emit error and dont change state if failed to fetch data', async () => {
       const error = new NotificationError({
@@ -117,7 +128,15 @@ describe('tokens actions', () => {
         { commit, state, getters, dispatch },
         { token },
       );
-      expect(commit).toHaveBeenCalledTimes(0);
+      expect(commit).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenNthCalledWith(1, DELETE_TOKEN, {
+        net: getters.net,
+        token,
+      });
+      expect(commit).toHaveBeenNthCalledWith(2, SAVE_TOKEN, {
+        net: getters.net,
+        token,
+      });
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,

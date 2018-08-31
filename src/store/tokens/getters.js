@@ -16,7 +16,10 @@ const address = (state, getters, { accounts }) => {
 };
 
 const isTrackedTokensLoaded = state => {
-  return state.trackedTokens !== null;
+  return (
+    state.trackedTokens &&
+    state.trackedTokens.every(token => typeof token.balance !== 'undefined')
+  );
 };
 
 // Tokens sorted by balance

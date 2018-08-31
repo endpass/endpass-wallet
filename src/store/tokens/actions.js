@@ -30,21 +30,22 @@ const saveTokenAndSubscribe = async (
   const tokenExist =
     state.tokenTracker &&
     state.tokenTracker.tokens &&
-    state.tokenTracker.tokens.includes(
+    state.tokenTracker.tokens.some(
       subscriptionToken => subscriptionToken.address === token.address,
     );
   if (!tokenExist) {
     try {
-      const newTokensData = Object.assign({}, state.savedTokens);
-      newTokensData[net] = newTokensData[net] || [];
-      newTokensData[net].push(token);
-      await userService.setSetting('tokens', newTokensData);
       commit(SAVE_TOKEN, {
         token,
         net: net,
       });
+      await userService.setSetting('tokens', state.savedTokens);
     } catch (e) {
       dispatch('errors/emitError', e, { root: true });
+      commit(DELETE_TOKEN, {
+        token,
+        net: net,
+      });
     }
   }
 };
@@ -56,16 +57,14 @@ const deleteTokenAndUnsubscribe = async (
   const { net } = getters;
 
   try {
-    const newTokensData = Object.assign({}, state.savedTokens);
-    const deletionTokenIndex = newTokensData[net].findIndex(
-      savedToken => savedToken.address === token.address,
-    );
-    newTokensData[net] = newTokensData[net].slice(0);
-    newTokensData[net].splice(deletionTokenIndex, 1);
-    await userService.setSetting('tokens', newTokensData);
     commit(DELETE_TOKEN, { token, net });
+    await userService.setSetting('tokens', state.savedTokens);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
+    commit(SAVE_TOKEN, {
+      token,
+      net,
+    });
   }
 };
 
