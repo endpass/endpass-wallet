@@ -5,8 +5,6 @@ import {
   SAVE_TRACKED_TOKENS,
   SAVE_TOKEN_PRICE,
   SAVE_TOKENS_PRICES,
-  SAVE_TOKEN_TRACKER_INSTANCE,
-  SAVE_SERIALISATION_INTERVAL,
   SAVE_TOKEN_INFO,
 } from './mutations-types';
 import { Token } from '@/class';
@@ -57,7 +55,6 @@ const saveTrackedTokens = (state, tokens = []) => {
   } else {
     state.trackedTokens = tokens.map(token => {
       let tokenInfo = state.allTokens[token.address] || {};
-      delete tokenInfo.balance;
       return {
         ...token,
         ...tokenInfo,
@@ -76,6 +73,7 @@ const saveTokensPrices = (state, prices) => {
 };
 
 // Save info like name and logo about all tokens
+// TODO track tokens on each network
 const saveTokenInfo = (state, tokenInfos = []) => {
   let allTokens = {};
   tokenInfos.forEach(tokenInfo => {
@@ -83,17 +81,11 @@ const saveTokenInfo = (state, tokenInfos = []) => {
       return;
     }
     let token = new Token(tokenInfo);
+    Object.freeze(token);
     allTokens[token.address] = token;
   });
+  Object.freeze(allTokens);
   state.allTokens = allTokens;
-};
-
-const saveTokenTrackerInstance = (state, tokenTracker) => {
-  state.tokenTracker = tokenTracker;
-};
-
-const saveSerialisationInterval = (state, interval) => {
-  state.tokensSerializeInterval = interval;
 };
 
 export default {
@@ -103,7 +95,5 @@ export default {
   SAVE_TRACKED_TOKENS: saveTrackedTokens,
   SAVE_TOKEN_PRICE: saveTokenPrice,
   SAVE_TOKENS_PRICES: saveTokensPrices,
-  SAVE_TOKEN_TRACKER_INSTANCE: saveTokenTrackerInstance,
-  SAVE_SERIALISATION_INTERVAL: saveSerialisationInterval,
   SAVE_TOKEN_INFO: saveTokenInfo,
 };

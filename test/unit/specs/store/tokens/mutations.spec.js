@@ -6,17 +6,16 @@ import {
   SAVE_TRACKED_TOKENS,
   SAVE_TOKEN_PRICE,
   SAVE_TOKENS_PRICES,
-  SAVE_TOKEN_TRACKER_INSTANCE,
-  SAVE_SERIALISATION_INTERVAL,
+  SAVE_TOKEN_INFO,
 } from '@/store/tokens/mutations-types';
 import { Token } from '@/class';
+import tokensFixture from 'fixtures/tokens';
 
 describe('tokens mutations', () => {
   it('saves token', () => {
     const token = {
       address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
       symbol: 'ZERO',
-      balance: 1,
       decimals: 1,
       logo: 'kek.jpg',
       name: 'Zero token',
@@ -37,7 +36,6 @@ describe('tokens mutations', () => {
     const token = {
       address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
       symbol: 'ZERO',
-      balance: 1,
       decimals: 1,
       logo: 'kek.jpg',
       name: 'Zero token',
@@ -66,7 +64,6 @@ describe('tokens mutations', () => {
       {
         address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
         symbol: 'ZERO',
-        balance: 1,
         decimals: 1,
         logo: 'kek.jpg',
         name: 'Zero token',
@@ -112,29 +109,17 @@ describe('tokens mutations', () => {
     expect(state.prices[symbol]).toBe(price);
   });
 
-  it('saves tracker instanse', () => {
-    const tracker = [
-      {
-        price: '100',
-      },
-    ];
+  it('saves and freezes token info', () => {
     let state = {};
+    const allTokens = tokensFixture.tokens;
+    mutations[SAVE_TOKEN_INFO](state, allTokens);
 
-    mutations[SAVE_TOKEN_TRACKER_INSTANCE](state, tracker);
+    let token = allTokens[0];
 
-    expect(state.tokenTracker).toBe(tracker);
-  });
+    expect(Object.keys(state.allTokens)).toHaveLength(2);
+    expect(state.allTokens[token.address]).toBeInstanceOf(Token);
 
-  it('saves serialisations interval', () => {
-    const interval = [
-      {
-        price: '100',
-      },
-    ];
-    let state = {};
-
-    mutations[SAVE_SERIALISATION_INTERVAL](state, interval);
-
-    expect(state.tokensSerializeInterval).toBe(interval);
+    expect(Object.isFrozen(state.allTokens)).toBe(true);
+    expect(Object.isFrozen(state.allTokens[token.address])).toBe(true);
   });
 });

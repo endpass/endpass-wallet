@@ -7,7 +7,6 @@ const apiResponse = {
   decimals: 18,
   logo: '/pop.jpg',
   symbol: '$KEK',
-  balance: '0',
 };
 
 describe('Transaction Class', () => {
@@ -20,6 +19,5 @@ describe('Transaction Class', () => {
     expect(token.decimals).toBe(apiResponse.decimals);
     expect(token.logo).toBe(apiResponse.logo);
     expect(token.symbol).toBe(apiResponse.symbol);
-    expect(token.balance).toBe(apiResponse.balance);
   });
 });

@@ -5,8 +5,6 @@ import {
   SAVE_TOKENS_PRICES,
   SAVE_TOKEN_PRICE,
   SAVE_TRACKED_TOKENS,
-  SAVE_SERIALISATION_INTERVAL,
-  SAVE_TOKEN_TRACKER_INSTANCE,
   SAVE_TOKEN_INFO,
 } from './mutations-types';
 import TokenTracker from 'eth-token-tracker';
@@ -88,6 +86,8 @@ const getAllTokens = async ({ commit, dispatch, getters }) => {
     commit(SAVE_TOKEN_INFO, tokens);
   }
 };
+
+// TODO remove
 const subscribeOnTokensBalancesUpdates = async ({
   dispatch,
   state,
@@ -189,6 +189,7 @@ const updateTokensBalances = async ({ state, commit }) => {
   }
 };
 
+//TODO remove
 const createTokenTracker = async (
   { state, commit, getters },
   { tokensWithBalance },

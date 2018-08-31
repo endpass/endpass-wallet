@@ -10,7 +10,7 @@ const state = {
   //tokens prices by symbol
   prices: {},
   // Info about all tokens, by checksum address
-  allTokens: {},
+  allTokens: {}, //IMMUTABLE
   tokenTracker: null,
   tokensSerializeInterval: null,
 };

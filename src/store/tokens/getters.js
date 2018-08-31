@@ -24,7 +24,8 @@ const trackedTokens = state => {
   let tokens = (state.trackedTokens || []).map(token => {
     return {
       ...token,
-      balance: new BigNumber(token.balance || 0),
+      // FIXME: fetch balance from ERC20 instance for this token
+      //balance: new BigNumber(token.balance || 0),
     };
   });
   return tokens;
