@@ -190,7 +190,7 @@ const updateTokensBalances = async ({ state, commit }) => {
 };
 
 const createTokenTracker = async (
-  { state, commit, getters, rootState },
+  { state, commit, getters },
   { tokensWithBalance },
 ) => {
   const { address } = getters;
