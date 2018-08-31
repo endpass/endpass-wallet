@@ -18,7 +18,7 @@ import {
   userService,
 } from '@/services';
 import { tokenUpdateInterval } from '@/config';
-import web3 from 'web3';
+import web3 from '@/utils/web3';
 
 const saveTokenAndSubscribe = async (
   { state, commit, getters, dispatch },
@@ -209,7 +209,7 @@ const createTokenTracker = async (
 
   const tokenTracker = new TokenTracker({
     userAddress: address,
-    provider: rootState.web3.web3.currentProvider,
+    provider: web3.currentProvider,
     pollingInterval: tokenUpdateInterval,
     tokens: tokensToTrack,
   });

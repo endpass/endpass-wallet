@@ -3,22 +3,12 @@ import EthBlockTracker from 'eth-block-tracker';
 import storage from '@/services/storage';
 import { infuraConf, blockUpdateInterval } from '@/config';
 import { providerFactory } from '@/class';
-
-const activeNet = {
-  name: 'Main',
-  id: 1,
-  networkType: 'main',
-  url: `https://mainnet.infura.io/${infuraConf.key}`,
-};
-
-const provider = providerFactory(activeNet.url);
-const web3 = new Web3(provider);
+import web3 from '@/utils/web3';
 
 export default {
   namespaced: true,
   state() {
     return {
-      web3,
       defaultNetworks: [
         {
           id: 1,
@@ -66,7 +56,7 @@ export default {
       storedNetworks: [],
       isSyncing: false,
       blockNumber: 0,
-      activeNet,
+      activeNet: {},
       activeCurrency: {
         name: 'ETH',
         id: 1,
@@ -92,15 +82,7 @@ export default {
     changeNetwork(state, network) {
       state.activeNet = network;
       const provider = providerFactory(state.activeNet.url);
-      if (state.web3 && state.web3.setProvider) {
-        if (state.web3.currentProvider.destroy) {
-          state.web3.currentProvider.destroy();
-        }
-
-        state.web3.setProvider(provider);
-      } else {
-        state.web3 = new Web3(provider);
-      }
+      web3.setProvider(provider);
     },
     changeCurrency(state, currency) {
       state.activeCurrency = currency;
@@ -192,7 +174,7 @@ export default {
         return Promise.resolve();
       }
 
-      return state.web3.eth.net
+      return web3.eth.net
         .getNetworkType()
         .then(resp => commit('setNetworkType', resp))
         .catch(e => dispatch('errors/emitError', e, { root: true }));
@@ -209,7 +191,7 @@ export default {
         state.blockSubscribtion.stop();
       }
       state.blockSubscribtion = new EthBlockTracker({
-        provider: state.web3.currentProvider,
+        provider: web3.currentProvider,
         pollingInterval: blockUpdateInterval,
       });
       state.blockSubscribtion.on('latest', block => {
@@ -217,10 +199,7 @@ export default {
         dispatch('transactions/handleBlockTransactions', block.transactions, {
           root: true,
         });
-        commit(
-          'setBlockNumber',
-          state.web3.utils.hexToNumberString(block.number),
-        );
+        commit('setBlockNumber', web3.utils.hexToNumberString(block.number));
       });
       state.blockSubscribtion.start();
     },

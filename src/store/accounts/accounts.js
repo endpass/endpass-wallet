@@ -1,6 +1,6 @@
 import { userService } from '@/services';
 import storage from '@/services/storage';
-import web3 from 'web3';
+import web3 from '@/utils/web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { hdKeyMnemonic, kdfParams } from '@/config';
@@ -217,7 +217,7 @@ export default {
         }
 
         try {
-          const balance = await rootState.web3.web3.eth.getBalance(address);
+          const balance = await web3.eth.getBalance(address);
 
           if (balance === '0') {
             break;
@@ -232,7 +232,7 @@ export default {
       if (state.address) {
         const address = state.address.getChecksumAddressString();
 
-        return rootState.web3.web3.eth
+        return web3.eth
           .getBalance(address)
           .then(balance => commit('setBalance', balance))
           .catch(e => dispatch('errors/emitError', e, { root: true }));

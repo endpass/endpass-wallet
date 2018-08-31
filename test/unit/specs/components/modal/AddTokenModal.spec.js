@@ -1,6 +1,7 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
+import Notifications from 'vue-notification';
 import AddTokenModal from '@/components/modal/AddTokenModal';
 import { fakeContract, fakeEmptyContract } from 'fixtures/contracts';
 
@@ -8,6 +9,7 @@ const localVue = createLocalVue();
 
 localVue.use(Vuex);
 localVue.use(VeeValidate);
+localVue.use(Notifications);
 
 describe('AddTokenModal', () => {
   let store;

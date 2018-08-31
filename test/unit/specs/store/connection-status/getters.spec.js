@@ -38,30 +38,4 @@ describe('connection-status getters', () => {
       expect(getters.appStatus(state)).toBe('failed');
     });
   });
-  describe('currentProvider', () => {
-    it('should return currentProvider from web3', () => {
-      const currentProvider = {};
-      let rootState = {
-        web3: {
-          web3: {
-            currentProvider,
-          },
-        },
-      };
-      expect(getters.currentProvider(0, 0, rootState)).toBe(currentProvider);
-    });
-  });
-  describe('eth', () => {
-    it('should return currentProvider from eth', () => {
-      const eth = {};
-      let rootState = {
-        web3: {
-          web3: {
-            eth,
-          },
-        },
-      };
-      expect(getters.eth(0, 0, rootState)).toBe(eth);
-    });
-  });
 });

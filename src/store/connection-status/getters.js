@@ -1,3 +1,5 @@
+import web3 from '@/utils/web3';
+
 const appStatus = state => {
   if (!state.web3Connection) {
     return 'failed';
@@ -7,8 +9,10 @@ const appStatus = state => {
     return 'ready';
   }
 };
-const currentProvider = (state, getters, { web3 }) => web3.web3.currentProvider;
-const eth = (state, getters, { web3 }) => web3.web3.eth;
+
+// FIXME not currently reactive
+const currentProvider = () => web3.currentProvider;
+const eth = () => web3.eth;
 
 export default {
   appStatus,

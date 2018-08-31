@@ -120,6 +120,7 @@ import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
+import web3 from '@/utils/web3';
 
 export default {
   name: 'AddTokenModal',
@@ -144,7 +145,6 @@ export default {
   },
   computed: {
     ...mapState({
-      web3: state => state.web3.web3,
       address: state => state.accounts.address.getChecksumAddressString(),
     }),
   },
@@ -162,10 +162,7 @@ export default {
       this.loadingToken = true;
 
       try {
-        const contract = new this.web3.eth.Contract(
-          erc20ABI,
-          this.token.address,
-        );
+        const contract = new web3.eth.Contract(erc20ABI, this.token.address);
         await this.checkContractExistence(contract);
         await this.setTokenData(contract);
         const { decimals, name, symbol } = this.token;
