@@ -3,11 +3,18 @@ import { shallow } from '@vue/test-utils';
 import VTextarea from '@/components/ui/form/VTextarea';
 
 describe('VTextarea', () => {
+  const attrs = {
+    id: 'id',
+    placeholder: 'placeholder',
+    disabled: 'disabled',
+  };
   describe('render', () => {
     let wrapper;
 
     beforeEach(() => {
-      wrapper = shallow(VTextarea);
+      wrapper = shallow(VTextarea, {
+        attrs,
+      });
     });
 
     it('should be a Vue component', () => {
@@ -30,27 +37,20 @@ describe('VTextarea', () => {
     let wrapper;
 
     beforeEach(() => {
-      wrapper = shallow(VTextarea);
+      wrapper = shallow(VTextarea, {
+        attrs,
+      });
     });
 
-    it('should render textarea props', () => {
-      const props = {
-        id: 'id',
-        value: 'value',
-        placeholder: 'placeholder',
-        disabled: 'disabled',
-        label: 'label',
-      };
-      const expectedProps = {
+    it('should render textarea attributes', () => {
+      const expectedAttrs = {
         id: 'id',
         placeholder: 'placeholder',
         disabled: 'disabled',
       };
-
-      wrapper.setProps(props);
 
       expect(wrapper.find('textarea').attributes()).toEqual(
-        expect.objectContaining(expectedProps),
+        expect.objectContaining(expectedAttrs),
       );
     });
 

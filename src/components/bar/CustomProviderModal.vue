@@ -1,6 +1,6 @@
 <template>
   <div class="new-account-modal">
-    <v-modal class="is-dark" @close="close">
+    <v-modal @close="close">
       <header slot="header">{{ headerText }}</header>
       <div v-if="!providerAdded">
 	      <v-form v-model="isFormValid" @submit="addNewProvider">
@@ -27,7 +27,7 @@
                    data-vv-name="Provider url"
                    @input="handleInput"
           />
-    
+
           <v-select v-model="innerProvider.currency"
                     :options="currencies"
                     v-validate="'required'"

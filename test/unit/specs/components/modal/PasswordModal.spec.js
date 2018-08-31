@@ -45,7 +45,7 @@ describe('PasswordModal', () => {
 
   describe('behavior', () => {
     beforeEach(() => {
-      wrapper = shallow(PasswordModal, {
+      wrapper = mount(PasswordModal, {
         ...options,
       });
     });
@@ -71,6 +71,13 @@ describe('PasswordModal', () => {
 
       expect(wrapper.vm.errors.has('jsonKeystorePassword')).toBeTruthy();
       expect(wrapper.contains('.is-danger')).toBeTruthy();
+    });
+
+    it('should have button that submits form', () => {
+      expect(wrapper.find('form').attributes().id).toBe('password-form');
+      expect(
+        wrapper.find('[data-test=submit-password]').attributes().form,
+      ).toBe('password-form');
     });
   });
 });

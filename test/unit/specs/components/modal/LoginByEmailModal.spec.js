@@ -21,35 +21,6 @@ describe('LoginByEmailModal', () => {
     it('should render component', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
-
-    describe('the send button', () => {
-      it('should change "disable" attribute', () => {
-        wrapper.setData({
-          termsAccepted: true,
-        });
-
-        expect(wrapper.find('v-button').attributes().disabled).toBeFalsy();
-
-        wrapper.setData({ termsAccepted: false });
-        expect(wrapper.find('v-button').attributes().disabled).toBeTruthy();
-      });
-    });
-  });
-
-  describe('props', () => {
-    describe('isLoading', () => {
-      it('should correctly change button "loading" property', () => {
-        wrapper.setProps({
-          isLoading: false,
-        });
-        expect(wrapper.find('v-button').attributes().loading).toBeFalsy();
-
-        wrapper.setProps({
-          isLoading: true,
-        });
-        expect(wrapper.find('v-button').attributes().loading).toBeTruthy();
-      });
-    });
   });
 
   describe('methods', () => {

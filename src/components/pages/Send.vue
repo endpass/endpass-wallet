@@ -512,6 +512,7 @@ export default {
             help: prices.high + ' Gwei',
           },
         ];
+        this.transaction.gasPrice = prices.medium.toString();
       })
       .catch(() => {
         this.isLoadingGasPrice = false;

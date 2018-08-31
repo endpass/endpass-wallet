@@ -44,7 +44,8 @@ const subscribeOnPriceUpdates = ({ commit, dispatch }) => {
   commit(SET_INTERVAL, interval);
 };
 
-const init = ({ dispatch }) => {
+const init = async ({ dispatch }) => {
+  await dispatch('updatePrice');
   return dispatch('subscribeOnPriceUpdates');
 };
 

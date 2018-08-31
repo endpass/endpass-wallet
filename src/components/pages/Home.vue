@@ -15,7 +15,7 @@
                     :address="address"
                     />
                 </div>
-                <div class="column" v-if="!isPublicAccount">
+                <div class="column is-one-third" v-if="!isPublicAccount">
                   <router-link class="button is-warning" :to="{name: 'ExportWallet'}">
                     Export Private Key
                   </router-link>

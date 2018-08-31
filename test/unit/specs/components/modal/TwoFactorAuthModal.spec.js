@@ -44,20 +44,4 @@ describe('TwoFactorAuthModal', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
   });
-
-  describe('props', () => {
-    describe('isLoading', () => {
-      it('should correctly change button "loading" property', () => {
-        wrapper.setProps({
-          isLoading: false,
-        });
-        expect(wrapper.find('v-button').attributes().loading).toBeFalsy();
-
-        wrapper.setProps({
-          isLoading: true,
-        });
-        expect(wrapper.find('v-button').attributes().loading).toBeTruthy();
-      });
-    });
-  });
 });

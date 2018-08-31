@@ -69,7 +69,7 @@
     </div>
 
     <div slot="footer">
-      <div class="is-pulled-left">
+      <div class="buttons">
         <v-button
           v-if="!loadedToken && !addedToken"
           :loading="loadingToken"
