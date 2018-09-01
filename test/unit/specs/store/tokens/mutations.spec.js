@@ -23,13 +23,9 @@ describe('tokens mutations', () => {
     const net = 1;
     let state = {
       savedTokens: {},
-      tokenTracker: {
-        add: jest.fn(),
-      },
     };
 
     mutations[SAVE_TOKEN](state, { token, net });
-    expect(state.tokenTracker.add).toHaveBeenCalledWith({ ...token });
     expect(state.savedTokens[net][0]).toMatchObject(token);
   });
   it('deletes token', () => {
@@ -41,25 +37,20 @@ describe('tokens mutations', () => {
       name: 'Zero token',
     };
     const net = 1;
-    let tokenTracker = {
-      tokens: [token],
-    };
     let state = {
       savedTokens: {
         [net]: [token],
       },
-      trackedTokens: [token],
-      tokenTracker,
+      trackedTokens: [token.address],
     };
 
     mutations[DELETE_TOKEN](state, { token, net });
 
     expect(state.savedTokens[net]).not.toContain(token);
-    expect(state.tokenTracker.tokens).not.toContain(token);
-    expect(state.trackedTokens).not.toContain(token);
+    expect(state.trackedTokens).not.toContain(token.address);
   });
 
-  it('saves tracked tokens as Token objects', () => {
+  it('saves tracked token as address string', () => {
     const tokens = [
       {
         address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
@@ -71,15 +62,24 @@ describe('tokens mutations', () => {
     ];
     let token = tokens[0];
     let state = {
-      allTokens: {
-        [token.address]: token,
-      },
+      trackedTokens: [],
     };
 
-    mutations[SAVE_TRACKED_TOKENS](state, tokens);
+    let address = tokens[0].address;
 
-    expect(state.trackedTokens.length).toBe(1);
-    expect(state.trackedTokens[0]).toMatchObject(tokens[0]);
+    mutations[SAVE_TRACKED_TOKENS](state, [address]);
+
+    expect(state.trackedTokens).toHaveLength(1);
+    expect(state.trackedTokens[0]).toEqual(address);
+  });
+
+  it('saves only unique tracked tokens', () => {
+    let state = {
+      trackedTokens: ['0x123', '0x456'],
+    };
+    mutations[SAVE_TRACKED_TOKENS](state, ['0x456', '0x789']);
+    expect(state.trackedTokens).toHaveLength(3);
+    expect(state.trackedTokens[2]).toEqual('0x789');
   });
 
   it('saves tokens prices', () => {

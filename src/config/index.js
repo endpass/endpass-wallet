@@ -30,7 +30,6 @@ export const {
   serviceThrottleTimeout,
   blockUpdateInterval,
   priceUpdateInterval,
-  tokenUpdateInterval,
   fiatPriceAPIUrl,
   fiatPriceMultiAPIUrl,
   cryptoDataAPIUrl,

@@ -162,12 +162,9 @@ export default {
       this.loadingToken = true;
 
       try {
-        const contract = new web3.eth.Contract(
-          erc20ABI,
-          this.token.address,
-        );
-        const erc20 = new ERC20Token(this.web3, this.token.address);
-        await this.setTokenData(erc20);
+        const erc20 = new ERC20Token(this.token.address);
+        const tokenInfo = await erc20.getToken();
+        await this.setTokenData(tokenInfo);
         const { decimals, name, symbol } = this.token;
 
         if (decimals && symbol && name) {
@@ -186,8 +183,8 @@ export default {
         });
       }
     },
-    async setTokenData(erc20) {
-      const tokenInfo = await erc20.getToken(); //Returns Token class
+    // Accepts Token class
+    async setTokenData(tokenInfo) {
       this.token = {
         ...this.token,
         name: tokenInfo.name,

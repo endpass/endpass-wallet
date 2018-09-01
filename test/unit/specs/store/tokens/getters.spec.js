@@ -1,4 +1,5 @@
 import getters from '@/store/tokens/getters';
+import { ERC20Token } from '@/class';
 
 describe('tokens getters', () => {
   describe('net', () => {
@@ -26,19 +27,29 @@ describe('tokens getters', () => {
     });
   });
   describe('tokensWithBalance', () => {
-    it('should filter tokens withut balance', () => {
-      const tokenWithBlance = {
-        balance: 1,
+    let tokens;
+    beforeEach(() => {
+      let state = {
+        trackedTokens: ['0x123', '0x456'],
+        allTokens: {
+          '0x123': { symbol: 'ABC' },
+          '0x456': { symbol: 'DEF' },
+        },
+        balances: {
+          '0x123': '100',
+          '0x456': undefined,
+        },
       };
-      const tokenWithoutBlance = {
-        balance: 0,
-      };
-      let mockGetters = {
-        trackedTokens: [tokenWithBlance, tokenWithoutBlance],
-      };
-      expect(getters.tokensWithBalance(1, mockGetters)).toMatchObject([
-        tokenWithBlance,
-      ]);
+      tokens = getters.tokensWithBalance(state);
+    });
+    it('should return all tracked tokens and default balances to 0', () => {
+      expect(tokens).toHaveLength(2);
+      expect(tokens[0].balance).toEqual('100');
+      expect(tokens[1].balance).toEqual('0');
+    });
+    it('should merge token info from state', () => {
+      expect(tokens[0].symbol).toEqual('ABC');
+      expect(tokens[1].symbol).toEqual('DEF');
     });
   });
   describe('trackedTokens', () => {
@@ -48,13 +59,17 @@ describe('tokens getters', () => {
       };
       expect(getters.trackedTokens(state)).toMatchObject([]);
     });
-    it('should return trackedTokens if it is an array', () => {
+    it('should return an array of ERC20 token objects', () => {
       let state = {
-        trackedTokens: [{}, {}],
+        trackedTokens: ['0x123', '0x456'],
       };
-      expect(getters.trackedTokens(state)).toMatchObject(state.trackedTokens);
+      let tokens = getters.trackedTokens(state);
+      expect(tokens).toHaveLength(2);
+      expect(tokens[0]).toBeInstanceOf(ERC20Token);
+      expect(tokens[0].address).toEqual(state.trackedTokens[0]);
     });
   });
+
   describe('activeCurrencyName', () => {
     it('should return currency name from web3', () => {
       let rootState = {

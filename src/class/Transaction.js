@@ -125,7 +125,7 @@ export class Transaction {
     let { data } = this;
 
     if (this.tokenInfo) {
-      const erc20 = new ERC20Token(web3, this.tokenInfo.address);
+      const erc20 = new ERC20Token(this.tokenInfo.address);
       const contract = erc20.getContract();
 
       data = contract.methods.transfer(this.validTo, this.valueWei).encodeABI();

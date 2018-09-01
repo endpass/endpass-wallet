@@ -5,12 +5,10 @@ import {
   DELETE_TOKEN,
   SAVE_TOKENS_PRICES,
   SAVE_TOKEN_PRICE,
-  SAVE_TOKEN_TRACKER_INSTANCE,
   SAVE_TOKEN_INFO,
+  SAVE_TRACKED_TOKENS,
 } from '@/store/tokens/mutations-types';
 import { NotificationError } from '@/class';
-import { tokenUpdateInterval } from '@/config';
-import TokenTracker from 'eth-token-tracker';
 import Web3 from 'web3';
 import {
   userService,
@@ -37,10 +35,7 @@ describe('tokens actions', () => {
       };
       state = {
         savedTokens: {},
-        tokenTracker: {
-          serialize: () => [],
-          add: jest.fn(),
-        },
+        trackedTokens: [],
       };
     });
     it('should try to save token with service and SAVE_TOKEN ', async () => {
@@ -86,10 +81,7 @@ describe('tokens actions', () => {
         savedTokens: {
           1: [token],
         },
-        tokenTracker: {
-          serialize: () => [],
-          add: jest.fn(),
-        },
+        trackedTokens: [],
       };
     });
     it('should try to delete token with service and DELETE_TOKEN ', async () => {
@@ -157,12 +149,11 @@ describe('tokens actions', () => {
         address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
       };
       state = {
-        tokenTracker: {
-          stop: jest.fn(),
-        },
+        trackedTokens: [],
       };
     });
-    it('should get tokens with balance and create tracker with them', async () => {
+    it('should get tokens with balance', async () => {
+      expect.assertions(2);
       const tokensWithBalance = [
         {
           token,
@@ -175,22 +166,8 @@ describe('tokens actions', () => {
         state,
         commit,
       });
-      expect(dispatch).toHaveBeenCalledTimes(3);
-      expect(dispatch).toHaveBeenNthCalledWith(2, 'createTokenTracker', {
-        tokensWithBalance,
-      });
-    });
-    it('should reset interval', async () => {
-      state.tokensSerializeInterval = setInterval(() => {});
-      await actions.subscribeOnTokensBalancesUpdates({
-        dispatch,
-        getters,
-        state,
-        commit,
-      });
-      expect(clearInterval).toHaveBeenCalledTimes(1);
-      expect(clearInterval).toHaveBeenCalledWith(state.tokensSerializeInterval);
-      expect(state.tokenTracker.stop).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'getTokensWithBalance');
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'updateTokensBalances');
     });
   });
   describe('getTokensWithBalance', () => {
@@ -202,13 +179,14 @@ describe('tokens actions', () => {
         allTokens: {
           [token.address]: token,
         },
+        trackedTokens: [],
       };
       dispatch = jest.fn();
       ethplorerService.getTokensWithBalance = jest.fn();
     });
     it('gets tokens with balance for current address, and updates api status', async () => {
       ethplorerService.getTokensWithBalance.mockReturnValueOnce([token]);
-      await actions.getTokensWithBalance({ state, dispatch, getters });
+      await actions.getTokensWithBalance({ state, dispatch, commit, getters });
       expect(ethplorerService.getTokensWithBalance).toBeCalledWith(
         getters.address,
       );
@@ -220,6 +198,7 @@ describe('tokens actions', () => {
         },
         { root: true },
       );
+      expect(commit).toBeCalledWith(SAVE_TRACKED_TOKENS, [token.address]);
     });
   });
   describe('updateTokensPrices', () => {
@@ -271,40 +250,6 @@ describe('tokens actions', () => {
         symbol: token.symbol,
         price,
       });
-    });
-  });
-  describe('createTokenTracker', () => {
-    const currentProvider = new Web3.providers.HttpProvider();
-    beforeEach(() => {
-      commit = jest.fn();
-      dispatch = jest.fn();
-      getters = {
-        net: 1,
-        address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
-        savedCurrentNetworkTokens: [token],
-      };
-      rootState = {
-        web3: {
-          web3: {
-            currentProvider,
-          },
-        },
-      };
-    });
-    it('should creates right token tracker', () => {
-      const tokenTrackerMock = new TokenTracker({
-        userAddress: getters.address,
-        provider: currentProvider,
-        pollingInterval: tokenUpdateInterval,
-        tokens: [token],
-      });
-      actions.createTokenTracker(
-        { commit, dispatch, getters, rootState },
-        { tokensWithBalance: [token] },
-      );
-      expect(commit.mock.calls[0][0]).toBe(SAVE_TOKEN_TRACKER_INSTANCE);
-      expect(commit.mock.calls[0][1].userAddress).toBe(getters.address);
-      expect(commit.mock.calls[0][1].tokens).toMatchObject([token]);
     });
   });
   describe('init', () => {

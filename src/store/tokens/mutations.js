@@ -6,33 +6,22 @@ import {
   SAVE_TOKEN_PRICE,
   SAVE_TOKENS_PRICES,
   SAVE_TOKEN_INFO,
+  SAVE_TOKENS_BALANCES,
+  SET_LOADING,
 } from './mutations-types';
 import { Token } from '@/class';
 
-const saveToken = ({ savedTokens, tokenTracker }, { token, net }) => {
+const saveToken = ({ savedTokens }, { token, net }) => {
   savedTokens[net] = savedTokens[net] || [];
   savedTokens[net].push(new Token(token));
-  tokenTracker.add(token);
 };
 
 // Delete token from saved tokens and subscription
-const deleteToken = (
-  { tokenTracker, savedTokens, trackedTokens },
-  { token, net },
-) => {
-  const tokenTrackedIdx = trackedTokens.findIndex(
-    tkn => tkn.address === token.address,
-  );
+const deleteToken = ({ savedTokens, trackedTokens }, { token, net }) => {
+  const tokenTrackedIdx = trackedTokens.indexOf(token.address);
 
   if (tokenTrackedIdx !== -1) {
     trackedTokens.splice(tokenTrackedIdx, 1);
-  }
-  // Remove token from tokenTracker instanse (unsubscribe)
-  const { tokens } = tokenTracker;
-  const tokenIdx = tokens.findIndex(tkn => tkn.address === token.address);
-
-  if (tokenIdx !== -1) {
-    tokens.splice(tokenIdx, 1);
   }
 
   const tokenSavedIdx = savedTokens[net].findIndex(
@@ -40,7 +29,7 @@ const deleteToken = (
   );
 
   if (tokenSavedIdx !== -1) {
-    savedTokens[net].splice(tokenIdx, 1);
+    savedTokens[net].splice(tokenSavedIdx, 1);
   }
 };
 
@@ -48,28 +37,23 @@ const saveTokens = (state, tokens = {}) => {
   state.savedTokens = tokens;
 };
 
-//Save token tracker response with balances or nullify before update
-const saveTrackedTokens = (state, tokens = []) => {
-  if (tokens === null) {
-    state.trackedTokens = null;
-  } else {
-    state.trackedTokens = tokens.map(token => {
-      let tokenInfo = state.allTokens[token.address] || {};
-      return {
-        ...token,
-        ...tokenInfo,
-      };
-    });
-  }
+//Save list of contract addresses to track
+const saveTrackedTokens = (state, tokenAddrs = []) => {
+  let trackedTokens = [...new Set([...state.trackedTokens, ...tokenAddrs])];
+  state.trackedTokens = trackedTokens;
 };
 
 const saveTokenPrice = (state, { symbol, price }) => {
   state.prices = state.prices || {};
-  state.prices[symbol] = price;
+  state.prices = { ...state.prices, [symbol]: price };
 };
 
 const saveTokensPrices = (state, prices) => {
   state.prices = prices;
+};
+
+const saveTokensBalances = (state, balances) => {
+  state.balances = balances;
 };
 
 // Save info like name and logo about all tokens
@@ -88,6 +72,10 @@ const saveTokenInfo = (state, tokenInfos = []) => {
   state.allTokens = allTokens;
 };
 
+const setLoading = (state, isLoading) => {
+  state.isLoading = isLoading;
+};
+
 export default {
   SAVE_TOKEN: saveToken,
   DELETE_TOKEN: deleteToken,
@@ -96,4 +84,6 @@ export default {
   SAVE_TOKEN_PRICE: saveTokenPrice,
   SAVE_TOKENS_PRICES: saveTokensPrices,
   SAVE_TOKEN_INFO: saveTokenInfo,
+  SAVE_TOKENS_BALANCES: saveTokensBalances,
+  SET_LOADING: setLoading,
 };

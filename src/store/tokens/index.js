@@ -3,16 +3,22 @@ import getters from './getters';
 import mutations from './mutations';
 
 const state = {
-  // tokens which's balances and prices are tracked null untill first responce is fetched
-  trackedTokens: null,
-  //all saved tokens by networks
+  // All tokens we are tracking balances and prices for. Array of token
+  // addresses
+  // []string
+  trackedTokens: [],
+  // all saved tokens by networks
   savedTokens: {},
   //tokens prices by symbol
   prices: {},
+  // Token balances by contract address
+  balances: {},
   // Info about all tokens, by checksum address
-  allTokens: {}, //IMMUTABLE
-  tokenTracker: null,
-  tokensSerializeInterval: null,
+  // {string: Token} - IMMUTABLE!
+  allTokens: {},
+  // True if anything is loading
+  // Boolean
+  isLoading: false,
 };
 
 export default {

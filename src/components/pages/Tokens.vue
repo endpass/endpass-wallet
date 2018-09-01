@@ -9,12 +9,12 @@
                 <p class="card-header-title">Your Tokens</p>
               </div>
               <div class="card-content is-narrow">
-                <nav v-if="!isTrackedTokensLoaded || trackedTokens.length" class="panel">
+                <nav v-if="isLoading || trackedTokens.length" class="panel">
                   <div class="panel-block">
                     <search-input v-model="search" />
                   </div>
                   <v-spinner
-                    :is-loading="!isTrackedTokensLoaded"
+                    :is-loading="isLoading"
                     class="spinner-block"
                   />
                   <div class="scroller">
@@ -101,12 +101,13 @@ export default {
     ...mapState({
       prices: state => state.tokens.prices,
       allTokens: state => state.tokens.allTokens,
+      isLoading: state => state.tokens.isLoading,
       ethPrice: state => state.price.price,
       currency: state => state.accounts.settings.fiatCurrency,
       tokensSubscription: tokensSubscription => state =>
         state.tokens.tokensSubscription,
     }),
-    ...mapGetters('tokens', ['net', 'trackedTokens', 'isTrackedTokensLoaded']),
+    ...mapGetters('tokens', ['net', 'trackedTokens']),
     filteredTokens() {
       return Object.values(this.allTokens).filter(
         token =>

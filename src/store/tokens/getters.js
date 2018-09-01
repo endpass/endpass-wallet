@@ -1,4 +1,5 @@
 import { BigNumber } from 'bignumber.js';
+import { ERC20Token } from '@/class';
 
 const net = (state, getters, rootState) => {
   return rootState.web3.activeNet.id;
@@ -15,24 +16,25 @@ const address = (state, getters, { accounts }) => {
   return accounts.address && accounts.address.getChecksumAddressString();
 };
 
-const isTrackedTokensLoaded = state => {
-  return state.trackedTokens !== null;
+// Returns []ERC20Token
+const trackedTokens = state => {
+  return (state.trackedTokens || []).map(address => {
+    return new ERC20Token(address);
+  });
 };
 
-// Tokens sorted by balance
-const trackedTokens = state => {
-  let tokens = (state.trackedTokens || []).map(token => {
+// Merges token info with balance
+// This is the only getter that includes symbol, name, etc and balance
+const tokensWithBalance = state => {
+  return state.trackedTokens.map(address => {
+    let tokenInfo = state.allTokens[address] || {};
+    let balance = state.balances[address] || '0';
+    // FIXME merge custom token info from user
     return {
-      ...token,
-      // FIXME: fetch balance from ERC20 instance for this token
-      //balance: new BigNumber(token.balance || 0),
+      ...tokenInfo, // Info from token info API
+      balance, // Balance updated as of last block
     };
   });
-  return tokens;
-};
-
-const tokensWithBalance = (state, { trackedTokens }) => {
-  return trackedTokens.filter(token => token.balance > 0);
 };
 
 export default {
@@ -40,7 +42,6 @@ export default {
   address,
   activeCurrencyName,
   savedCurrentNetworkTokens,
-  isTrackedTokensLoaded,
-  tokensWithBalance,
   trackedTokens,
+  tokensWithBalance,
 };

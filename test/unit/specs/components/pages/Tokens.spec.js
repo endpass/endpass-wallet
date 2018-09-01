@@ -33,7 +33,6 @@ describe('TokensPage', () => {
     getters = {
       savedCurrentNetworkTokens: () => [{}],
       trackedTokens: state => state.trackedTokens || [],
-      isTrackedTokensLoaded: state => state.trackedTokens === null,
       net: () => 1,
     };
 
@@ -99,7 +98,7 @@ describe('TokensPage', () => {
     describe('v-spinner', () => {
       it('should render v-spinner', () => {
         wrapper.setComputed({
-          isTrackedTokensLoaded: false,
+          isLoading: true,
         });
 
         expect(wrapper.find('v-spinner').attributes()).toEqual({
@@ -110,7 +109,7 @@ describe('TokensPage', () => {
 
       it('should not render v-spinner', () => {
         wrapper.setComputed({
-          isTrackedTokensLoaded: true,
+          isLoading: false,
         });
 
         expect(wrapper.find('v-spinner').attributes()).toEqual({
