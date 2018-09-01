@@ -31,11 +31,12 @@ export const actions = {
   async init({ dispatch, commit }) {
     commit('startPageLoading');
 
-    // Wait for accounts to load first
+    // init web3 networks
+    await dispatch('web3/init');
+    // Wait for accounts to load
     await dispatch('accounts/init');
 
     commit('stopPageLoading');
-    await dispatch('web3/init');
 
     return Promise.all([
       dispatch('tokens/init'),
