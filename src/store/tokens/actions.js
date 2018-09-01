@@ -166,16 +166,24 @@ const subscribeOnTokensPricesUpdates = ({ dispatch }) => {
 
 //TODO test and rename to SAVE_BALANCES
 const updateTokensBalances = async ({ commit, getters }) => {
-  const balances = {};
   const erc20s = getters.trackedTokens;
-  erc20s.forEach(erc20 => {
-    try {
-      balances[erc20.address] = erc20.getBalance(getters.address);
-    } catch (e) {
-      // null balance means error
-      balances[erc20.address] = null;
-    }
-  });
+  const allBalances = await Promise.all(
+    erc20s.map(async erc20 => {
+      try {
+        let balance = await erc20.getBalance(getters.address);
+        return [erc20.address, balance];
+      } catch (e) {
+        return [erc20.address, null];
+      }
+    }),
+  );
+
+  // In format {address: balance}
+  const balances = allBalances.reduce((obj, item) => {
+    obj[item[0]] = item[1];
+    return obj;
+  }, {});
+
   commit(SAVE_TOKENS_BALANCES, balances);
 };
 
