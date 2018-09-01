@@ -70,7 +70,7 @@ store.watch(
   () => {
     return Promise.all([
       store.dispatch('accounts/updateBalance'),
-      store.dispatch('tokens/updateTokenBalances'),
+      store.dispatch('tokens/updateTokensBalances'),
     ]);
   },
 );

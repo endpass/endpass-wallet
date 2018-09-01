@@ -17,6 +17,7 @@ import {
   userService,
 } from '@/services';
 import web3 from '@/utils/web3';
+import { priceUpdateInterval } from '@/config';
 
 const saveTokenAndSubscribe = async (
   { state, commit, getters, dispatch },
@@ -160,13 +161,13 @@ const updateTokenPrice = async ({ commit, getters }, { symbol }) => {
 const subscribeOnTokensPricesUpdates = ({ dispatch }) => {
   setInterval(() => {
     dispatch('updateTokensPrices');
-  }, tokenUpdateInterval);
+  }, priceUpdateInterval);
 };
 
 //TODO test and rename to SAVE_BALANCES
 const updateTokensBalances = async ({ commit, getters }) => {
   const balances = {};
-  const erc20s = getters.trackedTokens();
+  const erc20s = getters.trackedTokens;
   erc20s.forEach(erc20 => {
     try {
       balances[erc20.address] = erc20.getBalance(getters.address);
