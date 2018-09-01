@@ -1,5 +1,4 @@
 import { userService } from '@/services';
-import storage from '@/services/storage';
 import web3 from '@/utils/web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
@@ -246,8 +245,8 @@ export default {
     },
     updateSettings({ commit, dispatch }, settings) {
       commit('setSettings', settings);
-      return storage
-        .write('settings', settings)
+      return userService
+        .setSettings({ settings })
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     validatePassword({ state }, password) {
@@ -258,7 +257,8 @@ export default {
     },
     logout({ commit, dispatch }) {
       commit('setEmail', null);
-      return Promise.all([storage.clear(), userService.logout()])
+      return userService
+        .logout()
         .then(() => window.location.reload())
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
@@ -308,7 +308,6 @@ export default {
         if (email) {
           commit('setEmail', email);
         } else {
-          storage.disableRemote();
           return;
         }
 
