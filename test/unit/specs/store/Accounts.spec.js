@@ -232,23 +232,11 @@ describe('accounts store', () => {
     expect(commit.mock.calls[0]).toEqual(['setSettings', '123']);
   });
 
-  it('should update storage from update settings action', async () => {
-    const commit = jest.fn();
-    const dispatch = jest.fn();
-    const state = {};
-
-    await actions.updateSettings({ commit, state, dispatch }, '123');
-
-    const { settings } = localStorageMock.store;
-
-    expect(JSON.parse(settings)).toBe('123');
-  });
-
   it('should call mutation from logout action', async () => {
     const commit = jest.fn();
     const dispatch = jest.fn();
     const state = {};
-    userService.logout = jest.fn();
+    userService.logout = jest.fn().mockResolvedValueOnce();
 
     await actions.logout({ commit, dispatch, state });
 

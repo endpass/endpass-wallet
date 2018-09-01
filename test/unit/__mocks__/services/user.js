@@ -70,6 +70,12 @@ export default {
     });
   },
 
+  setSetting(settings) {
+    return Promise.resolve({
+      success: true,
+    });
+  },
+
   setSettings(settings) {
     return Promise.resolve({
       success: true,
