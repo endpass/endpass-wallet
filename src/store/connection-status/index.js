@@ -9,7 +9,6 @@ const state = {
   apiConnection: true,
   //is node syncing
   isSyncing: true,
-  blockNumber: null,
   //external api errors for multiple api tracking
   apiErrorsArray: [],
 };

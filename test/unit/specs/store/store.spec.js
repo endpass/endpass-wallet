@@ -1,4 +1,4 @@
-import { state, actions } from '@/store';
+import { actions } from '@/store';
 
 // Mock mutations
 const mutations = {

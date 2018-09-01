@@ -63,4 +63,16 @@ const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
 });
 
+// Dispatch on change in block number
+// This triggers when a new block is found OR network provider is changed
+store.watch(
+  state => state.web3.blockNumber,
+  () => {
+    return Promise.all([
+      store.dispatch('accounts/updateBalance'),
+      store.dispatch('tokens/updateTokenBalances'),
+    ]);
+  },
+);
+
 export default store;

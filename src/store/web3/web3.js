@@ -191,13 +191,8 @@ export default {
     },
     // Fires on new block found
     async updateBlockNumber({ dispatch, state, commit }) {
-      const oldBlockNumber = state.blockNumber;
       const blockNumber = await web3.eth.getBlockNumber();
-      if (blockNumber === oldBlockNumber) {
-        return;
-      }
       commit('setBlockNumber', blockNumber);
-      return dispatch('accounts/updateBalance', {}, { root: true });
     },
     async subscribeOnBlockUpdates({ state, commit, dispatch }) {
       await dispatch('unsubscribeOnBlockUpdates');
