@@ -1,11 +1,11 @@
 import erc20ABI from '@/abi/erc20.json';
+import web3 from '@/utils/web3';
 import { Token } from '@/class';
 
 // Service for functions related to ERC20 tokens
 export class ERC20Token {
   // Accepts a web.js instance and the address of the token contract
-  constructor(web3, address) {
-    this.web3 = web3;
+  constructor(address) {
     this.address = address;
 
     this._contract = null;
@@ -15,7 +15,7 @@ export class ERC20Token {
   // Returns the web3.Contract instance for this token
   getContract() {
     if (!this._contract) {
-      this._contract = new this.web3.eth.Contract(erc20ABI, this.address);
+      this._contract = new web3.eth.Contract(erc20ABI, this.address);
     }
     return this._contract;
   }

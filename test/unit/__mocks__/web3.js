@@ -8,22 +8,21 @@ jest.mock('web3', () => {
     send: jest.fn(),
     sendAsync: jest.fn(),
   };
-  const contract = {
-    methods: {
-      balanceOf(address) {
-        return {
-          call: jest.fn(),
-        };
-      },
-    },
-  };
+
+  class Contract {
+    constructor(abi, address) {
+      this.address = address;
+      this.abi = abi;
+    }
+  }
+
   const eth = {
     net: {
       getNetworkType: jest.fn().mockResolvedValue('ropsten'),
       getId: jest.fn().mockResolvedValue(3),
     },
     accounts: {},
-    Contract: jest.fn(() => contract),
+    Contract,
   };
 
   const utils = originalWeb3.utils;

@@ -1,4 +1,5 @@
 import { ERC20Token, Token } from '@/class';
+import web3 from '@/utils/web3';
 
 describe('ERC20 Token', () => {
   const tokenInfo = {
@@ -8,7 +9,9 @@ describe('ERC20 Token', () => {
     totalSupply: 100,
     balance: 1,
   };
-  const web3 = jest.genMockFromModule('web3');
+
+  let address;
+  let erc20;
 
   // method.call() returns given val
   const contractMethod = function(val) {
@@ -25,29 +28,12 @@ describe('ERC20 Token', () => {
     balanceOf: addr => contractMethod(tokenInfo.balance),
   };
 
-  class Contract {
-    constructor(abi, address) {
-      this.address = address;
-      this.token = {
-        ...tokenInfo,
-      };
-      this.methods = contractMethods;
-    }
-  }
-
-  web3.eth = {
-    Contract,
-  };
-  let address;
-  let erc20;
-
   beforeEach(() => {
     address = '0xb8c77482e45f1f44de1745f52c74426c631bdd52';
-    erc20 = new ERC20Token(web3, address);
+    erc20 = new ERC20Token(address);
   });
 
-  it('saves web3 reference and address', () => {
-    expect(erc20.web3).toBe(web3);
+  it('saves address', () => {
     expect(erc20.address).toBe(address);
   });
 
@@ -62,6 +48,8 @@ describe('ERC20 Token', () => {
 
   it('builds Token from tokeninfo', async () => {
     let contract = erc20.getContract();
+    contract.methods = contractMethods;
+
     let token = await erc20.getToken();
 
     expect(token).toBeInstanceOf(Token);
