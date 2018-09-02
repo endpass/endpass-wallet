@@ -76,4 +76,46 @@ store.watch(
   },
 );
 
+// Enable hot reloading in development
+if (module.hot) {
+  module.hot.accept(
+    [
+      './accounts/accounts',
+      './web3/web3',
+      './tokens',
+      './gas-price',
+      './price',
+      './transactions/transactions',
+      './errors',
+      './connection-status',
+      './user',
+    ],
+    () => {
+      const newAccounts = require('./accounts/accounts').default;
+      const newWeb3 = require('./web3/web3').default;
+      const newTokens = require('./tokens').default;
+      const newGasPrice = require('./gas-price').default;
+      const newPrice = require('./price').default;
+      const newTransactions = require('./transactions/transactions').default;
+      const newErrors = require('./errors').default;
+      const newConnectionStatus = require('./connection-status').default;
+      const newUserModule = require('./user').default;
+      // swap in the new actions and mutations
+      store.hotUpdate({
+        modules: {
+          accounts: newAccounts,
+          web3: newWeb3,
+          tokens: newTokens,
+          price: newPrice,
+          gasPrice: newGasPrice,
+          transactions: newTransactions,
+          errors: newErrors,
+          connectionStatus: newConnectionStatus,
+          user: newUserModule,
+        },
+      });
+    },
+  );
+}
+
 export default store;
