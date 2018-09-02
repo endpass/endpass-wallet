@@ -47,11 +47,10 @@ export default class ProxyRequest {
 
       return await this.provider[method](newParams);
     } catch (e) {
-      if (e.response && e.response.status === 401) {
-        return {};
-      }
-
-      if (e instanceof NotificationError) {
+      if (
+        (e.response && e.response.status === 401) ||
+        e instanceof NotificationError
+      ) {
         throw e;
       }
 
