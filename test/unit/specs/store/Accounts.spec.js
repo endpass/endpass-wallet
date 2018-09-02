@@ -7,7 +7,10 @@ import {
   SAVE_TOKENS,
   SAVE_TRACKED_TOKENS,
 } from '@/store/tokens/mutations-types';
-import { SET_AUTHORIZATION_STATUS } from '@/store/user/mutations-types';
+import {
+  SET_AUTHORIZATION_STATUS,
+  SET_IDENTITY_TYPE,
+} from '@/store/user/mutations-types';
 
 import accountsFixture from 'fixtures/accounts';
 
@@ -290,8 +293,8 @@ describe('accounts store', () => {
 
           await actions.login({ commit, dispatch }, { email, mode });
 
-          expect(commit).toHaveBeenCalledTimes(2);
-          expect(commit).toHaveBeenNthCalledWith(2, 'setEmail', email);
+          expect(commit).toHaveBeenCalledTimes(3);
+          expect(commit).toHaveBeenNthCalledWith(3, 'setEmail', email);
         });
 
         it('should set the user authorization status', async () => {
@@ -299,9 +302,9 @@ describe('accounts store', () => {
 
           await actions.login({ commit, dispatch }, { email, mode });
 
-          expect(commit).toHaveBeenCalledTimes(2);
+          expect(commit).toHaveBeenCalledTimes(3);
           expect(commit).toHaveBeenNthCalledWith(
-            1,
+            2,
             `user/${SET_AUTHORIZATION_STATUS}`,
             true,
             { root: true },
@@ -319,7 +322,7 @@ describe('accounts store', () => {
           });
         });
 
-        it('should set the user identity mode', async () => {
+        it('should set the user identity mode through the user service', async () => {
           expect.assertions(2);
 
           await actions.login({ commit, dispatch }, { email, mode });
@@ -328,6 +331,20 @@ describe('accounts store', () => {
           expect(userService.setIdentityMode).toHaveBeenCalledWith(
             type,
             serverUrl,
+          );
+        });
+
+        it('should set the user identity type to the store', async () => {
+          expect.assertions(2);
+
+          await actions.login({ commit, dispatch }, { email, mode });
+
+          expect(commit).toHaveBeenCalledTimes(3);
+          expect(commit).toHaveBeenNthCalledWith(
+            1,
+            `user/${SET_IDENTITY_TYPE}`,
+            type,
+            { root: true },
           );
         });
 

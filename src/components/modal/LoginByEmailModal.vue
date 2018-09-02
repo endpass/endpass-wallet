@@ -7,7 +7,9 @@
 
     <v-form
       id="loginByEmail"
-      @submit="handleSubmit">
+      v-model="isFormValid"
+      @submit="handleSubmit"
+    >
       <v-input v-model="email"
                label="Email"
                help="Your email address may be used to help recover your
@@ -41,7 +43,7 @@
       <v-button className="is-primary is-medium"
                 form="loginByEmail"
                 data-test="submit-login"
-                :disabled="!termsAccepted"
+                :disabled="!termsAccepted || !isFormValid"
                 :loading="isLoading">Continue</v-button>
     </div>
   </v-modal>
@@ -56,9 +58,9 @@ import VCheckbox from '@/components/ui/form/VCheckbox';
 import VSelect from '@/components/ui/form/VSelect';
 
 const availableIdentityServerTypes = [
-  'Endpass',
-  'Local Storage',
-  'Custom server',
+  { text: 'Endpass', val: 'default' },
+  { text: 'Local Storage', val: 'local' },
+  { text: 'Custom server', val: 'custom' },
 ];
 
 export default {
@@ -73,24 +75,26 @@ export default {
     email: '',
     termsAccepted: true,
     availableIdentityServerTypes,
-    currentIdentityServerType: availableIdentityServerTypes[0],
+    currentIdentityServerType: availableIdentityServerTypes[0].val,
     customIdentityServer: null,
+    isFormValid: false,
   }),
   computed: {
     selectedCustomIdentityServerType() {
-      return this.currentIdentityServerType === 'Custom server';
+      return this.currentIdentityServerType === 'custom';
     },
   },
   methods: {
     handleSubmit() {
-      const serverSettings = {
+      const mode = {
         type: this.currentIdentityServerType,
-        url: this.selectedCustomIdentityServerType
+        serverUrl: this.selectedCustomIdentityServerType
           ? this.customIdentityServer
           : undefined,
       };
+      const { email } = this;
 
-      this.$emit('confirm', this.email, serverSettings);
+      this.$emit('confirm', { email, mode });
     },
     handleClose() {
       this.$emit('close');

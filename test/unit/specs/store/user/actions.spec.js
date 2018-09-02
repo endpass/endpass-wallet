@@ -1,5 +1,8 @@
 import actions from '@/store/user/actions';
-import { SET_AUTHORIZATION_STATUS } from '@/store/user/mutations-types';
+import {
+  SET_AUTHORIZATION_STATUS,
+  SET_IDENTITY_TYPE,
+} from '@/store/user/mutations-types';
 import { NotificationError } from '@/class';
 import { userService } from '@/services';
 
@@ -69,8 +72,8 @@ describe('user actions', () => {
 
       await actions.initIdentityMode({ commit, dispatch });
 
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(SET_AUTHORIZATION_STATUS, true);
+      expect(commit).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenNthCalledWith(2, SET_AUTHORIZATION_STATUS, true);
     });
 
     it('should not set the auth status when default mode', async () => {
@@ -83,6 +86,18 @@ describe('user actions', () => {
       await actions.initIdentityMode({ commit, dispatch });
 
       expect(commit).toHaveBeenCalledTimes(0);
+    });
+
+    it('should set the user identity type when default mode', async () => {
+      expect.assertions(2);
+
+      const type = 'custom';
+      userService.getIdentityMode = jest.fn().mockReturnValueOnce({ type });
+
+      await actions.initIdentityMode({ commit, dispatch });
+
+      expect(commit).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenNthCalledWith(1, SET_IDENTITY_TYPE, type);
     });
 
     it('should handle error', async () => {

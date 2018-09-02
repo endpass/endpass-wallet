@@ -5,6 +5,7 @@ import mutations from './mutations';
 const state = {
   prevAuthorizationStatus: null,
   authorizationStatus: null,
+  identityType: 'default',
 };
 
 export default {

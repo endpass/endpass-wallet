@@ -74,6 +74,7 @@ export default {
       method: 'add',
       url: '/user',
       payload: settings,
+      prop: 'settings',
     });
   },
 

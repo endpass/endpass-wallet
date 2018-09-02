@@ -18,7 +18,7 @@
                 :options="availableCurrencies" />
 
     </v-form>
-    <two-factor-auth-settings/>
+    <two-factor-auth-settings v-if="identityType === 'default'" />
   </base-page>
 </template>
 
@@ -39,6 +39,9 @@ export default {
     },
   }),
   computed: {
+    ...mapState({
+      identityType: state => state.user.identityType,
+    }),
     ...mapState('accounts', ['settings', 'availableCurrencies', 'email']),
     isSettingsChange() {
       return JSON.stringify(this.settings) !== JSON.stringify(this.newSettings);
