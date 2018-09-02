@@ -4,26 +4,28 @@ import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
 
 export default class ProxyRequest {
-  constructor(mode, serverUrl) {
-    this.setMode(mode, serverUrl);
+  constructor(type, serverUrl) {
+    this.setMode(type, serverUrl);
   }
 
   setDecorators(decorators) {
     this.decorators = decorators;
   }
 
-  setMode(mode = 'default', serverUrl = identityAPIUrl) {
-    switch (mode) {
+  setMode(type = 'default', serverUrl) {
+    const url = serverUrl || identityAPIUrl;
+
+    switch (type) {
       case 'custom':
-        this.provider = new CustomProvider(serverUrl);
+        this.provider = new CustomProvider(url);
         break;
 
       case 'local':
-        this.provider = new LocalProvider(serverUrl);
+        this.provider = new LocalProvider(url);
         break;
 
       default:
-        this.provider = new ServerProvider(serverUrl);
+        this.provider = new ServerProvider(url);
         break;
     }
 

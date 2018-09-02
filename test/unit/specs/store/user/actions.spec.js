@@ -1,6 +1,7 @@
 import actions from '@/store/user/actions';
 import { SET_AUTHORIZATION_STATUS } from '@/store/user/mutations-types';
 import { NotificationError } from '@/class';
+import { userService } from '@/services';
 
 describe('user actions', () => {
   describe('setAuthorizationStatus', () => {
@@ -31,6 +32,73 @@ describe('user actions', () => {
       actions.setAuthorizationStatus({ commit, dispatch, getters }, {});
 
       expect(dispatch).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe('initIdentityMode', () => {
+    let dispatch;
+    let commit;
+
+    beforeEach(() => {
+      userService.setIdentityMode = jest.fn();
+      userService.setSettings = jest.fn();
+      dispatch = jest.fn();
+      commit = jest.fn();
+    });
+
+    it('should set the identity mode', async () => {
+      expect.assertions(2);
+
+      const type = 'custom';
+      const serverUrl = 'url';
+      const mode = { type, serverUrl };
+      userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
+
+      await actions.initIdentityMode({ commit, dispatch });
+
+      expect(userService.setIdentityMode).toHaveBeenCalledTimes(1);
+      expect(userService.setIdentityMode).toHaveBeenCalledWith(type, serverUrl);
+    });
+
+    it('should set the auth status when not default mode', async () => {
+      expect.assertions(2);
+
+      const type = 'custom';
+      const mode = { type };
+      userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
+
+      await actions.initIdentityMode({ commit, dispatch });
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(SET_AUTHORIZATION_STATUS, true);
+    });
+
+    it('should not set the auth status when default mode', async () => {
+      expect.assertions(1);
+
+      const type = 'default';
+      const mode = { type };
+      userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
+
+      await actions.initIdentityMode({ commit, dispatch });
+
+      expect(commit).toHaveBeenCalledTimes(0);
+    });
+
+    it('should handle error', async () => {
+      expect.assertions(2);
+
+      const error = 'error';
+      userService.getIdentityMode = jest.fn(() => {
+        throw error;
+      });
+
+      await actions.initIdentityMode({ commit, dispatch });
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith('errors/emitError', error, {
+        root: true,
+      });
     });
   });
 });

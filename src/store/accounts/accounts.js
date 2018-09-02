@@ -11,6 +11,7 @@ import {
 import { Wallet, Address } from '@/class';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
+import { SET_AUTHORIZATION_STATUS } from '@/store/user/mutations-types';
 
 export default {
   namespaced: true,
@@ -252,15 +253,34 @@ export default {
     validatePassword({ state }, password) {
       return state.wallet.validatePassword(password);
     },
-    login({ commit, dispatch }, email) {
-      return userService.login(email);
+    async login({ commit, dispatch }, { email, mode = {} }) {
+      const { type = 'default', serverUrl } = mode;
+
+      if (type === 'default') {
+        return userService.login(email);
+      }
+
+      try {
+        userService.setIdentityMode(type, serverUrl);
+        commit(`user/${SET_AUTHORIZATION_STATUS}`, true, { root: true });
+        commit('setEmail', email);
+        await userService.setSettings({ email });
+
+        return dispatch('init', null, { root: true });
+      } catch (e) {
+        return dispatch('errors/emitError', e, { root: true });
+      }
     },
-    logout({ commit, dispatch }) {
+    async logout({ commit, dispatch }) {
       commit('setEmail', null);
-      return userService
-        .logout()
-        .then(() => window.location.reload())
-        .catch(e => dispatch('errors/emitError', e, { root: true }));
+      userService.setIdentityMode('default');
+
+      try {
+        await userService.logout();
+        window.location.reload();
+      } catch (e) {
+        await dispatch('errors/emitError', e, { root: true });
+      }
     },
     loginViaOTP({}, { code, email }) {
       return userService.loginViaOTP(code, email);

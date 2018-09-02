@@ -1,4 +1,4 @@
-import { http } from '@/utils';
+import { http, proxyRequest } from '@/utils';
 import MockAdapter from 'axios-mock-adapter';
 
 import { NotificationError } from '@/class';
@@ -437,6 +437,65 @@ describe('User service', () => {
       } catch (receivedError) {
         expect(receivedError).toEqual(expectedError);
       }
+    });
+  });
+
+  describe('Identity mode', () => {
+    const identityModeKey = 'identityMode';
+
+    describe('setIdentityMode', () => {
+      const url = identityAPIUrl;
+      const type = 'custom';
+      const mode = { type, serverUrl: url };
+      let spyProxyRequest;
+
+      beforeEach(() => {
+        spyProxyRequest = jest.spyOn(proxyRequest, 'setMode');
+      });
+
+      afterEach(() => {
+        spyProxyRequest.mockRestore();
+        localStorage.setItem.mockReset();
+      });
+
+      it('should set the identity mode', () => {
+        expect.assertions(2);
+
+        userService.setIdentityMode(type, url);
+
+        expect(spyProxyRequest).toHaveBeenCalledTimes(1);
+        expect(spyProxyRequest).toBeCalledWith(type, url);
+      });
+
+      it('should save the identity mode in the local storage', () => {
+        expect.assertions(2);
+
+        userService.setIdentityMode(type, url);
+
+        const expected = JSON.stringify(mode);
+
+        expect(localStorage.setItem).toHaveBeenCalledTimes(1);
+        expect(localStorage.setItem).toBeCalledWith(identityModeKey, expected);
+      });
+    });
+
+    describe('getIdentityMode', () => {
+      afterEach(() => {
+        localStorage.getItem.mockReset();
+      });
+
+      it('should get the identity mode', () => {
+        userService.getIdentityMode();
+
+        expect(localStorage.getItem).toHaveBeenCalledTimes(1);
+        expect(localStorage.getItem).toBeCalledWith(identityModeKey);
+      });
+
+      it('should return default identity mode', () => {
+        const mode = userService.getIdentityMode();
+
+        expect(mode).toEqual({ type: 'default' });
+      });
     });
   });
 });
