@@ -114,7 +114,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 import { ERC20Token } from '@/class';
 import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
@@ -143,20 +143,13 @@ export default {
       isFormValid: false,
     };
   },
-  computed: {
-    ...mapState({
-      address: state => state.accounts.address.getChecksumAddressString(),
-    }),
-  },
   methods: {
-    ...mapActions('tokens', ['addTokenToSubscription']),
+    ...mapActions('tokens', ['saveTokenAndSubscribe']),
     resetForm() {
       Object.assign(this.$data, this.$options.data());
     },
-    addToken() {
-      this.addTokenToSubscription({ ...this.token });
-      this.loadingToken = false;
-      this.addedToken = true;
+    async addToken() {
+      return this.saveTokenAndSubscribe({ token: { ...this.token } });
     },
     async createToken() {
       this.loadingToken = true;
@@ -169,11 +162,13 @@ export default {
 
         if (decimals && symbol && name) {
           this.token.decimals = parseInt(decimals, 10);
-          this.addToken(this.token);
+          await this.addToken();
         } else {
           this.loadingToken = false;
           this.loadedToken = true;
         }
+        this.loadingToken = false;
+        this.addedToken = true;
       } catch (e) {
         this.loadingToken = false;
         this.$notify({

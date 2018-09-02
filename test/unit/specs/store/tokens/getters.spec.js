@@ -1,5 +1,5 @@
 import getters from '@/store/tokens/getters';
-import { ERC20Token } from '@/class';
+import { Token, ERC20Token } from '@/class';
 
 describe('tokens getters', () => {
   describe('net', () => {
@@ -27,9 +27,11 @@ describe('tokens getters', () => {
     });
   });
   describe('tokensWithBalance', () => {
+    let state;
     let tokens;
+    let mockGetters;
     beforeEach(() => {
-      let state = {
+      state = {
         trackedTokens: ['0x123', '0x456'],
         allTokens: {
           '0x123': { symbol: 'ABC' },
@@ -40,16 +42,32 @@ describe('tokens getters', () => {
           '0x456': undefined,
         },
       };
-      tokens = getters.tokensWithBalance(state);
+      mockGetters = {
+        savedTokenInfos: {
+          // User submitted token
+          '0x999': { symbol: 'XYZ' },
+        },
+      };
     });
     it('should return all tracked tokens and default balances to 0', () => {
+      tokens = getters.tokensWithBalance(state, mockGetters);
       expect(tokens).toHaveLength(2);
       expect(tokens[0].balance).toEqual('100');
       expect(tokens[1].balance).toEqual('0');
+      expect(tokens[0]).toBeInstanceOf(Token);
     });
     it('should merge token info from state', () => {
+      tokens = getters.tokensWithBalance(state, mockGetters);
       expect(tokens[0].symbol).toEqual('ABC');
       expect(tokens[1].symbol).toEqual('DEF');
+      expect(tokens[0]).toBeInstanceOf(Token);
+    });
+    it('should merge saved tokens', () => {
+      state.trackedTokens.push('0x999');
+      tokens = getters.tokensWithBalance(state, mockGetters);
+      expect(tokens).toHaveLength(3);
+      expect(tokens[2].symbol).toEqual('XYZ');
+      expect(tokens[0]).toBeInstanceOf(Token);
     });
   });
   describe('trackedTokens', () => {
@@ -92,9 +110,23 @@ describe('tokens getters', () => {
       const mockGetters = {
         net: 1,
       };
-      expect(getters.savedCurrentNetworkTokens(state, mockGetters, 1)).toBe(
-        'kek',
-      );
+      expect(getters.savedCurrentNetworkTokens(state, mockGetters)).toBe('kek');
+    });
+  });
+  describe('savedTokenInfos', () => {
+    it('should return tokens from net', () => {
+      const state = {
+        savedTokens: {
+          1: [{ address: '0x123', symbol: 'ABC' }],
+        },
+      };
+      const mockGetters = {
+        net: 1,
+        savedCurrentNetworkTokens: state.savedTokens[1],
+      };
+      expect(getters.savedTokenInfos(state, mockGetters)).toEqual({
+        '0x123': { address: '0x123', symbol: 'ABC' },
+      });
     });
   });
 });

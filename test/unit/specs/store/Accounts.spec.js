@@ -3,6 +3,10 @@ import { Address, Wallet } from '@/class';
 import localStorageMock from '../../localStorageMock.js';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { userService } from '@/services';
+import {
+  SAVE_TOKENS,
+  SAVE_TRACKED_TOKENS,
+} from '@/store/tokens/mutations-types';
 
 import accountsFixture from 'fixtures/accounts';
 
@@ -34,6 +38,27 @@ const context = {
   dispatch: dispatch({ state, commit, dispatch }),
   state,
 };
+
+describe('accounts actions', () => {
+  let commit;
+  let dispatch;
+
+  it('should fetch and save tokens on init', async () => {
+    commit = jest.fn();
+    dispatch = jest.fn();
+    await actions.init({ commit, dispatch });
+    expect(commit).toHaveBeenCalledWith(
+      `tokens/${SAVE_TOKENS}`,
+      expect.any(Object),
+      { root: true },
+    );
+    expect(commit).toHaveBeenCalledWith(
+      `tokens/${SAVE_TRACKED_TOKENS}`,
+      expect.any(Array),
+      { root: true },
+    );
+  });
+});
 
 describe('accounts store', () => {
   beforeEach(async () => {

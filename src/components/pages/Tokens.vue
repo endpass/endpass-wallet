@@ -93,30 +93,28 @@ export default {
       search: '',
       searchToken: '',
       addTokenModalOpen: false,
-      serializeInterval: null,
-      subscription: null,
     };
   },
   computed: {
     ...mapState({
       prices: state => state.tokens.prices,
       allTokens: state => state.tokens.allTokens,
+      // []string, list of tracked tokens addresses
+      trackedTokens: state => state.tokens.trackedTokens,
       isLoading: state => state.tokens.isLoading,
       ethPrice: state => state.price.price,
       currency: state => state.accounts.settings.fiatCurrency,
-      tokensSubscription: tokensSubscription => state =>
-        state.tokens.tokensSubscription,
     }),
-    ...mapGetters('tokens', ['net', 'trackedTokens']),
+    ...mapGetters('tokens', ['net', 'tokensWithBalance']),
+    // All tokens that are available to add
+    // TODO convert all addresses to checksum in store
     filteredTokens() {
-      return Object.values(this.allTokens).filter(
-        token =>
-          !this.trackedTokens.some(
-            activeToken =>
-              activeToken.address ===
-              web3.utils.toChecksumAddress(token.address),
-          ),
-      );
+      return Object.values(this.allTokens).filter(token => {
+        let address = token.address.toLowerCase();
+        return !this.trackedTokens
+          .map(addr => addr.toLowerCase())
+          .includes(address);
+      });
     },
     searchTokenList() {
       const { searchToken } = this;
@@ -140,13 +138,15 @@ export default {
       const { search } = this;
 
       if (!search) {
-        return this.trackedTokens;
+        return this.tokensWithBalance;
       }
 
       const searchLC = search.toLowerCase();
 
-      return this.trackedTokens.filter(token =>
-        token.symbol.toLowerCase().includes(searchLC),
+      return this.tokensWithBalance.filter(
+        token =>
+          name.toLowerCase().includes(search) ||
+          token.symbol.toLowerCase().includes(searchLC),
       );
     },
   },

@@ -9,13 +9,20 @@ const tokens = [
   },
   {
     name: 'second token',
-    symbol: '$SCdT',
+    symbol: 'SCDT',
     address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
     decimals: 8,
     logo: '',
   },
 ];
 
+// Tokens keyed by address, like in store.tokens.allTokens
+const allTokens = tokens.reduce((obj, item) => {
+  obj[item.address] = item;
+  return obj;
+}, {});
+
 export default {
   tokens,
+  allTokens,
 };

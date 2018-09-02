@@ -15,7 +15,6 @@ describe('Token', () => {
       decimals: 18,
       logo: '/pop.jpg',
       symbol: '$KEK',
-      balance: '0',
     });
 
     wrapper = shallow(VToken, {
@@ -30,11 +29,15 @@ describe('Token', () => {
     expect(wrapper.isVueInstance()).toBeTruthy();
   });
 
-  it('should show its logo, name and symbol', () => {
+  it('should show its logo, and name', () => {
     expect(wrapper.find('.token-logo img').attributes().src).toBe(
       mockToken.logo,
     );
-    expect(wrapper.find('.token-symbol').text()).toBe(mockToken.symbol);
     expect(wrapper.find('.token-name').text()).toBe(mockToken.name);
+  });
+  it('should show symbol if there is no balance', () => {
+    let token = { ...mockToken, balance: undefined };
+    wrapper.setProps({ token });
+    expect(wrapper.find('.token-symbol').text()).toBe(token.symbol);
   });
 });

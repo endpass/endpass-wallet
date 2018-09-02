@@ -11,9 +11,11 @@ import {
 } from './mutations-types';
 import { Token } from '@/class';
 
-const saveToken = ({ savedTokens }, { token, net }) => {
-  savedTokens[net] = savedTokens[net] || [];
-  savedTokens[net].push(new Token(token));
+// Save custom user tokens
+const saveToken = (state, { token, net }) => {
+  const tokens = state.savedTokens[net] || [];
+  tokens.push(new Token(token));
+  state.savedTokens = { ...state.savedTokens, [net]: tokens };
 };
 
 // Delete token from saved tokens and subscription
@@ -24,7 +26,8 @@ const deleteToken = ({ savedTokens, trackedTokens }, { token, net }) => {
     trackedTokens.splice(tokenTrackedIdx, 1);
   }
 
-  const tokenSavedIdx = savedTokens[net].findIndex(
+  const savedTokensNet = savedTokens[net] || [];
+  const tokenSavedIdx = savedTokensNet.findIndex(
     tkn => tkn.address === token.address,
   );
 
@@ -33,12 +36,27 @@ const deleteToken = ({ savedTokens, trackedTokens }, { token, net }) => {
   }
 };
 
+/*
+ * Tokens grouped by net id
+ * tokens = {
+ *   1: [Token, Token],
+ *   3: [Token],
+ * }
+*/
 const saveTokens = (state, tokens = {}) => {
-  state.savedTokens = tokens;
+  // Sanity check to filter out tokens with no address
+  let savedTokens = Object.keys(tokens).reduce((allTokens, net) => {
+    allTokens[net] = tokens[net]
+      .filter(token => !!token.address)
+      .map(token => new Token(token));
+    return allTokens;
+  }, {});
+  state.savedTokens = savedTokens;
 };
 
 //Save list of contract addresses to track
 const saveTrackedTokens = (state, tokenAddrs = []) => {
+  // Remove duplicate addresses
   let trackedTokens = [...new Set([...state.trackedTokens, ...tokenAddrs])];
   state.trackedTokens = trackedTokens;
 };
@@ -57,14 +75,16 @@ const saveTokensBalances = (state, balances) => {
 };
 
 // Save info like name and logo about all tokens
+// Can be called multiple times to insert info about new tokens
 // TODO track tokens on each network
 const saveTokenInfo = (state, tokenInfos = []) => {
-  let allTokens = {};
+  let allTokens = { ...state.allTokens };
   tokenInfos.forEach(tokenInfo => {
     if (!tokenInfo.address) {
       return;
     }
     let token = new Token(tokenInfo);
+    delete token.balance;
     Object.freeze(token);
     allTokens[token.address] = token;
   });

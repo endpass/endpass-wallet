@@ -40,15 +40,20 @@ describe('tokens actions', () => {
       };
     });
     it('should try to save token with service and SAVE_TOKEN ', async () => {
+      // mock saving
+      state.savedTokens = {
+        [getters.net]: [token],
+      };
       await actions.saveTokenAndSubscribe(
         { commit, state, getters, dispatch },
         { token },
       );
-      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenCalledWith(SAVE_TOKEN, {
         net: getters.net,
         token,
       });
+      expect(commit).toBeCalledWith(SAVE_TRACKED_TOKENS, [token.address]);
       expect(userService.setSetting).toHaveBeenCalledTimes(1);
       expect(userService.setSetting).toHaveBeenCalledWith('tokens', {
         [getters.net]: [token],
@@ -199,17 +204,19 @@ describe('tokens actions', () => {
         },
         { root: true },
       );
+      expect(commit).toBeCalledWith(SAVE_TOKEN_INFO, [token]);
       expect(commit).toBeCalledWith(SAVE_TRACKED_TOKENS, [token.address]);
     });
   });
   describe('updateTokensPrices', () => {
     beforeEach(() => {
       state = {
-        trackedTokens: [token],
+        trackedTokens: [token.address],
       };
       commit = jest.fn();
       getters = {
         activeCurrencyName: 'ETH',
+        tokensWithBalance: [token],
       };
       priceService.getPrices = jest.fn();
     });

@@ -122,4 +122,16 @@ describe('tokens mutations', () => {
     expect(Object.isFrozen(state.allTokens)).toBe(true);
     expect(Object.isFrozen(state.allTokens[token.address])).toBe(true);
   });
+  it('appends tokens to token info', () => {
+    let state = {};
+    let tokens = tokensFixture.tokens;
+    mutations[SAVE_TOKEN_INFO](state, tokens.slice(0, 1));
+    expect(Object.keys(state.allTokens)).toHaveLength(1);
+    expect(state.allTokens[tokens[0].address]).toMatchObject(tokens[0]);
+
+    mutations[SAVE_TOKEN_INFO](state, tokens.slice(1, 2));
+    expect(Object.keys(state.allTokens)).toHaveLength(2);
+    expect(state.allTokens[tokens[0].address]).toMatchObject(tokens[0]);
+    expect(state.allTokens[tokens[1].address]).toMatchObject(tokens[1]);
+  });
 });

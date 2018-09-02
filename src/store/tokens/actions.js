@@ -29,14 +29,9 @@ const saveTokenAndSubscribe = async (
   const tokenExist = state.trackedTokens.indexOf(token.address) !== -1;
   if (!tokenExist) {
     try {
-      const newTokensData = Object.assign({}, state.savedTokens);
-      newTokensData[net] = newTokensData[net] || [];
-      newTokensData[net].push(token);
-      await userService.setSetting('tokens', newTokensData);
-      commit(SAVE_TOKEN, {
-        token,
-        net: net,
-      });
+      commit(SAVE_TOKEN, { token, net });
+      commit(SAVE_TRACKED_TOKENS, [token.address]);
+      await userService.setSetting('tokens', state.savedTokens);
     } catch (e) {
       dispatch('errors/emitError', e, { root: true });
     }
@@ -134,19 +129,26 @@ const getTokensWithBalance = async ({ state, getters, dispatch, commit }) => {
     };
     dispatch('errors/emitError', e, { root: true });
   }
-  commit(SET_LOADING, false);
-  const tokenAddrs = tokensWithBalance
-    .map(tokenInfo => tokenInfo.address)
-    .filter(addr => !!addr)
-    .map(web3.utils.toChecksumAddress);
 
+  tokensWithBalance = tokensWithBalance
+    .filter(token => !!token.address)
+    .map(token => {
+      token.address = web3.utils.toChecksumAddress(token.address);
+      return token;
+    });
+
+  commit(SAVE_TOKEN_INFO, tokensWithBalance);
+
+  const tokenAddrs = tokensWithBalance.map(token => token.address);
   // Add unique addresses to tracked tokens list
   commit(SAVE_TRACKED_TOKENS, tokenAddrs);
+
+  commit(SET_LOADING, false);
 };
 
 const updateTokensPrices = async ({ state, commit, getters }) => {
   if (state.trackedTokens === null || state.trackedTokens.length === 0) return;
-  const symbols = state.trackedTokens.map(token => token.symbol);
+  const symbols = getters.tokensWithBalance.map(token => token.symbol);
 
   const prices = await priceService.getPrices(
     symbols,
@@ -159,6 +161,7 @@ const updateTokenPrice = async ({ commit, getters }, { symbol }) => {
   commit(SAVE_TOKEN_PRICE, { symbol, price });
 };
 const subscribeOnTokensPricesUpdates = ({ dispatch }) => {
+  dispatch('updateTokensPrices');
   setInterval(() => {
     dispatch('updateTokensPrices');
   }, priceUpdateInterval);

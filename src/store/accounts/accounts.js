@@ -5,7 +5,10 @@ import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { hdKeyMnemonic, kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
-import { SAVE_TOKENS } from '@/store/tokens/mutations-types';
+import {
+  SAVE_TOKENS,
+  SAVE_TRACKED_TOKENS,
+} from '@/store/tokens/mutations-types';
 import { Wallet, Address } from '@/class';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
@@ -288,6 +291,11 @@ export default {
           commit(`tokens/${SAVE_TOKENS}`, tokens || {}, {
             root: true,
           });
+          // Saved token contract addresses on all networks
+          const tokenAddrs = []
+            .concat(...Object.values(tokens))
+            .map(token => token.address);
+          commit(`tokens/${SAVE_TRACKED_TOKENS}`, tokenAddrs, { root: true });
         }
 
         if (settings) {

@@ -27,13 +27,15 @@ describe('TokensPage', () => {
       updateTokenPrice: jest.fn(),
       saveTokenAndSubscribe: jest.fn(),
       deleteTokenAndUnsubscribe: jest.fn(),
-      getAllTokens: jest.fn(() => tokens),
+      getAllTokens: jest.fn(() => tokensFixture.allTokens),
     };
 
     getters = {
       savedCurrentNetworkTokens: () => [{}],
       trackedTokens: state => state.trackedTokens || [],
       net: () => 1,
+      tokensWithBalance: state =>
+        state.trackedTokens.map(address => state.allTokens[address]),
     };
 
     store = new Vuex.Store({
@@ -49,9 +51,9 @@ describe('TokensPage', () => {
         tokens: {
           namespaced: true,
           state: {
-            trackedTokens: tokens,
+            trackedTokens: tokens.map(token => token.address),
             prices: null,
-            allTokens: {},
+            allTokens: tokensFixture.allTokens,
           },
           actions,
           getters,
@@ -122,7 +124,6 @@ describe('TokensPage', () => {
   describe('behavior', () => {
     beforeEach(() => {
       wrapper = shallow(TokensPage, options);
-      store.tokens = {};
     });
 
     describe('search', () => {
@@ -136,42 +137,46 @@ describe('TokensPage', () => {
         expect(wrapper.vm.userTokenList).toHaveLength(1);
       });
 
-      // it('should correctly find tokens in list', async () => {
-      //   expect(wrapper.vm.searchTokenList).toHaveLength(0);
-      //   options.store.tokens.allTokens = {
-      //     '0x687422eEA2cB73B5d3e242bA5456b782919AFc85':  {
-      //         name: 'Third Token',
-      //         symbol: 'TTKN',
-      //         address: '0x687422eEA2cB73B5d3e242bA5456b782919AFc85',
-      //       },
-      //       '0xAb54DE61A908583e6332a1282c7bFcA39f899B4f': {
-      //         name: 'fours token',
-      //         symbol: 'FurT',
-      //         address: '0xAb54DE61A908583e6332a1282c7bFcA39f899B4f',
-      //       },
-      //   }
-      //   console.log(wrapper.vm.allTokens);
-      //   wrapper.setData({searchToken: ''});
-      //   expect(wrapper.vm.searchTokenList).toHaveLength(2);
-      //
-      //   wrapper.setData({
-      //     searchToken: 'ttk',
-      //   });
-      //
-      //   expect(wrapper.vm.searchTokenList).toHaveLength(1);
-      //
-      //   wrapper.setData({
-      //     searchToken: '',
-      //   });
-      //
-      //   expect(wrapper.vm.searchTokenList).toHaveLength(2);
-      //
-      //   wrapper.setData({
-      //     searchToken: 'hir',
-      //   });
-      //
-      //   expect(wrapper.vm.searchTokenList).toHaveLength(1);
-      // });
+      it('should correctly find token in list', async () => {
+        store.state.tokens.trackedTokens = [];
+        expect(wrapper.vm.filteredTokens).toHaveLength(2);
+        expect(wrapper.vm.searchTokenList).toHaveLength(2);
+        wrapper.setData({ searchToken: '' });
+        expect(wrapper.vm.searchTokenList).toHaveLength(2);
+
+        wrapper.setData({
+          searchToken: 'FST',
+        });
+
+        expect(wrapper.vm.searchTokenList).toHaveLength(1);
+        expect(wrapper.vm.searchTokenList[0]).toEqual(tokens[0]);
+
+        wrapper.setData({
+          searchToken: '',
+        });
+
+        expect(wrapper.vm.searchTokenList).toHaveLength(2);
+
+        wrapper.setData({
+          searchToken: 'second',
+        });
+
+        expect(wrapper.vm.searchTokenList).toHaveLength(1);
+        expect(wrapper.vm.searchTokenList[0]).toEqual(tokens[1]);
+      });
+      it('should filter out tracked tokens', async () => {
+        store.state.tokens.trackedTokens = [
+          '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
+        ];
+        expect(wrapper.vm.filteredTokens).toHaveLength(1);
+        expect(wrapper.vm.filteredTokens[0]).toEqual(tokens[0]);
+
+        wrapper.setData({
+          searchToken: 'n',
+        });
+        expect(wrapper.vm.searchTokenList).toHaveLength(1);
+        expect(wrapper.vm.searchTokenList[0]).toEqual(tokens[0]);
+      });
     });
   });
 
