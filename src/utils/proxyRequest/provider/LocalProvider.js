@@ -8,9 +8,6 @@ export default class LocalProvider {
   Global = typeof window !== 'undefined' ? window : global;
 
   async add(params) {
-    console.log('add');
-    console.log(params);
-    console.log('------------------');
     try {
       const { url, payload, prop } = params;
       const oldData = await this.read({ url });
