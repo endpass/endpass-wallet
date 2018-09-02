@@ -28,7 +28,7 @@ export default {
     handleLoginByEmailModalConfirm(email) {
       this.isLoading = true;
 
-      return this.login(email)
+      return this.login({ email })
         .then(challengeType => {
           if (challengeType === 'otp') {
             this.email = email;

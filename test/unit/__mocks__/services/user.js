@@ -146,4 +146,12 @@ export default {
       }))
       .catch(() => {});
   },
+
+  setIdentityMode() {
+    return true;
+  },
+
+  getIdentityMode() {
+    return { type: 'default' };
+  },
 };

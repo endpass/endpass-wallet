@@ -1,4 +1,5 @@
 import { NotificationError } from '@/class';
+import { userService } from '@/services';
 import { SET_AUTHORIZATION_STATUS } from './mutations-types';
 
 const setAuthorizationStatus = (
@@ -19,6 +20,20 @@ const setAuthorizationStatus = (
   }
 };
 
+const initIdentityMode = async ({ commit, dispatch }) => {
+  try {
+    const { type, serverUrl } = userService.getIdentityMode();
+    userService.setIdentityMode(type, serverUrl);
+
+    if (type !== 'default') {
+      commit(SET_AUTHORIZATION_STATUS, true);
+    }
+  } catch (e) {
+    await dispatch('errors/emitError', e, { root: true });
+  }
+};
+
 export default {
   setAuthorizationStatus,
+  initIdentityMode,
 };

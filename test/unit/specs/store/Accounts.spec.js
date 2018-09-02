@@ -7,6 +7,7 @@ import {
   SAVE_TOKENS,
   SAVE_TRACKED_TOKENS,
 } from '@/store/tokens/mutations-types';
+import { SET_AUTHORIZATION_STATUS } from '@/store/user/mutations-types';
 
 import accountsFixture from 'fixtures/accounts';
 
@@ -245,16 +246,6 @@ describe('accounts store', () => {
     expect(commit.mock.calls[0]).toEqual(['setEmail', null]);
   });
 
-  it('should call user service in login action', async () => {
-    const dispatch = jest.fn();
-    const state = {};
-    userService.login = jest.fn();
-
-    await actions.login({ dispatch, state }, '123@123.com');
-
-    expect(userService.login).toHaveBeenCalledTimes(1);
-  });
-
   describe('mutations', () => {
     describe('setOtpSettings', () => {
       it('should set setOtpSettings', () => {
@@ -268,6 +259,105 @@ describe('accounts store', () => {
   });
 
   describe('actions', () => {
+    describe('login', () => {
+      const email = '123@123.com';
+      const type = 'custom';
+      const serverUrl = 'http://server';
+      const mode = { type, serverUrl };
+
+      it('should call user service in login action by default', async () => {
+        userService.login = jest.fn();
+
+        await actions.login({}, { email });
+
+        expect(userService.login).toHaveBeenCalledTimes(1);
+        expect(userService.login).toBeCalledWith(email);
+      });
+
+      describe('non default mode', () => {
+        let dispatch;
+        let commit;
+
+        beforeEach(() => {
+          userService.setIdentityMode = jest.fn();
+          userService.setSettings = jest.fn();
+          dispatch = jest.fn();
+          commit = jest.fn();
+        });
+
+        it('should set the user email', async () => {
+          expect.assertions(2);
+
+          await actions.login({ commit, dispatch }, { email, mode });
+
+          expect(commit).toHaveBeenCalledTimes(2);
+          expect(commit).toHaveBeenNthCalledWith(2, 'setEmail', email);
+        });
+
+        it('should set the user authorization status', async () => {
+          expect.assertions(2);
+
+          await actions.login({ commit, dispatch }, { email, mode });
+
+          expect(commit).toHaveBeenCalledTimes(2);
+          expect(commit).toHaveBeenNthCalledWith(
+            1,
+            `user/${SET_AUTHORIZATION_STATUS}`,
+            true,
+            { root: true },
+          );
+        });
+
+        it('should reinit the store', async () => {
+          expect.assertions(2);
+
+          await actions.login({ commit, dispatch }, { email, mode });
+
+          expect(dispatch).toHaveBeenCalledTimes(1);
+          expect(dispatch).toBeCalledWith('init', null, {
+            root: true,
+          });
+        });
+
+        it('should set the user identity mode', async () => {
+          expect.assertions(2);
+
+          await actions.login({ commit, dispatch }, { email, mode });
+
+          expect(userService.setIdentityMode).toHaveBeenCalledTimes(1);
+          expect(userService.setIdentityMode).toHaveBeenCalledWith(
+            type,
+            serverUrl,
+          );
+        });
+
+        it('should save the user email through the user service', async () => {
+          expect.assertions(2);
+
+          await actions.login({ commit, dispatch }, { email, mode });
+
+          expect(userService.setSettings).toHaveBeenCalledTimes(1);
+          expect(userService.setSettings).toBeCalledWith({ email });
+        });
+
+        it('should handle error', async () => {
+          expect.assertions(2);
+
+          const error = 'error';
+          commit = jest.fn(() => {
+            throw error;
+          });
+
+          await actions.login({ commit, dispatch }, { email, mode });
+
+          expect(dispatch).toHaveBeenCalledTimes(1);
+          expect(dispatch).toBeCalledWith('errors/emitError', error, {
+            root: true,
+          });
+        });
+      });
+    });
+
     describe('loginViaOTP', () => {
       it('should call userService.loginViaOTP', () => {
         const code = '123456';
