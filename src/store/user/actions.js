@@ -1,6 +1,6 @@
 import { NotificationError } from '@/class';
 import { userService } from '@/services';
-import { SET_AUTHORIZATION_STATUS } from './mutations-types';
+import { SET_AUTHORIZATION_STATUS, SET_IDENTITY_TYPE } from './mutations-types';
 
 const setAuthorizationStatus = (
   { commit, dispatch, getters },
@@ -26,6 +26,7 @@ const initIdentityMode = async ({ commit, dispatch }) => {
     userService.setIdentityMode(type, serverUrl);
 
     if (type !== 'default') {
+      commit(SET_IDENTITY_TYPE, type);
       commit(SET_AUTHORIZATION_STATUS, true);
     }
   } catch (e) {

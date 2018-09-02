@@ -11,7 +11,10 @@ import {
 import { Wallet, Address } from '@/class';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
-import { SET_AUTHORIZATION_STATUS } from '@/store/user/mutations-types';
+import {
+  SET_AUTHORIZATION_STATUS,
+  SET_IDENTITY_TYPE,
+} from '@/store/user/mutations-types';
 
 export default {
   namespaced: true,
@@ -262,6 +265,7 @@ export default {
 
       try {
         userService.setIdentityMode(type, serverUrl);
+        commit(`user/${SET_IDENTITY_TYPE}`, type, { root: true });
         commit(`user/${SET_AUTHORIZATION_STATUS}`, true, { root: true });
         commit('setEmail', email);
         await userService.setSettings({ email });

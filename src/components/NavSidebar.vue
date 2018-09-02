@@ -51,7 +51,10 @@
           <div class="column">
             <p class="menu-label">Accounts</p>
           </div>
-          <div class="column">
+          <div
+            v-if="identityType !== 'custom'"
+            class="column"
+          >
             <a
               class="button is-outlined is-small is-info"
               @click="openNewAccountModal"
@@ -153,6 +156,7 @@ export default {
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),
       email: state => state.accounts.email,
+      identityType: state => state.user.identityType,
     }),
     ...mapGetters({
       isLoggedOut: 'user/isLoggedOut',

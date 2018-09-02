@@ -24,7 +24,7 @@ describe('LoginByEmailModal', () => {
 
     it('should display a field for custom identity server', () => {
       wrapper.setData({
-        currentIdentityServerType: 'Custom server',
+        currentIdentityServerType: 'custom',
       });
 
       expect(wrapper.find('#customIdentityServer').html()).toMatchSnapshot();
@@ -36,11 +36,14 @@ describe('LoginByEmailModal', () => {
       const email = 'email';
 
       it('should trigger "confirm" event', () => {
-        const currentIdentityServerType = 'Endpass';
+        const currentIdentityServerType = 'default';
         const expected = [
-          email,
           {
-            type: currentIdentityServerType,
+            email,
+            mode: {
+              type: currentIdentityServerType,
+              serverUrl: undefined,
+            },
           },
         ];
 
@@ -52,12 +55,14 @@ describe('LoginByEmailModal', () => {
 
       it('should trigger "confirm" event with custom identity server url', () => {
         const customIdentityServer = 'custom identity server url';
-        const currentIdentityServerType = 'Custom server';
+        const currentIdentityServerType = 'custom';
         const expected = [
-          email,
           {
-            type: currentIdentityServerType,
-            url: customIdentityServer,
+            email,
+            mode: {
+              type: currentIdentityServerType,
+              serverUrl: customIdentityServer,
+            },
           },
         ];
 
@@ -77,6 +82,22 @@ describe('LoginByEmailModal', () => {
         wrapper.vm.handleClose();
 
         expect(wrapper.emitted().close).toEqual([[]]);
+      });
+    });
+  });
+
+  describe('behavior', () => {
+    describe('validation', () => {
+      beforeEach(() => {
+        wrapper = mount(LoginByEmailModal, {
+          stubs: generateStubs(LoginByEmailModal),
+        });
+      });
+
+      it('should disable submit button by default', () => {
+        const button = wrapper.find('v-button[data-test=submit-login]');
+
+        expect(button.attributes().disabled).toBeTruthy();
       });
     });
   });
