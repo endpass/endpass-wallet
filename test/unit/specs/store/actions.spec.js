@@ -1,19 +1,23 @@
-import { actions } from '@/store';
+import actions from '@/store/actions';
+import {
+  START_PAGE_LOADING,
+  STOP_PAGE_LOADING,
+} from '@/store/mutations-types.js';
 
 // Mock mutations
 const mutations = {
-  startPageLoading: jest.fn(),
-  stopPageLoading: jest.fn(),
+  [START_PAGE_LOADING]: jest.fn(),
+  [STOP_PAGE_LOADING]: jest.fn(),
 };
 
 const dispatch = jest.fn();
 const commit = (type, payload) => mutations[type](payload);
 
-describe('Store', () => {
+describe('Root Store actions', () => {
   it('initializes state and shows loading indicator', async () => {
     await actions.init({ dispatch, commit });
-    expect(mutations.startPageLoading).toHaveBeenCalledTimes(1);
-    expect(mutations.stopPageLoading).toHaveBeenCalledTimes(1);
+    expect(mutations[START_PAGE_LOADING]).toHaveBeenCalledTimes(1);
+    expect(mutations[STOP_PAGE_LOADING]).toHaveBeenCalledTimes(1);
 
     //Errors should be initialized first
     expect(dispatch).toHaveBeenNthCalledWith(1, 'web3/init');
