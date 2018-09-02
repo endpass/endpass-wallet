@@ -31,11 +31,12 @@ export const actions = {
   async init({ dispatch, commit }) {
     commit('startPageLoading');
 
-    // Wait for accounts to load first
+    // init web3 networks
+    await dispatch('web3/init');
+    // Wait for accounts to load
     await dispatch('accounts/init');
 
     commit('stopPageLoading');
-    await dispatch('web3/init');
 
     return Promise.all([
       dispatch('tokens/init'),
@@ -60,8 +61,19 @@ const store = new Vuex.Store({
     connectionStatus,
     user: userModule,
   },
-  //TODO enable strict
-  //strict: process.env.NODE_ENV !== 'production',
+  strict: process.env.NODE_ENV !== 'production',
 });
+
+// Dispatch on change in block number
+// This triggers when a new block is found OR network provider is changed
+store.watch(
+  state => state.web3.blockNumber,
+  () => {
+    return Promise.all([
+      store.dispatch('accounts/updateBalance'),
+      store.dispatch('tokens/updateTokensBalances'),
+    ]);
+  },
+);
 
 export default store;

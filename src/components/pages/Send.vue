@@ -223,7 +223,6 @@
 import { BigNumber } from 'bignumber.js';
 import { Transaction } from '@/class';
 import { mapState, mapActions, mapGetters } from 'vuex';
-import web3 from 'web3';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';
 import VInput from '@/components/ui/form/VInput.vue';
@@ -233,6 +232,7 @@ import VButton from '@/components/ui/form/VButton.vue';
 import VSelect from '@/components/ui/form/VSelect';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
+import web3 from '@/utils/web3';
 
 const defaultTnx = {
   gasPrice: '40',
@@ -265,7 +265,6 @@ export default {
       balance: state => state.accounts.balance,
       address: state => state.accounts.address.getChecksumAddressString(),
       activeCurrency: state => state.web3.activeCurrency,
-      web3: state => state.web3.web3,
       activeNet: state => state.web3.activeNet,
       isSyncing: state => !!state.web3.isSyncing,
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
@@ -453,7 +452,7 @@ export default {
       this.togglePasswordModal();
     },
     async updateEstimateGasCost() {
-      this.estimateGasCost = await this.transaction.getFullPrice(this.web3.eth);
+      this.estimateGasCost = await this.transaction.getFullPrice(web3.eth);
     },
     updateUserNonce() {
       this.getNextNonce().then(nonce => {

@@ -9,13 +9,13 @@
     <div class="media-content">
       <div class="content">
         <p class="token-title">
-          <span class="token-symbol">{{ token.symbol }}</span>
           <span class="token-name">{{ token.name }}</span>
         </p>
         <slot></slot>
       </div>
     </div>
     <div class="media-right">
+      <span v-if="!token.balance" class="token-symbol">{{ token.symbol }}</span>
       <balance
         v-if="token.balance"
         class="is-inline-block"
@@ -89,7 +89,6 @@ export default {
   }
   .token-title {
     .token-symbol {
-      display: none;
       font-weight: 600;
     }
     .token-name {

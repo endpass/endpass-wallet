@@ -40,7 +40,7 @@ describe('TokenList', () => {
             },
           },
           getters: {
-            trackedTokens: () => tokensFixture.tokens,
+            tokensWithBalance: () => tokensFixture.tokens,
           },
           actions,
         },
@@ -88,7 +88,7 @@ describe('TokenList', () => {
   it('allows setting custom token list', () => {
     wrapper.setProps({ tokens: tokensFixture.tokens.slice(0, 1) });
     expect(wrapper.vm.selectedTokens).toHaveLength(1);
-    expect(wrapper.vm.selectedTokens[0]).toBeInstanceOf(Token);
+    expect(wrapper.vm.selectedTokens[0]).toEqual(tokensFixture.tokens[0]);
   });
 
   it('should not show remove token button by default', () => {

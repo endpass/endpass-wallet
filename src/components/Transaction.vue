@@ -90,7 +90,6 @@
 
 <script>
 import Account from '@/components/Account';
-import web3 from 'web3';
 import Tx from 'ethereumjs-tx';
 import { Transaction } from '@/class';
 import ResendModal from './ResendModal';
@@ -99,7 +98,7 @@ import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import error from '@/mixins/error';
 import moment from 'moment';
-window.web3 = web3;
+import web3 from '@/utils/web3';
 
 export default {
   props: {
@@ -118,8 +117,7 @@ export default {
   },
   computed: {
     ...mapState({
-      isSyncing: state => state.web3.isSyncing,
-      web3: state => state.web3.web3,
+      isSyncing: state => !!state.web3.isSyncing,
       address: state =>
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),

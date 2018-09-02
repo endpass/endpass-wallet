@@ -6,17 +6,16 @@ import {
   SAVE_TRACKED_TOKENS,
   SAVE_TOKEN_PRICE,
   SAVE_TOKENS_PRICES,
-  SAVE_TOKEN_TRACKER_INSTANCE,
-  SAVE_SERIALISATION_INTERVAL,
+  SAVE_TOKEN_INFO,
 } from '@/store/tokens/mutations-types';
 import { Token } from '@/class';
+import tokensFixture from 'fixtures/tokens';
 
 describe('tokens mutations', () => {
   it('saves token', () => {
     const token = {
       address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
       symbol: 'ZERO',
-      balance: 1,
       decimals: 1,
       logo: 'kek.jpg',
       name: 'Zero token',
@@ -24,49 +23,38 @@ describe('tokens mutations', () => {
     const net = 1;
     let state = {
       savedTokens: {},
-      tokenTracker: {
-        add: jest.fn(),
-      },
     };
 
     mutations[SAVE_TOKEN](state, { token, net });
-    expect(state.tokenTracker.add).toHaveBeenCalledWith({ ...token });
     expect(state.savedTokens[net][0]).toMatchObject(token);
   });
   it('deletes token', () => {
     const token = {
       address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
       symbol: 'ZERO',
-      balance: 1,
       decimals: 1,
       logo: 'kek.jpg',
       name: 'Zero token',
     };
     const net = 1;
-    let tokenTracker = {
-      tokens: [token],
-    };
     let state = {
       savedTokens: {
         [net]: [token],
       },
-      trackedTokens: [token],
-      tokenTracker,
+      trackedTokens: [token.address],
     };
 
     mutations[DELETE_TOKEN](state, { token, net });
 
     expect(state.savedTokens[net]).not.toContain(token);
-    expect(state.tokenTracker.tokens).not.toContain(token);
-    expect(state.trackedTokens).not.toContain(token);
+    expect(state.trackedTokens).not.toContain(token.address);
   });
 
-  it('saves tracked tokens as Token objects', () => {
+  it('saves tracked token as address string', () => {
     const tokens = [
       {
         address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
         symbol: 'ZERO',
-        balance: 1,
         decimals: 1,
         logo: 'kek.jpg',
         name: 'Zero token',
@@ -74,15 +62,24 @@ describe('tokens mutations', () => {
     ];
     let token = tokens[0];
     let state = {
-      allTokens: {
-        [token.address]: token,
-      },
+      trackedTokens: [],
     };
 
-    mutations[SAVE_TRACKED_TOKENS](state, tokens);
+    let address = tokens[0].address;
 
-    expect(state.trackedTokens.length).toBe(1);
-    expect(state.trackedTokens[0]).toMatchObject(tokens[0]);
+    mutations[SAVE_TRACKED_TOKENS](state, [address]);
+
+    expect(state.trackedTokens).toHaveLength(1);
+    expect(state.trackedTokens[0]).toEqual(address);
+  });
+
+  it('saves only unique tracked tokens', () => {
+    let state = {
+      trackedTokens: ['0x123', '0x456'],
+    };
+    mutations[SAVE_TRACKED_TOKENS](state, ['0x456', '0x789']);
+    expect(state.trackedTokens).toHaveLength(3);
+    expect(state.trackedTokens[2]).toEqual('0x789');
   });
 
   it('saves tokens prices', () => {
@@ -112,29 +109,29 @@ describe('tokens mutations', () => {
     expect(state.prices[symbol]).toBe(price);
   });
 
-  it('saves tracker instanse', () => {
-    const tracker = [
-      {
-        price: '100',
-      },
-    ];
+  it('saves and freezes token info', () => {
     let state = {};
+    const allTokens = tokensFixture.tokens;
+    mutations[SAVE_TOKEN_INFO](state, allTokens);
 
-    mutations[SAVE_TOKEN_TRACKER_INSTANCE](state, tracker);
+    let token = allTokens[0];
 
-    expect(state.tokenTracker).toBe(tracker);
+    expect(Object.keys(state.allTokens)).toHaveLength(2);
+    expect(state.allTokens[token.address]).toBeInstanceOf(Token);
+
+    expect(Object.isFrozen(state.allTokens)).toBe(true);
+    expect(Object.isFrozen(state.allTokens[token.address])).toBe(true);
   });
-
-  it('saves serialisations interval', () => {
-    const interval = [
-      {
-        price: '100',
-      },
-    ];
+  it('appends tokens to token info', () => {
     let state = {};
+    let tokens = tokensFixture.tokens;
+    mutations[SAVE_TOKEN_INFO](state, tokens.slice(0, 1));
+    expect(Object.keys(state.allTokens)).toHaveLength(1);
+    expect(state.allTokens[tokens[0].address]).toMatchObject(tokens[0]);
 
-    mutations[SAVE_SERIALISATION_INTERVAL](state, interval);
-
-    expect(state.tokensSerializeInterval).toBe(interval);
+    mutations[SAVE_TOKEN_INFO](state, tokens.slice(1, 2));
+    expect(Object.keys(state.allTokens)).toHaveLength(2);
+    expect(state.allTokens[tokens[0].address]).toMatchObject(tokens[0]);
+    expect(state.allTokens[tokens[1].address]).toMatchObject(tokens[1]);
   });
 });

@@ -36,6 +36,7 @@ export default {
         if (!success) {
           return Promise.reject();
         }
+        return { success };
       })
       .catch(() => {
         throw new NotificationError({
@@ -191,6 +192,7 @@ export default {
           console.warn(`POST ${identityAPIUrl}/otp: ${message}`);
           return Promise.reject();
         }
+        return { success };
       })
       .catch(() => {
         throw new NotificationError({
@@ -211,6 +213,7 @@ export default {
           console.warn(`DELETE ${identityAPIUrl}/otp: ${message}`);
           return Promise.reject();
         }
+        return { success };
       })
       .catch(() => {
         throw new NotificationError({

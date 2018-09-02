@@ -1,11 +1,14 @@
 import { userService } from '@/services';
 import storage from '@/services/storage';
-import web3 from 'web3';
+import web3 from '@/utils/web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { hdKeyMnemonic, kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
-import { SAVE_TOKENS } from '@/store/tokens/mutations-types';
+import {
+  SAVE_TOKENS,
+  SAVE_TRACKED_TOKENS,
+} from '@/store/tokens/mutations-types';
 import { Wallet, Address } from '@/class';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
@@ -217,7 +220,7 @@ export default {
         }
 
         try {
-          const balance = await rootState.web3.web3.eth.getBalance(address);
+          const balance = await web3.eth.getBalance(address);
 
           if (balance === '0') {
             break;
@@ -232,7 +235,7 @@ export default {
       if (state.address) {
         const address = state.address.getChecksumAddressString();
 
-        return rootState.web3.web3.eth
+        return web3.eth
           .getBalance(address)
           .then(balance => commit('setBalance', balance))
           .catch(e => dispatch('errors/emitError', e, { root: true }));
@@ -288,6 +291,11 @@ export default {
           commit(`tokens/${SAVE_TOKENS}`, tokens || {}, {
             root: true,
           });
+          // Saved token contract addresses on all networks
+          const tokenAddrs = []
+            .concat(...Object.values(tokens))
+            .map(token => token.address);
+          commit(`tokens/${SAVE_TRACKED_TOKENS}`, tokenAddrs, { root: true });
         }
 
         if (settings) {

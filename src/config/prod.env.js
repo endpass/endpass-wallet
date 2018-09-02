@@ -15,7 +15,6 @@ const identityAPIUrl = 'https://identity.endpass.com/api/v1';
 const cryptoDataAPIUrl = 'https://cryptodata.endpass.com/api/v1';
 
 // ERC20 Tokens
-const tokenUpdateInterval = 15 * 1000;
 const tokenInfoAPIUrl = 'https://tokeninfo.endpass.com/api/v1';
 const tokenImageUrl = 'https://tokeninfo.endpass.com';
 
@@ -36,7 +35,6 @@ export default {
   infuraConf,
   serviceThrottleTimeout,
   blockUpdateInterval,
-  tokenUpdateInterval,
   priceUpdateInterval,
   fiatPriceAPIUrl,
   fiatPriceMultiAPIUrl,

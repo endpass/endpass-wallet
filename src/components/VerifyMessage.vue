@@ -15,10 +15,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
+import web3 from '@/utils/web3';
 
 export default {
   name: 'verify-message',
@@ -27,9 +27,6 @@ export default {
     signedMessageString: null,
   }),
   computed: {
-    ...mapState({
-      web3: state => state.web3.web3,
-    }),
     signedMessage() {
       try {
         return JSON.parse(this.signedMessageString);
@@ -41,7 +38,7 @@ export default {
   methods: {
     verifyMessage() {
       try {
-        this.address = this.web3.eth.accounts.recover(this.signedMessage);
+        this.address = web3.eth.accounts.recover(this.signedMessage);
       } catch (error) {
         this.address = null;
         this.$notify({

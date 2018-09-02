@@ -36,6 +36,7 @@ import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
+import web3 from '@/utils/web3';
 
 export default {
   name: 'sign-message',
@@ -46,7 +47,6 @@ export default {
   computed: {
     ...mapState({
       wallet: state => state.accounts.wallet,
-      web3: state => state.web3.web3,
     }),
     getSignedMessage() {
       return JSON.stringify(this.signedMessage);
@@ -56,7 +56,7 @@ export default {
     signMessage(password) {
       try {
         this.togglePasswordModal();
-        this.signedMessage = this.web3.eth.accounts.sign(
+        this.signedMessage = web3.eth.accounts.sign(
           this.message,
           this.wallet.getPrivateKey(password),
         );

@@ -3,13 +3,12 @@ import {
   SAVE_TOKENS,
   DELETE_TOKEN,
   SAVE_TOKENS_PRICES,
+  SAVE_TOKENS_BALANCES,
   SAVE_TOKEN_PRICE,
   SAVE_TRACKED_TOKENS,
-  SAVE_SERIALISATION_INTERVAL,
-  SAVE_TOKEN_TRACKER_INSTANCE,
   SAVE_TOKEN_INFO,
+  SET_LOADING,
 } from './mutations-types';
-import TokenTracker from 'eth-token-tracker';
 import { Token, NotificationError } from '@/class';
 import {
   tokenInfoService,
@@ -17,8 +16,8 @@ import {
   priceService,
   userService,
 } from '@/services';
-import { tokenUpdateInterval } from '@/config';
-import web3 from 'web3';
+import web3 from '@/utils/web3';
+import { priceUpdateInterval } from '@/config';
 
 const saveTokenAndSubscribe = async (
   { state, commit, getters, dispatch },
@@ -27,22 +26,12 @@ const saveTokenAndSubscribe = async (
   const { net } = getters;
 
   // Check if already subscribed to token
-  const tokenExist =
-    state.tokenTracker &&
-    state.tokenTracker.tokens &&
-    state.tokenTracker.tokens.includes(
-      subscriptionToken => subscriptionToken.address === token.address,
-    );
+  const tokenExist = state.trackedTokens.indexOf(token.address) !== -1;
   if (!tokenExist) {
     try {
-      const newTokensData = Object.assign({}, state.savedTokens);
-      newTokensData[net] = newTokensData[net] || [];
-      newTokensData[net].push(token);
-      await userService.setSetting('tokens', newTokensData);
-      commit(SAVE_TOKEN, {
-        token,
-        net: net,
-      });
+      commit(SAVE_TOKEN, { token, net });
+      commit(SAVE_TRACKED_TOKENS, [token.address]);
+      await userService.setSetting('tokens', state.savedTokens);
     } catch (e) {
       dispatch('errors/emitError', e, { root: true });
     }
@@ -69,10 +58,12 @@ const deleteTokenAndUnsubscribe = async (
   }
 };
 
+// Get public info like name and logo about all standard ERC20 tokens
 const getAllTokens = async ({ commit, dispatch, getters }) => {
   if (getters.net !== 1) {
     return [];
   }
+  commit(SET_LOADING, true);
   let tokens = [];
   try {
     tokens = await tokenInfoService.getTokensList();
@@ -86,8 +77,10 @@ const getAllTokens = async ({ commit, dispatch, getters }) => {
     dispatch('errors/emitError', error, { root: true });
   } finally {
     commit(SAVE_TOKEN_INFO, tokens);
+    commit(SET_LOADING, false);
   }
 };
+
 const subscribeOnTokensBalancesUpdates = async ({
   dispatch,
   state,
@@ -97,20 +90,9 @@ const subscribeOnTokensBalancesUpdates = async ({
   if (!getters.address) {
     return;
   }
-  commit(SAVE_TRACKED_TOKENS, null);
-  // destroy old subscription and recreate new one (in case of address/provider change)
-  if (state.tokensSerializeInterval) {
-    clearInterval(state.tokensSerializeInterval);
-    state.tokenTracker.stop();
-  }
   try {
-    const tokensWithBalance = await dispatch('getTokensWithBalance');
-    await dispatch('createTokenTracker', { tokensWithBalance });
-    // TokenTracker update event doesent work
-    const serialisationInterval = setInterval(() => {
-      dispatch('updateTokensBalances');
-    }, tokenUpdateInterval);
-    commit(SAVE_SERIALISATION_INTERVAL, serialisationInterval);
+    // Save tokens with balance
+    await dispatch('getTokensWithBalance');
   } catch (e) {
     const error = new NotificationError({
       title: 'Failed token subscription',
@@ -122,7 +104,9 @@ const subscribeOnTokensBalancesUpdates = async ({
   return dispatch('updateTokensBalances');
 };
 
-const getTokensWithBalance = async ({ state, getters, dispatch }) => {
+// Fetch non zero token balances of the given address
+const getTokensWithBalance = async ({ state, getters, dispatch, commit }) => {
+  commit(SET_LOADING, true);
   const { address } = getters;
   if (!address) {
     return [];
@@ -145,22 +129,26 @@ const getTokensWithBalance = async ({ state, getters, dispatch }) => {
     };
     dispatch('errors/emitError', e, { root: true });
   }
-  // Get tokeninfo from addresses
-  const allTokens = state.allTokens;
-  const tokenAddrs = tokensWithBalance
-    .map(tokenInfo => tokenInfo.address)
-    .filter(addr => !!addr)
-    .map(web3.utils.toChecksumAddress);
-  return tokenAddrs
-    .map(addr => {
-      let token = state.allTokens[addr] || {};
-      return { ...token };
-    })
-    .filter(token => !!token.address);
+
+  tokensWithBalance = tokensWithBalance
+    .filter(token => !!token.address)
+    .map(token => {
+      token.address = web3.utils.toChecksumAddress(token.address);
+      return token;
+    });
+
+  commit(SAVE_TOKEN_INFO, tokensWithBalance);
+
+  const tokenAddrs = tokensWithBalance.map(token => token.address);
+  // Add unique addresses to tracked tokens list
+  commit(SAVE_TRACKED_TOKENS, tokenAddrs);
+
+  commit(SET_LOADING, false);
 };
+
 const updateTokensPrices = async ({ state, commit, getters }) => {
   if (state.trackedTokens === null || state.trackedTokens.length === 0) return;
-  const symbols = state.trackedTokens.map(token => token.symbol);
+  const symbols = getters.tokensWithBalance.map(token => token.symbol);
 
   const prices = await priceService.getPrices(
     symbols,
@@ -173,48 +161,33 @@ const updateTokenPrice = async ({ commit, getters }, { symbol }) => {
   commit(SAVE_TOKEN_PRICE, { symbol, price });
 };
 const subscribeOnTokensPricesUpdates = ({ dispatch }) => {
+  dispatch('updateTokensPrices');
   setInterval(() => {
     dispatch('updateTokensPrices');
-  }, tokenUpdateInterval);
+  }, priceUpdateInterval);
 };
 
-//TODO test
-const updateTokensBalances = async ({ state, commit }) => {
-  const balances = state.tokenTracker.serialize();
-  // TODO check for errors here
-  if (balances.length && typeof balances[0].symbol !== 'undefined') {
-    commit(SAVE_TRACKED_TOKENS, balances);
-  } else {
-    commit(SAVE_TRACKED_TOKENS, []);
-  }
-};
+//TODO test and rename to SAVE_BALANCES
+const updateTokensBalances = async ({ commit, getters }) => {
+  const erc20s = getters.trackedTokens;
+  const allBalances = await Promise.all(
+    erc20s.map(async erc20 => {
+      try {
+        let balance = await erc20.getBalance(getters.address);
+        return [erc20.address, balance];
+      } catch (e) {
+        return [erc20.address, null];
+      }
+    }),
+  );
 
-const createTokenTracker = async (
-  { state, commit, getters, rootState },
-  { tokensWithBalance },
-) => {
-  const { address } = getters;
+  // In format {address: balance}
+  const balances = allBalances.reduce((obj, item) => {
+    obj[item[0]] = item[1];
+    return obj;
+  }, {});
 
-  //Merge tokens list by address
-  const tokensToTrack = tokensWithBalance
-    .concat(
-      getters.savedCurrentNetworkTokens.filter(
-        savedToken =>
-          !tokensWithBalance.find(
-            tokenWithBalance => tokenWithBalance.address === savedToken.address,
-          ),
-      ),
-    )
-    .filter(token => !!token.address); //filter out empty address
-
-  const tokenTracker = new TokenTracker({
-    userAddress: address,
-    provider: rootState.web3.web3.currentProvider,
-    pollingInterval: tokenUpdateInterval,
-    tokens: tokensToTrack,
-  });
-
-  commit(SAVE_TOKEN_TRACKER_INSTANCE, tokenTracker);
+  commit(SAVE_TOKENS_BALANCES, balances);
 };
 
 const init = async ({ dispatch }) => {
@@ -232,6 +205,5 @@ export default {
   updateTokenPrice,
   subscribeOnTokensBalancesUpdates,
   subscribeOnTokensPricesUpdates,
-  createTokenTracker,
   init,
 };
