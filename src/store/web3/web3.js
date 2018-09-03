@@ -84,7 +84,7 @@ export default {
       const provider = providerFactory(state.activeNet.url);
 
       // The DebounceProvider instance needs to be destroyed
-      if (web3.currentProvider.destroy) {
+      if (web3.currentProvider && web3.currentProvider.destroy) {
         web3.currentProvider.destroy();
       }
 
