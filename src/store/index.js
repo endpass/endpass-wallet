@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 
 import actions from './actions';
 import mutations from './mutations';
+import { sync } from './plugins';
 
 import accounts from './accounts/accounts';
 import tokens from './tokens';
@@ -17,13 +18,14 @@ import userModule from './user';
 Vue.use(Vuex);
 
 const state = {
-  isPageLoading: false, //global page loading
+  isPageLoading: false, // global page loading
 };
 
 const store = new Vuex.Store({
   state,
   mutations,
   actions,
+  plugins: [sync],
   modules: {
     accounts,
     web3,
@@ -41,13 +43,13 @@ const store = new Vuex.Store({
 // Dispatch on change in block number
 // This triggers when a new block is found OR network provider is changed
 store.watch(
+  /* eslint-disable-next-line no-shadow */
   state => state.web3.blockNumber,
-  () => {
-    return Promise.all([
+  () =>
+    Promise.all([
       store.dispatch('accounts/updateBalance'),
       store.dispatch('tokens/updateTokensBalances'),
-    ]);
-  },
+    ]),
 );
 
 // Enable hot reloading in development
@@ -67,6 +69,7 @@ if (module.hot) {
       './user',
     ],
     () => {
+      /* eslint-disable */
       const newMutations = require('./mutations').default;
       const newActions = require('./actions').default;
       const newAccounts = require('./accounts/accounts').default;
@@ -78,6 +81,8 @@ if (module.hot) {
       const newErrors = require('./errors').default;
       const newConnectionStatus = require('./connection-status').default;
       const newUserModule = require('./user').default;
+      /* eslint-enable */
+
       // swap in the new actions and mutations
       store.hotUpdate({
         mutations: newMutations,
