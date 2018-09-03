@@ -92,7 +92,8 @@ export default {
   actions: {
     async getNonceInBlock({ rootState }) {
       const address = rootState.accounts.address.getChecksumAddressString();
-      return await web3eth.getTransactionCount(address);
+
+      return await web3.eth.getTransactionCount(address);
     },
     async getNextNonce({ state, dispatch }) {
       const nonce = await dispatch('getNonceInBlock');
@@ -103,9 +104,8 @@ export default {
         .reduce((lastNonce, tnxNonce) => {
           if (lastNonce === tnxNonce) {
             return +tnxNonce + 1;
-          } else {
-            return lastNonce;
           }
+          return lastNonce;
         }, nonce.toString())
         .toString();
 

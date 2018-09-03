@@ -6,17 +6,17 @@
   "homepage": "https://wallet.endpass.com",
   "license": "MIT",
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev": "npx webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
-    "unit": "jest --config test/unit/jest.conf.js",
+    "unit": "npx jest --config test/unit/jest.conf.js",
     "test": "npm run unit",
-    "e2e": "cypress run",
-    "e2e:open": "cypress open",
+    "e2e": "npx cypress run",
+    "e2e:open": "npx cypress open",
     "build": "NODE_ENV=production node build/build.js",
     "dev-build": "node build/build.js",
-    "pre-commit": "lint-staged",
-    "lint": "eslint '**/*.{js,vue,json}' --quiet",
-    "format": "prettier --write '**/*.{js,vue,json}'"
+    "pre-commit": "npx lint-staged",
+    "lint": "npx eslint '**/*.{js,vue,json}' --quiet",
+    "format": "npx prettier --write '**/*.{js,vue,json}'"
   },
   "pre-commit": [
     "pre-commit"
