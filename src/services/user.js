@@ -106,7 +106,7 @@ export default {
   // Saves the encrypted keystore for an account
   setAccount(address, account) {
     return http
-      .post(`${identityAPIUrl}/accounts/${address}`, account)
+      .post(`${identityAPIUrl}/account/${address}`, account)
       .then(res => res.data);
   },
 
