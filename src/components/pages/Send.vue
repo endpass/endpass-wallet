@@ -372,9 +372,13 @@ export default {
         },
       ];
 
-      this.tokensWithBalance.forEach(token => currencies.push(token.symbol));
+      return this.tokensWithBalance.reduce((acc, token) => {
+        if (token.address) {
+          return acc.concat(token.symbol);
+        }
 
-      return currencies;
+        return acc;
+      }, currencies);
     },
   },
   methods: {
