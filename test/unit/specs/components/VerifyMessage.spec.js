@@ -2,6 +2,7 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import VerifyMessage from '@/components/VerifyMessage';
 import { generateStubs } from '@/utils/testUtils';
+import web3 from '@/utils/web3';
 
 describe('VerifyMessage', () => {
   const address = 'address';
@@ -11,15 +12,7 @@ describe('VerifyMessage', () => {
     const localVue = createLocalVue();
     const $store = {
       state: {
-        web3: {
-          web3: {
-            eth: {
-              accounts: {
-                recover: jest.fn(() => address),
-              },
-            },
-          },
-        },
+        web3: {},
       },
     };
 
@@ -68,6 +61,7 @@ describe('VerifyMessage', () => {
 
       it('should verify message', () => {
         const { vm } = wrapper;
+        web3.eth.accounts.recover = jest.fn(() => address);
 
         vm.verifyMessage();
 
@@ -78,7 +72,7 @@ describe('VerifyMessage', () => {
       it('should not verify message', () => {
         const { vm } = wrapper;
 
-        vm.$store.state.web3.web3.eth.accounts.recover = jest.fn(() => {
+        web3.eth.accounts.recover = jest.fn(() => {
           throw new Error();
         });
 

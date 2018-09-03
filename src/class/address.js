@@ -1,14 +1,14 @@
-import ethUtil from 'ethereumjs-util';
+import web3 from 'web3';
 
 // A wallet based on an Ethereum address string, to be used in place of
 // ethereumjs-wallet when only the address is available
 export class Address {
   constructor(addressString) {
-    addressString = ethUtil.addHexPrefix(addressString);
-    if (!ethUtil.isValidAddress(addressString)) {
+    addressString = '0x' + addressString.replace(/^0x/, '');
+    if (!web3.utils.isAddress(addressString)) {
       throw new Error('Not a valid Ethereum address');
     }
-    this.address = ethUtil.toBuffer(addressString);
+    this.address = web3.utils.hexToBytes(addressString);
     this._privKey = null;
     this._pubKey = null;
     this.privKey = null;
@@ -20,10 +20,10 @@ export class Address {
   }
 
   getAddressString() {
-    return ethUtil.bufferToHex(this.address);
+    return web3.utils.bytesToHex(this.address);;
   }
 
   getChecksumAddressString() {
-    return ethUtil.toChecksumAddress(this.getAddressString());
+    return web3.utils.toChecksumAddress(this.getAddressString());
   }
 }

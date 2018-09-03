@@ -1,11 +1,14 @@
 import { userService } from '@/services';
 import storage from '@/services/storage';
-import web3 from 'web3';
+import web3 from '@/utils/web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { hdKeyMnemonic, kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
-import { SAVE_TOKENS } from '@/store/tokens/mutations-types';
+import {
+  SAVE_TOKENS,
+  SAVE_TRACKED_TOKENS,
+} from '@/store/tokens/mutations-types';
 import { Wallet, Address } from '@/class';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
@@ -64,8 +67,11 @@ export default {
     },
   },
   mutations: {
-    setAddress(state, addressString) {
-      state.address = new Address(addressString);
+    setAddress(state, address) {
+      if (!(address instanceof Address)) {
+        address = new Address(address);
+      }
+      state.address = address;
     },
     setWallet(state, wallet) {
       state.wallet = wallet;
@@ -76,6 +82,13 @@ export default {
       state.wallets = {
         ...state.wallets,
         [address]: wallet,
+      };
+    },
+    // Adds an empty wallet in order to view a public key
+    addAddress(state, address) {
+      state.wallets = {
+        ...state.wallets,
+        [address]: null,
       };
     },
     // Saves the encrypted HD wallet key in V3 keystore format
@@ -100,9 +113,10 @@ export default {
     },
   },
   actions: {
-    selectWallet({ commit, state, dispatch }, address) {
+    async selectWallet({ commit, state, dispatch }, address) {
       commit('setWallet', state.wallets[address]);
       commit('setAddress', address);
+      dispatch('updateBalance');
       return dispatch(
         'tokens/subscribeOnTokensBalancesUpdates',
         {},
@@ -142,6 +156,17 @@ export default {
         const wallet = EthWallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));
         const json = keystore.encryptWallet(password, wallet);
         return dispatch('addWalletAndSelect', json);
+      } catch (e) {
+        return dispatch('errors/emitError', e, { root: true });
+      }
+    },
+    async addWalletWithPublicKey({ commit, dispatch }, publicKeyOrAddress) {
+      // TODO convert public key to address, accept xPub key
+      try {
+        let address = web3.utils.toChecksumAddress(publicKeyOrAddress);
+        await userService.setAccount(address, null);
+        commit('addAddress', address);
+        return dispatch('selectWallet', address);
       } catch (e) {
         return dispatch('errors/emitError', e, { root: true });
       }
@@ -195,7 +220,7 @@ export default {
         }
 
         try {
-          const balance = await rootState.web3.web3.eth.getBalance(address);
+          const balance = await web3.eth.getBalance(address);
 
           if (balance === '0') {
             break;
@@ -210,7 +235,7 @@ export default {
       if (state.address) {
         const address = state.address.getChecksumAddressString();
 
-        return rootState.web3.web3.eth
+        return web3.eth
           .getBalance(address)
           .then(balance => commit('setBalance', balance))
           .catch(e => dispatch('errors/emitError', e, { root: true }));
@@ -260,37 +285,52 @@ export default {
     },
     async init({ commit, dispatch }) {
       try {
-        let [settings, email] = await Promise.all([
-          userService.getSettings(),
-          storage.read('email'),
-        ]);
+        const { settings, email, tokens } = await userService.getSettings();
 
-        commit(`tokens/${SAVE_TOKENS}`, settings.tokens || {}, { root: true });
-        commit('setEmail', email);
+        if (tokens) {
+          commit(`tokens/${SAVE_TOKENS}`, tokens || {}, {
+            root: true,
+          });
+          // Saved token contract addresses on all networks
+          const tokenAddrs = []
+            .concat(...Object.values(tokens))
+            .map(token => token.address);
+          commit(`tokens/${SAVE_TRACKED_TOKENS}`, tokenAddrs, { root: true });
+        }
 
         if (settings) {
           commit('setSettings', settings);
         }
 
-        if (!email) {
+        if (email) {
+          commit('setEmail', email);
+        } else {
           storage.disableRemote();
-          return null;
+          return;
         }
 
         // Fetch and save HD wallet
-        let hdKey = await userService.getHDKey();
+        const hdKey = await userService.getHDKey();
         if (hdKey) {
           commit('setHdKey', hdKey);
         }
 
         // Fetch and save regular accounts
-        let accounts = await userService.getV3Accounts();
+        const accounts = await userService.getV3Accounts();
         if (accounts && accounts.length) {
-          accounts.forEach(wallet => commit('addWallet', wallet));
+          accounts.forEach(account => {
+            if (keystore.isV3(account)) {
+              // Encrypted private key
+              commit('addWallet', account);
+            } else {
+              // Read-only public key
+              commit('addAddress', account.address);
+            }
+          });
           await dispatch('selectWallet', accounts[0].address);
         }
       } catch (e) {
-        return dispatch('errors/emitError', e, { root: true });
+        await dispatch('errors/emitError', e, { root: true });
       }
     },
   },

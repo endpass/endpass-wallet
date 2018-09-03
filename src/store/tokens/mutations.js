@@ -5,74 +5,95 @@ import {
   SAVE_TRACKED_TOKENS,
   SAVE_TOKEN_PRICE,
   SAVE_TOKENS_PRICES,
-  SAVE_TOKEN_TRACKER_INSTANCE,
-  SAVE_SERIALISATION_INTERVAL,
+  SAVE_TOKEN_INFO,
+  SAVE_TOKENS_BALANCES,
+  SET_LOADING,
 } from './mutations-types';
 import { Token } from '@/class';
 
-const saveToken = ({ savedTokens, tokenTracker }, { token, net }) => {
-  savedTokens[net] = savedTokens[net] || [];
-  savedTokens[net].push(new Token(token));
-  tokenTracker.add(token);
+// Save custom user tokens
+const saveToken = (state, { token, net }) => {
+  const tokens = state.savedTokens[net] || [];
+  tokens.push(new Token(token));
+  state.savedTokens = { ...state.savedTokens, [net]: tokens };
 };
 
 // Delete token from saved tokens and subscription
-const deleteToken = (
-  { tokenTracker, savedTokens, trackedTokens },
-  { token, net },
-) => {
-  const tokenTrackedIdx = trackedTokens.findIndex(
-    tkn => tkn.address === token.address,
-  );
+const deleteToken = ({ savedTokens, trackedTokens }, { token, net }) => {
+  const tokenTrackedIdx = trackedTokens.indexOf(token.address);
 
   if (tokenTrackedIdx !== -1) {
     trackedTokens.splice(tokenTrackedIdx, 1);
   }
-  // Remove token from tokenTracker instanse (unsubscribe)
-  const { tokens } = tokenTracker;
-  const tokenIdx = tokens.findIndex(tkn => tkn.address === token.address);
 
-  if (tokenIdx !== -1) {
-    tokens.splice(tokenIdx, 1);
-  }
-
-  const tokenSavedIdx = savedTokens[net].findIndex(
+  const savedTokensNet = savedTokens[net] || [];
+  const tokenSavedIdx = savedTokensNet.findIndex(
     tkn => tkn.address === token.address,
   );
 
   if (tokenSavedIdx !== -1) {
-    savedTokens[net].splice(tokenIdx, 1);
+    savedTokens[net].splice(tokenSavedIdx, 1);
   }
 };
 
+/*
+ * Tokens grouped by net id
+ * tokens = {
+ *   1: [Token, Token],
+ *   3: [Token],
+ * }
+*/
 const saveTokens = (state, tokens = {}) => {
-  state.savedTokens = tokens;
+  // Sanity check to filter out tokens with no address
+  let savedTokens = Object.keys(tokens).reduce((allTokens, net) => {
+    allTokens[net] = tokens[net]
+      .filter(token => !!token.address)
+      .map(token => new Token(token));
+    return allTokens;
+  }, {});
+  state.savedTokens = savedTokens;
 };
 
-//Save token tracker response with balances or nullify before update
-const saveTrackedTokens = (state, tokens = []) => {
-  if (tokens === null) {
-    state.trackedTokens = null;
-  } else {
-    state.trackedTokens = tokens.map(token => new Token(token));
-  }
+//Save list of contract addresses to track
+const saveTrackedTokens = (state, tokenAddrs = []) => {
+  // Remove duplicate addresses
+  let trackedTokens = [...new Set([...state.trackedTokens, ...tokenAddrs])];
+  state.trackedTokens = trackedTokens;
 };
 
 const saveTokenPrice = (state, { symbol, price }) => {
   state.prices = state.prices || {};
-  state.prices[symbol] = price;
+  state.prices = { ...state.prices, [symbol]: price };
 };
 
 const saveTokensPrices = (state, prices) => {
   state.prices = prices;
 };
 
-const saveTokenTrackerInstance = (state, tokenTracker) => {
-  state.tokenTracker = tokenTracker;
+const saveTokensBalances = (state, balances) => {
+  state.balances = balances;
 };
 
-const saveSerialisationInterval = (state, interval) => {
-  state.tokensSerializeInterval = interval;
+// Save info like name and logo about all tokens
+// Can be called multiple times to insert info about new tokens
+// TODO track tokens on each network
+const saveTokenInfo = (state, tokenInfos = []) => {
+  let allTokens = { ...state.allTokens };
+  tokenInfos.forEach(tokenInfo => {
+    if (!tokenInfo.address) {
+      return;
+    }
+    let token = new Token(tokenInfo);
+    delete token.balance;
+    Object.freeze(token);
+    allTokens[token.address] = token;
+  });
+  Object.freeze(allTokens);
+  state.allTokens = allTokens;
+};
+
+const setLoading = (state, isLoading) => {
+  state.isLoading = isLoading;
 };
 
 export default {
@@ -82,6 +103,7 @@ export default {
   SAVE_TRACKED_TOKENS: saveTrackedTokens,
   SAVE_TOKEN_PRICE: saveTokenPrice,
   SAVE_TOKENS_PRICES: saveTokensPrices,
-  SAVE_TOKEN_TRACKER_INSTANCE: saveTokenTrackerInstance,
-  SAVE_SERIALISATION_INTERVAL: saveSerialisationInterval,
+  SAVE_TOKEN_INFO: saveTokenInfo,
+  SAVE_TOKENS_BALANCES: saveTokensBalances,
+  SET_LOADING: setLoading,
 };

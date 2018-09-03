@@ -1,5 +1,6 @@
+import Web3 from 'web3';
+
 import store from '@/store/web3/web3';
-import LocalStorageMock from '../../localStorageMock.js';
 import testAction from '../ActionTestingHelper';
 import storage from '@/services/storage';
 
@@ -9,38 +10,10 @@ jest.mock('@/services/storage', () => ({
 }));
 
 jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
-global.localStorage = LocalStorageMock;
-
-const commit = state => (type, payload) =>
-  store.mutations[type](state, payload);
-
-//Fake action from antoher storage
-store.actions['tokens/subscribeOnTokensBalancesUpdates'] = jest.fn();
-
-const dispatch = context => type => {
-  store.actions[type](context);
-};
 
 const stateInstance = store.state();
 
-describe('web3 store', async () => {
-  beforeEach(async () => {
-    localStorage.setItem('net', 1);
-    localStorage.setItem(
-      'networks',
-      JSON.stringify([
-        { name: 'TestNet', id: 4, url: 'https://testnet.infura.io/' },
-      ]),
-    );
-
-    store.state = stateInstance;
-    await store.actions.init({
-      commit: commit(stateInstance),
-      dispatch: dispatch({ state: stateInstance, commit, dispatch }),
-      state: stateInstance,
-    });
-  });
-
+describe('web3 store', () => {
   afterEach(() => {
     storage.write.mockClear();
   });
@@ -141,11 +114,14 @@ describe('web3 store', async () => {
 
   describe('getters', () => {
     describe('isCustomNetwork', () => {
-      const defaultNetworks = [{ id: 1 }, { id: 2 }];
+      const defaultNetworks = [{ url: 'url 1' }, { url: 'url 2' }];
       const { isCustomNetwork } = store.getters;
 
       it('should return true', () => {
-        const network = { id: 5 };
+        const network = {
+          id: 5,
+          url: 'url 5',
+        };
 
         expect(isCustomNetwork({ defaultNetworks })(network)).toBeTruthy();
       });
@@ -155,7 +131,10 @@ describe('web3 store', async () => {
 
         expect(isCustomNetwork({ defaultNetworks })(network)).toBeFalsy();
 
-        network = { id: 2 };
+        network = {
+          id: 1,
+          url: 'url 1',
+        };
 
         expect(isCustomNetwork({ defaultNetworks })(network)).toBeFalsy();
       });
@@ -499,6 +478,38 @@ describe('web3 store', async () => {
         expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
           root: true,
         });
+      });
+    });
+
+    describe('validateNetwork', () => {
+      const { validateNetwork } = store.actions;
+
+      it('should return network type and network id', async () => {
+        const context = {};
+        const network = {
+          url: 'https://url',
+        };
+        let networkType;
+        let networkId;
+        let result;
+
+        networkType = 'ropsten';
+        networkId = 3;
+        Web3.eth.net.getNetworkType.mockResolvedValueOnce(networkType);
+        Web3.eth.net.getId.mockResolvedValueOnce(networkId);
+
+        result = await validateNetwork(context, { network });
+
+        expect(result).toEqual([networkType, networkId]);
+
+        networkType = 'main';
+        networkId = 1;
+        Web3.eth.net.getNetworkType.mockResolvedValueOnce(networkType);
+        Web3.eth.net.getId.mockResolvedValueOnce(networkId);
+
+        result = await validateNetwork(context, { network });
+
+        expect(result).toEqual([networkType, networkId]);
       });
     });
   });

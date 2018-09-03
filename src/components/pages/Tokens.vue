@@ -9,12 +9,12 @@
                 <p class="card-header-title">Your Tokens</p>
               </div>
               <div class="card-content is-narrow">
-                <nav v-if="!isTrackedTokensLoaded || trackedTokens.length" class="panel">
+                <nav v-if="isLoading || trackedTokens.length" class="panel">
                   <div class="panel-block">
                     <search-input v-model="search" />
                   </div>
                   <v-spinner
-                    :is-loading="!isTrackedTokensLoaded"
+                    :is-loading="isLoading"
                     class="spinner-block"
                   />
                   <div class="scroller">
@@ -93,29 +93,28 @@ export default {
       search: '',
       searchToken: '',
       addTokenModalOpen: false,
-      tokens: [],
-      serializeInterval: null,
-      subscription: null,
     };
   },
   computed: {
     ...mapState({
       prices: state => state.tokens.prices,
+      allTokens: state => state.tokens.allTokens,
+      // []string, list of tracked tokens addresses
+      trackedTokens: state => state.tokens.trackedTokens,
+      isLoading: state => state.tokens.isLoading,
       ethPrice: state => state.price.price,
       currency: state => state.accounts.settings.fiatCurrency,
-      tokensSubscription: tokensSubscription => state =>
-        state.tokens.tokensSubscription,
     }),
-    ...mapGetters('tokens', ['net', 'trackedTokens', 'isTrackedTokensLoaded']),
+    ...mapGetters('tokens', ['net', 'tokensWithBalance']),
+    // All tokens that are available to add
+    // TODO convert all addresses to checksum in store
     filteredTokens() {
-      return this.tokens.filter(
-        token =>
-          !this.trackedTokens.some(
-            activeToken =>
-              activeToken.address ===
-              web3.utils.toChecksumAddress(token.address),
-          ),
-      );
+      return Object.values(this.allTokens).filter(token => {
+        let address = token.address.toLowerCase();
+        return !this.trackedTokens
+          .map(addr => addr.toLowerCase())
+          .includes(address);
+      });
     },
     searchTokenList() {
       const { searchToken } = this;
@@ -139,28 +138,20 @@ export default {
       const { search } = this;
 
       if (!search) {
-        return this.trackedTokens;
+        return this.tokensWithBalance;
       }
 
       const searchLC = search.toLowerCase();
 
-      return this.trackedTokens.filter(token =>
-        token.symbol.toLowerCase().includes(searchLC),
+      return this.tokensWithBalance.filter(
+        token =>
+          name.toLowerCase().includes(search) ||
+          token.symbol.toLowerCase().includes(searchLC),
       );
     },
   },
-  watch: {
-    net: {
-      handler() {
-        this.getAllTokens().then((tokens = []) => {
-          this.tokens = tokens;
-        });
-      },
-      immediate: true,
-    },
-  },
   methods: {
-    ...mapActions('tokens', ['saveTokenAndSubscribe', 'getAllTokens']),
+    ...mapActions('tokens', ['saveTokenAndSubscribe']),
     setSearchToken(query) {
       this.searchToken = query;
     },

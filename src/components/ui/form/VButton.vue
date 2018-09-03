@@ -1,11 +1,12 @@
 <template>
   <div class="field">
     <div class="control">
-      <button :id="id" @click="$emit('click',$event)"
-         :disabled="!form.isFormValid || disabled"
-         class="button"
-         :type="type"
-         :class="[...classes, {'is-loading' : loading }]">
+      <button
+        v-bind="$attrs"
+        v-on="$listeners"
+        :disabled="!form.isFormValid || disabled"
+        class="button"
+        :class="[...classes, {'is-loading' : loading }]">
         <slot />
       </button>
     </div>
@@ -15,6 +16,7 @@
 <script>
 export default {
   name: 'v-button',
+  inheritAttrs: false,
   inject: {
     $validator: '$validator',
     form: {
@@ -24,17 +26,9 @@ export default {
     },
   },
   props: {
-    id: {
-      type: String,
-      default: null,
-    },
     className: {
       type: String,
       default: '',
-    },
-    type: {
-      type: String,
-      default: 'submit'
     },
     disabled: {
       type: Boolean,
@@ -49,7 +43,7 @@ export default {
     classes() {
       return this.className.split(' ');
     },
-  }
+  },
 };
 </script>
 

@@ -6,3 +6,4 @@ export { Address } from './address';
 export { Wallet } from './wallet';
 export { ENSResolver } from './ens';
 export { Token } from './Token';
+export { ERC20Token } from './erc20';

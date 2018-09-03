@@ -1,7 +1,6 @@
 import web3 from 'web3';
-import { Token } from './Token';
+import { ERC20Token, Token } from '@/class';
 import { BigNumber } from 'bignumber.js';
-import erc20ABI from '@/abi/erc20.json';
 
 const { numberToHex, toWei } = web3.utils;
 
@@ -126,9 +125,8 @@ export class Transaction {
     let { data } = this;
 
     if (this.tokenInfo) {
-      const contract = new eth.Contract(erc20ABI, this.tokenInfo.address, {
-        from: this.from,
-      });
+      const erc20 = new ERC20Token(this.tokenInfo.address);
+      const contract = erc20.getContract();
 
       data = contract.methods.transfer(this.validTo, this.valueWei).encodeABI();
     }

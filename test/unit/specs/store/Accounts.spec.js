@@ -3,6 +3,10 @@ import { Address, Wallet } from '@/class';
 import localStorageMock from '../../localStorageMock.js';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { userService } from '@/services';
+import {
+  SAVE_TOKENS,
+  SAVE_TRACKED_TOKENS,
+} from '@/store/tokens/mutations-types';
 
 import accountsFixture from 'fixtures/accounts';
 
@@ -13,6 +17,7 @@ global.localStorage = localStorageMock;
 //Fake action from antoher storage
 store.actions['tokens/subscribeOnTokensBalancesUpdates'] = jest.fn();
 store.actions['errors/emitError'] = jest.fn();
+store.actions['updateBalance'] = jest.fn();
 
 const { state, actions } = store;
 
@@ -34,6 +39,27 @@ const context = {
   state,
 };
 
+describe('accounts actions', () => {
+  let commit;
+  let dispatch;
+
+  it('should fetch and save tokens on init', async () => {
+    commit = jest.fn();
+    dispatch = jest.fn();
+    await actions.init({ commit, dispatch });
+    expect(commit).toHaveBeenCalledWith(
+      `tokens/${SAVE_TOKENS}`,
+      expect.any(Object),
+      { root: true },
+    );
+    expect(commit).toHaveBeenCalledWith(
+      `tokens/${SAVE_TRACKED_TOKENS}`,
+      expect.any(Array),
+      { root: true },
+    );
+  });
+});
+
 describe('accounts store', () => {
   beforeEach(async () => {
     await actions.init(context);
@@ -52,6 +78,7 @@ describe('accounts store', () => {
     await actions.selectWallet(context, v3.address);
     expect(state.wallets[v3.address] instanceof Wallet).toBe(true);
     expect(state.wallet instanceof Wallet).toBe(true);
+    expect(store.actions['updateBalance']).toHaveBeenCalled();
   });
 
   it('should set address', () => {
@@ -112,6 +139,18 @@ describe('accounts store', () => {
       'addWalletWithPrivateKey',
       expect.any(Object),
     );
+  });
+
+  it('should add wallet with public key', async () => {
+    const dispatch = jest.fn();
+    const commit = jest.fn();
+    let address = '0x3c75226555FC496168d48B88DF83B95F16771F37';
+    userService.setAccount = jest.fn();
+    await actions.addWalletWithPublicKey({ dispatch, commit }, address);
+
+    expect(userService.setAccount).toHaveBeenCalledWith(address, null);
+    expect(commit).toHaveBeenCalledWith('addAddress', address);
+    expect(dispatch).toHaveBeenCalledWith('selectWallet', address);
   });
 
   it('should create wallet instance with seed phrase ', async () => {

@@ -33,13 +33,12 @@
 <script>
 import { ENSResolver } from '@/class';
 import { mapState } from 'vuex';
-import web3 from 'web3';
+import web3 from '@/utils/web3';
+
 export default {
   data() {
-    const ens = new ENSResolver(this.$store.state.web3.web3);
     return {
       pendingEns: false,
-      ens,
       tempValue: '',
     };
   },
@@ -105,7 +104,7 @@ export default {
       });
 
       try {
-        const address = await this.ens.getAddress(this.innerValue);
+        const address = await this.$ens.getAddress(this.innerValue);
         this.$validator.flag(name, {
           valid: true,
           invalid: false,
@@ -158,6 +157,9 @@ export default {
         {},
       );
     },
+  },
+  created() {
+    this.$ens = new ENSResolver(web3);
   },
 };
 </script>

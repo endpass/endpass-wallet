@@ -9,10 +9,11 @@ exports[`LoginByEmailModal render should render component 1`] = `
     class="subtitle"
   >
     Please enter your email address below to access your
-  wallet or create a new one.
+    wallet or create a new one.
   </p>
    
   <v-form
+    id="loginByEmail"
     v-on:submit="bound handleSubmit"
   >
     <v-input
@@ -29,7 +30,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
       v-model="termsAccepted"
     >
       
-      I accept the 
+        I accept the 
       <a
         href="https://endpass.com/terms/"
         target="_blank"
@@ -37,23 +38,29 @@ exports[`LoginByEmailModal render should render component 1`] = `
         Terms of Service
       </a>
       
-      and 
+        and 
       <a
         href="https://endpass.com/privacy/"
         target="_blank"
       >
         Privacy
-        Policy
+          Policy
       </a>
       .
-    
+      
     </v-checkbox>
-     
+  </v-form>
+   
+  <div
+    class="buttons"
+  >
     <v-button
       classname="is-primary is-medium"
+      data-test="submit-login"
+      form="loginByEmail"
     >
       Continue
     </v-button>
-  </v-form>
+  </div>
 </v-modal>
 `;

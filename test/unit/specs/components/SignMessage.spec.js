@@ -2,6 +2,7 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import SignMessage from '@/components/SignMessage';
 import { generateStubs } from '@/utils/testUtils';
+import web3 from '@/utils/web3';
 
 describe('SignMessage', () => {
   const signedMessage = {};
@@ -16,15 +17,7 @@ describe('SignMessage', () => {
             getPrivateKey: jest.fn(() => 'private key'),
           },
         },
-        web3: {
-          web3: {
-            eth: {
-              accounts: {
-                sign: jest.fn(() => signedMessage),
-              },
-            },
-          },
-        },
+        web3: {},
       },
     };
 
@@ -77,6 +70,7 @@ describe('SignMessage', () => {
       });
 
       it('should sign message', () => {
+        web3.eth.accounts.sign = jest.fn(() => signedMessage);
         const { vm } = wrapper;
 
         vm.signMessage(password);
@@ -88,7 +82,7 @@ describe('SignMessage', () => {
       it('should not sign message', () => {
         const { vm } = wrapper;
 
-        vm.$store.state.web3.web3.eth.accounts.sign = jest.fn(() => {
+        web3.eth.accounts.sign = jest.fn(() => {
           throw new Error();
         });
 

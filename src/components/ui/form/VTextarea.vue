@@ -5,9 +5,10 @@
            :for="id">{{ label }}</label>
     <div class="control">
       <textarea
-        v-model="innerValue"
+        :value="innerValue"
         class="textarea"
-        v-bind="getTextareaProps()"
+        v-bind="$attrs"
+        v-on="listeners"
       />
     </div>
   </div>
@@ -16,51 +17,31 @@
 <script>
 export default {
   name: 'v-textarea',
+  inheritAttrs: false,
   props: {
     value: {
       type: [String, Number],
-      default: null,
-    },
-    id: {
-      type: String,
       default: null,
     },
     label: {
       type: String,
       default: null,
     },
-    placeholder: {
-      type: String,
-      default: null,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
   },
-  data() {
-    return {
-      innerValue: this.value,
-      ignoreProps: ['label'],
-    };
-  },
-  methods: {
-    getTextareaProps() {
-      return Object.keys(this.$props).reduce((accumulator, prop) => {
-        if (!this.ignoreProps.includes(prop)) {
-          accumulator[prop] = this.$props[prop];
-        }
-
-        return accumulator;
-      }, {});
+  computed: {
+    innerValue: {
+      get() {
+        return this.value;
+      },
+      set(newVal) {
+        this.$emit('input', newVal);
+      },
     },
-  },
-  watch: {
-    value(value) {
-      this.innerValue = value;
-    },
-    innerValue(value) {
-      this.$emit('input', value);
+    listeners() {
+      return {
+        ...this.$listeners,
+        input: event => this.$emit('input', event.target.value),
+      };
     },
   },
 };

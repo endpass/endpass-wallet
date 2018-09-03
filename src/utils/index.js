@@ -1,6 +1,7 @@
 import store from '../store';
 
 export { default as http } from './http';
+export { default as web3 } from './web3';
 
 export const kebabToCamel = input =>
   input.replace(/-([a-z])/g, g => g[1].toUpperCase());

@@ -36,11 +36,11 @@ describe('TokenList', () => {
           namespaced: true,
           state: {
             prices: {
-              FST: 2, // price of token in ETH
+              FST: { ETH: 2 }, // price of token in ETH
             },
           },
           getters: {
-            trackedTokens: () => tokensFixture.tokens,
+            tokensWithBalance: () => tokensFixture.tokens,
           },
           actions,
         },
@@ -88,7 +88,7 @@ describe('TokenList', () => {
   it('allows setting custom token list', () => {
     wrapper.setProps({ tokens: tokensFixture.tokens.slice(0, 1) });
     expect(wrapper.vm.selectedTokens).toHaveLength(1);
-    expect(wrapper.vm.selectedTokens[0]).toBeInstanceOf(Token);
+    expect(wrapper.vm.selectedTokens[0]).toEqual(tokensFixture.tokens[0]);
   });
 
   it('should not show remove token button by default', () => {

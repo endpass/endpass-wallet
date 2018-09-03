@@ -1,6 +1,6 @@
 <template>
   <div class="new-account-modal">
-    <v-modal class="is-dark" @close="close">
+    <v-modal @close="close">
       <header slot="header">{{ headerText }}</header>
       <div v-if="!providerAdded">
 	      <v-form v-model="isFormValid" @submit="addNewProvider">
@@ -27,7 +27,7 @@
                    data-vv-name="Provider url"
                    @input="handleInput"
           />
-    
+
           <v-select v-model="innerProvider.currency"
                     :options="currencies"
                     v-validate="'required'"
@@ -135,16 +135,21 @@ export default {
     handleButtonClick() {
       this.isLoading = true;
 
-      return this.validateNetwork(this.innerProvider)
-        .then(() => {
+      return this.validateNetwork({ network: this.innerProvider })
+        .then(([networkType, networkId]) => {
           const action = this.needUpdateProvider
             ? this.updateProvider
             : this.addNewProvider;
+          const network = { ...this.innerProvider };
+
+          if (!this.needUpdateProvider) {
+            network.id = networkId;
+          }
 
           this.isLoading = false;
           this.providerAdded = true;
 
-          action({ network: this.innerProvider });
+          action({ network });
         })
         .catch(() => {
           this.isLoading = false;

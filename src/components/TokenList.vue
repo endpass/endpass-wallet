@@ -58,11 +58,13 @@ export default {
     };
   },
   computed: {
+    // TODO test that user added tokens have balances
     selectedTokens() {
-      let trackedTokens = this.tokens ? this.tokens : this.trackedTokens;
-      return trackedTokens.map(token => {
-        return new Token(token);
-      });
+      if (this.tokens && this.tokens.length) {
+        return this.tokens;
+      } else {
+        return this.tokensWithBalance;
+      }
     },
     // Returns a Map of token symbol to price
     prices() {
@@ -78,7 +80,7 @@ export default {
       ethPrice: state => state.price.price,
       currency: state => state.accounts.settings.fiatCurrency,
     }),
-    ...mapGetters('tokens', ['trackedTokens']),
+    ...mapGetters('tokens', ['tokensWithBalance']),
   },
   methods: {
     ...mapActions('tokens', [
@@ -87,9 +89,8 @@ export default {
     ]),
     // Return value of tokens in fiat
     getTokenPrice(symbol) {
-      return new BigNumber(this.tokenPrices[symbol] || 0)
-        .times(this.ethPrice)
-        .toString();
+      let prices = this.tokenPrices[symbol] || {};
+      return new BigNumber(prices['ETH'] || 0).times(this.ethPrice).toString();
     },
     // Get token prices for all tokens
     async updateTokenPrice() {

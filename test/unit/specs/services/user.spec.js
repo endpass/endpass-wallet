@@ -100,7 +100,8 @@ describe('User service', () => {
 
     it('should handle successfull POST /token request', async () => {
       mock.onPost(url).reply(200, successResp);
-      await userService.loginViaOTP(code, email);
+      let resp = await userService.loginViaOTP(code, email);
+      expect(resp).toEqual(successResp);
     });
 
     it('should handle failed POST /token request', async () => {
@@ -196,7 +197,8 @@ describe('User service', () => {
 
     it('should handle successful POST /user request', async () => {
       mock.onPost(url).reply(200, successResp);
-      await userService.setSettings(settings);
+      let resp = await userService.setSettings(settings);
+      expect(resp).toEqual(successResp);
     });
   });
 
@@ -279,7 +281,8 @@ describe('User service', () => {
 
     it('should handle successful POST /account request', async () => {
       mock.onPost(url).reply(200, successResp);
-      let response = await userService.setAccount(address, account);
+      let resp = await userService.setAccount(address, account);
+      expect(resp).toEqual(successResp);
     });
   });
 
@@ -367,7 +370,8 @@ describe('User service', () => {
 
     it('should handle successful POST /otp request', async () => {
       mock.onPost(url).reply(200, successResp);
-      await userService.setOtpSettings(secret, code);
+      let resp = await userService.setOtpSettings(secret, code);
+      expect(resp).toEqual(successResp);
     });
 
     it('should handle failed POST /otp request', async () => {
@@ -413,7 +417,8 @@ describe('User service', () => {
 
     it('should handle successful DELETE /otp request', async () => {
       mock.onDelete(url).reply(200, successResp);
-      await userService.deleteOtpSettings(code);
+      let resp = await userService.deleteOtpSettings(code);
+      expect(resp).toEqual(successResp);
     });
 
     it('should handle failed DELETE /otp request', async () => {

@@ -4,12 +4,12 @@ import {
   SAVE_TOKENS,
   DELETE_TOKEN,
   SAVE_TOKENS_PRICES,
+  SAVE_TOKENS_BALANCES,
   SAVE_TOKEN_PRICE,
-  SAVE_TOKEN_TRACKER_INSTANCE,
+  SAVE_TOKEN_INFO,
+  SAVE_TRACKED_TOKENS,
 } from '@/store/tokens/mutations-types';
 import { NotificationError } from '@/class';
-import { tokenUpdateInterval } from '@/config';
-import TokenTracker from 'eth-token-tracker';
 import Web3 from 'web3';
 import {
   userService,
@@ -23,7 +23,7 @@ jest.useFakeTimers();
 describe('tokens actions', () => {
   let commit, dispatch, token, state, getters, rootState;
   token = {
-    address: '0x0',
+    address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
     symbol: 'KEK-TOKEN',
   };
   describe('saveTokenAndSubscribe', () => {
@@ -36,22 +36,24 @@ describe('tokens actions', () => {
       };
       state = {
         savedTokens: {},
-        tokenTracker: {
-          serialize: () => [],
-          add: jest.fn(),
-        },
+        trackedTokens: [],
       };
     });
     it('should try to save token with service and SAVE_TOKEN ', async () => {
+      // mock saving
+      state.savedTokens = {
+        [getters.net]: [token],
+      };
       await actions.saveTokenAndSubscribe(
         { commit, state, getters, dispatch },
         { token },
       );
-      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenCalledWith(SAVE_TOKEN, {
         net: getters.net,
         token,
       });
+      expect(commit).toBeCalledWith(SAVE_TRACKED_TOKENS, [token.address]);
       expect(userService.setSetting).toHaveBeenCalledTimes(1);
       expect(userService.setSetting).toHaveBeenCalledWith('tokens', {
         [getters.net]: [token],
@@ -85,10 +87,7 @@ describe('tokens actions', () => {
         savedTokens: {
           1: [token],
         },
-        tokenTracker: {
-          serialize: () => [],
-          add: jest.fn(),
-        },
+        trackedTokens: [],
       };
     });
     it('should try to delete token with service and DELETE_TOKEN ', async () => {
@@ -128,28 +127,23 @@ describe('tokens actions', () => {
     beforeEach(() => {
       userService.setSetting = jest.fn();
       dispatch = jest.fn();
+      commit = jest.fn();
       getters = {
         net: 1,
       };
     });
-    it('should return empty array if network different from main', () => {
-      getters.net = 2;
-      expect(actions.getAllTokens({ dispatch, getters })).resolves.toBe([]);
-    });
     it('should resolve array of Tokens from service', async () => {
       tokenInfoService.getTokensList = jest.fn();
       tokenInfoService.getTokensList.mockReturnValueOnce([token]);
-      const result = await actions.getAllTokens({ dispatch, getters });
-      expect(result.length).toBe(1);
-      expect(result[0]).toMatchObject(token);
+      await actions.getAllTokens({ dispatch, getters, commit });
+      expect(commit).toHaveBeenCalledWith(SAVE_TOKEN_INFO, [token]);
     });
 
     it('should emit error and return empty array if failed to fetch data', async () => {
       tokenInfoService.getTokensList = jest.fn();
       tokenInfoService.getTokensList.mockRejectedValueOnce();
-      const result = await actions.getAllTokens({ dispatch, getters });
+      await actions.getAllTokens({ dispatch, getters, commit });
       expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(result.length).toBe(0);
     });
   });
   describe('subscribeOnTokensBalancesUpdates', () => {
@@ -158,15 +152,14 @@ describe('tokens actions', () => {
       commit = jest.fn();
       getters = {
         net: 1,
-        address: '0x0',
+        address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
       };
       state = {
-        tokenTracker: {
-          stop: jest.fn(),
-        },
+        trackedTokens: [],
       };
     });
-    it('should get tokens with balance and create tracker with them', async () => {
+    it('should get tokens with balance', async () => {
+      expect.assertions(2);
       const tokensWithBalance = [
         {
           token,
@@ -179,47 +172,27 @@ describe('tokens actions', () => {
         state,
         commit,
       });
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenNthCalledWith(2, 'createTokenTracker', {
-        tokensWithBalance,
-      });
-    });
-    it('should reset interval', async () => {
-      state.tokensSerializeInterval = setInterval(() => {});
-      await actions.subscribeOnTokensBalancesUpdates({
-        dispatch,
-        getters,
-        state,
-        commit,
-      });
-      expect(clearInterval).toHaveBeenCalledTimes(1);
-      expect(clearInterval).toHaveBeenCalledWith(state.tokensSerializeInterval);
-      expect(state.tokenTracker.stop).toHaveBeenCalledTimes(1);
-    });
-    it('should emit error if failed', async () => {
-      dispatch.mockRejectedValue();
-      await actions.subscribeOnTokensBalancesUpdates({
-        dispatch,
-        getters,
-        state,
-        commit,
-      });
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch.mock.calls[1][0]).toBe('errors/emitError');
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'getTokensWithBalance');
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'updateTokensBalances');
     });
   });
   describe('getTokensWithBalance', () => {
     beforeEach(() => {
       getters = {
-        address: '0x0',
+        address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+      };
+      state = {
+        allTokens: {
+          [token.address]: token,
+        },
+        trackedTokens: [],
       };
       dispatch = jest.fn();
       ethplorerService.getTokensWithBalance = jest.fn();
     });
     it('gets tokens with balance for current address, and updates api status', async () => {
       ethplorerService.getTokensWithBalance.mockReturnValueOnce([token]);
-      const result = await actions.getTokensWithBalance({ dispatch, getters });
-      expect(result).toMatchObject([token]);
+      await actions.getTokensWithBalance({ state, dispatch, commit, getters });
       expect(ethplorerService.getTokensWithBalance).toBeCalledWith(
         getters.address,
       );
@@ -231,21 +204,19 @@ describe('tokens actions', () => {
         },
         { root: true },
       );
-    });
-    it('emits error end returns empty array', async () => {
-      ethplorerService.getTokensWithBalance.mockRejectedValueOnce();
-      const result = await actions.getTokensWithBalance({ dispatch, getters });
-      expect(result).toMatchObject([]);
+      expect(commit).toBeCalledWith(SAVE_TOKEN_INFO, [token]);
+      expect(commit).toBeCalledWith(SAVE_TRACKED_TOKENS, [token.address]);
     });
   });
   describe('updateTokensPrices', () => {
     beforeEach(() => {
       state = {
-        trackedTokens: [token],
+        trackedTokens: [token.address],
       };
       commit = jest.fn();
       getters = {
         activeCurrencyName: 'ETH',
+        tokensWithBalance: [token],
       };
       priceService.getPrices = jest.fn();
     });
@@ -260,6 +231,50 @@ describe('tokens actions', () => {
       );
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toHaveBeenCalledWith(SAVE_TOKENS_PRICES, pricesMock);
+    });
+  });
+  describe('updateTokensBalances', () => {
+    beforeEach(() => {
+      commit = jest.fn();
+      getters = {
+        address: '0x999',
+        trackedTokens: [
+          {
+            address: '0x123',
+            getBalance: jest.fn(() => Promise.resolve('100')),
+          },
+          {
+            address: '0x456',
+            getBalance: jest.fn(() => Promise.resolve('200')),
+          },
+        ],
+      };
+    });
+    it('gets tokens balances and saves them with mutation', async () => {
+      await actions.updateTokensBalances({ commit, getters });
+      expect(getters.trackedTokens[0].getBalance).toHaveBeenCalledWith(
+        getters.address,
+      );
+      expect(getters.trackedTokens[1].getBalance).toHaveBeenCalledWith(
+        getters.address,
+      );
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(SAVE_TOKENS_BALANCES, {
+        '0x123': '100',
+        '0x456': '200',
+      });
+    });
+    it('sets balance to null on error', async () => {
+      (getters.trackedTokens[1] = {
+        address: '0x456',
+        getBalance: jest.fn(() => Promise.reject()),
+      }),
+        await actions.updateTokensBalances({ commit, getters });
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(SAVE_TOKENS_BALANCES, {
+        '0x123': '100',
+        '0x456': null,
+      });
     });
   });
   describe('updateTokenPrice', () => {
@@ -289,46 +304,13 @@ describe('tokens actions', () => {
       });
     });
   });
-  describe('createTokenTracker', () => {
-    const currentProvider = new Web3.providers.HttpProvider();
-    beforeEach(() => {
-      commit = jest.fn();
-      dispatch = jest.fn();
-      getters = {
-        net: 1,
-        address: '0x0',
-        savedCurrentNetworkTokens: [token],
-      };
-      rootState = {
-        web3: {
-          web3: {
-            currentProvider,
-          },
-        },
-      };
-    });
-    it('should creates right token tracker', () => {
-      const tokenTrackerMock = new TokenTracker({
-        userAddress: getters.address,
-        provider: currentProvider,
-        pollingInterval: tokenUpdateInterval,
-        tokens: [token],
-      });
-      actions.createTokenTracker(
-        { commit, dispatch, getters, rootState },
-        { tokensWithBalance: [token] },
-      );
-      expect(commit.mock.calls[0][0]).toBe(SAVE_TOKEN_TRACKER_INSTANCE);
-      expect(commit.mock.calls[0][1].userAddress).toBe(getters.address);
-      expect(commit.mock.calls[0][1].tokens).toMatchObject([token]);
-    });
-  });
   describe('init', () => {
     beforeEach(() => {
       dispatch = jest.fn();
     });
-    it('subscribes on prive updates', async () => {
-      actions.init({ dispatch });
+    it('gets all tokens on init', async () => {
+      await actions.init({ dispatch });
+      expect(dispatch).toHaveBeenCalledWith('getAllTokens');
       expect(dispatch).toHaveBeenCalledWith('subscribeOnTokensPricesUpdates');
     });
   });

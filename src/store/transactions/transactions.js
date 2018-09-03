@@ -1,11 +1,9 @@
 import Tx from 'ethereumjs-tx';
 import { BigNumber } from 'bignumber.js';
-import web3 from 'web3';
 import { EventEmitter, NotificationError, Transaction } from '@/class';
 import { MAIN_NET_ID } from '@/constants';
 import ethplorerService from '@/services/ethplorer';
-
-const { toChecksumAddress } = web3.utils;
+import web3 from '@/utils/web3';
 
 export default {
   namespaced: true,
@@ -33,8 +31,9 @@ export default {
           const { to, from, state: trxStatus } = trx;
 
           return (
-            toChecksumAddress(from) === address ||
-            (trxStatus === 'success' && toChecksumAddress(to) === address)
+            web3.utils.toChecksumAddress(from) === address ||
+            (trxStatus === 'success' &&
+              web3.utils.toChecksumAddress(to) === address)
           );
         })
         .sort((trx1, trx2) => {
@@ -93,8 +92,8 @@ export default {
   actions: {
     async getNonceInBlock({ rootState }) {
       const address = rootState.accounts.address.getChecksumAddressString();
-      const eth = rootState.web3.web3.eth;
-      return await eth.getTransactionCount(address);
+
+      return await web3.eth.getTransactionCount(address);
     },
     async getNextNonce({ state, dispatch }) {
       const nonce = await dispatch('getNonceInBlock');
@@ -105,9 +104,8 @@ export default {
         .reduce((lastNonce, tnxNonce) => {
           if (lastNonce === tnxNonce) {
             return +tnxNonce + 1;
-          } else {
-            return lastNonce;
           }
+          return lastNonce;
         }, nonce.toString())
         .toString();
 
@@ -117,7 +115,7 @@ export default {
       { rootState, state, dispatch },
       { transaction, password },
     ) {
-      const eth = rootState.web3.web3.eth;
+      const eth = web3.eth;
       const wallet = rootState.accounts.wallet;
 
       try {
@@ -136,12 +134,6 @@ export default {
           .once('transactionHash', hash => {
             eventEmitter.emit('transactionHash', hash);
           })
-          .on('confirmation', confNumber => {
-            if (confNumber > 0) {
-              sendEvent.off('confirmation');
-              eventEmitter.emit('confirmation', confNumber);
-            }
-          })
           .once('error', (err, receipt) => {
             const ignoreError = 'Transaction was not mined within750 seconds';
 
@@ -149,8 +141,10 @@ export default {
               dispatch('handleSendingError', { err, receipt, transaction });
               eventEmitter.emit('error', err);
             }
-
             console.error(err);
+          })
+          .then(() => {
+            eventEmitter.emit('confirmation');
           });
 
         return eventEmitter;

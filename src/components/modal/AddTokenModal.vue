@@ -69,7 +69,7 @@
     </div>
 
     <div slot="footer">
-      <div class="is-pulled-left">
+      <div class="buttons">
         <v-button
           v-if="!loadedToken && !addedToken"
           :loading="loadingToken"
@@ -114,12 +114,13 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
-import erc20ABI from '@/abi/erc20.json';
+import { mapActions } from 'vuex';
+import { ERC20Token } from '@/class';
 import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
+import web3 from '@/utils/web3';
 
 export default {
   name: 'AddTokenModal',
@@ -142,41 +143,32 @@ export default {
       isFormValid: false,
     };
   },
-  computed: {
-    ...mapState({
-      web3: state => state.web3.web3,
-      address: state => state.accounts.address.getChecksumAddressString(),
-    }),
-  },
   methods: {
-    ...mapActions('tokens', ['addTokenToSubscription']),
+    ...mapActions('tokens', ['saveTokenAndSubscribe']),
     resetForm() {
       Object.assign(this.$data, this.$options.data());
     },
-    addToken() {
-      this.addTokenToSubscription({ ...this.token });
-      this.loadingToken = false;
-      this.addedToken = true;
+    async addToken() {
+      return this.saveTokenAndSubscribe({ token: { ...this.token } });
     },
     async createToken() {
       this.loadingToken = true;
 
       try {
-        const contract = new this.web3.eth.Contract(
-          erc20ABI,
-          this.token.address,
-        );
-        await this.checkContractExistence(contract);
-        await this.setTokenData(contract);
+        const erc20 = new ERC20Token(this.token.address);
+        const tokenInfo = await erc20.getToken();
+        await this.setTokenData(tokenInfo);
         const { decimals, name, symbol } = this.token;
 
         if (decimals && symbol && name) {
           this.token.decimals = parseInt(decimals, 10);
-          this.addToken(this.token);
+          await this.addToken();
         } else {
           this.loadingToken = false;
           this.loadedToken = true;
         }
+        this.loadingToken = false;
+        this.addedToken = true;
       } catch (e) {
         this.loadingToken = false;
         this.$notify({
@@ -186,19 +178,14 @@ export default {
         });
       }
     },
-    checkContractExistence(contract) {
-      return contract.methods.balanceOf(this.address).call();
-    },
-    setTokenData(contract) {
-      const tokenData = ['name', 'decimals', 'symbol'].map(async item => {
-        try {
-          this.token[item] = await contract.methods[item]().call();
-        } catch (e) {
-          this.notFound[item] = true;
-        }
-      });
-
-      return Promise.all(tokenData);
+    // Accepts Token class
+    async setTokenData(tokenInfo) {
+      this.token = {
+        ...this.token,
+        name: tokenInfo.name,
+        decimals: tokenInfo.decimals,
+        symbol: tokenInfo.symbol,
+      };
     },
     close() {
       this.$emit('close');
