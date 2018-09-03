@@ -7,13 +7,11 @@ describe('ImportWalletFromJson', () => {
     let wrapper;
 
     beforeEach(() => {
-      wrapper = shallow(ImportWalletFromJSON, {
-      });
+      wrapper = shallow(ImportWalletFromJSON, {});
     });
 
     it('should be a Vue component', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
   });
-
 });
