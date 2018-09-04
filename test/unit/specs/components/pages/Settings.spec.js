@@ -38,8 +38,8 @@ describe('SettingsPage', () => {
       },
       user: {
         namespaced: true,
-        state: {
-          identityType: IDENTITY_MODE.DEFAULT,
+        getters: {
+          isDefaultIdentity: () => true,
         },
       },
     },
@@ -70,9 +70,7 @@ describe('SettingsPage', () => {
     });
 
     it('should not render otp settings when not default identity type', () => {
-      wrapper.setComputed({
-        identityType: IDENTITY_MODE.LOCAL,
-      });
+      wrapper.setComputed({ isDefaultIdentity: false });
 
       expect(wrapper.find('two-factor-auth-settings').exists()).toBeFalsy();
       expect(wrapper.element).toMatchSnapshot();

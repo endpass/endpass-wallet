@@ -9,21 +9,6 @@ export default class ServerProvider {
     return this.write(params);
   }
 
-  readProp = async params => {
-    try {
-      const { prop } = params;
-      const data = await this.read(params);
-
-      return data[prop];
-    } catch (e) {
-      e.title = 'Error in server storage';
-      e.text = "Can't read data from server storage, maybe it is not available";
-      e.type = 'is-warning';
-
-      throw e;
-    }
-  };
-
   read = async params => {
     try {
       const { url } = params;
@@ -33,21 +18,6 @@ export default class ServerProvider {
     } catch (e) {
       e.title = 'Error in server storage';
       e.text = "Can't read data from server storage, maybe it is not available";
-      e.type = 'is-warning';
-
-      throw e;
-    }
-  };
-
-  writeProp = async params => {
-    try {
-      const { url, payload, prop } = params;
-      const { data } = await this.write(url, { [prop]: payload });
-
-      return data;
-    } catch (e) {
-      e.title = 'Error in server storage';
-      e.text = "Can't save data to server storage, maybe it is not available";
       e.type = 'is-warning';
 
       throw e;
@@ -84,6 +54,4 @@ export default class ServerProvider {
       throw e;
     }
   };
-
-  clear = () => Promise.resolve({ success: true });
 }
