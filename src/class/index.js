@@ -7,3 +7,4 @@ export { Wallet } from './wallet';
 export { ENSResolver } from './ens';
 export { Token } from './Token';
 export { ERC20Token } from './erc20';
+export { default as Synchronizer } from './Synchronizer';
