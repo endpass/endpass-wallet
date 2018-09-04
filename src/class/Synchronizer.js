@@ -1,18 +1,14 @@
 export default class Synchronizer {
   constructor({ storage, state, modules = [], env = 'production' }) {
+    if (!storage) {
+      throw new Error('You must pass storagex to Synchronizer instance!');
+    } else if (!state) {
+      throw new Error('You must pass state to Synchronizer instance!');
+    }
+
     this.restore = this.restore.bind(this);
     this.backup = this.backup.bind(this);
     this.setListener = this.setListener.bind(this);
-
-    if (!storage) {
-      throw new Error(
-        'You must pass storage instance as first parameter to Synchronizer instance!',
-      );
-    } else if (!state) {
-      throw new Error(
-        'You must pass state as second parameter to Synchronizer instance!',
-      );
-    }
 
     this.storageKey = `${env}-endpass-local-sync`;
     this.listener = null;

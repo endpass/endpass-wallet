@@ -26,14 +26,14 @@ describe('Synchronizer Class', () => {
     it('throws if storage is not passed to constructor', () => {
       expect(() => {
         /* eslint-disable-next-line */
-        new Synchronizer();
+        new Synchronizer({});
       }).toThrow();
     });
 
     it('throws if state is not passed to constructor', () => {
       expect(() => {
         /* eslint-disable-next-line */
-        new Synchronizer({});
+        new Synchronizer({ storage: {} });
       }).toThrow();
     });
   });
@@ -55,6 +55,8 @@ describe('Synchronizer Class', () => {
     const state = {};
 
     it('calls listen handler when restore method was called', async () => {
+      expect.assertions(1);
+
       const sync = new Synchronizer({
         storage,
         state,
@@ -65,10 +67,11 @@ describe('Synchronizer Class', () => {
       await sync.restore();
 
       expect(listener).toBeCalled();
-      expect.assertions(1);
     });
 
     it('save backup data of given modules to given storage by endpass-local-sync key', async () => {
+      expect.assertions(2);
+
       const sync = new Synchronizer({
         storage,
         state,
@@ -90,10 +93,11 @@ describe('Synchronizer Class', () => {
           test: 'foo',
         },
       });
-      expect.assertions(2);
     });
 
     it('listener returns new value of given storage by given modules', async () => {
+      expect.assertions(1);
+
       const sync = new Synchronizer({
         storage,
         state,
@@ -112,11 +116,11 @@ describe('Synchronizer Class', () => {
       sync.setListener(listener);
       await sync.backup();
       await sync.restore();
-
-      expect.assertions(1);
     });
 
     it('stops listening if listener set to null', async () => {
+      expect.assertions(1);
+
       const sync = new Synchronizer({
         storage,
         state,
@@ -128,7 +132,6 @@ describe('Synchronizer Class', () => {
       await sync.restore();
 
       expect(listener).not.toBeCalled();
-      expect.assertions(1);
     });
   });
 });

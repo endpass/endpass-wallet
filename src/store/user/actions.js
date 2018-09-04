@@ -1,8 +1,22 @@
 import { NotificationError, Synchronizer } from '@/class';
-import { localStore } from '@/services/storage';
+import { LocalStorage } from '@/class/storage';
 import { SET_AUTHORIZATION_STATUS } from './mutations-types';
 
 let sync = null;
+let restoreHandler = null;
+let backupHandler = null;
+
+const triggerHandler = handler => async () => {
+  try {
+    await handler();
+  } catch (err) {
+    throw new NotificationError({
+      title: 'Browser sync error',
+      text: 'Something went wrong during last attempt to restore local data',
+      type: 'is-warning',
+    });
+  }
+};
 
 const setAuthorizationStatus = (
   { commit, dispatch, getters, rootState },
@@ -23,11 +37,13 @@ const setAuthorizationStatus = (
 
   if (!sync) {
     sync = new Synchronizer({
-      storage: localStore,
+      storage: LocalStorage,
       modules: ['transactions'],
       env: process.env.NODE_ENV,
       state: rootState,
     });
+    restoreHandler = triggerHandler(sync.restore);
+    backupHandler = triggerHandler(sync.backup);
   }
 
   if (authorizationStatus && !sync.listener) {
@@ -35,13 +51,13 @@ const setAuthorizationStatus = (
       dispatch('applyStateBackup', { data }, { root: true });
     });
 
-    window.addEventListener('focus', sync.restore);
-    window.addEventListener('blur', sync.backup);
+    window.addEventListener('focus', restoreHandler);
+    window.addEventListener('blur', backupHandler);
   } else if (!authorizationStatus && sync.listener) {
     sync.setListener(null);
 
-    window.removeEventListener('focus', sync.restore);
-    window.removeEventListener('blur', sync.backup);
+    window.removeEventListener('focus', restoreHandler);
+    window.removeEventListener('blur', backupHandler);
   }
 };
 

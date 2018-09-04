@@ -10,7 +10,7 @@ describe('user actions', () => {
       const authorizationStatus = true;
 
       actions.setAuthorizationStatus(
-        { commit, getters },
+        { commit, getters, rootState: {} },
         { authorizationStatus },
       );
 
@@ -28,7 +28,10 @@ describe('user actions', () => {
         isLoggedOut: false,
       };
 
-      actions.setAuthorizationStatus({ commit, dispatch, getters }, {});
+      actions.setAuthorizationStatus(
+        { commit, dispatch, getters, rootState: {} },
+        {},
+      );
 
       expect(dispatch).toHaveBeenCalledTimes(0);
     });
