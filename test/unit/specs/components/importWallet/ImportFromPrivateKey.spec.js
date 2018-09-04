@@ -1,17 +1,16 @@
 import { shallow, mount, createLocalVue } from '@vue/test-utils';
-import VeeValidate from 'vee-validate';
 import Vuex from 'vuex';
+import VeeValidate from 'vee-validate';
+import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
+
+jest.mock('@/router', () => require('../../../__mocks__/router'));
 
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
 localVue.use(VeeValidate);
 
-import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
-
 jest.useFakeTimers();
-
-import NavSidebar from '@/components/NavSidebar';
 
 describe('ImportFromPrivateKey', () => {
   let wrapper;
@@ -20,6 +19,7 @@ describe('ImportFromPrivateKey', () => {
       const storeOptions = {
         modules: {
           accounts: {
+            namespaced: true,
             actions: {
               addWalletWithPrivateKey: jest.fn(),
             },
@@ -27,7 +27,7 @@ describe('ImportFromPrivateKey', () => {
         },
       };
       const store = new Vuex.Store(storeOptions);
-      wrapper = shallow(NavSidebar, {
+      wrapper = shallow(ImportFromPrivateKey, {
         localVue,
         store,
       });
@@ -50,7 +50,7 @@ describe('ImportFromPrivateKey', () => {
     };
     beforeEach(() => {
       const store = new Vuex.Store(storeOptions);
-      wrapper = shallow(NavSidebar, {
+      wrapper = shallow(ImportFromPrivateKey, {
         localVue,
         store,
       });
