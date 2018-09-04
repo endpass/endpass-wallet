@@ -27,7 +27,6 @@ export default class ProxyRequest {
 
       default:
         this.provider = new ServerProvider(url);
-        break;
     }
 
     const decorators = [new ParametersDecorator(this.provider)];
@@ -61,5 +60,37 @@ export default class ProxyRequest {
         type: e.type,
       });
     }
+  }
+
+  add(url, params) {
+    return this.request({
+      ...params,
+      method: 'add',
+      url,
+    });
+  }
+
+  read(url, params) {
+    return this.request({
+      ...params,
+      method: 'read',
+      url,
+    });
+  }
+
+  write(url, params) {
+    return this.request({
+      ...params,
+      method: 'write',
+      url,
+    });
+  }
+
+  remove(url, params) {
+    return this.request({
+      ...params,
+      method: 'remove',
+      url,
+    });
   }
 }

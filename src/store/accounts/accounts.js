@@ -278,7 +278,10 @@ export default {
     },
     async logout({ commit, dispatch }) {
       commit('setEmail', null);
-      userService.setIdentityMode(IDENTITY_MODE.DEFAULT);
+
+      try {
+        userService.setIdentityMode(IDENTITY_MODE.DEFAULT);
+      } catch (e) {} // eslint-disable-line no-empty
 
       try {
         await userService.logout();
