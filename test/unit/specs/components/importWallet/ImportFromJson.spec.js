@@ -1,13 +1,20 @@
-import { shallow } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
+import VeeValidate from 'vee-validate';
 
-import ImportWalletFromJson from '@/components/importWallet/ImportWalletFromJson';
+const localVue = createLocalVue();
 
-describe('ImportWalletFromJson', () => {
+localVue.use(VeeValidate);
+
+import ImportFromJson from '@/components/importWallet/ImportFromJson';
+
+describe('ImportFromJson', () => {
   describe('render', () => {
     let wrapper;
 
     beforeEach(() => {
-      wrapper = shallow(ImportWalletFromJSON, {});
+      wrapper = shallow(ImportFromJson, {
+        localVue,
+      });
     });
 
     it('should be a Vue component', () => {

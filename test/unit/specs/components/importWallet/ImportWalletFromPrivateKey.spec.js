@@ -1,20 +1,19 @@
 import { shallow, mount, createLocalVue } from '@vue/test-utils';
-
+import VeeValidate from 'vee-validate';
 import Vuex from 'vuex';
+
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
+localVue.use(VeeValidate);
 
-import ImportWalletFromPrivateKey from '@/components/importWallet/ImportWalletFromPrivateKey';
+import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
 
 jest.useFakeTimers();
 
-
-
-
 import NavSidebar from '@/components/NavSidebar';
 
-describe('ImportWalletFromPrivateKey', () => {
+describe('ImportFromPrivateKey', () => {
   let wrapper;
   describe('render', () => {
     beforeEach(() => {
@@ -22,9 +21,9 @@ describe('ImportWalletFromPrivateKey', () => {
         modules: {
           accounts: {
             actions: {
-              logout: jest.fn(),
-            }
-          }
+              addWalletWithPrivateKey: jest.fn(),
+            },
+          },
         },
       };
       const store = new Vuex.Store(storeOptions);
@@ -45,8 +44,8 @@ describe('ImportWalletFromPrivateKey', () => {
         accounts: {
           actions: {
             addWalletWithPrivateKey: jest.fn(),
-          }
-        }
+          },
+        },
       },
     };
     beforeEach(() => {
@@ -57,18 +56,23 @@ describe('ImportWalletFromPrivateKey', () => {
       });
     });
     it('should call vuex addWalletWithPrivateKey with correct arguments', () => {
-      const privateKey = '0x87d420caef41c44aa6f54fe5adb8a1a593c1d07625dda3e66482090a41c86c8a';
+      const privateKey =
+        '0x87d420caef41c44aa6f54fe5adb8a1a593c1d07625dda3e66482090a41c86c8a';
       const walletPassword = 'kekkek';
       wrapper.setData({
-        privateKey
-        walletPassword
+        privateKey,
+        walletPassword,
       });
       wrapper.find('v-button').trigger('click');
-      expect(storeOptions.modules.accounts.actions.addWalletWithPrivateKey).toHaveBeenCalledTimes(1);
-      expect(storeOptions.modules.accounts.actions.addWalletWithPrivateKey).toHaveBeenCalledWith({
+      expect(
+        storeOptions.modules.accounts.actions.addWalletWithPrivateKey,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        storeOptions.modules.accounts.actions.addWalletWithPrivateKey,
+      ).toHaveBeenCalledWith({
         privateKey: privateKey.replace(/^0x/, ''),
         password: walletPassword,
       });
-    })
+    });
   });
 });
