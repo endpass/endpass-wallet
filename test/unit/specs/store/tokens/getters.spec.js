@@ -4,7 +4,7 @@ import { Token, ERC20Token } from '@/class';
 describe('tokens getters', () => {
   describe('net', () => {
     it('should return net from web3', () => {
-      let rootState = {
+      const rootState = {
         web3: {
           activeNet: {
             id: 1,
@@ -16,7 +16,7 @@ describe('tokens getters', () => {
   });
   describe('address', () => {
     it('should return address from accounts', () => {
-      let rootState = {
+      const rootState = {
         accounts: {
           address: {
             getChecksumAddressString: () => 1,
@@ -34,8 +34,17 @@ describe('tokens getters', () => {
       state = {
         trackedTokens: ['0x123', '0x456'],
         allTokens: {
-          '0x123': { symbol: 'ABC' },
-          '0x456': { symbol: 'DEF' },
+          '0x123': {
+            symbol: 'ABC',
+            address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+          },
+          '0x456': {
+            symbol: 'DEF',
+            address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+          },
+          '0x789': {
+            symbol: 'XYZ',
+          },
         },
         balances: {
           '0x123': '100',
@@ -45,7 +54,10 @@ describe('tokens getters', () => {
       mockGetters = {
         savedTokenInfos: {
           // User submitted token
-          '0x999': { symbol: 'XYZ' },
+          '0x999': {
+            symbol: 'XYZ',
+            address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+          },
         },
       };
     });
@@ -72,16 +84,16 @@ describe('tokens getters', () => {
   });
   describe('trackedTokens', () => {
     it('should return empty array if trackedTokens is null', () => {
-      let state = {
+      const state = {
         trackedTokens: null,
       };
       expect(getters.trackedTokens(state)).toMatchObject([]);
     });
     it('should return an array of ERC20 token objects', () => {
-      let state = {
+      const state = {
         trackedTokens: ['0x123', '0x456'],
       };
-      let tokens = getters.trackedTokens(state);
+      const tokens = getters.trackedTokens(state);
       expect(tokens).toHaveLength(2);
       expect(tokens[0]).toBeInstanceOf(ERC20Token);
       expect(tokens[0].address).toEqual(state.trackedTokens[0]);
@@ -90,7 +102,7 @@ describe('tokens getters', () => {
 
   describe('activeCurrencyName', () => {
     it('should return currency name from web3', () => {
-      let rootState = {
+      const rootState = {
         web3: {
           activeCurrency: {
             name: 'kek',
