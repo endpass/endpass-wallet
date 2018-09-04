@@ -4,6 +4,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
 import userService from '@/services/user';
+import { IDENTITY_MODE } from '@/constants';
 
 describe('User service', () => {
   let mock;
@@ -445,7 +446,7 @@ describe('User service', () => {
 
     describe('setIdentityMode', () => {
       const url = identityAPIUrl;
-      const type = 'custom';
+      const type = IDENTITY_MODE.CUSTOM;
       const mode = { type, serverUrl: url };
       let spyProxyRequest;
 
@@ -494,7 +495,7 @@ describe('User service', () => {
       it('should return default identity mode', () => {
         const mode = userService.getIdentityMode();
 
-        expect(mode).toEqual({ type: 'default' });
+        expect(mode).toEqual({ type: IDENTITY_MODE.DEFAULT });
       });
     });
   });

@@ -2,6 +2,7 @@ import { CustomProvider, LocalProvider, ServerProvider } from './provider';
 import { ParametersDecorator } from './decorator';
 import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
+import { IDENTITY_MODE } from '@/constants';
 
 export default class ProxyRequest {
   constructor(type, serverUrl) {
@@ -12,15 +13,15 @@ export default class ProxyRequest {
     this.decorators = decorators;
   }
 
-  setMode(type = 'default', serverUrl) {
+  setMode(type = IDENTITY_MODE.DEFAULT, serverUrl) {
     const url = serverUrl || identityAPIUrl;
 
     switch (type) {
-      case 'custom':
+      case IDENTITY_MODE.CUSTOM:
         this.provider = new CustomProvider(url);
         break;
 
-      case 'local':
+      case IDENTITY_MODE.LOCAL:
         this.provider = new LocalProvider(url);
         break;
 

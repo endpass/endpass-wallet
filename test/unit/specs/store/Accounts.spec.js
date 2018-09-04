@@ -3,6 +3,7 @@ import { Address, Wallet } from '@/class';
 import localStorageMock from '../../localStorageMock.js';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { userService } from '@/services';
+import { IDENTITY_MODE } from '@/constants';
 import {
   SAVE_TOKENS,
   SAVE_TRACKED_TOKENS,
@@ -264,7 +265,7 @@ describe('accounts store', () => {
   describe('actions', () => {
     describe('login', () => {
       const email = '123@123.com';
-      const type = 'custom';
+      const type = IDENTITY_MODE.CUSTOM;
       const serverUrl = 'http://server';
       const mode = { type, serverUrl };
 

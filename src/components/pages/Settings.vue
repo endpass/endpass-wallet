@@ -18,12 +18,12 @@
                 :options="availableCurrencies" />
 
     </v-form>
-    <two-factor-auth-settings v-if="identityType === 'default'" />
+    <two-factor-auth-settings v-if="isDefaultIdentity" />
   </base-page>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import BasePage from '@/components/pages/Base';
 import VForm from '@/components/ui/form/VForm.vue';
 import error from '@/mixins/error';
@@ -39,9 +39,7 @@ export default {
     },
   }),
   computed: {
-    ...mapState({
-      identityType: state => state.user.identityType,
-    }),
+    ...mapGetters('user', ['isDefaultIdentity']),
     ...mapState('accounts', ['settings', 'availableCurrencies', 'email']),
     isSettingsChange() {
       return JSON.stringify(this.settings) !== JSON.stringify(this.newSettings);

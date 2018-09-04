@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { NotificationError } from '@/class';
 import accountsFixture from 'fixtures/accounts';
+import { IDENTITY_MODE } from '@/constants';
 
 const { addresses, v3, hdv3 } = accountsFixture;
 
@@ -152,6 +153,6 @@ export default {
   },
 
   getIdentityMode() {
-    return { type: 'default' };
+    return { type: IDENTITY_MODE.DEFAULT };
   },
 };

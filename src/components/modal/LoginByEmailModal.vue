@@ -56,11 +56,12 @@ import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
 import VCheckbox from '@/components/ui/form/VCheckbox';
 import VSelect from '@/components/ui/form/VSelect';
+import { IDENTITY_MODE } from '@/constants';
 
 const availableIdentityServerTypes = [
-  { text: 'Endpass', val: 'default' },
-  { text: 'Local Storage', val: 'local' },
-  { text: 'Custom server', val: 'custom' },
+  { text: 'Endpass', val: IDENTITY_MODE.DEFAULT },
+  { text: 'Local Storage', val: IDENTITY_MODE.LOCAL },
+  { text: 'Custom server', val: IDENTITY_MODE.CUSTOM },
 ];
 
 export default {
@@ -81,7 +82,7 @@ export default {
   }),
   computed: {
     selectedCustomIdentityServerType() {
-      return this.currentIdentityServerType === 'custom';
+      return this.currentIdentityServerType === IDENTITY_MODE.CUSTOM;
     },
   },
   methods: {

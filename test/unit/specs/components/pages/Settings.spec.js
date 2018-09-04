@@ -4,6 +4,7 @@ import Notifications from 'vue-notification';
 import VeeValidate from 'vee-validate';
 // import validation from '@/validation';
 
+import { IDENTITY_MODE } from '@/constants';
 import SettingsPage from '@/components/pages/Settings.vue';
 import { generateStubs } from '@/utils/testUtils';
 
@@ -38,7 +39,7 @@ describe('SettingsPage', () => {
       user: {
         namespaced: true,
         state: {
-          identityType: 'default',
+          identityType: IDENTITY_MODE.DEFAULT,
         },
       },
     },
@@ -70,7 +71,7 @@ describe('SettingsPage', () => {
 
     it('should not render otp settings when not default identity type', () => {
       wrapper.setComputed({
-        identityType: 'local',
+        identityType: IDENTITY_MODE.LOCAL,
       });
 
       expect(wrapper.find('two-factor-auth-settings').exists()).toBeFalsy();
