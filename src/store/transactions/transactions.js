@@ -112,7 +112,7 @@ export default {
       return actualNonce;
     },
     async sendSignedTransaction(
-      { rootState, state, dispatch },
+      { rootState, dispatch },
       { transaction, password },
     ) {
       const eth = web3.eth;
@@ -160,7 +160,7 @@ export default {
               transaction.state = 'pending';
               transaction.hash = hash;
               transaction.date = new Date();
-              commit('addTransaction', transaction);
+              commit('addTransaction', { ...transaction });
               res(hash);
             });
 
