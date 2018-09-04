@@ -85,6 +85,12 @@ export default {
     addTransaction(state, transaction) {
       state.pendingTransactions.push(transaction);
     },
+    updateTransaction(state, { hash, payload }) {
+      const trxIndex = state.pendingTransactions.findIndex(
+        trx => trx.hash === hash,
+      );
+      Object.assign(state.pendingTransactions[trxIndex], payload);
+    },
     setTransactionHistory(state, transactions) {
       state.transactionHistory = transactions || [];
     },
@@ -93,7 +99,7 @@ export default {
     async getNonceInBlock({ rootState }) {
       const address = rootState.accounts.address.getChecksumAddressString();
 
-      return await web3.eth.getTransactionCount(address);
+      return web3.eth.getTransactionCount(address);
     },
     async getNextNonce({ state, dispatch }) {
       const nonce = await dispatch('getNonceInBlock');
@@ -112,15 +118,18 @@ export default {
       return actualNonce;
     },
     async sendSignedTransaction(
-      { rootState, state, dispatch },
+      { rootState, dispatch },
       { transaction, password },
     ) {
-      const eth = web3.eth;
-      const wallet = rootState.accounts.wallet;
+      const { eth } = web3;
+      const { wallet } = rootState.accounts;
 
       try {
+        // let hash;
+
         if (!transaction.nonce) {
-          transaction.nonce = await dispatch('getNextNonce');
+          const nonce = await dispatch('getNextNonce');
+          Object.assign(transaction, { nonce });
         }
 
         const tx = new Tx(transaction.getApiObject(eth));
@@ -131,21 +140,40 @@ export default {
 
         const sendEvent = eth
           .sendSignedTransaction(preparedTrx)
-          .once('transactionHash', hash => {
-            eventEmitter.emit('transactionHash', hash);
+          .once('transactionHash', trxHash => {
+            // hash = trxHash;
+            eventEmitter.emit('transactionHash', trxHash);
           })
           .once('error', (err, receipt) => {
-            const ignoreError = 'Transaction was not mined within750 seconds';
+            const ignoreErrors = [
+              'Transaction ran out of gas',
+              'Transaction was not mined within750 seconds',
+            ];
+            const errInx = ignoreErrors.findIndex(errMsg =>
+              err.message.includes(errMsg),
+            );
+            const isOutGas = errInx === 0 && receipt;
 
-            if (!err.message.includes(ignoreError)) {
+            if (errInx > 0 || isOutGas) {
               dispatch('handleSendingError', { err, receipt, transaction });
               eventEmitter.emit('error', err);
             }
-            console.error(err);
           })
           .then(() => {
             eventEmitter.emit('confirmation');
           });
+        // .catch(async ({ message }, receipt) => {
+        //   if (message.includes('Transaction ran out of gas') && !receipt) {
+        //     const interval = setInterval(async () => {
+        //       const trx = await web3.eth.getTransactionReceipt(hash);
+
+        //       if (trx && trx.status === true) {
+        //         clearInterval(interval);
+        //         eventEmitter.emit('confirmation');
+        //       }
+        //     }, 5000);
+        //   }
+        // });
 
         return eventEmitter;
       } catch (err) {
@@ -157,57 +185,84 @@ export default {
         sendEvent =>
           new Promise((res, rej) => {
             sendEvent.once('transactionHash', hash => {
-              transaction.state = 'pending';
-              transaction.hash = hash;
-              transaction.date = new Date();
+              // transaction.state = 'pending';
+              // transaction.hash = hash;
+              // transaction.date = new Date();
+              Object.assign(transaction, {
+                state: 'pending',
+                hash,
+                date: new Date(),
+              });
               commit('addTransaction', transaction);
               res(hash);
             });
 
             sendEvent.once('confirmation', () => {
-              transaction.state = 'success';
+              console.log('sendEvent.once(confirmation)');
+              const { hash } = transaction;
+              const payload = { state: 'success' };
+
+              commit('updateTransaction', {
+                hash,
+                payload,
+              });
             });
 
-            sendEvent.once('error', err => {
-              transaction.state = 'error';
-              transaction.error = err;
+            sendEvent.once('error', error => {
+              const { hash } = transaction;
+              const payload = { state: 'error', error };
+
+              commit('updateTransaction', {
+                hash,
+                payload,
+              });
               rej();
             });
           }),
       );
     },
-    resendTransaction({ dispatch, state }, { transaction, password }) {
+    resendTransaction({ dispatch, state, commit }, { transaction, password }) {
       return dispatch('sendSignedTransaction', { transaction, password }).then(
         sendEvent =>
           new Promise((res, rej) => {
             const trxInList = state.pendingTransactions.find(
               trx => transaction.hash === trx.hash,
             );
+            const { hash } = trxInList;
 
-            sendEvent.once('transactionHash', hash => {
-              trxInList.hash = hash;
+            sendEvent.once('transactionHash', newHash => {
+              commit('updateTransaction', {
+                hash,
+                payload: { hash: newHash },
+              });
               res(hash);
             });
 
             sendEvent.once('confirmation', () => {
-              trxInList.state = 'success';
+              commit('updateTransaction', {
+                hash,
+                payload: { state: 'success' },
+              });
             });
 
-            sendEvent.once('error', err => {
-              trxInList.state = 'error';
-              trxInList.error = err;
+            sendEvent.once('error', error => {
+              commit('updateTransaction', {
+                hash,
+                payload: { state: 'error', error },
+              });
               rej();
             });
           }),
       );
     },
-    cancelTransaction({ state, dispatch }, { transaction, password }) {
+    cancelTransaction({ state, dispatch, commit }, { transaction, password }) {
       return dispatch('sendSignedTransaction', { transaction, password }).then(
         sendEvent =>
           new Promise((res, rej) => {
             const trxInList = state.pendingTransactions.find(
               trx => transaction.hash === trx.hash,
             );
+            const { hash } = trxInList;
 
             sendEvent.once('transactionHash', async () => {
               const nonceInBlock = await dispatch('getNonceInBlock');
@@ -226,13 +281,18 @@ export default {
             });
 
             sendEvent.once('confirmation', () => {
-              trxInList.state = 'canceled';
+              commit('updateTransaction', {
+                hash,
+                payload: { state: 'canceled' },
+              });
               res();
             });
 
-            sendEvent.once('error', err => {
-              trxInList.state = 'error';
-              trxInList.error = err;
+            sendEvent.once('error', error => {
+              commit('updateTransaction', {
+                hash,
+                payload: { state: 'error', error },
+              });
               rej();
             });
           }),
