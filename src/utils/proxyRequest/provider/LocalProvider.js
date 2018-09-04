@@ -81,11 +81,6 @@ export default class LocalProvider {
       let { url } = params;
       const data = JSON.stringify(payload);
 
-      // FIXME server fix POST accounts/address -> account/address
-      if (url.includes('/accounts/')) {
-        url = url.replace('/accounts/', '/account/');
-      }
-
       localStorage.setItem(url, data);
 
       return { success: true };
