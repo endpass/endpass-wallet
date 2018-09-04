@@ -2,6 +2,7 @@ import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
 import { http, proxyRequest } from '@/utils';
 import keyUtil from '@/utils/keystore';
+import { IDENTITY_MODE } from '@/constants';
 
 export default {
   login(email) {
@@ -246,7 +247,7 @@ export default {
   },
 
   getIdentityMode() {
-    const defaultMode = { type: 'default' };
+    const defaultMode = { type: IDENTITY_MODE.DEFAULT };
 
     try {
       const mode = localStorage.getItem('identityMode');

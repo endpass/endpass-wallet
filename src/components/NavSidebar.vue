@@ -52,7 +52,7 @@
             <p class="menu-label">Accounts</p>
           </div>
           <div
-            v-if="identityType !== 'custom'"
+            v-if="!isCustomIdentity"
             class="column"
           >
             <a
@@ -158,9 +158,7 @@ export default {
       email: state => state.accounts.email,
       identityType: state => state.user.identityType,
     }),
-    ...mapGetters({
-      isLoggedOut: 'user/isLoggedOut',
-    }),
+    ...mapGetters('user', ['isLoggedOut', 'isCustomIdentity']),
     ...mapGetters('accounts', ['isPublicAccount', 'isLoggedIn']),
   },
   methods: {

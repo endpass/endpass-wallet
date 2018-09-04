@@ -5,6 +5,7 @@ import {
 } from '@/store/user/mutations-types';
 import { NotificationError } from '@/class';
 import { userService } from '@/services';
+import { IDENTITY_MODE } from '@/constants';
 
 describe('user actions', () => {
   describe('setAuthorizationStatus', () => {
@@ -52,7 +53,7 @@ describe('user actions', () => {
     it('should set the identity mode', async () => {
       expect.assertions(2);
 
-      const type = 'custom';
+      const type = IDENTITY_MODE.CUSTOM;
       const serverUrl = 'url';
       const mode = { type, serverUrl };
       userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
@@ -66,7 +67,7 @@ describe('user actions', () => {
     it('should set the auth status when not default mode', async () => {
       expect.assertions(2);
 
-      const type = 'custom';
+      const type = IDENTITY_MODE.CUSTOM;
       const mode = { type };
       userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
 
@@ -79,7 +80,7 @@ describe('user actions', () => {
     it('should not set the auth status when default mode', async () => {
       expect.assertions(1);
 
-      const type = 'default';
+      const type = IDENTITY_MODE.DEFAULT;
       const mode = { type };
       userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
 
@@ -91,7 +92,7 @@ describe('user actions', () => {
     it('should set the user identity type when default mode', async () => {
       expect.assertions(2);
 
-      const type = 'custom';
+      const type = IDENTITY_MODE.CUSTOM;
       userService.getIdentityMode = jest.fn().mockReturnValueOnce({ type });
 
       await actions.initIdentityMode({ commit, dispatch });

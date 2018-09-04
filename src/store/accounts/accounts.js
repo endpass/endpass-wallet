@@ -11,6 +11,7 @@ import {
 import { Wallet, Address } from '@/class';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
+import { IDENTITY_MODE } from '@/constants';
 import {
   SET_AUTHORIZATION_STATUS,
   SET_IDENTITY_TYPE,
@@ -257,9 +258,9 @@ export default {
       return state.wallet.validatePassword(password);
     },
     async login({ commit, dispatch }, { email, mode = {} }) {
-      const { type = 'default', serverUrl } = mode;
+      const { type = IDENTITY_MODE.DEFAULT, serverUrl } = mode;
 
-      if (type === 'default') {
+      if (type === IDENTITY_MODE.DEFAULT) {
         return userService.login(email);
       }
 
@@ -277,7 +278,7 @@ export default {
     },
     async logout({ commit, dispatch }) {
       commit('setEmail', null);
-      userService.setIdentityMode('default');
+      userService.setIdentityMode(IDENTITY_MODE.DEFAULT);
 
       try {
         await userService.logout();

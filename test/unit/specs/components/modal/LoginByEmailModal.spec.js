@@ -1,5 +1,6 @@
 import { shallow, mount, createLocalVue } from '@vue/test-utils';
 
+import { IDENTITY_MODE } from '@/constants';
 import LoginByEmailModal from '@/components/modal/LoginByEmailModal';
 import { generateStubs } from '@/utils/testUtils';
 
@@ -24,7 +25,7 @@ describe('LoginByEmailModal', () => {
 
     it('should display a field for custom identity server', () => {
       wrapper.setData({
-        currentIdentityServerType: 'custom',
+        currentIdentityServerType: IDENTITY_MODE.CUSTOM,
       });
 
       expect(wrapper.find('#customIdentityServer').html()).toMatchSnapshot();
@@ -36,7 +37,7 @@ describe('LoginByEmailModal', () => {
       const email = 'email';
 
       it('should trigger "confirm" event', () => {
-        const currentIdentityServerType = 'default';
+        const currentIdentityServerType = IDENTITY_MODE.DEFAULT;
         const expected = [
           {
             email,
@@ -55,7 +56,7 @@ describe('LoginByEmailModal', () => {
 
       it('should trigger "confirm" event with custom identity server url', () => {
         const customIdentityServer = 'custom identity server url';
-        const currentIdentityServerType = 'custom';
+        const currentIdentityServerType = IDENTITY_MODE.CUSTOM;
         const expected = [
           {
             email,
