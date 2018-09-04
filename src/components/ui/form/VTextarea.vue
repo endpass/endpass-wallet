@@ -2,7 +2,7 @@
   <div class="field">
     <label class="label"
            v-if="label"
-           :for="id">{{ label }}</label>
+           >{{ label }}</label>
     <div class="control">
       <textarea
         :value="innerValue"

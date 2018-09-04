@@ -264,7 +264,7 @@ describe('User service', () => {
     const address = '0x123';
     // Account data can be anything
     const account = { version: 3, crypto: {} };
-    const url = `${identityAPIUrl}/accounts/${address}`;
+    const url = `${identityAPIUrl}/account/${address}`;
     const successResp = {
       success: true,
     };

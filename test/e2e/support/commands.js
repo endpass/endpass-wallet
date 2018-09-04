@@ -58,7 +58,7 @@ Cypress.Commands.add('login', () => {
   ).as('publicAccount');
   cy.route(
     'POST',
-    '/identity/api/v1/accounts/*',
+    '/identity/api/v1/account/*',
     'fixture:identity/success.json',
   ).as('keystoreAddAccount');
 

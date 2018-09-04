@@ -14,7 +14,11 @@ const identityConfig = {
 function handleResponseError(error) {
   const { config, response } = error;
 
-  if (response.status === 401 && config.url.includes(identityAPIUrl)) {
+  if (
+    (typeof response === 'undefined' ||
+    response.status === 401) &&
+    config.url.includes(identityAPIUrl)
+  ) {
     store.dispatch({
       type: 'user/setAuthorizationStatus',
       authorizationStatus: false,
