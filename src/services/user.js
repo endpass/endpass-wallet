@@ -186,6 +186,8 @@ export default {
       return { success };
     } catch (e) {
       throw new NotificationError({
+        log: true,
+        message: e.message,
         title: 'Error saving two-factor authentication settings',
         text: `Failed to save OTP settings.`,
         type: 'is-danger',
@@ -208,6 +210,8 @@ export default {
       return { success };
     } catch (e) {
       throw new NotificationError({
+        log: true,
+        message: e.message,
         title: 'Error removing two-factor authentication settings',
         text: `Failed to remove OTP settings.`,
         type: 'is-danger',
