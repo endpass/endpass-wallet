@@ -1,4 +1,4 @@
-import state from '@/store/transactions/transactions';
+import state from '@/store/transactions';
 import ethplorerService from '@/services/ethplorer';
 import { address } from 'fixtures/accounts';
 import { Transaction } from '@/class';

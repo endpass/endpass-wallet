@@ -9,7 +9,7 @@ import tokens from './tokens';
 import web3 from './web3';
 import gasPrice from './gas-price';
 import price from './price';
-import transactions from './transactions/transactions';
+import transactions from './transactions';
 import errors from './errors';
 import connectionStatus from './connection-status';
 import userModule from './user';
@@ -61,7 +61,7 @@ if (module.hot) {
       './tokens',
       './gas-price',
       './price',
-      './transactions/transactions',
+      './transactions',
       './errors',
       './connection-status',
       './user',
@@ -74,7 +74,7 @@ if (module.hot) {
       const newTokens = require('./tokens').default;
       const newGasPrice = require('./gas-price').default;
       const newPrice = require('./price').default;
-      const newTransactions = require('./transactions/transactions').default;
+      const newTransactions = require('./transactions').default;
       const newErrors = require('./errors').default;
       const newConnectionStatus = require('./connection-status').default;
       const newUserModule = require('./user').default;
