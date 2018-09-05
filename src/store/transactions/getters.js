@@ -2,19 +2,26 @@ import { BigNumber } from 'bignumber.js';
 import web3 from '@/utils/web3';
 import { MAIN_NET_ID } from '@/constants';
 
+const getPendingTransactions = state => state.pendingTransactions;
+
+const getTransactionByHash = state => hash =>
+  state.transactionHistory.find(trx => trx.hash === hash);
+
+const getPendingTransactionByHash = state => hash =>
+  state.pendingTransactions.find(trx => trx.hash === hash);
+
 const accountTransactions = (state, getters, rootState) => {
   if (!rootState.accounts.address) {
     return [];
   }
 
-  let transactions = state.pendingTransactions;
   const { id: currentNetID } = rootState.web3.activeNet;
+  const address = rootState.accounts.address.getChecksumAddressString();
+  const transactions = [...state.pendingTransactions];
 
   if (currentNetID === MAIN_NET_ID) {
-    transactions = transactions.concat(getters.filteredHistoryTransactions);
+    transactions.push(...getters.filteredHistoryTransactions);
   }
-
-  const address = rootState.accounts.address.getChecksumAddressString();
 
   return transactions
     .filter(trx => {
@@ -27,8 +34,14 @@ const accountTransactions = (state, getters, rootState) => {
       );
     })
     .sort((trx1, trx2) => {
-      if (typeof trx2.date === 'undefined') return 1;
-      if (typeof trx1.date === 'undefined') return -1;
+      if (!trx2.date) {
+        return 1;
+      }
+
+      if (!trx1.date) {
+        return -1;
+      }
+
       return trx2.date - trx1.date;
     });
 };
@@ -75,6 +88,9 @@ const pendingBalance = (state, getters, rootState) => {
 };
 
 export default {
+  getPendingTransactions,
+  getPendingTransactionByHash,
+  getTransactionByHash,
   pendingBalance,
   filteredHistoryTransactions,
   currentNetTransactions,

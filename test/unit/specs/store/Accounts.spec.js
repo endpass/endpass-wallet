@@ -14,10 +14,10 @@ jest.mock('@/services/user', () => require('../../__mocks__/services/user'));
 
 global.localStorage = localStorageMock;
 
-//Fake action from antoher storage
+// Fake action from antoher storage
 store.actions['tokens/subscribeOnTokensBalancesUpdates'] = jest.fn();
 store.actions['errors/emitError'] = jest.fn();
-store.actions['updateBalance'] = jest.fn();
+store.actions.updateBalance = jest.fn();
 
 const { state, actions } = store;
 
@@ -38,6 +38,25 @@ const context = {
   dispatch: dispatch({ state, commit, dispatch }),
   state,
 };
+
+describe('accounts getters', () => {
+  const stateInstance = {
+    wallets: {
+      '0x1ce2109f8db1190cd44bc6554e35642214fbe144': {},
+      '0x1ce2109f8db1190cd44bc6554e35642214fbe143': {},
+    },
+    wallet: null,
+    address: null,
+  };
+
+  describe('getAccountAddresses', () => {
+    it('should returns account addresses strings', () => {
+      expect(store.getters.getAccountAddresses(stateInstance)).toEqual(
+        Object.keys(stateInstance.wallets),
+      );
+    });
+  });
+});
 
 describe('accounts actions', () => {
   let commit;
@@ -78,7 +97,7 @@ describe('accounts store', () => {
     await actions.selectWallet(context, v3.address);
     expect(state.wallets[v3.address] instanceof Wallet).toBe(true);
     expect(state.wallet instanceof Wallet).toBe(true);
-    expect(store.actions['updateBalance']).toHaveBeenCalled();
+    expect(store.actions.updateBalance).toHaveBeenCalled();
   });
 
   it('should set address', () => {
@@ -105,7 +124,7 @@ describe('accounts store', () => {
     const wallet = state.wallets[v3.address];
 
     expect(wallet instanceof Wallet).toBe(true);
-    let address = await wallet.getAddressString();
+    const address = await wallet.getAddressString();
     expect(address.toUpperCase()).toBe(v3.address.toUpperCase());
   });
 
@@ -144,7 +163,7 @@ describe('accounts store', () => {
   it('should add wallet with public key', async () => {
     const dispatch = jest.fn();
     const commit = jest.fn();
-    let address = '0x3c75226555FC496168d48B88DF83B95F16771F37';
+    const address = '0x3c75226555FC496168d48B88DF83B95F16771F37';
     userService.setAccount = jest.fn();
     await actions.addWalletWithPublicKey({ dispatch, commit }, address);
 
