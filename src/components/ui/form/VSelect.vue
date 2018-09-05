@@ -16,7 +16,8 @@
 </template>
 
 <script>
-import getOptionParameter from '@/utils/get-option-parameter';
+import getOptionParameter from '@/utils/getOptionParameter';
+
 export default {
   name: 'v-select',
   props: {

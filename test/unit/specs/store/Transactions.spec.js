@@ -1,13 +1,15 @@
 import state from '@/store/transactions';
 import ethplorerService from '@/services/ethplorer';
-import { address } from 'fixtures/accounts';
 import { Transaction } from '@/class';
+import { SET_TRANSACTION_HISTORY } from '@/store/transactions/mutations-types';
+import { address } from 'fixtures/accounts';
 import { ethplorerHistory, ethplorerTransactions } from 'fixtures/transactions';
 
 const { actions, mutations } = state;
 
 describe('transactions store', () => {
   let stateInstance;
+
   beforeEach(() => {
     stateInstance = {
       pendingTransactions: [],
@@ -193,7 +195,7 @@ describe('transactions store', () => {
           },
         ];
 
-        let pendingBalance = state.getters.pendingBalance(
+        const pendingBalance = state.getters.pendingBalance(
           stateInstance,
           {},
           {
@@ -300,12 +302,47 @@ describe('transactions store', () => {
         expect(transactions).toHaveLength(2);
       });
     });
+
+    describe('getPendingTransactions', () => {
+      it('should return all pending transactions', () => {
+        stateInstance.pendingTransactions = ethplorerTransactions;
+
+        expect(state.getters.getPendingTransactions(stateInstance)).toEqual(
+          stateInstance.pendingTransactions,
+        );
+      });
+    });
+
+    describe('getPendingTransactionByHash', () => {
+      it('should return pending transaction by hash', () => {
+        stateInstance.pendingTransactions = ethplorerTransactions;
+
+        expect(
+          state.getters.getPendingTransactionByHash(stateInstance)(
+            '0x53d26efcde07f1b2b68f3e1de93b730deabd1094970d9a68efb799e048e00892',
+          ),
+        ).toEqual(stateInstance.pendingTransactions[0]);
+      });
+    });
+
+    describe('getTransactionByHash', () => {
+      it('should return transaction by hash', () => {
+        stateInstance.transactionHistory = ethplorerTransactions;
+
+        expect(
+          state.getters.getTransactionByHash(stateInstance)(
+            '0x1cfa3ef1695ab8035ff9abbee0637a8948af3c787b28341cc12a9a5bbb894555',
+          ),
+        ).toEqual(stateInstance.transactionHistory[1]);
+      });
+    });
   });
 
   describe('actions', () => {
     let commit;
     let dispatch;
     let rootState;
+    let rootGetters;
 
     beforeEach(() => {
       commit = jest.fn();
@@ -323,6 +360,11 @@ describe('transactions store', () => {
         web3: {
           activeNet: { id: 2 },
         },
+      };
+      rootGetters = {
+        'transactions/pendingBalance': 0,
+        'accounts/getAccountAddresses': [address.toLowerCase()],
+        'web3/isMainNetwork': false,
       };
     });
 
@@ -355,10 +397,15 @@ describe('transactions store', () => {
           .fn()
           .mockResolvedValue(ethplorerTransactions);
 
-        await actions.getTransactionHistory({ dispatch, commit, rootState });
+        await actions.getTransactionHistory({
+          dispatch,
+          commit,
+          rootState,
+          rootGetters,
+        });
 
         expect(commit).toHaveBeenCalledTimes(1);
-        expect(commit.mock.calls[0][0]).toBe('setTransactionHistory');
+        expect(commit.mock.calls[0][0]).toBe(SET_TRANSACTION_HISTORY);
         expect(commit.mock.calls[0][1]).toHaveLength(4);
         expect(commit.mock.calls[0][1][0]).toBeInstanceOf(Transaction);
       });
@@ -367,7 +414,12 @@ describe('transactions store', () => {
         ethplorerService.getHistory = jest.fn().mockRejectedValue();
         ethplorerService.getInfo = jest.fn().mockRejectedValue();
 
-        await actions.getTransactionHistory({ dispatch, commit, rootState });
+        await actions.getTransactionHistory({
+          dispatch,
+          commit,
+          rootState,
+          rootGetters,
+        });
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch.mock.calls[0][0]).toBe('errors/emitError');
@@ -377,7 +429,7 @@ describe('transactions store', () => {
     describe('handleBlockTransactions', () => {
       it('should show notification of incoming transactions', () => {
         actions.handleBlockTransactions(
-          { dispatch, rootState },
+          { dispatch, rootState, rootGetters },
           ethplorerTransactions,
         );
 
@@ -386,15 +438,15 @@ describe('transactions store', () => {
       });
 
       it('should update transaction history', () => {
-        rootState = {
-          ...rootState,
-          web3: {
-            activeNet: { id: 1 },
-          },
-        };
-
         actions.handleBlockTransactions(
-          { dispatch, rootState },
+          {
+            dispatch,
+            rootState,
+            rootGetters: {
+              ...rootGetters,
+              'web3/isMainNetwork': true,
+            },
+          },
           ethplorerTransactions,
         );
 
@@ -405,11 +457,11 @@ describe('transactions store', () => {
   });
 
   describe('mutations', () => {
-    describe('setTransactionHistory', () => {
+    describe('SET_TRANSACTION_HISTORY', () => {
       it('should set transaction history', () => {
         expect(stateInstance.transactionHistory).toHaveLength(0);
 
-        mutations.setTransactionHistory(stateInstance, [{}, {}]);
+        mutations[SET_TRANSACTION_HISTORY](stateInstance, [{}, {}]);
 
         expect(stateInstance.transactionHistory).toHaveLength(2);
       });
@@ -417,7 +469,7 @@ describe('transactions store', () => {
       it('should set an empty array with the nullable parameter', () => {
         expect(stateInstance.transactionHistory).toEqual([]);
 
-        mutations.setTransactionHistory(stateInstance, null);
+        mutations[SET_TRANSACTION_HISTORY](stateInstance, null);
 
         expect(stateInstance.transactionHistory).toEqual([]);
       });

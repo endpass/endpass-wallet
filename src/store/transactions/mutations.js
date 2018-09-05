@@ -1,3 +1,9 @@
+import {
+  ADD_TRANSACTION,
+  SET_TRANSACTION_HISTORY,
+  UPDATE_TRANSACTION,
+} from './mutations-types';
+
 const addTransaction = (state, transaction) => {
   state.pendingTransactions.push(transaction);
 };
@@ -15,7 +21,7 @@ const setTransactionHistory = (state, transactions) => {
 };
 
 export default {
-  addTransaction,
-  updateTransaction,
-  setTransactionHistory,
+  [ADD_TRANSACTION]: addTransaction,
+  [UPDATE_TRANSACTION]: updateTransaction,
+  [SET_TRANSACTION_HISTORY]: setTransactionHistory,
 };

@@ -18,7 +18,8 @@
 </template>
 
 <script>
-import getOptionParameter from '@/utils/get-option-parameter'
+import getOptionParameter from '@/utils/getOptionParameter';
+
 export default {
   name: 'v-radio',
   props: {
@@ -26,7 +27,7 @@ export default {
       default: null,
     },
     id: {
-      type: String
+      type: String,
     },
     validator: {
       type: String,
@@ -68,13 +69,13 @@ export default {
   },
   methods: {
     getOptionParameter,
-    getKeyString: (item) => item.key || item.val || item
+    getKeyString: item => item.key || item.val || item,
   },
 };
 </script>
 
 <style lang="css">
-  .v-radio input {
-    display: none;
-  }
+.v-radio input {
+  display: none;
+}
 </style>
