@@ -95,7 +95,7 @@
                   <div class="field-label"></div>
                   <div class="field-body">
                     <a class="has-text-link" @click="toggleShowAdvanced">
-                      Advanced Options...gas price, gas limit, nonce, data
+                      Advanced Options...
                     </a>
                   </div>
                 </div>
@@ -528,7 +528,7 @@ export default {
         if (BigNumber(this.estimateGasCost).gt(this.balance)) {
           this.errors.add({
             field: 'value',
-            msg: 'Insufficient funds for the transaction commission',
+            msg: 'Insufficient funds',
             id: 'insufficientBalance',
           });
         } else {
