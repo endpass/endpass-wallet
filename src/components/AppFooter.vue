@@ -9,17 +9,20 @@
       <div class="footer-links level is-mobile">
         <div class="level-left">
           <p class="level-item">&copy; 2018 Endpass, Inc</p>
-        </div>
-        <div class="level-right">
           <p class="level-item">
             <a target="_blank"
+               class="github-button"
                href="https://github.com/endpass/endpass-wallet">
+<span class="icon is-small"
+                v-html="require('@/img/github.svg')"></span>
               100% Open Source
             </a>
           </p>
           <p class="level-item">
             <a target="_blank" href="https://help.endpass.com">Support</a>
           </p>
+        </div>
+        <div class="level-right">
         </div>
       </div>
     </div>
@@ -43,6 +46,9 @@ export default {
     &:hover {
       color: $primary;
     }
+  }
+  .icon {
+    vertical-align: middle;
   }
 
   .disclaimer {
