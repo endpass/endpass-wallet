@@ -3,7 +3,7 @@
     <v-modal @close="close">
       <header slot="header">{{ headerText }}</header>
       <div v-if="!providerAdded">
-	      <v-form v-model="isFormValid" @submit="addNewProvider">
+	      <v-form v-model="isFormValid" @submit="handleButtonClick">
 
           <v-input v-model="innerProvider.name"
                    v-validate="'required'"
@@ -75,6 +75,7 @@ import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VSelect from '@/components/ui/form/VSelect';
+import { CURRENCIES } from '@/constants';
 
 const defaultProvider = {
   name: '',
@@ -90,6 +91,10 @@ export default {
       isFormValid: false,
       isLoading: false,
       innerProvider: Object.assign({}, this.provider),
+      currencies: CURRENCIES.map(currency => ({
+        val: currency.id,
+        text: currency.name,
+      })),
     };
   },
   props: {
@@ -99,13 +104,6 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      currencies: state =>
-        state.web3.currencies.map(currency => ({
-          val: currency.id,
-          text: currency.name,
-        })),
-    }),
     ...mapGetters('web3', ['networks']),
     providersLinks() {
       const networks = this.needUpdateProvider
@@ -127,23 +125,20 @@ export default {
     },
   },
   methods: {
-    ...mapActions('web3', [
-      'addNewProvider',
-      'validateNetwork',
-      'updateProvider',
-    ]),
+    ...mapActions('web3', ['addNetwork', 'validateNetwork', 'updateNetwork']),
     handleButtonClick() {
       this.isLoading = true;
 
       return this.validateNetwork({ network: this.innerProvider })
         .then(([networkType, networkId]) => {
           const action = this.needUpdateProvider
-            ? this.updateProvider
-            : this.addNewProvider;
+            ? this.updateNetwork
+            : this.addNetwork;
           const network = { ...this.innerProvider };
 
           if (!this.needUpdateProvider) {
             network.id = networkId;
+            network.networkType = networkType;
           }
 
           this.isLoading = false;

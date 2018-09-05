@@ -60,6 +60,9 @@ describe('Send', () => {
             id: 1,
           },
         },
+        connectionStatus: {
+          isSyncing: false,
+        },
       },
       actions,
       modules: {
