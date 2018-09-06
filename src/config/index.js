@@ -25,6 +25,7 @@ switch (process.env.NODE_ENV) {
 }
 
 export const {
+  allowedDomain,
   hdKeyMnemonic,
   infuraConf,
   serviceThrottleTimeout,

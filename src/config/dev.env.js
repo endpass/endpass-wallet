@@ -2,6 +2,7 @@ const identityAPIUrl = '/identity/api/v1';
 const tokenImageUrl = 'https://tokeninfo-dev.endpass.com';
 const tokenInfoAPIUrl = '/tokeninfo/api/v1';
 const cryptoDataAPIUrl = '/gasprice/api/v1';
+const allowedDomain = 'http://localhost:8080';
 
 // Parameters for cipher encrypting wallet
 const kdfParams = {
@@ -10,6 +11,7 @@ const kdfParams = {
 };
 
 export default {
+  allowedDomain,
   cryptoDataAPIUrl,
   identityAPIUrl,
   tokenImageUrl,

@@ -27,8 +27,9 @@ export default {
     ...mapActions('accounts', ['login', 'loginViaOTP']),
     handleLoginByEmailModalConfirm(email) {
       this.isLoading = true;
+      const { fullPath: currentRoute } = this.$router.currentRoute;
 
-      return this.login(email)
+      return this.login({ email, currentRoute })
         .then(challengeType => {
           if (challengeType === 'otp') {
             this.email = email;

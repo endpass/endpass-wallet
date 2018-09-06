@@ -75,6 +75,9 @@ describe('LoginModal', () => {
       const localVue = createLocalVue();
       const $router = {
         push: jest.fn(),
+        currentRoute: {
+          fullPath: '/',
+        },
       };
       const $route = {
         query: {},
