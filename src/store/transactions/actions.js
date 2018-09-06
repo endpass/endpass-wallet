@@ -47,16 +47,14 @@ const sendSignedTransaction = async (
       Object.assign(transaction, { nonce });
     }
 
-    const tx = new Tx(transaction.getApiObject(eth));
-
-    await wallet.signTransaction(tx, password);
-
-    const serializedTx = tx.serialize();
-    const preparedTrx = `0x${serializedTx.toString('hex')}`;
+    const signedTx = await wallet.signTransaction(
+      transaction.getApiObject(eth),
+      password,
+    );
     const sendEvent = new EventEmitter();
 
     eth
-      .sendSignedTransaction(preparedTrx)
+      .sendSignedTransaction(signedTx)
       .once('transactionHash', trxHash => {
         sendEvent.emit('transactionHash', trxHash);
       })
