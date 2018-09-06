@@ -1,16 +1,13 @@
 import { CustomProvider, LocalProvider, ServerProvider } from './provider';
-import { ParametersDecorator } from './decorator';
+import { Decorator, ProviderUrlDecorator } from './decorator';
 import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
 import { IDENTITY_MODE } from '@/constants';
 
 export default class ProxyRequest {
   constructor(type, serverUrl) {
+    this.decorator = new Decorator();
     this.setMode(type, serverUrl);
-  }
-
-  setDecorators(decorators) {
-    this.decorators = decorators;
   }
 
   setMode(type = IDENTITY_MODE.DEFAULT, serverUrl) {
@@ -29,23 +26,14 @@ export default class ProxyRequest {
         this.provider = new ServerProvider(url);
     }
 
-    const decorators = [new ParametersDecorator(this.provider)];
-    this.setDecorators(decorators);
-  }
-
-  decorate(params = {}) {
-    return this.decorators.reduce(
-      (resultParams, decorator) => decorator.decorate(resultParams),
-      params,
-    );
+    const decorators = [new ProviderUrlDecorator(url)];
+    this.decorator.setDecorators(decorators);
   }
 
   async request(params = {}) {
     try {
-      const newParams = this.decorate(params);
-      const { method } = newParams;
-
-      return await this.provider[method](newParams);
+      const newParams = this.decorator.decorate(params);
+      return await this.provider.request(newParams);
     } catch (e) {
       if (e.response || e instanceof NotificationError) {
         throw e;

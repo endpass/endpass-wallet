@@ -15,6 +15,11 @@ export default class CustomProvider {
     this.serverProvider = new ServerProvider(serverUrl);
   }
 
+  request(params) {
+    const { method } = params;
+    return this[method](params);
+  }
+
   localProviderRequest(params) {
     const { method, url } = params;
 
