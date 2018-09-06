@@ -250,8 +250,14 @@ export default {
         .write('settings', settings)
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
-    validatePassword({ state }, password) {
-      return state.wallet.validatePassword(password);
+    async validatePassword({ state, getters }, password) {
+      let { wallet } = state;
+
+      if (getters.isPublicAccount) {
+        wallet = new Wallet(state.hdKey);
+      }
+
+      return wallet.validatePassword(password);
     },
     login({ commit, dispatch }, email) {
       return userService.login(email);
