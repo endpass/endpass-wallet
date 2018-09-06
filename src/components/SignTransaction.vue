@@ -15,38 +15,45 @@
       >
         Sign transaction
       </v-button>
-      <v-textarea
+      <div
         v-if="signedTransaction"
-        v-model="signedTransactionString"
-        label="RLP encoded transaction"
-        disabled
-      />
+        class="field"
+      >
+        <label class="label">RLP encoded transaction</label>
+        <p class="code">
+          {{ signedTransaction }}
+        </p>
+      </div>
     </v-form>
-    <password-modal
+    <code-password-modal
       v-if="isPasswordModal"
+      :code="transaction"
+      label="Transaction object"
       @confirm="signTransaction"
       @close="togglePasswordModal"
-    >
-      <div class="field">
-        <label class="label">Transaction object</label>
-        <p>{{ transaction }}</p>
-      </div>
-    </password-modal>
+    />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import Tx from 'ethereumjs-tx';
 import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
-import PasswordModal from '@/components/modal/PasswordModal';
+import CodePasswordModal from '@/components/modal/CodePasswordModal';
 import modalMixin from '@/mixins/modal';
-import { convertTransactionToHash } from '@/utils/transactions';
 
 export default {
-  name: 'sign-transaction',
+  name: 'SignTransaction',
+
+  components: {
+    VForm,
+    VButton,
+    VTextarea,
+    CodePasswordModal,
+  },
+
+  mixins: [modalMixin],
 
   data: () => ({
     transaction: '',
@@ -57,10 +64,6 @@ export default {
     ...mapState({
       wallet: state => state.accounts.wallet,
     }),
-
-    signedTransactionString() {
-      return convertTransactionToHash(this.signedTransaction);
-    },
   },
 
   methods: {
@@ -68,14 +71,9 @@ export default {
       try {
         this.togglePasswordModal();
 
-        const tx = new Tx(JSON.parse(this.transaction));
-
-        this.signedTransaction = await this.$store.dispatch(
-          'transactions/signTransaction',
-          {
-            transaction: tx,
-            password,
-          },
+        this.signedTransaction = await this.wallet.signTransaction(
+          JSON.parse(this.transaction),
+          password,
         );
       } catch (error) {
         this.signedTransaction = null;
@@ -88,15 +86,6 @@ export default {
         console.error(error);
       }
     },
-  },
-
-  mixins: [modalMixin],
-
-  components: {
-    VForm,
-    VButton,
-    VTextarea,
-    PasswordModal,
   },
 };
 </script>

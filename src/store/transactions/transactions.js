@@ -126,11 +126,7 @@ export default {
 
       return signedTransaction;
     },
-    async sendSignedTransaction(
-      { rootState, dispatch },
-      { transaction, password },
-    ) {
-      const { wallet } = rootState.accounts;
+    async sendSignedTransaction({ dispatch }, { transaction, password }) {
       const { eth } = web3;
 
       try {

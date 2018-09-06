@@ -356,6 +356,9 @@ describe('transactions store', () => {
           wallets: {
             [address]: {},
           },
+          wallet: {
+            signTransaction: jest.fn(),
+          },
         },
         web3: {
           activeNet: { id: 2 },

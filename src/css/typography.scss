@@ -1,8 +1,13 @@
 // Typography
 
 // Headers
-h1,h2,h3,h4,h5,h6 {
-    font-family: $heading-font-family;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $heading-font-family;
 }
 
 .title {
@@ -17,12 +22,14 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 // Global styles
-code, .code {
+code,
+.code {
   background: $light-grey;
   color: $dark-grey;
   padding: 1em;
+  white-space: normal;
   word-wrap: break-word;
-  font-family: "Lucida Console","Courier New",monospace;
+  font-family: 'Lucida Console', 'Courier New', monospace;
 }
 
 .long-number {
