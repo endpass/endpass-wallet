@@ -12,6 +12,7 @@ import ImportWallet from '@/components/pages/ImportWallet';
 import ExportWallet from '@/components/pages/ExportWallet';
 import SettingsPage from '@/components/pages/Settings';
 import MessagePage from '@/components/pages/Message';
+import TransactionPage from '@/components/pages/Transaction';
 
 import { hasLoginGuard, privateWalletGuard } from './guards';
 
@@ -76,6 +77,12 @@ export default new Router({
       path: '/message',
       name: 'MessagePage',
       component: MessagePage,
+      beforeEnter: multiguard([hasLoginGuard, privateWalletGuard]),
+    },
+    {
+      path: '/transaction',
+      name: 'TransactionPage',
+      component: TransactionPage,
       beforeEnter: multiguard([hasLoginGuard, privateWalletGuard]),
     },
   ],
