@@ -21,12 +21,8 @@
         </div>
     </main>
 
-    <footer class="app-footer">
-      <quick-actions class="is-hidden-desktop"/>
-      <div class="footer-inner container is-hidden-touch">
-        <p class="small">&copy; 2018 Endpass, Inc</p>
-      </div>
-    </footer>
+    <quick-actions class="is-hidden-desktop"/>
+    <app-footer class="is-hidden-touch"/>
     <page-loader />
   </div>
 </template>
@@ -37,6 +33,7 @@ import InfoBar from '@/components/bar/InfoBar.vue';
 import QuickActions from '@/components/QuickActions.vue';
 import errorHandler from '@/mixins/errorHandler';
 import PageLoader from '@/components/ui/PageLoader';
+import AppFooter from '@/components/AppFooter.vue';
 
 export default {
   name: 'App',
@@ -45,6 +42,7 @@ export default {
     InfoBar,
     QuickActions,
     PageLoader,
+    AppFooter,
   },
   mixins: [errorHandler],
   created() {

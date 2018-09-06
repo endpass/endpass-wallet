@@ -15,7 +15,7 @@ describe('AddTokenModal', () => {
   let store;
   let wrapper;
   let fakeToken;
-  let fakeEmptyToken;
+  let fakeEmptyTokenData;
 
   beforeEach(() => {
     store = new Vuex.Store({
@@ -40,7 +40,11 @@ describe('AddTokenModal', () => {
       balanceOf: 'balanceOf',
       decimals: 8,
     });
-    fakeEmptyToken = new Token({});
+    fakeEmptyTokenData = {
+      symbol: undefined,
+      name: undefined,
+      decimals: undefined,
+    };
   });
 
   describe('render', () => {
@@ -77,7 +81,7 @@ describe('AddTokenModal', () => {
     });
 
     it('correctly resets empty flags', async () => {
-      await wrapper.vm.setTokenData(fakeEmptyToken);
+      await wrapper.vm.setTokenData(fakeEmptyTokenData);
       wrapper.vm.resetForm();
 
       expect(wrapper.vm.notFound.symbol).toBe(false);
@@ -86,7 +90,7 @@ describe('AddTokenModal', () => {
     });
 
     it('should add token to the store', async () => {
-      let saveTokenAndSubscribe = jest.fn();
+      const saveTokenAndSubscribe = jest.fn();
       wrapper.setData({ token: fakeToken });
       wrapper.setMethods({ saveTokenAndSubscribe });
 
