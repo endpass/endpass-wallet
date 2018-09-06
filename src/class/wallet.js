@@ -38,6 +38,9 @@ export class Wallet {
 
   async signTransaction(transaction, password) {
     const privateKey = await this.getPrivateKey(password);
-    return transaction.sign(privateKey);
+
+    await transaction.sign(privateKey);
+
+    return transaction;
   }
 }
