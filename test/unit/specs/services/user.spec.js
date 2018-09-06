@@ -16,8 +16,17 @@ describe('User service', () => {
   });
 
   describe('login', () => {
-    const url = `${identityAPIUrl}/auth`;
+    const url = `${identityAPIUrl}/auth?redirect_uri=http%3A%2F%2Fdomain.com%2F%23%2Fsend`;
     const email = '123@email.com';
+    const locationHref = 'http://domain.com/#/?redirect_uri=%2Fsend';
+    const windowLocation = JSON.stringify(window.location);
+    delete window.location;
+    Object.defineProperty(window, 'location', {
+      value: {
+        ...JSON.parse(windowLocation),
+        href: locationHref,
+      },
+    });
 
     const successResp = {
       success: true,
