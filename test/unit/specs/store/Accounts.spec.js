@@ -211,13 +211,23 @@ describe('accounts store', () => {
   });
 
   it('should validate password', async () => {
+    expect.assertions(1);
+
     context.state.wallet = new Wallet(v3);
+    context.getters = {
+      isPublicAccount: false,
+    };
     const isValid = await actions.validatePassword(context, v3password);
     expect(isValid).toBe(true);
   });
 
   it('should reject wrong password', async () => {
+    expect.assertions(1);
+
     context.state.wallet = new Wallet(v3);
+    context.getters = {
+      isPublicAccount: false,
+    };
     const promise = actions.validatePassword(context, '');
     await expect(promise).rejects.toThrow('Invalid password');
   });
