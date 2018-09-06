@@ -117,12 +117,17 @@ export default {
 
       return actualNonce;
     },
-    async sendSignedTransaction(
-      { rootState, dispatch },
-      { transaction, password },
-    ) {
-      const { eth } = web3;
+    async signTransaction({ rootState }, { transaction, password }) {
       const { wallet } = rootState.accounts;
+      const signedTransaction = await wallet.signTransaction(
+        transaction,
+        password,
+      );
+
+      return signedTransaction;
+    },
+    async sendSignedTransaction({ dispatch }, { transaction, password }) {
+      const { eth } = web3;
 
       try {
         // let hash;
@@ -133,11 +138,13 @@ export default {
         }
 
         const tx = new Tx(transaction.getApiObject(eth));
-        await wallet.signTransaction(tx, password);
-        const serializedTx = tx.serialize();
+        const signedTx = await dispatch('signTransaction', {
+          transaction: tx,
+          password,
+        });
+        const serializedTx = signedTx.serialize();
         const preparedTrx = `0x${serializedTx.toString('hex')}`;
         const eventEmitter = new EventEmitter();
-
         const sendEvent = eth
           .sendSignedTransaction(preparedTrx)
           .once('transactionHash', trxHash => {

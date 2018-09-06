@@ -193,7 +193,7 @@ describe('transactions store', () => {
           },
         ];
 
-        let pendingBalance = state.getters.pendingBalance(
+        const pendingBalance = state.getters.pendingBalance(
           stateInstance,
           {},
           {
@@ -319,6 +319,9 @@ describe('transactions store', () => {
           wallets: {
             [address]: {},
           },
+          wallet: {
+            signTransaction: jest.fn(),
+          },
         },
         web3: {
           activeNet: { id: 2 },
@@ -400,6 +403,22 @@ describe('transactions store', () => {
 
         expect(dispatch).toHaveBeenCalledTimes(2);
         expect(dispatch.mock.calls[1][0]).toBe('getTransactionHistory');
+      });
+    });
+
+    describe('signTransaction', () => {
+      it('should sign transaction with wallet', async () => {
+        expect.assertions(1);
+
+        await actions.signTransaction(
+          { dispatch, rootState },
+          {
+            transaction: ethplorerTransactions[0],
+            password: 'foo',
+          },
+        );
+
+        expect(rootState.accounts.wallet.signTransaction).toBeCalled();
       });
     });
   });

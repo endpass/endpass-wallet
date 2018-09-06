@@ -1,0 +1,131 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Transaction page render should render the initial state of the page 1`] = `
+<base-page>
+  Transaction 
+  <div
+    class="tabs"
+  >
+    <ul>
+      <li
+        class="is-active"
+      >
+        <a
+          role="button"
+        >
+          
+          Sign
+        
+        </a>
+      </li>
+      <li
+        class=""
+      >
+        <a
+          role="button"
+        >
+          
+          Recover
+        
+        </a>
+      </li>
+    </ul>
+  </div>
+   
+  <sign-transaction
+    v-show="currentTab === 'sign'"
+  />
+   
+  <recover-transaction
+    style="display: none;"
+    v-show="currentTab === 'recover'"
+  />
+</base-page>
+`;
+
+exports[`Transaction page render should set Recover tab 1`] = `
+<base-page>
+  Transaction 
+  <div
+    class="tabs"
+  >
+    <ul>
+      <li
+        class=""
+      >
+        <a
+          role="button"
+        >
+          
+          Sign
+        
+        </a>
+      </li>
+      <li
+        class="is-active"
+      >
+        <a
+          role="button"
+        >
+          
+          Recover
+        
+        </a>
+      </li>
+    </ul>
+  </div>
+   
+  <sign-transaction
+    style="display: none;"
+    v-show="currentTab === 'sign'"
+  />
+   
+  <recover-transaction
+    style=""
+    v-show="currentTab === 'recover'"
+  />
+</base-page>
+`;
+
+exports[`Transaction page render should set Sign tab 1`] = `
+<base-page>
+  Transaction 
+  <div
+    class="tabs"
+  >
+    <ul>
+      <li
+        class="is-active"
+      >
+        <a
+          role="button"
+        >
+          
+          Sign
+        
+        </a>
+      </li>
+      <li
+        class=""
+      >
+        <a
+          role="button"
+        >
+          
+          Recover
+        
+        </a>
+      </li>
+    </ul>
+  </div>
+   
+  <sign-transaction
+    v-show="currentTab === 'sign'"
+  />
+   
+  <recover-transaction
+    style="display: none;"
+    v-show="currentTab === 'recover'"
+  />
+</base-page>
+`;
