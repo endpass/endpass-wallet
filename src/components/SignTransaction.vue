@@ -24,7 +24,7 @@
     </v-form>
     <password-modal
       v-if="isPasswordModal"
-      @confirm="signTransaction"
+      @confirm="signTransactionString"
       @close="togglePasswordModal"
     >
       <div class="field">
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import Tx from 'ethereumjs-tx';
 import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
@@ -59,24 +59,27 @@ export default {
     }),
 
     signedTransactionString() {
-      return convertTransactionToHash(this.signedTransaction);
+      if (this.signedTransaction) {
+        return convertTransactionToHash(this.signedTransaction);
+      }
+
+      return null;
     },
   },
 
   methods: {
-    async signTransaction(password) {
+    ...mapActions('transactions', ['signTransaction']),
+
+    async signTransactionString(password) {
       try {
         this.togglePasswordModal();
 
         const tx = new Tx(JSON.parse(this.transaction));
 
-        this.signedTransaction = await this.$store.dispatch(
-          'transactions/signTransaction',
-          {
-            transaction: tx,
-            password,
-          },
-        );
+        this.signedTransaction = await this.signTransaction({
+          transaction: tx,
+          password,
+        });
       } catch (error) {
         this.signedTransaction = null;
         this.$notify({

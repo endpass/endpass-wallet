@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit="verifyTransaction">
+  <v-form @submit="recoverTransaction">
     <v-textarea
       v-model="transactionHash"
       label="RLP encoded transaction"
@@ -26,7 +26,7 @@ import VTextarea from '@/components/ui/form/VTextarea.vue';
 import { recoverTransaction } from '@/utils/transactions';
 
 export default {
-  name: 'verify-transaction',
+  name: 'recover-transaction',
 
   components: {
     VForm,
@@ -46,7 +46,7 @@ export default {
   },
 
   methods: {
-    async verifyTransaction() {
+    async recoverTransaction() {
       try {
         this.recoveredTransaction = recoverTransaction(this.transactionHash);
       } catch (error) {
