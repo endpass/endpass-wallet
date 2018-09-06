@@ -266,7 +266,7 @@ export default {
       address: state => state.accounts.address.getChecksumAddressString(),
       activeCurrency: state => state.web3.activeCurrency,
       activeNet: state => state.web3.activeNet,
-      isSyncing: state => !!state.web3.isSyncing,
+      isSyncing: state => !!state.connectionStatus.isSyncing,
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
       ethPrice: state => state.price.price || 0,
     }),
