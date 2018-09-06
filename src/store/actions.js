@@ -1,4 +1,8 @@
-import { START_PAGE_LOADING, STOP_PAGE_LOADING } from './mutations-types.js';
+import {
+  START_PAGE_LOADING,
+  STOP_PAGE_LOADING,
+  APPLY_STATE_BACKUP,
+} from './mutations-types';
 
 // Dispatch all Vuex init() actions
 const init = async ({ dispatch, commit }) => {
@@ -18,6 +22,11 @@ const init = async ({ dispatch, commit }) => {
   ]);
 };
 
+const applyStateBackup = ({ commit }, { data }) => {
+  commit(APPLY_STATE_BACKUP, data);
+};
+
 export default {
   init,
+  applyStateBackup,
 };
