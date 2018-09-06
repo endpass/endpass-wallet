@@ -1,9 +1,19 @@
 import { NotificationError } from '@/class';
 import { PROXY_REQUEST_PREFIX } from '@/constants';
+import { Decorator, PrefixUrlDecorator } from '../decorator';
 
 export default class LocalProvider {
   constructor(serverUrl) {
+    const decorators = [new PrefixUrlDecorator(PROXY_REQUEST_PREFIX)];
+    this.decorator = new Decorator(decorators);
     this.url = serverUrl;
+  }
+
+  request(params) {
+    const { method } = params;
+    const newParams = this.decorator.decorate(params);
+
+    return this[method](newParams);
   }
 
   async add(params) {
@@ -111,6 +121,6 @@ export default class LocalProvider {
 
   getAllAccounts = () =>
     Object.keys(localStorage)
-      .filter(key => key.includes('/account'))
+      .filter(key => key.includes('/account/'))
       .map(key => key.match(/\/([^\/]+)\/?$/)[1]);
 }

@@ -241,9 +241,12 @@ describe('accounts store', () => {
     const commit = jest.fn();
     const dispatch = jest.fn();
     const state = {};
+    const getters = {
+      'user/isDefaultIdentity': () => true,
+    };
     userService.logout = jest.fn().mockResolvedValueOnce();
 
-    await actions.logout({ commit, dispatch, state });
+    await actions.logout({ commit, dispatch, state, getters });
 
     expect(userService.logout).toHaveBeenCalledTimes(1);
     expect(commit).toHaveBeenCalledTimes(1);

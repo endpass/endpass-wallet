@@ -5,6 +5,11 @@ export default class ServerProvider {
     this.url = serverUrl;
   }
 
+  request(params) {
+    const { method } = params;
+    return this[method](params);
+  }
+
   add(params) {
     return this.write(params);
   }

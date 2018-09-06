@@ -276,7 +276,7 @@ export default {
         return dispatch('errors/emitError', e, { root: true });
       }
     },
-    async logout({ commit, dispatch }) {
+    async logout({ commit, dispatch, getters }) {
       commit('setEmail', null);
 
       try {
@@ -284,7 +284,10 @@ export default {
       } catch (e) {} // eslint-disable-line no-empty
 
       try {
-        await userService.logout();
+        if (getters['user/isDefaultIdentity']) {
+          await userService.logout();
+        }
+
         window.location.reload();
       } catch (e) {
         await dispatch('errors/emitError', e, { root: true });
