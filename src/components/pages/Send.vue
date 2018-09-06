@@ -24,8 +24,8 @@
                   <v-input-address
                     id="address"
                     ref="address"
-                    v-model="transaction.to"
                     :disabled="isSending"
+                    v-model="transaction.to"
                     name="address"
                     aria-describedby="address"
                     placeholder="0x... or ENS"
@@ -96,9 +96,7 @@
                       slot="addon"
                       class="control"
                     >
-                      <a class="button is-static">
-                        {{ fiatCurrency }}
-                      </a>
+                      <a class="button is-static">{{ fiatCurrency }}</a>
                     </div>
                   </v-input>
                 </div>
@@ -129,8 +127,6 @@
                   </p>
                 </div>
               </div>
-
-
               <div class="advanced-options-container">
                 <div class="field advanced-toggle is-horizontal">
                   <div class="field-label" />
@@ -165,7 +161,8 @@
                         validator="required|numeric|integer|between:1,100"
                         aria-describedby="gasPrice"
                         placeholder="Gas price"
-                        required>
+                        required
+                      >
                         <div
                           slot="addon"
                           class="control"
@@ -193,10 +190,10 @@
                         validator="required|numeric|integer|between:21000,4000000"
                         aria-describedby="gasLimit"
                         placeholder="Gas limit"
-                        required />
+                        required
+                      />
                     </div>
                   </div>
-
 
                   <div class="field is-horizontal">
                     <div class="field-label">
@@ -218,7 +215,6 @@
                       />
                     </div>
                   </div>
-
 
                   <div class="field is-horizontal">
                     <div class="field-label">
@@ -294,6 +290,7 @@ import VRadio from '@/components/ui/form/VRadio.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VSpinner from '@/components/ui/VSpinner';
 import VInputAddress from '@/components/ui/form/VInputAddress.vue';
+import AccountChooser from '@/components/bar/AccountChooser.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VSelect from '@/components/ui/form/VSelect';
 import TransactionModal from '@/components/modal/TransactionModal';
@@ -310,6 +307,19 @@ const defaultTnx = {
 };
 
 export default {
+  components: {
+    VForm,
+    VButton,
+    VRadio,
+    VSpinner,
+    VInput,
+    VInputAddress,
+    VSelect,
+    AccountChooser,
+    TransactionModal,
+    PasswordModal,
+  },
+
   data: () => ({
     isSending: false,
     transaction: new Transaction(defaultTnx),
@@ -325,6 +335,7 @@ export default {
     showAdvanced: false,
     suggestedGasPrices: null,
   }),
+
   computed: {
     ...mapState({
       tokenPrices: state => state.tokens.prices,
@@ -443,6 +454,91 @@ export default {
       );
     },
   },
+
+  watch: {
+    'transaction.to': {
+      async handler() {
+        await this.$nextTick();
+        await this.$nextTick();
+
+        if (!this.errors.has('address')) {
+          this.updateEstimateGasCost();
+        }
+      },
+      immediate: true,
+    },
+    'transaction.data': {
+      async handler() {
+        await this.$nextTick();
+        await this.$nextTick();
+
+        if (!this.errors.has('data')) {
+          this.updateEstimateGasCost();
+        }
+      },
+    },
+    'transaction.tokenInfo': () => {
+      this.updateEstimateGasCost();
+    },
+  },
+
+  created() {
+    this.updateUserNonce();
+    this.getGasPrice()
+      .then(prices => {
+        this.suggestedGasPrices = [
+          {
+            val: prices.low.toString(),
+            key: 'Low',
+            help: `${prices.low} Gwei`,
+          },
+          {
+            val: prices.medium.toString(),
+            key: 'Medium',
+            help: `${prices.medium} Gwei`,
+          },
+          {
+            val: prices.high.toString(),
+            key: 'High',
+            help: `${prices.high} Gwei`,
+          },
+        ];
+        this.transaction.gasPrice = prices.medium.toString();
+      })
+      .catch(() => {
+        this.isLoadingGasPrice = false;
+      });
+
+    this.interval = setInterval(async () => {
+      this.nextNonceInBlock = await this.getNonceInBlock();
+      this.$validator.validate('nonce');
+    }, 2000);
+
+    this.$watch(
+      vm => [vm.balance, vm.$data.estimateGasCost].join(),
+      () => {
+        if (BigNumber(this.estimateGasCost).gt(this.balance)) {
+          this.errors.add({
+            field: 'value',
+            msg: 'Insufficient funds',
+            id: 'insufficientBalance',
+          });
+        } else {
+          this.errors.removeById('insufficientBalance');
+        }
+      },
+    );
+
+    this.$watch(
+      vm => [vm.activeNet.id, vm.address].join(),
+      this.updateUserNonce,
+    );
+  },
+
+  beforeDestroy() {
+    clearInterval(this.interval);
+  },
+
   methods: {
     ...mapActions('transactions', [
       'sendTransaction',
@@ -529,98 +625,6 @@ export default {
     setMaxAmount() {
       this.value = this.maxAmount;
     },
-  },
-  watch: {
-    'transaction.to': {
-      async handler() {
-        await this.$nextTick();
-        await this.$nextTick();
-
-        if (!this.errors.has('address')) {
-          this.updateEstimateGasCost();
-        }
-      },
-      immediate: true,
-    },
-    'transaction.data': {
-      async handler() {
-        await this.$nextTick();
-        await this.$nextTick();
-
-        if (!this.errors.has('data')) {
-          this.updateEstimateGasCost();
-        }
-      },
-    },
-    'transaction.tokenInfo': () => {
-      this.updateEstimateGasCost();
-    },
-  },
-  created() {
-    this.updateUserNonce();
-    this.getGasPrice()
-      .then(prices => {
-        this.suggestedGasPrices = [
-          {
-            val: prices.low.toString(),
-            key: 'Low',
-            help: `${prices.low} Gwei`,
-          },
-          {
-            val: prices.medium.toString(),
-            key: 'Medium',
-            help: `${prices.medium} Gwei`,
-          },
-          {
-            val: prices.high.toString(),
-            key: 'High',
-            help: `${prices.high} Gwei`,
-          },
-        ];
-        this.transaction.gasPrice = prices.medium.toString();
-      })
-      .catch(() => {
-        this.isLoadingGasPrice = false;
-      });
-
-    this.interval = setInterval(async () => {
-      this.nextNonceInBlock = await this.getNonceInBlock();
-      this.$validator.validate('nonce');
-    }, 2000);
-
-    this.$watch(
-      vm => [vm.balance, vm.$data.estimateGasCost].join(),
-      () => {
-        if (BigNumber(this.estimateGasCost).gt(this.balance)) {
-          this.errors.add({
-            field: 'value',
-            msg: 'Insufficient funds',
-            id: 'insufficientBalance',
-          });
-        } else {
-          this.errors.removeById('insufficientBalance');
-        }
-      },
-    );
-
-    this.$watch(
-      vm => [vm.activeNet.id, vm.address].join(),
-      this.updateUserNonce,
-    );
-  },
-  beforeDestroy() {
-    clearInterval(this.interval);
-  },
-  components: {
-    VForm,
-    VButton,
-    VRadio,
-    VSpinner,
-    VInput,
-    VInputAddress,
-    VSelect,
-    TransactionModal,
-    PasswordModal,
   },
 };
 </script>

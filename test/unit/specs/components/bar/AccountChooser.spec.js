@@ -46,7 +46,7 @@ describe('AccountChooser', () => {
   describe('render', () => {
     it('should be a Vue component', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
-      expect(wrapper.name()).toBe('account-chooser');
+      expect(wrapper.name()).toBe('AccountChooser');
     });
 
     it('should render initial state of the component', () => {
