@@ -4,7 +4,6 @@
     class="account-chooser field has-addons"
   >
     <div class="control is-expanded">
-
       <vue-multiselect
         :options="walletsAddresses"
         :option-height="height"
@@ -49,7 +48,7 @@ import { mapState, mapActions } from 'vuex';
 import Account from '@/components/Account';
 
 export default {
-  name: 'account-chooser',
+  name: 'AccountChooser',
   props: {
     // Maximum width of address
     width: {
@@ -63,12 +62,15 @@ export default {
     // Classes to set on selected single account
     singleClass: {
       type: Object,
+      default: () => {},
     },
     // Classes to set on non selected options
     optionClass: {
       type: Object,
+      default: () => {},
     },
   },
+
   computed: {
     ...mapState({
       wallets: state => state.accounts.wallets,
@@ -76,6 +78,7 @@ export default {
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),
     }),
+
     activeAddress: {
       get() {
         return this.address.replace(/^0x/, '');
@@ -84,10 +87,12 @@ export default {
         this.selectWallet(newValue);
       },
     },
+
     walletsAddresses() {
       return Object.keys(this.wallets);
     },
   },
+
   methods: {
     ...mapActions('accounts', ['selectWallet']),
   },
