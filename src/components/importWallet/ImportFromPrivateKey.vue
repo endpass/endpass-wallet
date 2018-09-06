@@ -13,7 +13,7 @@
       required
       @input="handleInput"
     />
-     <v-password v-model="walletPassword"
+     <v-password v-model="password"
               label="Wallet password"
               id="jsonKeystorePassword"
               name="walletPassword"
@@ -39,7 +39,7 @@ export default {
   data: () => ({
     isCreating: false,
     privateKey: '',
-    walletPassword: '',
+    password: '',
   }),
   methods: {
     ...mapActions('accounts', ['addWalletWithPrivateKey']),
@@ -51,7 +51,7 @@ export default {
       try {
         this.addWalletWithPrivateKey({
           privateKey: this.privateKey.replace(/^0x/, ''),
-          password: this.walletPassword,
+          password: this.password,
         });
         router.push('/');
       } catch (e) {

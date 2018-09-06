@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit="submitWalletImportForm">
+  <v-form @submit="addWallet">
     <v-input
       id="address"
       key="publicKeyUnique"
@@ -33,7 +33,7 @@ export default {
   }),
   methods: {
     ...mapActions('accounts', ['addWalletWithPublicKey']),
-    async submitWalletImportForm() {
+    async addWallet() {
       this.isCreating = true;
       try {
         await this.addWalletWithPublicKey(this.address);

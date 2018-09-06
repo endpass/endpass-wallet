@@ -27,7 +27,7 @@ export default {
       const hasInvalidField = Object.keys(fields).some(
         field => fields[field] && fields[field].invalid,
       );
-
+      console.log(errors, errors.any());
       return !(hasInvalidField || errors.any());
     },
   },

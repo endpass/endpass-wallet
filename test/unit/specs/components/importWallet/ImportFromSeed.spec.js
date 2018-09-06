@@ -3,9 +3,8 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 
 import { generateStubs } from '@/utils/testUtils';
-import { privateKeyString, v3password } from '../../../fixtures/accounts';
 
-import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
+import ImportFromSeed from '@/components/importWallet/ImportFromSeed';
 
 import router from '@/router';
 
@@ -17,11 +16,11 @@ localVue.use(Vuex);
 localVue.use(VeeValidate);
 
 jest.useFakeTimers();
-describe('ImportFromPrivateKey', () => {
+describe('ImportFromSeed', () => {
   let wrapper, actions;
   beforeEach(() => {
     actions = {
-      addWalletWithPrivateKey: jest.fn(),
+      addMultiHdWallet: jest.fn(),
     };
     const storeOptions = {
       modules: {
@@ -32,13 +31,12 @@ describe('ImportFromPrivateKey', () => {
       },
     };
     const store = new Vuex.Store(storeOptions);
-    wrapper = shallow(ImportFromPrivateKey, {
+    wrapper = shallow(ImportFromSeed, {
       localVue,
       store,
-      stubs: generateStubs(ImportFromPrivateKey),
+      stubs: generateStubs(ImportFromSeed),
     });
   });
-
   describe('render', () => {
     it('should be a Vue component', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
@@ -46,18 +44,15 @@ describe('ImportFromPrivateKey', () => {
   });
 
   describe('logic', () => {
-    it('should call vuex addWalletWithPrivateKey with correct arguments', async () => {
+    it('should call vuex addMultiHdWallet with correct arguments', async () => {
       const data = {
-        privateKey: '0xkek',
+        key: 'kek',
         password: 'kek',
       };
       wrapper.setData(data);
       wrapper.vm.addWallet();
       await jest.runAllTimers();
-      expect(actions.addWalletWithPrivateKey.mock.calls[0][1]).toEqual({
-        privateKey: data.privateKey.replace(/^0x/, ''),
-        password: data.password,
-      });
+      expect(actions.addMultiHdWallet.mock.calls[0][1]).toEqual(data);
       expect.assertions(1);
     });
 
@@ -70,24 +65,24 @@ describe('ImportFromPrivateKey', () => {
 
     it('should toggle isCreating before and after wallet creation', async () => {
       wrapper.vm.addWallet();
-      expect(actions.addWalletWithPrivateKey).not.toBeCalled();
+      expect(actions.addMultiHdWallet).not.toBeCalled();
       expect(wrapper.vm.isCreating).toBe(true);
       await jest.runAllTimers();
-      expect(actions.addWalletWithPrivateKey).toBeCalled();
+      expect(actions.addMultiHdWallet).toBeCalled();
       expect(wrapper.vm.isCreating).toBe(false);
       expect.assertions(4);
     });
 
     it('should add error to field if failed to create wallet', async () => {
-      actions.addWalletWithPrivateKey.mockImplementationOnce(() => {
+      actions.addMultiHdWallet.mockImplementationOnce(() => {
         throw new Error();
       });
       wrapper.vm.addWallet();
       await jest.runAllTimers();
       expect(wrapper.vm.errors.items[0]).toEqual({
-        field: 'privateKey',
-        msg: 'Private key is invalid',
-        id: 'wrongPrivateKey',
+        field: 'hdkeyPhrase',
+        msg: 'Seed phrase is invalid',
+        id: 'wrongPhrase',
         // vee validate added field
         scope: null,
       });
