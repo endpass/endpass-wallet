@@ -1,20 +1,24 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
-import VeeValidate from 'vee-validate';
 
 import VForm from '@/components/ui/form/VForm';
 
 const localVue = createLocalVue();
 
-localVue.use(VeeValidate);
+localVue.use(Vuex);
 
 describe('VForm page', () => {
-  let wrapper;
+  let wrapper, state;
+
+  const storeOptions = {
+    state: {
+      isPageLoading: true,
+    },
+  };
+  const store = new Vuex.Store(storeOptions);
   beforeEach(() => {
     wrapper = shallow(VForm, {
       localVue,
-      provide: () => ({
-        $validator: new VeeValidate.Validator(),
-      }),
+      store,
     });
   });
 
