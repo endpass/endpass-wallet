@@ -110,13 +110,25 @@
         <p class="menu-label" v-if="wallet">Tools</p>
         <ul class="menu-list" v-if="wallet">
           <li>
-            <router-link class="nav-link" active-class="is-active" :to="{name:'MessagePage'}">
+            <router-link
+              class="nav-link"
+              active-class="is-active"
+              :to="{name:'MessagePage'}"
+            >
               Message
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              class="nav-link"
+              active-class="is-active"
+              :to="{name:'TransactionPage'}"
+            >
+              Transaction
             </router-link>
           </li>
         </ul>
       </div>
-
 
       <div class="nav-sidebar-footer">
       </div>
