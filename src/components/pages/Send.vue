@@ -11,28 +11,19 @@
               id="sendEther"
               @submit="fetchAddress"
             >
-              <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                  <label
-                    class="label"
-                    for="address"
-                  >
-                    To
-                  </label>
-                </div>
-                <div class="field-body">
-                  <v-input-address
-                    id="address"
-                    ref="address"
-                    :disabled="isSending"
-                    v-model="transaction.to"
-                    name="address"
-                    aria-describedby="address"
-                    placeholder="0x... or ENS"
-                    help="Address to send to"
-                    required
-                  />
-                </div>
+              <div class="field">
+                <label class="label">
+                  To
+                </label>
+                <account-chooser
+                  v-model="transaction.to"
+                  :disabled="isSending"
+                  :searchable="true"
+                  :creatable="true"
+                  :width="35"
+                  :accounts="getAddressesFromTransactions"
+                  placeholder="0x... or ENS"
+                />
               </div>
               <div class="send-amount field is-horizontal">
                 <div class="field-label is-normal">
@@ -283,16 +274,16 @@
 
 <script>
 import { BigNumber } from 'bignumber.js';
-import { Transaction } from '@/class';
+import { Transaction, ENSResolver } from '@/class';
 import { mapState, mapActions, mapGetters } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VSpinner from '@/components/ui/VSpinner';
 import VInputAddress from '@/components/ui/form/VInputAddress.vue';
-import AccountChooser from '@/components/bar/AccountChooser.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VSelect from '@/components/ui/form/VSelect';
+import AccountChooser from '@/components/bar/AccountChooser.vue';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import web3 from '@/utils/web3';
@@ -348,13 +339,15 @@ export default {
       ethPrice: state => state.price.price || 0,
     }),
     ...mapGetters('tokens', ['tokensWithBalance']),
+    ...mapGetters('transactions', ['getAddressesFromTransactions']),
     value: {
       get() {
         const { value } = this.transaction;
 
         if (this.lastInputPrice === 'fiat' && value > 0) {
-          const { price, ethPrice, decimal } = this;
           const tokenPrice = this.actualPrice;
+          const { price, decimal } = this;
+
           return BigNumber(price)
             .div(tokenPrice)
             .toFixed(decimal);
@@ -363,9 +356,10 @@ export default {
         return value;
       },
       set(newValue) {
+        const price = this.actualPrice;
+
         this.transaction.value = newValue;
         this.lastInputPrice = 'amount';
-        const price = this.actualPrice;
         this.priceInFiat = BigNumber(newValue || '0')
           .times(price)
           .toFixed(2);
@@ -376,8 +370,9 @@ export default {
     price: {
       get() {
         if (this.lastInputPrice === 'amount' && this.priceInFiat > 0) {
-          const { value, ethPrice } = this;
+          const { value } = this;
           const price = this.actualPrice;
+
           return BigNumber(value)
             .times(price)
             .toFixed(2);
@@ -386,9 +381,10 @@ export default {
         return this.priceInFiat;
       },
       set(newValue) {
+        const price = this.actualPrice;
+
         this.priceInFiat = newValue;
         this.lastInputPrice = 'fiat';
-        const price = this.actualPrice;
         this.transaction.value = BigNumber(newValue || '0')
           .div(price)
           .toFixed(newValue > 0 ? this.decimal : 0);
@@ -533,6 +529,8 @@ export default {
       vm => [vm.activeNet.id, vm.address].join(),
       this.updateUserNonce,
     );
+
+    this.$ens = new ENSResolver(web3);
   },
 
   beforeDestroy() {
@@ -595,20 +593,37 @@ export default {
           this.resetForm();
         });
     },
+
+    async updateENS() {
+      const { to } = this.transaction;
+
+      if (!to.match(/^.+\.(eth|etc)$/)) {
+        return to;
+      }
+
+      const address = await this.$ens.getAddress(to);
+
+      return address;
+    },
+
     async fetchAddress() {
       this.isSending = true;
+
       try {
-        await this.$refs.address.updateENS();
+        this.transaction.to = await this.updateENS();
+
         this.toggleTransactionModal();
-      } catch (e) {
+      } catch (err) {
         this.$notify({
           title: 'Error',
-          text: e.message,
+          text: err.message,
           type: 'is-warning',
         });
+      } finally {
+        this.isSending = false;
       }
-      this.isSending = false;
     },
+
     confirmTransaction() {
       this.toggleTransactionModal();
       this.togglePasswordModal();

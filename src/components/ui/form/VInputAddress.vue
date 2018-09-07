@@ -141,6 +141,7 @@ export default {
   },
   methods: {
     camelToKebab: str => str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`),
+
     async updateENS() {
       if (!this.innerValue.match(/^.+\.(eth|etc)$/)) return;
 
@@ -152,6 +153,7 @@ export default {
       this.pendingEns = true;
 
       await this.$nextTick();
+
       this.$validator.flag(name, {
         invalid: true,
         valid: false,
@@ -160,6 +162,7 @@ export default {
 
       try {
         const address = await this.$ens.getAddress(this.innerValue);
+
         this.$validator.flag(name, {
           valid: true,
           invalid: false,

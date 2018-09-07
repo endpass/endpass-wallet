@@ -87,12 +87,27 @@ const getTransactionByHash = state => hash =>
 const getPendingTransactionByHash = state => hash =>
   state.pendingTransactions.find(trx => trx.hash === hash);
 
+const getAddressesFromTransactionsHistory = state =>
+  state.transactionHistory.map(({ _to }) => _to);
+
+const getAddressesFromPendingTransactions = state =>
+  state.pendingTransactions.map(({ _to }) => _to);
+
+const getAddressesFromTransactions = (state, getters) =>
+  [].concat(
+    getters.getAddressesFromTransactionsHistory,
+    getters.getAddressesFromPendingTransactions,
+  );
+
 export default {
+  getPendingTransactions,
+  getPendingTransactionByHash,
+  getTransactionByHash,
+  getAddressesFromTransactionsHistory,
+  getAddressesFromPendingTransactions,
+  getAddressesFromTransactions,
   pendingBalance,
   filteredHistoryTransactions,
   currentNetTransactions,
   accountTransactions,
-  getPendingTransactions,
-  getPendingTransactionByHash,
-  getTransactionByHash,
 };
