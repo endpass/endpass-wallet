@@ -1,51 +1,60 @@
-<template lang="html">
-  <div
-    v-if="walletsAddresses.length"
-    class="account-chooser field has-addons"
-  >
-    <div class="control is-expanded">
-      <vue-multiselect
-        :options="walletsAddresses"
-        :option-height="height"
-        :searchable="false"
-        :show-labels="false"
-        :allow-empty="false"
-        :value="activeAddress"
-        label="Account"
-        placeholder="Select account"
-        @select="selectWallet"
+<template>
+  <div class="account-chooser">
+    <div class="field">
+      <div class="control is-expanded">
+        <vue-multiselect
+          ref="select"
+          :disabled="disabled"
+          :options="accounts"
+          :option-height="height"
+          :searchable="searchable"
+          :show-labels="false"
+          :allow-empty="allowEmpty"
+          :value="value"
+          :placeholder="placeholder"
+          :show-no-results="false"
+          @search-change="handleSearchInput"
+          @close="handleDropdownClose"
+          @select="emitInput"
+        >
+          <span
+            slot="singleLabel"
+            slot-scope="props"
+            class="multiselect-single"
+          >
+            <account
+              :class="singleClass"
+              :address="value"
+              :size="width"
+            />
+          </span>
+          <span
+            slot="option"
+            slot-scope="props"
+            class="multiselect-option"
+          >
+            <account
+              :class="optionClass"
+              :address="props.option"
+              :size="width"
+            />
+          </span>
+        </vue-multiselect>
+      </div>
+      <p
+        v-if="error"
+        class="help is-danger"
       >
-        <span
-          slot="singleLabel"
-          slot-scope="props"
-          class="multiselect-single"
-        >
-          <account
-            :class="singleClass"
-            :address="address"
-            :size="width"
-          />
-        </span>
-        <span
-          slot="option"
-          slot-scope="props"
-          class="multiselect-option"
-        >
-          <account
-            :class="optionClass"
-            :address="props.option"
-            :size="width"
-          />
-        </span>
-      </vue-multiselect>
+        {{ error }}
+      </p>
     </div>
   </div>
 </template>
 
 <script>
 import VueMultiselect from 'vue-multiselect';
-import { mapState, mapActions } from 'vuex';
 import Account from '@/components/Account';
+import addressValidator from '@/validation/address';
 
 export default {
   name: 'AccountChooser',
@@ -55,46 +64,128 @@ export default {
       type: Number,
       default: 50,
     },
+
     height: {
       type: Number,
       default: 32,
     },
+
     // Classes to set on selected single account
     singleClass: {
       type: Object,
       default: () => {},
     },
+
     // Classes to set on non selected options
     optionClass: {
       type: Object,
       default: () => {},
     },
+
+    accounts: {
+      type: Array,
+      default: () => [],
+    },
+
+    searchable: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    placeholder: {
+      type: String,
+      required: false,
+      default: 'Select account',
+    },
+
+    allowEmpty: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    value: {
+      type: String,
+      required: false,
+      default: '',
+    },
+
+    creatable: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
-  computed: {
-    ...mapState({
-      wallets: state => state.accounts.wallets,
-      address: state =>
-        state.accounts.address &&
-        state.accounts.address.getChecksumAddressString(),
-    }),
+  data: () => ({
+    searchInput: null,
+    newAccountAddress: '',
+    isAddressValid: true,
+    error: null,
+  }),
 
-    activeAddress: {
-      get() {
-        return this.address.replace(/^0x/, '');
-      },
-      set(newValue) {
-        this.selectWallet(newValue);
-      },
-    },
+  created() {
+    this.$nextTick(() => {
+      const { $refs } = this.$refs.select;
 
-    walletsAddresses() {
-      return Object.keys(this.wallets);
-    },
+      if ($refs.search && this.creatable) {
+        this.searchInput = $refs.search;
+        this.searchInput.addEventListener(
+          'keydown',
+          this.handleSearchInputKeydown,
+        );
+      }
+    });
+  },
+
+  beforeDestroy() {
+    if (this.searchInput) {
+      this.searchInput.removeEventListener(
+        'keydown',
+        this.handleSearchInputKeydown,
+      );
+    }
   },
 
   methods: {
-    ...mapActions('accounts', ['selectWallet']),
+    processNewAccountAddress() {
+      const { valid, data } = addressValidator.validate(this.newAccountAddress);
+
+      if (valid) {
+        this.emitInput(this.newAccountAddress);
+        this.newAccountAddress = '';
+        this.searchInput.blur();
+      } else {
+        this.error = data.message;
+      }
+    },
+
+    handleSearchInputKeydown(e) {
+      if (e.keyCode === 13 && this.newAccountAddress) {
+        this.processNewAccountAddress();
+      }
+    },
+
+    handleSearchInput(value) {
+      if (this.creatable) {
+        this.newAccountAddress = value;
+      }
+    },
+
+    handleDropdownClose() {
+      this.error = null;
+    },
+
+    emitInput(value) {
+      this.$emit('input', value);
+    },
   },
   components: {
     VueMultiselect,
