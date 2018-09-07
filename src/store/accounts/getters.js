@@ -9,9 +9,6 @@ const getAccountAddresses = state =>
 const isPublicAccount = state =>
   state.address instanceof Address && !(state.wallet instanceof Wallet);
 
-// TODO move to user store?
-const isLoggedIn = state => !!state.email;
-
 const balance = (state, getters, rootState, rootGetters) => {
   if (state.balance === null) return null;
 
@@ -35,7 +32,6 @@ const hdWallet = state => password => {
 export default {
   getAccountAddresses,
   isPublicAccount,
-  isLoggedIn,
   balance,
   hdWallet,
 };

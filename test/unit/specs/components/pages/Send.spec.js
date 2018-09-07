@@ -34,9 +34,6 @@ describe('Send', () => {
               return '0x9eceefdf3554e178a6549006f2c02163e63c9fd8';
             },
           },
-          settings: {
-            fiatCurrency: 'USD',
-          },
           balance: '1000000000000000000',
           pendingTransactions: [
             {
@@ -50,6 +47,11 @@ describe('Send', () => {
               success: true,
             },
           ],
+        },
+        user: {
+          settings: {
+            fiatCurrency: 'USD',
+          },
         },
         web3: {
           web3: web3Instance,

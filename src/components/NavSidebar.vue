@@ -164,15 +164,13 @@ export default {
       address: state =>
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),
-      email: state => state.accounts.email,
+      email: state => state.user.email,
     }),
-    ...mapGetters({
-      isLoggedOut: 'user/isLoggedOut',
-    }),
-    ...mapGetters('accounts', ['isPublicAccount', 'isLoggedIn']),
+    ...mapGetters('user', ['isLoggedOut', 'isLoggedIn']),
+    ...mapGetters('accounts', ['isPublicAccount']),
   },
   methods: {
-    ...mapActions('accounts', ['logout']),
+    ...mapActions('user', ['logout']),
     toggleNavMenu() {
       this.navMenuActive = !this.navMenuActive;
     },
