@@ -132,7 +132,6 @@ describe('tokens actions', () => {
         net: 1,
       };
     });
-
     it('should resolve array of Tokens from service', async () => {
       tokenInfoService.getTokensList = jest.fn();
       tokenInfoService.getTokensList.mockReturnValueOnce([token]);

@@ -39,13 +39,13 @@ export default {
     },
   }),
   computed: {
-    ...mapState('user', ['settings', 'availableCurrencies', 'email']),
+    ...mapState('accounts', ['settings', 'availableCurrencies', 'email']),
     isSettingsChange() {
       return JSON.stringify(this.settings) !== JSON.stringify(this.newSettings);
     },
   },
   methods: {
-    ...mapActions('user', {
+    ...mapActions('accounts', {
       updateSettingsInStore: 'updateSettings',
     }),
     updateSettings() {

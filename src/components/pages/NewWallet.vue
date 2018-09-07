@@ -77,11 +77,11 @@ export default {
     // TODO encrypt seed in memory
     async createWallet() {
       this.isCreating = true;
+      let key;
       await new Promise(res => setTimeout(res, 20));
-
       try {
-        const key = Bip39.generateMnemonic();
-        await this.addHdWallet({ key, password: this.walletPassword });
+        key = Bip39.generateMnemonic();
+        this.addHdWallet({ key, password: this.walletPassword });
         this.key = key;
         this.$timer.start('seedPhrase');
       } catch (e) {
@@ -92,7 +92,6 @@ export default {
         });
         console.error(e);
       }
-
       this.isCreating = false;
     },
     handleSeedPhraseTimer() {
@@ -109,7 +108,7 @@ export default {
     seedPhrase: {
       repeat: true,
       time: UPDATE_SEED_PHRASE_INTERVAL_MSEC,
-      callback() {
+      callback: function() {
         this.handleSeedPhraseTimer();
       },
     },
