@@ -4,7 +4,7 @@ import Vuex from 'vuex';
 import actions from './actions';
 import mutations from './mutations';
 
-import accounts from './accounts/accounts';
+import accounts from './accounts';
 import tokens from './tokens';
 import web3 from './web3';
 import gasPrice from './gas-price';
