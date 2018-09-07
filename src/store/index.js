@@ -56,7 +56,7 @@ if (module.hot) {
     [
       './mutations',
       './actions',
-      './accounts/accounts',
+      './accounts',
       './web3',
       './tokens',
       './gas-price',
@@ -69,7 +69,7 @@ if (module.hot) {
     () => {
       const newMutations = require('./mutations').default;
       const newActions = require('./actions').default;
-      const newAccounts = require('./accounts/accounts').default;
+      const newAccounts = require('./accounts').default;
       const newWeb3 = require('./web3').default;
       const newTokens = require('./tokens').default;
       const newGasPrice = require('./gas-price').default;
