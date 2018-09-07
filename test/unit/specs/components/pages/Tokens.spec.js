@@ -40,7 +40,7 @@ describe('TokensPage', () => {
 
     store = new Vuex.Store({
       modules: {
-        user: {
+        accounts: {
           namespaced: true,
           state: {
             settings: {

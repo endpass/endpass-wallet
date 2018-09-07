@@ -85,7 +85,7 @@ describe('LoginModal', () => {
 
       const store = new Vuex.Store({
         modules: {
-          user: {
+          accounts: {
             namespaced: true,
             actions,
           },

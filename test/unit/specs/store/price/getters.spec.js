@@ -16,7 +16,7 @@ describe('price getters', () => {
   describe('fiatCurrency', () => {
     it('should return fiatCurrency from settings', () => {
       let rootState = {
-        user: {
+        accounts: {
           settings: {
             fiatCurrency: 'kek',
           },
