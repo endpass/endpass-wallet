@@ -1,30 +1,33 @@
 <template>
-  <ul class="tokens-list">
-    <li v-for="token in selectedTokens" :class="itemClass" :key="token.address">
-      <v-spinner v-if="isLoading"
-        :is-loading="isLoading"
-        class="spinner"
-        />
-      <v-token v-else
-        :token="token"
-        :currency="currency"
-        :price="prices.get(token.symbol)"
-      >
-        <a
-          slot="right"
-          v-if="hasRemove"
-          class="is-inline-block remove-token-button"
-          title="Remove Token"
-          @click="deleteTokenAndUnsubscribe({token})"
-          >
-            <span
-              class="icon has-text-danger is-small is-pulled-right"
-              v-html="require('@/img/x.svg')"
-            ></span>
-        </a>
-      </v-token>
-    </li>
-  </ul>
+  <div class="tokens-list">
+    <ul v-if="selectedTokens && selectedTokens.length">
+      <li v-for="token in selectedTokens" :class="itemClass" :key="token.address">
+        <v-spinner v-if="isLoading"
+          :is-loading="isLoading"
+          class="spinner"
+          />
+        <v-token v-else
+          :token="token"
+          :currency="currency"
+          :price="prices.get(token.symbol)"
+        >
+          <a
+            slot="right"
+            v-if="hasRemove"
+            class="is-inline-block remove-token-button"
+            title="Remove Token"
+            @click="deleteTokenAndUnsubscribe({token})"
+            >
+              <span
+                class="icon has-text-danger is-small is-pulled-right"
+                v-html="require('@/img/x.svg')"
+              ></span>
+          </a>
+        </v-token>
+      </li>
+    </ul>
+    <p class="small" v-else>You have no tokens at this address.</p>
+  </div>
 </template>
 
 <script>

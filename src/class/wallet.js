@@ -1,6 +1,7 @@
+import Tx from 'ethereumjs-tx';
 import { kdfParams } from '@/config';
+import web3 from '@/utils/web3';
 import keyUtil from '@/utils/keystore';
-import Web3 from 'web3';
 
 // A Wallet represents a single Ethereum account that can send transactions
 // All methods are async and return promises
@@ -15,7 +16,7 @@ export class Wallet {
 
   async getPrivateKeyString(password) {
     const privateKey = await this.getPrivateKey(password);
-    return Web3.utils.bytesToHex(privateKey);
+    return web3.utils.bytesToHex(privateKey);
   }
 
   // () => Promise<String>
@@ -38,6 +39,10 @@ export class Wallet {
 
   async signTransaction(transaction, password) {
     const privateKey = await this.getPrivateKey(password);
-    return transaction.sign(privateKey);
+    const tx = transaction instanceof Tx ? transaction : new Tx(transaction);
+
+    await tx.sign(privateKey);
+
+    return `0x${tx.serialize().toString('hex')}`;
   }
 }

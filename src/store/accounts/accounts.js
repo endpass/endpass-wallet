@@ -39,6 +39,9 @@ export default {
     },
   },
   getters: {
+    getAccountAddresses(state) {
+      return Object.keys(state.wallets).map(wallet => wallet.toLowerCase());
+    },
     isPublicAccount(state) {
       return (
         state.address instanceof Address && !(state.wallet instanceof Wallet)
@@ -142,7 +145,7 @@ export default {
     async addWalletWithV3({ commit, dispatch }, { json, password }) {
       try {
         const wallet = new Wallet(json);
-        let privateKey = await wallet.getPrivateKey(password);
+        const privateKey = await wallet.getPrivateKey(password);
         return dispatch('addWalletWithPrivateKey', privateKey);
       } catch (e) {
         return dispatch('errors/emitError', e, { root: true });
@@ -163,7 +166,7 @@ export default {
     async addWalletWithPublicKey({ commit, dispatch }, publicKeyOrAddress) {
       // TODO convert public key to address, accept xPub key
       try {
-        let address = web3.utils.toChecksumAddress(publicKeyOrAddress);
+        const address = web3.utils.toChecksumAddress(publicKeyOrAddress);
         await userService.setAccount(address, null);
         commit('addAddress', address);
         return dispatch('selectWallet', address);
@@ -176,10 +179,10 @@ export default {
         return;
       }
       try {
-        let hdWallet = getters.hdWallet(password);
-        let i = Object.keys(state.wallets).length;
-        let wallet = hdWallet.deriveChild(i).getWallet();
-        let json = keystore.encryptWallet(password, wallet);
+        const hdWallet = getters.hdWallet(password);
+        const i = Object.keys(state.wallets).length;
+        const wallet = hdWallet.deriveChild(i).getWallet();
+        const json = keystore.encryptWallet(password, wallet);
         return dispatch('addWalletAndSelect', json);
       } catch (e) {
         return dispatch('errors/emitError', e, { root: true });

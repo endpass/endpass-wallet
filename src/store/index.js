@@ -6,10 +6,10 @@ import mutations from './mutations';
 
 import accounts from './accounts/accounts';
 import tokens from './tokens';
-import web3 from './web3/web3';
+import web3 from './web3';
 import gasPrice from './gas-price';
 import price from './price';
-import transactions from './transactions/transactions';
+import transactions from './transactions';
 import errors from './errors';
 import connectionStatus from './connection-status';
 import userModule from './user';
@@ -57,11 +57,11 @@ if (module.hot) {
       './mutations',
       './actions',
       './accounts/accounts',
-      './web3/web3',
+      './web3',
       './tokens',
       './gas-price',
       './price',
-      './transactions/transactions',
+      './transactions',
       './errors',
       './connection-status',
       './user',
@@ -70,11 +70,11 @@ if (module.hot) {
       const newMutations = require('./mutations').default;
       const newActions = require('./actions').default;
       const newAccounts = require('./accounts/accounts').default;
-      const newWeb3 = require('./web3/web3').default;
+      const newWeb3 = require('./web3').default;
       const newTokens = require('./tokens').default;
       const newGasPrice = require('./gas-price').default;
       const newPrice = require('./price').default;
-      const newTransactions = require('./transactions/transactions').default;
+      const newTransactions = require('./transactions').default;
       const newErrors = require('./errors').default;
       const newConnectionStatus = require('./connection-status').default;
       const newUserModule = require('./user').default;

@@ -23,6 +23,7 @@ jest.mock('web3', () => {
     },
     accounts: {},
     Contract,
+    getBlockNumber: jest.fn().mockResolvedValue(),
   };
 
   const utils = originalWeb3.utils;
