@@ -105,8 +105,20 @@ const generateWallet = async ({ dispatch, state, getters }, password) => {
   await dispatch('addWalletAndSelect', json);
 };
 
-// Saves HD wallet's extended keys on the server
-const saveHdWallet = (ctx, json) => userService.setAccount(json.address, json);
+const saveWallet = async ({ commit }, { json }) => {
+  await userService.setAccount(json.address, json);
+
+  if (keystore.isExtendedPublicKey(json.address)) {
+    // HD wallet
+    commit(SET_HD_KEY, json);
+  } else if (keystore.isV3(json)) {
+    // Encrypted private key
+    commit(ADD_WALLET, json);
+  } else {
+    // Read-only public key
+    commit(ADD_ADDRESS, json.address);
+  }
+};
 
 const addHdWallet = async ({ commit, dispatch }, { key, password }) => {
   try {
@@ -115,10 +127,9 @@ const addHdWallet = async ({ commit, dispatch }, { key, password }) => {
     const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
     // Encrypt extended private key
     const json = keystore.encryptHDWallet(password, hdWallet);
-    commit(SET_HD_KEY, json);
 
     // Save HD keys and generate the first child wallet
-    await dispatch('saveHdWallet', json);
+    await dispatch('saveWallet', { json });
     await dispatch('generateWallet', password);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
@@ -232,10 +243,10 @@ export default {
   generateWallet,
   setUserHdKey,
   setUserWallets,
-  saveHdWallet,
   addHdWallet,
   addMultiHdWallet,
   updateBalance,
   validatePassword,
   init,
+  saveWallet,
 };
