@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CurrencySelect render should match snapshot 1`] = `
+<div
+  class="provider-select"
+>
+  <div
+    class="net-select"
+  >
+    <vue-multiselect
+      allow-empty="true"
+      label="name"
+      options="KEK,ETH"
+      placeholder="Select currency"
+      track-by="id"
+      value="KEK"
+    />
+  </div>
+</div>
+`;

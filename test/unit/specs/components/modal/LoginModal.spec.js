@@ -23,6 +23,10 @@ describe('LoginModal', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
+    it('should render component', () => {
+      expect(wrapper.element).toMatchSnapshot();
+    });
+
     it('should render LoginByEmailModal component', () => {
       wrapper.setData({
         currentModal: LoginByEmailModal.name,

@@ -39,31 +39,51 @@ describe('ImportFromPublicKey', () => {
     it('should be a Vue component', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
+
+    it('should match snapshot', () => {
+      expect(wrapper.element).toMatchSnapshot();
+    });
   });
 
-  describe('logic', () => {
-    it('should call vuex addWalletWithPublicKey with correct arguments', () => {
-      wrapper.setData({ address });
-      wrapper.vm.addWallet();
-      expect(actions.addWalletWithPublicKey.mock.calls[0][1]).toEqual(address);
-    });
-
-    it('should redirect to root after successful wallet creation', () => {
-      wrapper.vm.addWallet();
-      expect(router.push).toHaveBeenCalledWith('/');
-    });
-
-    it('should add error to field if failed to create wallet', () => {
-      actions.addWalletWithPublicKey.mockImplementationOnce(() => {
-        throw new Error();
+  describe('methods', () => {
+    describe('addWallet', () => {
+      it('should call vuex addWalletWithPublicKey with correct arguments', () => {
+        wrapper.setData({ address });
+        wrapper.vm.addWallet();
+        expect(actions.addWalletWithPublicKey.mock.calls[0][1]).toEqual(
+          address,
+        );
       });
-      wrapper.vm.addWallet();
-      expect(wrapper.vm.errors.items[0]).toEqual({
-        field: 'address',
-        id: 'wrongAddress',
-        msg: 'Address is invalid',
-        // vee validate added field
-        scope: null,
+
+      it('should redirect to root after successful wallet creation', () => {
+        wrapper.vm.addWallet();
+        expect(router.push).toHaveBeenCalledWith('/');
+      });
+
+      it('should add error to field if failed to create wallet', () => {
+        actions.addWalletWithPublicKey.mockImplementationOnce(() => {
+          throw new Error();
+        });
+        wrapper.vm.addWallet();
+        expect(wrapper.vm.errors.items[0]).toEqual({
+          field: 'address',
+          id: 'wrongAddress',
+          msg: 'Address is invalid',
+          // vee validate added field
+          scope: null,
+        });
+      });
+    });
+    describe('handleInput', () => {
+      it('should clear error with wrongAddress id', () => {
+        wrapper.vm.errors.add({
+          field: 'address',
+          msg: 'Address is invalid',
+          id: 'wrongAddress',
+        });
+        expect(wrapper.vm.errors.has('address')).toBe(true);
+        wrapper.vm.handleInput();
+        expect(wrapper.vm.errors.has('address')).toBe(false);
       });
     });
   });

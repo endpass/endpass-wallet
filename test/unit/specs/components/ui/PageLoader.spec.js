@@ -1,12 +1,13 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 
-import VForm from '@/components/ui/form/VForm';
+import Vuex from 'vuex';
+import PageLoader from '@/components/ui/PageLoader';
 
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
 
-describe('VForm page', () => {
+describe('PageLoader page', () => {
   let wrapper, state;
 
   const storeOptions = {
@@ -16,7 +17,7 @@ describe('VForm page', () => {
   };
   const store = new Vuex.Store(storeOptions);
   beforeEach(() => {
-    wrapper = shallow(VForm, {
+    wrapper = shallow(PageLoader, {
       localVue,
       store,
     });

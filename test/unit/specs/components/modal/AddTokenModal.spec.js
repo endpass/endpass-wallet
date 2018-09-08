@@ -48,6 +48,10 @@ describe('AddTokenModal', () => {
       expect(wrapper.name()).toBe('AddTokenModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
+
+    it('should render component', () => {
+      expect(wrapper.element).toMatchSnapshot();
+    });
   });
 
   describe('behavior', () => {

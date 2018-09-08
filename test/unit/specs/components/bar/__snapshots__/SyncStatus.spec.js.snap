@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SyncStatus render should match snapshot 1`] = `
+<div
+  class="sync-status"
+>
+  <span
+    class="tag is-danger"
+    title="synced to block 1"
+  >
+    failed
+  </span>
+</div>
+`;

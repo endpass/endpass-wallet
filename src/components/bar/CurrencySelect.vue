@@ -1,7 +1,7 @@
 <template>
   <div class="provider-select">
     <div class="net-select">
-      <multiselect
+      <vue-multiselect
          :options="currencies"
          track-by="id" label="name"
                        :show-labels="false"
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect';
+import VueMultiselect from 'vue-multiselect';
 import { mapActions, mapState } from 'vuex';
 
 export default {
@@ -32,7 +32,7 @@ export default {
     },
   },
   components: {
-    Multiselect,
+    VueMultiselect,
   },
 };
 </script>

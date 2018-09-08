@@ -20,5 +20,9 @@ describe('ImportFromJson', () => {
     it('should be a Vue component', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
+
+    it('should match snapshot', () => {
+      expect(wrapper.element).toMatchSnapshot();
+    });
   });
 });
