@@ -30,6 +30,7 @@
 
     </v-form>
     <two-factor-auth-settings/>
+    <change-password-settings/>
   </base-page>
 </template>
 
@@ -41,6 +42,7 @@ import error from '@/mixins/error';
 import VSelect from '@/components/ui/form/VSelect.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
+import ChangePasswordSettings from '@/components/ChangePasswordSettings';
 
 export default {
   name: 'SettingsPage',
@@ -83,12 +85,13 @@ export default {
     VSelect,
     VButton,
     TwoFactorAuthSettings,
+    ChangePasswordSettings,
   },
 };
 </script>
 
 <style lang="scss">
-.save-settings .field:last-child {
+.settings-page .field:last-child {
   margin-bottom: 0.75rem;
 }
 </style>
