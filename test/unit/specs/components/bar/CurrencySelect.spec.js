@@ -1,5 +1,6 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import { generateStubs } from '@/utils/testUtils';
+import { CURRENCIES } from '@/constants';
 
 import Vuex from 'vuex';
 const localVue = createLocalVue();
@@ -19,8 +20,7 @@ describe('CurrencySelect', () => {
         web3: {
           namespaced: true,
           state: {
-            activeCurrency: 'KEK',
-            currencies: ['KEK', 'ETH'],
+            activeCurrency: CURRENCIES[0],
           },
           actions,
         },
@@ -47,8 +47,8 @@ describe('CurrencySelect', () => {
   describe('behavior', () => {
     it('should set correct props for select', () => {
       const multiselect = wrapper.find('vue-multiselect');
-      expect(multiselect.attributes().options).toBe('KEK,ETH');
-      expect(multiselect.attributes().value).toBe('KEK');
+      expect(multiselect.attributes().options).toBe(CURRENCIES.toString());
+      expect(multiselect.attributes().value).toBe(CURRENCIES[0].toString());
     });
   });
 });

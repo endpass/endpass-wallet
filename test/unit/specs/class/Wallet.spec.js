@@ -1,3 +1,4 @@
+import Tx from 'ethereumjs-tx';
 import { Wallet } from '@/class';
 import { v3, v3password, privateKey } from 'fixtures/accounts';
 
@@ -14,13 +15,20 @@ describe('Wallet Class', () => {
 
   describe('instance methods', () => {
     describe('signTransaction', () => {
-      it('should call sign function with private key', async () => {
-        const transaction = { sign: jest.fn() };
+      const transaction = new Tx();
+
+      transaction.sign = jest.fn();
+
+      it('should call sign function with private key and return transaction rlp hash', async () => {
+        expect.assertions(3);
+
         wallet.getPrivateKey = jest.fn().mockResolvedValue(privateKey);
 
-        await wallet.signTransaction(transaction, v3password);
+        const signedTx = await wallet.signTransaction(transaction, v3password);
 
         expect(transaction.sign).toBeCalledWith(privateKey);
+        expect(signedTx).toEqual(expect.any(String));
+        expect(/^0x\S+/.test(signedTx)).toBeTruthy();
       });
     });
 

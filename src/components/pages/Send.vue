@@ -95,7 +95,7 @@
                   <div class="field-label"></div>
                   <div class="field-body">
                     <a class="has-text-link" @click="toggleShowAdvanced">
-                      Advanced Options...gas price, gas limit, nonce, data
+                      Advanced Options...
                     </a>
                   </div>
                 </div>
@@ -134,7 +134,7 @@
                                name="gasLimit"
                                type="number"
                                min="21000"
-                               max="4000000"
+                               max="1000000"
                                step="1000"
                                validator="required|numeric|integer|between:21000,4000000"
                                id="gasLimit"
@@ -266,7 +266,7 @@ export default {
       address: state => state.accounts.address.getChecksumAddressString(),
       activeCurrency: state => state.web3.activeCurrency,
       activeNet: state => state.web3.activeNet,
-      isSyncing: state => !!state.web3.isSyncing,
+      isSyncing: state => !!state.connectionStatus.isSyncing,
       fiatCurrency: state => state.accounts.settings.fiatCurrency,
       ethPrice: state => state.price.price || 0,
     }),
@@ -372,9 +372,9 @@ export default {
         },
       ];
 
-      this.tokensWithBalance.forEach(token => currencies.push(token.symbol));
-
-      return currencies;
+      return currencies.concat(
+        this.tokensWithBalance.map(({ symbol }) => symbol),
+      );
     },
   },
   methods: {
@@ -528,7 +528,7 @@ export default {
         if (BigNumber(this.estimateGasCost).gt(this.balance)) {
           this.errors.add({
             field: 'value',
-            msg: 'Insufficient funds for the transaction commission',
+            msg: 'Insufficient funds',
             id: 'insufficientBalance',
           });
         } else {

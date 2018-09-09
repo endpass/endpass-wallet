@@ -16,7 +16,8 @@
 </template>
 
 <script>
-import getOptionParameter from '@/utils/get-option-parameter'
+import getOptionParameter from '@/utils/getOptionParameter';
+
 export default {
   name: 'v-select',
   props: {
@@ -62,7 +63,7 @@ export default {
     },
   },
   methods: {
-    getOptionParameter
+    getOptionParameter,
   },
 };
 </script>
@@ -72,17 +73,23 @@ export default {
   &:not(.is-multiple):not(.is-loading)::after {
     border-color: $primary;
   }
-  .field .is-naked &, form .is-naked &, .modal .is-naked & {
+  .field .is-naked &,
+  form .is-naked &,
+  .modal .is-naked & {
     select {
       background-color: transparent;
       color: $white;
       border: none;
-      &.is-active,&:active,&.is-focused,&:focus {
+      &.is-active,
+      &:active,
+      &.is-focused,
+      &:focus {
         border: 1px solid $white;
         box-shadow: none;
       }
     }
-    &::after, &:hover::after {
+    &::after,
+    &:hover::after {
       border-color: $white;
     }
   }

@@ -10,6 +10,15 @@ const apiResponse = {
 };
 
 describe('Transaction Class', () => {
+  it('throws if address not present', () => {
+    expect(() => {
+      /* eslint-disable-next-line */
+      new Token({
+        address: null,
+      });
+    }).toThrow();
+  });
+
   it('creates transaction with API format', () => {
     const token = new Token(apiResponse);
     expect(token.address).toBe(

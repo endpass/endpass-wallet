@@ -18,12 +18,12 @@
               <span
                 class="icon is-small"
                 v-html="require('@/img/pencil.svg')"
-                @click.stop="handleEditProvider(props.option)"
+                @click.stop="openCustomProviderModal(props.option)"
               />
               <span
                 class="icon is-small"
                 v-html="require('@/img/x.svg')"
-                @click.stop="handleDeleteProvider(props.option)"
+                @click.stop="deleteNetwork({ network: props.option })"
               />
             </span>
           </div>
@@ -61,16 +61,13 @@ export default {
     },
   },
   methods: {
-    ...mapActions('web3', ['changeNetwork', 'deleteProvider']),
+    ...mapActions('web3', ['changeNetwork', 'deleteNetwork']),
     selectNet(net) {
       if (net.id === -1) {
         this.openCustomProviderModal();
       } else {
-        this.setNetwork(net.id);
+        this.changeNetwork({ networkId: net.id });
       }
-    },
-    setNetwork(id) {
-      this.changeNetwork(id);
     },
     openCustomProviderModal(network) {
       this.selectedProvider = network;
@@ -78,12 +75,6 @@ export default {
     },
     closeCustomProviderModal() {
       this.customProviderModalOpen = false;
-    },
-    handleEditProvider(network) {
-      this.openCustomProviderModal(network);
-    },
-    handleDeleteProvider(network) {
-      this.deleteProvider({ network });
     },
   },
   components: {

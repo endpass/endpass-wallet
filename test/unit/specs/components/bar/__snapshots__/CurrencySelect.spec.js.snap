@@ -10,10 +10,10 @@ exports[`CurrencySelect render should match snapshot 1`] = `
     <vue-multiselect
       allow-empty="true"
       label="name"
-      options="KEK,ETH"
+      options="[object Object],[object Object],[object Object]"
       placeholder="Select currency"
       track-by="id"
-      value="KEK"
+      value="[object Object]"
     />
   </div>
 </div>

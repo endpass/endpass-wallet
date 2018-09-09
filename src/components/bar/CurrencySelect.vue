@@ -18,17 +18,25 @@
 import VueMultiselect from 'vue-multiselect';
 import { mapActions, mapState } from 'vuex';
 
+import { CURRENCIES } from '@/constants';
+
 export default {
+  data: function() {
+    return {
+      currencies: CURRENCIES,
+    };
+  },
   computed: {
     ...mapState({
       activeCurrency: state => state.web3.activeCurrency,
-      currencies: state => state.web3.currencies,
     }),
   },
   methods: {
     ...mapActions('web3', ['changeCurrency']),
     selectCurrency(currency) {
-      this.changeCurrency(currency.id);
+      this.changeCurrency({
+        currencyId: currency.id,
+      });
     },
   },
   components: {

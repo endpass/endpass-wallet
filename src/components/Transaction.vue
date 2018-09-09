@@ -117,7 +117,7 @@ export default {
   },
   computed: {
     ...mapState({
-      isSyncing: state => !!state.web3.isSyncing,
+      isSyncing: state => !!state.connectionStatus.isSyncing,
       address: state =>
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),

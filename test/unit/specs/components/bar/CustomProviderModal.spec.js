@@ -7,9 +7,9 @@ import { generateStubs } from '@/utils/testUtils';
 
 describe('CustomProviderModal', () => {
   const web3Actions = {
-    addNewProvider: jest.fn(),
+    addNetwork: jest.fn(),
     validateNetwork: jest.fn(),
-    updateProvider: jest.fn(),
+    updateNetwork: jest.fn(),
   };
   const web3Getters = {
     networks: jest.fn(() => [{ url: 'provider url' }]),
@@ -177,7 +177,7 @@ describe('CustomProviderModal', () => {
           const networkId = 3;
 
           wrapper.setMethods({
-            addNewProvider: jest.fn(),
+            addNetwork: jest.fn(),
             validateNetwork: jest
               .fn()
               .mockResolvedValueOnce([networkType, networkId]),
@@ -192,10 +192,11 @@ describe('CustomProviderModal', () => {
             network: provider,
           });
 
-          expect(wrapper.vm.addNewProvider).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.addNewProvider).toHaveBeenCalledWith({
+          expect(wrapper.vm.addNetwork).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.addNetwork).toHaveBeenCalledWith({
             network: {
               ...provider,
+              networkType,
               id: networkId,
             },
           });
@@ -239,7 +240,7 @@ describe('CustomProviderModal', () => {
           const networkId = 3;
 
           wrapper.setMethods({
-            updateProvider: jest.fn(),
+            updateNetwork: jest.fn(),
             validateNetwork: jest
               .fn()
               .mockResolvedValue([networkType, networkId]),
@@ -254,8 +255,8 @@ describe('CustomProviderModal', () => {
             network: provider,
           });
 
-          expect(wrapper.vm.updateProvider).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.updateProvider).toHaveBeenCalledWith({
+          expect(wrapper.vm.updateNetwork).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.updateNetwork).toHaveBeenCalledWith({
             network: provider,
           });
 

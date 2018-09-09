@@ -13,67 +13,69 @@ jest.mock('@/store', () => ({
   }),
 }));
 
-describe('kebabToCamel', () => {
-  it('should replace kebab notation to camel notation', () => {
-    const received = 'replace-to-camel-notation';
-    const expected = 'replaceToCamelNotation';
+describe('utils', () => {
+  describe('kebabToCamel', () => {
+    it('should replace kebab notation to camel notation', () => {
+      const received = 'replace-to-camel-notation';
+      const expected = 'replaceToCamelNotation';
 
-    expect(utils.kebabToCamel(received)).toBe(expected);
+      expect(utils.kebabToCamel(received)).toBe(expected);
+    });
+
+    it('should not do anything', () => {
+      let text = 'textInCamelNotation';
+
+      expect(utils.kebabToCamel(text)).toBe(text);
+
+      text = 'oneword';
+
+      expect(utils.kebabToCamel(text)).toBe(text);
+    });
   });
 
-  it('should not do anything', () => {
-    let text = 'textInCamelNotation';
+  describe('camelToKebab', () => {
+    it('should replace camel notation to kebab notation', () => {
+      const received = 'replaceToKebabNotation';
+      const expected = 'replace-to-kebab-notation';
 
-    expect(utils.kebabToCamel(text)).toBe(text);
+      expect(utils.camelToKebab(received)).toBe(expected);
+    });
 
-    text = 'oneword';
+    it('should not do anything', () => {
+      let text = 'text-in-kebab-notation';
 
-    expect(utils.kebabToCamel(text)).toBe(text);
-  });
-});
+      expect(utils.camelToKebab(text)).toBe(text);
 
-describe('camelToKebab', () => {
-  it('should replace camel notation to kebab notation', () => {
-    const received = 'replaceToKebabNotation';
-    const expected = 'replace-to-kebab-notation';
+      text = 'oneword';
 
-    expect(utils.camelToKebab(received)).toBe(expected);
-  });
-
-  it('should not do anything', () => {
-    let text = 'text-in-kebab-notation';
-
-    expect(utils.camelToKebab(text)).toBe(text);
-
-    text = 'oneword';
-
-    expect(utils.camelToKebab(text)).toBe(text);
-  });
-});
-
-describe('getInitializedValueFromStore', () => {
-  const value = 'value';
-  const { module } = store.state;
-
-  it('should return already initialized value', async () => {
-    module.field = value;
-
-    const receivedValue = await utils.getInitializedValueFromStore(
-      module,
-      'field',
-    );
-
-    expect(receivedValue).toBe(value);
+      expect(utils.camelToKebab(text)).toBe(text);
+    });
   });
 
-  it('should return just initialized value', async () => {
-    module.field = null;
+  describe('getInitializedValueFromStore', () => {
+    const value = 'value';
+    const { module } = store.state;
 
-    const receivedValue = await utils.getInitializedValueFromStore(
-      module,
-      'field',
-    );
+    it('should return already initialized value', async () => {
+      module.field = value;
 
-    expect(receivedValue).toBe('new value');
+      const receivedValue = await utils.getInitializedValueFromStore(
+        module,
+        'field',
+      );
+
+      expect(receivedValue).toBe(value);
+    });
+
+    it('should return just initialized value', async () => {
+      module.field = null;
+
+      const receivedValue = await utils.getInitializedValueFromStore(
+        module,
+        'field',
+      );
+
+      expect(receivedValue).toBe('new value');
+    });
   });
 });

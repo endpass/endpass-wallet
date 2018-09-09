@@ -1,0 +1,126 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SignTransaction render should enable "Sign transaction" button 1`] = `
+<div>
+  <v-form
+    id="signing-transaction-form"
+  >
+    <v-textarea
+      label="Transaction object (JSON)"
+      placeholder="This is a transaction that you are signing to prove that you own it."
+      v-model="transaction"
+    />
+     
+    <v-button
+      class-name="is-primary is-medium"
+    >
+      
+      Sign transaction
+    
+    </v-button>
+     
+    <!---->
+  </v-form>
+   
+  <!---->
+</div>
+`;
+
+exports[`SignTransaction render should render the initial state of the component 1`] = `
+<div>
+  <v-form
+    id="signing-transaction-form"
+  >
+    <v-textarea
+      label="Transaction object (JSON)"
+      placeholder="This is a transaction that you are signing to prove that you own it."
+      v-model="transaction"
+    />
+     
+    <v-button
+      class-name="is-primary is-medium"
+      disabled="true"
+    >
+      
+      Sign transaction
+    
+    </v-button>
+     
+    <!---->
+  </v-form>
+   
+  <!---->
+</div>
+`;
+
+exports[`SignTransaction render should show modal window for password confirmation 1`] = `
+<div>
+  <v-form
+    id="signing-transaction-form"
+  >
+    <v-textarea
+      label="Transaction object (JSON)"
+      placeholder="This is a transaction that you are signing to prove that you own it."
+      v-model="transaction"
+    />
+     
+    <v-button
+      class-name="is-primary is-medium"
+    >
+      
+      Sign transaction
+    
+    </v-button>
+     
+    <!---->
+  </v-form>
+   
+  <code-password-modal
+    code="{\\"timestamp\\":1535035155,\\"from\\":\\"0xb14ab53e38da1c172f877dbc6d65e4a1b0474c3c\\",\\"to\\":\\"0xb41e54248facd542165a4fcb53fb980e4ac88db5\\",\\"hash\\":\\"0x53d26efcde07f1b2b68f3e1de93b730deabd1094970d9a68efb799e048e00892\\",\\"value\\":0.048671,\\"input\\":\\"0x\\",\\"success\\":true}"
+    label="Transaction object"
+  />
+</div>
+`;
+
+exports[`SignTransaction render should show signed message 1`] = `
+<div>
+  <v-form
+    id="signing-transaction-form"
+  >
+    <v-textarea
+      label="Transaction object (JSON)"
+      placeholder="This is a transaction that you are signing to prove that you own it."
+      v-model="transaction"
+    />
+     
+    <v-button
+      class-name="is-primary is-medium"
+      disabled="true"
+    >
+      
+      Sign transaction
+    
+    </v-button>
+     
+    <div
+      class="field"
+    >
+      <label
+        class="label"
+      >
+        RLP encoded transaction
+      </label>
+       
+      <p
+        class="code"
+      >
+        
+        0x0
+      
+      </p>
+    </div>
+  </v-form>
+   
+  <!---->
+</div>
+`;
