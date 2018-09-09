@@ -3,6 +3,7 @@ import Web3 from 'web3';
 
 function createWeb3Instance() {
   const web3 = new Web3();
+
   return web3;
 }
 
