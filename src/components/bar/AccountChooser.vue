@@ -133,44 +133,38 @@ export default {
 
   created() {
     this.$nextTick(() => {
-      const { $refs } = this.$refs.select;
+      const { $refs: $selectRefs } = this.$refs.select;
 
-      if ($refs.search && this.creatable) {
-        this.searchInput = $refs.search;
-        this.searchInput.addEventListener(
-          'keydown',
-          this.handleSearchInputKeydown,
-        );
+      if ($selectRefs.search && this.creatable) {
+        this.searchInput = $selectRefs.search;
+        this.searchInput.addEventListener('blur', this.handleSearchBlur);
+        this.searchInput.addEventListener('focus', this.handleSearchFocus);
       }
     });
   },
 
   beforeDestroy() {
     if (this.searchInput) {
-      this.searchInput.removeEventListener(
-        'keydown',
-        this.handleSearchInputKeydown,
-      );
+      this.searchInput.removeEventListener('blur', this.handleSearchBlur);
+      this.searchInput.removeEventListener('focus', this.handleSearchFocus);
     }
   },
 
   methods: {
-    processNewAccountAddress() {
+    handleSearchBlur() {
       const { valid, data } = addressValidator.validate(this.newAccountAddress);
 
-      if (valid) {
-        this.emitInput(this.newAccountAddress);
-        this.newAccountAddress = '';
-        this.searchInput.blur();
-      } else {
+      if (!valid) {
         this.error = data.message;
       }
+
+      this.emitInput(this.newAccountAddress);
     },
 
-    handleSearchInputKeydown(e) {
-      if (e.keyCode === 13 && this.newAccountAddress) {
-        this.processNewAccountAddress();
-      }
+    handleSearchFocus() {
+      this.$refs.select.search = this.value
+        ? this.value
+        : this.newAccountAddress;
     },
 
     handleSearchInput(value) {
