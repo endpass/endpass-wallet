@@ -33,7 +33,7 @@ import net from '@/mixins/net';
 export default {
   computed: {
     ...mapState({
-      fiatCurrency: state => state.accounts.settings.fiatCurrency,
+      fiatCurrency: state => state.user.settings.fiatCurrency,
       activeCurrency: state => state.web3.activeCurrency,
       price: state => state.price.price,
       priceLoading: state => state.price.isLoading,

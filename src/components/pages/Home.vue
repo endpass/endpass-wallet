@@ -78,7 +78,6 @@
 import Balance from '@/components/Balance';
 import Account from '@/components/Account';
 import TokenList from '@/components/TokenList';
-import accounts from '@/mixins/accounts';
 import { mapGetters, mapState } from 'vuex';
 
 export default {
@@ -86,7 +85,8 @@ export default {
     return {};
   },
   computed: {
-    ...mapGetters('accounts', ['isPublicAccount', 'isLoggedIn', 'balance']),
+    ...mapGetters('user', ['isLoggedIn']),
+    ...mapGetters('accounts', ['isPublicAccount', 'balance']),
     ...mapState({
       activeCurrency: state => state.web3.activeCurrency,
       address: state =>

@@ -24,6 +24,7 @@ import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import { SET_ADDRESS } from '@/store/accounts/mutations-types';
 
 export default {
   name: 'import-from-public-key',
