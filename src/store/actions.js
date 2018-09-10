@@ -4,6 +4,8 @@ import { START_PAGE_LOADING, STOP_PAGE_LOADING } from './mutations-types.js';
 const init = async ({ dispatch, commit }) => {
   commit(START_PAGE_LOADING);
 
+  // Wait init last or default identity mode
+  await dispatch('user/initIdentityMode');
   // init web3 networks
   await dispatch('web3/init');
   // Wait for accounts to load

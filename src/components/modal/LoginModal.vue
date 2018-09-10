@@ -25,10 +25,10 @@ export default {
   }),
   methods: {
     ...mapActions('accounts', ['login', 'loginViaOTP']),
-    handleLoginByEmailModalConfirm(email) {
+    handleLoginByEmailModalConfirm({ email, mode }) {
       this.isLoading = true;
 
-      return this.login(email)
+      return this.login({ email, mode })
         .then(challengeType => {
           if (challengeType === 'otp') {
             this.email = email;

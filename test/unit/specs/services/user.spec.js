@@ -1,9 +1,10 @@
-import { http } from '@/utils';
+import { http, proxyRequest } from '@/utils';
 import MockAdapter from 'axios-mock-adapter';
 
 import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
 import userService from '@/services/user';
+import { IDENTITY_MODE } from '@/constants';
 
 describe('User service', () => {
   let mock;
@@ -357,6 +358,7 @@ describe('User service', () => {
       text: `Failed to save OTP settings.`,
       type: 'is-danger',
     });
+    const errorMessage = 'server error';
 
     it('should make correct request', async () => {
       mock.onPost(url).reply(config => {
@@ -375,11 +377,17 @@ describe('User service', () => {
     });
 
     it('should handle failed POST /otp request', async () => {
-      mock.onPost(url).reply(200, { success: false });
+      const error = new NotificationError({
+        ...expectedError,
+        message: `POST ${url}: ${errorMessage}`,
+      });
+
+      mock.onPost(url).reply(200, { success: false, message: errorMessage });
+
       try {
         await userService.setOtpSettings(secret, code);
       } catch (receivedError) {
-        expect(receivedError).toEqual(expectedError);
+        expect(receivedError).toEqual(error);
       }
     });
 
@@ -388,7 +396,7 @@ describe('User service', () => {
       try {
         await userService.setOtpSettings();
       } catch (receivedError) {
-        expect(receivedError).toEqual(expectedError);
+        expect(receivedError.text).toEqual(expectedError.text);
       }
     });
   });
@@ -404,6 +412,7 @@ describe('User service', () => {
       text: `Failed to remove OTP settings.`,
       type: 'is-danger',
     });
+    const errorMessage = 'server error';
 
     it('should make correct request', async () => {
       mock.onDelete(url).reply(config => {
@@ -422,11 +431,17 @@ describe('User service', () => {
     });
 
     it('should handle failed DELETE /otp request', async () => {
-      mock.onDelete(url).reply(200, { success: false });
+      const error = new NotificationError({
+        ...expectedError,
+        message: `DELETE ${url}: ${errorMessage}`,
+      });
+
+      mock.onDelete(url).reply(200, { success: false, message: errorMessage });
+
       try {
         await userService.deleteOtpSettings(code);
       } catch (receivedError) {
-        expect(receivedError).toEqual(expectedError);
+        expect(receivedError).toEqual(error);
       }
     });
 
@@ -435,8 +450,65 @@ describe('User service', () => {
       try {
         await userService.deleteOtpSettings(code);
       } catch (receivedError) {
-        expect(receivedError).toEqual(expectedError);
+        expect(receivedError.text).toEqual(expectedError.text);
       }
+    });
+  });
+
+  describe('Identity mode', () => {
+    const identityModeKey = 'identityMode';
+
+    describe('setIdentityMode', () => {
+      const url = identityAPIUrl;
+      const type = IDENTITY_MODE.CUSTOM;
+      const mode = { type, serverUrl: url };
+
+      afterEach(() => {
+        localStorage.setItem.mockReset();
+      });
+
+      it('should set the identity mode', () => {
+        expect.assertions(2);
+
+        const spyProxyRequest = jest.spyOn(proxyRequest, 'setMode');
+
+        userService.setIdentityMode(type, url);
+
+        expect(spyProxyRequest).toHaveBeenCalledTimes(1);
+        expect(spyProxyRequest).toBeCalledWith(type, url);
+
+        spyProxyRequest.mockRestore();
+      });
+
+      it('should save the identity mode in the local storage', () => {
+        expect.assertions(2);
+
+        userService.setIdentityMode(type, url);
+
+        const expected = JSON.stringify(mode);
+
+        expect(localStorage.setItem).toHaveBeenCalledTimes(1);
+        expect(localStorage.setItem).toBeCalledWith(identityModeKey, expected);
+      });
+    });
+
+    describe('getIdentityMode', () => {
+      afterEach(() => {
+        localStorage.getItem.mockReset();
+      });
+
+      it('should get the identity mode', () => {
+        userService.getIdentityMode();
+
+        expect(localStorage.getItem).toHaveBeenCalledTimes(1);
+        expect(localStorage.getItem).toBeCalledWith(identityModeKey);
+      });
+
+      it('should return default identity mode', () => {
+        const mode = userService.getIdentityMode();
+
+        expect(mode).toEqual({ type: IDENTITY_MODE.DEFAULT });
+      });
     });
   });
 });

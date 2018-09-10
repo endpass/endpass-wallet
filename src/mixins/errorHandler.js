@@ -12,7 +12,11 @@ export default {
       if (err instanceof NotificationError) {
         const { title, text, type } = err;
         this.$notify({ title, text, type });
-      } else {
+
+        if (err.log) {
+          console.error(err.message);
+        }
+      } else if (!(err.response && err.response.status === 401)) {
         console.error(err);
       }
     },

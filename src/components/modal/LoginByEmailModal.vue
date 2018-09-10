@@ -7,7 +7,9 @@
 
     <v-form
       id="loginByEmail"
-      @submit="handleSubmit">
+      v-model="isFormValid"
+      @submit="handleSubmit"
+    >
       <v-input v-model="email"
                label="Email"
                help="Your email address may be used to help recover your
@@ -17,17 +19,31 @@
                placeholder="Your email"
                :disabled="isLoading" />
 
-        <v-checkbox v-model="termsAccepted">
-          I accept the <a href="https://endpass.com/terms/" target="_blank">Terms of Service</a>
-          and <a href="https://endpass.com/privacy/" target="_blank">Privacy
-            Policy</a>.
-        </v-checkbox>
+      <v-select v-model="currentIdentityServerType"
+                label="Identity Server"
+                name="currentIdentityServerType"
+                :options="availableIdentityServerTypes"
+                :disabled="isLoading" />
+
+      <v-input v-model="customIdentityServer"
+               v-if="selectedCustomIdentityServerType"
+               label="Custom Identity Server"
+               id="customIdentityServer"
+               name="customIdentityServer"
+               validator="required|url:require_protocol:true"
+               placeholder="Custom Identity Server"
+               :disabled="isLoading" />
+
+      <v-checkbox v-model="termsAccepted">
+        I accept the <a href="https://endpass.com/terms/" target="_blank">Terms of Service</a>
+        and <a href="https://endpass.com/privacy/" target="_blank">Privacy Policy</a>.
+      </v-checkbox>
     </v-form>
     <div class="buttons" slot="footer">
       <v-button className="is-primary is-medium"
                 form="loginByEmail"
                 data-test="submit-login"
-                :disabled="!termsAccepted"
+                :disabled="!termsAccepted || !isFormValid"
                 :loading="isLoading">Continue</v-button>
     </div>
   </v-modal>
@@ -39,6 +55,14 @@ import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
 import VCheckbox from '@/components/ui/form/VCheckbox';
+import VSelect from '@/components/ui/form/VSelect';
+import { IDENTITY_MODE } from '@/constants';
+
+const availableIdentityServerTypes = [
+  { text: 'Endpass', val: IDENTITY_MODE.DEFAULT },
+  { text: 'Local Storage', val: IDENTITY_MODE.LOCAL },
+  { text: 'Custom server', val: IDENTITY_MODE.CUSTOM },
+];
 
 export default {
   name: 'login-by-email-modal',
@@ -51,10 +75,27 @@ export default {
   data: () => ({
     email: '',
     termsAccepted: true,
+    availableIdentityServerTypes,
+    currentIdentityServerType: availableIdentityServerTypes[0].val,
+    customIdentityServer: null,
+    isFormValid: false,
   }),
+  computed: {
+    selectedCustomIdentityServerType() {
+      return this.currentIdentityServerType === IDENTITY_MODE.CUSTOM;
+    },
+  },
   methods: {
     handleSubmit() {
-      this.$emit('confirm', this.email);
+      const mode = {
+        type: this.currentIdentityServerType,
+        serverUrl: this.selectedCustomIdentityServerType
+          ? this.customIdentityServer
+          : undefined,
+      };
+      const { email } = this;
+
+      this.$emit('confirm', { email, mode });
     },
     handleClose() {
       this.$emit('close');
@@ -66,6 +107,7 @@ export default {
     VInput,
     VButton,
     VCheckbox,
+    VSelect,
   },
 };
 </script>

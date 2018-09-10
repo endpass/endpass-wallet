@@ -48,8 +48,18 @@ export const CURRENCIES = Object.freeze([
   },
 ]);
 
+export const IDENTITY_MODE = {
+  DEFAULT: 'default',
+  CUSTOM: 'custom',
+  LOCAL: 'local',
+};
+
+export const PROXY_REQUEST_PREFIX = 'endpass-identity';
+
 export default {
   MAIN_NET_ID,
   DEFAULT_NETWORKS,
   CURRENCIES,
+  IDENTITY_MODE: Object.freeze(IDENTITY_MODE),
+  PROXY_REQUEST_PREFIX,
 };

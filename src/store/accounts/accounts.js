@@ -1,5 +1,4 @@
 import { userService } from '@/services';
-import storage from '@/services/storage';
 import web3 from '@/utils/web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
@@ -12,6 +11,11 @@ import {
 import { Wallet, Address } from '@/class';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
+import { IDENTITY_MODE } from '@/constants';
+import {
+  SET_AUTHORIZATION_STATUS,
+  SET_IDENTITY_TYPE,
+} from '@/store/user/mutations-types';
 
 export default {
   namespaced: true,
@@ -246,8 +250,8 @@ export default {
     },
     updateSettings({ commit, dispatch }, settings) {
       commit('setSettings', settings);
-      return storage
-        .write('settings', settings)
+      return userService
+        .setSettings({ settings })
         .catch(e => dispatch('errors/emitError', e, { root: true }));
     },
     async validatePassword({ state, getters }, password) {
@@ -259,14 +263,41 @@ export default {
 
       return wallet.validatePassword(password);
     },
-    login({ commit, dispatch }, email) {
-      return userService.login(email);
+    async login({ commit, dispatch }, { email, mode = {} }) {
+      const { type = IDENTITY_MODE.DEFAULT, serverUrl } = mode;
+
+      if (type === IDENTITY_MODE.DEFAULT) {
+        return userService.login(email);
+      }
+
+      try {
+        userService.setIdentityMode(type, serverUrl);
+        commit(`user/${SET_IDENTITY_TYPE}`, type, { root: true });
+        commit(`user/${SET_AUTHORIZATION_STATUS}`, true, { root: true });
+        commit('setEmail', email);
+        await userService.setSettings({ email });
+
+        return dispatch('init', null, { root: true });
+      } catch (e) {
+        return dispatch('errors/emitError', e, { root: true });
+      }
     },
-    logout({ commit, dispatch }) {
+    async logout({ commit, dispatch, getters }) {
       commit('setEmail', null);
-      return Promise.all([storage.clear(), userService.logout()])
-        .then(() => window.location.reload())
-        .catch(e => dispatch('errors/emitError', e, { root: true }));
+
+      try {
+        userService.setIdentityMode(IDENTITY_MODE.DEFAULT);
+      } catch (e) {} // eslint-disable-line no-empty
+
+      try {
+        if (getters['user/isDefaultIdentity']) {
+          await userService.logout();
+        }
+
+        window.location.reload();
+      } catch (e) {
+        await dispatch('errors/emitError', e, { root: true });
+      }
     },
     loginViaOTP({}, { code, email }) {
       return userService.loginViaOTP(code, email);
@@ -314,7 +345,6 @@ export default {
         if (email) {
           commit('setEmail', email);
         } else {
-          storage.disableRemote();
           return;
         }
 

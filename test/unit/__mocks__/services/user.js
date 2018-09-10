@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { NotificationError } from '@/class';
 import accountsFixture from 'fixtures/accounts';
+import { IDENTITY_MODE } from '@/constants';
 
 const { addresses, v3, hdv3 } = accountsFixture;
 
@@ -67,6 +68,12 @@ export default {
         text: 'Failed to get user information. Please, reload page',
         type: 'is-danger',
       });
+    });
+  },
+
+  setSetting(settings) {
+    return Promise.resolve({
+      success: true,
     });
   },
 
@@ -139,5 +146,13 @@ export default {
         ...settings,
       }))
       .catch(() => {});
+  },
+
+  setIdentityMode() {
+    return true;
+  },
+
+  getIdentityMode() {
+    return { type: IDENTITY_MODE.DEFAULT };
   },
 };
