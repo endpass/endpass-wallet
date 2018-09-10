@@ -8,9 +8,6 @@ import {
   SET_WALLET,
   SET_HD_KEY,
   SET_BALANCE,
-  SET_SETTINGS,
-  SET_OTP_SETTINGS,
-  SET_EMAIL,
 } from '@/store/accounts/mutations-types';
 
 describe('Accounts mutations', () => {
@@ -83,39 +80,6 @@ describe('Accounts mutations', () => {
       mutations[SET_BALANCE](state, balance);
 
       expect(state.balance).toBe(balance);
-    });
-  });
-
-  describe(SET_SETTINGS, () => {
-    it('should set settings', () => {
-      const state = { settings: { fiatCurrency: 'USD' } };
-      const settings = { fiatCurrency: 'GBR' };
-
-      mutations[SET_SETTINGS](state, settings);
-
-      expect(state.settings).toEqual(settings);
-    });
-  });
-
-  describe(SET_OTP_SETTINGS, () => {
-    it('should set otp settings', () => {
-      const state = { otpSettings: null };
-      const newOptSettings = {};
-
-      mutations[SET_OTP_SETTINGS](state, newOptSettings);
-
-      expect(state.otpSettings).toEqual(newOptSettings);
-    });
-  });
-
-  describe(SET_EMAIL, () => {
-    it('should set email', () => {
-      const state = { email: null };
-      const email = 'email@email.com';
-
-      mutations[SET_EMAIL](state, email);
-
-      expect(state.email).toEqual(email);
     });
   });
 });

@@ -81,7 +81,7 @@ export default {
     ...mapState({
       tokenPrices: state => state.tokens.prices,
       ethPrice: state => state.price.price,
-      currency: state => state.accounts.settings.fiatCurrency,
+      currency: state => state.user.settings.fiatCurrency,
     }),
     ...mapGetters('tokens', ['tokensWithBalance']),
   },

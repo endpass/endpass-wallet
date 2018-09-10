@@ -22,7 +22,7 @@ describe('SettingsPage', () => {
   };
   const storeOptions = {
     modules: {
-      accounts: {
+      user: {
         namespaced: true,
         state: {
           settings: {

@@ -267,7 +267,7 @@ export default {
       activeCurrency: state => state.web3.activeCurrency,
       activeNet: state => state.web3.activeNet,
       isSyncing: state => !!state.connectionStatus.isSyncing,
-      fiatCurrency: state => state.accounts.settings.fiatCurrency,
+      fiatCurrency: state => state.user.settings.fiatCurrency,
       ethPrice: state => state.price.price || 0,
     }),
     ...mapGetters('tokens', ['tokensWithBalance']),

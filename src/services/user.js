@@ -140,7 +140,11 @@ export default {
           .map(this.getAccount);
         return Promise.all(allAcc);
       })
-      .catch(() => {
+      .catch(e => {
+        if (e.response && e.response.status === 401) {
+          throw e;
+        }
+
         throw new NotificationError({
           title: 'Accounts request error',
           text: 'Failed to get user accounts. Please, reload page',
