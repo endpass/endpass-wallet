@@ -48,7 +48,13 @@ export const CURRENCIES = Object.freeze([
   },
 ]);
 
+export const AVAILABLE_FIAT_CURRENCIES = Object.freeze(
+  // prettier-ignore
+  ['USD', 'AUD', 'BRL', 'CAD', 'CHF', 'CLP', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PKR', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'ZAR'],
+);
+
 export default {
+  AVAILABLE_FIAT_CURRENCIES,
   MAIN_NET_ID,
   DEFAULT_NETWORKS,
   CURRENCIES,
