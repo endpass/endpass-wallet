@@ -4,25 +4,26 @@ import { http } from '@/utils';
 import keyUtil from '@/utils/keystore';
 
 export default {
-  login(email) {
-    return http
-      .post(`${identityAPIUrl}/auth`, {
-        email,
-      })
-      .then(({ data: { success, challenge } }) => {
-        if (!success) {
-          return Promise.reject();
-        }
+  async login(email) {
+    try {
+      const redirectUri = window.location.href.replace('?redirect_uri=%2F', '');
+      const encodedUri = encodeURIComponent(redirectUri);
+      const requestUrl = `${identityAPIUrl}/auth?redirect_uri=${encodedUri}`;
+      const { data } = await http.post(requestUrl, { email });
+      const { success, challenge } = data;
 
-        return challenge.challenge_type;
-      })
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Auth error',
-          text: 'Invalid or missing email address. Please, try again',
-          type: 'is-danger',
-        });
+      if (!success) {
+        throw new Error();
+      }
+
+      return challenge.challenge_type;
+    } catch (e) {
+      throw new NotificationError({
+        title: 'Auth error',
+        text: 'Invalid or missing email address. Please, try again',
+        type: 'is-danger',
       });
+    }
   },
 
   loginViaOTP(code, email) {
