@@ -49,12 +49,18 @@ const addWalletAndSelect = async ({ dispatch }, json) => {
 };
 
 // Import wallet from json V3 keystore
-const addWalletWithV3 = async ({ dispatch }, { json, password }) => {
+const addWalletWithV3 = async (
+  { dispatch },
+  { json, jsonPassword, walletPassword },
+) => {
   try {
     const wallet = new Wallet(json);
-    const privateKey = await wallet.getPrivateKeyString(password);
+    const privateKey = await wallet.getPrivateKeyString(jsonPassword);
 
-    return dispatch('addWalletWithPrivateKey', { privateKey, password });
+    return dispatch('addWalletWithPrivateKey', {
+      privateKey,
+      password: walletPassword,
+    });
   } catch (e) {
     return dispatch('errors/emitError', e, { root: true });
   }
