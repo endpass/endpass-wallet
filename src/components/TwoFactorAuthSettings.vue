@@ -29,13 +29,13 @@ export default {
     isLoading: false,
   }),
   computed: {
-    ...mapState('user', ['email', 'otpSettings']),
+    ...mapState('accounts', ['email', 'otpSettings']),
     isButtonDisabled() {
       return !this.otpSettings.secret && !this.otpSettings.status;
     },
   },
   methods: {
-    ...mapActions('user', [
+    ...mapActions('accounts', [
       'getOtpSettings',
       'setOtpSettings',
       'deleteOtpSettings',

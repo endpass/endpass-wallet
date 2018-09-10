@@ -1,6 +1,5 @@
 // Account address
 export const address = '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c';
-export const checksumAddress = '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c';
 
 // List of account addresses
 export const addresses = [
@@ -32,31 +31,27 @@ export const v3 = {
   address: '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c',
 };
 
-// mnemonic for hdv3
-export const mnemonic =
-  'seed sock milk update focus rotate barely fade car face mechanic mercy';
-
 // Encrypted keystore for an hd account
 export const hdv3 = {
-  address:
-    'xpub6DojZ5fC8cSLRwc95PFfzUDWUSRod2jSWSbhGKEWFJhoTDiJgRva4am9m7ex1Fm1Ege8MDQ7PNEFqkzdgsRS6UooRfDZpgHkD8vNHiMP3zq',
   crypto: {
     cipher: 'aes-128-ctr',
-    cipherparams: { iv: 'b58264d466c90f8924f3a6c13ee64463' },
     ciphertext:
-      'fea516b5cf51e6d0b5d5c83fc1673a1f0e2563b4523fb409a655a9d53b1e0055586ff4182fbebf00a52a585f595abd917970ab79f8938e5dc60f841a170af265e77ecca1d20beff845db276f8bbe',
+      '85bd8c827099d3e005981bc3e286797c9ec3d727e612b8ba5113043a0fb25b0512c1b01876c021cc8b72214c8629aa5df1af4ebee81ad148be26d264d3c3ba97da3e2f9afba8b3e9e14ed234e20f',
+    cipherparams: { iv: '459938f01512646d1f31ff10ebc53942' },
+    mac: '404661975cd3421b30fd8ce7e7599a59453be52764806f55468386babb218bc9',
     kdf: 'scrypt',
     kdfparams: {
       dklen: 32,
       n: 4,
-      p: 8,
       r: 1,
-      salt: '951266735f664dc8f0911b8c424d79b285cb962fc0b980b3937f821f912963e2',
+      p: 8,
+      salt: '0e9ffb54bdaf85c27b52a11f9ab3a404a0c37ba695056e71a3683e39991b01fd',
     },
-    mac: '5e7db9b83ca75c1be99c3587d5dc6882892b3c4556924606eb499da52e38b942',
   },
-  id: '26c91dbc-f900-4d7c-8ec5-a9a59c0ecd81',
+  id: '8ebd381f-dcc2-4ae8-840a-e62379adea38',
   version: 3,
+  address:
+    'xpub661MyMwAqRbcFhF3oXSY7tcJWrgzX7VYHqvkoNqr9NXAqDUv4KfWSnago4BMD4yty2cX6f6jLeQefve3nKriVY6c18NLzCmHdKqWeN8VHkJ',
 };
 
 // Private key buffer for v3
@@ -69,10 +64,8 @@ export const privateKeyString =
 export default {
   address,
   addresses,
-  checksumAddress,
-  hdv3,
-  mnemonic,
   v3,
+  hdv3,
   v3password,
   privateKey,
   privateKeyString,

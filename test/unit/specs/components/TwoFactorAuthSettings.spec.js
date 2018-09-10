@@ -12,7 +12,7 @@ describe('TwoFactorAuthSettings', () => {
   };
   const storeOptions = {
     modules: {
-      user: {
+      accounts: {
         namespaced: true,
         state: {
           email: 'email',

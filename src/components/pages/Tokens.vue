@@ -103,7 +103,7 @@ export default {
       trackedTokens: state => state.tokens.trackedTokens,
       isLoading: state => state.tokens.isLoading,
       ethPrice: state => state.price.price,
-      currency: state => state.user.settings.fiatCurrency,
+      currency: state => state.accounts.settings.fiatCurrency,
     }),
     ...mapGetters('tokens', ['net', 'tokensWithBalance']),
     // All tokens that are available to add
