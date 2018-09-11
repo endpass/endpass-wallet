@@ -24,7 +24,7 @@ export default {
     email: null,
   }),
   methods: {
-    ...mapActions('accounts', ['login', 'loginViaOTP']),
+    ...mapActions('user', ['login', 'loginViaOTP']),
     handleLoginByEmailModalConfirm(email) {
       this.isLoading = true;
 
