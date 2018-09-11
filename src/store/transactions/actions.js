@@ -1,4 +1,3 @@
-import Tx from 'ethereumjs-tx';
 import { EventEmitter, NotificationError, Transaction } from '@/class';
 import ethplorerService from '@/services/ethplorer';
 import web3 from '@/utils/web3';
@@ -18,16 +17,15 @@ const getNonceInBlock = async ({ rootState }) => {
 const getNextNonce = async ({ state, dispatch }) => {
   const nonce = await dispatch('getNonceInBlock');
   const actualNonce = state.pendingTransactions
-    .filter(tnx => tnx.state === 'pending')
     .map(tnx => tnx.nonce)
     .sort((a, b) => (a > b ? 1 : -1))
-    .reduce((lastNonce, tnxNonce) => {
-      if (lastNonce === tnxNonce) {
+    .reduce((acc, tnxNonce) => {
+      if (acc === tnxNonce) {
         return tnxNonce + 1;
       }
 
-      return lastNonce;
-    }, nonce.toString())
+      return acc;
+    }, nonce)
     .toString();
 
   return actualNonce;
@@ -38,7 +36,6 @@ const sendSignedTransaction = async (
   { transaction, password },
 ) => {
   const { wallet } = rootState.accounts;
-  const { eth } = web3;
 
   try {
     if (!transaction.nonce) {
@@ -48,12 +45,12 @@ const sendSignedTransaction = async (
     }
 
     const signedTx = await wallet.signTransaction(
-      transaction.getApiObject(eth),
+      transaction.getApiObject(web3.eth),
       password,
     );
     const sendEvent = new EventEmitter();
 
-    eth
+    web3.eth
       .sendSignedTransaction(signedTx)
       .once('transactionHash', trxHash => {
         sendEvent.emit('transactionHash', trxHash);
@@ -79,6 +76,104 @@ const sendSignedTransaction = async (
     return sendEvent;
   } catch (err) {
     dispatch('handleSendingError', { transaction });
+  }
+};
+
+const handleSendingError = (
+  { dispatch },
+  { err = {}, receipt, transaction = {} } = {},
+) => {
+  const { err: errorMessage = '' } = err;
+  const { hash } = transaction;
+  const shortHash = hash ? getShortStringWithEllipsis(hash) : '';
+  const cause =
+    receipt || errorMessage.includes('out of gas')
+      ? ', because out of gas'
+      : '';
+  const error = new NotificationError({
+    title: 'Error sending transaction',
+    text: `Transaction ${shortHash} was not sent${cause}`,
+    type: 'is-danger',
+  });
+
+  dispatch('errors/emitError', error, { root: true });
+};
+
+// Transaction history from ethplorer
+const getTransactionHistory = async ({ commit, dispatch, rootState }) => {
+  if (!rootState.accounts.address) return;
+
+  try {
+    const { address } = rootState.accounts;
+    const addressCheckSum = address.getChecksumAddressString();
+    const [transactions, history] = await Promise.all([
+      ethplorerService.getInfo(addressCheckSum),
+      ethplorerService.getHistory(addressCheckSum),
+    ]);
+    const allTrx = transactions
+      .concat(history)
+      .map(trx => new Transaction(trx));
+
+    commit(SET_TRANSACTION_HISTORY, allTrx);
+    dispatch(
+      'connectionStatus/updateApiErrorStatus',
+      {
+        id: 'ethplorer',
+        status: true,
+      },
+      { root: true },
+    );
+  } catch (e) {
+    const error = new NotificationError({
+      ...e,
+      title: 'Failed to get transaction information',
+      text:
+        'An error occurred while retrieving transaction information. Please try again.',
+      type: 'is-warning',
+      apiError: {
+        id: 'ethplorer',
+        status: false,
+      },
+    });
+
+    dispatch('errors/emitError', error, { root: true });
+  }
+};
+
+// Show notification of incoming transactions from block
+const handleBlockTransactions = (
+  { dispatch, rootState, rootGetters },
+  transactions,
+) => {
+  const userAddresses = rootGetters['accounts/getAccountAddresses'];
+  const toUserTrx = transactions.filter(trx =>
+    userAddresses.some(address => address === trx.to),
+  );
+
+  toUserTrx.forEach(trx => {
+    const { hash, to } = trx;
+    const shortAddress = getShortStringWithEllipsis(to);
+    const shortHash = getShortStringWithEllipsis(hash);
+    const error = new NotificationError({
+      title: 'Incoming transaction',
+      text: `Address ${shortAddress} received transaction ${shortHash}`,
+    });
+
+    dispatch('errors/emitError', error, { root: true });
+  });
+
+  if (!rootState.accounts.address) {
+    return;
+  }
+
+  const address = rootState.accounts.address.getAddressString();
+  const trxAddresses = toUserTrx.map(({ to }) => to);
+
+  if (
+    rootGetters['web3/isMainNetwork'] &&
+    trxAddresses.some(trxAddress => trxAddress === address)
+  ) {
+    dispatch('getTransactionHistory');
   }
 };
 
@@ -198,7 +293,7 @@ const processTransactionAction = async (
           });
           return res();
         default:
-          break;
+          return res();
       }
     });
 
@@ -222,104 +317,6 @@ const processTransactionAction = async (
       rej();
     });
   });
-
-const handleSendingError = (
-  { dispatch },
-  { err = {}, receipt, transaction = {} } = {},
-) => {
-  const { err: errorMessage = '' } = err;
-  const { hash } = transaction;
-  const shortHash = hash ? getShortStringWithEllipsis(hash) : '';
-  const cause =
-    receipt || errorMessage.includes('out of gas')
-      ? ', because out of gas'
-      : '';
-  const error = new NotificationError({
-    title: 'Error sending transaction',
-    text: `Transaction ${shortHash} was not sent${cause}`,
-    type: 'is-danger',
-  });
-
-  dispatch('errors/emitError', error, { root: true });
-};
-
-// Transaction history from ethplorer
-const getTransactionHistory = async ({ commit, dispatch, rootState }) => {
-  if (!rootState.accounts.address) return;
-
-  try {
-    const { address } = rootState.accounts;
-    const addressCheckSum = address.getChecksumAddressString();
-    const [transactions, history] = await Promise.all([
-      ethplorerService.getInfo(addressCheckSum),
-      ethplorerService.getHistory(addressCheckSum),
-    ]);
-    const allTrx = transactions
-      .concat(history)
-      .map(trx => new Transaction(trx));
-
-    commit(SET_TRANSACTION_HISTORY, allTrx);
-    dispatch(
-      'connectionStatus/updateApiErrorStatus',
-      {
-        id: 'ethplorer',
-        status: true,
-      },
-      { root: true },
-    );
-  } catch (e) {
-    const error = new NotificationError({
-      ...e,
-      title: 'Failed to get transaction information',
-      text:
-        'An error occurred while retrieving transaction information. Please try again.',
-      type: 'is-warning',
-      apiError: {
-        id: 'ethplorer',
-        status: false,
-      },
-    });
-
-    dispatch('errors/emitError', error, { root: true });
-  }
-};
-
-// Show notification of incoming transactions from block
-const handleBlockTransactions = (
-  { dispatch, rootState, rootGetters },
-  transactions,
-) => {
-  const userAddresses = rootGetters['accounts/getAccountAddresses'];
-  const toUserTrx = transactions.filter(trx =>
-    userAddresses.some(address => address === trx.to),
-  );
-
-  toUserTrx.forEach(trx => {
-    const { hash, to } = trx;
-    const shortAddress = getShortStringWithEllipsis(to);
-    const shortHash = getShortStringWithEllipsis(hash);
-    const error = new NotificationError({
-      title: 'Incoming transaction',
-      text: `Address ${shortAddress} received transaction ${shortHash}`,
-    });
-
-    dispatch('errors/emitError', error, { root: true });
-  });
-
-  if (!rootState.accounts.address) {
-    return;
-  }
-
-  const address = rootState.accounts.address.getAddressString();
-  const trxAddresses = toUserTrx.map(({ to }) => to);
-
-  if (
-    rootGetters['web3/isMainNetwork'] &&
-    trxAddresses.some(trxAddress => trxAddress === address)
-  ) {
-    dispatch('getTransactionHistory');
-  }
-};
 
 export default {
   handleTransactionSendingHash,

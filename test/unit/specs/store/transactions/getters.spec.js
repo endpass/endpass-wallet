@@ -1,6 +1,10 @@
 import state from '@/store/transactions';
 
-import { ethplorerTransactions } from 'fixtures/transactions';
+import {
+  ethplorerTransactions,
+  pendingTransactions,
+} from 'fixtures/transactions';
+import { checksumAddress } from 'fixtures/accounts';
 
 describe('transactions getters', () => {
   let stateInstance;
@@ -14,21 +18,8 @@ describe('transactions getters', () => {
 
   describe('accountTransactions', () => {
     it('should get account transactions correctly', () => {
-      stateInstance.pendingTransactions = [
-        {
-          to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
-          from: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
-          state: 'success',
-        },
-        {
-          to: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
-          from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
-        },
-        {
-          to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
-          from: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
-        },
-      ];
+      stateInstance.pendingTransactions = pendingTransactions;
+
       const transactions = state.getters.accountTransactions(
         stateInstance,
         {},
@@ -36,7 +27,7 @@ describe('transactions getters', () => {
           accounts: {
             address: {
               getChecksumAddressString() {
-                return '0x1cE2109F8db1190cD44bC6554e35642214fbE144';
+                return checksumAddress;
               },
             },
           },
@@ -46,7 +37,7 @@ describe('transactions getters', () => {
         },
       );
 
-      expect(transactions).toHaveLength(2);
+      expect(transactions).toHaveLength(3);
       expect(transactions).toContainEqual(stateInstance.pendingTransactions[0]);
     });
 
@@ -73,29 +64,19 @@ describe('transactions getters', () => {
 
     it('should concat transactions', () => {
       stateInstance = {
-        pendingTransactions: [
-          {
-            to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
-            from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
-          },
-        ],
+        pendingTransactions: [pendingTransactions[0]],
       };
 
       const transactions = state.getters.accountTransactions(
         stateInstance,
         {
-          filteredHistoryTransactions: [
-            {
-              to: '0x3ce2109f8db1190cd44bc6554e35642214fbe144',
-              from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
-            },
-          ],
+          filteredHistoryTransactions: [pendingTransactions[3]],
         },
         {
           accounts: {
             address: {
               getChecksumAddressString() {
-                return '0x1cE2109F8db1190cD44bC6554e35642214fbE144';
+                return checksumAddress;
               },
             },
           },
@@ -111,17 +92,17 @@ describe('transactions getters', () => {
     it('should sort transactions by date', () => {
       const trx1 = {
         to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
-        from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+        from: checksumAddress,
         date: new Date('01/01/2001'),
       };
       const trx2 = {
         to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
-        from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+        from: checksumAddress,
         date: new Date('01/01/2010'),
       };
       const trx3 = {
         to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
-        from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+        from: checksumAddress,
       };
 
       stateInstance = {
@@ -135,7 +116,7 @@ describe('transactions getters', () => {
           accounts: {
             address: {
               getChecksumAddressString() {
-                return '0x1cE2109F8db1190cD44bC6554e35642214fbE144';
+                return checksumAddress;
               },
             },
           },
@@ -151,41 +132,7 @@ describe('transactions getters', () => {
 
   describe('pendingBalance', () => {
     it('should get pending balance correctly', () => {
-      stateInstance.pendingTransactions = [
-        {
-          from: '0x0',
-          token: 'ETH',
-          networkId: 1,
-          state: 'pending',
-          valueWei: '1',
-          gasCost: '6',
-        },
-        {
-          from: '0x0',
-          token: 'ETH',
-          networkId: 1,
-          state: 'success',
-          valueWei: '1',
-          gasCost: '6',
-        },
-        {
-          from: '0x0',
-          token: 'ETH',
-          networkId: 2,
-          state: 'success',
-          valueWei: '2',
-          gasCost: '5',
-        },
-        {
-          to: '0x1',
-          token: 'ETH',
-          networkId: 1,
-          state: 'success',
-          valueWei: '3',
-          gasCost: '4',
-          from: '0x2',
-        },
-      ];
+      stateInstance.pendingTransactions = pendingTransactions;
 
       const pendingBalance = state.getters.pendingBalance(
         stateInstance,
@@ -194,7 +141,7 @@ describe('transactions getters', () => {
           accounts: {
             address: {
               getChecksumAddressString() {
-                return '0x0';
+                return checksumAddress;
               },
             },
           },
@@ -205,7 +152,7 @@ describe('transactions getters', () => {
           },
         },
       );
-      expect(pendingBalance).toBe('7');
+      expect(pendingBalance).toBe('14');
     });
 
     it('should return zero pending balance with a nullable address', () => {

@@ -1,5 +1,10 @@
 import state from '@/store/transactions';
-import { SET_TRANSACTION_HISTORY } from '@/store/transactions/mutations-types';
+import {
+  ADD_TRANSACTION,
+  UPDATE_TRANSACTION,
+  SET_TRANSACTION_HISTORY,
+} from '@/store/transactions/mutations-types';
+import { ethplorerTransactions } from 'fixtures/transactions';
 
 const { mutations } = state;
 
@@ -11,6 +16,37 @@ describe('transactions  mutations', () => {
       pendingTransactions: [],
       transactionHistory: [],
     };
+  });
+
+  describe('ADD_TRANSACTION', () => {
+    it('should add transaction to pending transactions', () => {
+      const [tx] = ethplorerTransactions;
+
+      mutations[ADD_TRANSACTION](stateInstance, tx);
+
+      expect(stateInstance.pendingTransactions).toEqual([tx]);
+    });
+  });
+
+  describe('UPDATE_TRANSACTION', () => {
+    it('should update transaction with given data', () => {
+      const [tx] = ethplorerTransactions;
+
+      stateInstance.pendingTransactions = [tx];
+      mutations[UPDATE_TRANSACTION](stateInstance, {
+        hash: tx.hash,
+        payload: {
+          success: false,
+        },
+      });
+
+      expect(stateInstance.pendingTransactions).toEqual([
+        {
+          ...tx,
+          success: false,
+        },
+      ]);
+    });
   });
 
   describe('SET_TRANSACTION_HISTORY', () => {
