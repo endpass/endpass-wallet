@@ -24,7 +24,7 @@ describe('TokenList', () => {
 
     store = new Vuex.Store({
       modules: {
-        accounts: {
+        user: {
           namespaced: true,
           state: {
             settings: {

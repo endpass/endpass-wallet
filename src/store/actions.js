@@ -6,8 +6,8 @@ const init = async ({ dispatch, commit }) => {
 
   // init web3 networks
   await dispatch('web3/init');
-  // Wait for accounts to load
-  await dispatch('accounts/init');
+  // Wait for accounts and user settings to load
+  await Promise.all([dispatch('accounts/init'), dispatch('user/init')]);
 
   commit(STOP_PAGE_LOADING);
 
