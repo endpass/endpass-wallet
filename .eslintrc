@@ -23,7 +23,7 @@
     "import/no-unresolved": [
       "error",
       {
-        "ignore": ["@", "fixtures"]
+        "ignore": ["@", "fixtures", "mocks"]
       }
     ],
     "vue/order-in-components": [
