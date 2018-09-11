@@ -21,11 +21,16 @@ import {
 jest.useFakeTimers();
 
 describe('tokens actions', () => {
-  let commit, dispatch, token, state, getters, rootState;
-  token = {
+  let commit;
+  let dispatch;
+  let state;
+  let getters;
+  let rootState;
+  let token = {
     address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
     symbol: 'KEK-TOKEN',
   };
+
   describe('saveTokenAndSubscribe', () => {
     beforeEach(() => {
       userService.setSetting = jest.fn();
