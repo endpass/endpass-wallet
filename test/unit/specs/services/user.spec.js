@@ -292,6 +292,57 @@ describe('User service', () => {
     });
   });
 
+  describe('updateAccounts', () => {
+    const url = `${identityAPIUrl}/accounts`;
+    const accounts = {
+      'address 1': {},
+      'address 2': {},
+    };
+    const successResp = {
+      success: true,
+    };
+    const expectedError = new NotificationError({
+      title: 'Error updating accounts',
+      text: `An error occurred updating accounts. Please try again later`,
+      type: 'is-danger',
+    });
+
+    it('should make correct request', async () => {
+      expect.assertions(3);
+
+      mock.onAny(url).reply(config => {
+        expect(config.method).toBe('post');
+        expect(config.url).toBe(url);
+        expect(config.data).toBe(JSON.stringify(accounts));
+
+        return [200];
+      });
+      await userService.updateAccounts(accounts);
+    });
+
+    it('should handle successful POST /accounts request', async () => {
+      mock.onPost(url).reply(200, successResp);
+
+      expect.assertions(1);
+
+      const response = await userService.updateAccounts(accounts);
+
+      expect(response).toEqual(successResp);
+    });
+
+    it('should handle rejected GET /accounts request', async () => {
+      mock.onPost(url).reply(404);
+
+      expect.assertions(1);
+
+      try {
+        await userService.updateAccounts(accounts);
+      } catch (receivedError) {
+        expect(receivedError).toEqual(expectedError);
+      }
+    });
+  });
+
   describe('HD Accounts', () => {
     const addrs = ['0x123', 'xpubabcde', '0x456'];
 

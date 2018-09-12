@@ -343,24 +343,15 @@ describe('Accounts actions', () => {
     });
   });
 
-  describe('saveWallet', () => {
-    const { saveWallet } = actions;
-    const json = {
+  describe('commitWallet', () => {
+    const { commitWallet } = actions;
+    const commit = jest.fn();
+    const wallet = {
       address: 'address',
     };
-    const commit = jest.fn();
 
     beforeEach(() => {
       commit.mockClear();
-    });
-
-    it('should call userService.setAccount', () => {
-      userService.setAccount = jest.fn();
-
-      saveWallet({ commit }, { json });
-
-      expect(userService.setAccount).toHaveBeenCalledTimes(1);
-      expect(userService.setAccount).toHaveBeenCalledWith(json.address, json);
     });
 
     it('should save HD wallet', async () => {
@@ -368,10 +359,10 @@ describe('Accounts actions', () => {
 
       expect.assertions(2);
 
-      await saveWallet({ commit }, { json });
+      await commitWallet({ commit }, { wallet });
 
       expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(SET_HD_KEY, json);
+      expect(commit).toHaveBeenCalledWith(SET_HD_KEY, wallet);
     });
 
     it('should save wallet', async () => {
@@ -380,10 +371,10 @@ describe('Accounts actions', () => {
 
       expect.assertions(2);
 
-      await saveWallet({ commit }, { json });
+      await commitWallet({ commit }, { wallet });
 
       expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(ADD_WALLET, json);
+      expect(commit).toHaveBeenCalledWith(ADD_WALLET, wallet);
     });
 
     it('should save public key', async () => {
@@ -392,10 +383,40 @@ describe('Accounts actions', () => {
 
       expect.assertions(2);
 
-      await saveWallet({ commit }, { json });
+      await commitWallet({ commit }, { wallet });
 
       expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(ADD_ADDRESS, json.address);
+      expect(commit).toHaveBeenCalledWith(ADD_ADDRESS, wallet.address);
+    });
+  });
+
+  describe('saveWallet', () => {
+    const { saveWallet } = actions;
+    const json = {
+      address: 'address',
+    };
+    const dispatch = jest.fn();
+
+    beforeEach(() => {
+      dispatch.mockClear();
+    });
+
+    it('should call userService.setAccount', () => {
+      userService.setAccount = jest.fn();
+
+      saveWallet({ dispatch }, { json });
+
+      expect(userService.setAccount).toHaveBeenCalledTimes(1);
+      expect(userService.setAccount).toHaveBeenCalledWith(json.address, json);
+    });
+
+    it('should call commitWallet action', async () => {
+      expect.assertions(2);
+
+      await saveWallet({ dispatch }, { json });
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('commitWallet', { wallet: json });
     });
   });
 
@@ -487,6 +508,77 @@ describe('Accounts actions', () => {
       );
 
       expect(dispatch).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('updateWallets', () => {
+    const { updateWallets } = actions;
+    const walletAddress1 = 'wallet address 1';
+    const walletAddress2 = 'wallet address 2';
+    const wallet1 = { address: walletAddress1 };
+    const wallet2 = { address: walletAddress2 };
+    const wallets = {
+      [walletAddress1]: wallet1,
+      [walletAddress2]: wallet2,
+    };
+
+    it('should call userService.updateAccounts', () => {
+      userService.updateAccounts = jest.fn();
+
+      updateWallets({ dispatch }, { wallets });
+
+      expect(userService.updateAccounts).toHaveBeenCalledTimes(1);
+      expect(userService.updateAccounts).toHaveBeenCalledWith(wallets);
+    });
+
+    it('should call commitWallet actions', async () => {
+      expect.assertions(1);
+
+      userService.updateAccounts = jest
+        .fn()
+        .mockResolvedValue({ success: true });
+
+      await updateWallets({ dispatch }, { wallets });
+
+      expect(dispatch.mock.calls).toEqual([
+        ['commitWallet', { wallet: wallet1 }],
+        ['commitWallet', { wallet: wallet2 }],
+      ]);
+    });
+
+    it('should handle errors', async () => {
+      const error = new Error();
+
+      expect.assertions(2);
+
+      userService.updateAccounts = jest.fn().mockRejectedValue(error);
+
+      await updateWallets({ dispatch }, { wallets });
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+        root: true,
+      });
+    });
+
+    it('should return userService.updateAccounts response', async () => {
+      let updateAccountsResponse = { success: true };
+      let response;
+
+      expect.assertions(2);
+
+      userService.updateAccounts = jest
+        .fn()
+        .mockResolvedValue(updateAccountsResponse);
+      response = await updateWallets({ dispatch }, { wallets });
+
+      expect(response).toEqual(updateAccountsResponse.success);
+
+      updateAccountsResponse = { success: false };
+      userService.updateAccounts.mockResolvedValue(updateAccountsResponse);
+      response = await updateWallets({ dispatch }, { wallets });
+
+      expect(response).toEqual(updateAccountsResponse.success);
     });
   });
 
