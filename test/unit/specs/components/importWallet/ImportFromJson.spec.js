@@ -18,8 +18,8 @@ describe('ImportFromJson', () => {
     });
 
     it('should be a Vue component', () => {
-      expect(wrapper.isVueInstance()).toBeTruthy();
       expect(wrapper.name()).toBe('import-from-json');
+      expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
     it('should render initial state of the component', () => {

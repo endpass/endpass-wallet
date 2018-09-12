@@ -43,12 +43,14 @@ describe('SyncStatus', () => {
   });
 
   describe('computed', () => {
-    it('should return correct statusClass', () => {
-      expect(wrapper.vm.statusClass).toBe('is-danger');
-      wrapper.setComputed({ appStatus: 'syncing' });
-      expect(wrapper.vm.statusClass).toBe('is-warning');
-      wrapper.setComputed({ appStatus: 'ready' });
-      expect(wrapper.vm.statusClass).toBe('is-success');
+    describe('statusClass', () => {
+      it('should return correct statusClass', () => {
+        expect(wrapper.vm.statusClass).toBe('is-danger');
+        wrapper.setComputed({ appStatus: 'syncing' });
+        expect(wrapper.vm.statusClass).toBe('is-warning');
+        wrapper.setComputed({ appStatus: 'ready' });
+        expect(wrapper.vm.statusClass).toBe('is-success');
+      });
     });
   });
 });
