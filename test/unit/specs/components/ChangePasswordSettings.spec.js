@@ -11,7 +11,7 @@ describe('ChangePasswordSettings', () => {
       accounts: {
         namespaced: true,
         actions: {
-          saveWallet: jest.fn(),
+          updateWallets: jest.fn(),
         },
         getters: {
           decryptedWallets: jest.fn(() => [{}]),
@@ -127,7 +127,7 @@ describe('ChangePasswordSettings', () => {
           }),
         });
         wrapper.setMethods({
-          saveWallet: jest.fn(),
+          updateWallets: jest.fn(),
         });
 
         vm.handleFormSubmit();
@@ -139,7 +139,7 @@ describe('ChangePasswordSettings', () => {
             'An error occurred while decrypting wallets. Try using a different password.',
           type: 'is-danger',
         });
-        expect(vm.saveWallet).toHaveBeenCalledTimes(0);
+        expect(vm.updateWallets).toHaveBeenCalledTimes(0);
       });
 
       it('should handle the error of HD wallet decryption', () => {
@@ -151,7 +151,7 @@ describe('ChangePasswordSettings', () => {
           }),
         });
         wrapper.setMethods({
-          saveWallet: jest.fn(),
+          updateWallets: jest.fn(),
         });
 
         vm.handleFormSubmit();
@@ -163,7 +163,7 @@ describe('ChangePasswordSettings', () => {
             'An error occurred while decrypting wallets. Try using a different password.',
           type: 'is-danger',
         });
-        expect(vm.saveWallet).toHaveBeenCalledTimes(0);
+        expect(vm.updateWallets).toHaveBeenCalledTimes(0);
       });
 
       it('should handle the error of wallets encryption', () => {
@@ -175,7 +175,7 @@ describe('ChangePasswordSettings', () => {
           }),
         });
         wrapper.setMethods({
-          saveWallet: jest.fn(),
+          updateWallets: jest.fn(),
         });
 
         vm.handleFormSubmit();
@@ -187,7 +187,7 @@ describe('ChangePasswordSettings', () => {
             'An error occurred while decrypting wallets. Try using a different password.',
           type: 'is-danger',
         });
-        expect(vm.saveWallet).toHaveBeenCalledTimes(0);
+        expect(vm.updateWallets).toHaveBeenCalledTimes(0);
       });
 
       it('should handle the error of HD wallet encryption', () => {
@@ -199,7 +199,7 @@ describe('ChangePasswordSettings', () => {
           }),
         });
         wrapper.setMethods({
-          saveWallet: jest.fn(),
+          updateWallets: jest.fn(),
         });
 
         vm.handleFormSubmit();
@@ -211,7 +211,7 @@ describe('ChangePasswordSettings', () => {
             'An error occurred while decrypting wallets. Try using a different password.',
           type: 'is-danger',
         });
-        expect(vm.saveWallet).toHaveBeenCalledTimes(0);
+        expect(vm.updateWallets).toHaveBeenCalledTimes(0);
       });
 
       it('should handle the error while saving the wallets', async () => {
@@ -224,19 +224,14 @@ describe('ChangePasswordSettings', () => {
           encryptedWallets: jest.fn(() => [{}]),
         });
         wrapper.setMethods({
-          saveWallet: jest.fn().mockRejectedValue(),
+          updateWallets: jest.fn().mockResolvedValue(),
         });
 
-        expect.assertions(5);
+        expect.assertions(4);
 
         await vm.handleFormSubmit();
 
-        expect(vm.$notify).toHaveBeenCalledTimes(1);
-        expect(vm.$notify).toHaveBeenCalledWith({
-          title: 'Error while saving wallets',
-          text: 'An error occurred while saving wallets. Please try again.',
-          type: 'is-danger',
-        });
+        expect(vm.$notify).toHaveBeenCalledTimes(0);
         expect(vm.isLoading).toBeFalsy();
         expect(vm.oldPassword).toBeNull();
         expect(vm.newPassword).toBeNull();
@@ -265,43 +260,35 @@ describe('ChangePasswordSettings', () => {
 
       it('should save wallets', async () => {
         const { vm } = wrapper;
-        const newPassword = 'newPassword';
+        const walletAddress = 'wallet address';
+        const hdWalletAddress = 'hd wallet address';
+        const wallet = { address: walletAddress };
+        const hdWallet = { address: hdWalletAddress };
+        const expectedWalletsToUpdate = {
+          [walletAddress]: wallet,
+          [hdWalletAddress]: hdWallet,
+        };
 
         wrapper.setComputed({
-          decryptedWallets: jest.fn(() => [{}]),
-          hdWallet: jest.fn(() => ({})),
-          encryptedHdWallet: jest.fn((password, wallet) => ({
-            ...wallet,
-            password,
-          })),
+          decryptedWallets: jest.fn(() => [wallet]),
+          hdWallet: jest.fn(() => hdWallet),
+          encryptedHdWallet: jest.fn((password, wallet) => wallet),
           encryptedWallets: jest.fn((password, wallets) =>
-            wallets.map(wallet => ({
-              ...wallet,
-              password,
-            })),
+            wallets.map(wallet => wallet),
           ),
         });
         wrapper.setMethods({
-          saveWallet: jest.fn().mockResolvedValue(),
+          updateWallets: jest.fn().mockResolvedValue(true),
         });
-        wrapper.setData({ newPassword });
 
-        expect.assertions(6);
+        expect.assertions(7);
 
         await vm.handleFormSubmit();
 
-        expect(vm.saveWallet.mock.calls).toEqual([
-          [
-            {
-              json: { password: newPassword },
-            },
-          ],
-          [
-            {
-              json: { password: newPassword },
-            },
-          ],
-        ]);
+        expect(vm.updateWallets).toHaveBeenCalledTimes(1);
+        expect(vm.updateWallets).toHaveBeenCalledWith({
+          wallets: expectedWalletsToUpdate,
+        });
         expect(vm.$notify).toHaveBeenCalledTimes(1);
         expect(vm.$notify).toHaveBeenCalledWith({
           title: 'Password changed successfully',

@@ -43,7 +43,7 @@ export default {
     ]),
   },
   methods: {
-    ...mapActions('accounts', ['saveWallet']),
+    ...mapActions('accounts', ['updateWallets']),
     decryptWallets() {
       let decryptedWallets = [];
       let decryptedHdWallet;
@@ -97,44 +97,35 @@ export default {
         decryptedWallets,
         decryptedHdWallet,
       );
-      const promises = encryptedWallets.map(encryptedWallet =>
-        this.saveWallet({
-          json: encryptedWallet,
-        }),
+      const walletsToUpdate = {};
+
+      encryptedWallets.forEach(
+        encryptedWallet =>
+          (walletsToUpdate[encryptedWallet.address] = encryptedWallet),
       );
 
       if (encryptedHdWallet) {
-        promises.push(
-          this.saveWallet({
-            json: encryptedHdWallet,
-          }),
-        );
+        walletsToUpdate[encryptedHdWallet.address] = encryptedHdWallet;
       }
 
-      if (promises.length === 0) {
+      if (!Object.keys(walletsToUpdate).length) {
         return;
       }
 
       this.isLoading = true;
 
-      try {
-        await Promise.all(promises);
+      const isSuccess = await this.updateWallets({ wallets: walletsToUpdate });
 
+      if (isSuccess) {
         this.$notify({
           title: 'Password changed successfully',
           type: 'is-success',
         });
-      } catch (error) {
-        this.$notify({
-          title: 'Error while saving wallets',
-          text: 'An error occurred while saving wallets. Please try again.',
-          type: 'is-danger',
-        });
-      } finally {
-        this.isLoading = false;
-        this.oldPassword = null;
-        this.newPassword = null;
       }
+
+      this.isLoading = false;
+      this.oldPassword = null;
+      this.newPassword = null;
     },
   },
   components: {

@@ -110,6 +110,21 @@ export default {
       .then(res => res.data);
   },
 
+  // Update the encrypted keystore for an existing accounts
+  async updateAccounts(accounts) {
+    try {
+      return await http
+        .post(`${identityAPIUrl}/accounts`, accounts)
+        .then(({ data }) => data);
+    } catch (error) {
+      throw new NotificationError({
+        title: 'Error updating accounts',
+        text: `An error occurred updating accounts. Please try again later`,
+        type: 'is-danger',
+      });
+    }
+  },
+
   // Returns the encrypted keystore for a single account
   getAccount(address) {
     return http
