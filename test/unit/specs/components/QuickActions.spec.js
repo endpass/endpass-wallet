@@ -32,8 +32,15 @@ describe('QuickActions', () => {
       });
     });
 
-    it('should be a Vue component', () => {
-      expect(wrapper.isVueInstance()).toBeTruthy();
+    describe('render', () => {
+      it('should be a Vue component', () => {
+        expect(wrapper.isVueInstance()).toBeTruthy();
+        expect(wrapper.name()).toBe('quick-actions');
+      });
+
+      it('should render initial state of the component', () => {
+        expect(wrapper.element).toMatchSnapshot();
+      });
     });
   });
 });

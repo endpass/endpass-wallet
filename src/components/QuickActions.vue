@@ -43,6 +43,7 @@ export default {
     return {};
   },
   computed: {
+    name: 'quick-actions',
     ...mapState({
       wallet: state => state.accounts.wallet,
       address: state =>

@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`QuickActions render render should render initial state of the component 1`] = `
+<div
+  class="quick-actions"
+>
+  <div
+    class="navbar is-fixed-bottom"
+  >
+    <router-link
+      active-class="is-active"
+      class="navbar-item button"
+      exact=""
+      to="/"
+    >
+      <span
+        class="icon is-small"
+      >
+        {}
+      </span>
+       
+      <span
+        class="caption"
+      >
+        Home
+      </span>
+    </router-link>
+     
+    <router-link
+      active-class="is-active"
+      class="navbar-item button"
+      disabled="true"
+      to="[object Object]"
+    >
+      <span
+        class="icon is-small"
+      >
+        {}
+      </span>
+       
+      <span
+        class="caption"
+      >
+        Send
+      </span>
+    </router-link>
+     
+    <router-link
+      active-class="is-active"
+      class="navbar-item button"
+      disabled="true"
+      to="[object Object]"
+    >
+      <span
+        class="icon is-small"
+      >
+        {}
+      </span>
+       
+      <span
+        class="caption"
+      >
+        Recieve
+      </span>
+    </router-link>
+     
+    <router-link
+      active-class="is-active"
+      class="navbar-item button"
+      disabled="true"
+      to="[object Object]"
+    >
+      <span
+        class="icon is-small"
+      >
+        {}
+      </span>
+       
+      <span
+        class="caption"
+      >
+        History
+      </span>
+    </router-link>
+  </div>
+</div>
+`;
