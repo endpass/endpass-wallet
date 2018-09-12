@@ -6,9 +6,9 @@ exports[`Balance render should render initial state of the component 1`] = `
 >
   <span
     class="title amount"
-    title="12"
+    title="0"
   >
-    12
+    0
   </span>
    
   <span
