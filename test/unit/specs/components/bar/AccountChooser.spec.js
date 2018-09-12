@@ -46,6 +46,7 @@ describe('AccountChooser', () => {
   describe('render', () => {
     it('should be a Vue component', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
+      expect(wrapper.name()).toBe('account-chooser');
     });
 
     it('should render initial state of the component', () => {
@@ -54,30 +55,28 @@ describe('AccountChooser', () => {
   });
 
   describe('computed', () => {
-    it('should get activeAddress correctly', () => {
-      expect(wrapper.vm.activeAddress).toBe(checksumAddress.replace(/^0x/, ''));
-    });
+    describe('activeAddress', () => {
+      it('should get activeAddress correctly', () => {
+        expect(wrapper.vm.activeAddress).toBe(
+          checksumAddress.replace(/^0x/, ''),
+        );
+      });
 
-    it('should set activeAddress with correct action', () => {
-      wrapper.vm.activeAddress = checksumAddress;
-      expect(actions.selectWallet).toBeCalledWith(
-        expect.any(Object),
-        checksumAddress,
-        undefined,
-      );
+      it('should set activeAddress with correct action', () => {
+        wrapper.vm.activeAddress = checksumAddress;
+        expect(actions.selectWallet).toBeCalledWith(
+          expect.any(Object),
+          checksumAddress,
+          undefined,
+        );
+      });
     });
-
-    it('should get walletsAddresses correctly ', () => {
-      expect(wrapper.vm.walletsAddresses.length).toBe(2);
-      expect(wrapper.vm.walletsAddresses).toContain(checksumAddress);
-      expect(wrapper.vm.walletsAddresses).toContain(address);
-    });
-  });
-
-  describe('mapping', () => {
-    it('should map correct action to selectWallet', () => {
-      wrapper.vm.selectWallet();
-      expect(actions.selectWallet).toHaveBeenCalled();
+    describe('walletsAddresses', () => {
+      it('should get walletsAddresses correctly ', () => {
+        expect(wrapper.vm.walletsAddresses.length).toBe(2);
+        expect(wrapper.vm.walletsAddresses).toContain(checksumAddress);
+        expect(wrapper.vm.walletsAddresses).toContain(address);
+      });
     });
   });
 
@@ -86,6 +85,9 @@ describe('AccountChooser', () => {
       expect(wrapper.vm.$options.filters.truncateAddr(address)).toBe(
         '0xB1...4C3c',
       );
+    });
+    it('should return empty string if addres is false', () => {
+      expect(wrapper.vm.$options.filters.truncateAddr(false)).toBe('');
     });
   });
 

@@ -30,7 +30,7 @@ import { mapState, mapActions } from 'vuex';
 import Account from '@/components/Account';
 
 export default {
-  name: 'AccountChooser',
+  name: 'account-chooser',
   props: {
     // Maximum width of address
     width: {
