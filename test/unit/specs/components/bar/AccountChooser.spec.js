@@ -81,13 +81,15 @@ describe('AccountChooser', () => {
   });
 
   describe('filters', () => {
-    it('should truncate filter correctly', () => {
-      expect(wrapper.vm.$options.filters.truncateAddr(address)).toBe(
-        '0xB1...4C3c',
-      );
-    });
-    it('should return empty string if addres is false', () => {
-      expect(wrapper.vm.$options.filters.truncateAddr(false)).toBe('');
+    describe('truncateAddr', () => {
+      it('should truncate filter correctly', () => {
+        expect(wrapper.vm.$options.filters.truncateAddr(address)).toBe(
+          '0xB1...4C3c',
+        );
+      });
+      it('should return empty string if addres is false', () => {
+        expect(wrapper.vm.$options.filters.truncateAddr(false)).toBe('');
+      });
     });
   });
 
