@@ -21,6 +21,7 @@ import { mapActions, mapState } from 'vuex';
 import { CURRENCIES } from '@/constants';
 
 export default {
+  name: 'currency-select',
   data: function() {
     return {
       currencies: CURRENCIES,

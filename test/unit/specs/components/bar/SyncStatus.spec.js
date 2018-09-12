@@ -33,18 +33,12 @@ describe('SyncStatus', () => {
   });
   describe('render', () => {
     it('should be a Vue component', () => {
+      expect(wrapper.name()).toBe('sync-status');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
-    it('should match snapshot', () => {
+    it('should render initial state of the component', () => {
       expect(wrapper.element).toMatchSnapshot();
-    });
-
-    it('should render data from vuex', () => {
-      const tag = wrapper.find('.tag');
-      expect(tag.element.title).toBe('synced to block 1');
-      expect(tag.classes()).toContain('is-danger');
-      expect(tag.text()).toContain('failed');
     });
   });
 

@@ -1,24 +1,22 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
+import VueRouter from 'vue-router';
 
 import { generateStubs } from '@/utils/testUtils';
 import { privateKeyString, v3password } from '../../../fixtures/accounts';
 
 import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
 
-import router from '@/router';
-
-jest.mock('@/router', () => require('../../../__mocks__/router'));
-
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
 localVue.use(VeeValidate);
+localVue.use(VueRouter);
 
 jest.useFakeTimers();
 describe('ImportFromPrivateKey', () => {
-  let wrapper, actions;
+  let wrapper, actions, router;
   beforeEach(() => {
     actions = {
       addWalletWithPrivateKey: jest.fn(),
@@ -32,71 +30,90 @@ describe('ImportFromPrivateKey', () => {
       },
     };
     const store = new Vuex.Store(storeOptions);
+    router = new VueRouter();
     wrapper = shallow(ImportFromPrivateKey, {
       localVue,
       store,
       stubs: generateStubs(ImportFromPrivateKey),
+      router,
     });
   });
 
   describe('render', () => {
     it('should be a Vue component', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
+      expect(wrapper.name()).toBe('import-from-private-key');
     });
 
-    it('should match snapshot', () => {
+    it('should render initial state of the component', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
   });
 
   describe('methods', () => {
     describe('addWallet', () => {
-      it('should call vuex addWalletWithPrivateKey with correct arguments', async () => {
+      it('should call vuex addWalletWithPrivateKey with correct arguments', done => {
         const data = {
           privateKey: '0xkek',
           password: 'kek',
         };
+
+        expect.assertions(1);
+
         wrapper.setData(data);
-        wrapper.vm.addWallet();
-        await jest.runAllTimers();
-        expect(actions.addWalletWithPrivateKey.mock.calls[0][1]).toEqual({
-          privateKey: data.privateKey.replace(/^0x/, ''),
-          password: data.password,
+        wrapper.vm.submitAddWallet().then(() => {
+          expect(actions.addWalletWithPrivateKey).toBeCalledWith(
+            expect.any(Object),
+            expect.objectContaining({
+              privateKey: data.privateKey.replace(/^0x/, ''),
+              password: data.password,
+            }),
+            undefined,
+          );
+          done();
         });
-        expect.assertions(1);
+        jest.runAllTimers();
       });
 
-      it('should redirect to root after successful wallet creation', async () => {
-        wrapper.vm.addWallet();
-        await jest.runAllTimers();
-        expect(router.push).toHaveBeenCalledWith('/');
-        expect.assertions(1);
+      it('should redirect to root after successful wallet creation', done => {
+        expect.assertions(2);
+        router.push('/kek');
+        expect(router.currentRoute.fullPath).toBe('/kek');
+        wrapper.vm.submitAddWallet().then(() => {
+          expect(router.currentRoute.fullPath).toBe('/');
+          done();
+        });
+        jest.runAllTimers();
       });
 
-      it('should toggle isCreating before and after wallet creation', async () => {
-        wrapper.vm.addWallet();
+      it('should toggle isCreating before and after wallet creation', done => {
+        expect.assertions(4);
+        wrapper.vm.submitAddWallet().then(() => {
+          expect(actions.addWalletWithPrivateKey).toBeCalled();
+          expect(wrapper.vm.isCreating).toBe(false);
+          done();
+        });
         expect(actions.addWalletWithPrivateKey).not.toBeCalled();
         expect(wrapper.vm.isCreating).toBe(true);
-        await jest.runAllTimers();
-        expect(actions.addWalletWithPrivateKey).toBeCalled();
-        expect(wrapper.vm.isCreating).toBe(false);
-        expect.assertions(4);
+        jest.runAllTimers();
       });
 
-      it('should add error to field if failed to create wallet', async () => {
+      it('should add error to field if failed to create wallet', done => {
+        expect.assertions(1);
         actions.addWalletWithPrivateKey.mockImplementationOnce(() => {
           throw new Error();
         });
-        wrapper.vm.addWallet();
-        await jest.runAllTimers();
-        expect(wrapper.vm.errors.items[0]).toEqual({
-          field: 'privateKey',
-          msg: 'Private key is invalid',
-          id: 'wrongPrivateKey',
-          // vee validate added field
-          scope: null,
+        wrapper.vm.submitAddWallet().catch(() => {
+          expect(wrapper.vm.errors.items[0]).toEqual({
+            field: 'privateKey',
+            msg: 'Private key is invalid',
+            id: 'wrongPrivateKey',
+            // vee validate added field
+            scope: null,
+          });
+          done();
         });
-        expect.assertions(1);
+        jest.runAllTimers();
       });
     });
     describe('handleInput', () => {

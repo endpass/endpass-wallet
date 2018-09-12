@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AccountChooser render should match snapshot 1`] = `
+exports[`AccountChooser render should render initial state of the component 1`] = `
 <div
   class="account-chooser field has-addons"
 >

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`SyncStatus render should match snapshot 1`] = `
+exports[`SyncStatus render should render initial state of the component 1`] = `
 <div
   class="sync-status"
 >

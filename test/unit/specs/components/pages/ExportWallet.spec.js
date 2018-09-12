@@ -20,7 +20,12 @@ describe('ExportWallet page', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
+      expect(wrapper.name()).toBe('export-wallet');
       expect(wrapper.isVueInstance()).toBeTruthy();
+    });
+
+    it('should render initial state of the component', () => {
+      expect(wrapper.element).toMatchSnapshot();
     });
 
     it('should display correct components depending on export type', () => {

@@ -17,11 +17,14 @@ describe('InfoBar', () => {
           },
         },
         modules: {
-          accounts: {
+          user: {
             namespaced: true,
             state: {
               settings: {},
             },
+          },
+          accounts: {
+            namespaced: true,
             getters: {
               balance: jest.fn(),
             },
@@ -59,10 +62,11 @@ describe('InfoBar', () => {
     });
 
     it('should be a Vue component', () => {
+      expect(wrapper.name()).toBe('info-bar');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
-    it('should match snapshot', () => {
+    it('should render initial state of the component', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
   });

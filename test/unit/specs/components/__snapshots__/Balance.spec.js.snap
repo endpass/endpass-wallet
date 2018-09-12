@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Balance render should render initial state of the component 1`] = `
+<div
+  class="balance has-spinner"
+>
+  <span
+    class="title amount"
+    title="12"
+  >
+    12
+  </span>
+   
+  <span
+    class="currency"
+  >
+    
+      ETH
+    
+  </span>
+   
+  <!---->
+   
+  <!---->
+</div>
+`;

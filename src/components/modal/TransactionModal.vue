@@ -49,6 +49,7 @@ import { mapState } from 'vuex';
 import VModal from '@/components/ui/VModal';
 
 export default {
+  name: 'transaction-modal',
   props: {
     transaction: {
       type: Object,

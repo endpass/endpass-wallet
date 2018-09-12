@@ -30,6 +30,7 @@ import Balance from '@/components/Balance';
 import net from '@/mixins/net';
 
 export default {
+  name: 'info-bar',
   computed: {
     ...mapState({
       fiatCurrency: state => state.user.settings.fiatCurrency,

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`InfoBar render should match snapshot 1`] = `
+exports[`InfoBar render should render initial state of the component 1`] = `
 <div
   class="section info-bar"
 >

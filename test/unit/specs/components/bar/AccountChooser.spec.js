@@ -48,7 +48,7 @@ describe('AccountChooser', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
-    it('should match snapshot', () => {
+    it('should render initial state of the component', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
   });
@@ -60,7 +60,11 @@ describe('AccountChooser', () => {
 
     it('should set activeAddress with correct action', () => {
       wrapper.vm.activeAddress = checksumAddress;
-      expect(actions.selectWallet.mock.calls[0][1]).toBe(checksumAddress);
+      expect(actions.selectWallet).toBeCalledWith(
+        expect.any(Object),
+        checksumAddress,
+        undefined,
+      );
     });
 
     it('should get walletsAddresses correctly ', () => {

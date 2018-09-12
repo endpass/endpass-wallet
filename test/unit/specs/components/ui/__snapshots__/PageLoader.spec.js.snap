@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PageLoader page render should render initial state of the component 1`] = `
+<div
+  class="page-loader modal is-active"
+>
+  <div
+    class="modal-content"
+  >
+    <div
+      class="page-loader-logo"
+    >
+      <img
+        alt="Endpass"
+        src="/static/logo-dark.png"
+      />
+    </div>
+     
+    <div
+      class="spinner"
+    >
+      <div
+        class="spinner-dot spinner-dot-1"
+      />
+       
+      <div
+        class="spinner-dot spinner-dot-2"
+      />
+       
+      <div
+        class="spinner-dot spinner-dot-3"
+      />
+    </div>
+     
+    <p
+      class="spinner-caption"
+    >
+      Loading...
+    </p>
+  </div>
+</div>
+`;

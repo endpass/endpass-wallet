@@ -36,19 +36,12 @@ describe('CurrencySelect', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
+      expect(wrapper.name()).toBe('currency-select');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
-    it('should match snapshot', () => {
+    it('should render initial state of the component', () => {
       expect(wrapper.element).toMatchSnapshot();
-    });
-  });
-
-  describe('behavior', () => {
-    it('should set correct props for select', () => {
-      const multiselect = wrapper.find('vue-multiselect');
-      expect(multiselect.attributes().options).toBe(CURRENCIES.toString());
-      expect(multiselect.attributes().value).toBe(CURRENCIES[0].toString());
     });
   });
 });

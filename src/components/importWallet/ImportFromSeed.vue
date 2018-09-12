@@ -1,5 +1,5 @@
 <template>
-  <v-form  @submit="addWallet">
+  <v-form  @submit="submitAddWallet">
     <v-input
       id="hdkeySeed"
       key="hdkeyPhraseUnique"
@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import router from '@/router';
 import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
@@ -44,7 +43,7 @@ export default {
   }),
   methods: {
     ...mapActions('accounts', ['addMultiHdWallet']),
-    async addWallet() {
+    async submitAddWallet() {
       this.isCreating = true;
 
       await new Promise(res => setTimeout(res, 20));
@@ -54,7 +53,7 @@ export default {
           key: this.key,
           password: this.password,
         });
-        router.push('/');
+        this.$router.push('/');
       } catch (e) {
         this.errors.add({
           field: 'hdkeyPhrase',

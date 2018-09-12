@@ -81,6 +81,7 @@ import TokenList from '@/components/TokenList';
 import { mapGetters, mapState } from 'vuex';
 
 export default {
+  name: 'home',
   data() {
     return {};
   },

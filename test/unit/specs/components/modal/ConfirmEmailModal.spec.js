@@ -6,15 +6,16 @@ describe('ConfirmEmailModal', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(ConfirmEmailModal, {});
+    wrapper = shallow(ConfirmEmailModal);
   });
 
   describe('render', () => {
     it('should be a Vue component', () => {
+      expect(wrapper.name()).toBe('confirm-email-modal');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
-    it('should match snapshot', () => {
+    it('should render initial state of the component', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
   });

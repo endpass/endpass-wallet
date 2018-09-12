@@ -25,7 +25,12 @@ describe('PageLoader page', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
+      expect(wrapper.name()).toBe('page-loader');
       expect(wrapper.isVueInstance()).toBeTruthy();
+    });
+
+    it('should render initial state of the component', () => {
+      expect(wrapper.element).toMatchSnapshot();
     });
   });
 });

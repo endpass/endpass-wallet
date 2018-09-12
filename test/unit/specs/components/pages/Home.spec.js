@@ -10,6 +10,12 @@ describe('Home page', () => {
   beforeEach(() => {
     const store = new Vuex.Store({
       modules: {
+        user: {
+          namespaced: true,
+          getters: {
+            isLoggedIn: () => true,
+          },
+        },
         accounts: {
           namespaced: true,
           getters: {
@@ -31,7 +37,12 @@ describe('Home page', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
+      expect(wrapper.name()).toBe('home');
       expect(wrapper.isVueInstance()).toBeTruthy();
+    });
+
+    it('should render initial state of the component', () => {
+      expect(wrapper.element).toMatchSnapshot();
     });
   });
 });
