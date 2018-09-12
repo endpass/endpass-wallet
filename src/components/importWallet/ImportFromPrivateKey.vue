@@ -13,17 +13,23 @@
       required
       @input="handleInput"
     />
-     <v-password v-model="password"
-              label="Wallet password"
-              id="jsonKeystorePassword"
-              name="walletPassword"
-              validator="required|min:8"
-              data-vv-as="password"
-              aria-describedby="jsonKeystorePassword"
-              placeholder="wallet password"
-              required />
-    <v-button className="is-primary is-cta"
-              :loading="isCreating">Import</v-button>
+    <v-password
+      id="jsonKeystorePassword"
+      v-model="walletPassword"
+      label="Wallet password"
+      name="walletPassword"
+      validator="required|min:8"
+      data-vv-as="password"
+      aria-describedby="jsonKeystorePassword"
+      placeholder="wallet password"
+      required
+    />
+    <v-button
+      :loading="isCreating"
+      class-name="is-primary is-cta"
+    >
+      Import
+    </v-button>
   </v-form>
 </template>
 
@@ -34,7 +40,7 @@ import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
-  name: 'import-from-private-key',
+  name: 'ImportFromPrivateKey',
   data: () => ({
     isCreating: false,
     privateKey: '',

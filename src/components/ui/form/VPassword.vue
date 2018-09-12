@@ -1,11 +1,20 @@
 <template>
-  <v-input :type="inputType" autocomplete="current-password" v-bind="$attrs"
+  <v-input
+    :type="inputType"
+    v-bind="$attrs"
     :value="value"
+    autocomplete="current-password"
     @input="$emit('input', $event)"
-    @blur="$emit('blur', $event)">
-    <a slot="icon" @click="toggleVisible">
-      <span class="icon is-small is-right" v-html="require('@/img/eye.svg')">
-      </span>
+    @blur="$emit('blur', $event)"
+  >
+    <a
+      slot="icon"
+      @click="toggleVisible"
+    >
+      <span
+        class="icon is-small is-right"
+        v-html="require('@/img/eye.svg')"
+      />
     </a>
   </v-input>
 </template>
@@ -16,6 +25,9 @@ import VInput from '@/components/ui/form/VInput.vue';
 // Wrap a VInput component to turn it into a toggleable password input
 export default {
   name: 'VPassword',
+  inject: {
+    $validator: '$validator',
+  },
   props: {
     value: {
       type: String,
@@ -27,22 +39,19 @@ export default {
       default: false,
     },
   },
-  inject: {
-    $validator: '$validator',
-  },
   data() {
     return {
       isVisible: this.visible,
     };
   },
-  methods: {
-    toggleVisible() {
-      this.isVisible = !this.isVisible;
-    },
-  },
   computed: {
     inputType() {
       return this.isVisible ? 'text' : 'password';
+    },
+  },
+  methods: {
+    toggleVisible() {
+      this.isVisible = !this.isVisible;
     },
   },
   components: {

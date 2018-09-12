@@ -1,5 +1,8 @@
 <template>
-  <v-modal class="is-dark" @close="handleClose">
+  <v-modal
+    class="is-dark"
+    @close="handleClose"
+  >
     <template slot="header">Check Your Email</template>
 
     <p class="subtitle">We just sent you an email with a confirmation link.
@@ -11,7 +14,7 @@
 import VModal from '@/components/ui/VModal';
 
 export default {
-  name: 'confirm-email-modal',
+  name: 'ConfirmEmailModal',
   methods: {
     handleClose() {
       this.$emit('close');

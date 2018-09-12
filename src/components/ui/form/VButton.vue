@@ -3,10 +3,11 @@
     <div class="control">
       <button
         v-bind="$attrs"
-        v-on="$listeners"
         :disabled="!form.isFormValid || disabled"
+        :class="[...classes, {'is-loading' : loading }]"
         class="button"
-        :class="[...classes, {'is-loading' : loading }]">
+        v-on="$listeners"
+      >
         <slot />
       </button>
     </div>
@@ -15,8 +16,7 @@
 
 <script>
 export default {
-  name: 'v-button',
-  inheritAttrs: false,
+  name: 'VButton',
   inject: {
     $validator: '$validator',
     form: {
@@ -44,6 +44,7 @@ export default {
       return this.className.split(' ');
     },
   },
+  inheritAttrs: false,
 };
 </script>
 

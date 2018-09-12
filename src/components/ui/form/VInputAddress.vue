@@ -1,32 +1,52 @@
 <template>
   <div class="field">
-    <label class="label"
-           v-if="label"
-           :for="id">{{ label }}</label>
-    <div class="field"
-         :class="{'has-addons': $slots.addon }">
-      <div class="control"
-           :class="{'is-expanded': $slots.addon,
-           'is-loading': pendingEns }">
-        <input v-model="innerValue"
-               :name="name"
-               v-validate="'required|ensOrAddress'"
-               :data-vv-as="label || 'To' || name"
-               data-vv-validate-on="input"
-               class="input"
-               :class="{'is-danger': error || errors.has(name)}"
-               :disabled="disabled || pendingEns"
-               v-bind="props">
+    <label
+      v-if="label"
+      :for="id"
+      class="label"
+    >
+      {{ label }}
+    </label>
+    <div
+      :class="{'has-addons': $slots.addon }"
+      class="field"
+    >
+      <div
+        :class="{'is-expanded': $slots.addon,
+                 'is-loading': pendingEns }"
+        class="control"
+      >
+        <input
+          v-validate="'required|ensOrAddress'"
+          v-model="innerValue"
+          :name="name"
+          :data-vv-as="label || 'To' || name"
+          :class="{'is-danger': error || errors.has(name)}"
+          :disabled="disabled || pendingEns"
+          v-bind="props"
+          data-vv-validate-on="input"
+          class="input"
+        >
       </div>
-      <div class="control"
-           v-if="$slots.addon">
+      <div
+        v-if="$slots.addon"
+        class="control"
+      >
         <slot name="addon" />
       </div>
     </div>
-    <p class="help is-danger"
-       v-if="error || errors.has(name) ">{{ error || errors.first(name) }}</p>
-    <p class="help is-info"
-        v-if="pendingEns">Resolving name</p>
+    <p
+      v-if="error || errors.has(name) "
+      class="help is-danger"
+    >
+      {{ error || errors.first(name) }}
+    </p>
+    <p
+      v-if="pendingEns"
+      class="help is-info"
+    >
+      Resolving name
+    </p>
   </div>
 </template>
 
@@ -36,13 +56,10 @@ import { mapState } from 'vuex';
 import web3 from '@/utils/web3';
 
 export default {
-  data() {
-    return {
-      pendingEns: false,
-      tempValue: '',
-    };
+  name: 'VInputAddress',
+  inject: {
+    $validator: '$validator',
   },
-  name: 'v-input-address',
   props: {
     id: {
       type: String,
@@ -81,8 +98,46 @@ export default {
       default: null,
     },
   },
-  inject: {
-    $validator: '$validator',
+  data() {
+    return {
+      pendingEns: false,
+      tempValue: '',
+    };
+  },
+  computed: {
+    innerValue: {
+      get() {
+        if (this.value === '') {
+          return this.value;
+        }
+
+        return this.tempValue;
+      },
+      set(newVal) {
+        const { name } = this;
+        const field = this.$validator.fields.find({ name });
+
+        if (!field) return;
+
+        this.$validator.errors.remove(name);
+        this.tempValue = newVal;
+
+        if (newVal.match(/^.+\.(eth|etc)$/)) {
+          this.updateENS();
+        } else {
+          this.$emit('input', newVal);
+        }
+      },
+    },
+    props() {
+      return Object.keys(this.$props).reduce(
+        (res, prop) => ({
+          ...res,
+          [this.camelToKebab(prop)]: this.$props[prop],
+        }),
+        {},
+      );
+    },
   },
   methods: {
     camelToKebab: str => str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`),
@@ -121,41 +176,6 @@ export default {
       } finally {
         this.pendingEns = false;
       }
-    },
-  },
-  computed: {
-    innerValue: {
-      get() {
-        if (this.value === '') {
-          return this.value;
-        }
-
-        return this.tempValue;
-      },
-      set(newVal) {
-        const { name } = this;
-        const field = this.$validator.fields.find({ name });
-
-        if (!field) return;
-
-        this.$validator.errors.remove(name);
-        this.tempValue = newVal;
-
-        if (newVal.match(/^.+\.(eth|etc)$/)) {
-          this.updateENS();
-        } else {
-          this.$emit('input', newVal);
-        }
-      },
-    },
-    props() {
-      return Object.keys(this.$props).reduce(
-        (res, prop) => ({
-          ...res,
-          [this.camelToKebab(prop)]: this.$props[prop],
-        }),
-        {},
-      );
     },
   },
   created() {

@@ -1,34 +1,56 @@
 <template>
-  <v-modal class="is-dark" @close="handleClose">
+  <v-modal
+    class="is-dark"
+    @close="handleClose"
+  >
     <template slot="header">Get Started</template>
 
     <p class="subtitle">Please enter your email address below to access your
-      wallet or create a new one.</p>
+    wallet or create a new one.</p>
 
     <v-form
       id="loginByEmail"
       @submit="handleSubmit">
-      <v-input v-model="email"
-               label="Email"
-               help="Your email address may be used to help recover your
+      <v-input
+        v-model="email"
+        :disabled="isLoading"
+        label="Email"
+        help="Your email address may be used to help recover your
                wallet in case you lose access."
-               name="email"
-               validator="required|email"
-               placeholder="Your email"
-               :disabled="isLoading" />
+        name="email"
+        validator="required|email"
+        placeholder="Your email"
+      />
 
-        <v-checkbox v-model="termsAccepted">
-          I accept the <a href="https://endpass.com/terms/" target="_blank">Terms of Service</a>
-          and <a href="https://endpass.com/privacy/" target="_blank">Privacy
-            Policy</a>.
-        </v-checkbox>
+      <v-checkbox v-model="termsAccepted">
+        I accept the <a
+          href="https://endpass.com/terms/"
+          target="_blank"
+        >
+          Terms of Service
+        </a>
+        and
+        <a
+          href="https://endpass.com/privacy/"
+          target="_blank"
+        >
+          Privacy Policy
+        </a>.
+      </v-checkbox>
     </v-form>
-    <div class="buttons" slot="footer">
-      <v-button className="is-primary is-medium"
-                form="loginByEmail"
-                data-test="submit-login"
-                :disabled="!termsAccepted"
-                :loading="isLoading">Continue</v-button>
+    <div
+      slot="footer"
+      class="buttons"
+    >
+      <v-button
+        :disabled="!termsAccepted"
+        :loading="isLoading"
+        class-name="is-primary is-medium"
+        form="loginByEmail"
+        data-test="submit-login"
+      >
+        Continue
+      </v-button>
     </div>
   </v-modal>
 </template>
@@ -41,7 +63,7 @@ import VButton from '@/components/ui/form/VButton';
 import VCheckbox from '@/components/ui/form/VCheckbox';
 
 export default {
-  name: 'login-by-email-modal',
+  name: 'LoginByEmailModal',
   props: {
     isLoading: {
       type: Boolean,

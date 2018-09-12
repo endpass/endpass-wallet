@@ -2,18 +2,20 @@
   <base-page class="import-wallet">
     <template slot="title">Import Existing Wallet</template>
     <p class="subtitle">Select the type of wallet you would like to
-      import.</p>
+    import.</p>
     <div class="columns">
 
       <div class="column is-one-third">
-        <v-list v-model="importType"
-                label="Import Type"
-                :list="menu"/>
+        <v-list
+          v-model="importType"
+          :list="menu"
+          label="Import Type"
+        />
       </div>
 
       <div class="column">
         <div class="import-wallet">
-          <component :is="importComponent"></component>
+          <component :is="importComponent" />
         </div>
       </div>
 

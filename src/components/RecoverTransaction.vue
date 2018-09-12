@@ -30,13 +30,7 @@ import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
 
 export default {
-  name: 'recover-transaction',
-
-  components: {
-    VForm,
-    VButton,
-    VTextarea,
-  },
+  name: 'RecoverTransaction',
 
   data: () => ({
     transactionHash: null,
@@ -70,6 +64,12 @@ export default {
         console.error(error);
       }
     },
+  },
+
+  components: {
+    VForm,
+    VButton,
+    VTextarea,
   },
 };
 </script>

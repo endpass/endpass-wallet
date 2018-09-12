@@ -35,9 +35,22 @@
         </table>
       </div>
 
-      <div class="buttons" slot="footer">
-        <a class="button is-primary" @click="confirm">Confirm</a>
-        <a class="button" @click="close">Cancel</a>
+      <div
+        slot="footer"
+        class="buttons"
+      >
+        <a
+          class="button is-primary"
+          @click="confirm"
+        >
+          Confirm
+        </a>
+        <a
+          class="button"
+          @click="close"
+        >
+          Cancel
+        </a>
       </div>
 
     </v-modal>
