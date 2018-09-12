@@ -1,6 +1,6 @@
 import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
-import { http } from '@/utils';
+import { http, proxyRequest } from '@/utils';
 import keyUtil from '@/utils/keystore';
 
 export default {
@@ -58,26 +58,23 @@ export default {
   },
 
   getSettings() {
-    return http.get(`${identityAPIUrl}/user`).then(({ data }) => data);
-  },
-
-  getSetting(setting) {
-    return this.getSettings().then(data => {
-      return data[setting];
+    return proxyRequest.request({
+      method: 'read',
+      url: '/user',
     });
   },
 
+  async getSetting(setting) {
+    const allSettings = await this.getSettings();
+    return allSettings[setting];
+  },
+
   setSettings(settings) {
-    return http
-      .post(`${identityAPIUrl}/user`, settings)
-      .then(({ data }) => data)
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Error in server storage',
-          text: "Can't save data to server storage, maybe it is not available",
-          type: 'is-warning',
-        });
-      });
+    return proxyRequest.request({
+      method: 'add',
+      url: '/user',
+      payload: settings,
+    });
   },
 
   setSetting(prop, data) {
@@ -100,14 +97,19 @@ export default {
 
   // Returns addresses of all of the user's accounts
   getAccounts() {
-    return http.get(`${identityAPIUrl}/accounts`).then(res => res.data);
+    return proxyRequest.request({
+      method: 'read',
+      url: '/accounts',
+    });
   },
 
   // Saves the encrypted keystore for an account
   setAccount(address, account) {
-    return http
-      .post(`${identityAPIUrl}/account/${address}`, account)
-      .then(res => res.data);
+    return proxyRequest.request({
+      method: 'write',
+      url: `/account/${address}`,
+      payload: account,
+    });
   },
 
   // Update the encrypted keystore for an existing accounts
@@ -126,23 +128,24 @@ export default {
   },
 
   // Returns the encrypted keystore for a single account
-  getAccount(address) {
-    return http
-      .get(`${identityAPIUrl}/account/${address}`)
-      .then(res => {
-        let account = res.data;
-        account.address = address;
-        return account;
-      })
-      .catch(() => {
-        const shortAcc = address.replace(/^(.{5}).+/, '$1…');
-
-        throw new NotificationError({
-          title: 'Account request error',
-          text: `Failed to get account ${shortAcc}. Please, reload page`,
-          type: 'is-danger',
-        });
+  async getAccount(address) {
+    try {
+      const account = await proxyRequest.request({
+        method: 'read',
+        url: `/account/${address}`,
       });
+      account.address = address;
+
+      return account;
+    } catch (e) {
+      const shortAcc = address.replace(/^(.{5}).+/, '$1…');
+
+      throw new NotificationError({
+        title: 'Account request error',
+        text: `Failed to get account ${shortAcc}. Please, reload page`,
+        type: 'is-danger',
+      });
+    }
   },
 
   // Returns encrypted keystores for all non HD accounts
@@ -190,56 +193,64 @@ export default {
       .catch(() => {});
   },
 
-  getOtpSettings() {
-    return http
-      .get(`${identityAPIUrl}/otp`)
-      .then(res => res.data)
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Error requesting two-factor authentication settings',
-          text: `Failed to get OTP settings.`,
-          type: 'is-danger',
-        });
+  async getOtpSettings() {
+    try {
+      return await proxyRequest.request({
+        method: 'read',
+        url: '/otp',
       });
+    } catch (e) {
+      throw new NotificationError({
+        title: 'Error requesting two-factor authentication settings',
+        text: `Failed to get OTP settings.`,
+        type: 'is-danger',
+      });
+    }
   },
 
-  setOtpSettings(secret, code) {
-    return http
-      .post(`${identityAPIUrl}/otp`, { secret, code })
-      .then(({ data: { success, message } }) => {
-        if (!success) {
-          console.warn(`POST ${identityAPIUrl}/otp: ${message}`);
-          return Promise.reject();
-        }
-        return { success };
-      })
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Error saving two-factor authentication settings',
-          text: `Failed to save OTP settings.`,
-          type: 'is-danger',
-        });
+  async setOtpSettings(secret, code) {
+    try {
+      const { success, message } = await proxyRequest.request({
+        method: 'write',
+        url: '/otp',
+        payload: { secret, code },
       });
+
+      if (!success) {
+        throw new Error(`POST ${identityAPIUrl}/otp: ${message}`);
+      }
+
+      return { success };
+    } catch (e) {
+      throw new NotificationError({
+        title: 'Error saving two-factor authentication settings',
+        text: `Failed to save OTP settings.`,
+        type: 'is-danger',
+      });
+    }
   },
 
-  deleteOtpSettings(code) {
-    return http
-      .delete(`${identityAPIUrl}/otp`, {
-        data: { code },
-      })
-      .then(({ data: { success, message } }) => {
-        if (!success) {
-          console.warn(`DELETE ${identityAPIUrl}/otp: ${message}`);
-          return Promise.reject();
-        }
-        return { success };
-      })
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Error removing two-factor authentication settings',
-          text: `Failed to remove OTP settings.`,
-          type: 'is-danger',
-        });
+  async deleteOtpSettings(code) {
+    try {
+      const { success, message } = await proxyRequest.request({
+        method: 'remove',
+        url: '/otp',
+        payload: {
+          data: { code },
+        },
       });
+
+      if (!success) {
+        throw new Error(`DELETE ${identityAPIUrl}/otp: ${message}`);
+      }
+
+      return { success };
+    } catch (e) {
+      throw new NotificationError({
+        title: 'Error removing two-factor authentication settings',
+        text: `Failed to remove OTP settings.`,
+        type: 'is-danger',
+      });
+    }
   },
 };
