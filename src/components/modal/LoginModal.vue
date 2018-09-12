@@ -1,10 +1,10 @@
 <template>
   <component
-    class="login-modal"
-    data-test="login-modal"
+    v-dynamic-events="['confirm', 'close']"
     :is="currentModal"
     :is-loading="isLoading"
-    v-dynamic-events="['confirm', 'close']"
+    class="login-modal"
+    data-test="login-modal"
   />
 </template>
 
@@ -17,7 +17,7 @@ import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
 import error from '@/mixins/error';
 
 export default {
-  name: 'login-modal',
+  name: 'LoginModal',
   data: () => ({
     currentModal: LoginByEmailModal.name,
     isLoading: false,
@@ -87,11 +87,11 @@ export default {
       }
     },
   },
+  mixins: [error],
   components: {
     LoginByEmailModal,
     ConfirmEmailModal,
     TwoFactorAuthModal,
   },
-  mixins: [error],
 };
 </script>

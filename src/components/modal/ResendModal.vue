@@ -1,33 +1,50 @@
 <template lang="html">
   <div class="new-account-modal">
     <v-modal @close="close">
-      <v-form id="sendEther" @submit="confirmResend">
-        <v-input v-model="newTransaction.gasPrice"
-                 label="Gas price"
-                 name="gasPrice"
-                 type="number"
-                 :validator="`required|numeric|integer|between:${transaction.gasPrice},100`"
-                 id="gasPrice"
-                 aria-describedby="gasPrice"
-                 placeholder="Gas price"
-                 required>
-          <div class="control" slot="addon">
+      <v-form
+        id="sendEther"
+        @submit="confirmResend">
+        <v-input
+          id="gasPrice"
+          v-model="newTransaction.gasPrice"
+          :validator="`required|numeric|integer|between:${transaction.gasPrice},100`"
+          label="Gas price"
+          name="gasPrice"
+          type="number"
+          aria-describedby="gasPrice"
+          placeholder="Gas price"
+          required
+        >
+          <div
+            slot="addon"
+            class="control"
+          >
             <a class="button is-static">Gwei</a>
           </div>
         </v-input>
-        <v-input v-model="newTransaction.gasLimit"
-                 label="Gas limit"
-                 name="gasLimit"
-                 type="number"
-                 :validator="`required|numeric|integer|between:${transaction.gasLimit},4000000`"
-                 id="gasLimit"
-                 aria-describedby="gasLimit"
-                 placeholder="Gas limit"
-                 required />
+        <v-input
+          id="gasLimit"
+          v-model="newTransaction.gasLimit"
+          :validator="`required|numeric|integer|between:${transaction.gasLimit},4000000`"
+          label="Gas limit"
+          name="gasLimit"
+          type="number"
+          aria-describedby="gasLimit"
+          placeholder="Gas limit"
+          required
+        />
 
       </v-form>
-      <div class="buttons" slot="footer">
-        <v-button form="sendEther" className="is-primary is-medium">Send</v-button>
+      <div
+        slot="footer"
+        class="buttons"
+      >
+        <v-button
+          form="sendEther"
+          class-name="is-primary is-medium"
+        >
+          Send
+        </v-button>
       </div>
     </v-modal>
   </div>

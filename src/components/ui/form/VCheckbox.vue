@@ -2,13 +2,13 @@
   <div class="field">
     <label class="checkbox">
       <input
-        type="checkbox"
+        v-validate="validator"
         :name="name"
         :data-vv-as="name"
-        v-validate="validator"
         :class="{'is-danger': error || errors.has(name) }"
         v-model="innerValue"
-      />
+        type="checkbox"
+      >
       <slot />
     </label>
   </div>
@@ -16,7 +16,10 @@
 
 <script>
 export default {
-  name: 'v-checkbox',
+  name: 'VCheckbox',
+  inject: {
+    $validator: '$validator',
+  },
   props: {
     value: {
       type: Boolean,
@@ -24,28 +27,25 @@ export default {
     },
     name: {
       type: String,
-      default: 'checkbox'
+      default: 'checkbox',
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     error: {
       type: String,
-      default: null
+      default: null,
     },
     validator: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
   data() {
     return {
       innerValue: this.value,
     };
-  },
-  inject: {
-    $validator: '$validator',
   },
   watch: {
     value(value) {

@@ -28,7 +28,7 @@ const ACTION_TYPES = {
 };
 
 export default {
-  name: 'message-page',
+  name: 'MessagePage',
   data: () => ({
     action: ACTION_TYPES.SIGN,
   }),

@@ -46,19 +46,19 @@ import modalMixin from '@/mixins/modal';
 export default {
   name: 'SignTransaction',
 
+  data: () => ({
+    transaction: '',
+    signedTransaction: null,
+  }),
+
+  mixins: [modalMixin],
+
   components: {
     VForm,
     VButton,
     VTextarea,
     CodePasswordModal,
   },
-
-  mixins: [modalMixin],
-
-  data: () => ({
-    transaction: '',
-    signedTransaction: null,
-  }),
 
   computed: {
     ...mapState({

@@ -2,8 +2,17 @@
   <div class="media token">
     <div class="media-left">
       <p class="image token-logo is-32x32">
-        <img :src="token.logo" :alt="token.name" v-if="token.logo">
-        <span class="icon missing" v-html="require('@/img/compass.svg')" :alt="token.name" v-else></span>
+        <img
+          v-if="token.logo"
+          :src="token.logo"
+          :alt="token.name"
+        >
+        <span
+          v-else
+          :alt="token.name"
+          class="icon missing"
+          v-html="require('@/img/compass.svg')"
+        />
       </p>
     </div>
     <div class="media-content">
@@ -11,30 +20,35 @@
         <p class="token-title">
           <span class="token-name">{{ token.name }}</span>
         </p>
-        <slot></slot>
+        <slot />
       </div>
     </div>
     <div class="media-right">
-      <span v-if="!token.balance" class="token-symbol">{{ token.symbol }}</span>
+      <span
+        v-if="!token.balance"
+        class="token-symbol"
+      >
+        {{ token.symbol }}
+      </span>
       <balance
         v-if="token.balance"
-        class="is-inline-block"
         :amount="amount"
         :currency="token.symbol"
         :decimals="token.decimals"
         :round="4"
+        class="is-inline-block"
       />
 
       <balance
         v-if="price"
-        class="is-inline-block"
         :amount="amount"
         :currency="currency"
         :decimals="2"
         :round="2"
         :price="price"
+        class="is-inline-block"
       />
-      <slot name="right"></slot>
+      <slot name="right" />
     </div>
   </div>
 </template>
@@ -46,13 +60,13 @@ import { BigNumber } from 'bignumber.js';
 
 // Displays details about a single ERC20 token
 export default {
-  name: 'v-token',
+  name: 'VToken',
   props: {
     token: {
       type: Token,
       required: true,
     },
-    //fiat currency
+    // fiat currency
     currency: {
       type: String,
       default: 'USD',
@@ -70,7 +84,7 @@ export default {
       } else {
         balanceBn = new BigNumber(this.token.balance);
       }
-      let decimalsBn = new BigNumber(10).pow(this.token.decimals);
+      const decimalsBn = new BigNumber(10).pow(this.token.decimals);
       return balanceBn.div(decimalsBn).toString(10);
     },
   },

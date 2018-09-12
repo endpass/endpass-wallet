@@ -1,39 +1,55 @@
 <template>
   <base-page class="new-wallet">
     <template slot="title">{{ hdKey ? "Wallet Created" : "Create Wallet" }}</template>
-    <div v-if="hdKey" class="container has-text-centered is-narrow">
+    <div
+      v-if="hdKey"
+      class="container has-text-centered is-narrow"
+    >
       <p class="subtitle">Your wallet has been created successfully.
-        Please <strong>write down the 12 word recovery phrase below</strong>
+      Please <strong>write down the 12 word recovery phrase below</strong>
         and store it in a safe place. You will not be able to recover your
         wallet without it.</p>
       <div class="box">
         <p>Your wallet recovery phrase</p>
-        <p class="code" data-test="seed-phrase">{{key}}</p>
+        <p
+          class="code"
+          data-test="seed-phrase"
+        >
+          {{ key }}
+        </p>
       </div>
       <router-link
+        :disabled="!!remainingSeedPhraseTimeout"
         to="/"
         class="button is-success is-cta"
-        :disabled="!!remainingSeedPhraseTimeout"
-        >
-        Continue {{getRemainingSeedPhraseTimeout}}
+      >
+        Continue {{ getRemainingSeedPhraseTimeout }}
       </router-link>
     </div>
-    <div v-else class="container has-text-centered is-narrow">
+    <div
+      v-else
+      class="container has-text-centered is-narrow">
       <p class="subtitle">Just click the button below to create a new,
-        secure Ethereum Wallet. Your wallet can contain multiple addresses
-        for storing Ethereum and ERC20 compatible tokens.</p>
+      secure Ethereum Wallet. Your wallet can contain multiple addresses
+      for storing Ethereum and ERC20 compatible tokens.</p>
       <v-form @submit="createWallet">
-        <v-password v-model="walletPassword"
-                    label="Wallet password"
-                    id="jsonKeystorePassword"
-                    name="walletPassword"
-                    validator="required|min:8"
-                    data-vv-as="password"
-                    aria-describedby="jsonKeystorePassword"
-                    placeholder="wallet password"
-                    required />
-          <v-button className="is-success is-cta"
-                    :loading="isCreating">Create New Wallet</v-button>
+        <v-password
+          id="jsonKeystorePassword"
+          v-model="walletPassword"
+          label="Wallet password"
+          name="walletPassword"
+          validator="required|min:8"
+          data-vv-as="password"
+          aria-describedby="jsonKeystorePassword"
+          placeholder="wallet password"
+          required
+        />
+        <v-button
+          :loading="isCreating"
+          class-name="is-success is-cta"
+        >
+          Create New Wallet
+        </v-button>
       </v-form>
     </div>
   </base-page>

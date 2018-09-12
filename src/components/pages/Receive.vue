@@ -25,10 +25,15 @@
             <h2 class="card-header-title">Incoming Payment History</h2>
           </div>
           <div class="card-content">
-            <ul class="transactions" v-if="processedTransactions.length">
-              <li v-for="transaction in processedTransactions"
-                :key="transaction.hash">
-                <app-transaction :transaction="transaction"></app-transaction>
+            <ul
+              v-if="processedTransactions.length"
+              class="transactions"
+            >
+              <li
+                v-for="transaction in processedTransactions"
+                :key="transaction.hash"
+              >
+                <app-transaction :transaction="transaction" />
               </li>
             </ul>
             <p v-else>This account has no transactions.</p>
@@ -70,9 +75,7 @@ export default {
   created() {
     EthplorerService.getInfo(this.address)
       .then(transactions => {
-        this.transactions = transactions.filter(trx => {
-          return trx.to === this.address;
-        });
+        this.transactions = transactions.filter(trx => trx.to === this.address);
         this.$store.dispatch('connectionStatus/updateApiErrorStatus', {
           id: 'ethplorer',
           status: true,

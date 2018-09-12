@@ -3,42 +3,49 @@
     <v-modal @close="close">
       <header slot="header">{{ headerText }}</header>
       <div v-if="!providerAdded">
-	      <v-form v-model="isFormValid" @submit="handleButtonClick">
+        <v-form
+          v-model="isFormValid"
+          @submit="handleButtonClick"
+        >
 
-          <v-input v-model="innerProvider.name"
-                   v-validate="'required'"
-                   :disabled="isLoading"
-                   name="name"
-                   label="Network name"
-                   id="name"
-                   aria-describedby="name"
-                   placeholder="Network name"
-                   data-vv-name="Network name"
-                   required />
-
-          <v-input v-model="innerProvider.url"
-                   v-validate="`required|url:require_protocol:true|not_in:${providersLinks}`"
-                   :disabled="isLoading"
-                   name="url"
-                   label="Provider url"
-                   id="url"
-                   aria-describedby="url"
-                   placeholder="Provider url"
-                   data-vv-name="Provider url"
-                   @input="handleInput"
+          <v-input
+            v-validate="'required'"
+            id="name"
+            v-model="innerProvider.name"
+            :disabled="isLoading"
+            name="name"
+            label="Network name"
+            aria-describedby="name"
+            placeholder="Network name"
+            data-vv-name="Network name"
+            required
           />
 
-          <v-select v-model="innerProvider.currency"
-                    :options="currencies"
-                    v-validate="'required'"
-                    name="currency"
-                    label="Provider currency"
-                    id="currency"
-                    aria-describedby="currency"
-                    placeholder="Provider currency"
-                    data-vv-name="Provider currency"
-                    required />
-	      </v-form>
+          <v-input
+            v-validate="`required|url:require_protocol:true|not_in:${providersLinks}`"
+            id="url"
+            v-model="innerProvider.url"
+            :disabled="isLoading"
+            name="url"
+            label="Provider url"
+            aria-describedby="url"
+            placeholder="Provider url"
+            data-vv-name="Provider url"
+            @input="handleInput"
+          />
+
+          <v-select
+            v-validate="'required'"
+            id="currency"
+            v-model="innerProvider.currency"
+            :options="currencies"
+            name="currency"
+            label="Provider currency"
+            aria-describedby="currency"
+            placeholder="Provider currency"
+            data-vv-name="Provider currency"
+            required />
+        </v-form>
       </div>
       <div v-else>
         <p class="subtitle">New Provider Added</p>
@@ -48,19 +55,20 @@
             <p>Provider Address</p>
           </div>
           <div class="message-body">
-            <p>{{innerProvider.name}}</p>
-            <p class="code address">{{innerProvider.url}}</p>
+            <p>{{ innerProvider.name }}</p>
+            <p class="code address">{{ innerProvider.url }}</p>
           </div>
         </div>
       </div>
       <template slot="footer">
         <div class="buttons">
-          <a v-if="!providerAdded"
-             class="button is-primary is-medium"
-             :class="{'is-loading' : isLoading }"
-             :disabled="!isFormValid"
-             type="button"
-             @click="handleButtonClick">
+          <a
+            v-if="!providerAdded"
+            :class="{'is-loading' : isLoading }"
+            :disabled="!isFormValid"
+            class="button is-primary is-medium"
+            type="button"
+            @click="handleButtonClick">
             {{ buttonText }}
           </a>
         </div>
@@ -85,6 +93,12 @@ const defaultProvider = {
 
 export default {
   name: 'CustomProviderModal',
+  props: {
+    provider: {
+      type: Object,
+      default: () => defaultProvider,
+    },
+  },
   data() {
     return {
       providerAdded: false,
@@ -96,12 +110,6 @@ export default {
         text: currency.name,
       })),
     };
-  },
-  props: {
-    provider: {
-      type: Object,
-      default: () => defaultProvider,
-    },
   },
   computed: {
     ...mapGetters('web3', ['networks']),
@@ -173,5 +181,4 @@ export default {
 };
 </script>
 <style lang="css">
-
 </style>

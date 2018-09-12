@@ -5,8 +5,11 @@
 
       <div>
         <p class="subtitle">Please enter your wallet password to
-          continue.</p>
-        <v-form id="password-form" @submit="confirm">
+        continue.</p>
+        <v-form
+          id="password-form"
+          @submit="confirm"
+        >
           <slot />
           <v-password
             v-model="jsonKeystorePassword"
@@ -19,13 +22,18 @@
           />
         </v-form>
       </div>
-      <div class="buttons" slot="footer">
+      <div
+        slot="footer"
+        class="buttons"
+      >
         <v-button
+          :loading="processingConfirmation"
           form="password-form"
           data-test="submit-password"
-          :loading="processingConfirmation"
           class-name="is-primary is-medium"
-          >Confirm</v-button>
+        >
+          Confirm
+        </v-button>
       </div>
     </v-modal>
   </div>

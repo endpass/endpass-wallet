@@ -13,8 +13,12 @@
       required
       @input="handleInput"
     />
-    <v-button className="is-primary is-cta"
-              :loading="isCreating">Import</v-button>
+    <v-button
+      :loading="isCreating"
+      class-name="is-primary is-cta"
+    >
+      Import
+    </v-button>
   </v-form>
 </template>
 
@@ -26,7 +30,7 @@ import VButton from '@/components/ui/form/VButton.vue';
 import { SET_ADDRESS } from '@/store/accounts/mutations-types';
 
 export default {
-  name: 'import-from-public-key',
+  name: 'ImportFromPublicKey',
   data: () => ({
     isCreating: false,
     address: '',
