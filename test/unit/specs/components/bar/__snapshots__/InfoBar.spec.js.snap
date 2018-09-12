@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InfoBar render should render initial state of the component 1`] = `
+<div
+  class="section info-bar"
+>
+  <div
+    class="info-item"
+  >
+    <div
+      class="field"
+    >
+      <p
+        class="heading"
+      >
+        Status
+      </p>
+       
+      <div
+        class="control is-expanded"
+      >
+        <!---->
+      </div>
+    </div>
+  </div>
+   
+  <div
+    class="info-item"
+  >
+    <p
+      class="heading"
+    >
+      Balance
+    </p>
+     
+    <!---->
+  </div>
+   
+  <div
+    class="info-item"
+  >
+    <p
+      class="heading"
+    >
+      Value
+    </p>
+     
+    <!---->
+  </div>
+</div>
+`;

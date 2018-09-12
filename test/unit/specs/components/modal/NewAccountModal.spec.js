@@ -47,6 +47,10 @@ describe('NewAccountModal', () => {
       expect(wrapper.name()).toBe('NewAccountModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
+
+    it('should render component', () => {
+      expect(wrapper.element).toMatchSnapshot();
+    });
   });
 
   describe('behavior', () => {

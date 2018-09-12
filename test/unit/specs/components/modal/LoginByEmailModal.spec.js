@@ -1,4 +1,4 @@
-import { shallow, mount, createLocalVue } from '@vue/test-utils';
+import { shallow, mount } from '@vue/test-utils';
 
 import LoginByEmailModal from '@/components/modal/LoginByEmailModal';
 import { generateStubs } from '@/utils/testUtils';

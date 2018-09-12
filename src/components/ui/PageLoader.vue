@@ -18,13 +18,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 // Loading indicator that covers the entire page
 export default {
   name: 'page-loader',
   computed: {
-    isLoading() {
-      return this.$store.state.isPageLoading;
-    },
+    ...mapState({
+      isLoading: state => state.isPageLoading,
+    }),
   },
 };
 </script>

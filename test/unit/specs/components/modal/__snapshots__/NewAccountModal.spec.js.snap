@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NewAccountModal render should render component 1`] = `
+<div
+  class="new-account-modal"
+>
+  <!---->
+   
+  <!---->
+</div>
+`;

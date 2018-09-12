@@ -92,7 +92,7 @@
 import Account from '@/components/Account';
 import Tx from 'ethereumjs-tx';
 import { Transaction } from '@/class';
-import ResendModal from './ResendModal';
+import ResendModal from '@/components/modal/ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';

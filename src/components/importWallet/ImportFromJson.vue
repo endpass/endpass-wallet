@@ -40,7 +40,6 @@
 
 <script>
 import EthWallet from 'ethereumjs-wallet';
-import router from '@/router';
 import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VPassword from '@/components/ui/form/VPassword.vue';
@@ -80,7 +79,7 @@ export default {
           json: e.target.result,
           password: this.jsonKeystorePassword,
         });
-        router.push('/');
+        this.$router.push('/');
       } catch (e) {
         let error = {
           field: 'jsonKeystorePassword',

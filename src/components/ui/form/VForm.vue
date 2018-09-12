@@ -51,9 +51,6 @@ export default {
         });
       }
     },
-    validateFrom() {
-      this.$emit('formValid', this.isFormValid());
-    },
   },
 };
 </script>

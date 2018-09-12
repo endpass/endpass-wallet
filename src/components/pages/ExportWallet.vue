@@ -50,6 +50,7 @@ import ExportToPrivateKey from '@/components/ExportToPrivateKey.vue';
 import { mapState } from 'vuex';
 
 export default {
+  name: 'export-wallet',
   data() {
     return {
       exportType: 'privateKey',
