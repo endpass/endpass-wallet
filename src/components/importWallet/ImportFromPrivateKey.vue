@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit="addWallet">
+  <v-form @submit="submitAddWallet">
     <v-password
       id="privateKey"
       key="privateKeyUnique"
@@ -13,7 +13,7 @@
       required
       @input="handleInput"
     />
-     <v-password v-model="walletPassword"
+     <v-password v-model="password"
               label="Wallet password"
               id="jsonKeystorePassword"
               name="walletPassword"
@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import router from '@/router';
 import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VPassword from '@/components/ui/form/VPassword.vue';
@@ -39,11 +38,11 @@ export default {
   data: () => ({
     isCreating: false,
     privateKey: '',
-    walletPassword: '',
+    password: '',
   }),
   methods: {
     ...mapActions('accounts', ['addWalletWithPrivateKey']),
-    async addWallet() {
+    async submitAddWallet() {
       this.isCreating = true;
 
       await new Promise(res => setTimeout(res, 20));
@@ -51,9 +50,9 @@ export default {
       try {
         this.addWalletWithPrivateKey({
           privateKey: this.privateKey.replace(/^0x/, ''),
-          password: this.walletPassword,
+          password: this.password,
         });
-        router.push('/');
+        this.$router.push('/');
       } catch (e) {
         this.errors.add({
           field: 'privateKey',

@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit="submitWalletImportForm">
+  <v-form @submit="submitAddWallet">
     <v-input
       id="address"
       key="publicKeyUnique"
@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import router from '@/router';
 import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
@@ -34,11 +33,11 @@ export default {
   }),
   methods: {
     ...mapActions('accounts', ['addWalletWithPublicKey']),
-    async submitWalletImportForm() {
+    async submitAddWallet() {
       this.isCreating = true;
       try {
         await this.addWalletWithPublicKey(this.address);
-        router.push('/');
+        this.$router.push('/');
       } catch (e) {
         this.errors.add({
           field: 'address',

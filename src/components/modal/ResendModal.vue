@@ -42,6 +42,7 @@ import VButton from '@/components/ui/form/VButton.vue';
 import { Transaction } from '@/class';
 
 export default {
+  name: 'resend-modal',
   props: ['transaction'],
   data() {
     return {

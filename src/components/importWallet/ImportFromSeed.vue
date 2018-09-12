@@ -1,9 +1,9 @@
 <template>
-  <v-form  @submit="addWalletWithPhrase">
+  <v-form  @submit="submitAddWallet">
     <v-input
       id="hdkeySeed"
       key="hdkeyPhraseUnique"
-      v-model="hdkeyPhrase"
+      v-model="key"
       label="Seed phrase"
       name="hdkeyPhrase"
       validator="required|seed_phrase"
@@ -13,10 +13,10 @@
       required
       @input="handleInput"
     />
-     <v-password v-model="walletPassword"
+     <v-password v-model="password"
               label="Wallet password"
               id="jsonKeystorePassword"
-              name="walletPassword"
+              name="password"
               validator="required|min:8"
               data-vv-as="password"
               aria-describedby="jsonKeystorePassword"
@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import router from '@/router';
 import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
@@ -39,22 +38,22 @@ export default {
   name: 'import-from-seed',
   data: () => ({
     isCreating: false,
-    hdkeyPhrase: '',
-    walletPassword: '',
+    key: '',
+    password: '',
   }),
   methods: {
     ...mapActions('accounts', ['addMultiHdWallet']),
-    async addWalletWithPhrase() {
+    async submitAddWallet() {
       this.isCreating = true;
 
       await new Promise(res => setTimeout(res, 20));
 
       try {
         this.addMultiHdWallet({
-          key: this.hdkeyPhrase,
-          password: this.walletPassword,
+          key: this.key,
+          password: this.password,
         });
-        router.push('/');
+        this.$router.push('/');
       } catch (e) {
         this.errors.add({
           field: 'hdkeyPhrase',
