@@ -57,7 +57,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('transactions', ['getTransactionHistory']),
+    ...mapActions('transactions', ['updateTransactionHistory']),
     async getHistory() {
       if (!(this.address && this.isHistoryAvailable)) {
         this.isLoading = false;
@@ -65,7 +65,7 @@ export default {
       }
 
       this.isLoading = true;
-      await this.getTransactionHistory();
+      await this.updateTransactionHistory();
       this.isLoading = false;
     },
   },

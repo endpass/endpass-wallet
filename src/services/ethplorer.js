@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Transaction } from '@/class';
 
 export default {
   async getTokensWithBalance(address) {
@@ -43,6 +44,14 @@ export default {
     return data || [];
   },
 
+  // get tokens and ETH transactions
+  async getTransactionHistory() {
+    const [transactions, history] = await Promise.all([
+      ethplorerService.getInfo(addressCheckSum),
+      ethplorerService.getHistory(addressCheckSum),
+    ]);
+    return transactions.concat(history).map(trx => new Transaction(trx));
+  },
   // Filter out spam balances of tokens
   tokenIsNotSpam(token) {
     return token && token.tokenInfo && token.tokenInfo.price;

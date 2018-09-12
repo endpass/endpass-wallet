@@ -20,7 +20,11 @@ export class Address {
   }
 
   getAddressString() {
-    return web3.utils.bytesToHex(this.address);;
+    return web3.utils.bytesToHex(this.address);
+  }
+
+  async getBalance() {
+    return await web3.eth.getBalance(this.getAddressString());
   }
 
   getChecksumAddressString() {

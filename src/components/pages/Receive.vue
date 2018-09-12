@@ -7,11 +7,29 @@
             <h2 class="card-header-title">Receive ETH</h2>
           </div>
           <div class="card-content">
-            <p>Your Wallet Address:</p>
-            <account
+            <p>Your Active Address:</p>
+            <account v-if="address"
               :currency="activeCurrency.name"
               :address="address"
               :balance="balance"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="container">
+        <div class="card app-card">
+          <div class="card-header">
+            <h2 class="card-header-title">Receive ETH</h2>
+          </div>
+          <div class="card-content">
+            <p>Wallets Addresses:</p>
+            <account v-for="(wallet, address) in wallets" :key="address"
+              :currency="activeCurrency.name"
+              :address="address"
+              :balance="wallet.getBalance()"
             />
           </div>
         </div>
@@ -57,6 +75,7 @@ export default {
       address: state =>
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),
+      wallets: state => state.accounts.wallets,
     }),
     ...mapGetters('accounts', {
       balance: 'balance',

@@ -244,21 +244,15 @@ const handleSendingError = (
 };
 
 // Transaction history from ethplorer
-const getTransactionHistory = async ({ commit, dispatch, rootState }) => {
+const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
   if (!rootState.accounts.address) return;
 
   try {
     const { address } = rootState.accounts;
-    const addressCheckSum = address.getChecksumAddressString();
-    const [transactions, history] = await Promise.all([
-      ethplorerService.getInfo(addressCheckSum),
-      ethplorerService.getHistory(addressCheckSum),
-    ]);
-    const allTrx = transactions
-      .concat(history)
-      .map(trx => new Transaction(trx));
+    const addressString = address.getAddressString();
+    const transactions = ethplorerService.getTransactionHistory(addressString);
 
-    commit(SET_TRANSACTION_HISTORY, allTrx);
+    commit(SET_TRANSACTION_HISTORY, transactions);
     dispatch(
       'connectionStatus/updateApiErrorStatus',
       {
@@ -317,7 +311,7 @@ const handleBlockTransactions = (
     rootGetters['web3/isMainNetwork'] &&
     trxAddresses.some(trxAddress => trxAddress === address)
   ) {
-    dispatch('getTransactionHistory');
+    dispatch('updateTransactionHistory');
   }
 };
 
@@ -330,7 +324,7 @@ export default {
   getNonceInBlock,
   getNextNonce,
   sendSignedTransaction,
-  getTransactionHistory,
+  updateTransactionHistory,
   sendTransaction,
   cancelTransaction,
   resendTransaction,

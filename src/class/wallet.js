@@ -28,6 +28,10 @@ export class Wallet {
     return this.v3.address;
   }
 
+  async getBalance() {
+    return await web3.eth.getBalance(this.getAddressString());
+  }
+
   async validatePassword(password) {
     try {
       await this.getPrivateKey(password);
