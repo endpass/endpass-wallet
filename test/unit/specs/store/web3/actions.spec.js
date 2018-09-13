@@ -8,7 +8,7 @@ import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
 
 jest.mock('@/services', () => ({
   userService: {
-    setSetting: jest.fn(),
+    setSetting: jest.fn().mockResolvedValue({ success: true }),
     getSettings: jest.fn().mockResolvedValue({}),
   },
 }));
@@ -162,44 +162,40 @@ describe('web3 actions', () => {
 
   describe('addNetwork', () => {
     const { addNetwork } = actions;
-    const getters = {
-      networks: [{ id: 1 }],
-    };
     const state = {
-      storedNetworks: {},
+      storedNetworks: [],
     };
+    const network = { id: 1 };
+    const networksToSave = [...state.storedNetworks, network];
 
-    it('should call ADD_NETWORK mutation', async () => {
-      const network = {};
-
+    it('should call userService.setSetting', () => {
       expect.assertions(2);
 
-      await addNetwork({ commit, dispatch, getters, state }, { network });
-
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(mutationsTypes.ADD_NETWORK, network);
-    });
-
-    it('should save networks', async () => {
-      const network = {};
-
-      expect.assertions(2);
-
-      await addNetwork({ commit, dispatch, getters, state }, { network });
+      addNetwork({ commit, dispatch, state }, { network });
 
       expect(userService.setSetting).toHaveBeenCalledTimes(1);
       expect(userService.setSetting).toHaveBeenCalledWith(
         'networks',
-        state.storedNetworks,
+        networksToSave,
+      );
+    });
+
+    it('should call SET_NETWORKS mutation', async () => {
+      expect.assertions(2);
+
+      await addNetwork({ commit, dispatch, state }, { network });
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(
+        mutationsTypes.SET_NETWORKS,
+        networksToSave,
       );
     });
 
     it('should dispatch changeNetwork action', async () => {
-      const network = { id: 1 };
-
       expect.assertions(2);
 
-      await addNetwork({ commit, dispatch, getters, state }, { network });
+      await addNetwork({ commit, dispatch, state }, { network });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('changeNetwork', {
@@ -208,96 +204,177 @@ describe('web3 actions', () => {
     });
 
     it('should handle the error of adding a new provider', async () => {
-      const network = {};
       const error = new Error();
 
-      expect.assertions(4);
+      expect.assertions(3);
 
       userService.setSetting.mockRejectedValueOnce(error);
 
-      await addNetwork({ commit, dispatch, getters, state }, { network });
+      await addNetwork({ commit, dispatch, state }, { network });
 
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
-        root: true,
-      });
-
-      dispatch.mockClear();
-      dispatch.mockRejectedValueOnce(error);
-
-      await addNetwork({ commit, dispatch, getters, state }, { network });
-
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
-        root: true,
-      });
-    });
-  });
-
-  describe('updateNetwork', () => {
-    const { updateNetwork } = actions;
-    const state = {
-      storedNetworks: {},
-    };
-
-    it('should call UPDATE_NETWORK mutation', async () => {
-      const network = {};
-
-      expect.assertions(2);
-
-      await updateNetwork({ commit, dispatch, state }, { network });
-
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(
-        mutationsTypes.UPDATE_NETWORK,
-        network,
-      );
-    });
-
-    it('should update networks', async () => {
-      const network = {};
-
-      expect.assertions(2);
-
-      await updateNetwork({ commit, dispatch, state }, { network });
-
-      expect(userService.setSetting).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'networks',
-        state.storedNetworks,
-      );
-    });
-
-    it('should handle the network update error', async () => {
-      const network = {};
-      const error = new Error();
-
-      expect.assertions(2);
-
-      userService.setSetting.mockRejectedValueOnce(error);
-
-      await updateNetwork({ commit, dispatch, state }, { network });
-
+      expect(commit).toHaveBeenCalledTimes(0);
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
       });
     });
+
+    it('should return success status', async () => {
+      let setSettingResponse = { success: true };
+      let response;
+
+      expect.assertions(2);
+
+      userService.setSetting.mockResolvedValue(setSettingResponse);
+      response = await addNetwork({ commit, dispatch, state }, { network });
+
+      expect(response).toBe(setSettingResponse.success);
+
+      setSettingResponse = { success: false };
+      userService.setSetting.mockResolvedValue(setSettingResponse);
+      response = await addNetwork({ commit, dispatch, state }, { network });
+
+      expect(response).toBe(setSettingResponse.success);
+    });
+  });
+
+  describe('updateNetwork', () => {
+    const { updateNetwork } = actions;
+    const oldNetwork = { id: 1, url: 'url' };
+    const network = { id: 2 };
+    const state = {
+      storedNetworks: [oldNetwork],
+      activeNet: oldNetwork,
+    };
+
+    it('should not do anything', async () => {
+      expect.assertions(3);
+
+      await updateNetwork(
+        { commit, dispatch, state },
+        { network, oldNetwork: network },
+      );
+
+      expect(userService.setSetting).toHaveBeenCalledTimes(0);
+      expect(commit).toHaveBeenCalledTimes(0);
+      expect(dispatch).toHaveBeenCalledTimes(0);
+    });
+
+    it('should call userService.setSetting', () => {
+      const networksToSave = [network];
+
+      updateNetwork({ commit, dispatch, state }, { network, oldNetwork });
+
+      expect(userService.setSetting).toHaveBeenCalledTimes(1);
+      expect(userService.setSetting).toHaveBeenCalledWith(
+        'networks',
+        networksToSave,
+      );
+    });
+
+    it('should call SET_NETWORKS mutation', async () => {
+      const networksToSave = [network];
+
+      expect.assertions(2);
+
+      await updateNetwork({ commit, dispatch, state }, { network, oldNetwork });
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(
+        mutationsTypes.SET_NETWORKS,
+        networksToSave,
+      );
+    });
+
+    it('should dispatch changeNetwork action', async () => {
+      expect.assertions(2);
+
+      await updateNetwork({ commit, dispatch, state }, { network, oldNetwork });
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('changeNetwork', {
+        networkId: network.id,
+      });
+    });
+
+    it('should not dispatch changeNetwork action', async () => {
+      const oldNetwork = {};
+
+      expect.assertions(1);
+
+      await updateNetwork({ commit, dispatch, state }, { network, oldNetwork });
+
+      expect(dispatch).toHaveBeenCalledTimes(0);
+    });
+
+    it('should handle the network update error', async () => {
+      const error = new Error();
+
+      expect.assertions(3);
+
+      userService.setSetting.mockRejectedValueOnce(error);
+
+      await updateNetwork({ commit, dispatch, state }, { network, oldNetwork });
+
+      expect(commit).toHaveBeenCalledTimes(0);
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+        root: true,
+      });
+    });
+
+    it('should return success status', async () => {
+      let setSettingResponse = { success: true };
+      let response;
+
+      expect.assertions(2);
+
+      userService.setSetting.mockResolvedValue(setSettingResponse);
+      response = await updateNetwork(
+        { commit, dispatch, state },
+        { network, oldNetwork },
+      );
+
+      expect(response).toBe(setSettingResponse.success);
+
+      setSettingResponse = { success: false };
+      userService.setSetting.mockResolvedValue(setSettingResponse);
+      response = await updateNetwork(
+        { commit, dispatch, state },
+        { network, oldNetwork },
+      );
+
+      expect(response).toBe(setSettingResponse.success);
+    });
   });
 
   describe('deleteNetwork', () => {
     const { deleteNetwork } = actions;
-    const url = 'url';
+    const network = { id: 1, url: 'url' };
     const state = {
-      storedNetworks: {},
-      activeNet: { url },
+      storedNetworks: [network],
+      activeNet: network,
     };
     const getters = {
       networks: [{ id: 1 }],
     };
 
-    it('should call DELETE_NETWORK mutation', async () => {
-      const network = {};
+    it('should call userService.setSetting', () => {
+      const networksToSave = [];
+
+      expect.assertions(2);
+
+      deleteNetwork({ commit, dispatch, getters, state }, { network });
+
+      expect(userService.setSetting).toHaveBeenCalledTimes(1);
+      expect(userService.setSetting).toHaveBeenCalledWith(
+        'networks',
+        networksToSave,
+      );
+    });
+
+    it('should call SET_NETWORKS mutation', async () => {
+      const networksToSave = [];
 
       expect.assertions(2);
 
@@ -305,28 +382,12 @@ describe('web3 actions', () => {
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toHaveBeenCalledWith(
-        mutationsTypes.DELETE_NETWORK,
-        network,
-      );
-    });
-
-    it('should save networks', async () => {
-      const network = {};
-
-      expect.assertions(2);
-
-      await deleteNetwork({ commit, dispatch, getters, state }, { network });
-
-      expect(userService.setSetting).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'networks',
-        state.storedNetworks,
+        mutationsTypes.SET_NETWORKS,
+        networksToSave,
       );
     });
 
     it('should dispatch changeNetwork action', async () => {
-      const network = { url };
-
       expect.assertions(2);
 
       await deleteNetwork({ commit, dispatch, getters, state }, { network });
@@ -348,29 +409,43 @@ describe('web3 actions', () => {
     });
 
     it('should handle the removal error of the network', async () => {
-      const network = { url };
       const error = new Error();
 
-      expect.assertions(4);
+      expect.assertions(3);
 
       userService.setSetting.mockRejectedValueOnce(error);
 
       await deleteNetwork({ commit, dispatch, getters, state }, { network });
 
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
+      expect(commit).toHaveBeenCalledTimes(0);
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
       });
+    });
 
-      dispatch.mockClear();
-      dispatch.mockRejectedValueOnce(error);
+    it('should return success status', async () => {
+      let setSettingResponse = { success: true };
+      let response;
 
-      await deleteNetwork({ commit, dispatch, getters, state }, { network });
+      expect.assertions(2);
 
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
-        root: true,
-      });
+      userService.setSetting.mockResolvedValue(setSettingResponse);
+      response = await deleteNetwork(
+        { commit, dispatch, getters, state },
+        { network },
+      );
+
+      expect(response).toBe(setSettingResponse.success);
+
+      setSettingResponse = { success: false };
+      userService.setSetting.mockResolvedValue(setSettingResponse);
+      response = await deleteNetwork(
+        { commit, dispatch, getters, state },
+        { network },
+      );
+
+      expect(response).toBe(setSettingResponse.success);
     });
   });
 
