@@ -15,7 +15,7 @@ describe('SearchInput', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('search-input');
+      expect(wrapper.name()).toBe('SearchInput');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

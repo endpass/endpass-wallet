@@ -1,4 +1,4 @@
-import { shallow } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import { generateStubs } from '@/utils/testUtils';
@@ -7,6 +7,10 @@ import Home from '@/components/pages/Home';
 
 describe('Home page', () => {
   let wrapper;
+  const localVue = createLocalVue();
+
+  localVue.use(Vuex);
+
   beforeEach(() => {
     const store = new Vuex.Store({
       modules: {
@@ -32,12 +36,13 @@ describe('Home page', () => {
     });
     wrapper = shallow(Home, {
       store,
+      localVue,
     });
   });
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('home');
+      expect(wrapper.name()).toBe('Home');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

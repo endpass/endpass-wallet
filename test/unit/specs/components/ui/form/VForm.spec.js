@@ -20,7 +20,7 @@ describe('VForm page', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('v-form');
+      expect(wrapper.name()).toBe('VForm');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

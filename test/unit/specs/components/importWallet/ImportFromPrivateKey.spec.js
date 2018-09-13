@@ -41,7 +41,7 @@ describe('ImportFromPrivateKey', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('import-from-private-key');
+      expect(wrapper.name()).toBe('ImportFromPrivateKey');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

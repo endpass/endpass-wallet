@@ -11,7 +11,7 @@ describe('ConfirmEmailModal', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('confirm-email-modal');
+      expect(wrapper.name()).toBe('ConfirmEmailModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

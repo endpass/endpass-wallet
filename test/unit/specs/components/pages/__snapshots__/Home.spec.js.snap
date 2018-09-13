@@ -28,18 +28,19 @@ exports[`Home page render should render initial state of the component 1`] = `
                 class="subtitle"
               >
                 Get started by generating an
-                Ethereum wallet.
+              Ethereum wallet.
               </p>
                
               <div
                 class="is-centered"
               >
                 <router-link
-                  class="button
-                is-success is-cta"
+                  class="button is-success is-cta"
                   to="[object Object]"
                 >
+                  
                   Create New Wallet
+                
                 </router-link>
               </div>
             </div>

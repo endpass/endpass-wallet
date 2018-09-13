@@ -8,6 +8,7 @@ exports[`ExportWallet page render should render initial state of the component 1
   <p
     class="subtitle"
   >
+    
     Exporting account 
     <strong>
       
@@ -36,8 +37,9 @@ exports[`ExportWallet page render should render initial state of the component 1
             <a
               class="is-active"
             >
-              Private
-              Key
+              
+              Private Key
+            
             </a>
           </li>
            
@@ -45,7 +47,9 @@ exports[`ExportWallet page render should render initial state of the component 1
             <a
               class=""
             >
+              
               Seed Phrase
+            
             </a>
           </li>
            
@@ -53,8 +57,9 @@ exports[`ExportWallet page render should render initial state of the component 1
             <a
               class=""
             >
-              JSON
-              Keystore
+              
+              JSON Keystore
+            
             </a>
           </li>
         </ul>

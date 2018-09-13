@@ -8,7 +8,9 @@ exports[`SyncStatus render should render initial state of the component 1`] = `
     class="tag is-danger"
     title="synced to block 1"
   >
+    
     failed
+  
   </span>
 </div>
 `;

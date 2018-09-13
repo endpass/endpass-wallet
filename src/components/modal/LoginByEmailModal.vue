@@ -63,7 +63,8 @@ import VButton from '@/components/ui/form/VButton';
 import VCheckbox from '@/components/ui/form/VCheckbox';
 
 export default {
-  name: 'LoginByEmailModal',
+  // TODO: must be in PascalCase, breaks tests
+  name: 'login-by-email-modal',
   props: {
     isLoading: {
       type: Boolean,

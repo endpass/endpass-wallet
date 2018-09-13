@@ -19,7 +19,7 @@ describe('LoginModal', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('login-modal');
+      expect(wrapper.name()).toBe('LoginModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

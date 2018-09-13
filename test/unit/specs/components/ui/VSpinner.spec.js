@@ -11,7 +11,7 @@ describe('VSpinner', () => {
     });
 
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('v-spinner');
+      expect(wrapper.name()).toBe('VSpinner');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
   });

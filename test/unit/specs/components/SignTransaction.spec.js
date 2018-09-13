@@ -10,6 +10,10 @@ describe('SignTransaction', () => {
 
   beforeEach(() => {
     const localVue = createLocalVue();
+
+    localVue.use(Notifications);
+    localVue.use(Vuex);
+
     const store = new Vuex.Store({
       state: {
         accounts: {
@@ -20,8 +24,6 @@ describe('SignTransaction', () => {
         web3: {},
       },
     });
-
-    localVue.use(Notifications);
 
     wrapper = mount(SignTransaction, {
       store,

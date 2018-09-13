@@ -1,13 +1,12 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import { generateStubs } from '@/utils/testUtils';
 import { CURRENCIES } from '@/constants';
-
+import CurrencySelect from '@/components/bar/CurrencySelect';
 import Vuex from 'vuex';
+
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
-
-import CurrencySelect from '@/components/bar/CurrencySelect';
 
 describe('CurrencySelect', () => {
   let wrapper, actions;
@@ -36,7 +35,7 @@ describe('CurrencySelect', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('currency-select');
+      expect(wrapper.name()).toBe('CurrencySelect');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
