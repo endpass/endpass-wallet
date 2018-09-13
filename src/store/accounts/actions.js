@@ -161,8 +161,7 @@ const updateBalance = async ({ commit, dispatch, state }) => {
   }
 
   try {
-    console.log(state.address);
-    const balance = await state.address.getBalance(address);
+    const balance = await state.address.getBalance();
     commit(SET_BALANCE, balance);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });

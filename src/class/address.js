@@ -1,4 +1,4 @@
-import web3 from 'web3';
+import web3 from '@/utils/web3';
 
 // A wallet based on an Ethereum address string, to be used in place of
 // ethereumjs-wallet when only the address is available
