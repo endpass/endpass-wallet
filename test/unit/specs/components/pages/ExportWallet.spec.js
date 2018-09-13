@@ -1,4 +1,4 @@
-import { shallow } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import { generateStubs } from '@/utils/testUtils';
 
@@ -6,6 +6,10 @@ import ExportWallet from '@/components/pages/ExportWallet';
 
 describe('ExportWallet page', () => {
   let wrapper;
+  const localVue = createLocalVue();
+
+  localVue.use(Vuex);
+
   beforeEach(() => {
     const store = new Vuex.Store({
       state: {
@@ -15,6 +19,7 @@ describe('ExportWallet page', () => {
     wrapper = shallow(ExportWallet, {
       store,
       stubs: generateStubs(ExportWallet),
+      localVue,
     });
   });
 
@@ -44,7 +49,7 @@ describe('ExportWallet page', () => {
       });
       expect(wrapper.find('export-to-json').exists()).toBe(false);
       expect(wrapper.find('export-to-private-key').exists()).toBe(false);
-      //type is unsupportable message
+      // type is unsupportable message
       expect(wrapper.find('.subtitle').exists()).toBe(true);
     });
   });

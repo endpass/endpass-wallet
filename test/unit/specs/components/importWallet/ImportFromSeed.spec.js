@@ -39,7 +39,7 @@ describe('ImportFromSeed', () => {
   });
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('import-from-seed');
+      expect(wrapper.name()).toBe('ImportFromSeed');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

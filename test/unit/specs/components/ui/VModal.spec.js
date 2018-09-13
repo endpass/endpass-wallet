@@ -21,7 +21,7 @@ describe('VModal page', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('v-modal');
+      expect(wrapper.name()).toBe('VModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

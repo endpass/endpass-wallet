@@ -37,7 +37,7 @@ describe('ImportFromPublicKey', () => {
   });
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('import-from-public-key');
+      expect(wrapper.name()).toBe('ImportFromPublicKey');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

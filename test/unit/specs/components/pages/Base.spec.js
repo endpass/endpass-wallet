@@ -18,7 +18,7 @@ describe('Base page', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('base-page');
+      expect(wrapper.name()).toBe('BasePage');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

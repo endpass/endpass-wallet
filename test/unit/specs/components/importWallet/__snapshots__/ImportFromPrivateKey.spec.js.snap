@@ -23,14 +23,16 @@ exports[`ImportFromPrivateKey render should render initial state of the componen
     name="walletPassword"
     placeholder="wallet password"
     required=""
-    v-model="password"
+    v-model="walletPassword"
     validator="required|min:8"
   />
    
   <v-button
-    classname="is-primary is-cta"
+    class-name="is-primary is-cta"
   >
+    
     Import
+  
   </v-button>
 </v-form>
 `;

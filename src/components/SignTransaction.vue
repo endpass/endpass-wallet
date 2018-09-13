@@ -51,15 +51,6 @@ export default {
     signedTransaction: null,
   }),
 
-  mixins: [modalMixin],
-
-  components: {
-    VForm,
-    VButton,
-    VTextarea,
-    CodePasswordModal,
-  },
-
   computed: {
     ...mapState({
       wallet: state => state.accounts.wallet,
@@ -86,6 +77,15 @@ export default {
         console.error(error);
       }
     },
+  },
+
+  mixins: [modalMixin],
+
+  components: {
+    VForm,
+    VButton,
+    VTextarea,
+    CodePasswordModal,
   },
 };
 </script>

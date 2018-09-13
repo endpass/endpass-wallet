@@ -8,15 +8,17 @@ exports[`Balance render should render initial state of the component 1`] = `
     class="title amount"
     title="0"
   >
+    
     0
+  
   </span>
    
   <span
     class="currency"
   >
     
-      ETH
-    
+    ETH
+  
   </span>
    
   <!---->

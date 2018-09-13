@@ -18,7 +18,7 @@ describe('VTextarea', () => {
     });
 
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('v-textarea');
+      expect(wrapper.name()).toBe('VTextarea');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

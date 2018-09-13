@@ -25,7 +25,7 @@ describe('Token', () => {
   });
 
   it('should be a Vue component', () => {
-    expect(wrapper.name()).toBe('v-token');
+    expect(wrapper.name()).toBe('VToken');
     expect(wrapper.isVueInstance()).toBeTruthy();
   });
 
@@ -36,7 +36,7 @@ describe('Token', () => {
     expect(wrapper.find('.token-name').text()).toBe(mockToken.name);
   });
   it('should show symbol if there is no balance', () => {
-    let token = { ...mockToken, balance: undefined };
+    const token = { ...mockToken, balance: undefined };
     wrapper.setProps({ token });
     expect(wrapper.find('.token-symbol').text()).toBe(token.symbol);
   });

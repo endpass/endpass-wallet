@@ -1,11 +1,11 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import VeeValidate from 'vee-validate';
 
+import ImportFromJson from '@/components/importWallet/ImportFromJson';
+
 const localVue = createLocalVue();
 
 localVue.use(VeeValidate);
-
-import ImportFromJson from '@/components/importWallet/ImportFromJson';
 
 describe('ImportFromJson', () => {
   describe('render', () => {
@@ -18,7 +18,7 @@ describe('ImportFromJson', () => {
     });
 
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('import-from-json');
+      expect(wrapper.name()).toBe('ImportFromJson');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

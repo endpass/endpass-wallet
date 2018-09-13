@@ -40,8 +40,8 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
           {}
         </span>
         
-          Login
-        
+        Login
+      
       </a>
     </div>
   </div>
@@ -119,6 +119,7 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
             >
               {}
             </span>
+            
             Home
           
           </router-link>
