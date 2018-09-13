@@ -24,6 +24,7 @@
 
 <script>
 import { decodeTx } from 'ethereum-tx-decoder';
+import web3 from '@/utils/web3';
 import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
@@ -51,7 +52,13 @@ export default {
   methods: {
     async recoverTransaction() {
       try {
-        this.recoveredTransaction = decodeTx(this.transactionHash);
+        const decodedTransaction = decodeTx(this.transactionHash);
+
+        Object.assign(decodedTransaction, {
+          to: web3.utils.toChecksumAddress(decodedTransaction.to),
+        });
+
+        this.recoveredTransaction = decodedTransaction;
       } catch (error) {
         this.recoveredTransaction = null;
         this.$notify({
