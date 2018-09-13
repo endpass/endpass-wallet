@@ -48,7 +48,7 @@
         </v-form>
       </div>
       <div v-else>
-        <p class="subtitle">New Provider Added</p>
+        <p class="subtitle">{{headerTextAfterAction}}</p>
 
         <div class="message">
           <div class="message-header">
@@ -131,37 +131,49 @@ export default {
         ? 'Update Provider'
         : 'Create New Provider';
     },
+    headerTextAfterAction() {
+      return this.needUpdateProvider
+        ? 'Provider Updated'
+        : 'New Provider Added';
+    },
   },
   methods: {
     ...mapActions('web3', ['addNetwork', 'validateNetwork', 'updateNetwork']),
-    handleButtonClick() {
+    async handleButtonClick() {
       this.isLoading = true;
 
-      return this.validateNetwork({ network: this.innerProvider })
-        .then(([networkType, networkId]) => {
-          const action = this.needUpdateProvider
-            ? this.updateNetwork
-            : this.addNetwork;
-          const network = { ...this.innerProvider };
-
-          if (!this.needUpdateProvider) {
-            network.id = networkId;
-            network.networkType = networkType;
-          }
-
-          this.isLoading = false;
-          this.providerAdded = true;
-
-          action({ network });
-        })
-        .catch(() => {
-          this.isLoading = false;
-          this.errors.add({
-            field: 'url',
-            msg: 'Provider is invalid',
-            id: 'wrongUrl',
-          });
+      try {
+        const [networkType, networkId] = await this.validateNetwork({
+          network: this.innerProvider,
         });
+        const network = {
+          ...this.innerProvider,
+          id: networkId,
+          networkType,
+        };
+        let isSuccess;
+
+        if (this.needUpdateProvider) {
+          isSuccess = await this.updateNetwork({
+            network,
+            oldNetwork: this.provider,
+          });
+        } else {
+          isSuccess = await this.addNetwork({ network });
+        }
+
+        if (isSuccess) {
+          this.providerAdded = true;
+        }
+      } catch (error) {
+        this.errors.add({
+          field: 'url',
+          msg: 'Provider is invalid',
+          id: 'wrongUrl',
+        });
+      } finally {
+        this.isLoading = false;
+      }
     },
     close() {
       if (!this.isLoading) {
