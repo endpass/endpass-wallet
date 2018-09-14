@@ -25,43 +25,45 @@ export default {
   }),
   methods: {
     ...mapActions('user', ['login', 'loginViaOTP']),
-    handleLoginByEmailModalConfirm(email) {
-      this.isLoading = true;
+    async handleLoginByEmailModalConfirm(email) {
+      try {
+        this.isLoading = true;
+        const { redirect_uri: redirectUri } = this.$route.query;
+        const challengeType = await this.login({ email, redirectUri });
 
-      return this.login(email)
-        .then(challengeType => {
-          if (challengeType === 'otp') {
-            this.email = email;
-            this.currentModal = TwoFactorAuthModal.name;
-            this.isLoading = false;
-          } else if (challengeType === 'email_link') {
-            this.currentModal = ConfirmEmailModal.name;
-            this.isLoading = false;
-          } else {
-            this.handleSuccessfulLogin();
-          }
-        })
-        .catch(this.handleFailedLogin);
+        if (challengeType === 'otp') {
+          this.email = email;
+          this.currentModal = TwoFactorAuthModal.name;
+        } else if (challengeType === 'email_link') {
+          this.currentModal = ConfirmEmailModal.name;
+        } else {
+          this.handleSuccessfulLogin();
+        }
+      } catch (e) {
+        this.handleFailedLogin(e);
+      } finally {
+        this.isLoading = false;
+      }
     },
-    handleTwoFactorAuthModalConfirm(code) {
+    async handleTwoFactorAuthModalConfirm(code) {
       this.isLoading = true;
-      const {
-        email,
-        handleFailedLogin,
-        handleSuccessfulLogin,
-        loginViaOTP,
-      } = this;
 
-      return loginViaOTP({ code, email })
-        .then(handleSuccessfulLogin)
-        .then(this.redirectPage)
-        .catch(handleFailedLogin);
+      try {
+        const { email } = this;
+
+        await this.loginViaOTP({ code, email });
+        this.handleSuccessfulLogin();
+        this.redirectPage();
+      } catch (e) {
+        this.handleFailedLogin(e);
+      } finally {
+        this.isLoading = false;
+      }
     },
     handleClose() {
       this.close();
     },
     handleSuccessfulLogin() {
-      this.isLoading = false;
       this.close();
 
       this.$notify({
@@ -70,9 +72,8 @@ export default {
         text: 'Logged In',
       });
     },
-    handleFailedLogin(error) {
-      this.isLoading = false;
-      this.emitError(error);
+    handleFailedLogin(err) {
+      this.emitError(err);
     },
     close() {
       this.$emit('close');

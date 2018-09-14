@@ -93,6 +93,12 @@ describe('LoginModal', () => {
             namespaced: true,
             actions,
           },
+          errors: {
+            namespaced: true,
+            actions: {
+              emitError: jest.fn(),
+            },
+          },
         },
       });
 
@@ -112,11 +118,14 @@ describe('LoginModal', () => {
       const email = 'email';
 
       beforeEach(() => {
-        spyOn(wrapper.vm, '$notify');
+        jest.spyOn(wrapper.vm, '$notify');
       });
 
-      it('should login user via emeil_link challenge type', async () => {
+      it('should login user via email_link challenge type', async () => {
+        expect.assertions(3);
+
         actions.login.mockResolvedValueOnce('email_link');
+
         await wrapper.vm.handleLoginByEmailModalConfirm(email);
 
         expect(wrapper.vm.isLoading).toBeFalsy();
@@ -125,6 +134,8 @@ describe('LoginModal', () => {
       });
 
       it('should login user via OTP challenge type', async () => {
+        expect.assertions(4);
+
         actions.login.mockResolvedValueOnce('otp');
 
         await wrapper.vm.handleLoginByEmailModalConfirm(email);
@@ -136,9 +147,11 @@ describe('LoginModal', () => {
       });
 
       it('should not login user', async () => {
+        expect.assertions(5);
+
         const error = {};
 
-        spyOn(wrapper.vm, 'emitError');
+        jest.spyOn(wrapper.vm, 'emitError');
         actions.login.mockRejectedValueOnce(error);
 
         await wrapper.vm.handleLoginByEmailModalConfirm(email);
@@ -155,7 +168,7 @@ describe('LoginModal', () => {
       const code = '111';
 
       beforeEach(() => {
-        spyOn(wrapper.vm, '$notify');
+        jest.spyOn(wrapper.vm, '$notify');
 
         wrapper.setData({
           currentModal: TwoFactorAuthModal.name,
@@ -178,7 +191,7 @@ describe('LoginModal', () => {
       it('should not login user', async () => {
         const error = {};
 
-        spyOn(wrapper.vm, 'emitError');
+        jest.spyOn(wrapper.vm, 'emitError');
         actions.loginViaOTP.mockRejectedValueOnce(error);
 
         await wrapper.vm.handleTwoFactorAuthModalConfirm(code);
