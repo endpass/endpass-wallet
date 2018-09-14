@@ -32,7 +32,7 @@
               :balance="balances[walletAddress]"
             />
             <v-button v-if="!isPublicWallet(wallet)" @click="clickSendButton(walletAddress)" type="button" name="button">Send ethereum</v-button>
-            <div class="">
+            <div class="token-list-container">
               <token-list v-if="tokens[walletAddress]" :tokens="tokens[walletAddress]" />
               <v-spinner
                 v-else-if="!isTokensLoaded(walletAddress)"
@@ -116,6 +116,7 @@ export default {
     ...mapActions('transactions', ['updateTransactionHistory']),
     ...mapActions('accounts', ['selectWallet']),
     async clickSendButton(address) {
+      console.log(web3.utils.hexToBytes(address));
       this.selectWallet(address);
       this.$router.push('/send');
     },
@@ -178,18 +179,22 @@ export default {
     },
   },
   created() {
-    this.$watch(vm => vm.activeNet.id, this.getBalances, {
-      immediate: true,
-    });
-    this.$watch(vm => vm.wallets, this.getBalances, {
-      immediate: true,
-    });
-    this.$watch(vm => vm.wallets, this.getTokensLists, {
-      immediate: true,
-    });
     this.$watch(vm => vm.address, this.getHistory, {
       immediate: true,
     });
+    this.$watch(vm => vm.activeNet.id, this.getBalances, {
+      immediate: true,
+    });
+    this.$watch(
+      vm => vm.wallets,
+      () => {
+        this.getBalances();
+        this.getTokensLists();
+      },
+      {
+        immediate: true,
+      },
+    );
   },
   components: {
     Account,
@@ -204,5 +209,9 @@ export default {
 <style lang="scss">
 .transactions {
   max-width: 700px;
+}
+.token-list-container {
+  min-height: 30px;
+  position: relative;
 }
 </style>
