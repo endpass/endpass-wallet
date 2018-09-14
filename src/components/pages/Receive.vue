@@ -21,17 +21,24 @@
 
     <div class="section">
       <div class="container">
-        <div class="card app-card" v-for="(wallet, address) in wallets" :key="address">
+        <div class="card app-card" v-if="walletAddress !== address" v-for="(wallet, walletAddress) in wallets" :key="walletAddress">
           <div class="card-header">
             <h2 class="card-header-title">Receive ETH</h2>
           </div>
           <div class="card-content">
             <account
               :currency="activeCurrency.name"
-              :address="address"
-              :balance="balances[address]"
+              :address="walletAddress"
+              :balance="balances[walletAddress]"
             />
-            <token-list v-if="tokens[address]" :tokens="tokens[address]" />
+            <v-button v-if="!isPublicWallet(wallet)" @click="clickSendButton(walletAddress)" type="button" name="button">Send ethereum</v-button>
+            <div class="">
+              <token-list v-if="tokens[walletAddress]" :tokens="tokens[walletAddress]" />
+              <v-spinner
+                v-else-if="!isTokensLoaded(walletAddress)"
+                :is-loading="!isTokensLoaded(walletAddress)"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -65,9 +72,10 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { ethplorerService } from '@/services';
-import { Token, ERC20Token } from '@/class';
+import { Token, ERC20Token, Address } from '@/class';
 import web3 from '@/utils/web3';
 import TokenList from '@/components/TokenList';
+import VButton from '@/components/ui/form/VButton';
 import appTransaction from '@/components/Transaction';
 import Account from '@/components/Account';
 import EthplorerService from '@/services/ethplorer';
@@ -78,7 +86,6 @@ export default {
   data() {
     return {
       isLoading: true,
-      isLoadingBalances: {},
       balances: {},
       tokens: {},
     };
@@ -107,6 +114,17 @@ export default {
   },
   methods: {
     ...mapActions('transactions', ['updateTransactionHistory']),
+    ...mapActions('accounts', ['selectWallet']),
+    async clickSendButton(address) {
+      this.selectWallet(address);
+      this.$router.push('/send');
+    },
+    isPublicWallet(wallet) {
+      return wallet instanceof Address;
+    },
+    isTokensLoaded(address) {
+      return typeof this.tokens[address] !== 'undefined';
+    },
     async getHistory() {
       if (!this.address) {
         this.isLoading = false;
@@ -125,14 +143,11 @@ export default {
       addresses.forEach(this.getTokensList);
     },
     async getBalance(address) {
-      this.isLoadingBalances[address] = true;
       let balance = await this.wallets[address].getBalance();
       balance = web3.utils.fromWei(balance);
       this.$set(this.balances, address, balance);
-      this.isLoadingBalances[address] = false;
     },
     async getTokensList(address) {
-      this.isLoadingBalances[address] = true;
       let tokensList = await ethplorerService.getTokensWithBalance(address);
       const allBalances = await Promise.all(
         tokensList
@@ -140,22 +155,17 @@ export default {
           .map(async erc20 => {
             try {
               let balance = await erc20.getBalance(address);
-              console.log(balance);
               return [erc20.address, balance];
             } catch (e) {
-              console.log(e);
               return [erc20.address, null];
             }
           }),
       );
-
-      console.log(allBalances);
       // In format {address: balance}
       const balances = allBalances.reduce((obj, item) => {
         obj[item[0]] = item[1];
         return obj;
       }, {});
-      console.log(balances);
       this.$set(
         this.tokens,
         address,
@@ -165,11 +175,13 @@ export default {
           return tokenObj;
         }),
       );
-      this.isLoadingBalances[address] = false;
     },
   },
   created() {
-    this.$watch(vm => [vm.activeNet.id, vm.wallets].join(), this.getBalances, {
+    this.$watch(vm => vm.activeNet.id, this.getBalances, {
+      immediate: true,
+    });
+    this.$watch(vm => vm.wallets, this.getBalances, {
       immediate: true,
     });
     this.$watch(vm => vm.wallets, this.getTokensLists, {
@@ -184,6 +196,7 @@ export default {
     appTransaction,
     VSpinner,
     TokenList,
+    VButton,
   },
 };
 </script>

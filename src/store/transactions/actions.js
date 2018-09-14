@@ -250,7 +250,9 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
   try {
     const { address } = rootState.accounts;
     const addressString = address.getAddressString();
-    const transactions = ethplorerService.getTransactionHistory(addressString);
+    const transactions = await ethplorerService.getTransactionHistory(
+      addressString,
+    );
 
     commit(SET_TRANSACTION_HISTORY, transactions);
     dispatch(

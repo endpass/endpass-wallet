@@ -62,11 +62,16 @@ export default {
 
   // get tokens and ETH transactions
   async getTransactionHistory(address) {
-    const [transactions, history] = await Promise.all([
-      this.getInfo(address),
-      this.getHistory(address),
-    ]);
-    return transactions.concat(history).map(trx => new Transaction(trx));
+    let throttlePromice = new Promise((res, rej) => {
+      throttle(() => {
+        Promise.all([this.getInfo(address), this.getHistory(address)])
+          .then(([transactions, history]) => {
+            res(transactions.concat(history).map(trx => new Transaction(trx)));
+          })
+          .catch(rej);
+      });
+    });
+    return throttlePromice;
   },
   // Filter out spam balances of tokens
   tokenIsNotSpam(token) {
