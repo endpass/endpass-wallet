@@ -41,4 +41,4 @@ class AddressMock {
   }
 }
 
-export default new Address();
+export default new AddressMock();

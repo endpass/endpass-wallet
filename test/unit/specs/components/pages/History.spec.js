@@ -49,7 +49,7 @@ describe('HistoryPage', () => {
             transactionHistory: [],
           },
           actions: {
-            getTransactionHistory: jest.fn(),
+            updateTransactionHistory: jest.fn(),
           },
           getters: {
             currentNetTransactions: () => [
@@ -148,7 +148,7 @@ describe('HistoryPage', () => {
 
     // FIXME getHistory don't work when $watch in created
     it('should update history when the account/net is changed', () => {
-      const watcher = jest.spyOn(wrapper.vm, 'getTransactionHistory');
+      const watcher = jest.spyOn(wrapper.vm, 'updateTransactionHistory');
 
       wrapper.setComputed({ address: '0x0' });
       wrapper.setComputed({ activeNet: { id: 2 } });
@@ -158,7 +158,7 @@ describe('HistoryPage', () => {
     });
 
     it('should`t update history when the account/net is not valid', () => {
-      const watcher = jest.spyOn(wrapper.vm, 'getTransactionHistory');
+      const watcher = jest.spyOn(wrapper.vm, 'updateTransactionHistory');
 
       wrapper.setComputed({ address: null, isHistoryAvailable: true });
       wrapper.setComputed({ address: '0x0', isHistoryAvailable: false });

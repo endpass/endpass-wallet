@@ -76,7 +76,7 @@ import { Token, ERC20Token, Address } from '@/class';
 import web3 from '@/utils/web3';
 import TokenList from '@/components/TokenList';
 import VButton from '@/components/ui/form/VButton';
-import appTransaction from '@/components/Transaction';
+import AppTransaction from '@/components/Transaction';
 import Account from '@/components/Account';
 import EthplorerService from '@/services/ethplorer';
 import VSpinner from '@/components/ui/VSpinner';
@@ -104,7 +104,9 @@ export default {
     }),
     ...mapGetters('transactions', ['currentNetTransactions']),
     incomingTransactions() {
-      return (this.transactions || []).filter(trx => trx.to === this.address);
+      return (this.currentNetTransactions || []).filter(trx => {
+        return trx.to === this.address;
+      });
     },
     sortedTransactions() {
       return this.incomingTransactions.sort(
@@ -116,7 +118,6 @@ export default {
     ...mapActions('transactions', ['updateTransactionHistory']),
     ...mapActions('accounts', ['selectWallet']),
     async clickSendButton(address) {
-      console.log(web3.utils.hexToBytes(address));
       this.selectWallet(address);
       this.$router.push('/send');
     },
@@ -198,7 +199,7 @@ export default {
   },
   components: {
     Account,
-    appTransaction,
+    AppTransaction,
     VSpinner,
     TokenList,
     VButton,

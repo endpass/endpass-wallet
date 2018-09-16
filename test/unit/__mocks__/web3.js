@@ -23,6 +23,7 @@ jest.mock('web3', () => {
     },
     accounts: {},
     Contract,
+    getBalance: jest.fn().mockResolvedValue('1'),
     getBlockNumber: jest.fn().mockResolvedValue(),
   };
 

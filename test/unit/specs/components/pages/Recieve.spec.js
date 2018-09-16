@@ -1,10 +1,13 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import { Address } from '@/class';
 import Vuex from 'vuex';
 import ReceivePage from '@/components/pages/Receive.vue';
 import web3 from 'web3';
 import ethereumWalletMock from '../../../fixtures/wallet.js';
+import ethereumAddressWalletMock from '../../../fixtures/address.js';
+import transactions from '../../../fixtures/transactions.js';
 
 const wallet = ethereumWalletMock;
 
@@ -13,56 +16,152 @@ const localVue = createLocalVue();
 localVue.use(Vuex);
 
 describe('ReceivePage', () => {
-  let actions = {
-    'connectionStatus/updateApiErrorStatus': function() {},
-  };
   let store;
   let mock;
-
+  let trxActions;
+  let accountsActions;
+  let wrapper;
+  const walletAddress = ethereumWalletMock.getChecksumAddressString();
+  const publicWalletAddress = ethereumAddressWalletMock.getChecksumAddressString();
   beforeEach(() => {
+    trxActions = {
+      updateTransactionHistory: jest.fn(),
+    };
+
+    accountsActions = {
+      selectWallet: jest.fn(),
+    };
+
     mock = new MockAdapter(axios);
 
     store = new Vuex.Store({
-      state: {
+      modules: {
         web3: {
-          web3,
-          activeCurrency: {
-            name: 'ETH',
+          namespaced: true,
+          state: {
+            activeCurrency: 'KEK',
+            activeNet: {
+              id: 1,
+            },
           },
         },
-      },
-      actions,
-      modules: {
+        transactions: {
+          namespaced: true,
+          getters: {
+            currentNetTransactions: jest
+              .fn()
+              .mockReturnValue(transactions.ethplorerTransactions),
+          },
+          actions: trxActions,
+        },
         accounts: {
           namespaced: true,
           state: {
-            address: wallet,
+            address: ethereumWalletMock,
+            wallets: {
+              [walletAddress]: ethereumWalletMock,
+              [publicWalletAddress]: ethereumAddressWalletMock,
+            },
           },
+          actions: accountsActions,
           getters: {
             balance: jest.fn(),
           },
         },
       },
     });
+    wrapper = shallow(ReceivePage, {
+      localVue,
+      store,
+    });
   });
 
-  afterEach(() => {
-    mock.reset();
+  describe('render', () => {
+    it('should be a Vue component', () => {
+      expect(wrapper.name()).toBe('receive-page');
+      expect(wrapper.isVueInstance()).toBeTruthy();
+    });
+
+    it('should render component', () => {
+      expect(wrapper.element).toMatchSnapshot();
+    });
+  });
+
+  describe('computed', () => {
+    describe('incomingTransactions', () => {
+      it('should filter transaction by to equal to address', () => {
+        expect(wrapper.vm.incomingTransactions.length).toBe(1);
+        expect(wrapper.vm.incomingTransactions[0].to).toBe(walletAddress);
+      });
+    });
+
+    describe('sortedTransactions', () => {
+      it('should sort transaction by timestamp', () => {
+        wrapper.setComputed({
+          incomingTransactions: transactions.ethplorerHistory,
+        });
+        expect(wrapper.vm.incomingTransactions[0]).toBe(
+          transactions.ethplorerHistory[0],
+        );
+      });
+    });
+  });
+
+  describe('methods', () => {
+    describe('isPublicWallet', () => {
+      it('should return true if object is an instance of Address', () => {
+        const addressInstance = new Address(publicWalletAddress);
+        expect(wrapper.vm.isPublicWallet(addressInstance)).toBe(true);
+      });
+      it('should return false if object is not an instance of Address', () => {
+        expect(wrapper.vm.isPublicWallet(ethereumWalletMock)).toBe(false);
+      });
+    });
+
+    describe('getHistory', () => {
+      it("shouldn't call updateTransactionHistory if address is not present", async () => {
+        expect.assertions(2);
+        expect(trxActions.updateTransactionHistory).toHaveBeenCalledTimes(1);
+        wrapper.setComputed({
+          address: null,
+        });
+        await wrapper.vm.getHistory();
+        expect(trxActions.updateTransactionHistory).toHaveBeenCalledTimes(1);
+      });
+      it('should call updateTransactionHistory', async () => {
+        expect.assertions(1);
+        await wrapper.vm.getHistory();
+        expect(trxActions.updateTransactionHistory).toHaveBeenCalled();
+      });
+    });
+    describe('isTokensLoaded', () => {
+      it('should return false if tokens is undefined', () => {
+        expect(wrapper.vm.isTokensLoaded(walletAddress)).toBe(false);
+      });
+      it('should return true if tokens is not undefined', () => {
+        wrapper.setData({
+          tokens: {
+            [walletAddress]: [],
+          },
+        });
+        expect(wrapper.vm.isTokensLoaded(walletAddress)).toBe(true);
+      });
+    });
   });
 
   // done callback is required for async tests
-  it.only('downloads transaction history', async () => {
-    mock
-      .onGet(/api\.ethplorer\.io\/getAddressTransactions/)
-      .reply(200, [{ id: '1', to: wallet.getChecksumAddressString() }]);
-
-    // new wrapper must be initialized in each test AFTER setting up mock
-    const wrapper = shallow(ReceivePage, { store, localVue });
-    // Wait for promises in created() hook to resolve
-    await flushPromises();
-
-    let elems = wrapper.vm.transactions;
-    expect(elems.length).toBe(1);
-    expect(elems[0].to).toBe(wrapper.vm.address);
-  });
+  // it.only('downloads transaction history', async () => {
+  //   mock
+  //     .onGet(/api\.ethplorer\.io\/getAddressTransactions/)
+  //     .reply(200, [{ id: '1', to: wallet.getChecksumAddressString() }]);
+  //
+  //   // new wrapper must be initialized in each test AFTER setting up mock
+  //   const wrapper = shallow(ReceivePage, { store, localVue });
+  //   // Wait for promises in created() hook to resolve
+  //   await flushPromises();
+  //
+  //   let elems = wrapper.vm.transactions;
+  //   expect(elems.length).toBe(1);
+  //   expect(elems[0].to).toBe(wrapper.vm.address);
+  // });
 });

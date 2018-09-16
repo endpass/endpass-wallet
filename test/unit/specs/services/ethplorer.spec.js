@@ -25,6 +25,7 @@ describe('Ethplorer service', () => {
     };
 
     it('should make correct request', async () => {
+      expect.assertions(2);
       mock.onGet(url).reply(config => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
@@ -36,6 +37,7 @@ describe('Ethplorer service', () => {
     });
 
     it('should handle successfull request', async () => {
+      expect.assertions(1);
       mock.onGet(url).reply(200, successTokenResp);
       const result = await ethplorerService.getTokensWithBalance(address);
 
@@ -43,6 +45,7 @@ describe('Ethplorer service', () => {
     });
 
     it('should return empty array with failed request', async () => {
+      expect.assertions(1);
       mock.onGet(url).reply(200, { success: false });
       const result = await ethplorerService.getTokensWithBalance(address);
 
@@ -50,6 +53,7 @@ describe('Ethplorer service', () => {
     });
 
     it('should throw exception with rejected request', async () => {
+      expect.assertions(1);
       mock.onGet(url).reply(500, {});
 
       await expect(
@@ -67,6 +71,7 @@ describe('Ethplorer service', () => {
     };
 
     it('should make correct request', async () => {
+      expect.assertions(2);
       mock.onGet(url).reply(config => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
@@ -78,6 +83,7 @@ describe('Ethplorer service', () => {
     });
 
     it('should handle successfull request', async () => {
+      expect.assertions(1);
       mock.onGet(url).reply(200, successResp);
       const result = await getHistory(address);
 
@@ -85,6 +91,7 @@ describe('Ethplorer service', () => {
     });
 
     it('should return empty array with failed request', async () => {
+      expect.assertions(1);
       mock.onGet(url).reply(200, { success: false });
       const result = await getHistory(address);
 
@@ -92,6 +99,7 @@ describe('Ethplorer service', () => {
     });
 
     it('should throw exception with rejected request', async () => {
+      expect.assertions(1);
       mock.onGet(url).reply(500, {});
 
       await expect(getHistory(address)).rejects.toThrow();
@@ -105,6 +113,7 @@ describe('Ethplorer service', () => {
     const successResp = [{}, {}];
 
     it('should make correct request', async () => {
+      expect.assertions(2);
       mock.onGet(url).reply(config => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
@@ -116,6 +125,7 @@ describe('Ethplorer service', () => {
     });
 
     it('should handle successfull request', async () => {
+      expect.assertions(1);
       mock.onGet(url).reply(200, successResp);
       const result = await getInfo(address);
 
@@ -123,6 +133,7 @@ describe('Ethplorer service', () => {
     });
 
     it('should return empty array with failed request', async () => {
+      expect.assertions(1);
       mock.onGet(url).reply(200, undefined);
       const result = await getInfo(address);
 
@@ -130,6 +141,7 @@ describe('Ethplorer service', () => {
     });
 
     it('should throw exception with rejected request', async () => {
+      expect.assertions(1);
       mock.onGet(url).reply(500, {});
 
       await expect(getInfo(address)).rejects.toThrow();

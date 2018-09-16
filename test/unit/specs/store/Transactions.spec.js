@@ -391,7 +391,7 @@ describe('transactions store', () => {
       });
     });
 
-    describe('getTransactionHistory', () => {
+    describe('updateTransactionHistory', () => {
       it('should recieve transaction history', async () => {
         ethplorerService.getHistory = jest
           .fn()
@@ -400,7 +400,7 @@ describe('transactions store', () => {
           .fn()
           .mockResolvedValue(ethplorerTransactions);
 
-        await actions.getTransactionHistory({
+        await actions.updateTransactionHistory({
           dispatch,
           commit,
           rootState,
@@ -417,7 +417,7 @@ describe('transactions store', () => {
         ethplorerService.getHistory = jest.fn().mockRejectedValue();
         ethplorerService.getInfo = jest.fn().mockRejectedValue();
 
-        await actions.getTransactionHistory({
+        await actions.updateTransactionHistory({
           dispatch,
           commit,
           rootState,
@@ -454,7 +454,7 @@ describe('transactions store', () => {
         );
 
         expect(dispatch).toHaveBeenCalledTimes(2);
-        expect(dispatch.mock.calls[1][0]).toBe('getTransactionHistory');
+        expect(dispatch.mock.calls[1][0]).toBe('updateTransactionHistory');
       });
     });
   });
