@@ -8,10 +8,12 @@ exports[`VerifyMessage render should disable "Verify message" button 1`] = `
   />
    
   <v-button
-    classname="is-primary is-medium"
+    class-name="is-primary is-medium"
     disabled="true"
   >
+    
     Verify message
+  
   </v-button>
    
   <!---->
@@ -26,9 +28,11 @@ exports[`VerifyMessage render should enable "Verify message" button 1`] = `
   />
    
   <v-button
-    classname="is-primary is-medium"
+    class-name="is-primary is-medium"
   >
+    
     Verify message
+  
   </v-button>
    
   <!---->
@@ -43,10 +47,12 @@ exports[`VerifyMessage render should render the initial state of the component 1
   />
    
   <v-button
-    classname="is-primary is-medium"
+    class-name="is-primary is-medium"
     disabled="true"
   >
+    
     Verify message
+  
   </v-button>
    
   <!---->
@@ -61,10 +67,12 @@ exports[`VerifyMessage render should show the received address 1`] = `
   />
    
   <v-button
-    classname="is-primary is-medium"
+    class-name="is-primary is-medium"
     disabled="true"
   >
+    
     Verify message
+  
   </v-button>
    
   <div

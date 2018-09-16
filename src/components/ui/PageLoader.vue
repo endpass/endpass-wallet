@@ -1,16 +1,19 @@
 <template>
-  <div v-if="isLoading" class="page-loader modal is-active">
+  <div
+    v-if="isLoading"
+    class="page-loader modal is-active"
+  >
     <div class="modal-content">
       <div class="page-loader-logo">
-        <img src="/static/logo-dark.png" alt="Endpass">
+        <img
+          src="/static/logo-dark.png"
+          alt="Endpass"
+        >
       </div>
       <div class="spinner">
-        <div class="spinner-dot spinner-dot-1">
-        </div>
-        <div class="spinner-dot spinner-dot-2">
-        </div>
-        <div class="spinner-dot spinner-dot-3">
-        </div>
+        <div class="spinner-dot spinner-dot-1" />
+        <div class="spinner-dot spinner-dot-2" />
+        <div class="spinner-dot spinner-dot-3" />
       </div>
       <p class="spinner-caption">Loading...</p>
     </div>
@@ -18,13 +21,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 // Loading indicator that covers the entire page
 export default {
-  name: 'page-loader',
+  name: 'PageLoader',
   computed: {
-    isLoading() {
-      return this.$store.state.isPageLoading;
-    },
+    ...mapState({
+      isLoading: state => state.isPageLoading,
+    }),
   },
 };
 </script>

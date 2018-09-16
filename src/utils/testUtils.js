@@ -1,12 +1,13 @@
-import { camelToKebab } from '@/utils';
+import { toKebab } from '@/utils/strings';
 
 function convertDirectivesToAttrs(directives) {
   const attrs = {};
 
-  directives &&
+  if (directives) {
     directives.forEach(({ rawName, expression }) => {
       attrs[rawName] = expression;
     });
+  }
 
   return attrs;
 }
@@ -14,7 +15,7 @@ function convertDirectivesToAttrs(directives) {
 function convertListenersToAttrs(listeners) {
   const attrs = {};
 
-  listeners &&
+  if (listeners) {
     Object.keys(listeners).forEach(key => {
       let handlers = listeners[key];
 
@@ -28,6 +29,7 @@ function convertListenersToAttrs(listeners) {
         attrs[`v-on:${key}`] = handler.name;
       }
     });
+  }
 
   return attrs;
 }
@@ -68,7 +70,7 @@ function generateElementFromComponent(
   };
 
   if (listeners) {
-    componentData['on'] = Object.assign({}, listeners);
+    componentData.on = Object.assign({}, listeners);
   }
 
   return createElement(
@@ -102,29 +104,29 @@ function generateElementFromHTML(createElement, vnode) {
 }
 
 export function generateStubs(Component) {
-  return Object.values(Component.components).reduce((stubs, stubComponent) => {
+  return Object.values(Component.components).reduce((acc, stubComponent) => {
     let elementName;
 
     if (stubComponent.name) {
-      elementName = camelToKebab(stubComponent.name);
+      elementName = toKebab(stubComponent.name);
     }
 
-    stubs[elementName] = {
-      render(createElement) {
-        const subElements = Object.values(this.$slots).reduce(
-          (elements, slot) =>
-            elements.concat(
-              slot.map(vnode => generateElement(createElement, vnode)),
-            ),
-          [],
-        );
+    return Object.assign(acc, {
+      [elementName]: {
+        render(createElement) {
+          const subElements = Object.values(this.$slots).reduce(
+            (elements, slot) =>
+              elements.concat(
+                slot.map(vnode => generateElement(createElement, vnode)),
+              ),
+            [],
+          );
 
-        // TODO: add scopedSlots support
-        // TODO: add support for directives and events for the stub component
-        return createElement(elementName, subElements);
+          // TODO: add scopedSlots support
+          // TODO: add support for directives and events for the stub component
+          return createElement(elementName, subElements);
+        },
       },
-    };
-
-    return stubs;
+    });
   }, {});
 }

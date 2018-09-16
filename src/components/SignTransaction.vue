@@ -46,15 +46,6 @@ import modalMixin from '@/mixins/modal';
 export default {
   name: 'SignTransaction',
 
-  components: {
-    VForm,
-    VButton,
-    VTextarea,
-    CodePasswordModal,
-  },
-
-  mixins: [modalMixin],
-
   data: () => ({
     transaction: '',
     signedTransaction: null,
@@ -86,6 +77,15 @@ export default {
         console.error(error);
       }
     },
+  },
+
+  mixins: [modalMixin],
+
+  components: {
+    VForm,
+    VButton,
+    VTextarea,
+    CodePasswordModal,
   },
 };
 </script>

@@ -1,19 +1,43 @@
 <template lang="html">
   <div class="field is-horizontal has-addons v-radio">
-    <label class="label"
-           v-if="label">{{ label }}</label>
-    <div class="control" :key="'label' + getKeyString(option)"  v-for="option in options">
+    <label
+      v-if="label"
+      class="label"
+    >
+      {{ label }}
+    </label>
+    <div
+      v-for="option in options"
+      :key="'label' + getKeyString(option)"
+      class="control"
+    >
       <label
         :class="{'is-info is-selected': getOptionParameter(option, 'val') === value}"
-        class="button is-multiline" :for="id + getKeyString(option)"
+        :for="id + getKeyString(option)"
+        class="button is-multiline"
       >
-          {{ getOptionParameter(option, 'key') }}
-          <span v-if="option.help" class="help">{{option.help}}</span>
+        {{ getOptionParameter(option, 'key') }}
+        <span
+          v-if="option.help"
+          class="help"
+        >
+          {{ option.help }}
+        </span>
       </label>
-      <input v-model="selected" :id="id + getKeyString(option)" type="radio" :name="name" :value="getOptionParameter(option, 'val')">
+      <input
+        v-model="selected"
+        :id="id + getKeyString(option)"
+        :name="name"
+        :value="getOptionParameter(option, 'val')"
+        type="radio"
+      >
     </div>
-    <p class="help is-danger"
-       v-if="error || errors && errors.has(name) ">{{ error || errors && errors.first(name) }}</p>
+    <p
+      v-if="error || errors && errors.has(name) "
+      class="help is-danger"
+    >
+      {{ error || errors && errors.first(name) }}
+    </p>
   </div>
 </template>
 
@@ -21,7 +45,10 @@
 import getOptionParameter from '@/utils/getOptionParameter';
 
 export default {
-  name: 'v-radio',
+  name: 'VRadio',
+  inject: {
+    $validator: '$validator',
+  },
   props: {
     value: {
       default: null,
@@ -53,9 +80,6 @@ export default {
       type: String,
       default: null,
     },
-  },
-  inject: {
-    $validator: '$validator',
   },
   computed: {
     selected: {

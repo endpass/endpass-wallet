@@ -2,17 +2,21 @@
   <div>
     <v-form @submit="handleFormSubmit">
       <label class="label">Two Factor Authentication</label>
-      <v-button className="is-primary is-medium"
-                :disabled="isButtonDisabled"
-                :loading="isLoading">
-        {{otpSettings.secret ? 'Enable' : 'Disable'}} Two Factor Auth
+      <v-button
+        :disabled="isButtonDisabled"
+        :loading="isLoading"
+        class-name="is-primary is-medium"
+      >
+        {{ otpSettings.secret ? 'Enable' : 'Disable' }} Two Factor Auth
       </v-button>
     </v-form>
-    <two-factor-auth-modal v-if="isTwoFactorAuthModal"
-                           @close="toggleTwoFactorAuthModal"
-                           @confirm="handleConfirmTwoFactorAuthModal"
-                           v-bind:secret="otpSettings.secret"
-                           v-bind:email="email"/>
+    <two-factor-auth-modal
+      v-if="isTwoFactorAuthModal"
+      :secret="otpSettings.secret"
+      :email="email"
+      @close="toggleTwoFactorAuthModal"
+      @confirm="handleConfirmTwoFactorAuthModal"
+    />
   </div>
 </template>
 
@@ -24,7 +28,7 @@ import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
 import modalMixin from '@/mixins/modal';
 
 export default {
-  name: 'two-factor-auth-settings',
+  name: 'TwoFactorAuthSettings',
   data: () => ({
     isLoading: false,
   }),
@@ -58,14 +62,14 @@ export default {
       !this.isButtonDisabled && this.toggleTwoFactorAuthModal();
     },
   },
+  mounted() {
+    this.getOtpSettings();
+  },
+  mixins: [modalMixin],
   components: {
     VForm,
     VButton,
     TwoFactorAuthModal,
   },
-  mounted() {
-    this.getOtpSettings();
-  },
-  mixins: [modalMixin],
 };
 </script>

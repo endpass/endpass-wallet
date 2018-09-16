@@ -3,6 +3,7 @@ import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { Address } from '@/class';
 import Vuex from 'vuex';
+import VueRouter from 'vue-router';
 import ReceivePage from '@/components/pages/Receive.vue';
 import web3 from 'web3';
 import ethereumWalletMock from '../../../fixtures/wallet.js';
@@ -14,6 +15,7 @@ const wallet = ethereumWalletMock;
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
+localVue.use(VueRouter);
 
 describe('ReceivePage', () => {
   let store;
@@ -21,6 +23,7 @@ describe('ReceivePage', () => {
   let trxActions;
   let accountsActions;
   let wrapper;
+  let router;
   const walletAddress = ethereumWalletMock.getChecksumAddressString();
   const publicWalletAddress = ethereumAddressWalletMock.getChecksumAddressString();
   beforeEach(() => {
@@ -33,7 +36,7 @@ describe('ReceivePage', () => {
     };
 
     mock = new MockAdapter(axios);
-
+    router = new VueRouter();
     store = new Vuex.Store({
       modules: {
         web3: {
@@ -73,6 +76,7 @@ describe('ReceivePage', () => {
     wrapper = shallow(ReceivePage, {
       localVue,
       store,
+      router,
     });
   });
 
@@ -145,6 +149,72 @@ describe('ReceivePage', () => {
           },
         });
         expect(wrapper.vm.isTokensLoaded(walletAddress)).toBe(true);
+      });
+    });
+    describe('clickSendButton', () => {
+      it('should call select wallet with passed address', () => {
+        wrapper.vm.clickSendButton(walletAddress);
+        expect(accountsActions.selectWallet).toHaveBeenCalledWith(
+          expect.any(Object),
+          walletAddress,
+          undefined,
+        );
+      });
+      it('should redirect to send', () => {
+        router.push('/kek');
+        expect(router.currentRoute.fullPath).toBe('/kek');
+        wrapper.vm.clickSendButton(walletAddress);
+        expect(router.currentRoute.fullPath).toBe('/send');
+      });
+    });
+    describe('getBalances', () => {
+      it('should call getBalance with all wallets', () => {
+        const getBalance = jest.fn();
+        wrapper.setMethods({
+          getBalance,
+        });
+        expect(getBalance).toHaveBeenCalledTimes(2);
+        expect(getBalance).toHaveBeenNthCalledWith(1, walletAddress, 0, [
+          walletAddress,
+          publicWalletAddress,
+        ]);
+        expect(getBalance).toHaveBeenNthCalledWith(2, publicWalletAddress, 1, [
+          walletAddress,
+          publicWalletAddress,
+        ]);
+      });
+    });
+    describe('getBalance', () => {
+      it('should get and set balance', async () => {
+        expect.assertions(1);
+        await wrapper.vm.getBalance(walletAddress);
+        expect(wrapper.vm.balances[walletAddress]).toBe('0.000000000000000001');
+      });
+    });
+    describe('getBalance', () => {
+      it('should get and set balance', async () => {
+        expect.assertions(1);
+        await wrapper.vm.getBalance(walletAddress);
+        expect(wrapper.vm.balances[walletAddress]).toBe('0.000000000000000001');
+      });
+    });
+    describe('getTokensLists', () => {
+      it('should call getTokensList with all wallets', () => {
+        const getTokensList = jest.fn();
+        wrapper.setMethods({
+          getTokensList,
+        });
+        expect(getTokensList).toHaveBeenCalledTimes(2);
+        expect(getTokensList).toHaveBeenNthCalledWith(1, walletAddress, 0, [
+          walletAddress,
+          publicWalletAddress,
+        ]);
+        expect(getTokensList).toHaveBeenNthCalledWith(
+          2,
+          publicWalletAddress,
+          1,
+          [walletAddress, publicWalletAddress],
+        );
       });
     });
   });

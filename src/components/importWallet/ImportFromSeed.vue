@@ -1,9 +1,9 @@
 <template>
-  <v-form  @submit="addWalletWithPhrase">
+  <v-form @submit="submitAddWallet">
     <v-input
       id="hdkeySeed"
       key="hdkeyPhraseUnique"
-      v-model="hdkeyPhrase"
+      v-model="key"
       label="Seed phrase"
       name="hdkeyPhrase"
       validator="required|seed_phrase"
@@ -13,22 +13,27 @@
       required
       @input="handleInput"
     />
-     <v-password v-model="walletPassword"
-              label="Wallet password"
-              id="jsonKeystorePassword"
-              name="walletPassword"
-              validator="required|min:8"
-              data-vv-as="password"
-              aria-describedby="jsonKeystorePassword"
-              placeholder="wallet password"
-              required />
-    <v-button className="is-primary is-cta"
-              :loading="isCreating">Import</v-button>
+    <v-password
+      id="jsonKeystorePassword"
+      v-model="walletPassword"
+      label="Wallet password"
+      name="walletPassword"
+      validator="required|min:8"
+      data-vv-as="password"
+      aria-describedby="jsonKeystorePassword"
+      placeholder="wallet password"
+      required
+    />
+    <v-button
+      :loading="isCreating"
+      class-name="is-primary is-cta"
+    >
+      Import
+    </v-button>
   </v-form>
 </template>
 
 <script>
-import router from '@/router';
 import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
@@ -36,25 +41,25 @@ import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
-  name: 'import-from-seed',
+  name: 'ImportFromSeed',
   data: () => ({
     isCreating: false,
-    hdkeyPhrase: '',
-    walletPassword: '',
+    key: '',
+    password: '',
   }),
   methods: {
     ...mapActions('accounts', ['addMultiHdWallet']),
-    async addWalletWithPhrase() {
+    async submitAddWallet() {
       this.isCreating = true;
 
       await new Promise(res => setTimeout(res, 20));
 
       try {
         this.addMultiHdWallet({
-          key: this.hdkeyPhrase,
-          password: this.walletPassword,
+          key: this.key,
+          password: this.password,
         });
-        router.push('/');
+        this.$router.push('/');
       } catch (e) {
         this.errors.add({
           field: 'hdkeyPhrase',

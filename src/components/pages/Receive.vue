@@ -140,14 +140,14 @@ export default {
       let addresses = Object.keys(this.wallets);
       addresses.forEach(this.getBalance);
     },
-    getTokensLists(address) {
-      let addresses = Object.keys(this.wallets);
-      addresses.forEach(this.getTokensList);
-    },
     async getBalance(address) {
       let balance = await this.wallets[address].getBalance();
       balance = web3.utils.fromWei(balance);
       this.$set(this.balances, address, balance);
+    },
+    getTokensLists(address) {
+      let addresses = Object.keys(this.wallets);
+      addresses.forEach(this.getTokensList);
     },
     async getTokensList(address) {
       let tokensList = await ethplorerService.getTokensWithBalance(address);

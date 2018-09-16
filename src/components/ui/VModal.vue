@@ -1,19 +1,24 @@
 <template lang="html">
   <div class="modal is-active">
-    <div class="modal-background" @click="close"></div>
-    <div class="modal-logo"></div>
+    <div
+      class="modal-background"
+      @click="close"
+    />
+    <div class="modal-logo" />
     <div class="modal-card">
       <div class="modal-card-head">
         <h3 class="modal-card-title">
-          <slot name="header"></slot>
+          <slot name="header" />
         </h3>
-        <button class="delete is-large" @click="close"></button>
+        <button
+          class="delete is-large"
+          @click="close" />
       </div>
       <div class="modal-card-body">
-        <slot></slot>
+        <slot />
       </div>
       <div class="modal-card-foot">
-        <slot name="footer"></slot>
+        <slot name="footer" />
       </div>
     </div>
   </div>
@@ -22,7 +27,7 @@
 <script>
 // Generic modal component to be used with slots
 export default {
-  name: 'v-modal',
+  name: 'VModal',
   inject: ['$validator'],
   methods: {
     close() {
@@ -80,9 +85,10 @@ export default {
 
   .delete {
     background-color: $purple;
-    &:hover,&.is-hoevered {
+    &:hover,
+    &.is-hoevered {
       background-color: lighten($purple, 5%);
-      transition: background-color .2s ease-in;
+      transition: background-color 0.2s ease-in;
     }
   }
 
@@ -93,7 +99,7 @@ export default {
     width: 240px;
     height: 80px;
     background-size: cover;
-    background-image: url("/static/logo-dark.png");
+    background-image: url('/static/logo-dark.png');
   }
   @media screen and (max-width: 1023px) {
     .modal-logo {
@@ -105,7 +111,9 @@ export default {
 
 .modal.is-naked {
   .modal-card {
-    .modal-card-head, .modal-card-foot, .modal-card-body {
+    .modal-card-head,
+    .modal-card-foot,
+    .modal-card-body {
       background-color: transparent;
       color: $white;
     }

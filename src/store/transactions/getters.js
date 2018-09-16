@@ -2,14 +2,6 @@ import { BigNumber } from 'bignumber.js';
 import web3 from '@/utils/web3';
 import { MAIN_NET_ID } from '@/constants';
 
-const getPendingTransactions = state => state.pendingTransactions;
-
-const getTransactionByHash = state => hash =>
-  state.transactionHistory.find(trx => trx.hash === hash);
-
-const getPendingTransactionByHash = state => hash =>
-  state.pendingTransactions.find(trx => trx.hash === hash);
-
 const accountTransactions = (state, getters, rootState) => {
   if (!rootState.accounts.address) {
     return [];
@@ -46,23 +38,6 @@ const accountTransactions = (state, getters, rootState) => {
     });
 };
 
-// Trx for the current network
-const currentNetTransactions = (state, getters, rootState) => {
-  const { id: currentNetID } = rootState.web3.activeNet;
-
-  return getters.accountTransactions.filter(
-    ({ networkId }) => networkId === currentNetID,
-  );
-};
-
-// Exclude trx that exist in pendingTransactions
-const filteredHistoryTransactions = state => {
-  const isInPending = itemHash =>
-    state.pendingTransactions.some(({ hash }) => hash === itemHash);
-
-  return state.transactionHistory.filter(({ hash }) => !isInPending(hash));
-};
-
 const pendingBalance = (state, getters, rootState) => {
   if (!rootState.accounts.address) {
     return '0';
@@ -87,12 +62,37 @@ const pendingBalance = (state, getters, rootState) => {
     .toFixed();
 };
 
+// Exclude trx that exist in pendingTransactions
+const filteredHistoryTransactions = state => {
+  const isInPending = itemHash =>
+    state.pendingTransactions.some(({ hash }) => hash === itemHash);
+
+  return state.transactionHistory.filter(({ hash }) => !isInPending(hash));
+};
+
+// Trx for the current network
+const currentNetTransactions = (state, getters, rootState) => {
+  const { id: currentNetID } = rootState.web3.activeNet;
+
+  return getters.accountTransactions.filter(
+    ({ networkId }) => networkId === currentNetID,
+  );
+};
+
+const getPendingTransactions = state => state.pendingTransactions;
+
+const getTransactionByHash = state => hash =>
+  state.transactionHistory.find(trx => trx.hash === hash);
+
+const getPendingTransactionByHash = state => hash =>
+  state.pendingTransactions.find(trx => trx.hash === hash);
+
 export default {
-  getPendingTransactions,
-  getPendingTransactionByHash,
-  getTransactionByHash,
   pendingBalance,
   filteredHistoryTransactions,
   currentNetTransactions,
   accountTransactions,
+  getPendingTransactions,
+  getPendingTransactionByHash,
+  getTransactionByHash,
 };

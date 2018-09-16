@@ -1,27 +1,30 @@
 <template>
   <div class="provider-select">
     <div class="net-select">
-      <multiselect
-         :options="currencies"
-         track-by="id" label="name"
-                       :show-labels="false"
-                       :allow-empty="true"
-                       :value="activeCurrency"
-                       @select="selectCurrency"
-                       placeholder="Select currency"
-                       />
+      <vue-multiselect
+        :options="currencies"
+        :show-labels="false"
+        :allow-empty="true"
+        :value="activeCurrency"
+        track-by="id"
+        label="name"
+        placeholder="Select currency"
+        @select="selectCurrency"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect';
+import VueMultiselect from 'vue-multiselect';
 import { mapActions, mapState } from 'vuex';
 
 import { CURRENCIES } from '@/constants';
 
 export default {
-  data: function() {
+  name: 'CurrencySelect',
+
+  data() {
     return {
       currencies: CURRENCIES,
     };
@@ -40,7 +43,7 @@ export default {
     },
   },
   components: {
-    Multiselect,
+    VueMultiselect,
   },
 };
 </script>

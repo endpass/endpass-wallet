@@ -1,6 +1,9 @@
 <template>
   <div class="home-page app-page">
-    <div class="auth-content" v-if="address">
+    <div
+      v-if="address"
+      class="auth-content"
+    >
 
       <div class="section section-address">
         <div class="container">
@@ -13,10 +16,16 @@
                 <div class="column">
                   <account
                     :address="address"
-                    />
+                  />
                 </div>
-                <div class="column is-one-third" v-if="!isPublicAccount">
-                  <router-link class="button is-warning" :to="{name: 'ExportWallet'}">
+                <div
+                  v-if="!isPublicAccount"
+                  class="column is-one-third"
+                >
+                  <router-link
+                    :to="{name: 'ExportWallet'}"
+                    class="button is-warning"
+                  >
                     Export Private Key
                   </router-link>
                 </div>
@@ -32,9 +41,13 @@
             <div class="card-header">
               <p class="card-header-title">Your Tokens</p>
               <div class="card-header-icon">
-                <router-link :to="{name:
-            'TokensPage'}" class="button is-outlined is-info is-small">
-                  Edit</router-link>
+                <router-link
+                  :to="{name:
+                  'TokensPage'}"
+                  class="button is-outlined is-info is-small"
+                >
+                  Edit
+                </router-link>
               </div>
             </div>
             <div class="card-content">
@@ -54,10 +67,14 @@
               <div v-if="isLoggedIn">
                 <h1 class="title">Welcome</h1>
                 <p class="subtitle">Get started by generating an
-                  Ethereum wallet.</p>
+                Ethereum wallet.</p>
                 <div class="is-centered">
-                  <router-link  :to="{name: 'NewWallet'}" class="button
-                  is-success is-cta">Create New Wallet</router-link>
+                  <router-link
+                    :to="{name: 'NewWallet'}"
+                    class="button is-success is-cta"
+                  >
+                    Create New Wallet
+                  </router-link>
                 </div>
               </div>
 
@@ -81,6 +98,7 @@ import TokenList from '@/components/TokenList';
 import { mapGetters, mapState } from 'vuex';
 
 export default {
+  name: 'Home',
   data() {
     return {};
   },

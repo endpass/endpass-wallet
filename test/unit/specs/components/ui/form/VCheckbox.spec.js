@@ -1,10 +1,10 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import VeeValidate from 'vee-validate';
+import VCheckbox from '@/components/ui/form/VCheckbox.vue';
 
 const localVue = createLocalVue();
 
 localVue.use(VeeValidate);
-import VCheckbox from '@/components/ui/form/VCheckbox.vue';
 
 localVue.use(VeeValidate);
 describe('VCheckbox', () => {
@@ -24,7 +24,7 @@ describe('VCheckbox', () => {
     });
 
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('v-checkbox');
+      expect(wrapper.name()).toBe('VCheckbox');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

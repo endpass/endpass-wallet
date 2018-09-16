@@ -1,13 +1,16 @@
 <template>
   <div class="field">
-    <label class="label"
-           v-if="label"
-           >{{ label }}</label>
+    <label
+      v-if="label"
+      class="label"
+    >
+      {{ label }}
+    </label>
     <div class="control">
       <textarea
         :value="innerValue"
-        class="textarea"
         v-bind="$attrs"
+        class="textarea"
         v-on="listeners"
       />
     </div>
@@ -16,8 +19,7 @@
 
 <script>
 export default {
-  name: 'v-textarea',
-  inheritAttrs: false,
+  name: 'VTextarea',
   props: {
     value: {
       type: [String, Number],
@@ -44,5 +46,6 @@ export default {
       };
     },
   },
+  inheritAttrs: false,
 };
 </script>

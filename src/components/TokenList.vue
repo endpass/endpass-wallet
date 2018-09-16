@@ -1,32 +1,43 @@
 <template>
   <div class="tokens-list">
     <ul v-if="selectedTokens && selectedTokens.length">
-      <li v-for="token in selectedTokens" :class="itemClass" :key="token.address">
-        <v-spinner v-if="isLoading"
+      <li
+        v-for="token in selectedTokens"
+        :class="itemClass"
+        :key="token.address"
+      >
+        <v-spinner
+          v-if="isLoading"
           :is-loading="isLoading"
           class="spinner"
-          />
-        <v-token v-else
+        />
+        <v-token
+          v-else
           :token="token"
           :currency="currency"
           :price="prices.get(token.symbol)"
         >
           <a
-            slot="right"
             v-if="hasRemove"
+            slot="right"
             class="is-inline-block remove-token-button"
             title="Remove Token"
             @click="deleteTokenAndUnsubscribe({token})"
-            >
-              <span
-                class="icon has-text-danger is-small is-pulled-right"
-                v-html="require('@/img/x.svg')"
-              ></span>
+          >
+            <span
+              class="icon has-text-danger is-small is-pulled-right"
+              v-html="require('@/img/x.svg')"
+            />
           </a>
         </v-token>
       </li>
     </ul>
-    <p class="small" v-else>You have no tokens at this address.</p>
+    <p
+      v-else
+      class="small"
+    >
+      You have no tokens at this address.
+    </p>
   </div>
 </template>
 
@@ -65,9 +76,8 @@ export default {
     selectedTokens() {
       if (Array.isArray(this.tokens)) {
         return this.tokens;
-      } else {
-        return this.tokensWithBalance;
       }
+      return this.tokensWithBalance;
     },
     // Returns a Map of token symbol to price
     prices() {
@@ -92,8 +102,8 @@ export default {
     ]),
     // Return value of tokens in fiat
     getTokenPrice(symbol) {
-      let prices = this.tokenPrices[symbol] || {};
-      return new BigNumber(prices['ETH'] || 0).times(this.ethPrice).toString();
+      const prices = this.tokenPrices[symbol] || {};
+      return new BigNumber(prices.ETH || 0).times(this.ethPrice).toString();
     },
     // Get token prices for all tokens
     async updateTokenPrice() {
@@ -104,11 +114,11 @@ export default {
   mounted() {
     this.updateTokenPrice();
   },
+  mixins: [error],
   components: {
     VToken,
     VSpinner,
   },
-  mixins: [error],
 };
 </script>
 

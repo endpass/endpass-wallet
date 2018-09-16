@@ -25,6 +25,7 @@ jest.mock('web3', () => {
     Contract,
     getBalance: jest.fn().mockResolvedValue('1'),
     getBlockNumber: jest.fn().mockResolvedValue(),
+    getTransactionCount: jest.fn().mockResolvedValue(),
   };
 
   const utils = originalWeb3.utils;

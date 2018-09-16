@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CurrencySelect render should render initial state of the component 1`] = `
+<div
+  class="provider-select"
+>
+  <div
+    class="net-select"
+  >
+    <vue-multiselect
+      allow-empty="true"
+      label="name"
+      options="[object Object],[object Object],[object Object]"
+      placeholder="Select currency"
+      track-by="id"
+      value="[object Object]"
+    />
+  </div>
+</div>
+`;

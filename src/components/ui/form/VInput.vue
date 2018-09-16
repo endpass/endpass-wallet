@@ -1,39 +1,61 @@
 <template>
   <div class="field">
-    <label class="label"
-           :class="{'has-text-danger': error || errors.has(name) }"
-           v-if="label"
-           :for="$attrs.id">{{ label }}</label>
-    <div class="field"
-         :class="{'has-addons': $slots.addon }">
-      <div class="control"
-           :class="{'is-expanded': $slots.addon, 'has-icons-right': $slots.icon }">
-        <input :value="innerValue"
-               v-validate="validator"
-               :data-vv-as="name"
-               @blur="$emit('blur', $event.target.value)"
-               class="input"
-               :class="{'is-danger': error || errors.has(name) }"
-               v-bind="$attrs"
-               v-on="listeners"
-               >
-        <slot name="icon"></slot>
+    <label
+      v-if="label"
+      :class="{'has-text-danger': error || errors.has(name) }"
+      :for="$attrs.id"
+      class="label"
+    >
+      {{ label }}
+    </label>
+    <div
+      :class="{'has-addons': $slots.addon }"
+      class="field"
+    >
+      <div
+        :class="{'is-expanded': $slots.addon, 'has-icons-right': $slots.icon }"
+        class="control"
+      >
+        <input
+          v-validate="validator"
+          :value="innerValue"
+          :data-vv-as="name"
+          :class="{'is-danger': error || errors.has(name) }"
+          v-bind="$attrs"
+          class="input"
+          @blur="$emit('blur', $event.target.value)"
+          v-on="listeners"
+        >
+        <slot name="icon" />
       </div>
-      <div class="control"
-           v-if="$slots.addon">
+      <div
+        v-if="$slots.addon"
+        class="control"
+      >
         <slot name="addon" />
       </div>
     </div>
-    <p class="help is-danger"
-       v-if="error || errors.has(name) ">{{ error || errors.first(name) }}</p>
-    <p class="help" v-else-if="help">{{ help }}</p>
+    <p
+      v-if="error || errors.has(name) "
+      class="help is-danger"
+    >
+      {{ error || errors.first(name) }}
+    </p>
+    <p
+      v-else-if="help"
+      class="help"
+    >
+      {{ help }}
+    </p>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'v-input',
-  inheritAttrs: false,
+  name: 'VInput',
+  inject: {
+    $validator: '$validator',
+  },
   props: {
     value: {
       type: [String, Number],
@@ -56,9 +78,6 @@ export default {
       default: null,
     },
   },
-  inject: {
-    $validator: '$validator',
-  },
   computed: {
     innerValue: {
       get() {
@@ -78,6 +97,7 @@ export default {
       };
     },
   },
+  inheritAttrs: false,
 };
 </script>
 

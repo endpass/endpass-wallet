@@ -1,22 +1,38 @@
 <template>
-	<div class="balance has-spinner">
-    <span class="title amount" :title="balanceString"
-      :class="{'long-number': balance.length > 6}">{{ balanceStringShort }}</span>
-    <span class="currency">
-      {{currency}}
+  <div class="balance has-spinner">
+    <span
+      :title="balanceString"
+      :class="{'long-number': balance.length > 6}"
+      class="title amount"
+    >
+      {{ balanceStringShort }}
     </span>
-    <a class="button is-small" :class="{'is-loading': isLoading}" v-if="hasUpdate" @click.prevent="update()">
-    	<span class="icon is-small"
-                v-html="require('@/img/reload.svg')"></span>
+    <span class="currency">
+      {{ currency }}
+    </span>
+    <a
+      v-if="hasUpdate"
+      :class="{'is-loading': isLoading}"
+      class="button is-small"
+      @click.prevent="update()"
+    >
+      <span
+        class="icon is-small"
+        v-html="require('@/img/reload.svg')"
+      />
     </a>
-    <v-spinner class="is-transparent" :is-loading="isLoading"></v-spinner>
-	</div>
+    <v-spinner
+      :is-loading="isLoading"
+      class="is-transparent"
+    />
+  </div>
 </template>
 <script>
 import { BigNumber } from 'bignumber.js';
 import VSpinner from '@/components/ui/VSpinner';
 
 export default {
+  name: 'balance',
   props: {
     amount: {
       default: 0,
@@ -54,7 +70,8 @@ export default {
         priceBn = this.price;
       }
 
-      let balance = amountBn.times(priceBn);
+      const balance = amountBn.times(priceBn);
+
       return balance;
     },
     balanceString() {

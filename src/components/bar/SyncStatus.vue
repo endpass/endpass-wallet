@@ -1,11 +1,19 @@
 <template>
   <div class="sync-status">
-    <span class="tag" :title="'synced to block '+ blockNumber" :class="statusClass">{{appStatus}}</span>
+    <span
+      :title="'synced to block '+ blockNumber"
+      :class="statusClass"
+      class="tag"
+    >
+      {{ appStatus }}
+    </span>
   </div>
 </template>
 <script>
 import { mapState, mapGetters } from 'vuex';
+
 export default {
+  name: 'sync-status',
   data() {
     return {};
   },

@@ -74,7 +74,49 @@ export const ethplorerTransactions = [
   },
 ];
 
+export const pendingTransactions = [
+  {
+    to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+    from: '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c',
+    token: 'ETH',
+    networkId: 2,
+    state: 'pending',
+    valueWei: '2',
+    gasCost: '5',
+  },
+  {
+    to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+    from: '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c',
+    token: 'ETH',
+    networkId: 1,
+    state: 'pending',
+    valueWei: '2',
+    gasCost: '5',
+  },
+  {
+    to: '0x1de2109f8db1190cd44bc6554e35642214fbe144',
+    from: '0x4de2109f8db1190cd44bc6554e35642214fbe144',
+    token: 'ETH',
+    networkId: 2,
+    state: 'success',
+    valueWei: '2',
+    gasCost: '5',
+    date: new Date('01/03/2001'),
+  },
+  {
+    to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+    from: '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c',
+    token: 'ETH',
+    networkId: 1,
+    state: 'pending',
+    valueWei: '1',
+    gasCost: '6',
+    date: new Date('01/01/2001'),
+  },
+];
+
 export default {
   ethplorerHistory,
   ethplorerTransactions,
+  pendingTransactions,
 };

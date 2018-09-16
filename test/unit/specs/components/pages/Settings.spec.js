@@ -75,7 +75,7 @@ describe('SettingsPage', () => {
     wrapper.setData({ newSettings });
     wrapper.vm.updateSettings(newSettings);
 
-    expect(actions.updateSettings.mock.calls).toHaveLength(1);
+    expect(actions.updateSettings).toHaveBeenCalledTimes(1);
     expect(actions.updateSettings).toBeCalledWith(
       expect.any(Object),
       newSettings,
