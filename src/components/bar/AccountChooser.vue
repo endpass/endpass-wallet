@@ -1,23 +1,42 @@
 <template lang="html">
-  <div v-if="walletsAddresses.length" class="account-chooser field has-addons">
+  <div
+    v-if="walletsAddresses.length"
+    class="account-chooser field has-addons"
+  >
     <div class="control is-expanded">
 
       <vue-multiselect
         :options="walletsAddresses"
-        label="Account"
         :option-height="height"
         :searchable="false"
         :show-labels="false"
         :allow-empty="false"
         :value="activeAddress"
-        @select="selectWallet"
+        label="Account"
         placeholder="Select account"
+        @select="selectWallet"
       >
-        <span class="multiselect-single" slot="singleLabel" slot-scope="props">
-          <account :class="singleClass" :address="address" :size="width" />
+        <span
+          slot="singleLabel"
+          slot-scope="props"
+          class="multiselect-single"
+        >
+          <account
+            :class="singleClass"
+            :address="address"
+            :size="width"
+          />
         </span>
-        <span class="multiselect-option" slot="option" slot-scope="props">
-          <account :class="optionClass" :address="props.option" :size="width" />
+        <span
+          slot="option"
+          slot-scope="props"
+          class="multiselect-option"
+        >
+          <account
+            :class="optionClass"
+            :address="props.option"
+            :size="width"
+          />
         </span>
       </vue-multiselect>
     </div>
@@ -30,7 +49,7 @@ import { mapState, mapActions } from 'vuex';
 import Account from '@/components/Account';
 
 export default {
-  name: 'AccountChooser',
+  name: 'account-chooser',
   props: {
     // Maximum width of address
     width: {
@@ -72,6 +91,10 @@ export default {
   methods: {
     ...mapActions('accounts', ['selectWallet']),
   },
+  components: {
+    VueMultiselect,
+    Account,
+  },
   filters: {
     // Truncate an address to the first 4 and last 4 characters
     truncateAddr(value) {
@@ -79,10 +102,6 @@ export default {
       value = value.toString();
       return `${value.substr(0, 4)}...${value.substr(value.length - 4)}`;
     },
-  },
-  components: {
-    VueMultiselect,
-    Account,
   },
 };
 </script>

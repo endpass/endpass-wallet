@@ -1,14 +1,20 @@
 <template>
   <div>
-    <v-form id="signing-message-form" @submit="togglePasswordModal">
+    <v-form
+      id="signing-message-form"
+      @submit="togglePasswordModal"
+    >
       <v-textarea
         v-model="message"
         label="Message"
         placeholder="This is a message that you are signing to prove that you own the address you say you own."
       />
       <v-button
-        className="is-primary is-medium"
-        :disabled="!message">Sign message</v-button>
+        :disabled="!message"
+        class-name="is-primary is-medium"
+      >
+        Sign message
+      </v-button>
       <v-textarea
         v-if="signedMessage"
         v-model="getSignedMessage"
@@ -23,7 +29,7 @@
     >
       <div class="field">
         <label class="label">Message</label>
-        <p>{{message}}</p>
+        <p>{{ message }}</p>
       </div>
     </password-modal>
   </div>
@@ -39,7 +45,7 @@ import modalMixin from '@/mixins/modal';
 import web3 from '@/utils/web3';
 
 export default {
-  name: 'sign-message',
+  name: 'SignMessage',
   data: () => ({
     message: '',
     signedMessage: null,

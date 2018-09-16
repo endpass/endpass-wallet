@@ -3,7 +3,7 @@
     <div class="section is-narrow app-page-header">
       <div class="container is-narrow">
         <h1 class="page-title">
-          <slot name="title"></slot>
+          <slot name="title" />
         </h1>
       </div>
     </div>
@@ -11,7 +11,10 @@
       <div class="container is-narrow">
         <div class="card app-card main-app-card">
           <div class="card-header">
-            <a class="card-header-icon" @click="$router.back()">
+            <a
+              class="card-header-icon"
+              @click="$router.back()"
+            >
               &lt; Back
             </a>
           </div>
@@ -26,7 +29,7 @@
 
 <script>
 export default {
-  name: 'base-page',
+  name: 'BasePage',
   inject: ['$validator'],
 };
 </script>

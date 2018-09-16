@@ -1,26 +1,31 @@
 import Vue from 'vue';
-
-import { kebabToCamel } from '@/utils';
+import { toCamel } from '@/utils/strings';
 
 Vue.directive('DynamicEvents', {
-  bind: function(el, binding, vnode) {
+  bind(el, binding, vnode) {
     const allEvents = binding.value;
 
     allEvents.forEach(event => {
       vnode.componentInstance.$on(event, eventData => {
-        const commonEventHandler = kebabToCamel(`handle-${event}`);
-        const currentComponentEventHandler = kebabToCamel(
+        const commonEventHandler = toCamel(`handle-${event}`);
+        const currentComponentEventHandler = toCamel(
           `handle-${vnode.componentInstance.$options.name}-${event}`,
         );
 
-        vnode.context[commonEventHandler] &&
+        console.log(commonEventHandler);
+        console.log(currentComponentEventHandler);
+
+        if (vnode.context[commonEventHandler]) {
           vnode.context[commonEventHandler](eventData);
-        vnode.context[currentComponentEventHandler] &&
+        }
+
+        if (vnode.context[currentComponentEventHandler]) {
           vnode.context[currentComponentEventHandler](eventData);
+        }
       });
     });
   },
-  unbind: function(el, binding, vnode) {
+  unbind(el, binding, vnode) {
     vnode.componentInstance.$off();
   },
 });

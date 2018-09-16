@@ -11,19 +11,25 @@
         placeholder="Select network"
         @select="selectNet"
       >
-        <template slot="option" slot-scope="props">
+        <template
+          slot="option"
+          slot-scope="props"
+        >
           <div class="multiselect-option">
             {{ props.option.name }}
-            <span class="right" v-if="isCustomNetwork(props.option)">
+            <span
+              v-if="isCustomNetwork(props.option)"
+              class="right"
+            >
               <span
                 class="icon is-small"
-                v-html="require('@/img/pencil.svg')"
                 @click.stop="openCustomProviderModal(props.option)"
+                v-html="require('@/img/pencil.svg')"
               />
               <span
                 class="icon is-small"
-                v-html="require('@/img/x.svg')"
                 @click.stop="deleteNetwork({ network: props.option })"
+                v-html="require('@/img/x.svg')"
               />
             </span>
           </div>
@@ -32,8 +38,8 @@
     </div>
     <custom-provider-modal
       v-if="customProviderModalOpen"
-      @close="closeCustomProviderModal"
       :provider="selectedProvider"
+      @close="closeCustomProviderModal"
     />
   </div>
 </template>

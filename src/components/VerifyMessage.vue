@@ -5,11 +5,17 @@
       label="Signature"
     />
     <v-button
-      className="is-primary is-medium"
-      :disabled="!signedMessage">Verify message</v-button>
-    <div class="field" v-if="address">
+      :disabled="!signedMessage"
+      class-name="is-primary is-medium"
+    >
+      Verify message
+    </v-button>
+    <div
+      v-if="address"
+      class="field"
+    >
       <label class="label">Address</label>
-      <p>{{address}}</p>
+      <p>{{ address }}</p>
     </div>
   </v-form>
 </template>
@@ -21,7 +27,7 @@ import VTextarea from '@/components/ui/form/VTextarea.vue';
 import web3 from '@/utils/web3';
 
 export default {
-  name: 'verify-message',
+  name: 'VerifyMessage',
   data: () => ({
     address: null,
     signedMessageString: null,

@@ -8,14 +8,14 @@ exports[`VRadio props options options are objects should correctly render text o
 
             <!---->
         </label>
-        <input id="undefined[object Object]" type="radio" name="" value="">
+        <input id="undefined[object Object]" name="" type="radio" value="">
     </div>
     <div class="control">
         <label for="undefined[object Object]" class="button is-multiline">
 
             <!---->
         </label>
-        <input id="undefined[object Object]" type="radio" name="" value="">
+        <input id="undefined[object Object]" name="" type="radio" value="">
     </div>
     <!---->
 </div>
@@ -29,14 +29,14 @@ exports[`VRadio props options options are objects should correctly render values
 
             <!---->
         </label>
-        <input id="undefinedval" type="radio" name="" value="val">
+        <input id="undefinedval" name="" type="radio" value="val">
     </div>
     <div class="control">
         <label for="undefined[object Object]" class="button is-multiline">
 
             <!---->
         </label>
-        <input id="undefined[object Object]" type="radio" name="" value="">
+        <input id="undefined[object Object]" name="" type="radio" value="">
     </div>
     <!---->
 </div>
@@ -50,14 +50,14 @@ exports[`VRadio props options options are strings should correctly render option
             option1
             <!---->
         </label>
-        <input id="undefinedoption1" type="radio" name="" value="option1">
+        <input id="undefinedoption1" name="" type="radio" value="option1">
     </div>
     <div class="control">
         <label for="undefinedoption2" class="button is-multiline">
             option2
             <!---->
         </label>
-        <input id="undefinedoption2" type="radio" name="" value="option2">
+        <input id="undefinedoption2" name="" type="radio" value="option2">
     </div>
     <!---->
 </div>
@@ -71,14 +71,14 @@ exports[`VRadio props options options have different types should correctly rend
             option
             <!---->
         </label>
-        <input id="undefinedoption" type="radio" name="" value="option">
+        <input id="undefinedoption" name="" type="radio" value="option">
     </div>
     <div class="control">
         <label for="undefinedoption value" class="button is-multiline">
 
             <!---->
         </label>
-        <input id="undefinedoption value" type="radio" name="" value="option value">
+        <input id="undefinedoption value" name="" type="radio" value="option value">
     </div>
     <!---->
 </div>

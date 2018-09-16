@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AccountChooser render should render initial state of the component 1`] = `
+<div
+  class="account-chooser field has-addons"
+>
+  <div
+    class="control is-expanded"
+  >
+    <vue-multiselect
+      label="Account"
+      option-height="32"
+      options="0x9ECEEfDF3554E178a6549006F2C02163E63C9fd8,0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c"
+      placeholder="Select account"
+      value="9ECEEfDF3554E178a6549006F2C02163E63C9fd8"
+    />
+  </div>
+</div>
+`;

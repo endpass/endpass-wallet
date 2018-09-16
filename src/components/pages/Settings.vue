@@ -2,20 +2,31 @@
   <base-page class="settings-page">
     <template slot="title">Settings</template>
 
-    <v-form id="save-settings" class="save-settings" @submit="updateSettings">
+    <v-form
+      id="save-settings"
+      class="save-settings"
+      @submit="updateSettings"
+    >
       <div class="field">
         <label class="label">Email Address</label>
         <div class="control">
-          <input class="input is-static" type="email" :value="email" readonly>
+          <input
+            :value="email"
+            class="input is-static"
+            type="email"
+            readonly
+          >
         </div>
         <p class="help">Contact support if you need to change your email
-          address.</p>
+        address.</p>
       </div>
-      <v-select v-model="newSettings.fiatCurrency"
-                label="Fiat Currency"
-                name='fiatCurrency'
-                @input="updateSettings"
-                :options="availableCurrencies" />
+      <v-select
+        v-model="newSettings.fiatCurrency"
+        :options="availableCurrencies"
+        label="Fiat Currency"
+        name="fiatCurrency"
+        @input="updateSettings"
+      />
 
     </v-form>
     <two-factor-auth-settings/>
@@ -32,7 +43,7 @@ import VButton from '@/components/ui/form/VButton.vue';
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
 
 export default {
-  name: 'settings-page',
+  name: 'SettingsPage',
   data: () => ({
     newSettings: {
       fiatCurrency: 'USD',
@@ -58,13 +69,6 @@ export default {
       });
     },
   },
-  components: {
-    BasePage,
-    VForm,
-    VSelect,
-    VButton,
-    TwoFactorAuthSettings,
-  },
   mounted() {
     try {
       this.newSettings = JSON.parse(JSON.stringify(this.settings));
@@ -73,6 +77,13 @@ export default {
     }
   },
   mixins: [error],
+  components: {
+    BasePage,
+    VForm,
+    VSelect,
+    VButton,
+    TwoFactorAuthSettings,
+  },
 };
 </script>
 

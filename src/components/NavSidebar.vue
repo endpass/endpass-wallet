@@ -1,31 +1,55 @@
 <template>
   <div class="nav-sidebar">
     <div class="navbar-brand nav-sidebar-header">
-      <a class="navbar-burger" @click="toggleNavMenu" :class="{'is-active':navMenuActive}">
-        <span></span>
-        <span></span>
-        <span></span>
+      <a
+        :class="{'is-active':navMenuActive}"
+        class="navbar-burger"
+        @click="toggleNavMenu">
+        <span/>
+        <span/>
+        <span/>
       </a>
-      <router-link class="logo logo-icon" to="/" exact>
-        <img src="@/img/logo-light.png" alt="Endpass Wallet">
+      <router-link
+        class="logo logo-icon"
+        to="/"
+        exact
+      >
+        <img
+          src="@/img/logo-light.png"
+          alt="Endpass Wallet"
+        >
       </router-link>
       <div class="login-control">
-          <a class="button is-success" v-if="!isLoggedIn" @click.prevent="isLoginModal = true">
-            <span class="icon is-small" v-html="require('@/img/account-login.svg')"/>
-            Login
-          </a>
-        <a class="button"
-           v-else
-           to=""
-           @click.prevent="logout()">
-          <span class="icon is-small"
-                v-html="require('@/img/account-logout.svg')"></span>Logout
+        <a
+          v-if="!isLoggedIn"
+          class="button is-success"
+          @click.prevent="isLoginModal = true"
+        >
+          <span
+            class="icon is-small"
+            v-html="require('@/img/account-login.svg')"
+          />
+          Login
+        </a>
+        <a
+          v-else
+          class="button"
+          to=""
+          @click.prevent="logout()">
+          <span
+            class="icon is-small"
+            v-html="require('@/img/account-logout.svg')"
+          />
+          Logout
         </a>
       </div>
     </div>
 
 
-    <div class="nav-sidebar-content navbar-menu" :class="{'is-active':navMenuActive}">
+    <div
+      :class="{'is-active':navMenuActive}"
+      class="nav-sidebar-content navbar-menu"
+    >
       <div class="nav-sidebar-item network-options">
         <div class="level is-mobile">
           <div class="level-item">
@@ -46,7 +70,10 @@
           </div>
         </div>
       </div>
-      <div class="nav-sidebar-item section" v-if="address">
+      <div
+        v-if="address"
+        class="nav-sidebar-item section"
+      >
         <div class="columns is-mobile">
           <div class="column">
             <p class="menu-label">Accounts</p>
@@ -63,66 +90,129 @@
         <account-chooser :width="4"/>
       </div>
 
-      <div class="nav-sidebar-item menu" @click="closeNavMenu">
-        <p class="menu-label" v-if="wallet">Wallet</p>
+      <div
+        class="nav-sidebar-item menu"
+        @click="closeNavMenu"
+      >
+        <p
+          v-if="wallet"
+          class="menu-label"
+        >
+          Wallet
+        </p>
         <ul class="menu-list">
           <li>
-            <router-link active-class="is-active" class="nav-link" to="/" exact>
-              <span class="icon is-small"
-                    v-html="require('@/img/home.svg')"></span>Home
+            <router-link
+              active-class="is-active"
+              class="nav-link"
+              to="/"
+              exact
+            >
+              <span
+                class="icon is-small"
+                v-html="require('@/img/home.svg')"
+              />
+              Home
             </router-link>
           </li>
           <li>
-            <router-link v-if="address" active-class="is-active" class="nav-link" :to="{name: 'HistoryPage'}">
-              <span class="icon is-small"
-                    v-html="require('@/img/clock.svg')"></span>History
+            <router-link
+              v-if="address"
+              :to="{name: 'HistoryPage'}"
+              active-class="is-active"
+              class="nav-link"
+            >
+              <span
+                class="icon is-small"
+                v-html="require('@/img/clock.svg')"
+              />
+              History
             </router-link>
           </li>
           <li>
-            <router-link v-if="wallet" class="nav-link" active-class="is-active" :to="{name: 'SendPage'}">
-              <span class="icon is-small"
-                    v-html="require('@/img/arrow-thick-left.svg')"></span>Send
+            <router-link
+              v-if="wallet"
+              :to="{name: 'SendPage'}"
+              class="nav-link"
+              active-class="is-active"
+            >
+              <span
+                class="icon is-small"
+                v-html="require('@/img/arrow-thick-left.svg')"
+              />
+              Send
             </router-link>
           </li>
           <li>
-            <router-link v-if="address" class="nav-link" active-class="is-active" :to="{name:
-            'ReceivePage'}">
-              <span class="icon is-small"
-                    v-html="require('@/img/arrow-thick-right.svg')"></span>Receive
+            <router-link
+              v-if="address"
+              :to="{name:
+              'ReceivePage'}"
+              class="nav-link"
+              active-class="is-active"
+            >
+              <span
+                class="icon is-small"
+                v-html="require('@/img/arrow-thick-right.svg')"
+              />
+              Receive
             </router-link>
           </li>
           <li>
-            <router-link v-if="address" class="nav-link" active-class="is-active" :to="{name:
-            'TokensPage'}">
-              <span class="icon is-small"
-                    v-html="require('@/img/compass.svg')"></span>Tokens
+            <router-link
+              v-if="address"
+              :to="{name:
+              'TokensPage'}"
+              class="nav-link"
+              active-class="is-active"
+            >
+              <span
+                class="icon is-small"
+                v-html="require('@/img/compass.svg')"
+              />
+              Tokens
             </router-link>
           </li>
           <li>
-            <router-link v-if="address" class="nav-link" active-class="is-active" :to="{name:
-            'SettingsPage'}">
-              <span class="icon is-small"
-                    v-html="require('@/img/cog.svg')"></span>Settings
+            <router-link
+              v-if="address"
+              :to="{name:
+              'SettingsPage'}"
+              class="nav-link"
+              active-class="is-active"
+            >
+              <span
+                class="icon is-small"
+                v-html="require('@/img/cog.svg')"
+              />
+              Settings
             </router-link>
           </li>
         </ul>
 
-        <p class="menu-label" v-if="wallet">Tools</p>
-        <ul class="menu-list" v-if="wallet">
+        <p
+          v-if="wallet"
+          class="menu-label"
+        >
+          Tools
+        </p>
+        <ul
+          v-if="wallet"
+          class="menu-list">
           <li>
             <router-link
+              :to="{name:'MessagePage'}"
               class="nav-link"
               active-class="is-active"
-              :to="{name:'MessagePage'}"
             >
               Message
             </router-link>
           </li>
           <li>
             <router-link
+              :to="{name:'TransactionPage'}"
               class="nav-link"
               active-class="is-active"
-              :to="{name:'TransactionPage'}"
             >
               Transaction
             </router-link>
@@ -130,14 +220,18 @@
         </ul>
       </div>
 
-      <div class="nav-sidebar-footer">
-      </div>
+      <div class="nav-sidebar-footer" />
 
     </div>
-    <new-account-modal @close="closeNewAccountModal"
-      v-if="newAccountModalOpen"/>
+    <new-account-modal
+      v-if="newAccountModalOpen"
+      @close="closeNewAccountModal"
+    />
 
-    <login-modal v-if="isLoginModal" @close="toggleLoginModal"/>
+    <login-modal
+      v-if="isLoginModal"
+      @close="toggleLoginModal"
+    />
   </div>
 </template>
 
@@ -151,6 +245,7 @@ import modalMixin from '@/mixins/modal';
 import NewAccountModal from '@/components/modal/NewAccountModal';
 
 export default {
+  name: 'nav-sidebar',
   data() {
     return {
       navMenuActive: false,
@@ -185,12 +280,13 @@ export default {
     },
   },
   watch: {
-    isLoggedOut: function(value) {
+    isLoggedOut(value) {
       if (value) {
         this.isLoginModal = true;
       }
     },
   },
+  mixins: [modalMixin],
   components: {
     ProviderSelect,
     CurrencySelect,
@@ -198,7 +294,6 @@ export default {
     LoginModal,
     NewAccountModal,
   },
-  mixins: [modalMixin],
 };
 </script>
 

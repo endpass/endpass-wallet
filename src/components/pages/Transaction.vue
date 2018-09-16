@@ -28,13 +28,7 @@ import SignTransaction from '@/components/SignTransaction';
 import RecoverTransaction from '@/components/RecoverTransaction';
 
 export default {
-  name: 'transaction-page',
-
-  components: {
-    BasePage,
-    SignTransaction,
-    RecoverTransaction,
-  },
+  name: 'TransactionPage',
 
   data: () => ({
     currentTab: 'sign',
@@ -58,6 +52,12 @@ export default {
     isTabActive(tab) {
       return this.currentTab === tab;
     },
+  },
+
+  components: {
+    BasePage,
+    SignTransaction,
+    RecoverTransaction,
   },
 };
 </script>

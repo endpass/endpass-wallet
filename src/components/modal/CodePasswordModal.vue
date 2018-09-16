@@ -21,10 +21,6 @@ import PasswordModal from '@/components/modal/PasswordModal';
 export default {
   name: 'CodePasswordModal',
 
-  components: {
-    PasswordModal,
-  },
-
   props: {
     label: {
       type: String,
@@ -46,6 +42,10 @@ export default {
     emitClose() {
       this.$emit('close');
     },
+  },
+
+  components: {
+    PasswordModal,
   },
 };
 </script>

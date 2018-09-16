@@ -15,7 +15,7 @@ function handleResponseError(error) {
   const { config, response } = error;
 
   if (
-    (typeof response === 'undefined' || response.status === 401) &&
+    (!response || response.status === 401) &&
     config.url.includes(identityAPIUrl)
   ) {
     store.dispatch({

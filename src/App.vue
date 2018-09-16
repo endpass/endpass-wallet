@@ -1,8 +1,11 @@
 <template>
-  <div id="app" class="app-container">
+  <div
+    id="app"
+    class="app-container"
+  >
 
     <header class="app-header">
-      <info-bar class="app-section"></info-bar>
+      <info-bar class="app-section" />
     </header>
 
     <nav class="app-nav">
@@ -10,15 +13,20 @@
     </nav>
 
     <main class="app-content">
-        <div class="">
-          <notifications position="top center" width="100%" :speed="500"
-                                               :duration="5000" classes="app-notification"/>
+      <div class="">
+        <notifications
+          :speed="500"
+          :duration="5000"
+          position="top center"
+          width="100%"
+          classes="app-notification"
+        />
 
-          <div class="main app-content app-section">
+        <div class="main app-content app-section">
 
-            <router-view/>
-          </div>
+          <router-view/>
         </div>
+      </div>
     </main>
 
     <quick-actions class="is-hidden-desktop"/>
@@ -37,16 +45,16 @@ import AppFooter from '@/components/AppFooter.vue';
 
 export default {
   name: 'App',
+  created() {
+    this.$store.dispatch('init');
+  },
+  mixins: [errorHandler],
   components: {
     NavSidebar,
     InfoBar,
     QuickActions,
     PageLoader,
     AppFooter,
-  },
-  mixins: [errorHandler],
-  created() {
-    this.$store.dispatch('init');
   },
 };
 </script>

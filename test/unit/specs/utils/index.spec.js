@@ -14,44 +14,6 @@ jest.mock('@/store', () => ({
 }));
 
 describe('utils', () => {
-  describe('kebabToCamel', () => {
-    it('should replace kebab notation to camel notation', () => {
-      const received = 'replace-to-camel-notation';
-      const expected = 'replaceToCamelNotation';
-
-      expect(utils.kebabToCamel(received)).toBe(expected);
-    });
-
-    it('should not do anything', () => {
-      let text = 'textInCamelNotation';
-
-      expect(utils.kebabToCamel(text)).toBe(text);
-
-      text = 'oneword';
-
-      expect(utils.kebabToCamel(text)).toBe(text);
-    });
-  });
-
-  describe('camelToKebab', () => {
-    it('should replace camel notation to kebab notation', () => {
-      const received = 'replaceToKebabNotation';
-      const expected = 'replace-to-kebab-notation';
-
-      expect(utils.camelToKebab(received)).toBe(expected);
-    });
-
-    it('should not do anything', () => {
-      let text = 'text-in-kebab-notation';
-
-      expect(utils.camelToKebab(text)).toBe(text);
-
-      text = 'oneword';
-
-      expect(utils.camelToKebab(text)).toBe(text);
-    });
-  });
-
   describe('getInitializedValueFromStore', () => {
     const value = 'value';
     const { module } = store.state;

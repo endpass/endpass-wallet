@@ -19,8 +19,12 @@ describe('LoginModal', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('login-modal');
+      expect(wrapper.name()).toBe('LoginModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
+    });
+
+    it('should render component', () => {
+      expect(wrapper.element).toMatchSnapshot();
     });
 
     it('should render LoginByEmailModal component', () => {

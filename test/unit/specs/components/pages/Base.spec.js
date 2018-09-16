@@ -17,6 +17,11 @@ describe('Base page', () => {
   });
 
   describe('render', () => {
+    it('should be a Vue component', () => {
+      expect(wrapper.name()).toBe('BasePage');
+      expect(wrapper.isVueInstance()).toBeTruthy();
+    });
+
     it('should render the initial state of the page', () => {
       expect(wrapper.element).toMatchSnapshot();
     });

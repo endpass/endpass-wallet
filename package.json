@@ -17,7 +17,8 @@
     "dev-build": "node build/build.js",
     "pre-commit": "lint-staged",
     "lint": "eslint '**/*.{js,vue,json}' --quiet",
-    "format": "prettier --write '**/*.{js,vue,json}'"
+    "format": "prettier --write '**/*.{js,vue,json}'",
+    "format:templates": "eslint src/**/*.vue --fix"
   },
   "pre-commit": [
     "pre-commit"
