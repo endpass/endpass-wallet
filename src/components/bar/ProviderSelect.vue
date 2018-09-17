@@ -6,7 +6,7 @@
         :options="networkOptions"
         :show-labels="false"
         :value="activeNet"
-        track-by="id"
+        track-by="url"
         label="name"
         placeholder="Select network"
         @select="selectNet"
@@ -62,17 +62,17 @@ export default {
     ...mapGetters('web3', ['networks', 'isCustomNetwork']),
     networkOptions() {
       // Options that dispatch methods
-      const actions = [{ id: -1, name: 'Add Custom Network' }];
+      const actions = [{ name: 'Add Custom Network' }];
       return this.networks.concat(actions);
     },
   },
   methods: {
     ...mapActions('web3', ['changeNetwork', 'deleteNetwork']),
     selectNet(net) {
-      if (net.id === -1) {
-        this.openCustomProviderModal();
+      if (net.url) {
+        this.changeNetwork({ networkUrl: net.url });
       } else {
-        this.changeNetwork({ networkId: net.id });
+        this.openCustomProviderModal();
       }
     },
     openCustomProviderModal(network) {

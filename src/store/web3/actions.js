@@ -7,8 +7,8 @@ import { blockUpdateInterval } from '@/config';
 import * as mutationsTypes from './mutations-types';
 import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
 
-const changeNetwork = async ({ commit, dispatch, getters }, { networkId }) => {
-  const network = getters.networks.find(net => net.id === networkId);
+const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
+  const network = getters.networks.find(net => net.url === networkUrl);
 
   commit(mutationsTypes.CHANGE_NETWORK, network);
 
@@ -29,7 +29,7 @@ const changeCurrency = async (
 
   if (state.activeNet.currency !== currency.id) {
     await dispatch('changeNetwork', {
-      networkId: getters.networks[0].id,
+      networkUrl: getters.networks[0].url,
     });
   }
 };
@@ -46,7 +46,7 @@ const addNetwork = async ({ state, commit, dispatch }, { network }) => {
     commit(mutationsTypes.SET_NETWORKS, networksToSave);
 
     await dispatch('changeNetwork', {
-      networkId: network.id,
+      networkUrl: network.url,
     });
 
     return success;
@@ -79,7 +79,7 @@ const updateNetwork = async (
     commit(mutationsTypes.SET_NETWORKS, networksToSave);
 
     if (oldNetwork.url === state.activeNet.url) {
-      await dispatch('changeNetwork', { networkId: network.id });
+      await dispatch('changeNetwork', { networkUrl: network.url });
     }
 
     return success;
@@ -105,7 +105,7 @@ const deleteNetwork = async (
     commit(mutationsTypes.SET_NETWORKS, networksToSave);
 
     if (network.url === state.activeNet.url) {
-      await dispatch('changeNetwork', { networkId: getters.networks[0].id });
+      await dispatch('changeNetwork', { networkUrl: getters.networks[0].url });
     }
 
     return success;
