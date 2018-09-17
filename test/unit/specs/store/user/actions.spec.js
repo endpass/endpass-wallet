@@ -60,10 +60,12 @@ describe('user actions', () => {
     it('should login through the user service', async () => {
       expect.assertions(2);
 
-      await actions.login({ commit, dispatch }, email);
+      const params = { email, redirectUri: '/uri' };
+
+      await actions.login({ commit, dispatch }, params);
 
       expect(userService.login).toHaveBeenCalledTimes(1);
-      expect(userService.login).toBeCalledWith(email);
+      expect(userService.login).toBeCalledWith(params);
     });
   });
 

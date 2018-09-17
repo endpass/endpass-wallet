@@ -16,7 +16,8 @@ describe('User service', () => {
   });
 
   describe('login', () => {
-    const url = `${identityAPIUrl}/auth`;
+    const redirectUri = '/send?to=0x1234&amount=0.1';
+    const url = `${identityAPIUrl}/auth?redirect_uri=%2Fsend%3Fto%3D0x1234%26amount%3D0.1`;
     const email = '123@email.com';
 
     const successResp = {
@@ -33,19 +34,24 @@ describe('User service', () => {
     });
 
     it('should make correct request', async () => {
+      expect.assertions(2);
+
       mock.onPost(url).reply(config => {
-        expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify({ email }));
 
         return [200, successResp];
       });
-      await userService.login(email);
+
+      await userService.login({ email, redirectUri });
     });
 
     it('should handle successfull POST /auth request', async () => {
+      expect.assertions(1);
+
       mock.onPost(url).reply(200, successResp);
-      let challengeType = await userService.login(email);
+
+      const challengeType = await userService.login({ email, redirectUri });
 
       expect(challengeType).toBe(successResp.challenge.challenge_type);
     });
