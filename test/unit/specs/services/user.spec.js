@@ -3,16 +3,14 @@ import MockAdapter from 'axios-mock-adapter';
 
 import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
-import userService from '@/services/user';
+
+const userService = require.requireActual('@/services/user').default;
 
 describe('User service', () => {
-  let mock;
-  beforeEach(() => {
-    mock = new MockAdapter(http);
-  });
+  let axiosMock;
 
-  afterEach(() => {
-    mock.reset();
+  beforeEach(() => {
+    axiosMock = new MockAdapter(http);
   });
 
   describe('login', () => {
@@ -36,7 +34,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      mock.onPost(url).reply(config => {
+      axiosMock.onPost(url).reply(config => {
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify({ email }));
 
@@ -49,7 +47,7 @@ describe('User service', () => {
     it('should handle successfull POST /auth request', async () => {
       expect.assertions(1);
 
-      mock.onPost(url).reply(200, successResp);
+      axiosMock.onPost(url).reply(200, successResp);
 
       const challengeType = await userService.login({ email, redirectUri });
 
@@ -57,7 +55,7 @@ describe('User service', () => {
     });
 
     it('should handle failed POST /auth request', async () => {
-      mock.onPost(url).reply(200, { success: false });
+      axiosMock.onPost(url).reply(200, { success: false });
       try {
         await userService.login(email);
       } catch (receivedError) {
@@ -66,7 +64,7 @@ describe('User service', () => {
     });
 
     it('should handle rejected POST /auth request', async () => {
-      mock.onPost(url).reply(500, {});
+      axiosMock.onPost(url).reply(500, {});
       try {
         await userService.login(email);
       } catch (receivedError) {
@@ -89,7 +87,7 @@ describe('User service', () => {
     });
 
     it('should make correct request', async () => {
-      mock.onPost(url).reply(config => {
+      axiosMock.onPost(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(
@@ -105,13 +103,13 @@ describe('User service', () => {
     });
 
     it('should handle successfull POST /token request', async () => {
-      mock.onPost(url).reply(200, successResp);
-      let resp = await userService.loginViaOTP(code, email);
+      axiosMock.onPost(url).reply(200, successResp);
+      const resp = await userService.loginViaOTP(code, email);
       expect(resp).toEqual(successResp);
     });
 
     it('should handle failed POST /token request', async () => {
-      mock.onPost(url).reply(200, { success: false });
+      axiosMock.onPost(url).reply(200, { success: false });
       try {
         await userService.loginViaOTP(code, email);
       } catch (receivedError) {
@@ -120,7 +118,7 @@ describe('User service', () => {
     });
 
     it('should handle rejected POST /token request', async () => {
-      mock.onPost(url).reply(500, { success: false });
+      axiosMock.onPost(url).reply(500, { success: false });
       try {
         await userService.loginViaOTP(code, email);
       } catch (receivedError) {
@@ -138,7 +136,7 @@ describe('User service', () => {
     });
 
     it('should make correct request', async () => {
-      mock.onPost(url).reply(config => {
+      axiosMock.onPost(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         return [200, {}];
@@ -147,7 +145,7 @@ describe('User service', () => {
     });
 
     it('should handle rejected POST /logout request', async () => {
-      mock.onPost(url).reply(500, {});
+      axiosMock.onPost(url).reply(500, {});
       try {
         await userService.logout();
       } catch (receivedError) {
@@ -165,7 +163,7 @@ describe('User service', () => {
     };
 
     it('should make correct request', async () => {
-      mock.onGet(url).reply(config => {
+      axiosMock.onGet(url).reply(config => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
         return [200, successResp];
@@ -174,8 +172,8 @@ describe('User service', () => {
     });
 
     it('should handle successfull GET /user request', async () => {
-      mock.onGet(url).reply(200, successResp);
-      let settings = await userService.getSettings();
+      axiosMock.onGet(url).reply(200, successResp);
+      const settings = await userService.getSettings();
       expect(settings).toEqual(successResp);
     });
   });
@@ -192,7 +190,7 @@ describe('User service', () => {
     };
 
     it('should make correct request', async () => {
-      mock.onPost(url).reply(config => {
+      axiosMock.onPost(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify(settings));
@@ -202,8 +200,8 @@ describe('User service', () => {
     });
 
     it('should handle successful POST /user request', async () => {
-      mock.onPost(url).reply(200, successResp);
-      let resp = await userService.setSettings(settings);
+      axiosMock.onPost(url).reply(200, successResp);
+      const resp = await userService.setSettings(settings);
       expect(resp).toEqual(successResp);
     });
   });
@@ -213,7 +211,7 @@ describe('User service', () => {
     const successResp = ['0x123', 'xpub1234'];
 
     it('should make correct request', async () => {
-      mock.onGet(url).reply(config => {
+      axiosMock.onGet(url).reply(config => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
         return [200, successResp];
@@ -222,8 +220,8 @@ describe('User service', () => {
     });
 
     it('should handle successful GET /accounts request', async () => {
-      mock.onGet(url).reply(200, successResp);
-      let accounts = await userService.getAccounts();
+      axiosMock.onGet(url).reply(200, successResp);
+      const accounts = await userService.getAccounts();
       expect(accounts.length).toBe(2);
       expect(accounts[0]).toEqual(successResp[0]);
     });
@@ -241,7 +239,7 @@ describe('User service', () => {
     });
 
     it('should make correct request', async () => {
-      mock.onGet(url).reply(config => {
+      axiosMock.onGet(url).reply(config => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
         return [200, successResp];
@@ -250,14 +248,14 @@ describe('User service', () => {
     });
 
     it('should handle successfull GET /account request', async () => {
-      mock.onGet(url).reply(200, successResp);
-      let account = await userService.getAccount(address);
+      axiosMock.onGet(url).reply(200, successResp);
+      const account = await userService.getAccount(address);
       // Address should be automatically appended by getAccount
-      expect(account).toEqual({ address: address });
+      expect(account).toEqual({ address });
     });
 
     it('should handle rejected GET /account request', async () => {
-      mock.onGet(url).reply(404);
+      axiosMock.onGet(url).reply(404);
       try {
         await userService.getAccount(address);
       } catch (receivedError) {
@@ -276,7 +274,7 @@ describe('User service', () => {
     };
 
     it('should make correct request', async () => {
-      mock.onPost(url).reply(config => {
+      axiosMock.onPost(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify(account));
@@ -286,8 +284,8 @@ describe('User service', () => {
     });
 
     it('should handle successful POST /account request', async () => {
-      mock.onPost(url).reply(200, successResp);
-      let resp = await userService.setAccount(address, account);
+      axiosMock.onPost(url).reply(200, successResp);
+      const resp = await userService.setAccount(address, account);
       expect(resp).toEqual(successResp);
     });
   });
@@ -347,20 +345,24 @@ describe('User service', () => {
     const addrs = ['0x123', 'xpubabcde', '0x456'];
 
     it('should return keystores for regular accounts only', async () => {
-      mock.onGet(`${identityAPIUrl}/accounts`).reply(200, addrs);
-      mock.onGet(new RegExp(`${identityAPIUrl}/account/.+`)).reply(200, {});
+      axiosMock.onGet(`${identityAPIUrl}/accounts`).reply(200, addrs);
+      axiosMock
+        .onGet(new RegExp(`${identityAPIUrl}/account/.+`))
+        .reply(200, {});
 
-      let accounts = await userService.getV3Accounts();
+      const accounts = await userService.getV3Accounts();
       expect(accounts.length).toBe(2);
       expect(accounts[0]).toEqual({ address: '0x123' });
       expect(accounts[1]).toEqual({ address: '0x456' });
     });
 
     it('should return the HD key if it exists', async () => {
-      mock.onGet(`${identityAPIUrl}/accounts`).reply(200, addrs);
-      mock.onGet(new RegExp(`${identityAPIUrl}/account/.+`)).reply(200, {});
+      axiosMock.onGet(`${identityAPIUrl}/accounts`).reply(200, addrs);
+      axiosMock
+        .onGet(new RegExp(`${identityAPIUrl}/account/.+`))
+        .reply(200, {});
 
-      let account = await userService.getHDKey();
+      const account = await userService.getHDKey();
       expect(account).toBeTruthy();
       expect(account.address).toBe('xpubabcde');
     });
@@ -378,7 +380,7 @@ describe('User service', () => {
     });
 
     it('should make correct request', async () => {
-      mock.onGet(url).reply(config => {
+      axiosMock.onGet(url).reply(config => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
         return [200, successResp];
@@ -387,13 +389,13 @@ describe('User service', () => {
     });
 
     it('should handle successful GET /otp request', async () => {
-      mock.onGet(url).reply(200, successResp);
-      let otp = await userService.getOtpSettings();
+      axiosMock.onGet(url).reply(200, successResp);
+      const otp = await userService.getOtpSettings();
       expect(otp).toEqual(successResp);
     });
 
     it('should handle rejected GET /otp request', async () => {
-      mock.onGet(url).reply(500, {});
+      axiosMock.onGet(url).reply(500, {});
       try {
         await userService.getOtpSettings();
       } catch (receivedError) {
@@ -416,7 +418,7 @@ describe('User service', () => {
     });
 
     it('should make correct request', async () => {
-      mock.onPost(url).reply(config => {
+      axiosMock.onPost(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify({ secret, code }));
@@ -426,13 +428,13 @@ describe('User service', () => {
     });
 
     it('should handle successful POST /otp request', async () => {
-      mock.onPost(url).reply(200, successResp);
-      let resp = await userService.setOtpSettings(secret, code);
+      axiosMock.onPost(url).reply(200, successResp);
+      const resp = await userService.setOtpSettings(secret, code);
       expect(resp).toEqual(successResp);
     });
 
     it('should handle failed POST /otp request', async () => {
-      mock.onPost(url).reply(200, { success: false });
+      axiosMock.onPost(url).reply(200, { success: false });
       try {
         await userService.setOtpSettings(secret, code);
       } catch (receivedError) {
@@ -441,7 +443,7 @@ describe('User service', () => {
     });
 
     it('should handle rejected POST /otp request', async () => {
-      mock.onPost(url).reply(500, {});
+      axiosMock.onPost(url).reply(500, {});
       try {
         await userService.setOtpSettings();
       } catch (receivedError) {
@@ -463,7 +465,7 @@ describe('User service', () => {
     });
 
     it('should make correct request', async () => {
-      mock.onDelete(url).reply(config => {
+      axiosMock.onDelete(url).reply(config => {
         expect(config.method).toBe('delete');
         expect(config.url).toBe(`${identityAPIUrl}/otp`);
         expect(config.data).toBe(JSON.stringify({ code }));
@@ -473,13 +475,13 @@ describe('User service', () => {
     });
 
     it('should handle successful DELETE /otp request', async () => {
-      mock.onDelete(url).reply(200, successResp);
-      let resp = await userService.deleteOtpSettings(code);
+      axiosMock.onDelete(url).reply(200, successResp);
+      const resp = await userService.deleteOtpSettings(code);
       expect(resp).toEqual(successResp);
     });
 
     it('should handle failed DELETE /otp request', async () => {
-      mock.onDelete(url).reply(200, { success: false });
+      axiosMock.onDelete(url).reply(200, { success: false });
       try {
         await userService.deleteOtpSettings(code);
       } catch (receivedError) {
@@ -488,7 +490,7 @@ describe('User service', () => {
     });
 
     it('should handle rejected DELETE /otp request', async () => {
-      mock.onDelete(url).reply(500, {});
+      axiosMock.onDelete(url).reply(500, {});
       try {
         await userService.deleteOtpSettings(code);
       } catch (receivedError) {
