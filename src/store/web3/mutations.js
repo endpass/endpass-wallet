@@ -20,28 +20,6 @@ const changeCurrency = (state, currency) => {
   state.activeCurrency = currency;
 };
 
-const addNetwork = (state, network) => {
-  state.storedNetworks.push(network);
-};
-
-const updateNetwork = (state, network) => {
-  const storedNetwork = state.storedNetworks.find(
-    item => item.id === network.id,
-  );
-
-  if (storedNetwork) {
-    storedNetwork.name = network.name;
-    storedNetwork.url = network.url;
-    storedNetwork.currency = network.currency;
-  }
-};
-
-const deleteNetwork = (state, network) => {
-  state.storedNetworks = state.storedNetworks.filter(
-    item => item.id !== network.id,
-  );
-};
-
 const setBlockNumber = (state, number) => {
   state.blockNumber = number;
 };
@@ -57,9 +35,6 @@ const setInterval = (state, interval) => {
 export default {
   [mutationsTypes.CHANGE_NETWORK]: changeNetwork,
   [mutationsTypes.CHANGE_CURRENCY]: changeCurrency,
-  [mutationsTypes.ADD_NETWORK]: addNetwork,
-  [mutationsTypes.UPDATE_NETWORK]: updateNetwork,
-  [mutationsTypes.DELETE_NETWORK]: deleteNetwork,
   [mutationsTypes.SET_NETWORKS]: setNetworks,
   [mutationsTypes.SET_BLOCK_NUMBER]: setBlockNumber,
   [mutationsTypes.SET_INTERVAL]: setInterval,

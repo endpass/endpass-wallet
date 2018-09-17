@@ -25,10 +25,9 @@ describe('transactions actions', () => {
   beforeEach(() => {
     web3.eth.getTransactionCount = jest.fn().mockResolvedValue(1);
     web3.eth.sendSignedTransaction = jest.fn(() => ({
-      once() {
-        return this;
-      },
-      then: jest.fn(),
+      once: jest.fn().mockReturnThis(),
+      then: jest.fn().mockReturnThis(),
+      catch: jest.fn(),
     }));
     transaction = {
       ...ethplorerTransactions[0],
