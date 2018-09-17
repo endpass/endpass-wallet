@@ -32,7 +32,8 @@ describe('web3 actions', () => {
   describe('changeNetwork', () => {
     const { changeNetwork } = actions;
     const networkId = 1;
-    const network = { id: networkId };
+    const networkUrl = 'url';
+    const network = { id: networkId, url: networkUrl };
     const getters = {
       networks: [network],
     };
@@ -40,7 +41,7 @@ describe('web3 actions', () => {
     it('should call CHANGE_NETWORK mutation', async () => {
       expect.assertions(2);
 
-      await changeNetwork({ commit, dispatch, getters }, { networkId });
+      await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toHaveBeenCalledWith(
@@ -52,7 +53,7 @@ describe('web3 actions', () => {
     it('should save network id', async () => {
       expect.assertions(2);
 
-      await changeNetwork({ commit, dispatch, getters }, { networkId });
+      await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
       expect(userService.setSetting).toHaveBeenCalledTimes(1);
       expect(userService.setSetting).toHaveBeenCalledWith('net', networkId);
@@ -61,7 +62,7 @@ describe('web3 actions', () => {
     it('should dispatch subscribeOnBlockUpdates and tokens/subscribeOnTokensBalancesUpdates actions', async () => {
       expect.assertions(1);
 
-      await changeNetwork({ commit, dispatch, getters }, { networkId });
+      await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
       expect(dispatch.mock.calls).toEqual([
         ['subscribeOnBlockUpdates'],
@@ -76,7 +77,7 @@ describe('web3 actions', () => {
 
       userService.setSetting.mockRejectedValueOnce(error);
 
-      await changeNetwork({ commit, dispatch, getters }, { networkId });
+      await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
       expect(dispatch).toHaveBeenCalledTimes(3);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
@@ -86,7 +87,7 @@ describe('web3 actions', () => {
       dispatch.mockClear();
       dispatch.mockRejectedValueOnce(error);
 
-      await changeNetwork({ commit, dispatch, getters }, { networkId });
+      await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
       expect(dispatch).toHaveBeenCalledTimes(3);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
@@ -98,7 +99,7 @@ describe('web3 actions', () => {
   describe('changeCurrency', () => {
     const { changeCurrency } = actions;
     const getters = {
-      networks: [{ id: 1 }],
+      networks: [{ url: 'url' }],
     };
     const currencyId = 1;
 
@@ -138,7 +139,7 @@ describe('web3 actions', () => {
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('changeNetwork', {
-        networkId: getters.networks[0].id,
+        networkUrl: getters.networks[0].url,
       });
     });
 
@@ -165,7 +166,7 @@ describe('web3 actions', () => {
     const state = {
       storedNetworks: [],
     };
-    const network = { id: 1 };
+    const network = { url: 'url' };
     const networksToSave = [...state.storedNetworks, network];
 
     it('should call userService.setSetting', () => {
@@ -199,7 +200,7 @@ describe('web3 actions', () => {
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('changeNetwork', {
-        networkId: network.id,
+        networkUrl: network.url,
       });
     });
 
@@ -240,8 +241,8 @@ describe('web3 actions', () => {
 
   describe('updateNetwork', () => {
     const { updateNetwork } = actions;
-    const oldNetwork = { id: 1, url: 'url' };
-    const network = { id: 2 };
+    const oldNetwork = { url: 'old url' };
+    const network = { url: 'new url' };
     const state = {
       storedNetworks: [oldNetwork],
       activeNet: oldNetwork,
@@ -293,7 +294,7 @@ describe('web3 actions', () => {
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('changeNetwork', {
-        networkId: network.id,
+        networkUrl: network.url,
       });
     });
 
@@ -350,13 +351,13 @@ describe('web3 actions', () => {
 
   describe('deleteNetwork', () => {
     const { deleteNetwork } = actions;
-    const network = { id: 1, url: 'url' };
+    const network = { url: 'url' };
     const state = {
       storedNetworks: [network],
       activeNet: network,
     };
     const getters = {
-      networks: [{ id: 1 }],
+      networks: [{ url: 'new url' }],
     };
 
     it('should call userService.setSetting', () => {
@@ -394,7 +395,7 @@ describe('web3 actions', () => {
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('changeNetwork', {
-        networkId: getters.networks[0].id,
+        networkUrl: getters.networks[0].url,
       });
     });
 
