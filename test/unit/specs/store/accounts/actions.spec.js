@@ -346,8 +346,17 @@ describe('Accounts actions', () => {
   describe('commitWallet', () => {
     const { commitWallet } = actions;
     const commit = jest.fn();
+    const walletAddress = 'address';
     const wallet = {
-      address: 'address',
+      address: walletAddress,
+    };
+    const state = {
+      wallet: {
+        getAddressString: jest.fn().mockResolvedValue(),
+      },
+      wallets: {
+        [walletAddress]: null,
+      },
     };
 
     beforeEach(() => {
@@ -359,7 +368,7 @@ describe('Accounts actions', () => {
 
       expect.assertions(2);
 
-      await commitWallet({ commit }, { wallet });
+      await commitWallet({ state, commit }, { wallet });
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toHaveBeenCalledWith(SET_HD_KEY, wallet);
@@ -371,7 +380,7 @@ describe('Accounts actions', () => {
 
       expect.assertions(2);
 
-      await commitWallet({ commit }, { wallet });
+      await commitWallet({ state, commit }, { wallet });
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toHaveBeenCalledWith(ADD_WALLET, wallet);
@@ -383,10 +392,24 @@ describe('Accounts actions', () => {
 
       expect.assertions(2);
 
-      await commitWallet({ commit }, { wallet });
+      await commitWallet({ state, commit }, { wallet });
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toHaveBeenCalledWith(ADD_ADDRESS, wallet.address);
+    });
+
+    it('should update active wallet', async () => {
+      state.wallet.getAddressString.mockResolvedValueOnce(walletAddress);
+
+      expect.assertions(2);
+
+      await commitWallet({ state, commit }, { wallet });
+
+      expect(commit).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenLastCalledWith(
+        SET_WALLET,
+        state.wallets[wallet.address],
+      );
     });
   });
 

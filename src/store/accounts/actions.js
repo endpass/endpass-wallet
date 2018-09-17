@@ -111,7 +111,7 @@ const generateWallet = async ({ dispatch, state, getters }, password) => {
   await dispatch('addWalletAndSelect', json);
 };
 
-const commitWallet = ({ commit }, { wallet }) => {
+const commitWallet = async ({ state, commit }, { wallet }) => {
   if (keystore.isExtendedPublicKey(wallet.address)) {
     // HD wallet
     commit(SET_HD_KEY, wallet);
@@ -121,6 +121,13 @@ const commitWallet = ({ commit }, { wallet }) => {
   } else {
     // Read-only public key
     commit(ADD_ADDRESS, wallet.address);
+  }
+
+  const currentWalletAddress =
+    state.wallet && (await state.wallet.getAddressString());
+
+  if (currentWalletAddress === wallet.address) {
+    commit(SET_WALLET, state.wallets[wallet.address]);
   }
 };
 
