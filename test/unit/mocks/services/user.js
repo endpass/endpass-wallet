@@ -1,64 +1,67 @@
-import { settings, addresses, v3, hdv3 } from 'fixtures/accounts';
+import userService from '@/services/user';
 
-const getAccountByAddress = address => {
-  if (/^(xpub)/.test(address)) {
-    return hdv3;
-  }
+jest.mock('@/services/user', () => {
+  /* eslint-disable-next-line */
+  const { settings, addresses, v3, hdv3 } = require('fixtures/accounts');
 
-  return v3;
-};
+  const getAccountByAddress = address => {
+    if (/^(xpub)/.test(address)) {
+      return hdv3;
+    }
 
-export default {
-  login() {
-    return Promise.resolve('email_link');
-  },
+    return v3;
+  };
 
-  logout() {
-    return Promise.resolve({
+  return {
+    login: jest.fn().mockResolvedValue('email_auth'),
+
+    logout: jest.fn().mockResolvedValue({
       success: true,
-    });
-  },
+    }),
 
-  getSettings() {
-    return Promise.resolve(settings);
-  },
+    getSettings: jest.fn().mockResolvedValue(settings),
 
-  setSettings() {
-    return Promise.resolve({
+    setSettings: jest.fn().mockResolvedValue({
       success: true,
-    });
-  },
+    }),
 
-  removeSettings() {
-    return Promise.resolve({
+    removeSettings: jest.fn().mockResolvedValue({
       success: true,
-    });
-  },
+    }),
 
-  setAccount() {
-    return Promise.resolve({
+    setAccount: jest.fn().mockResolvedValue({
       success: true,
-    });
-  },
+    }),
 
-  getAccount(account) {
-    return Promise.resolve(getAccountByAddress(account));
-  },
+    getAccount(account) {
+      return jest.fn().mockResolvedValue(getAccountByAddress(account));
+    },
 
-  getAccounts() {
-    return Promise.resolve(addresses);
-  },
+    getAccounts: jest.fn().mockResolvedValue(addresses),
 
-  getV3Accounts() {
-    return Promise.resolve(
-      addresses.map(address => getAccountByAddress(address)),
-    );
-  },
+    getV3Accounts: jest
+      .fn()
+      .mockResolvedValue(
+        addresses.map(address => getAccountByAddress(address)),
+      ),
 
-  getFullUserInfo() {
-    return Promise.resolve([
-      ...addresses.map(address => getAccountByAddress(address)),
-      ...settings,
-    ]);
-  },
-};
+    getFullUserInfo: jest
+      .fn()
+      .mockResolvedValue([
+        ...addresses.map(address => getAccountByAddress(address)),
+        ...settings,
+      ]),
+
+    getHDKey: jest.fn().mockResolvedValue(hdv3),
+
+    setOtpSettings: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
+    deleteOtpSettings: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+  };
+});
+
+export default userService;

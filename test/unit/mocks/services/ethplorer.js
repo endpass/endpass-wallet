@@ -2,18 +2,19 @@ import { ethplorerTransactions, ethplorerHistory } from 'fixtures/transactions';
 
 export default {
   getTransactions() {
-    return Promise.resolve(ethplorerTransactions);
+    return jest.fn().mockResolvedValue(ethplorerTransactions);
   },
 
   getHistory() {
-    return Promise.resolve(ethplorerHistory);
+    return jest.fn().mockResolvedValue(ethplorerHistory);
   },
 
+  // TODO: need more info
   getInfo() {
-    return Promise.resolve();
+    return jest.fn().mockResolvedValue();
   },
 
   tokenIsNotSpam() {
-    return Promise.resolve();
+    return jest.fn().mockResolvedValue(true);
   },
 };

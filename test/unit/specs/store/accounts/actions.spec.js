@@ -18,17 +18,18 @@ import {
   SET_BALANCE,
   ADD_ADDRESS,
 } from '@/store/accounts/mutations-types';
-import { userService } from '@/services';
 import keystore from '@/utils/keystore';
+import userService from '@/services/user';
 
 describe('Accounts actions', () => {
   let dispatch;
   let commit;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     commit = jest.fn();
     dispatch = jest.fn();
-    userService.setAccount = jest.fn();
   });
 
   describe('selectWallet', () => {
@@ -100,7 +101,7 @@ describe('Accounts actions', () => {
       expect.assertions(2);
 
       const error = new Error('error');
-      userService.setAccount.mockRejectedValue(error);
+      userService.setAccount.mockRejectedValueOnce(error);
 
       await actions.addWallet({ commit, dispatch }, v3);
 
@@ -286,11 +287,8 @@ describe('Accounts actions', () => {
       expect.assertions(2);
 
       const error = new Error('error');
-      const spy = jest
-        .spyOn(userService, 'setAccount')
-        .mockImplementation(() => {
-          throw error;
-        });
+
+      userService.setAccount = jest.fn().mockRejectedValueOnce(error);
 
       await actions.addWalletWithPublicKey(
         { commit, dispatch },
@@ -301,8 +299,6 @@ describe('Accounts actions', () => {
       expect(dispatch).toBeCalledWith('errors/emitError', error, {
         root: true,
       });
-
-      spy.mockRestore();
     });
   });
 
@@ -365,6 +361,8 @@ describe('Accounts actions', () => {
 
     it('should save HD wallet', async () => {
       keystore.isExtendedPublicKey = jest.fn().mockReturnValueOnce(true);
+
+      await actions.saveHdWallet(null, v3);
 
       expect.assertions(2);
 
@@ -606,10 +604,13 @@ describe('Accounts actions', () => {
   });
 
   describe('updateBalance', () => {
-    const state = { address: new Address(checksumAddress) };
+    let state;
     const balance = '5';
 
     beforeEach(() => {
+      state = {
+        address: new Address(checksumAddress),
+      };
       web3.eth.getBalance = jest.fn().mockResolvedValue(balance);
     });
 
@@ -625,7 +626,7 @@ describe('Accounts actions', () => {
     it('should not update the balance if the address does not exist', async () => {
       expect.assertions(2);
 
-      const state = { address: null };
+      state = { address: null };
 
       await actions.updateBalance({ commit, dispatch, state });
 
@@ -649,25 +650,30 @@ describe('Accounts actions', () => {
   });
 
   describe('validatePassword', () => {
-    const state = {
-      hdKey: hdv3,
-      wallet: {
-        validatePassword: jest.fn().mockResolvedValue(true),
-      },
-    };
-    const getters = { isPublicAccount: false };
-    const { validatePassword } = state.wallet;
+    let state;
+    let getters;
+
+    beforeEach(() => {
+      state = {
+        hdKey: hdv3,
+        wallet: {
+          validatePassword: jest.fn().mockResolvedValue(true),
+        },
+      };
+      getters = { isPublicAccount: false };
+    });
 
     it('should validate the password', async () => {
       expect.assertions(2);
 
+      const { validatePassword } = state.wallet;
       const isValid = await actions.validatePassword(
         { state, getters },
         v3password,
       );
 
       expect(validatePassword).toHaveBeenCalledTimes(1);
-      expect(isValid).toBe(true);
+      expect(isValid).toBeTruthy();
     });
 
     it('should validate the password through the hdKey when the public account', async () => {
@@ -689,6 +695,7 @@ describe('Accounts actions', () => {
     it('should throw an error if the password is incorrect', async () => {
       expect.assertions(1);
 
+      const { validatePassword } = state.wallet;
       const error = new Error('error');
       validatePassword.mockRejectedValueOnce(error);
 
@@ -701,8 +708,6 @@ describe('Accounts actions', () => {
   });
 
   describe('setUserHdKey', () => {
-    userService.getHDKey = jest.fn().mockResolvedValue(hdv3);
-
     it('should set the hd key to the store', async () => {
       expect.assertions(2);
 
@@ -721,7 +726,7 @@ describe('Accounts actions', () => {
       await actions.setUserHdKey({ commit, dispatch });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toBeCalledWith('errors/emitError', error, {
+      expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
       });
     });
