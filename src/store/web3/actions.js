@@ -7,8 +7,8 @@ import { blockUpdateInterval } from '@/config';
 import * as mutationsTypes from './mutations-types';
 import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
 
-const changeNetwork = async ({ commit, dispatch, getters }, { networkId }) => {
-  const network = getters.networks.find(net => net.id === networkId);
+const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
+  const network = getters.networks.find(net => net.url === networkUrl);
 
   commit(mutationsTypes.CHANGE_NETWORK, network);
 
@@ -29,29 +29,62 @@ const changeCurrency = async (
 
   if (state.activeNet.currency !== currency.id) {
     await dispatch('changeNetwork', {
-      networkId: getters.networks[0].id,
+      networkUrl: getters.networks[0].url,
     });
   }
 };
 
 const addNetwork = async ({ state, commit, dispatch }, { network }) => {
-  commit(mutationsTypes.ADD_NETWORK, network);
-
-  return Promise.all([
-    userService.setSetting('networks', state.storedNetworks),
-    dispatch('changeNetwork', {
-      networkId: network.id,
-    }),
-  ]).catch(e => dispatch('errors/emitError', e, { root: true }));
-};
-
-const updateNetwork = async ({ state, commit, dispatch }, { network }) => {
-  commit(mutationsTypes.UPDATE_NETWORK, network);
+  const networksToSave = [...state.storedNetworks, network];
 
   try {
-    await userService.setSetting('networks', state.storedNetworks);
-  } catch (e) {
-    await dispatch('errors/emitError', e, { root: true });
+    const { success } = await userService.setSetting(
+      'networks',
+      networksToSave,
+    );
+
+    commit(mutationsTypes.SET_NETWORKS, networksToSave);
+
+    await dispatch('changeNetwork', {
+      networkUrl: network.url,
+    });
+
+    return success;
+  } catch (error) {
+    await dispatch('errors/emitError', error, { root: true });
+  }
+};
+
+const updateNetwork = async (
+  { state, commit, dispatch },
+  { network, oldNetwork },
+) => {
+  const networksToSave = [...state.storedNetworks];
+  const oldNetworkIndex = networksToSave.findIndex(
+    item => item.url === oldNetwork.url,
+  );
+
+  if (oldNetworkIndex === -1) {
+    return;
+  }
+
+  networksToSave.splice(oldNetworkIndex, 1, network);
+
+  try {
+    const { success } = await userService.setSetting(
+      'networks',
+      networksToSave,
+    );
+
+    commit(mutationsTypes.SET_NETWORKS, networksToSave);
+
+    if (oldNetwork.url === state.activeNet.url) {
+      await dispatch('changeNetwork', { networkUrl: network.url });
+    }
+
+    return success;
+  } catch (error) {
+    await dispatch('errors/emitError', error, { root: true });
   }
 };
 
@@ -59,21 +92,26 @@ const deleteNetwork = async (
   { state, commit, dispatch, getters },
   { network },
 ) => {
-  commit(mutationsTypes.DELETE_NETWORK, network);
-
-  const promises = [userService.setSetting('networks', state.storedNetworks)];
-
-  if (network.url === state.activeNet.url) {
-    promises.push(
-      dispatch('changeNetwork', {
-        networkId: getters.networks[0].id,
-      }),
-    );
-  }
-
-  return Promise.all(promises).catch(e =>
-    dispatch('errors/emitError', e, { root: true }),
+  const networksToSave = state.storedNetworks.filter(
+    item => item.url !== network.url,
   );
+
+  try {
+    const { success } = await userService.setSetting(
+      'networks',
+      networksToSave,
+    );
+
+    commit(mutationsTypes.SET_NETWORKS, networksToSave);
+
+    if (network.url === state.activeNet.url) {
+      await dispatch('changeNetwork', { networkUrl: getters.networks[0].url });
+    }
+
+    return success;
+  } catch (error) {
+    await dispatch('errors/emitError', error, { root: true });
+  }
 };
 
 const validateNetwork = (context, { network }) => {
