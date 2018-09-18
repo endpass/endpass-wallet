@@ -1,20 +1,23 @@
-import { ethplorerTransactions, ethplorerHistory } from 'fixtures/transactions';
+jest.mock('@/services/ethplorer', () => {
+  /* eslint-disable global-require */
+  const {
+    ethplorerTransactions,
+    ethplorerHistory,
+  } = require('fixtures/transactions');
+  const { checksumAddress } = require('fixtures/accounts');
 
-export default {
-  getTransactions() {
-    return jest.fn().mockResolvedValue(ethplorerTransactions);
-  },
+  return {
+    getTransactions: jest.fn().mockResolvedValue(ethplorerTransactions),
 
-  getHistory() {
-    return jest.fn().mockResolvedValue(ethplorerHistory);
-  },
+    getHistory: jest.fn().mockResolvedValue(ethplorerHistory),
 
-  // TODO: need more info
-  getInfo() {
-    return jest.fn().mockResolvedValue();
-  },
+    getInfo: jest.fn().mockResolvedValue([
+      {
+        id: '1',
+        to: checksumAddress,
+      },
+    ]),
 
-  tokenIsNotSpam() {
-    return jest.fn().mockResolvedValue(true);
-  },
-};
+    tokenIsNotSpam: jest.fn().mockResolvedValue(true),
+  };
+});

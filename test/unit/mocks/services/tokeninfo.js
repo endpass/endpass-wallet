@@ -1,7 +1,8 @@
-import { tokens } from 'fixtures/tokens';
+jest.mock('@/services/tokeninfo', () => {
+  /* eslint-disable global-require */
+  const { tokens } = require('fixtures/tokens');
 
-export default {
-  getTokensList() {
-    return jest.fn().mockResolvedValue(tokens);
-  },
-};
+  return {
+    getTokensList: jest.fn().mockResolvedValue(tokens),
+  };
+});

@@ -1,7 +1,8 @@
-import { gasPrice } from 'fixtures/gasPrice';
+jest.mock('@/services/gas-price', () => {
+  /* eslint-disable global-require */
+  const { gasPrice } = require('fixtures/gasPrice');
 
-export default {
-  getGasPrice() {
-    return jest.fn().mockResolvedValue(gasPrice);
-  },
-};
+  return {
+    getGasPrice: jest.fn().mockResolvedValue(gasPrice),
+  };
+});

@@ -1,5 +1,11 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import {
+  fiatPriceAPIUrl,
+  fiatPriceMultiAPIUrl,
+  serviceThrottleTimeout,
+} from '@/config';
+const priceService = require.requireActual('@/services/price').default;
 
 jest.mock('throttled-queue', function() {
   return function() {
@@ -8,13 +14,6 @@ jest.mock('throttled-queue', function() {
     };
   };
 });
-
-import {
-  fiatPriceAPIUrl,
-  fiatPriceMultiAPIUrl,
-  serviceThrottleTimeout,
-} from '@/config';
-import priceService from '@/services/price';
 
 describe('Price service', () => {
   let mock;

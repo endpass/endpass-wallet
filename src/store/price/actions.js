@@ -16,7 +16,7 @@ const updatePrice = async ({ commit, getters, dispatch }) => {
       getters.fiatCurrency,
     );
     commit(SET_PRICE, price[getters.fiatCurrency]);
-    commit(SET_UPDATE_TIME, new Date().time);
+    commit(SET_UPDATE_TIME, new Date().getTime());
     dispatch(
       'connectionStatus/updateApiErrorStatus',
       {
