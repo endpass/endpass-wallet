@@ -6,8 +6,7 @@ import { Wallet, Address } from '@/class';
 const getAccountAddresses = state =>
   Object.keys(state.wallets).map(wallet => wallet.toLowerCase());
 
-const isPublicAccount = state =>
-  state.address instanceof Address && !(state.wallet instanceof Wallet);
+const isPublicAccount = state => state.wallet.isPublic;
 
 const balance = (state, getters, rootState, rootGetters) => {
   if (!state.balance) return null;

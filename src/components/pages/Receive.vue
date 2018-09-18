@@ -31,7 +31,7 @@
               :address="walletAddress"
               :balance="balances[walletAddress]"
             />
-            <v-button v-if="!isPublicWallet(wallet)" @click="clickSendButton(walletAddress)" type="button" name="button">Send ethereum</v-button>
+            <v-button v-if="!wallet.isPublic" @click="clickSendButton(walletAddress)" type="button" name="button">Send ethereum</v-button>
             <div class="token-list-container">
               <token-list v-if="tokens[walletAddress]" :tokens="tokens[walletAddress]" />
               <v-spinner
@@ -51,8 +51,8 @@
             <h2 class="card-header-title">Incoming Payment History</h2>
           </div>
           <div class="card-content">
-            <ul class="transactions" v-if="sortedTransactions.length">
-              <li v-for="transaction in processedTransactions"
+            <ul class="transactions" v-if="incomingTransactions.length">
+              <li v-for="transaction in incomingTransactions"
                 :key="transaction.hash">
                 <app-transaction :transaction="transaction"></app-transaction>
               </li>
@@ -97,21 +97,28 @@ export default {
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),
       wallets: state => state.accounts.wallets,
-      activeNet: state => state.web3.activeNet,
+      activeNetId: state => state.web3.activeNet.id,
     }),
     ...mapGetters('accounts', {
       balance: 'balance',
     }),
-    ...mapGetters('transactions', ['currentNetTransactions']),
-    incomingTransactions() {
-      return (this.currentNetTransactions || []).filter(trx => {
-        return trx.to === this.address;
-      });
+    ...mapGetters('transactions', ['incomingTransactions']),
+  },
+  watch: {
+    address: {
+      handler: 'getHistory',
+      immediate: true,
     },
-    sortedTransactions() {
-      return this.incomingTransactions.sort(
-        (trx1, trx2) => trx2.timestamp - trx1.timestamp,
-      );
+    wallets: {
+      handler() {
+        this.getTokensLists();
+        this.getBalances();
+      },
+      immediate: true,
+    },
+    activeNetId: {
+      handler: 'getBalances',
+      immediate: true,
     },
   },
   methods: {
@@ -120,9 +127,6 @@ export default {
     async clickSendButton(address) {
       this.selectWallet(address);
       this.$router.push('/send');
-    },
-    isPublicWallet(wallet) {
-      return wallet instanceof Address;
     },
     isTokensLoaded(address) {
       return typeof this.tokens[address] !== 'undefined';
@@ -136,21 +140,19 @@ export default {
       await this.updateTransactionHistory();
       this.isLoading = false;
     },
-    getBalances(address) {
-      let addresses = Object.keys(this.wallets);
-      addresses.forEach(this.getBalance);
+    getBalances() {
+      let addresses = Object.keys(this.wallets).forEach(this.getBalance);
     },
     async getBalance(address) {
       let balance = await this.wallets[address].getBalance();
       balance = web3.utils.fromWei(balance);
       this.$set(this.balances, address, balance);
     },
-    getTokensLists(address) {
-      let addresses = Object.keys(this.wallets);
-      addresses.forEach(this.getTokensList);
+    getTokensLists() {
+      Object.keys(this.wallets).forEach(this.getTokensList);
     },
     async getTokensList(address) {
-      let tokensList = await ethplorerService.getTokensWithBalance(address);
+      const tokensList = await ethplorerService.getTokensWithBalance(address);
       const allBalances = await Promise.all(
         tokensList
           .map(token => new ERC20Token(token.address))
@@ -180,22 +182,7 @@ export default {
     },
   },
   created() {
-    this.$watch(vm => vm.address, this.getHistory, {
-      immediate: true,
-    });
-    this.$watch(vm => vm.activeNet.id, this.getBalances, {
-      immediate: true,
-    });
-    this.$watch(
-      vm => vm.wallets,
-      () => {
-        this.getBalances();
-        this.getTokensLists();
-      },
-      {
-        immediate: true,
-      },
-    );
+    this.getTokensLists();
   },
   components: {
     Account,

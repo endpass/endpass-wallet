@@ -7,6 +7,7 @@ import keyUtil from '@/utils/keystore';
 // All methods are async and return promises
 export class Wallet {
   constructor(v3Keystore) {
+    this.isPublic = false;
     this.v3 = v3Keystore;
   }
 

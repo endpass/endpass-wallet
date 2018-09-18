@@ -2,11 +2,11 @@ import axios from 'axios';
 import throttledQueue from 'throttled-queue';
 import { Transaction } from '@/class';
 
-let throttle = throttledQueue(1, 5000);
+const throttle = throttledQueue(1, 5000);
 
 export default {
   getTokensWithBalance(address) {
-    let throttlePromice = new Promise((res, rej) => {
+    return new Promise((res, rej) => {
       throttle(() => {
         axios
           .get(`https://api.ethplorer.io/getAddressInfo/${address}`, {
@@ -25,10 +25,9 @@ export default {
           .catch(rej);
       });
     });
-    return throttlePromice;
   },
   getHistory(address) {
-    let throttlePromice = new Promise((res, rej) => {
+    return new Promise((res, rej) => {
       throttle(() => {
         axios
           .get(`https://api.ethplorer.io/getAddressHistory/${address}`, {
@@ -41,10 +40,9 @@ export default {
           .catch(rej);
       });
     });
-    return throttlePromice;
   },
   getInfo(address) {
-    let throttlePromice = new Promise((res, rej) => {
+    return new Promise((res, rej) => {
       throttle(() => {
         axios
           .get(`https://api.ethplorer.io/getAddressTransactions/${address}`, {
@@ -57,12 +55,11 @@ export default {
           .catch(rej);
       });
     });
-    return throttlePromice;
   },
 
   // get tokens and ETH transactions
-  async getTransactionHistory(address) {
-    let throttlePromice = new Promise((res, rej) => {
+  getTransactionHistory(address) {
+    return new Promise((res, rej) => {
       throttle(() => {
         Promise.all([this.getInfo(address), this.getHistory(address)])
           .then(([transactions, history]) => {
@@ -71,7 +68,6 @@ export default {
           .catch(rej);
       });
     });
-    return throttlePromice;
   },
   // Filter out spam balances of tokens
   tokenIsNotSpam(token) {

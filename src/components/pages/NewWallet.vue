@@ -35,9 +35,9 @@
       <v-form @submit="createWallet">
         <v-password
           id="jsonKeystorePassword"
-          v-model="walletPassword"
+          v-model="password"
           label="Wallet password"
-          name="walletPassword"
+          name="password"
           validator="required|min:8"
           data-vv-as="password"
           aria-describedby="jsonKeystorePassword"
@@ -71,7 +71,7 @@ const UPDATE_SEED_PHRASE_INTERVAL_MSEC = 1000;
 export default {
   data() {
     return {
-      walletPassword: '',
+      password: '',
       key: null,
       isCreating: false,
       remainingSeedPhraseTimeout: SEED_PHRASE_TIMEOUT_SEC,
@@ -97,7 +97,7 @@ export default {
 
       try {
         const key = Bip39.generateMnemonic();
-        await this.addHdWallet({ key, password: this.walletPassword });
+        await this.addHdWallet({ key, password: this.password });
         this.key = key;
         this.$timer.start('seedPhrase');
       } catch (e) {

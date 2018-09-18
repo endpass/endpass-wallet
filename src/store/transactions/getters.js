@@ -79,6 +79,16 @@ const currentNetTransactions = (state, getters, rootState) => {
   );
 };
 
+const incomingTransactions = (state, getters, rootState) => {
+  if (!rootState.accounts.address) {
+    return [];
+  }
+
+  const address = rootState.accounts.address.getChecksumAddressString();
+
+  return getters.accountTransactions.filter(({ to }) => to === address);
+};
+
 const getPendingTransactions = state => state.pendingTransactions;
 
 const getTransactionByHash = state => hash =>
@@ -92,6 +102,7 @@ export default {
   filteredHistoryTransactions,
   currentNetTransactions,
   accountTransactions,
+  incomingTransactions,
   getPendingTransactions,
   getPendingTransactionByHash,
   getTransactionByHash,
