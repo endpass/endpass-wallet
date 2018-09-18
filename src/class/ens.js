@@ -1,5 +1,6 @@
 import namehash from 'eth-ens-namehash';
 import ABI from '@/abi/ens.json';
+
 const registryAddresses = {
   // Mainnet
   '1': '0x314159265dd8dbb310642f98f50c066173c1259b',
@@ -14,16 +15,21 @@ const registryAddresses = {
 export class ENSResolver {
   constructor(web3) {
     this.NameNotFound = new Error("Name isn't resolvable");
+
     this.getAddress = async function(name) {
       const registryContract = new web3.eth.Contract(ABI);
       const node = namehash.hash(name);
       const netId = await web3.eth.net.getId();
+
       registryContract.options.address = registryAddresses[netId];
-      const addres = await registryContract.methods.resolver(node).call();
-      if (addres == '0x0000000000000000000000000000000000000000') {
+
+      const address = await registryContract.methods.resolver(node).call();
+
+      if (address == '0x0000000000000000000000000000000000000000') {
         throw this.NameNotFound;
       }
-      return addres;
+
+      return address;
     };
   }
 }

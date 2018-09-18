@@ -78,6 +78,9 @@ export default {
 
 <style lang="scss">
 .account {
+  display: flex;
+  align-items: center;
+
   .media-content {
     overflow: hidden;
     text-overflow: ellipsis;
