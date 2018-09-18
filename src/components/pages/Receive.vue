@@ -123,6 +123,7 @@ export default {
   },
   methods: {
     ...mapActions('transactions', ['updateTransactionHistory']),
+    ...mapActions('tokens', ['getTokensWithBalanceByAddress']),
     ...mapActions('accounts', ['selectWallet']),
     async clickSendButton(address) {
       this.selectWallet(address);
@@ -152,33 +153,7 @@ export default {
       Object.keys(this.wallets).forEach(this.getTokensList);
     },
     async getTokensList(address) {
-      const tokensList = await ethplorerService.getTokensWithBalance(address);
-      const allBalances = await Promise.all(
-        tokensList
-          .map(token => new ERC20Token(token.address))
-          .map(async erc20 => {
-            try {
-              let balance = await erc20.getBalance(address);
-              return [erc20.address, balance];
-            } catch (e) {
-              return [erc20.address, null];
-            }
-          }),
-      );
-      // In format {address: balance}
-      const balances = allBalances.reduce((obj, item) => {
-        obj[item[0]] = item[1];
-        return obj;
-      }, {});
-      this.$set(
-        this.tokens,
-        address,
-        tokensList.map(token => {
-          const tokenObj = new Token(token);
-          tokenObj.balance = balances[token.address];
-          return tokenObj;
-        }),
-      );
+      const tokensList = await this.getTokensWithBalanceByAddress({ address });
     },
   },
   created() {

@@ -112,6 +112,22 @@ const getTokensWithBalance = async ({ state, getters, dispatch, commit }) => {
     return [];
   }
   let tokensWithBalance = [];
+
+  tokensWithBalance = await dispatch('getTokensWithBalanceByAddress', {
+    address,
+  });
+
+  commit(SAVE_TOKEN_INFO, tokensWithBalance);
+
+  const tokenAddrs = tokensWithBalance.map(token => token.address);
+  // Add unique addresses to tracked tokens list
+  commit(SAVE_TRACKED_TOKENS, tokenAddrs);
+
+  commit(SET_LOADING, false);
+};
+
+const getTokensWithBalanceByAddress = async ({ dispatch }, { address }) => {
+  let tokensWithBalance = [];
   try {
     tokensWithBalance = await ethplorerService.getTokensWithBalance(address);
     dispatch(
@@ -130,20 +146,10 @@ const getTokensWithBalance = async ({ state, getters, dispatch, commit }) => {
     dispatch('errors/emitError', e, { root: true });
   }
 
-  tokensWithBalance = tokensWithBalance
-    .filter(token => !!token.address)
-    .map(token => {
-      token.address = web3.utils.toChecksumAddress(token.address);
-      return token;
-    });
-
-  commit(SAVE_TOKEN_INFO, tokensWithBalance);
-
-  const tokenAddrs = tokensWithBalance.map(token => token.address);
-  // Add unique addresses to tracked tokens list
-  commit(SAVE_TRACKED_TOKENS, tokenAddrs);
-
-  commit(SET_LOADING, false);
+  return tokensWithBalance.filter(token => !!token.address).map(token => {
+    token.address = web3.utils.toChecksumAddress(token.address);
+    return token;
+  });
 };
 
 const updateTokensPrices = async ({ state, commit, getters }) => {
@@ -200,6 +206,7 @@ export default {
   saveTokenAndSubscribe,
   deleteTokenAndUnsubscribe,
   getTokensWithBalance,
+  getTokensWithBalanceByAddress,
   updateTokensPrices,
   updateTokensBalances,
   updateTokenPrice,
