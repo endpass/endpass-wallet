@@ -1,6 +1,6 @@
 // Wrapper around global web3 instance
 import Web3 from 'web3';
-import { providerFactory } from '@/class';
+import { providerFactory } from '@/class/provider';
 import { DEFAULT_NETWORKS } from '@/constants';
 
 const defaultProvider = providerFactory(DEFAULT_NETWORKS[0].url);
