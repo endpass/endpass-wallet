@@ -7,7 +7,7 @@ export default {
   validate(value) {
     const zeroAddressRegex = /^0x0+$/;
     const isHashKey =
-      web3.utils.isAddress(value) || value.match(/^.+\.(eth|etc)$/);
+      web3.utils.isAddress(value) || value.match(/^.+\.(eth|etc|test)$/);
     const isZeroKey = value.match(zeroAddressRegex);
     const message = isZeroKey
       ? 'This is a zero address'

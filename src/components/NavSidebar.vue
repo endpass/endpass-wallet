@@ -245,19 +245,17 @@
 import { mapGetters, mapActions, mapState } from 'vuex';
 import ProviderSelect from '@/components/bar/ProviderSelect.vue';
 import CurrencySelect from '@/components/bar/CurrencySelect.vue';
-import AccountChooser from '@/components/bar/AccountChooser.vue';
+import AccountChooser from '@/components/AccountChooser';
 import LoginModal from '@/components/modal/LoginModal';
 import modalMixin from '@/mixins/modal';
 import NewAccountModal from '@/components/modal/NewAccountModal';
 
 export default {
   name: 'NavSidebar',
-  data() {
-    return {
-      navMenuActive: false,
-      newAccountModalOpen: false,
-    };
-  },
+  data: () => ({
+    navMenuActive: false,
+    newAccountModalOpen: false,
+  }),
 
   computed: {
     ...mapState({
@@ -271,10 +269,25 @@ export default {
     }),
     ...mapGetters('user', ['isLoggedOut', 'isLoggedIn']),
     ...mapGetters('accounts', ['isPublicAccount']),
+
+    walletsOptions() {
+      return Object.keys(this.wallets);
+    },
+
+    activeAddress: {
+      get() {
+        return this.address;
+      },
+
+      set(newValue) {
+        this.selectWallet(newValue);
+      },
+    },
   },
 
   methods: {
     ...mapActions('user', ['logout']),
+    ...mapActions('accounts', ['selectWallet']),
     toggleNavMenu() {
       this.navMenuActive = !this.navMenuActive;
     },

@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import web3 from '@/utils/web3';
+import { uniq } from '@/utils/arrays';
 import { MAIN_NET_ID } from '@/constants';
 
 const accountTransactions = (state, getters, rootState) => {
@@ -88,15 +89,16 @@ const getPendingTransactionByHash = state => hash =>
   state.pendingTransactions.find(trx => trx.hash === hash);
 
 const getAddressesFromTransactionsHistory = state =>
-  state.transactionHistory.map(({ _to }) => _to);
+  uniq(state.transactionHistory.map(({ to }) => to));
 
 const getAddressesFromPendingTransactions = state =>
-  state.pendingTransactions.map(({ _to }) => _to);
+  uniq(state.pendingTransactions.map(({ to }) => to));
 
 const getAddressesFromTransactions = (state, getters) =>
-  [].concat(
-    getters.getAddressesFromTransactionsHistory,
-    getters.getAddressesFromPendingTransactions,
+  uniq(
+    getters.getAddressesFromTransactionsHistory.concat(
+      getters.getAddressesFromPendingTransactions,
+    ),
   );
 
 export default {

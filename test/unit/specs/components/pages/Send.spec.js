@@ -1,9 +1,9 @@
 import Vue from 'vue';
+import validation from '@/validation';
 import Vuex from 'vuex';
-import web3 from 'web3';
+import Web3 from 'web3';
 import { shallow, createLocalVue, mount } from '@vue/test-utils';
 import Notifications from 'vue-notification';
-import validation from '@/validation';
 import { Transaction } from '@/class';
 import { generateStubs } from '@/utils/testUtils';
 
@@ -20,7 +20,7 @@ describe('Send', () => {
   let actions;
   let store;
   let wrapper;
-  let web3Instance = new web3('https://mainnet.infura.io/');
+  const web3Instance = new Web3('https://mainnet.infura.io/');
 
   beforeEach(() => {
     store = new Vuex.Store({
@@ -47,6 +47,7 @@ describe('Send', () => {
               success: true,
             },
           ],
+          wallets: () => [],
         },
         user: {
           settings: {
@@ -85,15 +86,13 @@ describe('Send', () => {
         tokens: {
           namespaced: true,
           getters: {
-            tokensWithBalance: () => {
-              return [
-                {
-                  symbol: 'AAA',
-                  address: '0xB6eD7644C69416d67B522e20bC294A9a9B405B31',
-                  decimals: 8,
-                },
-              ];
-            },
+            tokensWithBalance: () => [
+              {
+                symbol: 'AAA',
+                address: '0xB6eD7644C69416d67B522e20bC294A9a9B405B31',
+                decimals: 8,
+              },
+            ],
           },
         },
         transactions: {
@@ -102,10 +101,35 @@ describe('Send', () => {
             getNextNonce: jest.fn(),
             getNonceInBlock: jest.fn(),
           },
+          getters: {
+            getAddressesFromTransactions: () => [],
+          },
         },
       },
     });
     wrapper = shallow(Send, { store, localVue });
+  });
+
+  describe('render', () => {
+    beforeEach(() => {
+      wrapper = shallow(Send, {
+        store,
+        localVue,
+        stubs: generateStubs(Send),
+      });
+    });
+
+    it('should render ens error', async () => {
+      expect.assertions(1);
+
+      wrapper.setData({
+        ensError: 'foo',
+      });
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.html()).toMatchSnapshot();
+    });
   });
 
   describe('behavior', () => {
@@ -152,9 +176,6 @@ describe('Send', () => {
         },
         value: '1.5',
       });
-
-      wrapper.vm.$refs.address.$el.querySelector('input').value =
-        '0xE824633E6d247e64ba2cD841D8270505770d53fE';
 
       await wrapper.vm.$validator.validateAll();
 
@@ -209,7 +230,7 @@ describe('Send', () => {
         localVue,
       });
 
-      const inputIdArr = ['address', 'gasPrice', 'gasLimit', 'value'];
+      const inputIdArr = ['gasPrice', 'gasLimit', 'value'];
 
       inputIdArr
         .map(inputId => wrapper.find(`#${inputId}`))
@@ -293,16 +314,41 @@ describe('Send', () => {
 
     it('should update user nonce when changing the address', async () => {
       wrapper.vm.getNextNonce = jest.fn().mockResolvedValueOnce('2');
-      wrapper.setComputed({ address: '0xddddd' });
+      wrapper.setData({ address: '0xddddd' });
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.$data.userNonce).toBe('2');
 
       wrapper.vm.getNextNonce.mockResolvedValueOnce('7');
-      wrapper.setComputed({ address: '0xkdjf' });
+      wrapper.setData({ address: '0xkdjf' });
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.$data.userNonce).toBe('7');
+    });
+
+    it('should call get ENS after each network change', async () => {
+      expect.assertions(1);
+
+      wrapper.setData({
+        address: 'ether.eth',
+      });
+
+      wrapper.vm.getEnsAddress = jest.fn();
+
+      wrapper.setComputed({
+        isEnsTransaction: true,
+        activeNet: {
+          id: 2,
+        },
+      });
+      wrapper.setComputed({
+        isEnsTransaction: true,
+        activeNet: {
+          id: 3,
+        },
+      });
+
+      expect(wrapper.vm.getEnsAddress).toHaveBeenCalledTimes(2);
     });
   });
 });

@@ -9,21 +9,26 @@
           <div class="card-content">
             <v-form
               id="sendEther"
-              @submit="fetchAddress"
+              @submit="handleTransactionFormSubmit"
             >
               <div class="field">
                 <label class="label">
                   To
                 </label>
                 <account-chooser
-                  v-model="transaction.to"
+                  v-model="address"
                   :disabled="isSending"
-                  :searchable="true"
                   :creatable="true"
                   :width="35"
-                  :accounts="getAddressesFromTransactions"
+                  :accounts="accountsOptions"
                   placeholder="0x... or ENS"
                 />
+                <p
+                  v-if="ensError"
+                  class="help is-danger"
+                >
+                  {{ ensError }}
+                </p>
               </div>
               <div class="send-amount field is-horizontal">
                 <div class="field-label is-normal">
@@ -232,8 +237,9 @@
                 <div class="field-body">
                   <v-button
                     :loading="isSending"
-                    :disabled="isSyncing"
+                    :disabled="!isSendAllowed"
                     class-name="is-success is-medium is-cta"
+                    data-test="transaction-send-button"
                   >
                     Send
                   </v-button>
@@ -266,7 +272,7 @@
     />
     <password-modal
       v-if="isPasswordModal"
-      @confirm="confirmPassword"
+      @confirm="confirmTransactionSend"
       @close="togglePasswordModal"
     />
   </div>
@@ -283,10 +289,12 @@ import VSpinner from '@/components/ui/VSpinner';
 import VInputAddress from '@/components/ui/form/VInputAddress.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VSelect from '@/components/ui/form/VSelect';
-import AccountChooser from '@/components/bar/AccountChooser.vue';
+import AccountChooser from '@/components/AccountChooser';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import web3 from '@/utils/web3';
+import { getShortStringWithEllipsis } from '@/utils/strings';
+import { uniq } from '@/utils/arrays';
 
 const defaultTnx = {
   gasPrice: '40',
@@ -312,6 +320,7 @@ export default {
   },
 
   data: () => ({
+    address: '',
     isSending: false,
     transaction: new Transaction(defaultTnx),
     estimateGasCost: 0,
@@ -320,18 +329,21 @@ export default {
     nextNonceInBlock: 0,
     userNonce: null,
     isLoadingGasPrice: true,
+    isEnsAddressLoading: false,
     lastInputPrice: 'amount',
     isTransactionModal: false,
     isPasswordModal: false,
     showAdvanced: false,
     suggestedGasPrices: null,
+    ensError: null,
   }),
 
   computed: {
     ...mapState({
+      wallets: state => state.accounts.wallets,
       tokenPrices: state => state.tokens.prices,
       balance: state => state.accounts.balance,
-      address: state => state.accounts.address.getChecksumAddressString(),
+      activeAddress: state => state.accounts.address.getChecksumAddressString(),
       activeCurrency: state => state.web3.activeCurrency,
       activeNet: state => state.web3.activeNet,
       isSyncing: state => !!state.connectionStatus.isSyncing,
@@ -411,6 +423,11 @@ export default {
       }
       return price.toFixed();
     },
+    accountsOptions() {
+      const { wallets, getAddressesFromTransactions } = this;
+
+      return uniq(Object.keys(wallets).concat(getAddressesFromTransactions));
+    },
     maxAmount() {
       if (this.transaction.tokenInfo) {
         return this.transaction.tokenInfo.balance || '0';
@@ -449,20 +466,31 @@ export default {
         this.tokensWithBalance.map(({ symbol }) => symbol),
       );
     },
+    isEnsTransaction() {
+      return /^.+\.(eth|etc|test)$/.test(this.address);
+    },
+    isSendAllowed() {
+      return (
+        this.transaction.to &&
+        !this.isSyncing &&
+        !this.ensError &&
+        !this.isEnsAddressLoading
+      );
+    },
   },
 
   watch: {
-    'transaction.to': {
-      async handler() {
-        await this.$nextTick();
-        await this.$nextTick();
-
-        if (!this.errors.has('address')) {
-          this.updateEstimateGasCost();
-        }
-      },
-      immediate: true,
+    async address() {
+      if (this.isEnsTransaction) {
+        this.transaction.to = await this.getEnsAddress();
+        this.updateEstimateGasCost();
+      } else if (!this.errors.has('address')) {
+        this.ensError = null;
+        this.transaction.to = this.address;
+        this.updateEstimateGasCost();
+      }
     },
+
     'transaction.data': {
       async handler() {
         await this.$nextTick();
@@ -475,6 +503,12 @@ export default {
     },
     'transaction.tokenInfo': () => {
       this.updateEstimateGasCost();
+    },
+
+    async activeNet(newValue, prevValue) {
+      if (this.isEnsTransaction && newValue.id !== prevValue.id) {
+        this.transaction.to = await this.getEnsAddress();
+      }
     },
   },
 
@@ -547,6 +581,22 @@ export default {
     setTrxNonce(nonce) {
       this.transaction.nonce = nonce;
     },
+    async getEnsAddress() {
+      this.isEnsAddressLoading = true;
+
+      try {
+        const ensAddress = await this.$ens.getAddress(this.address);
+        this.ensError = null;
+
+        return ensAddress;
+      } catch (err) {
+        this.ensError = `ENS ${this.address} can not be resolved.`;
+
+        return '';
+      } finally {
+        this.isEnsAddressLoading = false;
+      }
+    },
     async resetForm() {
       this.$validator.pause();
       await this.$nextTick();
@@ -571,48 +621,27 @@ export default {
     requestPassword() {
       this.togglePasswordModal();
     },
-    confirmPassword(password) {
+    async confirmTransactionSend(password) {
       this.isSending = true;
-      this.transaction.from = this.address;
-      this.togglePasswordModal();
+      this.transaction.from = this.activeAddress;
       this.transaction.networkId = this.activeNet.id;
-      this.sendTransaction({ transaction: this.transaction, password })
-        .then(hash => {
-          this.transactionHash = hash;
-          this.isSending = false;
-          this.resetForm();
-          const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`;
-          this.$notify({
-            title: 'Transaction Sent',
-            text: `Transaction ${shortHash} sent`,
-            type: 'is-info',
-          });
-        })
-        .catch(e => {
-          this.isSending = false;
-          this.resetForm();
-        });
-    },
 
-    async updateENS() {
-      const { to } = this.transaction;
-
-      if (!to.match(/^.+\.(eth|etc)$/)) {
-        return to;
-      }
-
-      const address = await this.$ens.getAddress(to);
-
-      return address;
-    },
-
-    async fetchAddress() {
-      this.isSending = true;
+      this.togglePasswordModal();
 
       try {
-        this.transaction.to = await this.updateENS();
+        const hash = await this.sendTransaction({
+          transaction: this.transaction,
+          password,
+        });
+        const shortHash = getShortStringWithEllipsis(hash);
 
-        this.toggleTransactionModal();
+        this.transactionHash = hash;
+
+        this.$notify({
+          title: 'Transaction Sent',
+          text: `Transaction ${shortHash} sent`,
+          type: 'is-info',
+        });
       } catch (err) {
         this.$notify({
           title: 'Error',
@@ -621,7 +650,12 @@ export default {
         });
       } finally {
         this.isSending = false;
+        this.resetForm();
       }
+    },
+
+    async handleTransactionFormSubmit() {
+      this.toggleTransactionModal();
     },
 
     confirmTransaction() {
@@ -629,7 +663,15 @@ export default {
       this.togglePasswordModal();
     },
     async updateEstimateGasCost() {
-      this.estimateGasCost = await this.transaction.getFullPrice(web3.eth);
+      const { transaction } = this;
+
+      try {
+        this.estimateGasCost = await transaction.getFullPrice(web3.eth);
+      } catch (err) {
+        if (err.message.includes('always failing transaction')) {
+          this.ensError = 'Transaction will always fail, try other address.';
+        }
+      }
     },
     updateUserNonce() {
       this.getNextNonce().then(nonce => {

@@ -4,6 +4,7 @@ export const getShortStringWithEllipsis = (string, symbolsCount = 4) =>
 export const toWords = string =>
   string
     .replace(/([A-Z]{1})/g, ' $1')
+    /* eslint-disable-next-line */
     .match(/[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g)
     .map(word => word.toLowerCase());
 
