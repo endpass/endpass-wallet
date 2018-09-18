@@ -1,5 +1,5 @@
 <template>
-  <div class="app-page receive-page">
+  <div class="app-page receive-page" v-if="address">
     <div class="section">
       <div class="container">
         <div class="card app-card">
@@ -72,30 +72,40 @@ export default {
       return trxArr.sort((trx1, trx2) => trx2.timestamp - trx1.timestamp);
     },
   },
-  created() {
-    EthplorerService.getInfo(this.address)
-      .then(transactions => {
-        this.transactions = transactions.filter(trx => trx.to === this.address);
-        this.$store.dispatch('connectionStatus/updateApiErrorStatus', {
-          id: 'ethplorer',
-          status: true,
+  methods: {
+    getTransactions() {
+      EthplorerService.getInfo(this.address)
+        .then(transactions => {
+          this.transactions = transactions.filter(
+            trx => trx.to === this.address,
+          );
+          this.$store.dispatch('connectionStatus/updateApiErrorStatus', {
+            id: 'ethplorer',
+            status: true,
+          });
+        })
+        .catch(e => {
+          this.$notify({
+            title: 'Failed to get transaction information',
+            text:
+              'An error occurred while retrieving transaction information. Please try again.',
+            type: 'is-warning',
+          });
+          e.apiError = {
+            id: 'ethplorer',
+            status: false,
+          };
+          this.$store.dispatch('errors/emitError', e, { root: true });
+          console.error(e);
         });
-      })
-      .catch(e => {
-        this.$notify({
-          title: 'Failed to get transaction information',
-          text:
-            'An error occurred while retrieving transaction information. Please try again.',
-          type: 'is-warning',
-        });
-        e.apiError = {
-          id: 'ethplorer',
-          status: false,
-        };
-        this.$store.dispatch('errors/emitError', e, { root: true });
-        console.error(e);
-      });
+    },
   },
+  watch: {
+    address: function(val, oldVal) {
+      this.getTransactions();
+    },
+  },
+  created() {},
   components: {
     Account,
     appTransaction,
