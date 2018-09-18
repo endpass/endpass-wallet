@@ -58,6 +58,7 @@ describe('ReceivePage', () => {
 
     // new wrapper must be initialized in each test AFTER setting up mock
     const wrapper = shallow(ReceivePage, { store, localVue });
+    wrapper.vm.getTransactions();
     // Wait for promises in created() hook to resolve
     await flushPromises();
 

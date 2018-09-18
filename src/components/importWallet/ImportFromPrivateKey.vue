@@ -15,9 +15,9 @@
     />
     <v-password
       id="jsonKeystorePassword"
-      v-model="walletPassword"
+      v-model="password"
       label="Wallet password"
-      name="walletPassword"
+      name="password"
       validator="required|min:8"
       data-vv-as="password"
       aria-describedby="jsonKeystorePassword"
