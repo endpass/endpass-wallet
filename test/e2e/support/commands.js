@@ -61,6 +61,11 @@ Cypress.Commands.add('login', () => {
     '/identity/api/v1/account/*',
     'fixture:identity/success.json',
   ).as('keystoreAddAccount');
+  cy.route(
+    'POST',
+    '/identity/api/v1/accounts',
+    'fixture:identity/success.json',
+  ).as('keystoreUpdateAccounts');
 
   // Identity server
   cy.route('GET', '/identity/api/v1/user', 'fixture:identity/user.json').as(
