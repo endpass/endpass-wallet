@@ -1,54 +1,53 @@
 <template>
-  <v-form @submit="submitAddWallet">
-    <v-input
-      id="hdkeySeed"
-      key="hdkeyPhraseUnique"
-      v-model="key"
-      label="Seed phrase"
-      name="hdkeyPhrase"
-      validator="required|seed_phrase"
-      data-vv-as="seed phrase"
-      aria-describedby="hdkeyPhrase"
-      placeholder="Seed phrase"
-      required
-      @input="handleInput"
+  <div>
+    <v-form @submit="togglePasswordModal">
+      <v-input
+        id="hdkeySeed"
+        key="hdkeyPhraseUnique"
+        v-model="key"
+        label="Seed phrase"
+        name="hdkeyPhrase"
+        validator="required|seed_phrase"
+        data-vv-as="seed phrase"
+        aria-describedby="hdkeyPhrase"
+        placeholder="Seed phrase"
+        required
+        @input="handleInput"
+      />
+
+      <v-button
+        :loading="isCreating"
+        class-name="is-primary is-cta"
+      >
+        Import
+      </v-button>
+    </v-form>
+
+    <password-modal
+      v-if="isPasswordModal"
+      @close="togglePasswordModal"
+      @confirm="handlePasswordConfirm"
     />
-    <v-password
-      v-model="password"
-      label="Wallet password"
-      name="password"
-      validator="required|min:8"
-      data-vv-as="password"
-      aria-describedby="jsonKeystorePassword"
-      placeholder="wallet password"
-      required
-    />
-    <v-button
-      :loading="isCreating"
-      class-name="is-primary is-cta"
-    >
-      Import
-    </v-button>
-  </v-form>
+  </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex';
-import VForm from '@/components/ui/form/VForm.vue';
-import VInput from '@/components/ui/form/VInput.vue';
-import VPassword from '@/components/ui/form/VPassword.vue';
-import VButton from '@/components/ui/form/VButton.vue';
+import VForm from '@/components/ui/form/VForm';
+import VInput from '@/components/ui/form/VInput';
+import VButton from '@/components/ui/form/VButton';
+import PasswordModal from '@/components/modal/PasswordModal';
+import modalMixin from '@/mixins/modal';
 
 export default {
   name: 'ImportFromSeed',
   data: () => ({
     isCreating: false,
     key: '',
-    password: '',
   }),
   methods: {
     ...mapActions('accounts', ['addMultiHdWallet']),
-    async submitAddWallet() {
+    async handlePasswordConfirm(password) {
       this.isCreating = true;
 
       await new Promise(res => setTimeout(res, 20));
@@ -56,7 +55,7 @@ export default {
       try {
         this.addMultiHdWallet({
           key: this.key,
-          password: this.password,
+          password,
         });
         this.$router.push('/');
       } catch (e) {
@@ -74,11 +73,12 @@ export default {
       this.errors.removeById('wrongPhrase');
     },
   },
+  mixins: [modalMixin],
   components: {
     VForm,
     VInput,
-    VPassword,
     VButton,
+    PasswordModal,
   },
 };
 </script>

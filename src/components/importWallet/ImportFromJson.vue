@@ -1,15 +1,16 @@
 <template>
-  <v-form @submit="parseJson">
-    <div class="field">
-      <div class="file">
-        <label class="file-label">
-          <input
-            class="file-input"
-            type="file"
-            name="jsonWallet"
-            @change="setFile"
-          >
-          <span class="file-cta">
+  <div>
+    <v-form @submit="togglePasswordModal">
+      <div class="field">
+        <div class="file">
+          <label class="file-label">
+            <input
+              class="file-input"
+              type="file"
+              name="jsonWallet"
+              @change="setFile"
+            >
+            <span class="file-cta">
             <span class="file-icon">
               <span
                 class="icon is-small"
@@ -20,65 +21,69 @@
               {{ fileName || 'V3 JSON keystore file' }}
             </span>
           </span>
-        </label>
+          </label>
+        </div>
+        <p
+          v-show="errors.has('fileName')"
+          class="help is-danger"
+        >
+          {{ errors.first('fileName') }}
+        </p>
       </div>
-      <p
-        v-show="errors.has('fileName')"
-        class="help is-danger"
+
+      <v-password
+        id="jsonKeystorePassword"
+        key="jsonKeystorePasswordUnique"
+        v-model="jsonKeystorePassword"
+        label="V3 JSON keystore password"
+        name="jsonKeystorePassword"
+        validator="required|min:8"
+        data-vv-as="password"
+        aria-describedby="jsonKeystorePassword"
+        placeholder="V3 JSON keystore password"
+        required />
+
+      <v-button
+        :loading="isCreating"
+        class-name="is-primary is-cta"
       >
-        {{ errors.first('fileName') }}
-      </p>
-    </div>
+        Import
+      </v-button>
+    </v-form>
 
-    <v-password
-      id="jsonKeystorePassword"
-      key="jsonKeystorePasswordUnique"
-      v-model="jsonKeystorePassword"
-      label="V3 JSON keystore password"
-      name="jsonKeystorePassword"
-      validator="required|min:8"
-      data-vv-as="password"
-      aria-describedby="jsonKeystorePassword"
-      placeholder="V3 JSON keystore password"
-      required />
-
-    <v-password v-model="walletPassword"
-             label="Wallet password"
-             name="walletRassword"
-             validator="required|min:8"
-             placeholder="Wallet password" />
-    <p>The wallet password will be used for operations on the imported wallet</p>
-
-    <v-button
-      :loading="isCreating"
-      class-name="is-primary is-cta"
+    <password-modal
+      v-if="isPasswordModal"
+      @close="togglePasswordModal"
+      @confirm="handlePasswordConfirm"
     >
-      Import
-    </v-button>
-  </v-form>
+      The wallet password will be used for operations on the imported wallet
+    </password-modal>
+  </div>
 </template>
 
 <script>
 import EthWallet from 'ethereumjs-wallet';
 import { mapActions } from 'vuex';
-import VForm from '@/components/ui/form/VForm.vue';
-import VPassword from '@/components/ui/form/VPassword.vue';
-import VButton from '@/components/ui/form/VButton.vue';
+import VForm from '@/components/ui/form/VForm';
+import VPassword from '@/components/ui/form/VPassword';
+import VButton from '@/components/ui/form/VButton';
+import PasswordModal from '@/components/modal/PasswordModal';
+import modalMixin from '@/mixins/modal';
 
 export default {
   name: 'ImportFromJson',
   data: () => ({
     isCreating: false,
     jsonKeystorePassword: '',
-    walletPassword: null,
     fileName: '',
     file: null,
   }),
   methods: {
     ...mapActions('accounts', ['addWalletWithV3']),
-    parseJson() {
+    handlePasswordConfirm(walletPassword) {
       const reader = new FileReader();
-      reader.onload = this.addWalletWithJson.bind(this);
+      reader.onload = ({ target: { result: fileData } }) =>
+        this.addWalletWithJson(fileData, walletPassword);
 
       try {
         reader.readAsText(this.file);
@@ -90,16 +95,16 @@ export default {
         });
       }
     },
-    async addWalletWithJson(e) {
+    async addWalletWithJson(fileData, walletPassword) {
       this.isCreating = true;
 
       await new Promise(res => setTimeout(res, 20));
 
       try {
-        this.addWalletWithV3({
-          json: JSON.parse(e.target.result),
+        await this.addWalletWithV3({
+          json: JSON.parse(fileData),
           jsonPassword: this.jsonKeystorePassword,
-          walletPassword: this.walletPassword,
+          walletPassword,
         });
         this.$router.push('/');
       } catch (e) {
@@ -121,6 +126,7 @@ export default {
         }
 
         this.errors.add(error);
+        this.togglePasswordModal();
       }
 
       this.isCreating = false;
@@ -142,10 +148,12 @@ export default {
       this.errors.removeById('wrongPass');
     },
   },
+  mixins: [modalMixin],
   components: {
     VForm,
     VPassword,
     VButton,
+    PasswordModal,
   },
 };
 </script>

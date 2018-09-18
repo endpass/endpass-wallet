@@ -53,42 +53,46 @@ describe('ImportFromSeed', () => {
   });
 
   describe('methods', () => {
-    describe('addWallet', () => {
+    describe('handlePasswordConfirm', () => {
+      const password = 'password';
+
       it('should call vuex addMultiHdWallet with correct arguments', done => {
-        const data = {
-          key: 'kek',
-          password: 'kek',
-        };
+        const key = 'key';
 
-        expect.assertions(1);
+        expect.assertions(2);
 
-        wrapper.setData(data);
-        wrapper.vm.submitAddWallet().then(() => {
-          expect(actions.addMultiHdWallet).toBeCalledWith(
-            expect.any(Object),
-            data,
-            undefined,
-          );
+        wrapper.setData({ key });
+        wrapper.setMethods({
+          addMultiHdWallet: jest.fn(),
+        });
+
+        wrapper.vm.handlePasswordConfirm(password).then(() => {
+          expect(wrapper.vm.addMultiHdWallet).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.addMultiHdWallet).toBeCalledWith({ key, password });
           done();
         });
+
         jest.runAllTimers();
       });
 
       it('should redirect to root after successful wallet creation', done => {
         expect.assertions(2);
+
         router.push('/kek');
+
         expect(router.currentRoute.fullPath).toBe('/kek');
-        wrapper.vm.submitAddWallet().then(() => {
+        wrapper.vm.handlePasswordConfirm(password).then(() => {
           expect(router.currentRoute.fullPath).toBe('/');
           done();
         });
+
         jest.runAllTimers();
       });
 
       it('should toggle isCreating before and after wallet creation', done => {
         expect.assertions(4);
 
-        wrapper.vm.submitAddWallet().then(() => {
+        wrapper.vm.handlePasswordConfirm(password).then(() => {
           expect(actions.addMultiHdWallet).toBeCalled();
           expect(wrapper.vm.isCreating).toBe(false);
           done();
@@ -105,7 +109,8 @@ describe('ImportFromSeed', () => {
         actions.addMultiHdWallet.mockImplementationOnce(() => {
           throw new Error();
         });
-        wrapper.vm.submitAddWallet().catch(() => {
+
+        wrapper.vm.handlePasswordConfirm(password).catch(() => {
           expect(wrapper.vm.errors.items[0]).toEqual({
             field: 'hdkeyPhrase',
             msg: 'Seed phrase is invalid',
