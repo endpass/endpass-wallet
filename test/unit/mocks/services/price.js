@@ -1,23 +1,14 @@
-import { price } from 'fixtures/price';
+jest.mock('@/services/price', () => {
+  /* eslint-disable global-require */
+  const { price } = require('fixtures/price');
 
-export default {
-  getPrice(symbol) {
-    if (symbol === 'ETH-TEST') {
-      return jest.fn().mockResolvedValue({
-        USD: 0,
-      });
-    }
+  return {
+    getPrice: jest.fn().mockResolvedValue(price),
 
-    return jest.fn().mockResolvedValue(price);
-  },
+    getEthPrice: jest.fn().mockResolvedValue(price),
 
-  getEthPrice() {
-    return jest.fn().mockResolvedValue(price);
-  },
-
-  getPrices() {
-    return jest.fn().mockResolvedValue({
+    getPrices: jest.fn().mockResolvedValue({
       ETH: price,
-    });
-  },
-};
+    }),
+  };
+});

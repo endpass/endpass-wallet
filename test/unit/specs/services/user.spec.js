@@ -308,7 +308,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(3);
 
-      mock.onAny(url).reply(config => {
+      axiosMock.onAny(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify(accounts));
@@ -319,7 +319,7 @@ describe('User service', () => {
     });
 
     it('should handle successful POST /accounts request', async () => {
-      mock.onPost(url).reply(200, successResp);
+      axiosMock.onPost(url).reply(200, successResp);
 
       expect.assertions(1);
 
@@ -329,7 +329,7 @@ describe('User service', () => {
     });
 
     it('should handle rejected GET /accounts request', async () => {
-      mock.onPost(url).reply(404);
+      axiosMock.onPost(url).reply(404);
 
       expect.assertions(1);
 

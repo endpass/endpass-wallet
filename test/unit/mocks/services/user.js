@@ -1,7 +1,7 @@
 import userService from '@/services/user';
 
 jest.mock('@/services/user', () => {
-  /* eslint-disable-next-line */
+  /* eslint-disable global-require */
   const { settings, addresses, v3, hdv3 } = require('fixtures/accounts');
 
   const getAccountByAddress = address => {

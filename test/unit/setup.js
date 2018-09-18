@@ -1,7 +1,12 @@
 import Vue from 'vue';
+
 import 'jest-localstorage-mock';
 import 'mocks/web3';
 import 'mocks/services/user';
+import 'mocks/services/ethplorer';
+import 'mocks/services/gas-price';
+import 'mocks/services/price';
+import 'mocks/services/tokeninfo';
 
 Vue.config.productionTip = false;
 

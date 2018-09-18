@@ -1,7 +1,8 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import ethplorerService from '@/services/ethplorer';
 import { address } from 'fixtures/accounts';
+
+const ethplorerService = require.requireActual('@/services/ethplorer').default;
 
 describe('Ethplorer service', () => {
   const apiUrl = 'https://api.ethplorer.io';

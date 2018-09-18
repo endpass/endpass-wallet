@@ -362,8 +362,6 @@ describe('Accounts actions', () => {
     it('should save HD wallet', async () => {
       keystore.isExtendedPublicKey = jest.fn().mockReturnValueOnce(true);
 
-      await actions.saveHdWallet(null, v3);
-
       expect.assertions(2);
 
       await commitWallet({ state, commit }, { wallet });
@@ -673,7 +671,7 @@ describe('Accounts actions', () => {
       );
 
       expect(validatePassword).toHaveBeenCalledTimes(1);
-      expect(isValid).toBeTruthy();
+      expect(isValid).toBe(true);
     });
 
     it('should validate the password through the hdKey when the public account', async () => {
@@ -725,8 +723,8 @@ describe('Accounts actions', () => {
 
       await actions.setUserHdKey({ commit, dispatch });
 
-      expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+      expect(dispatch).toBeCalledTimes(1);
+      expect(dispatch).toBeCalledWith('errors/emitError', error, {
         root: true,
       });
     });
