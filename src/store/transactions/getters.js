@@ -86,7 +86,7 @@ const incomingTransactions = (state, getters, rootState) => {
 
   const address = rootState.accounts.address.getChecksumAddressString();
 
-  return getters.accountTransactions.filter(({ to }) => to === address);
+  return getters.currentNetTransactions.filter(({ to }) => to === address);
 };
 
 const getPendingTransactions = state => state.pendingTransactions;

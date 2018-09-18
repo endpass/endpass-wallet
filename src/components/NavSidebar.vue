@@ -245,7 +245,7 @@ import modalMixin from '@/mixins/modal';
 import NewAccountModal from '@/components/modal/NewAccountModal';
 
 export default {
-  name: 'nav-sidebar',
+  name: 'NavSidebar',
   data() {
     return {
       navMenuActive: false,

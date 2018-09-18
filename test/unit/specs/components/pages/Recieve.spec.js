@@ -51,7 +51,7 @@ describe('ReceivePage', () => {
         transactions: {
           namespaced: true,
           getters: {
-            currentNetTransactions: jest
+            incomingTransactions: jest
               .fn()
               .mockReturnValue(transactions.ethplorerTransactions),
           },
@@ -91,37 +91,7 @@ describe('ReceivePage', () => {
     });
   });
 
-  describe('computed', () => {
-    describe('incomingTransactions', () => {
-      it('should filter transaction by to equal to address', () => {
-        expect(wrapper.vm.incomingTransactions.length).toBe(1);
-        expect(wrapper.vm.incomingTransactions[0].to).toBe(walletAddress);
-      });
-    });
-
-    describe('sortedTransactions', () => {
-      it('should sort transaction by timestamp', () => {
-        wrapper.setComputed({
-          incomingTransactions: transactions.ethplorerHistory,
-        });
-        expect(wrapper.vm.incomingTransactions[0]).toBe(
-          transactions.ethplorerHistory[0],
-        );
-      });
-    });
-  });
-
   describe('methods', () => {
-    describe('isPublicWallet', () => {
-      it('should return true if object is an instance of Address', () => {
-        const addressInstance = new Address(publicWalletAddress);
-        expect(wrapper.vm.isPublicWallet(addressInstance)).toBe(true);
-      });
-      it('should return false if object is not an instance of Address', () => {
-        expect(wrapper.vm.isPublicWallet(ethereumWalletMock)).toBe(false);
-      });
-    });
-
     describe('getHistory', () => {
       it("shouldn't call updateTransactionHistory if address is not present", async () => {
         expect.assertions(2);

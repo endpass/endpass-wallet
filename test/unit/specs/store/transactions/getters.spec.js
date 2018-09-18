@@ -212,6 +212,74 @@ describe('transactions getters', () => {
     });
   });
 
+  describe('incomingTransactions', () => {
+    it('should return empty array', () => {
+      const mockGetters = {
+        currentNetTransactions: [
+          {
+            to: 1,
+          },
+          {
+            to: 1,
+          },
+          {
+            to: 2,
+          },
+        ],
+      };
+      const rootState = {
+        accounts: {
+          address: null,
+        },
+      };
+
+      expect(
+        state.getters.incomingTransactions(
+          stateInstance,
+          mockGetters,
+          rootState,
+        ),
+      ).toEqual([]);
+    });
+
+    it('should return an array of addresses with to equal to active wallet addres', () => {
+      const mockGetters = {
+        currentNetTransactions: [
+          {
+            to: 1,
+          },
+          {
+            to: 1,
+          },
+          {
+            to: 2,
+          },
+        ],
+      };
+      const rootState = {
+        accounts: {
+          address: {
+            getChecksumAddressString: jest.fn().mockReturnValue(1),
+          },
+        },
+      };
+
+      expect(
+        state.getters.incomingTransactions(
+          stateInstance,
+          mockGetters,
+          rootState,
+        ),
+      ).toEqual([
+        {
+          to: 1,
+        },
+        {
+          to: 1,
+        },
+      ]);
+    });
+  });
   describe('currentNetTransactions', () => {
     it('should filter trasactions by network id', () => {
       const getters = {

@@ -99,7 +99,14 @@ exports[`ReceivePage render should render component 1`] = `
         >
           <ul
             class="transactions"
-          />
+          >
+            <li>
+              <!---->
+            </li>
+            <li>
+              <!---->
+            </li>
+          </ul>
         </div>
       </div>
     </div>
