@@ -292,7 +292,7 @@ import VSelect from '@/components/ui/form/VSelect';
 import AccountChooser from '@/components/AccountChooser';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
-import web3 from '@/utils/web3';
+import web3, { isAddressOfContract } from '@/utils/web3';
 import { getShortStringWithEllipsis } from '@/utils/strings';
 import { uniq } from '@/utils/arrays';
 
@@ -668,7 +668,9 @@ export default {
       try {
         this.estimateGasCost = await transaction.getFullPrice(web3.eth);
       } catch (err) {
-        if (err.message.includes('always failing transaction')) {
+        const isContract = await isAddressOfContract(transaction.to);
+
+        if (!isContract && err.message.includes('always failing transaction')) {
           this.ensError = 'Transaction will always fail, try other address.';
         }
       }
