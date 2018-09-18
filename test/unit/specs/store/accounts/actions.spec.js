@@ -8,7 +8,7 @@ import {
   privateKeyString,
   checksumAddress,
 } from 'fixtures/accounts';
-import { Wallet, Address } from '@/class';
+import { Wallet, Address, NotificationError } from '@/class';
 import actions from '@/store/accounts/actions';
 import {
   SET_ADDRESS,
@@ -177,10 +177,13 @@ describe('Accounts actions', () => {
       });
     });
 
-    it('should handle errors', async () => {
+    it('should handle notification errors', async () => {
       expect.assertions(2);
 
-      const error = new Error('error');
+      const error = new NotificationError({
+        title: 'title',
+        text: 'text',
+      });
       const spy = jest
         .spyOn(Wallet.prototype, 'getPrivateKeyString')
         .mockImplementation(() => {
@@ -193,6 +196,26 @@ describe('Accounts actions', () => {
       expect(dispatch).toBeCalledWith('errors/emitError', error, {
         root: true,
       });
+
+      spy.mockRestore();
+    });
+
+    it('should handle errors without notifications', async () => {
+      expect.assertions(2);
+
+      const error = new Error('error');
+      const spy = jest
+        .spyOn(Wallet.prototype, 'getPrivateKeyString')
+        .mockImplementation(() => {
+          throw error;
+        });
+
+      try {
+        await actions.addWalletWithV3({ commit, dispatch }, v3);
+      } catch (e) {
+        expect(e).toEqual(error);
+        expect(dispatch).toHaveBeenCalledTimes(0);
+      }
 
       spy.mockRestore();
     });
