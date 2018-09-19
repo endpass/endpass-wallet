@@ -83,6 +83,7 @@ describe('LoginModal', () => {
       const $route = {
         query: {},
       };
+      const $ga = { event: jest.fn() };
 
       localVue.use(Vuex);
       localVue.use(Notifications);
@@ -105,7 +106,7 @@ describe('LoginModal', () => {
       wrapper = shallow(LoginModal, {
         store,
         localVue,
-        mocks: { $route, $router },
+        mocks: { $route, $router, $ga },
       });
     });
 
