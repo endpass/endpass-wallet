@@ -18,6 +18,7 @@ Vue.use(Notifications);
 
 Vue.use(VueAnalytics, {
   id: googleAnalyticsId,
+  router,
   debug: {
     sendHitTask: isProduction,
   },
