@@ -71,9 +71,18 @@ export default {
         type: 'is-info',
         text: 'Logged In',
       });
+
+      this.$ga.event({
+        eventCategory: 'onboarding',
+        eventAction: 'login_success',
+      });
     },
     handleFailedLogin(err) {
       this.emitError(err);
+      this.$ga.event({
+        eventCategory: 'onboarding',
+        eventAction: 'login_fail',
+      });
     },
     close() {
       this.$emit('close');

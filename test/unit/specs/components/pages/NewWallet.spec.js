@@ -113,10 +113,14 @@ describe('NewWallet page', () => {
           actions,
         });
         const localVue = createLocalVue();
+        const $ga = { event: jest.fn() };
 
         wrapper = shallow(NewWallet, {
           localVue,
           store,
+          mocks: {
+            $ga,
+          },
           mixins: [VueTimers],
         });
 

@@ -45,9 +45,6 @@ import AppFooter from '@/components/AppFooter.vue';
 
 export default {
   name: 'App',
-  created() {
-    this.$store.dispatch('init');
-  },
   mixins: [errorHandler],
   components: {
     NavSidebar,
@@ -55,6 +52,14 @@ export default {
     QuickActions,
     PageLoader,
     AppFooter,
+  },
+  created() {
+    this.$store.dispatch('init');
+  },
+  mounted() {
+    this.$intercom.boot();
+    // TODO configure and enable
+    //this.$intercom.show();
   },
 };
 </script>

@@ -97,6 +97,10 @@ export default {
     // TODO consider gap limit if multiple hd accounts are already used
     createNewAccount() {
       this.togglePasswordModal();
+      this.$ga.event({
+        eventCategory: 'onboarding',
+        eventAction: 'create_new_account',
+      });
     },
     togglePasswordModal() {
       this.isPasswordModal = !this.isPasswordModal;

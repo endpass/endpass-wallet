@@ -30,6 +30,9 @@ const kdfParams = {
   n: 8192,
 };
 
+const googleAnalyticsId = 'UA-115004766-3';
+const intercomAppId = 'ap1xxb8t';
+
 export default {
   hdKeyMnemonic,
   infuraConf,
@@ -44,4 +47,6 @@ export default {
   tokenInfoAPIUrl,
   fiatPriceAPIUrl,
   kdfParams,
+  googleAnalyticsId,
+  intercomAppId,
 };
