@@ -28,26 +28,34 @@
                 :disabled="isSyncing"
                 class="level-item has-text-info"
                 title="Resend"
+                role="button"
+                data-test="transaction-resend-button"
                 @click="resend"
               >
                 <span
                   class="icon is-small"
                   v-html="require('@/img/loop.svg')"
                 />
-                <span class="caption is-hidden-mobile">Resend</span>
+                <span class="caption is-hidden-mobile">
+                  Resend
+                </span>
               </a>
               <a
                 v-if="transaction.state === 'pending' && !isPublicAccount"
                 :disabled="isSyncing"
                 class="level-item has-text-danger"
                 title="Cancel"
+                role="button"
+                data-test="transaction-cancel-button"
                 @click="cancel"
               >
                 <span
                   class="icon is-small"
                   v-html="require('@/img/ban.svg')"
                 />
-                <span class="caption is-hidden-mobile">Cancel</span>
+                <span class="caption is-hidden-mobile">
+                  Cancel
+                </span>
               </a>
             </template>
 
@@ -225,12 +233,6 @@ export default {
   },
   methods: {
     ...mapActions('transactions', ['resendTransaction', 'cancelTransaction']),
-    resend() {
-      this.transactionToSend = this.transaction.clone();
-      this.transactionToSend.state = null;
-      this.resendModalOpen = true;
-      this.state = 'resent';
-    },
     requestPassword() {
       this.passwordModalOpen = true;
     },
@@ -268,6 +270,12 @@ export default {
     },
     closeResendModal() {
       this.resendModalOpen = false;
+    },
+    resend() {
+      this.transactionToSend = this.transaction.clone();
+      this.transactionToSend.state = null;
+      this.resendModalOpen = true;
+      this.state = 'resent';
     },
     cancel() {
       if (this.transaction.state !== 'pending') return;
