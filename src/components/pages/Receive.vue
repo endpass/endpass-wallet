@@ -71,14 +71,11 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
-import { ethplorerService } from '@/services';
-import { Token, ERC20Token, Address } from '@/class';
 import web3 from '@/utils/web3';
 import TokenList from '@/components/TokenList';
 import VButton from '@/components/ui/form/VButton';
 import AppTransaction from '@/components/Transaction';
 import Account from '@/components/Account';
-import EthplorerService from '@/services/ethplorer';
 import VSpinner from '@/components/ui/VSpinner';
 
 export default {
@@ -145,7 +142,7 @@ export default {
       let addresses = Object.keys(this.wallets).forEach(this.getBalance);
     },
     async getBalance(address) {
-      let balance = await this.wallets[address].getBalance();
+      let balance = await web3.eth.getBalance(address);
       balance = web3.utils.fromWei(balance);
       this.$set(this.balances, address, balance);
     },
@@ -154,6 +151,7 @@ export default {
     },
     async getTokensList(address) {
       const tokensList = await this.getTokensWithBalanceByAddress({ address });
+      this.$set(this.tokens, address, tokensList);
     },
   },
   created() {

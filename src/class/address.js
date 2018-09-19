@@ -1,4 +1,4 @@
-import web3 from '@/utils/web3';
+import web3 from 'web3';
 
 // A wallet based on an Ethereum address string, to be used in place of
 // ethereumjs-wallet when only the address is available
@@ -22,10 +22,6 @@ export class Address {
 
   getAddressString() {
     return web3.utils.bytesToHex(this.address);
-  }
-
-  async getBalance() {
-    return await web3.eth.getBalance(this.getAddressString());
   }
 
   getChecksumAddressString() {

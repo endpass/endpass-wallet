@@ -1,6 +1,6 @@
 import Tx from 'ethereumjs-tx';
 import { kdfParams } from '@/config';
-import web3 from '@/utils/web3';
+import web3 from 'web3';
 import keyUtil from '@/utils/keystore';
 
 // A Wallet represents a single Ethereum account that can send transactions
@@ -27,10 +27,6 @@ export class Wallet {
 
   getAddressString() {
     return this.v3.address;
-  }
-
-  async getBalance() {
-    return await web3.eth.getBalance(this.getAddressString());
   }
 
   async validatePassword(password) {

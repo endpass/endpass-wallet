@@ -159,9 +159,10 @@ const updateBalance = async ({ commit, dispatch, state }) => {
   if (!state.address) {
     return;
   }
+  const address = state.address.getChecksumAddressString();
 
   try {
-    const balance = await state.address.getBalance();
+    const balance = await web3.eth.getBalance(address);
     commit(SET_BALANCE, balance);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
