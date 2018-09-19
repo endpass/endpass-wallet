@@ -77,6 +77,7 @@ export default {
       if (Array.isArray(this.tokens)) {
         return this.tokens;
       }
+      console.log(this.tokensWithBalance);
       return this.tokensWithBalance;
     },
     // Returns a Map of token symbol to price

@@ -22,6 +22,7 @@ describe('ReceivePage', () => {
   let mock;
   let trxActions;
   let accountsActions;
+  let tokensActions;
   let wrapper;
   let router;
   const walletAddress = ethereumWalletMock.getChecksumAddressString();
@@ -33,6 +34,11 @@ describe('ReceivePage', () => {
 
     accountsActions = {
       selectWallet: jest.fn(),
+    };
+
+    tokensActions = {
+      getTokensWithBalanceByAddress: jest.fn(),
+      getTokensBalances: jest.fn(),
     };
 
     mock = new MockAdapter(axios);
@@ -47,6 +53,10 @@ describe('ReceivePage', () => {
               id: 1,
             },
           },
+        },
+        tokens: {
+          namespaced: true,
+          actions: tokensActions,
         },
         transactions: {
           namespaced: true,
@@ -139,41 +149,17 @@ describe('ReceivePage', () => {
     });
     describe('getBalances', () => {
       it('should call getBalance with all wallets', () => {
-        const getBalance = jest.fn();
-        wrapper.setMethods({
-          getBalance,
-        });
-        expect(getBalance).toHaveBeenCalledTimes(2);
-        expect(getBalance).toHaveBeenNthCalledWith(1, walletAddress, 0, [
-          walletAddress,
-          publicWalletAddress,
-        ]);
-        expect(getBalance).toHaveBeenNthCalledWith(2, publicWalletAddress, 1, [
-          walletAddress,
-          publicWalletAddress,
-        ]);
-      });
-    });
-    describe('getBalance', () => {
-      it('should get and set balance', async () => {
-        expect.assertions(1);
-        await wrapper.vm.getBalance(walletAddress);
-        expect(wrapper.vm.balances[walletAddress]).toBe('0.000000000000000001');
-      });
-    });
-    describe('getBalance', () => {
-      it('should get and set balance', async () => {
-        expect.assertions(1);
-        await wrapper.vm.getBalance(walletAddress);
+        expect.assertions(2);
+        wrapper.vm.getBalances(walletAddress);
+        expect(wrapper.vm.balances[publicWalletAddress]).toBe(
+          '0.000000000000000001',
+        );
         expect(wrapper.vm.balances[walletAddress]).toBe('0.000000000000000001');
       });
     });
     describe('getTokensLists', () => {
-      it('should call getTokensList with all wallets', () => {
-        const getTokensList = jest.fn();
-        wrapper.setMethods({
-          getTokensList,
-        });
+      it('should call get tokens and balances and merge them for all wallets', () => {
+        wrapper.vm.getTokensLists(walletAddress);
         expect(getTokensList).toHaveBeenCalledTimes(2);
         expect(getTokensList).toHaveBeenNthCalledWith(1, walletAddress, 0, [
           walletAddress,

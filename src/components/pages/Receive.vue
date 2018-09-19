@@ -72,6 +72,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import web3 from '@/utils/web3';
+import { Token, ERC20Token } from '@/class';
 import TokenList from '@/components/TokenList';
 import VButton from '@/components/ui/form/VButton';
 import AppTransaction from '@/components/Transaction';
@@ -120,7 +121,10 @@ export default {
   },
   methods: {
     ...mapActions('transactions', ['updateTransactionHistory']),
-    ...mapActions('tokens', ['getTokensWithBalanceByAddress']),
+    ...mapActions('tokens', [
+      'getTokensWithBalanceByAddress',
+      'getTokensBalancesByAddress',
+    ]),
     ...mapActions('accounts', ['selectWallet']),
     async clickSendButton(address) {
       this.selectWallet(address);
@@ -139,23 +143,28 @@ export default {
       this.isLoading = false;
     },
     getBalances() {
-      let addresses = Object.keys(this.wallets).forEach(this.getBalance);
-    },
-    async getBalance(address) {
-      let balance = await web3.eth.getBalance(address);
-      balance = web3.utils.fromWei(balance);
-      this.$set(this.balances, address, balance);
+      Object.keys(this.wallets).forEach(async address => {
+        const balance = await web3.eth.getBalance(address);
+        this.$set(this.balances, address, web3.utils.fromWei(balance));
+      });
     },
     getTokensLists() {
-      Object.keys(this.wallets).forEach(this.getTokensList);
+      Object.keys(this.wallets).forEach(async address => {
+        let tokens = await this.getTokensWithBalanceByAddress({ address });
+        const balances = await this.getTokensBalancesByAddress({
+          tokens: tokens.map(token => new ERC20Token(token.address)),
+        });
+        this.$set(
+          this.tokens,
+          address,
+          tokens.map(token => {
+            const tokenInstance = new Token(token);
+            tokenInstance.balance = balances[token.address];
+            return tokenInstance;
+          }),
+        );
+      });
     },
-    async getTokensList(address) {
-      const tokensList = await this.getTokensWithBalanceByAddress({ address });
-      this.$set(this.tokens, address, tokensList);
-    },
-  },
-  created() {
-    this.getTokensLists();
   },
   components: {
     Account,
