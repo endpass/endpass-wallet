@@ -2,9 +2,12 @@
 
 [![Build Status](https://travis-ci.org/endpass/endpass-wallet.svg?branch=master)](https://travis-ci.org/endpass/endpass-wallet)
 
-Lightweight, easy to use Ethereum wallet.
+The first decentralized cloud wallet for Ethereum and ICO tokens.
 
 ### The "release" branch is the stable version of the wallet.
+Log in to the wallet:
+
+## [https://wallet.endpass.com](https://wallet.endpass.com)
 
 ## Developer Instructions
 

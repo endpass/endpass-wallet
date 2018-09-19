@@ -1,10 +1,10 @@
 <template>
   <component
-    class="login-modal"
-    data-test="login-modal"
+    v-dynamic-events="['confirm', 'close']"
     :is="currentModal"
     :is-loading="isLoading"
-    v-dynamic-events="['confirm', 'close']"
+    class="login-modal"
+    data-test="login-modal"
   />
 </template>
 
@@ -17,51 +17,53 @@ import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
 import error from '@/mixins/error';
 
 export default {
-  name: 'login-modal',
+  name: 'LoginModal',
   data: () => ({
     currentModal: LoginByEmailModal.name,
     isLoading: false,
     email: null,
   }),
   methods: {
-    ...mapActions('accounts', ['login', 'loginViaOTP']),
-    handleLoginByEmailModalConfirm(email) {
-      this.isLoading = true;
+    ...mapActions('user', ['login', 'loginViaOTP']),
+    async handleLoginByEmailModalConfirm(email) {
+      try {
+        this.isLoading = true;
+        const { redirect_uri: redirectUri } = this.$route.query;
+        const challengeType = await this.login({ email, redirectUri });
 
-      return this.login(email)
-        .then(challengeType => {
-          if (challengeType === 'otp') {
-            this.email = email;
-            this.currentModal = TwoFactorAuthModal.name;
-            this.isLoading = false;
-          } else if (challengeType === 'email_link') {
-            this.currentModal = ConfirmEmailModal.name;
-            this.isLoading = false;
-          } else {
-            this.handleSuccessfulLogin();
-          }
-        })
-        .catch(this.handleFailedLogin);
+        if (challengeType === 'otp') {
+          this.email = email;
+          this.currentModal = TwoFactorAuthModal.name;
+        } else if (challengeType === 'email_link') {
+          this.currentModal = ConfirmEmailModal.name;
+        } else {
+          this.handleSuccessfulLogin();
+        }
+      } catch (e) {
+        this.handleFailedLogin(e);
+      } finally {
+        this.isLoading = false;
+      }
     },
-    handleTwoFactorAuthModalConfirm(code) {
+    async handleTwoFactorAuthModalConfirm(code) {
       this.isLoading = true;
-      const {
-        email,
-        handleFailedLogin,
-        handleSuccessfulLogin,
-        loginViaOTP,
-      } = this;
 
-      return loginViaOTP({ code, email })
-        .then(handleSuccessfulLogin)
-        .then(this.redirectPage)
-        .catch(handleFailedLogin);
+      try {
+        const { email } = this;
+
+        await this.loginViaOTP({ code, email });
+        this.handleSuccessfulLogin();
+        this.redirectPage();
+      } catch (e) {
+        this.handleFailedLogin(e);
+      } finally {
+        this.isLoading = false;
+      }
     },
     handleClose() {
       this.close();
     },
     handleSuccessfulLogin() {
-      this.isLoading = false;
       this.close();
 
       this.$notify({
@@ -69,10 +71,18 @@ export default {
         type: 'is-info',
         text: 'Logged In',
       });
+
+      this.$ga.event({
+        eventCategory: 'onboarding',
+        eventAction: 'login_success',
+      });
     },
-    handleFailedLogin(error) {
-      this.isLoading = false;
-      this.emitError(error);
+    handleFailedLogin(err) {
+      this.emitError(err);
+      this.$ga.event({
+        eventCategory: 'onboarding',
+        eventAction: 'login_fail',
+      });
     },
     close() {
       this.$emit('close');
@@ -87,11 +97,11 @@ export default {
       }
     },
   },
+  mixins: [error],
   components: {
     LoginByEmailModal,
     ConfirmEmailModal,
     TwoFactorAuthModal,
   },
-  mixins: [error],
 };
 </script>

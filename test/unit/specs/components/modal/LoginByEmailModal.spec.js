@@ -1,4 +1,4 @@
-import { shallow, mount, createLocalVue } from '@vue/test-utils';
+import { shallow, mount } from '@vue/test-utils';
 
 import LoginByEmailModal from '@/components/modal/LoginByEmailModal';
 import { generateStubs } from '@/utils/testUtils';
@@ -7,8 +7,12 @@ describe('LoginByEmailModal', () => {
   let wrapper;
 
   beforeEach(() => {
+    const $ga = { event: jest.fn() };
     wrapper = shallow(LoginByEmailModal, {
       stubs: generateStubs(LoginByEmailModal),
+      mocks: {
+        $ga,
+      },
     });
   });
 

@@ -1,13 +1,20 @@
 <template>
-  <div v-if="isLoading" class="v-spinner is-overlay">
-    <div class="spinner loader"></div>
-    <p v-if="label" class="spinner-label">{{ label }}</p>
+  <div
+    v-if="isLoading"
+    class="v-spinner is-overlay">
+    <div class="spinner loader" />
+    <p
+      v-if="label"
+      class="spinner-label"
+    >
+      {{ label }}
+    </p>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'v-spinner',
+  name: 'VSpinner',
   props: {
     isLoading: {
       type: Boolean,

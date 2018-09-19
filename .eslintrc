@@ -23,7 +23,40 @@
     "import/no-unresolved": [
       "error",
       {
-        "ignore": ["@"]
+        "ignore": ["@", "fixtures"]
+      }
+    ],
+    "vue/order-in-components": [
+      "error",
+      {
+        "order": [
+          "el",
+          "name",
+          "inject",
+          "provide",
+          ["props", "propsData"],
+          "data",
+          "computed",
+          "watch",
+          "methods",
+          "LIFECYCLE_HOOKS",
+          "mixins",
+          "components",
+          [
+            "functional",
+            "delimiters",
+            "comments",
+            "directives",
+            "filters",
+            "parent",
+            "extends",
+            "inheritAttrs",
+            "model",
+            "template",
+            "render",
+            "renderError"
+          ]
+        ]
       }
     ]
   }

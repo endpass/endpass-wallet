@@ -10,20 +10,28 @@
         <div class="level-left">
           <p class="level-item">&copy; 2018 Endpass, Inc</p>
           <p class="level-item">
-            <a target="_blank"
-               class="github-button"
-               href="https://github.com/endpass/endpass-wallet">
-<span class="icon is-small"
-                v-html="require('@/img/github.svg')"></span>
+            <a
+              target="_blank"
+              class="github-button"
+              href="https://github.com/endpass/endpass-wallet"
+            >
+              <span
+                class="icon is-small"
+                v-html="require('@/img/github.svg')"
+              />
               100% Open Source
             </a>
           </p>
           <p class="level-item">
-            <a target="_blank" href="https://help.endpass.com">Support</a>
+            <a
+              target="_blank"
+              href="https://help.endpass.com"
+            >
+              Support
+            </a>
           </p>
         </div>
-        <div class="level-right">
-        </div>
+        <div class="level-right" />
       </div>
     </div>
   </footer>
@@ -31,7 +39,7 @@
 
 <script>
 export default {
-  name: 'app-footer',
+  name: 'AppFooter',
 };
 </script>
 

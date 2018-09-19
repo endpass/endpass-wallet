@@ -32,10 +32,9 @@ describe('Transaction', () => {
           },
           accountsActions,
         },
-        web3: {
+        connectionStatus: {
           namespaced: true,
           state: {
-            web3: {},
             isSyncing: false,
           },
         },

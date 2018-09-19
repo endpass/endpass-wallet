@@ -22,7 +22,7 @@ describe('SettingsPage', () => {
   };
   const storeOptions = {
     modules: {
-      accounts: {
+      user: {
         namespaced: true,
         state: {
           settings: {
@@ -34,6 +34,15 @@ describe('SettingsPage', () => {
           },
         },
         actions,
+      },
+      accounts: {
+        namespaced: true,
+        getters: {
+          hdWallet: jest.fn(),
+          decryptedWallets: jest.fn(),
+          encryptedWallets: jest.fn(),
+          encryptedHdWallet: jest.fn(),
+        },
       },
     },
   };
@@ -75,7 +84,7 @@ describe('SettingsPage', () => {
     wrapper.setData({ newSettings });
     wrapper.vm.updateSettings(newSettings);
 
-    expect(actions.updateSettings.mock.calls).toHaveLength(1);
+    expect(actions.updateSettings).toHaveBeenCalledTimes(1);
     expect(actions.updateSettings).toBeCalledWith(
       expect.any(Object),
       newSettings,

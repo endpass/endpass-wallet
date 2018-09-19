@@ -1,13 +1,25 @@
 <template>
   <div class="menu">
-    <p class="menu-label"
-       v-if="label">{{ label }}</p>
-    <ul class="menu-list"
-        v-if="!isEmpty">
-      <li v-for="(value, key) in list"
-          :key="key">
-        <a @click.prevent="active = key"
-           :class="{'is-active': active === key}">{{ value }}</a>
+    <p
+      v-if="label"
+      class="menu-label"
+    >
+      {{ label }}
+    </p>
+    <ul
+      v-if="!isEmpty"
+      class="menu-list"
+    >
+      <li
+        v-for="(value, key) in list"
+        :key="key"
+      >
+        <a
+          :class="{'is-active': active === key}"
+          @click.prevent="active = key"
+        >
+          {{ value }}
+        </a>
       </li>
     </ul>
   </div>
@@ -15,10 +27,7 @@
 
 <script>
 export default {
-  name: 'v-list',
-  data: () => ({
-    active: null,
-  }),
+  name: 'VList',
   props: {
     label: {
       type: String,
@@ -29,6 +38,9 @@ export default {
       default: () => ({}),
     },
   },
+  data: () => ({
+    active: null,
+  }),
   computed: {
     isEmpty() {
       return !Object.keys(this.list).length;

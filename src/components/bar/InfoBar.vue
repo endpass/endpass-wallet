@@ -1,39 +1,53 @@
 <template>
-  <div class="section info-bar" :class="networkClass">
+  <div
+    :class="networkClass"
+    class="section info-bar"
+  >
     <div class="info-item">
       <div class="field">
-				<p class="heading">Status</p>
-				<div class="control is-expanded">
-					<sync-status/>
-				</div>
+        <p class="heading">Status</p>
+        <div class="control is-expanded">
+          <sync-status/>
+        </div>
       </div>
     </div>
 
     <div class="info-item">
-			<p class="heading">Balance</p>
-      <balance :amount="balance || 0" class="level-stat"
-      :currency="activeCurrency.name" :round="4" />
+      <p class="heading">Balance</p>
+      <balance
+        :amount="balance || 0"
+        :currency="activeCurrency.name"
+        :round="4"
+        class="level-stat"
+      />
     </div>
     <div class="info-item">
-			<p class="heading">Value</p>
-      <balance :is-loading="priceLoading" :amount="balance || 0"
-        :price="price || 0" :decimals="2" :round="0"
-      :currency="fiatCurrency" v-on:update="updatePrice" class="level-stat" />
+      <p class="heading">Value</p>
+      <balance
+        :is-loading="priceLoading"
+        :amount="balance || 0"
+        :price="price || 0"
+        :decimals="2"
+        :round="0"
+        :currency="fiatCurrency"
+        class="level-stat"
+        @update="updatePrice"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
-import AccountChooser from '@/components/bar/AccountChooser.vue';
 import SyncStatus from '@/components/bar/SyncStatus.vue';
 import Balance from '@/components/Balance';
 import net from '@/mixins/net';
 
 export default {
+  name: 'info-bar',
   computed: {
     ...mapState({
-      fiatCurrency: state => state.accounts.settings.fiatCurrency,
+      fiatCurrency: state => state.user.settings.fiatCurrency,
       activeCurrency: state => state.web3.activeCurrency,
       price: state => state.price.price,
       priceLoading: state => state.price.isLoading,
@@ -45,12 +59,11 @@ export default {
   methods: {
     ...mapActions('price', ['updatePrice']),
   },
+  mixins: [net],
   components: {
-    AccountChooser,
     SyncStatus,
     Balance,
   },
-  mixins: [net],
 };
 </script>
 

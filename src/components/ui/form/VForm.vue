@@ -1,12 +1,15 @@
 <template>
-  <form class="control" @submit.prevent="submit">
+  <form
+    class="control"
+    @submit.prevent="submit"
+  >
     <slot />
   </form>
 </template>
 
 <script>
 export default {
-  name: 'v-form',
+  name: 'VForm',
   inject: ['$validator'],
   provide() {
     const form = {};
@@ -50,9 +53,6 @@ export default {
           type: 'is-warning',
         });
       }
-    },
-    validateFrom() {
-      this.$emit('formValid', this.isFormValid());
     },
   },
 };

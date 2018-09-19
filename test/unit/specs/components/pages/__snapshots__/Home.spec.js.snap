@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Home page render should render initial state of the component 1`] = `
+<div
+  class="home-page app-page"
+>
+  <div>
+    <div
+      class="section"
+    >
+      <div
+        class="has-text-centered"
+      >
+        <div
+          class="card app-card main-app-card"
+        >
+          <div
+            class="card-content"
+          >
+            <div>
+              <h1
+                class="title"
+              >
+                Welcome
+              </h1>
+               
+              <p
+                class="subtitle"
+              >
+                Get started by generating an
+              Ethereum wallet.
+              </p>
+               
+              <div
+                class="is-centered"
+              >
+                <router-link
+                  class="button is-success is-cta"
+                  to="[object Object]"
+                >
+                  
+                  Create New Wallet
+                
+                </router-link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -9,7 +9,10 @@
                 <p class="card-header-title">Your Tokens</p>
               </div>
               <div class="card-content is-narrow">
-                <nav v-if="isLoading || trackedTokens.length" class="panel">
+                <nav
+                  v-if="isLoading || trackedTokens.length"
+                  class="panel"
+                >
                   <div class="panel-block">
                     <search-input v-model="search" />
                   </div>
@@ -22,12 +25,15 @@
                       :tokens="userTokenList"
                       :has-remove="true"
                       :item-class="'panel-block is-clearfix is-block'"
-                    >
-                    </token-list>
+                    />
                   </div>
                 </nav>
-                <p v-else class="small">You have no tokens on this network. Add
-                some!</p>
+                <p
+                  v-else
+                  class="small"
+                >
+                  You have no tokens on this network. Add some!
+                </p>
               </div>
             </div>
           </div>
@@ -38,7 +44,10 @@
                   Add Token
                 </div>
                 <div class="card-header-icon">
-                  <a class="button is-outlined is-info is-small" @click.prevent="openAddTokenModal()">
+                  <a
+                    class="button is-outlined is-info is-small"
+                    @click.prevent="openAddTokenModal()"
+                  >
                     Add Custom Token
                   </a>
                 </div>
@@ -48,15 +57,19 @@
                   :allow-empty="false"
                   :internal-search="false"
                   :options="searchTokenList"
-                  :optionsLimit="10"
+                  :options-limit="10"
                   :show-labels="false"
                   track-by="address"
                   label="name"
                   placeholder="Type to search tokens..."
                   @search-change="setSearchToken"
                   @select="saveTokenAndSubscribe({token: $event })"
+                >
+                  <span
+                    slot="option"
+                    slot-scope="props"
+                    class="multiselect-option"
                   >
-                  <span class="multiselect-option" slot="option" slot-scope="props">
                     <v-token :token="props.option" />
                   </span>
                 </multiselect>
@@ -87,7 +100,7 @@ import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapActions, mapGetters } from 'vuex';
 
 export default {
-  name: 'tokens-page',
+  name: 'TokensPage',
   data() {
     return {
       search: '',
@@ -103,14 +116,14 @@ export default {
       trackedTokens: state => state.tokens.trackedTokens,
       isLoading: state => state.tokens.isLoading,
       ethPrice: state => state.price.price,
-      currency: state => state.accounts.settings.fiatCurrency,
+      currency: state => state.user.settings.fiatCurrency,
     }),
     ...mapGetters('tokens', ['net', 'tokensWithBalance']),
     // All tokens that are available to add
     // TODO convert all addresses to checksum in store
     filteredTokens() {
       return Object.values(this.allTokens).filter(token => {
-        let address = token.address.toLowerCase();
+        const address = token.address.toLowerCase();
         return !this.trackedTokens
           .map(addr => addr.toLowerCase())
           .includes(address);

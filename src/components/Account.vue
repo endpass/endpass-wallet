@@ -1,19 +1,25 @@
 <template>
   <div class="media account">
     <div class="media-left">
-        <p class="image is-32x32">
-          <img class="identicon" :src="icon">
-        </p>
+      <p class="image is-32x32">
+        <img
+          :src="icon"
+          class="identicon"
+        >
+      </p>
     </div>
     <div class="media-content">
       <div class="content">
         <h5 class="address">{{ addressFmt }}</h5>
-        <slot></slot>
+        <slot />
       </div>
     </div>
     <div class="media-right">
-        <balance v-if="balance && balance.length" :amount="balance"
-        :currency="currency" />
+      <balance
+        v-if="balance && balance.length"
+        :amount="balance"
+        :currency="currency"
+      />
     </div>
   </div>
 </template>
@@ -24,7 +30,6 @@ import Balance from '@/components/Balance';
 
 export default {
   name: 'Account',
-  components: { Balance },
   props: {
     address: {
       type: String,
@@ -45,19 +50,22 @@ export default {
   },
   computed: {
     icon() {
-      const seed = '0x' + this.address.toLowerCase().replace(/^0x/, '');
+      const seed = `0x${this.address.toLowerCase().replace(/^0x/, '')}`;
+
       return makeBlockie(seed);
     },
     addressFmt() {
       if (this.address.length <= this.size) {
         return this.address;
-      } else if (this.size === 0) {
-        return '';
-      } else {
-        return '...' + this.address.substr(this.address.length - this.size);
       }
+
+      if (this.size === 0) {
+        return '';
+      }
+      return `...${this.address.substr(this.address.length - this.size)}`;
     },
   },
+  components: { Balance },
 };
 </script>
 

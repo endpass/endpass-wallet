@@ -1,0 +1,7 @@
+export const CHANGE_CURRENCY = 'CHANGE_CURRENCY';
+
+export const CHANGE_NETWORK = 'CHANGE_NETWORK';
+export const SET_NETWORKS = 'SET_NETWORKS';
+
+export const SET_BLOCK_NUMBER = 'SET_BLOCK_NUMBER';
+export const SET_INTERVAL = 'SET_INTERVAL';

@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit="submitWalletImportForm">
+  <v-form @submit="submitAddWallet">
     <v-input
       id="address"
       key="publicKeyUnique"
@@ -13,31 +13,35 @@
       required
       @input="handleInput"
     />
-    <v-button className="is-primary is-cta"
-              :loading="isCreating">Import</v-button>
+    <v-button
+      :loading="isCreating"
+      class-name="is-primary is-cta"
+    >
+      Import
+    </v-button>
   </v-form>
 </template>
 
 <script>
-import router from '@/router';
 import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import { SET_ADDRESS } from '@/store/accounts/mutations-types';
 
 export default {
-  name: 'import-from-public-key',
+  name: 'ImportFromPublicKey',
   data: () => ({
     isCreating: false,
     address: '',
   }),
   methods: {
     ...mapActions('accounts', ['addWalletWithPublicKey']),
-    async submitWalletImportForm() {
+    async submitAddWallet() {
       this.isCreating = true;
       try {
         await this.addWalletWithPublicKey(this.address);
-        router.push('/');
+        this.$router.push('/');
       } catch (e) {
         this.errors.add({
           field: 'address',

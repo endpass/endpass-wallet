@@ -6,24 +6,30 @@
         :options="networkOptions"
         :show-labels="false"
         :value="activeNet"
-        track-by="id"
+        track-by="url"
         label="name"
         placeholder="Select network"
         @select="selectNet"
       >
-        <template slot="option" slot-scope="props">
+        <template
+          slot="option"
+          slot-scope="props"
+        >
           <div class="multiselect-option">
             {{ props.option.name }}
-            <span class="right" v-if="isCustomNetwork(props.option)">
+            <span
+              v-if="isCustomNetwork(props.option)"
+              class="right"
+            >
               <span
                 class="icon is-small"
+                @click.stop="openCustomProviderModal(props.option)"
                 v-html="require('@/img/pencil.svg')"
-                @click.stop="handleEditProvider(props.option)"
               />
               <span
                 class="icon is-small"
+                @click.stop="deleteNetwork({ network: props.option })"
                 v-html="require('@/img/x.svg')"
-                @click.stop="handleDeleteProvider(props.option)"
               />
             </span>
           </div>
@@ -32,8 +38,8 @@
     </div>
     <custom-provider-modal
       v-if="customProviderModalOpen"
-      @close="closeCustomProviderModal"
       :provider="selectedProvider"
+      @close="closeCustomProviderModal"
     />
   </div>
 </template>
@@ -56,21 +62,18 @@ export default {
     ...mapGetters('web3', ['networks', 'isCustomNetwork']),
     networkOptions() {
       // Options that dispatch methods
-      const actions = [{ id: -1, name: 'Add Custom Network' }];
+      const actions = [{ name: 'Add Custom Network' }];
       return this.networks.concat(actions);
     },
   },
   methods: {
-    ...mapActions('web3', ['changeNetwork', 'deleteProvider']),
+    ...mapActions('web3', ['changeNetwork', 'deleteNetwork']),
     selectNet(net) {
-      if (net.id === -1) {
-        this.openCustomProviderModal();
+      if (net.url) {
+        this.changeNetwork({ networkUrl: net.url });
       } else {
-        this.setNetwork(net.id);
+        this.openCustomProviderModal();
       }
-    },
-    setNetwork(id) {
-      this.changeNetwork(id);
     },
     openCustomProviderModal(network) {
       this.selectedProvider = network;
@@ -78,12 +81,6 @@ export default {
     },
     closeCustomProviderModal() {
       this.customProviderModalOpen = false;
-    },
-    handleEditProvider(network) {
-      this.openCustomProviderModal(network);
-    },
-    handleDeleteProvider(network) {
-      this.deleteProvider({ network });
     },
   },
   components: {

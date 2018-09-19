@@ -2,23 +2,35 @@
   <base-page class="settings-page">
     <template slot="title">Settings</template>
 
-    <v-form id="save-settings" class="save-settings" @submit="updateSettings">
+    <v-form
+      id="save-settings"
+      class="save-settings"
+      @submit="updateSettings"
+    >
       <div class="field">
         <label class="label">Email Address</label>
         <div class="control">
-          <input class="input is-static" type="email" :value="email" readonly>
+          <input
+            :value="email"
+            class="input is-static"
+            type="email"
+            readonly
+          >
         </div>
         <p class="help">Contact support if you need to change your email
-          address.</p>
+        address.</p>
       </div>
-      <v-select v-model="newSettings.fiatCurrency"
-                label="Fiat Currency"
-                name='fiatCurrency'
-                @input="updateSettings"
-                :options="availableCurrencies" />
+      <v-select
+        v-model="newSettings.fiatCurrency"
+        :options="availableCurrencies"
+        label="Fiat Currency"
+        name="fiatCurrency"
+        @input="updateSettings"
+      />
 
     </v-form>
     <two-factor-auth-settings/>
+    <change-password-settings/>
   </base-page>
 </template>
 
@@ -30,22 +42,23 @@ import error from '@/mixins/error';
 import VSelect from '@/components/ui/form/VSelect.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
+import ChangePasswordSettings from '@/components/ChangePasswordSettings';
 
 export default {
-  name: 'settings-page',
+  name: 'SettingsPage',
   data: () => ({
     newSettings: {
       fiatCurrency: 'USD',
     },
   }),
   computed: {
-    ...mapState('accounts', ['settings', 'availableCurrencies', 'email']),
+    ...mapState('user', ['settings', 'availableCurrencies', 'email']),
     isSettingsChange() {
       return JSON.stringify(this.settings) !== JSON.stringify(this.newSettings);
     },
   },
   methods: {
-    ...mapActions('accounts', {
+    ...mapActions('user', {
       updateSettingsInStore: 'updateSettings',
     }),
     updateSettings() {
@@ -58,13 +71,6 @@ export default {
       });
     },
   },
-  components: {
-    BasePage,
-    VForm,
-    VSelect,
-    VButton,
-    TwoFactorAuthSettings,
-  },
   mounted() {
     try {
       this.newSettings = JSON.parse(JSON.stringify(this.settings));
@@ -73,11 +79,19 @@ export default {
     }
   },
   mixins: [error],
+  components: {
+    BasePage,
+    VForm,
+    VSelect,
+    VButton,
+    TwoFactorAuthSettings,
+    ChangePasswordSettings,
+  },
 };
 </script>
 
 <style lang="scss">
-.save-settings .field:last-child {
+.settings-page .field:last-child {
   margin-bottom: 0.75rem;
 }
 </style>

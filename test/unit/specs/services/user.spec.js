@@ -16,7 +16,8 @@ describe('User service', () => {
   });
 
   describe('login', () => {
-    const url = `${identityAPIUrl}/auth`;
+    const redirectUri = '/send?to=0x1234&amount=0.1';
+    const url = `${identityAPIUrl}/auth?redirect_uri=%2Fsend%3Fto%3D0x1234%26amount%3D0.1`;
     const email = '123@email.com';
 
     const successResp = {
@@ -33,19 +34,24 @@ describe('User service', () => {
     });
 
     it('should make correct request', async () => {
+      expect.assertions(2);
+
       mock.onPost(url).reply(config => {
-        expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify({ email }));
 
         return [200, successResp];
       });
-      await userService.login(email);
+
+      await userService.login({ email, redirectUri });
     });
 
     it('should handle successfull POST /auth request', async () => {
+      expect.assertions(1);
+
       mock.onPost(url).reply(200, successResp);
-      let challengeType = await userService.login(email);
+
+      const challengeType = await userService.login({ email, redirectUri });
 
       expect(challengeType).toBe(successResp.challenge.challenge_type);
     });
@@ -283,6 +289,57 @@ describe('User service', () => {
       mock.onPost(url).reply(200, successResp);
       let resp = await userService.setAccount(address, account);
       expect(resp).toEqual(successResp);
+    });
+  });
+
+  describe('updateAccounts', () => {
+    const url = `${identityAPIUrl}/accounts`;
+    const accounts = {
+      'address 1': {},
+      'address 2': {},
+    };
+    const successResp = {
+      success: true,
+    };
+    const expectedError = new NotificationError({
+      title: 'Error updating accounts',
+      text: `An error occurred updating accounts. Please try again later`,
+      type: 'is-danger',
+    });
+
+    it('should make correct request', async () => {
+      expect.assertions(3);
+
+      mock.onAny(url).reply(config => {
+        expect(config.method).toBe('post');
+        expect(config.url).toBe(url);
+        expect(config.data).toBe(JSON.stringify(accounts));
+
+        return [200];
+      });
+      await userService.updateAccounts(accounts);
+    });
+
+    it('should handle successful POST /accounts request', async () => {
+      mock.onPost(url).reply(200, successResp);
+
+      expect.assertions(1);
+
+      const response = await userService.updateAccounts(accounts);
+
+      expect(response).toEqual(successResp);
+    });
+
+    it('should handle rejected GET /accounts request', async () => {
+      mock.onPost(url).reply(404);
+
+      expect.assertions(1);
+
+      try {
+        await userService.updateAccounts(accounts);
+      } catch (receivedError) {
+        expect(receivedError).toEqual(expectedError);
+      }
     });
   });
 

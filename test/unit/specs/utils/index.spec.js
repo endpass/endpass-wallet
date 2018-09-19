@@ -13,67 +13,31 @@ jest.mock('@/store', () => ({
   }),
 }));
 
-describe('kebabToCamel', () => {
-  it('should replace kebab notation to camel notation', () => {
-    const received = 'replace-to-camel-notation';
-    const expected = 'replaceToCamelNotation';
+describe('utils', () => {
+  describe('getInitializedValueFromStore', () => {
+    const value = 'value';
+    const { module } = store.state;
 
-    expect(utils.kebabToCamel(received)).toBe(expected);
-  });
+    it('should return already initialized value', async () => {
+      module.field = value;
 
-  it('should not do anything', () => {
-    let text = 'textInCamelNotation';
+      const receivedValue = await utils.getInitializedValueFromStore(
+        module,
+        'field',
+      );
 
-    expect(utils.kebabToCamel(text)).toBe(text);
+      expect(receivedValue).toBe(value);
+    });
 
-    text = 'oneword';
+    it('should return just initialized value', async () => {
+      module.field = null;
 
-    expect(utils.kebabToCamel(text)).toBe(text);
-  });
-});
+      const receivedValue = await utils.getInitializedValueFromStore(
+        module,
+        'field',
+      );
 
-describe('camelToKebab', () => {
-  it('should replace camel notation to kebab notation', () => {
-    const received = 'replaceToKebabNotation';
-    const expected = 'replace-to-kebab-notation';
-
-    expect(utils.camelToKebab(received)).toBe(expected);
-  });
-
-  it('should not do anything', () => {
-    let text = 'text-in-kebab-notation';
-
-    expect(utils.camelToKebab(text)).toBe(text);
-
-    text = 'oneword';
-
-    expect(utils.camelToKebab(text)).toBe(text);
-  });
-});
-
-describe('getInitializedValueFromStore', () => {
-  const value = 'value';
-  const { module } = store.state;
-
-  it('should return already initialized value', async () => {
-    module.field = value;
-
-    const receivedValue = await utils.getInitializedValueFromStore(
-      module,
-      'field',
-    );
-
-    expect(receivedValue).toBe(value);
-  });
-
-  it('should return just initialized value', async () => {
-    module.field = null;
-
-    const receivedValue = await utils.getInitializedValueFromStore(
-      module,
-      'field',
-    );
-
-    expect(receivedValue).toBe('new value');
+      expect(receivedValue).toBe('new value');
+    });
   });
 });

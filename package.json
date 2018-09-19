@@ -9,6 +9,7 @@
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "unit": "jest --config test/unit/jest.conf.js",
+    "unit:watch": "jest --config test/unit/jest.conf.js --watch",
     "test": "npm run unit",
     "e2e": "cypress run",
     "e2e:open": "cypress open",
@@ -16,7 +17,8 @@
     "dev-build": "node build/build.js",
     "pre-commit": "lint-staged",
     "lint": "eslint '**/*.{js,vue,json}' --quiet",
-    "format": "prettier --write '**/*.{js,vue,json}'"
+    "format": "prettier --write '**/*.{js,vue,json}'",
+    "format:templates": "eslint src/**/*.vue --fix"
   },
   "pre-commit": [
     "pre-commit"
@@ -35,6 +37,7 @@
     "eth-ens-namehash": "^2.0.8",
     "ethereum-blockies-base64": "^1.0.2",
     "ethereum-ens": "^0.7.4",
+    "ethereum-tx-decoder": "^2.0.1",
     "ethereumjs-tx": "^1.3.4",
     "ethereumjs-wallet": "^0.6.0",
     "keythereum": "^1.0.4",
@@ -44,6 +47,8 @@
     "throttled-queue": "^1.0.5",
     "vee-validate": "^2.0.9",
     "vue": "^2.5.2",
+    "vue-analytics": "^5.12.2",
+    "vue-intercom": "^1.0.12",
     "vue-multiselect": "^2.1.0",
     "vue-notification": "^1.3.7",
     "vue-router": "^3.0.1",

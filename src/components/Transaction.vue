@@ -1,80 +1,109 @@
 <template lang="html">
-  <div class="transaction" :class="statusClass">
+  <div
+    :class="statusClass"
+    class="transaction"
+  >
     <div class="transaction-header">
-      <account :address="txAddress" :balance="transaction.value.toString()"
-        :currency="symbol" >
-      <div class="transaction-actions level is-mobile">
-        <div class="level-left">
-          <div class="level-item">
-            <span class="date">{{date.fromNow()}}</span>
+      <account
+        :address="txAddress"
+        :balance="transaction.value.toString()"
+        :currency="symbol"
+      >
+        <div class="transaction-actions level is-mobile">
+          <div class="level-left">
+            <div class="level-item">
+              <span class="date">{{ date.fromNow() }}</span>
+            </div>
+          </div>
+          <div class="level-right">
+            <v-spinner
+              v-if="isHavePendingRelatedTransaction && transaction.state === 'pending'"
+              :is-loading="isHavePendingRelatedTransaction"
+              :label="pendingActionText"
+              class="level-item has-text-info actions-loader"
+            />
+            <template v-else>
+              <a
+                v-if="transaction.state === 'pending' && !isPublicAccount"
+                :disabled="isSyncing"
+                class="level-item has-text-info"
+                title="Resend"
+                @click="resend"
+              >
+                <span
+                  class="icon is-small"
+                  v-html="require('@/img/loop.svg')"
+                />
+                <span class="caption is-hidden-mobile">Resend</span>
+              </a>
+              <a
+                v-if="transaction.state === 'pending' && !isPublicAccount"
+                :disabled="isSyncing"
+                class="level-item has-text-danger"
+                title="Cancel"
+                @click="cancel"
+              >
+                <span
+                  class="icon is-small"
+                  v-html="require('@/img/ban.svg')"
+                />
+                <span class="caption is-hidden-mobile">Cancel</span>
+              </a>
+            </template>
+
+            <a
+              title="Details"
+              class="level-item has-text-info"
+              @click="toggleExpanded"
+            >
+              <span
+                class="icon is-small"
+                v-html="require('@/img/ellipses.svg')"
+              />
+
+              <span class="caption is-hidden-mobile">Details</span>
+            </a>
           </div>
         </div>
-        <div class="level-right">
-          <v-spinner
-            v-if="isHavePendingRelatedTransaction && transaction.state === 'pending'"
-            class="level-item has-text-info actions-loader"
-            :is-loading="isHavePendingRelatedTransaction"
-            :label="pendingActionText"
-          />
-          <template v-else>
-            <a class="level-item has-text-info"
-               title="Resend" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="resend" :disabled="isSyncing">
-            <span class="icon is-small"
-                  v-html="require('@/img/loop.svg')"></span>
-            <span class="caption is-hidden-mobile">Resend</span>
-          </a>
-          <a class="level-item has-text-danger"
-             title="Cancel" v-if="transaction.state === 'pending'  && !isPublicAccount" @click="cancel" :disabled="isSyncing" >
-            <span class="icon is-small"
-                  v-html="require('@/img/ban.svg')"></span>
-            <span class="caption is-hidden-mobile">Cancel</span>
-          </a>
-          </template>
-
-          <a @click="toggleExpanded" title="Details" class="level-item has-text-info">
-            <span class="icon is-small"
-                  v-html="require('@/img/ellipses.svg')"></span>
-
-            <span class="caption is-hidden-mobile">Details</span>
-          </a>
-        </div>
-      </div>
       </account>
     </div>
 
-    <div class="transaction-detail" v-if="isExpanded">
+    <div
+      v-if="isExpanded"
+      class="transaction-detail"
+    >
       <div v-if="transaction.hash.length">
         <span class="text-label">Txid</span>
-        <p class="code">{{transaction.hash}}</p>
+        <p class="code">{{ transaction.hash }}</p>
       </div>
       <div>
-        <span class="heading status-text">{{transaction.state}}</span>
+        <span class="heading status-text">{{ transaction.state }}</span>
       </div>
 
       <div v-if="date">
         <span class="text-label">Date</span>
-        <p class="date">{{date.format("YYYY-MM-DD H:mm")}}</p>
+        <p class="date">{{ date.format("YYYY-MM-DD H:mm") }}</p>
       </div>
 
       <div v-if="recieve">
         <span class="text-label">From</span>
-        <p class="code address">{{transaction.from}}</p>
+        <p class="code address">{{ transaction.from }}</p>
       </div>
 
       <div v-else>
         <span class="text-label">To</span>
-        <p class="code address">{{transaction.to}}</p>
+        <p class="code address">{{ transaction.to }}</p>
       </div>
 
       <div>
         <span class="text-label">Nonce</span>
-        <span class="">{{transaction.nonce}}</span>
+        <span class="">{{ transaction.nonce }}</span>
       </div>
 
       <div v-if="transaction.data">
         <span class="text-label">Data</span>
         <span class="code">
-          {{parseData(transaction.data)}}
+          {{ parseData(transaction.data) }}
         </span>
       </div>
     </div>
@@ -83,8 +112,17 @@
 
 
 
-    <resend-modal :transaction="transactionToSend" v-if="resendModalOpen" @close="closeResendModal" @confirm="confirmResend"/>
-    <password-modal v-if="passwordModalOpen" @close="closePassword" @confirm="confirmPassword"/>
+    <resend-modal
+      v-if="resendModalOpen"
+      :transaction="transactionToSend"
+      @close="closeResendModal"
+      @confirm="confirmResend"
+    />
+    <password-modal
+      v-if="passwordModalOpen"
+      @close="closePassword"
+      @confirm="confirmPassword"
+    />
   </div>
 </template>
 
@@ -92,7 +130,7 @@
 import Account from '@/components/Account';
 import Tx from 'ethereumjs-tx';
 import { Transaction } from '@/class';
-import ResendModal from './ResendModal';
+import ResendModal from '@/components/modal/ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';
@@ -117,7 +155,7 @@ export default {
   },
   computed: {
     ...mapState({
-      isSyncing: state => !!state.web3.isSyncing,
+      isSyncing: state => !!state.connectionStatus.isSyncing,
       address: state =>
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),
@@ -181,9 +219,8 @@ export default {
     txAddress() {
       if (this.recieve) {
         return this.transaction.from;
-      } else {
-        return this.transaction.to;
       }
+      return this.transaction.to;
     },
   },
   methods: {
@@ -244,15 +281,8 @@ export default {
       this.requestPassword();
     },
     parseData() {
-      let dataString = this.transaction.data || '0x';
+      const dataString = this.transaction.data || '0x';
       return web3.utils.hexToString(dataString);
-    },
-  },
-  filters: {
-    truncateHash(value) {
-      if (!value) return '';
-      value = value.toString();
-      return `${value.substr(0, 4)}...${value.substr(value.length - 8)}`;
     },
   },
   components: {
@@ -260,6 +290,13 @@ export default {
     ResendModal,
     PasswordModal,
     VSpinner,
+  },
+  filters: {
+    truncateHash(value) {
+      if (!value) return '';
+      value = value.toString();
+      return `${value.substr(0, 4)}...${value.substr(value.length - 8)}`;
+    },
   },
 };
 </script>

@@ -7,63 +7,98 @@
             <h1 class="card-header-title">Send ETH</h1>
           </div>
           <div class="card-content">
-            <v-form id="sendEther" @submit="fetchAddress">
+            <v-form
+              id="sendEther"
+              @submit="fetchAddress"
+            >
               <div class="field is-horizontal">
                 <div class="field-label is-normal">
-                  <label class="label" for="address">To</label>
+                  <label
+                    class="label"
+                    for="address"
+                  >
+                    To
+                  </label>
                 </div>
                 <div class="field-body">
-                  <v-input-address v-model="transaction.to"
-                           ref="address"
-                           name="address"
-                           id="address"
-                           aria-describedby="address"
-                           placeholder="0x... or ENS"
-                           help="Address to send to"
-                           :disabled="isSending"
-                           required />
+                  <v-input-address
+                    id="address"
+                    ref="address"
+                    v-model="transaction.to"
+                    :disabled="isSending"
+                    name="address"
+                    aria-describedby="address"
+                    placeholder="0x... or ENS"
+                    help="Address to send to"
+                    required
+                  />
                 </div>
               </div>
               <div class="send-amount field is-horizontal">
                 <div class="field-label is-normal">
-                  <label class="label" for="amount">Amount</label>
+                  <label
+                    class="label"
+                    for="amount"
+                  >
+                    Amount
+                  </label>
                 </div>
                 <div class="field-body">
-                  <v-input v-model="value"
-                           type="number"
-                           min="0"
-                           step="any"
-                           name="value"
-                           :validator="`required|decimal:${decimal}|between:0,${maxAmount}`"
-                           data-vv-as="amount"
-                           id="value"
-                           aria-describedby="value"
-                           placeholder="Amount"
-                           :disabled="isSending"
-                           required>
-                    <span class="select" slot="addon">
-                      <v-select name="currencies" v-model="transaction.tokenInfo"
-                                :options="tokenCurrencies"/>
+                  <v-input
+                    id="value"
+                    v-model="value"
+                    :validator="`required|decimal:${decimal}|between:0,${maxAmount}`"
+                    :disabled="isSending"
+                    type="number"
+                    min="0"
+                    step="any"
+                    name="value"
+                    data-vv-as="amount"
+                    aria-describedby="value"
+                    placeholder="Amount"
+                    required
+                  >
+                    <span
+                      slot="addon"
+                      class="select"
+                    >
+                      <v-select
+                        v-model="transaction.tokenInfo"
+                        :options="tokenCurrencies"
+                        name="currencies"
+                      />
                     </span>
-                    <a slot="icon" title="Send entire balance" @click="setMaxAmount">
-                      <span class="icon is-small is-right"
-                        v-html="require('@/img/arrow-thick-top.svg')">
-                      </span>
+                    <a
+                      slot="icon"
+                      title="Send entire balance"
+                      @click="setMaxAmount"
+                    >
+                      <span
+                        class="icon is-small is-right"
+                        v-html="require('@/img/arrow-thick-top.svg')"
+                      />
                     </a>
                   </v-input>
-                  <v-input v-model="price"
-                           type="number"
-                           min="0"
-                           step="0.01"
-                           name="price"
-                           :validator="`required|decimal:2|between:0,${maxPrice}`"
-                           id="price"
-                           aria-describedby="price"
-                           placeholder="Price"
-                           :disabled="isSending || !ethPrice"
-                           required>
-                    <div class="control" slot="addon">
-                      <a class="button is-static">{{fiatCurrency}}</a>
+                  <v-input
+                    id="price"
+                    v-model="price"
+                    :validator="`required|decimal:2|between:0,${maxPrice}`"
+                    :disabled="isSending || !ethPrice"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    name="price"
+                    aria-describedby="price"
+                    placeholder="Price"
+                    required
+                  >
+                    <div
+                      slot="addon"
+                      class="control"
+                    >
+                      <a class="button is-static">
+                        {{ fiatCurrency }}
+                      </a>
                     </div>
                   </v-input>
                 </div>
@@ -75,14 +110,20 @@
                 </div>
                 <div class="field-body">
                   <v-radio
-                    name="priority"
-                    :options="suggestedGasPrices"
-                    id="priority"
-                    v-model="transaction.gasPrice"
                     v-if="suggestedGasPrices"
-                  ></v-radio>
-                  <v-spinner v-else-if="isLoadingGasPrice" :is-loading="isLoadingGasPrice"/>
-                  <p class="help is-danger" v-else>
+                    id="priority"
+                    :options="suggestedGasPrices"
+                    v-model="transaction.gasPrice"
+                    name="priority"
+                  />
+                  <v-spinner
+                    v-else-if="isLoadingGasPrice"
+                    :is-loading="isLoadingGasPrice"
+                  />
+                  <p
+                    v-else
+                    class="help is-danger"
+                  >
                     Unable to load suggested gas price, please set gas price
                     manually.
                   </p>
@@ -92,33 +133,43 @@
 
               <div class="advanced-options-container">
                 <div class="field advanced-toggle is-horizontal">
-                  <div class="field-label"></div>
+                  <div class="field-label" />
                   <div class="field-body">
-                    <a class="has-text-link" @click="toggleShowAdvanced">
+                    <a
+                      class="has-text-link"
+                      @click="toggleShowAdvanced"
+                    >
                       Advanced Options...
                     </a>
                   </div>
                 </div>
 
-                <div class="advanced-options" v-show="showAdvanced">
+                <div
+                  v-show="showAdvanced"
+                  class="advanced-options"
+                >
                   <div class="field is-horizontal">
                     <div class="field-label">
                       <label class="label">Gas Price</label>
                     </div>
                     <div class="field-body">
-                      <v-input v-model="transaction.gasPrice"
-                               name="gasPrice"
-                               type="number"
-                               min="1"
-                               max="100"
-                               step="1"
-                               validator="required|numeric|integer|between:1,100"
-                               id="gasPrice"
-                               aria-describedby="gasPrice"
-                               placeholder="Gas price"
-                               :disabled="isSending"
-                               required>
-                        <div class="control" slot="addon">
+                      <v-input
+                        id="gasPrice"
+                        v-model="transaction.gasPrice"
+                        :disabled="isSending"
+                        name="gasPrice"
+                        type="number"
+                        min="1"
+                        max="100"
+                        step="1"
+                        validator="required|numeric|integer|between:1,100"
+                        aria-describedby="gasPrice"
+                        placeholder="Gas price"
+                        required>
+                        <div
+                          slot="addon"
+                          class="control"
+                        >
                           <a class="button is-static">Gwei</a>
                         </div>
                       </v-input>
@@ -130,18 +181,19 @@
                       <label class="label">Gas Limit</label>
                     </div>
                     <div class="field-body">
-                      <v-input v-model="transaction.gasLimit"
-                               name="gasLimit"
-                               type="number"
-                               min="21000"
-                               max="1000000"
-                               step="1000"
-                               validator="required|numeric|integer|between:21000,4000000"
-                               id="gasLimit"
-                               aria-describedby="gasLimit"
-                               placeholder="Gas limit"
-                               :disabled="isSending"
-                               required />
+                      <v-input
+                        id="gasLimit"
+                        v-model="transaction.gasLimit"
+                        :disabled="isSending"
+                        name="gasLimit"
+                        type="number"
+                        min="21000"
+                        max="1000000"
+                        step="1000"
+                        validator="required|numeric|integer|between:21000,4000000"
+                        aria-describedby="gasLimit"
+                        placeholder="Gas limit"
+                        required />
                     </div>
                   </div>
 
@@ -151,17 +203,19 @@
                       <label class="label">Nonce</label>
                     </div>
                     <div class="field-body">
-                      <v-input v-model="userNonce"
-                               @input="setTrxNonce"
-                               name="nonce"
-                               type="number"
-                               step="1"
-                               :validator="`required|numeric|integer|min_value:${nextNonceInBlock}`"
-                               id="nonce"
-                               aria-describedby="nonce"
-                               placeholder="Nonce"
-                               :disabled="isSending"
-                               required />
+                      <v-input
+                        id="nonce"
+                        v-model="userNonce"
+                        :validator="`required|numeric|integer|min_value:${nextNonceInBlock}`"
+                        :disabled="isSending"
+                        name="nonce"
+                        type="number"
+                        step="1"
+                        aria-describedby="nonce"
+                        placeholder="Nonce"
+                        required
+                        @input="setTrxNonce"
+                      />
                     </div>
                   </div>
 
@@ -171,31 +225,39 @@
                       <label class="label">Data</label>
                     </div>
                     <div class="field-body">
-                      <v-input v-show="!transaction.tokenInfo"
-                               v-model="transaction.data"
-                               name="data"
-                               validator="required|hex"
-                               id="data"
-                               aria-describedby="data"
-                               placeholder="Data"
-                               :disabled="isSending"
-                               required />
+                      <v-input
+                        v-show="!transaction.tokenInfo"
+                        id="data"
+                        v-model="transaction.data"
+                        :disabled="isSending"
+                        name="data"
+                        validator="required|hex"
+                        aria-describedby="data"
+                        placeholder="Data"
+                        required />
                     </div>
                   </div>
                 </div>
               </div>
 
               <div class="field is-horizontal">
-                <div class="field-label"></div>
+                <div class="field-label" />
                 <div class="field-body">
-                  <v-button className="is-success is-medium is-cta"
-                            :loading="isSending"
-                            :disabled="isSyncing">Send</v-button>
+                  <v-button
+                    :loading="isSending"
+                    :disabled="isSyncing"
+                    class-name="is-success is-medium is-cta"
+                  >
+                    Send
+                  </v-button>
                 </div>
               </div>
             </v-form>
 
-            <div class="transaction-status message is-success" v-if="transactionHash">
+            <div
+              v-if="transactionHash"
+              class="transaction-status message is-success"
+            >
               <div class="message-header">
                 <p>Transaction Sent!</p>
               </div>
@@ -209,13 +271,17 @@
         </div>
       </div>
     </div>
-    <transaction-modal v-if="isTransactionModal"
-                       :transaction="transaction"
-                       @confirm="confirmTransaction"
-                       @close="toggleTransactionModal" />
-    <password-modal v-if="isPasswordModal"
-                       @confirm="confirmPassword"
-                       @close="togglePasswordModal" />
+    <transaction-modal
+      v-if="isTransactionModal"
+      :transaction="transaction"
+      @confirm="confirmTransaction"
+      @close="toggleTransactionModal"
+    />
+    <password-modal
+      v-if="isPasswordModal"
+      @confirm="confirmPassword"
+      @close="togglePasswordModal"
+    />
   </div>
 </template>
 
@@ -266,8 +332,8 @@ export default {
       address: state => state.accounts.address.getChecksumAddressString(),
       activeCurrency: state => state.web3.activeCurrency,
       activeNet: state => state.web3.activeNet,
-      isSyncing: state => !!state.web3.isSyncing,
-      fiatCurrency: state => state.accounts.settings.fiatCurrency,
+      isSyncing: state => !!state.connectionStatus.isSyncing,
+      fiatCurrency: state => state.user.settings.fiatCurrency,
       ethPrice: state => state.price.price || 0,
     }),
     ...mapGetters('tokens', ['tokensWithBalance']),
@@ -277,7 +343,7 @@ export default {
 
         if (this.lastInputPrice === 'fiat' && value > 0) {
           const { price, ethPrice, decimal } = this;
-          let tokenPrice = this.actualPrice;
+          const tokenPrice = this.actualPrice;
           return BigNumber(price)
             .div(tokenPrice)
             .toFixed(decimal);
@@ -288,7 +354,7 @@ export default {
       set(newValue) {
         this.transaction.value = newValue;
         this.lastInputPrice = 'amount';
-        let price = this.actualPrice;
+        const price = this.actualPrice;
         this.priceInFiat = BigNumber(newValue || '0')
           .times(price)
           .toFixed(2);
@@ -300,7 +366,7 @@ export default {
       get() {
         if (this.lastInputPrice === 'amount' && this.priceInFiat > 0) {
           const { value, ethPrice } = this;
-          let price = this.actualPrice;
+          const price = this.actualPrice;
           return BigNumber(value)
             .times(price)
             .toFixed(2);
@@ -311,7 +377,7 @@ export default {
       set(newValue) {
         this.priceInFiat = newValue;
         this.lastInputPrice = 'fiat';
-        let price = this.actualPrice;
+        const price = this.actualPrice;
         this.transaction.value = BigNumber(newValue || '0')
           .div(price)
           .toFixed(newValue > 0 ? this.decimal : 0);
@@ -498,17 +564,17 @@ export default {
           {
             val: prices.low.toString(),
             key: 'Low',
-            help: prices.low + ' Gwei',
+            help: `${prices.low} Gwei`,
           },
           {
             val: prices.medium.toString(),
             key: 'Medium',
-            help: prices.medium + ' Gwei',
+            help: `${prices.medium} Gwei`,
           },
           {
             val: prices.high.toString(),
             key: 'High',
-            help: prices.high + ' Gwei',
+            help: `${prices.high} Gwei`,
           },
         ];
         this.transaction.gasPrice = prices.medium.toString();

@@ -1,5 +1,5 @@
 <template>
-  <div class="app-page receive-page">
+  <div class="app-page receive-page" v-if="address">
     <div class="section">
       <div class="container">
         <div class="card app-card">
@@ -25,10 +25,15 @@
             <h2 class="card-header-title">Incoming Payment History</h2>
           </div>
           <div class="card-content">
-            <ul class="transactions" v-if="processedTransactions.length">
-              <li v-for="transaction in processedTransactions"
-                :key="transaction.hash">
-                <app-transaction :transaction="transaction"></app-transaction>
+            <ul
+              v-if="processedTransactions.length"
+              class="transactions"
+            >
+              <li
+                v-for="transaction in processedTransactions"
+                :key="transaction.hash"
+              >
+                <app-transaction :transaction="transaction" />
               </li>
             </ul>
             <p v-else>This account has no transactions.</p>
@@ -67,32 +72,40 @@ export default {
       return trxArr.sort((trx1, trx2) => trx2.timestamp - trx1.timestamp);
     },
   },
-  created() {
-    EthplorerService.getInfo(this.address)
-      .then(transactions => {
-        this.transactions = transactions.filter(trx => {
-          return trx.to === this.address;
+  methods: {
+    getTransactions() {
+      EthplorerService.getInfo(this.address)
+        .then(transactions => {
+          this.transactions = transactions.filter(
+            trx => trx.to === this.address,
+          );
+          this.$store.dispatch('connectionStatus/updateApiErrorStatus', {
+            id: 'ethplorer',
+            status: true,
+          });
+        })
+        .catch(e => {
+          this.$notify({
+            title: 'Failed to get transaction information',
+            text:
+              'An error occurred while retrieving transaction information. Please try again.',
+            type: 'is-warning',
+          });
+          e.apiError = {
+            id: 'ethplorer',
+            status: false,
+          };
+          this.$store.dispatch('errors/emitError', e, { root: true });
+          console.error(e);
         });
-        this.$store.dispatch('connectionStatus/updateApiErrorStatus', {
-          id: 'ethplorer',
-          status: true,
-        });
-      })
-      .catch(e => {
-        this.$notify({
-          title: 'Failed to get transaction information',
-          text:
-            'An error occurred while retrieving transaction information. Please try again.',
-          type: 'is-warning',
-        });
-        e.apiError = {
-          id: 'ethplorer',
-          status: false,
-        };
-        this.$store.dispatch('errors/emitError', e, { root: true });
-        console.error(e);
-      });
+    },
   },
+  watch: {
+    address: function(val, oldVal) {
+      this.getTransactions();
+    },
+  },
+  created() {},
   components: {
     Account,
     appTransaction,

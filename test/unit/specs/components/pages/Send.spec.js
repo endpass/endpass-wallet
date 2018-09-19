@@ -34,9 +34,6 @@ describe('Send', () => {
               return '0x9eceefdf3554e178a6549006f2c02163e63c9fd8';
             },
           },
-          settings: {
-            fiatCurrency: 'USD',
-          },
           balance: '1000000000000000000',
           pendingTransactions: [
             {
@@ -51,6 +48,11 @@ describe('Send', () => {
             },
           ],
         },
+        user: {
+          settings: {
+            fiatCurrency: 'USD',
+          },
+        },
         web3: {
           web3: web3Instance,
           activeCurrency: {
@@ -59,6 +61,9 @@ describe('Send', () => {
           activeNet: {
             id: 1,
           },
+        },
+        connectionStatus: {
+          isSyncing: false,
         },
       },
       actions,

@@ -7,9 +7,9 @@ import { generateStubs } from '@/utils/testUtils';
 
 describe('CustomProviderModal', () => {
   const web3Actions = {
-    addNewProvider: jest.fn(),
+    addNetwork: jest.fn(),
     validateNetwork: jest.fn(),
-    updateProvider: jest.fn(),
+    updateNetwork: jest.fn(),
   };
   const web3Getters = {
     networks: jest.fn(() => [{ url: 'provider url' }]),
@@ -175,9 +175,10 @@ describe('CustomProviderModal', () => {
         it('should create new provider', async () => {
           const networkType = 'ropsten';
           const networkId = 3;
+          const isSuccess = true;
 
           wrapper.setMethods({
-            addNewProvider: jest.fn(),
+            addNetwork: jest.fn().mockResolvedValueOnce(isSuccess),
             validateNetwork: jest
               .fn()
               .mockResolvedValueOnce([networkType, networkId]),
@@ -192,16 +193,17 @@ describe('CustomProviderModal', () => {
             network: provider,
           });
 
-          expect(wrapper.vm.addNewProvider).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.addNewProvider).toHaveBeenCalledWith({
+          expect(wrapper.vm.addNetwork).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.addNetwork).toHaveBeenCalledWith({
             network: {
               ...provider,
+              networkType,
               id: networkId,
             },
           });
 
           expect(wrapper.vm.isLoading).toBeFalsy();
-          expect(wrapper.vm.providerAdded).toBeTruthy();
+          expect(wrapper.vm.providerAdded).toBe(isSuccess);
         });
 
         it('should handle the validation error of the network', async () => {
@@ -237,9 +239,10 @@ describe('CustomProviderModal', () => {
         it('should update provider', async () => {
           const networkType = 'ropsten';
           const networkId = 3;
+          const isSuccess = true;
 
           wrapper.setMethods({
-            updateProvider: jest.fn(),
+            updateNetwork: jest.fn().mockResolvedValueOnce(isSuccess),
             validateNetwork: jest
               .fn()
               .mockResolvedValue([networkType, networkId]),
@@ -254,9 +257,14 @@ describe('CustomProviderModal', () => {
             network: provider,
           });
 
-          expect(wrapper.vm.updateProvider).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.updateProvider).toHaveBeenCalledWith({
-            network: provider,
+          expect(wrapper.vm.updateNetwork).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.updateNetwork).toHaveBeenCalledWith({
+            network: {
+              ...provider,
+              id: networkId,
+              networkType,
+            },
+            oldNetwork: provider,
           });
 
           expect(wrapper.vm.isLoading).toBeFalsy();

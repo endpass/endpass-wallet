@@ -3,54 +3,74 @@
     <div class="field">
       <div class="file">
         <label class="file-label">
-          <input class="file-input"
-                 type="file"
-                 name="jsonWallet"
-                 @change="setFile">
+          <input
+            class="file-input"
+            type="file"
+            name="jsonWallet"
+            @change="setFile"
+          >
           <span class="file-cta">
             <span class="file-icon">
-              <span class="icon is-small"
-                    v-html="require('@/img/arrow-thick-top.svg')"></span>
+              <span
+                class="icon is-small"
+                v-html="require('@/img/arrow-thick-top.svg')"
+              />
             </span>
             <span class="file-label">
-              {{ fileName || 'V3 JSON keystore file'}}
+              {{ fileName || 'V3 JSON keystore file' }}
             </span>
           </span>
         </label>
       </div>
-      <p v-show="errors.has('fileName')"
-         class="help is-danger">{{ errors.first('fileName') }}</p>
+      <p
+        v-show="errors.has('fileName')"
+        class="help is-danger"
+      >
+        {{ errors.first('fileName') }}
+      </p>
     </div>
 
-    <v-password v-model="jsonKeystorePassword"
-             label="V3 JSON keystore password"
-             id="jsonKeystorePassword"
-             name="jsonKeystorePassword"
-             validator="required|min:8"
-             data-vv-as="password"
-             key="jsonKeystorePasswordUnique"
-             aria-describedby="jsonKeystorePassword"
-             placeholder="V3 JSON keystore password"
-             required />
+    <v-password
+      id="jsonKeystorePassword"
+      key="jsonKeystorePasswordUnique"
+      v-model="jsonKeystorePassword"
+      label="V3 JSON keystore password"
+      name="jsonKeystorePassword"
+      validator="required|min:8"
+      data-vv-as="password"
+      aria-describedby="jsonKeystorePassword"
+      placeholder="V3 JSON keystore password"
+      required />
 
-    <v-button className="is-primary is-cta"
-              :loading="isCreating">Import</v-button>
+    <v-password v-model="walletPassword"
+             label="Wallet password"
+             name="walletRassword"
+             validator="required|min:8"
+             placeholder="Wallet password" />
+    <p>The wallet password will be used for operations on the imported wallet</p>
+
+    <v-button
+      :loading="isCreating"
+      class-name="is-primary is-cta"
+    >
+      Import
+    </v-button>
   </v-form>
 </template>
 
 <script>
 import EthWallet from 'ethereumjs-wallet';
-import router from '@/router';
 import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
-  name: 'import-from-json',
+  name: 'ImportFromJson',
   data: () => ({
     isCreating: false,
     jsonKeystorePassword: '',
+    walletPassword: null,
     fileName: '',
     file: null,
   }),
@@ -77,10 +97,11 @@ export default {
 
       try {
         this.addWalletWithV3({
-          json: e.target.result,
-          password: this.jsonKeystorePassword,
+          json: JSON.parse(e.target.result),
+          jsonPassword: this.jsonKeystorePassword,
+          walletPassword: this.walletPassword,
         });
-        router.push('/');
+        this.$router.push('/');
       } catch (e) {
         let error = {
           field: 'jsonKeystorePassword',

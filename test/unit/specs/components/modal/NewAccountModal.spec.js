@@ -32,9 +32,14 @@ describe('NewAccountModal', () => {
       },
     });
 
+    const $ga = { event: jest.fn() };
+
     options = {
       store,
       localVue,
+      mocks: {
+        $ga,
+      },
     };
 
     wrapper = shallow(NewAccountModal, {
@@ -46,6 +51,10 @@ describe('NewAccountModal', () => {
     it('should be a Vue component', () => {
       expect(wrapper.name()).toBe('NewAccountModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
+    });
+
+    it('should render component', () => {
+      expect(wrapper.element).toMatchSnapshot();
     });
   });
 

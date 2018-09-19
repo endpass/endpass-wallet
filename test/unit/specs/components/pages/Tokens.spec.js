@@ -40,7 +40,7 @@ describe('TokensPage', () => {
 
     store = new Vuex.Store({
       modules: {
-        accounts: {
+        user: {
           namespaced: true,
           state: {
             settings: {
@@ -89,7 +89,7 @@ describe('TokensPage', () => {
     });
 
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('tokens-page');
+      expect(wrapper.name()).toBe('TokensPage');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

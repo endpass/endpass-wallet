@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit="addWallet">
+  <v-form @submit="submitAddWallet">
     <v-password
       id="privateKey"
       key="privateKeyUnique"
@@ -13,37 +13,42 @@
       required
       @input="handleInput"
     />
-     <v-password v-model="walletPassword"
-              label="Wallet password"
-              id="jsonKeystorePassword"
-              name="walletPassword"
-              validator="required|min:8"
-              data-vv-as="password"
-              aria-describedby="jsonKeystorePassword"
-              placeholder="wallet password"
-              required />
-    <v-button className="is-primary is-cta"
-              :loading="isCreating">Import</v-button>
+    <v-password
+      id="jsonKeystorePassword"
+      v-model="password"
+      label="Wallet password"
+      name="password"
+      validator="required|min:8"
+      data-vv-as="password"
+      aria-describedby="jsonKeystorePassword"
+      placeholder="wallet password"
+      required
+    />
+    <v-button
+      :loading="isCreating"
+      class-name="is-primary is-cta"
+    >
+      Import
+    </v-button>
   </v-form>
 </template>
 
 <script>
-import router from '@/router';
 import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
-  name: 'import-from-private-key',
+  name: 'ImportFromPrivateKey',
   data: () => ({
     isCreating: false,
     privateKey: '',
-    walletPassword: '',
+    password: '',
   }),
   methods: {
     ...mapActions('accounts', ['addWalletWithPrivateKey']),
-    async addWallet() {
+    async submitAddWallet() {
       this.isCreating = true;
 
       await new Promise(res => setTimeout(res, 20));
@@ -51,9 +56,9 @@ export default {
       try {
         this.addWalletWithPrivateKey({
           privateKey: this.privateKey.replace(/^0x/, ''),
-          password: this.walletPassword,
+          password: this.password,
         });
-        router.push('/');
+        this.$router.push('/');
       } catch (e) {
         this.errors.add({
           field: 'privateKey',
