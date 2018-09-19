@@ -35,7 +35,8 @@
           v-else
           class="button"
           to=""
-          @click.prevent="logout()">
+          @click.prevent="logout()"
+        >
           <span
             class="icon is-small"
             v-html="require('@/img/account-logout.svg')"
@@ -87,7 +88,12 @@
             </a>
           </div>
         </div>
-        <account-chooser :width="4"/>
+        <account-chooser
+          v-model="activeAddress"
+          :width="4"
+          :accounts="walletsOptions"
+          :allow-empty="false"
+        />
       </div>
 
       <div
@@ -239,23 +245,22 @@
 import { mapGetters, mapActions, mapState } from 'vuex';
 import ProviderSelect from '@/components/bar/ProviderSelect.vue';
 import CurrencySelect from '@/components/bar/CurrencySelect.vue';
-import AccountChooser from '@/components/bar/AccountChooser.vue';
+import AccountChooser from '@/components/AccountChooser';
 import LoginModal from '@/components/modal/LoginModal';
 import modalMixin from '@/mixins/modal';
 import NewAccountModal from '@/components/modal/NewAccountModal';
 
 export default {
   name: 'NavSidebar',
-  data() {
-    return {
-      navMenuActive: false,
-      newAccountModalOpen: false,
-    };
-  },
+  data: () => ({
+    navMenuActive: false,
+    newAccountModalOpen: false,
+  }),
   computed: {
     ...mapState({
       hdKey: state => state.accounts.hdKey,
       wallet: state => state.accounts.wallet,
+      wallets: state => state.accounts.wallets,
       address: state =>
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),
@@ -263,18 +268,37 @@ export default {
     }),
     ...mapGetters('user', ['isLoggedOut', 'isLoggedIn']),
     ...mapGetters('accounts', ['isPublicAccount']),
+
+    walletsOptions() {
+      return Object.keys(this.wallets);
+    },
+
+    activeAddress: {
+      get() {
+        return this.address;
+      },
+
+      set(newValue) {
+        this.selectWallet(newValue);
+      },
+    },
   },
+
   methods: {
     ...mapActions('user', ['logout']),
+    ...mapActions('accounts', ['selectWallet']),
     toggleNavMenu() {
       this.navMenuActive = !this.navMenuActive;
     },
+
     closeNavMenu() {
       this.navMenuActive = false;
     },
+
     openNewAccountModal() {
       this.newAccountModalOpen = true;
     },
+
     closeNewAccountModal() {
       this.newAccountModalOpen = false;
     },

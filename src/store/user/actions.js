@@ -29,7 +29,8 @@ const setAuthorizationStatus = (
   }
 };
 
-const login = (ctx, email) => userService.login(email);
+const login = (ctx, { email, redirectUri }) =>
+  userService.login({ email, redirectUri });
 
 const logout = async ({ commit, dispatch }) => {
   try {

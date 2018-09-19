@@ -7,8 +7,12 @@ describe('LoginByEmailModal', () => {
   let wrapper;
 
   beforeEach(() => {
+    const $ga = { event: jest.fn() };
     wrapper = shallow(LoginByEmailModal, {
       stubs: generateStubs(LoginByEmailModal),
+      mocks: {
+        $ga,
+      },
     });
   });
 

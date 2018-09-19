@@ -18,7 +18,6 @@ exports[`ImportFromSeed render should render initial state of the component 1`] 
   <v-password
     aria-describedby="jsonKeystorePassword"
     data-vv-as="password"
-    id="jsonKeystorePassword"
     label="Wallet password"
     name="password"
     placeholder="wallet password"

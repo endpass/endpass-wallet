@@ -72,16 +72,18 @@ describe('ProviderSelect', () => {
 
     it('should open a modal with corresponding option', () => {
       const spy = jest.spyOn(wrapper.vm, 'openCustomProviderModal');
+      const network = {};
 
-      wrapper.vm.selectNet({ id: -1 });
+      wrapper.vm.selectNet(network);
 
       expect(spy).toBeCalled();
     });
 
     it('should call an action to change the network', () => {
       const spy = jest.spyOn(wrapper.vm, 'changeNetwork');
+      const network = { url: 'url' };
 
-      wrapper.vm.selectNet({ id: 1 });
+      wrapper.vm.selectNet(network);
 
       expect(spy).toBeCalled();
     });

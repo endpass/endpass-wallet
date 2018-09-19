@@ -35,6 +35,15 @@ describe('SettingsPage', () => {
         },
         actions,
       },
+      accounts: {
+        namespaced: true,
+        getters: {
+          hdWallet: jest.fn(),
+          decryptedWallets: jest.fn(),
+          encryptedWallets: jest.fn(),
+          encryptedHdWallet: jest.fn(),
+        },
+      },
     },
   };
   let wrapper;

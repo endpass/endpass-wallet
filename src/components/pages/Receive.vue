@@ -1,5 +1,5 @@
 <template>
-  <div class="app-page receive-page">
+  <div class="app-page receive-page" v-if="address">
     <div class="section">
       <div class="container">
         <div class="card app-card">
@@ -176,6 +176,7 @@ export default {
       );
     },
   },
+  created() {},
   components: {
     Account,
     AppTransaction,

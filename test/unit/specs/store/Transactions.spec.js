@@ -155,6 +155,82 @@ describe('transactions store', () => {
 
         expect(transactions).toStrictEqual([trx3, trx2, trx1]);
       });
+
+      it('should return unique addresses from transactions history', () => {
+        stateInstance.transactionHistory = [
+          {
+            to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+            from: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+            state: 'success',
+          },
+          {
+            to: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+            from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+          },
+          {
+            to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+            from: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+          },
+        ];
+
+        const transactionAddresses = state.getters.getAddressesFromTransactionsHistory(
+          stateInstance,
+        );
+
+        expect(transactionAddresses).toEqual([
+          '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+          '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+        ]);
+      });
+
+      it('should return unique addresses from pending transactions', () => {
+        stateInstance.pendingTransactions = [
+          {
+            to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+            from: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+            state: 'success',
+          },
+          {
+            to: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+            from: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+          },
+          {
+            to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+            from: '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+          },
+        ];
+
+        const transactionAddresses = state.getters.getAddressesFromPendingTransactions(
+          stateInstance,
+        );
+
+        expect(transactionAddresses).toEqual([
+          '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+          '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+        ]);
+      });
+
+      it('should return unique addresses from all transactions', () => {
+        const transactionAddresses = state.getters.getAddressesFromTransactions(
+          stateInstance,
+          {
+            getAddressesFromTransactionsHistory: [
+              '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+              '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+            ],
+
+            getAddressesFromPendingTransactions: [
+              '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+              '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+            ],
+          },
+        );
+
+        expect(transactionAddresses).toEqual([
+          '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
+          '0x4ce2109f8db1190cd44bc6554e35642214fbe144',
+        ]);
+      });
     });
 
     describe('pendingBalance', () => {

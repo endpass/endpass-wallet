@@ -14,7 +14,6 @@
       @input="handleInput"
     />
     <v-password
-      id="jsonKeystorePassword"
       v-model="password"
       label="Wallet password"
       name="password"

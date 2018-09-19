@@ -4,25 +4,25 @@ import { http } from '@/utils';
 import keyUtil from '@/utils/keystore';
 
 export default {
-  login(email) {
-    return http
-      .post(`${identityAPIUrl}/auth`, {
-        email,
-      })
-      .then(({ data: { success, challenge } }) => {
-        if (!success) {
-          return Promise.reject();
-        }
+  async login({ email, redirectUri = '/' }) {
+    try {
+      const encodedUri = encodeURIComponent(redirectUri);
+      const requestUrl = `${identityAPIUrl}/auth?redirect_uri=${encodedUri}`;
+      const { data } = await http.post(requestUrl, { email });
+      const { success, challenge } = data;
 
-        return challenge.challenge_type;
-      })
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Auth error',
-          text: 'Invalid or missing email address. Please, try again',
-          type: 'is-danger',
-        });
+      if (!success) {
+        throw new Error();
+      }
+
+      return challenge.challenge_type;
+    } catch (e) {
+      throw new NotificationError({
+        title: 'Auth error',
+        text: 'Invalid or missing email address. Please, try again',
+        type: 'is-danger',
       });
+    }
   },
 
   loginViaOTP(code, email) {
@@ -108,6 +108,21 @@ export default {
     return http
       .post(`${identityAPIUrl}/account/${address}`, account)
       .then(res => res.data);
+  },
+
+  // Update the encrypted keystore for an existing accounts
+  async updateAccounts(accounts) {
+    try {
+      return await http
+        .post(`${identityAPIUrl}/accounts`, accounts)
+        .then(({ data }) => data);
+    } catch (error) {
+      throw new NotificationError({
+        title: 'Error updating accounts',
+        text: `An error occurred updating accounts. Please try again later`,
+        type: 'is-danger',
+      });
+    }
   },
 
   // Returns the encrypted keystore for a single account

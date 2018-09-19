@@ -32,9 +32,14 @@ describe('NewAccountModal', () => {
       },
     });
 
+    const $ga = { event: jest.fn() };
+
     options = {
       store,
       localVue,
+      mocks: {
+        $ga,
+      },
     };
 
     wrapper = shallow(NewAccountModal, {
