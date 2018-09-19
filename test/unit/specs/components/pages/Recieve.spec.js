@@ -38,7 +38,7 @@ describe('ReceivePage', () => {
 
     tokensActions = {
       getTokensWithBalanceByAddress: jest.fn(),
-      getTokensBalances: jest.fn(),
+      getTokensBalancesByAddress: jest.fn(),
     };
 
     mock = new MockAdapter(axios);
@@ -104,13 +104,13 @@ describe('ReceivePage', () => {
   describe('methods', () => {
     describe('getHistory', () => {
       it("shouldn't call updateTransactionHistory if address is not present", async () => {
-        expect.assertions(2);
-        expect(trxActions.updateTransactionHistory).toHaveBeenCalledTimes(1);
+        expect.assertions(1);
+        trxActions.updateTransactionHistory.mockClear();
         wrapper.setComputed({
           address: null,
         });
         await wrapper.vm.getHistory();
-        expect(trxActions.updateTransactionHistory).toHaveBeenCalledTimes(1);
+        expect(trxActions.updateTransactionHistory).not.toHaveBeenCalled();
       });
       it('should call updateTransactionHistory', async () => {
         expect.assertions(1);
@@ -150,7 +150,7 @@ describe('ReceivePage', () => {
     describe('getBalances', () => {
       it('should call getBalance with all wallets', () => {
         expect.assertions(2);
-        wrapper.vm.getBalances(walletAddress);
+        wrapper.vm.getBalances();
         expect(wrapper.vm.balances[publicWalletAddress]).toBe(
           '0.000000000000000001',
         );
@@ -158,8 +158,13 @@ describe('ReceivePage', () => {
       });
     });
     describe('getTokensLists', () => {
-      it('should call get tokens and balances and merge them for all wallets', () => {
-        wrapper.vm.getTokensLists(walletAddress);
+      it('should call get getTokensList with all wallets', () => {
+        const getTokensList = jest.fn();
+        wrapper.setMethods({
+          getTokensList,
+        });
+        getTokensList.mockClear();
+        wrapper.vm.getTokensLists();
         expect(getTokensList).toHaveBeenCalledTimes(2);
         expect(getTokensList).toHaveBeenNthCalledWith(1, walletAddress, 0, [
           walletAddress,
@@ -173,21 +178,33 @@ describe('ReceivePage', () => {
         );
       });
     });
+    describe('getTokensList', () => {
+      it('should call get tokens and balances and merge them for all wallets', async () => {
+        expect.assertions(3);
+        tokensActions.getTokensBalancesByAddress.mockClear();
+        tokensActions.getTokensWithBalanceByAddress.mockClear();
+        tokensActions.getTokensBalancesByAddress.mockReturnValue({
+          [walletAddress]: '0',
+        });
+        tokensActions.getTokensWithBalanceByAddress.mockReturnValue([
+          {
+            address: walletAddress,
+          },
+        ]);
+        await wrapper.vm.getTokensList(walletAddress);
+        expect(
+          tokensActions.getTokensWithBalanceByAddress,
+        ).toHaveBeenCalledTimes(1);
+        expect(tokensActions.getTokensBalancesByAddress).toHaveBeenCalledTimes(
+          1,
+        );
+        expect(wrapper.vm.tokens[walletAddress]).toMatchObject([
+          {
+            address: walletAddress,
+            balance: '0',
+          },
+        ]);
+      });
+    });
   });
-
-  // done callback is required for async tests
-  // it.only('downloads transaction history', async () => {
-  //   mock
-  //     .onGet(/api\.ethplorer\.io\/getAddressTransactions/)
-  //     .reply(200, [{ id: '1', to: wallet.getChecksumAddressString() }]);
-  //
-  //   // new wrapper must be initialized in each test AFTER setting up mock
-  //   const wrapper = shallow(ReceivePage, { store, localVue });
-  //   // Wait for promises in created() hook to resolve
-  //   await flushPromises();
-  //
-  //   let elems = wrapper.vm.transactions;
-  //   expect(elems.length).toBe(1);
-  //   expect(elems[0].to).toBe(wrapper.vm.address);
-  // });
 });

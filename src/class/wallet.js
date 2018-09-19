@@ -25,7 +25,7 @@ export class Wallet {
     return JSON.stringify(this.v3);
   }
 
-  getAddressString() {
+  async getAddressString() {
     return this.v3.address;
   }
 

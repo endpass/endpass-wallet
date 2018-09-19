@@ -95,6 +95,7 @@ export default {
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),
       wallets: state => state.accounts.wallets,
+      wallet: state => state.accounts.wallet,
       activeNetId: state => state.web3.activeNet.id,
     }),
     ...mapGetters('accounts', {
@@ -111,6 +112,12 @@ export default {
       handler() {
         this.getTokensLists();
         this.getBalances();
+      },
+      immediate: true,
+    },
+    wallet: {
+      handler() {
+        this.updateTransactionHistory();
       },
       immediate: true,
     },
@@ -149,21 +156,24 @@ export default {
       });
     },
     getTokensLists() {
-      Object.keys(this.wallets).forEach(async address => {
-        let tokens = await this.getTokensWithBalanceByAddress({ address });
-        const balances = await this.getTokensBalancesByAddress({
-          tokens: tokens.map(token => new ERC20Token(token.address)),
-        });
-        this.$set(
-          this.tokens,
-          address,
-          tokens.map(token => {
-            const tokenInstance = new Token(token);
-            tokenInstance.balance = balances[token.address];
-            return tokenInstance;
-          }),
-        );
+      Object.keys(this.wallets).forEach(this.getTokensList);
+    },
+    async getTokensList(address) {
+      const tokens = await this.getTokensWithBalanceByAddress({ address });
+
+      const balances = await this.getTokensBalancesByAddress({
+        tokens: tokens.map(token => new ERC20Token(token.address)),
+        address,
       });
+      this.$set(
+        this.tokens,
+        address,
+        tokens.map(token => {
+          const tokenInstance = new Token(token);
+          tokenInstance.balance = balances[token.address];
+          return tokenInstance;
+        }),
+      );
     },
   },
   components: {
