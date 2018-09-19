@@ -7,6 +7,7 @@ import store from './store';
 import validation from './validation';
 import App from './App';
 import './directives';
+import { googleAnalyticsId, intercomAppId } from '@/config';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -16,13 +17,13 @@ Vue.config.performance = true;
 Vue.use(Notifications);
 
 Vue.use(VueAnalytics, {
-  id: process.env.ANALYTICS_SITE_ID,
+  id: googleAnalyticsId,
   debug: {
     sendHitTask: isProduction,
   },
 });
 
-Vue.use(Intercom, { appId: process.env.INTERCOM_APP_ID });
+Vue.use(Intercom, { appId: intercomAppId });
 
 /* eslint-disable no-new */
 const app = new Vue({

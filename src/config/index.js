@@ -37,4 +37,6 @@ export const {
   tokenImageUrl,
   tokenInfoAPIUrl,
   kdfParams,
+  googleAnalyticsId,
+  intercomAppId,
 } = env;
