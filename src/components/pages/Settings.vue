@@ -61,13 +61,12 @@ export default {
     ...mapActions('user', {
       updateSettingsInStore: 'updateSettings',
     }),
-    updateSettings() {
-      this.updateSettingsInStore(this.newSettings).then(() => {
-        this.$notify({
-          title: 'Settings Saved',
-          text: 'Your settings have been saved.',
-          type: 'is-info',
-        });
+    async updateSettings() {
+      await this.updateSettingsInStore({ ...this.newSettings });
+      this.$notify({
+        title: 'Settings Saved',
+        text: 'Your settings have been saved.',
+        type: 'is-info',
       });
     },
   },
