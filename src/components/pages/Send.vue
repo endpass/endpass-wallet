@@ -600,6 +600,7 @@ export default {
     async resetForm() {
       this.$validator.pause();
       await this.$nextTick();
+      this.address = '';
       this.transaction = new Transaction(defaultTnx);
       await this.$nextTick();
       this.$validator.resume();

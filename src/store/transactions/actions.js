@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import { EventEmitter, NotificationError, Transaction } from '@/class';
 import ethplorerService from '@/services/ethplorer';
 import web3 from '@/utils/web3';
@@ -10,8 +11,9 @@ import {
 
 const getNonceInBlock = async ({ rootState }) => {
   const address = rootState.accounts.address.getChecksumAddressString();
+  const nonce = await web3.eth.getTransactionCount(address);
 
-  return web3.eth.getTransactionCount(address);
+  return nonce.toString();
 };
 
 const getNextNonce = async ({ state, dispatch }) => {
@@ -21,12 +23,13 @@ const getNextNonce = async ({ state, dispatch }) => {
     .sort((a, b) => (a > b ? 1 : -1))
     .reduce((acc, tnxNonce) => {
       if (acc === tnxNonce) {
-        return tnxNonce + 1;
+        return BigNumber(tnxNonce)
+          .plus('1')
+          .toString();
       }
 
       return acc;
-    }, nonce)
-    .toString();
+    }, nonce);
 
   return actualNonce;
 };
@@ -248,7 +251,7 @@ const handleTransactionCancelingHash = async (
   const { nonce, hash } = getters.getPendingTransactionByHash(transaction.hash);
   const nonceInBlock = await dispatch('getNonceInBlock');
 
-  if (nonce == nonceInBlock) {
+  if (nonce === nonceInBlock) {
     const shortTnx = hash.slice(0, 10);
     const error = new NotificationError({
       title: 'Try to cancel the transaction',
