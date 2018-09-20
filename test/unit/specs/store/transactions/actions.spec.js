@@ -77,7 +77,7 @@ describe('transactions actions', () => {
 
       expect(rootState.accounts.address.getChecksumAddressString).toBeCalled();
       expect(web3.eth.getTransactionCount).toBeCalledWith(address);
-      expect(res).toEqual(1);
+      expect(res).toEqual('1');
     });
   });
 
@@ -85,15 +85,15 @@ describe('transactions actions', () => {
     it('should return next nonce', async () => {
       expect.assertions(2);
 
-      dispatch.mockResolvedValueOnce(1);
+      dispatch.mockResolvedValueOnce('1');
 
       Object.assign(stateInstance, {
         pendingTransactions: [
           {
-            nonce: 1,
+            nonce: '2',
           },
           {
-            nonce: 2,
+            nonce: '1',
           },
         ],
       });
