@@ -1,6 +1,5 @@
 import axios from 'axios';
 import throttledQueue from 'throttled-queue';
-import { Transaction } from '@/class';
 
 const throttle = throttledQueue(1, 5000);
 
@@ -63,7 +62,7 @@ export default {
       throttle(() => {
         Promise.all([this.getInfo(address), this.getHistory(address)])
           .then(([transactions, history]) => {
-            res(transactions.concat(history).map(trx => new Transaction(trx)));
+            res(transactions.concat(history));
           })
           .catch(rej);
       });

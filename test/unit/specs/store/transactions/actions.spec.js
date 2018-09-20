@@ -5,6 +5,7 @@ import {
   UPDATE_TRANSACTION,
   SET_TRANSACTION_HISTORY,
 } from '@/store/transactions/mutations-types';
+
 import ethplorerService from '@/services/ethplorer';
 import { EventEmitter, Transaction, NotificationError } from '@/class';
 
@@ -25,9 +26,10 @@ describe('transactions actions', () => {
   beforeEach(() => {
     web3.eth.getTransactionCount = jest.fn().mockResolvedValue(1);
     web3.eth.sendSignedTransaction = jest.fn(() => ({
-      once: jest.fn().mockReturnThis(),
-      then: jest.fn().mockReturnThis(),
-      catch: jest.fn(),
+      once() {
+        return this;
+      },
+      then: jest.fn(),
     }));
     transaction = {
       ...ethplorerTransactions[0],
@@ -133,15 +135,8 @@ describe('transactions actions', () => {
       expect.assertions(2);
 
       const expectedHistory = []
-        .concat(ethplorerTransactions, ethplorerHistory)
-        .map(tx => new Transaction(tx));
-
-      ethplorerService.getHistory = jest
-        .fn()
-        .mockResolvedValue(ethplorerHistory);
-      ethplorerService.getInfo = jest
-        .fn()
-        .mockResolvedValue(ethplorerTransactions);
+        .concat(ethplorerHistory, ethplorerTransactions)
+        .map(trx => new Transaction(trx));
 
       await actions.updateTransactionHistory({
         dispatch,
@@ -162,17 +157,13 @@ describe('transactions actions', () => {
       expect.assertions(2);
 
       const error = new Error();
-
-      ethplorerService.getHistory = jest.fn().mockRejectedValue(error);
-      ethplorerService.getInfo = jest.fn().mockRejectedValue(error);
-
+      ethplorerService.getTransactionHistory.mockRejectedValueOnce(error);
       await actions.updateTransactionHistory({
         dispatch,
         commit,
         rootState,
         rootGetters,
       });
-
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith(
         'errors/emitError',

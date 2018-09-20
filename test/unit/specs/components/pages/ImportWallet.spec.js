@@ -3,7 +3,7 @@ import { mount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import ImportWallet from '@/components/pages/ImportWallet.vue';
-import LocalStorageMock from '../../../localStorageMock.js';
+import LocalStorageMock from 'mocks/localStorage';
 import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
 import ImportFromSeed from '@/components/importWallet/ImportFromSeed';
 

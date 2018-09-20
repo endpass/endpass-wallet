@@ -490,8 +490,7 @@ describe('transactions store', () => {
       });
 
       it('should handle errors', async () => {
-        ethplorerService.getHistory = jest.fn().mockRejectedValue();
-        ethplorerService.getInfo = jest.fn().mockRejectedValue();
+        ethplorerService.getTransactionHistory = jest.fn().mockRejectedValue();
 
         await actions.updateTransactionHistory({
           dispatch,

@@ -1,14 +1,6 @@
 import Web3 from 'web3';
 
 jest.mock('web3', () => {
-  const originalWeb3 = require.requireActual('web3');
-  const setProvider = jest.fn(() => true);
-  const currentProvider = {
-    destroy: jest.fn(),
-    send: jest.fn(),
-    sendAsync: jest.fn(),
-  };
-
   class Contract {
     constructor(abi, address) {
       this.address = address;
@@ -16,6 +8,13 @@ jest.mock('web3', () => {
     }
   }
 
+  const originalWeb3 = require.requireActual('web3');
+  const setProvider = jest.fn(() => true);
+  const currentProvider = {
+    destroy: jest.fn(),
+    send: jest.fn(),
+    sendAsync: jest.fn(),
+  };
   const eth = {
     net: {
       getNetworkType: jest.fn().mockResolvedValue('ropsten'),
@@ -27,9 +26,7 @@ jest.mock('web3', () => {
     getBlockNumber: jest.fn().mockResolvedValue(),
     getTransactionCount: jest.fn().mockResolvedValue(),
   };
-
-  const utils = originalWeb3.utils;
-
+  const { utils } = originalWeb3;
   const mockWeb3 = jest.fn(() => ({
     setProvider,
     currentProvider,

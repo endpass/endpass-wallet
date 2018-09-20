@@ -49,40 +49,28 @@ const sendSignedTransaction = async (
       password,
     );
     const sendEvent = new EventEmitter();
-    let hash;
 
     web3.eth
       .sendSignedTransaction(signedTx)
       .once('transactionHash', trxHash => {
-        hash = trxHash;
         sendEvent.emit('transactionHash', trxHash);
       })
-      .then(() => {
-        sendEvent.emit('confirmation');
-      })
-      .catch(async (err, receipt) => {
+      .once('error', (err, receipt) => {
         const ignoreErrors = [
           'Transaction ran out of gas',
           'Transaction was not mined within750 seconds',
         ];
-        const errIndex = ignoreErrors.findIndex(errMsg =>
+        const errInx = ignoreErrors.findIndex(errMsg =>
           err.message.includes(errMsg),
         );
-        const isIgnoreOutGas = errIndex === 0 && !receipt;
 
-        if (errIndex === -1 || !isIgnoreOutGas) {
+        if (errInx !== -1) {
           dispatch('handleSendingError', { err, receipt, transaction });
           sendEvent.emit('error', err);
-        } else {
-          const interval = setInterval(async () => {
-            const trx = await web3.eth.getTransactionReceipt(hash);
-
-            if (trx && trx.status === true) {
-              clearInterval(interval);
-              sendEvent.emit('confirmation');
-            }
-          }, 5000);
         }
+      })
+      .then(() => {
+        sendEvent.emit('confirmation');
       });
 
     return sendEvent;
@@ -117,11 +105,11 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
 
   try {
     const { address } = rootState.accounts;
-    const addressString = address.getAddressString();
-    const transactions = await ethplorerService.getTransactionHistory(
-      addressString,
+    const addressCheckSum = address.getChecksumAddressString();
+    let transactions = await ethplorerService.getTransactionHistory(
+      addressCheckSum,
     );
-
+    transactions = transactions.map(trx => new Transaction(trx));
     commit(SET_TRANSACTION_HISTORY, transactions);
     dispatch(
       'connectionStatus/updateApiErrorStatus',
