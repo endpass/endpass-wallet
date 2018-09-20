@@ -17,6 +17,7 @@ import {
   ethplorerService,
   priceService,
 } from '@/services';
+import { address } from '../../../fixtures/accounts';
 import { tokens } from 'fixtures/tokens';
 
 jest.useFakeTimers();
@@ -172,7 +173,7 @@ describe('tokens actions', () => {
       commit = jest.fn();
       getters = {
         net: 1,
-        address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+        address,
       };
       state = {
         trackedTokens: [],
@@ -199,7 +200,7 @@ describe('tokens actions', () => {
   describe('getTokensWithBalance', () => {
     beforeEach(() => {
       getters = {
-        address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+        address,
       };
       state = {
         allTokens: {
@@ -210,11 +211,51 @@ describe('tokens actions', () => {
       dispatch = jest.fn();
       ethplorerService.getTokensWithBalance = jest.fn();
     });
-    it('gets tokens with balance for current address, and updates api status', async () => {
-      ethplorerService.getTokensWithBalance.mockReturnValueOnce([token]);
+    it('gets tokens with balance for current address, and updates store', async () => {
+      expect.assertions(3);
+      dispatch.mockReturnValueOnce([token]);
       await actions.getTokensWithBalance({ state, dispatch, commit, getters });
-      expect(ethplorerService.getTokensWithBalance).toBeCalledWith(
-        getters.address,
+      expect(dispatch).toBeCalledWith('getTokensWithBalanceByAddress', {
+        address,
+      });
+      expect(commit).toBeCalledWith(SAVE_TOKEN_INFO, [token]);
+      expect(commit).toBeCalledWith(SAVE_TRACKED_TOKENS, [token.address]);
+    });
+  });
+  describe('getTokensWithBalanceByAddress', () => {
+    beforeEach(() => {
+      dispatch = jest.fn();
+      ethplorerService.getTokensWithBalance = jest.fn();
+    });
+    it('should return empty array if failed', async () => {
+      expect.assertions(1);
+      ethplorerService.getTokensWithBalance.mockRejectedValue({});
+      const result = await actions.getTokensWithBalanceByAddress(
+        { state, dispatch, commit, getters },
+        { address },
+      );
+      expect(result).toMatchObject([]);
+    });
+
+    it('should emit error if failed', async () => {
+      expect.assertions(1);
+      const err = {};
+      ethplorerService.getTokensWithBalance.mockRejectedValue(err);
+      const result = await actions.getTokensWithBalanceByAddress(
+        { state, dispatch, commit, getters },
+        { address },
+      );
+      expect(dispatch).toHaveBeenCalledWith('errors/emitError', err, {
+        root: true,
+      });
+    });
+
+    it('gets tokens with balance for current address, and updates api status', async () => {
+      expect.assertions(1);
+      ethplorerService.getTokensWithBalance.mockReturnValueOnce([token]);
+      await actions.getTokensWithBalanceByAddress(
+        { state, dispatch, commit, getters },
+        { address },
       );
       expect(dispatch).toBeCalledWith(
         'connectionStatus/updateApiErrorStatus',
@@ -224,8 +265,6 @@ describe('tokens actions', () => {
         },
         { root: true },
       );
-      expect(commit).toBeCalledWith(SAVE_TOKEN_INFO, [token]);
-      expect(commit).toBeCalledWith(SAVE_TRACKED_TOKENS, [token.address]);
     });
   });
   describe('updateTokensPrices', () => {
@@ -255,6 +294,38 @@ describe('tokens actions', () => {
   });
   describe('updateTokensBalances', () => {
     beforeEach(() => {
+      dispatch = jest.fn();
+      commit = jest.fn();
+      getters = {
+        address: '0x999',
+        trackedTokens: [
+          {
+            address: '0x123',
+          },
+          {
+            address: '0x456',
+          },
+        ],
+      };
+    });
+    it('gets tokens balances and saves them with mutation', async () => {
+      expect.assertions(3);
+      dispatch.mockResolvedValueOnce(getters.trackedTokens);
+      await actions.updateTokensBalances({ dispatch, commit, getters });
+      expect(dispatch).toHaveBeenCalledWith('getTokensBalancesByAddress', {
+        tokens: getters.trackedTokens,
+        address: getters.address,
+      });
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(
+        SAVE_TOKENS_BALANCES,
+        getters.trackedTokens,
+      );
+    });
+  });
+  describe('getTokensBalancesByAddress', () => {
+    beforeEach(() => {
+      dispatch = jest.fn();
       commit = jest.fn();
       getters = {
         address: '0x999',
@@ -270,33 +341,46 @@ describe('tokens actions', () => {
         ],
       };
     });
-    it('gets tokens balances and saves them with mutation', async () => {
-      await actions.updateTokensBalances({ commit, getters });
-      expect(getters.trackedTokens[0].getBalance).toHaveBeenCalledWith(
-        getters.address,
-      );
-      expect(getters.trackedTokens[1].getBalance).toHaveBeenCalledWith(
-        getters.address,
-      );
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(SAVE_TOKENS_BALANCES, {
-        '0x123': '100',
-        '0x456': '200',
-      });
-    });
-    it('sets balance to null on error', async () => {
+
+    it('should set balance to null on error', async () => {
+      expect.assertions(1);
       (getters.trackedTokens[1] = {
         address: '0x456',
         getBalance: jest.fn(() => Promise.reject()),
       }),
-        await actions.updateTokensBalances({ commit, getters });
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(SAVE_TOKENS_BALANCES, {
+        await expect(
+          actions.getTokensBalancesByAddress(
+            { dispatch, commit, getters },
+            {
+              tokens: getters.trackedTokens,
+              address: getters.address,
+            },
+          ),
+        ).resolves.toMatchObject({
+          '0x123': '100',
+          '0x456': null,
+        });
+    });
+
+    it('should get tokens balances and map them', async () => {
+      expect.assertions(3);
+      const result = await expect(
+        actions.getTokensBalancesByAddress(
+          { dispatch, commit, getters },
+          {
+            tokens: getters.trackedTokens,
+            address: getters.address,
+          },
+        ),
+      ).resolves.toMatchObject({
         '0x123': '100',
-        '0x456': null,
+        '0x456': '200',
       });
+      expect(getters.trackedTokens[0].getBalance).toHaveBeenCalled();
+      expect(getters.trackedTokens[1].getBalance).toHaveBeenCalled();
     });
   });
+
   describe('updateTokenPrice', () => {
     beforeEach(() => {
       commit = jest.fn();

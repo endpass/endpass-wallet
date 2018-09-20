@@ -9,6 +9,7 @@ export class Address {
       throw new Error('Not a valid Ethereum address');
     }
     this.address = web3.utils.hexToBytes(addressString);
+    this.isPublic = true;
     this._privKey = null;
     this._pubKey = null;
     this.privKey = null;
@@ -20,7 +21,7 @@ export class Address {
   }
 
   getAddressString() {
-    return web3.utils.bytesToHex(this.address);;
+    return web3.utils.bytesToHex(this.address);
   }
 
   getChecksumAddressString() {

@@ -112,6 +112,22 @@ const getTokensWithBalance = async ({ state, getters, dispatch, commit }) => {
     return [];
   }
   let tokensWithBalance = [];
+
+  tokensWithBalance = await dispatch('getTokensWithBalanceByAddress', {
+    address,
+  });
+
+  commit(SAVE_TOKEN_INFO, tokensWithBalance);
+
+  const tokenAddrs = tokensWithBalance.map(token => token.address);
+  // Add unique addresses to tracked tokens list
+  commit(SAVE_TRACKED_TOKENS, tokenAddrs);
+
+  commit(SET_LOADING, false);
+};
+
+const getTokensWithBalanceByAddress = async ({ dispatch }, { address }) => {
+  let tokensWithBalance = [];
   try {
     tokensWithBalance = await ethplorerService.getTokensWithBalance(address);
     dispatch(
@@ -130,20 +146,10 @@ const getTokensWithBalance = async ({ state, getters, dispatch, commit }) => {
     dispatch('errors/emitError', e, { root: true });
   }
 
-  tokensWithBalance = tokensWithBalance
-    .filter(token => !!token.address)
-    .map(token => {
-      token.address = web3.utils.toChecksumAddress(token.address);
-      return token;
-    });
-
-  commit(SAVE_TOKEN_INFO, tokensWithBalance);
-
-  const tokenAddrs = tokensWithBalance.map(token => token.address);
-  // Add unique addresses to tracked tokens list
-  commit(SAVE_TRACKED_TOKENS, tokenAddrs);
-
-  commit(SET_LOADING, false);
+  return tokensWithBalance.filter(token => !!token.address).map(token => {
+    token.address = web3.utils.toChecksumAddress(token.address);
+    return token;
+  });
 };
 
 const updateTokensPrices = async ({ state, commit, getters }) => {
@@ -168,26 +174,35 @@ const subscribeOnTokensPricesUpdates = ({ dispatch }) => {
 };
 
 //TODO test and rename to SAVE_BALANCES
-const updateTokensBalances = async ({ commit, getters }) => {
-  const erc20s = getters.trackedTokens;
-  const allBalances = await Promise.all(
-    erc20s.map(async erc20 => {
+const updateTokensBalances = async ({ commit, dispatch, getters }) => {
+  const tokens = getters.trackedTokens;
+  const address = getters.address;
+  const balances = await dispatch('getTokensBalancesByAddress', {
+    tokens,
+    address,
+  });
+
+  commit(SAVE_TOKENS_BALANCES, balances);
+};
+const getTokensBalancesByAddress = async (
+  { commit, getters },
+  { tokens, address },
+) => {
+  const balances = await Promise.all(
+    tokens.map(async erc20 => {
       try {
-        let balance = await erc20.getBalance(getters.address);
+        let balance = await erc20.getBalance(address);
         return [erc20.address, balance];
       } catch (e) {
         return [erc20.address, null];
       }
     }),
   );
-
   // In format {address: balance}
-  const balances = allBalances.reduce((obj, item) => {
+  return balances.reduce((obj, item) => {
     obj[item[0]] = item[1];
     return obj;
   }, {});
-
-  commit(SAVE_TOKENS_BALANCES, balances);
 };
 
 const init = async ({ dispatch }) => {
@@ -200,8 +215,10 @@ export default {
   saveTokenAndSubscribe,
   deleteTokenAndUnsubscribe,
   getTokensWithBalance,
+  getTokensWithBalanceByAddress,
   updateTokensPrices,
   updateTokensBalances,
+  getTokensBalancesByAddress,
   updateTokenPrice,
   subscribeOnTokensBalancesUpdates,
   subscribeOnTokensPricesUpdates,

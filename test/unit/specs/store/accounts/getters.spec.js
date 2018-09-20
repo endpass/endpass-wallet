@@ -21,14 +21,14 @@ describe('Accounts getters', () => {
   describe('isPublicAccount', () => {
     it('should return true when the account is public', () => {
       const { address } = v3;
-      const state = { address: new Address(address), wallet: null };
+      const state = { wallet: new Address(address) };
 
       expect(getters.isPublicAccount(state)).toBeTruthy();
     });
 
     it('should return false when the account is not public', () => {
       const { address } = v3;
-      const state = { address: new Address(address), wallet: new Wallet(v3) };
+      const state = { wallet: new Wallet(v3) };
 
       expect(getters.isPublicAccount(state)).toBeFalsy();
     });
