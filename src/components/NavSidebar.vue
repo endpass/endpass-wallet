@@ -256,7 +256,6 @@ export default {
     navMenuActive: false,
     newAccountModalOpen: false,
   }),
-
   computed: {
     ...mapState({
       hdKey: state => state.accounts.hdKey,

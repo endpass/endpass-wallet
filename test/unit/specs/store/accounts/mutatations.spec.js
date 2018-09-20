@@ -17,7 +17,9 @@ describe('Accounts mutations', () => {
 
       mutations[ADD_ADDRESS](state, checksumAddress);
 
-      expect(state.wallets).toEqual({ [checksumAddress]: null });
+      expect(state.wallets).toEqual({
+        [checksumAddress]: new Address(checksumAddress),
+      });
     });
   });
 

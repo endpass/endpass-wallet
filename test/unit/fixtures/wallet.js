@@ -157,6 +157,10 @@ class EthereumWalletMock {
     return this.pubKey;
   }
 
+  async getBalance() {
+    return await web3.eth.getBalance(this.getChecksumAddressString());
+  }
+
   getPublicKeyString() {
     return '0x3e55280b165c71fc5c2b182e7055bab2723331c212b640e42153a1ebb2229c41fbfd096ac595d0c4f658d9013143d82565e5748a0e8b664383ce49d6475e2f8f';
   }

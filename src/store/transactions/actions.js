@@ -52,40 +52,28 @@ const sendSignedTransaction = async (
       password,
     );
     const sendEvent = new EventEmitter();
-    let hash;
 
     web3.eth
       .sendSignedTransaction(signedTx)
       .once('transactionHash', trxHash => {
-        hash = trxHash;
         sendEvent.emit('transactionHash', trxHash);
       })
-      .then(() => {
-        sendEvent.emit('confirmation');
-      })
-      .catch(async (err, receipt) => {
+      .once('error', (err, receipt) => {
         const ignoreErrors = [
           'Transaction ran out of gas',
           'Transaction was not mined within750 seconds',
         ];
-        const errIndex = ignoreErrors.findIndex(errMsg =>
+        const errInx = ignoreErrors.findIndex(errMsg =>
           err.message.includes(errMsg),
         );
-        const isIgnoreOutGas = errIndex === 0 && !receipt;
 
-        if (errIndex === -1 || !isIgnoreOutGas) {
+        if (errInx !== -1) {
           dispatch('handleSendingError', { err, receipt, transaction });
           sendEvent.emit('error', err);
-        } else {
-          const interval = setInterval(async () => {
-            const trx = await web3.eth.getTransactionReceipt(hash);
-
-            if (trx && trx.status === true) {
-              clearInterval(interval);
-              sendEvent.emit('confirmation');
-            }
-          }, 5000);
         }
+      })
+      .then(() => {
+        sendEvent.emit('confirmation');
       });
 
     return sendEvent;
@@ -115,21 +103,17 @@ const handleSendingError = (
 };
 
 // Transaction history from ethplorer
-const getTransactionHistory = async ({ commit, dispatch, rootState }) => {
+const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
   if (!rootState.accounts.address) return;
 
   try {
     const { address } = rootState.accounts;
     const addressCheckSum = address.getChecksumAddressString();
-    const [transactions, history] = await Promise.all([
-      ethplorerService.getInfo(addressCheckSum),
-      ethplorerService.getHistory(addressCheckSum),
-    ]);
-    const allTrx = transactions
-      .concat(history)
-      .map(trx => new Transaction(trx));
-
-    commit(SET_TRANSACTION_HISTORY, allTrx);
+    let transactions = await ethplorerService.getTransactionHistory(
+      addressCheckSum,
+    );
+    transactions = transactions.map(trx => new Transaction(trx));
+    commit(SET_TRANSACTION_HISTORY, transactions);
     dispatch(
       'connectionStatus/updateApiErrorStatus',
       {
@@ -188,7 +172,7 @@ const handleBlockTransactions = (
     rootGetters['web3/isMainNetwork'] &&
     trxAddresses.some(trxAddress => trxAddress === address)
   ) {
-    dispatch('getTransactionHistory');
+    dispatch('updateTransactionHistory');
   }
 };
 
@@ -342,7 +326,7 @@ export default {
   getNonceInBlock,
   getNextNonce,
   sendSignedTransaction,
-  getTransactionHistory,
+  updateTransactionHistory,
   sendTransaction,
   cancelTransaction,
   resendTransaction,

@@ -74,7 +74,7 @@ export default {
   computed: {
     // TODO test that user added tokens have balances
     selectedTokens() {
-      if (this.tokens && this.tokens.length) {
+      if (Array.isArray(this.tokens)) {
         return this.tokens;
       }
       return this.tokensWithBalance;

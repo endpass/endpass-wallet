@@ -5,6 +5,7 @@ import {
   UPDATE_TRANSACTION,
   SET_TRANSACTION_HISTORY,
 } from '@/store/transactions/mutations-types';
+
 import ethplorerService from '@/services/ethplorer';
 import { EventEmitter, Transaction, NotificationError } from '@/class';
 
@@ -25,9 +26,10 @@ describe('transactions actions', () => {
   beforeEach(() => {
     web3.eth.getTransactionCount = jest.fn().mockResolvedValue(1);
     web3.eth.sendSignedTransaction = jest.fn(() => ({
-      once: jest.fn().mockReturnThis(),
-      then: jest.fn().mockReturnThis(),
-      catch: jest.fn(),
+      once() {
+        return this;
+      },
+      then: jest.fn(),
     }));
     transaction = {
       ...ethplorerTransactions[0],
@@ -128,22 +130,15 @@ describe('transactions actions', () => {
     });
   });
 
-  describe('getTransactionHistory', () => {
+  describe('updateTransactionHistory', () => {
     it('should recieve transaction history', async () => {
       expect.assertions(2);
 
       const expectedHistory = []
-        .concat(ethplorerTransactions, ethplorerHistory)
-        .map(tx => new Transaction(tx));
+        .concat(ethplorerHistory, ethplorerTransactions)
+        .map(trx => new Transaction(trx));
 
-      ethplorerService.getHistory = jest
-        .fn()
-        .mockResolvedValue(ethplorerHistory);
-      ethplorerService.getInfo = jest
-        .fn()
-        .mockResolvedValue(ethplorerTransactions);
-
-      await actions.getTransactionHistory({
+      await actions.updateTransactionHistory({
         dispatch,
         commit,
         rootState,
@@ -162,17 +157,13 @@ describe('transactions actions', () => {
       expect.assertions(2);
 
       const error = new Error();
-
-      ethplorerService.getHistory = jest.fn().mockRejectedValue(error);
-      ethplorerService.getInfo = jest.fn().mockRejectedValue(error);
-
-      await actions.getTransactionHistory({
+      ethplorerService.getTransactionHistory.mockRejectedValueOnce(error);
+      await actions.updateTransactionHistory({
         dispatch,
         commit,
         rootState,
         rootGetters,
       });
-
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith(
         'errors/emitError',
@@ -219,7 +210,7 @@ describe('transactions actions', () => {
         expect.any(NotificationError),
         { root: true },
       );
-      expect(dispatch).toHaveBeenNthCalledWith(2, 'getTransactionHistory');
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'updateTransactionHistory');
     });
   });
 
