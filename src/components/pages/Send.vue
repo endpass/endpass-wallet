@@ -9,30 +9,26 @@
           <div class="card-content">
             <v-form
               id="sendEther"
-              @submit="fetchAddress"
+              @submit="handleTransactionFormSubmit"
             >
-              <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                  <label
-                    class="label"
-                    for="address"
-                  >
-                    To
-                  </label>
-                </div>
-                <div class="field-body">
-                  <v-input-address
-                    id="address"
-                    ref="address"
-                    v-model="transaction.to"
-                    :disabled="isSending"
-                    name="address"
-                    aria-describedby="address"
-                    placeholder="0x... or ENS"
-                    help="Address to send to"
-                    required
-                  />
-                </div>
+              <div class="field">
+                <label class="label">
+                  To
+                </label>
+                <account-chooser
+                  v-model="address"
+                  :disabled="isSending"
+                  :creatable="true"
+                  :width="35"
+                  :accounts="accountsOptions"
+                  placeholder="0x... or ENS"
+                />
+                <p
+                  v-if="ensError"
+                  class="help is-danger"
+                >
+                  {{ ensError }}
+                </p>
               </div>
               <div class="send-amount field is-horizontal">
                 <div class="field-label is-normal">
@@ -96,9 +92,7 @@
                       slot="addon"
                       class="control"
                     >
-                      <a class="button is-static">
-                        {{ fiatCurrency }}
-                      </a>
+                      <a class="button is-static">{{ fiatCurrency }}</a>
                     </div>
                   </v-input>
                 </div>
@@ -129,8 +123,6 @@
                   </p>
                 </div>
               </div>
-
-
               <div class="advanced-options-container">
                 <div class="field advanced-toggle is-horizontal">
                   <div class="field-label" />
@@ -165,7 +157,8 @@
                         validator="required|numeric|integer|between:1,100"
                         aria-describedby="gasPrice"
                         placeholder="Gas price"
-                        required>
+                        required
+                      >
                         <div
                           slot="addon"
                           class="control"
@@ -193,10 +186,10 @@
                         validator="required|numeric|integer|between:21000,4000000"
                         aria-describedby="gasLimit"
                         placeholder="Gas limit"
-                        required />
+                        required
+                      />
                     </div>
                   </div>
-
 
                   <div class="field is-horizontal">
                     <div class="field-label">
@@ -218,7 +211,6 @@
                       />
                     </div>
                   </div>
-
 
                   <div class="field is-horizontal">
                     <div class="field-label">
@@ -245,8 +237,9 @@
                 <div class="field-body">
                   <v-button
                     :loading="isSending"
-                    :disabled="isSyncing"
+                    :disabled="!isSendAllowed"
                     class-name="is-success is-medium is-cta"
+                    data-test="transaction-send-button"
                   >
                     Send
                   </v-button>
@@ -279,7 +272,7 @@
     />
     <password-modal
       v-if="isPasswordModal"
-      @confirm="confirmPassword"
+      @confirm="confirmTransactionSend"
       @close="togglePasswordModal"
     />
   </div>
@@ -287,7 +280,7 @@
 
 <script>
 import { BigNumber } from 'bignumber.js';
-import { Transaction } from '@/class';
+import { Transaction, ENSResolver } from '@/class';
 import { mapState, mapActions, mapGetters } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';
@@ -296,9 +289,12 @@ import VSpinner from '@/components/ui/VSpinner';
 import VInputAddress from '@/components/ui/form/VInputAddress.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VSelect from '@/components/ui/form/VSelect';
+import AccountChooser from '@/components/AccountChooser';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
-import web3 from '@/utils/web3';
+import web3, { isAddressOfContract } from '@/utils/web3';
+import { getShortStringWithEllipsis } from '@/utils/strings';
+import { uniq } from '@/utils/arrays';
 
 const defaultTnx = {
   gasPrice: '40',
@@ -310,7 +306,21 @@ const defaultTnx = {
 };
 
 export default {
+  components: {
+    VForm,
+    VButton,
+    VRadio,
+    VSpinner,
+    VInput,
+    VInputAddress,
+    VSelect,
+    AccountChooser,
+    TransactionModal,
+    PasswordModal,
+  },
+
   data: () => ({
+    address: '',
     isSending: false,
     transaction: new Transaction(defaultTnx),
     estimateGasCost: 0,
@@ -319,17 +329,21 @@ export default {
     nextNonceInBlock: 0,
     userNonce: null,
     isLoadingGasPrice: true,
+    isEnsAddressLoading: false,
     lastInputPrice: 'amount',
     isTransactionModal: false,
     isPasswordModal: false,
     showAdvanced: false,
     suggestedGasPrices: null,
+    ensError: null,
   }),
+
   computed: {
     ...mapState({
+      wallets: state => state.accounts.wallets,
       tokenPrices: state => state.tokens.prices,
       balance: state => state.accounts.balance,
-      address: state => state.accounts.address.getChecksumAddressString(),
+      activeAddress: state => state.accounts.address.getChecksumAddressString(),
       activeCurrency: state => state.web3.activeCurrency,
       activeNet: state => state.web3.activeNet,
       isSyncing: state => !!state.connectionStatus.isSyncing,
@@ -337,13 +351,15 @@ export default {
       ethPrice: state => state.price.price || 0,
     }),
     ...mapGetters('tokens', ['tokensWithBalance']),
+    ...mapGetters('transactions', ['getAddressesFromTransactions']),
     value: {
       get() {
         const { value } = this.transaction;
 
         if (this.lastInputPrice === 'fiat' && value > 0) {
-          const { price, ethPrice, decimal } = this;
           const tokenPrice = this.actualPrice;
+          const { price, decimal } = this;
+
           return BigNumber(price)
             .div(tokenPrice)
             .toFixed(decimal);
@@ -352,9 +368,10 @@ export default {
         return value;
       },
       set(newValue) {
+        const price = this.actualPrice;
+
         this.transaction.value = newValue;
         this.lastInputPrice = 'amount';
-        const price = this.actualPrice;
         this.priceInFiat = BigNumber(newValue || '0')
           .times(price)
           .toFixed(2);
@@ -365,8 +382,9 @@ export default {
     price: {
       get() {
         if (this.lastInputPrice === 'amount' && this.priceInFiat > 0) {
-          const { value, ethPrice } = this;
+          const { value } = this;
           const price = this.actualPrice;
+
           return BigNumber(value)
             .times(price)
             .toFixed(2);
@@ -375,9 +393,10 @@ export default {
         return this.priceInFiat;
       },
       set(newValue) {
+        const price = this.actualPrice;
+
         this.priceInFiat = newValue;
         this.lastInputPrice = 'fiat';
-        const price = this.actualPrice;
         this.transaction.value = BigNumber(newValue || '0')
           .div(price)
           .toFixed(newValue > 0 ? this.decimal : 0);
@@ -403,6 +422,11 @@ export default {
         price = this.ethPrice;
       }
       return price.toFixed();
+    },
+    accountsOptions() {
+      const { wallets, getAddressesFromTransactions } = this;
+
+      return uniq(Object.keys(wallets).concat(getAddressesFromTransactions));
     },
     maxAmount() {
       if (this.transaction.tokenInfo) {
@@ -442,106 +466,31 @@ export default {
         this.tokensWithBalance.map(({ symbol }) => symbol),
       );
     },
+    isEnsTransaction() {
+      return /^.+\.(eth|etc|test)$/.test(this.address);
+    },
+    isSendAllowed() {
+      return (
+        this.transaction.to &&
+        !this.isSyncing &&
+        !this.ensError &&
+        !this.isEnsAddressLoading
+      );
+    },
   },
-  methods: {
-    ...mapActions('transactions', [
-      'sendTransaction',
-      'getNextNonce',
-      'getNonceInBlock',
-    ]),
-    ...mapActions('gasPrice', ['getGasPrice']),
-    setTrxNonce(nonce) {
-      this.transaction.nonce = nonce;
-    },
-    async resetForm() {
-      this.$validator.pause();
-      await this.$nextTick();
-      this.transaction = new Transaction(defaultTnx);
-      await this.$nextTick();
-      this.$validator.resume();
-      this.$validator.flag('address', {
-        valid: false,
-      });
-      this.updateUserNonce();
-    },
 
-    toggleTransactionModal() {
-      this.isTransactionModal = !this.isTransactionModal;
-    },
-    togglePasswordModal() {
-      this.isPasswordModal = !this.isPasswordModal;
-    },
-    toggleShowAdvanced() {
-      this.showAdvanced = !this.showAdvanced;
-    },
-    requestPassword() {
-      this.togglePasswordModal();
-    },
-    confirmPassword(password) {
-      this.isSending = true;
-      this.transaction.from = this.address;
-      this.togglePasswordModal();
-      this.transaction.networkId = this.activeNet.id;
-      this.sendTransaction({ transaction: this.transaction, password })
-        .then(hash => {
-          this.transactionHash = hash;
-          this.isSending = false;
-          this.resetForm();
-          const shortHash = `${hash.slice(0, 4)}...${hash.slice(-4)}`;
-          this.$notify({
-            title: 'Transaction Sent',
-            text: `Transaction ${shortHash} sent`,
-            type: 'is-info',
-          });
-        })
-        .catch(e => {
-          this.isSending = false;
-          this.resetForm();
-        });
-    },
-    async fetchAddress() {
-      this.isSending = true;
-      try {
-        await this.$refs.address.updateENS();
-        this.toggleTransactionModal();
-      } catch (e) {
-        this.$notify({
-          title: 'Error',
-          text: e.message,
-          type: 'is-warning',
-        });
-      }
-      this.isSending = false;
-    },
-    confirmTransaction() {
-      this.toggleTransactionModal();
-      this.togglePasswordModal();
-    },
-    async updateEstimateGasCost() {
-      this.estimateGasCost = await this.transaction.getFullPrice(web3.eth);
-    },
-    updateUserNonce() {
-      this.getNextNonce().then(nonce => {
-        this.userNonce = nonce;
-      });
-    },
-    // Sets transaction value to the maximum amount
-    setMaxAmount() {
-      this.value = this.maxAmount;
-    },
-  },
   watch: {
-    'transaction.to': {
-      async handler() {
-        await this.$nextTick();
-        await this.$nextTick();
-
-        if (!this.errors.has('address')) {
-          this.updateEstimateGasCost();
-        }
-      },
-      immediate: true,
+    async address() {
+      if (this.isEnsTransaction) {
+        this.transaction.to = await this.getEnsAddress();
+        this.updateEstimateGasCost();
+      } else if (!this.errors.has('address')) {
+        this.ensError = null;
+        this.transaction.to = this.address;
+        this.updateEstimateGasCost();
+      }
     },
+
     'transaction.data': {
       async handler() {
         await this.$nextTick();
@@ -555,7 +504,14 @@ export default {
     'transaction.tokenInfo': () => {
       this.updateEstimateGasCost();
     },
+
+    async activeNet(newValue, prevValue) {
+      if (this.isEnsTransaction && newValue.id !== prevValue.id) {
+        this.transaction.to = await this.getEnsAddress();
+      }
+    },
   },
+
   created() {
     this.updateUserNonce();
     this.getGasPrice()
@@ -607,20 +563,127 @@ export default {
       vm => [vm.activeNet.id, vm.address].join(),
       this.updateUserNonce,
     );
+
+    this.$ens = new ENSResolver(web3);
   },
+
   beforeDestroy() {
     clearInterval(this.interval);
   },
-  components: {
-    VForm,
-    VButton,
-    VRadio,
-    VSpinner,
-    VInput,
-    VInputAddress,
-    VSelect,
-    TransactionModal,
-    PasswordModal,
+
+  methods: {
+    ...mapActions('transactions', [
+      'sendTransaction',
+      'getNextNonce',
+      'getNonceInBlock',
+    ]),
+    ...mapActions('gasPrice', ['getGasPrice']),
+    setTrxNonce(nonce) {
+      this.transaction.nonce = nonce;
+    },
+    async getEnsAddress() {
+      this.isEnsAddressLoading = true;
+
+      try {
+        const ensAddress = await this.$ens.getAddress(this.address);
+        this.ensError = null;
+
+        return ensAddress;
+      } catch (err) {
+        this.ensError = `ENS ${this.address} can not be resolved.`;
+
+        return '';
+      } finally {
+        this.isEnsAddressLoading = false;
+      }
+    },
+    async resetForm() {
+      this.$validator.pause();
+      await this.$nextTick();
+      this.transaction = new Transaction(defaultTnx);
+      await this.$nextTick();
+      this.$validator.resume();
+      this.$validator.flag('address', {
+        valid: false,
+      });
+      this.updateUserNonce();
+    },
+
+    toggleTransactionModal() {
+      this.isTransactionModal = !this.isTransactionModal;
+    },
+    togglePasswordModal() {
+      this.isPasswordModal = !this.isPasswordModal;
+    },
+    toggleShowAdvanced() {
+      this.showAdvanced = !this.showAdvanced;
+    },
+    requestPassword() {
+      this.togglePasswordModal();
+    },
+    async confirmTransactionSend(password) {
+      this.isSending = true;
+      this.transaction.from = this.activeAddress;
+      this.transaction.networkId = this.activeNet.id;
+
+      this.togglePasswordModal();
+
+      try {
+        const hash = await this.sendTransaction({
+          transaction: this.transaction,
+          password,
+        });
+        const shortHash = getShortStringWithEllipsis(hash);
+
+        this.transactionHash = hash;
+
+        this.$notify({
+          title: 'Transaction Sent',
+          text: `Transaction ${shortHash} sent`,
+          type: 'is-info',
+        });
+      } catch (err) {
+        this.$notify({
+          title: 'Error',
+          text: err.message,
+          type: 'is-warning',
+        });
+      } finally {
+        this.isSending = false;
+        this.resetForm();
+      }
+    },
+
+    async handleTransactionFormSubmit() {
+      this.toggleTransactionModal();
+    },
+
+    confirmTransaction() {
+      this.toggleTransactionModal();
+      this.togglePasswordModal();
+    },
+    async updateEstimateGasCost() {
+      const { transaction } = this;
+
+      try {
+        this.estimateGasCost = await transaction.getFullPrice(web3.eth);
+      } catch (err) {
+        const isContract = await isAddressOfContract(transaction.to);
+
+        if (!isContract && err.message.includes('always failing transaction')) {
+          this.ensError = 'Transaction will always fail, try other address.';
+        }
+      }
+    },
+    updateUserNonce() {
+      this.getNextNonce().then(nonce => {
+        this.userNonce = nonce;
+      });
+    },
+    // Sets transaction value to the maximum amount
+    setMaxAmount() {
+      this.value = this.maxAmount;
+    },
   },
 };
 </script>

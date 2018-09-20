@@ -17,15 +17,21 @@ import {
   ethplorerService,
   priceService,
 } from '@/services';
+import { tokens } from 'fixtures/tokens';
 
 jest.useFakeTimers();
 
 describe('tokens actions', () => {
-  let commit, dispatch, token, state, getters, rootState;
-  token = {
+  let commit;
+  let dispatch;
+  let state;
+  let getters;
+  let rootState;
+  const token = {
     address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
     symbol: 'KEK-TOKEN',
   };
+
   describe('saveTokenAndSubscribe', () => {
     beforeEach(() => {
       userService.setSetting = jest.fn();
@@ -134,17 +140,30 @@ describe('tokens actions', () => {
     });
 
     it('should resolve array of Tokens from service', async () => {
-      tokenInfoService.getTokensList = jest.fn();
-      tokenInfoService.getTokensList.mockReturnValueOnce([token]);
+      expect.assertions(1);
+
       await actions.getAllTokens({ dispatch, getters, commit });
-      expect(commit).toHaveBeenCalledWith(SAVE_TOKEN_INFO, [token]);
+
+      expect(commit).toHaveBeenCalledWith(SAVE_TOKEN_INFO, tokens);
     });
 
     it('should emit error and return empty array if failed to fetch data', async () => {
-      tokenInfoService.getTokensList = jest.fn();
-      tokenInfoService.getTokensList.mockRejectedValueOnce();
+      expect.assertions(2);
+
+      const error = new Error();
+
+      tokenInfoService.getTokensList.mockRejectedValueOnce(error);
+
       await actions.getAllTokens({ dispatch, getters, commit });
+
       expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith(
+        'errors/emitError',
+        expect.any(NotificationError),
+        {
+          root: true,
+        },
+      );
     });
   });
   describe('subscribeOnTokensBalancesUpdates', () => {

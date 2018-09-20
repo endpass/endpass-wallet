@@ -39,7 +39,7 @@ describe('NavSidebar', () => {
   describe('render', () => {
     it('should be a Vue component', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
-      expect(wrapper.name()).toBe('nav-sidebar');
+      expect(wrapper.name()).toBe('NavSidebar');
     });
 
     it('should render initial state of the component', () => {

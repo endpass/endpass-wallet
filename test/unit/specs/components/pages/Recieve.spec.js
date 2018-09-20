@@ -2,25 +2,29 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import Vuex from 'vuex';
+import Notifications from 'vue-notification';
 import ReceivePage from '@/components/pages/Receive.vue';
 import web3 from 'web3';
-import ethereumWalletMock from '../../../fixtures/wallet.js';
+import ethereumWalletMock from 'fixtures/wallet';
+import { checksumAddress } from 'fixtures/accounts';
 
 const wallet = ethereumWalletMock;
 
 const localVue = createLocalVue();
 
+localVue.use(Notifications);
 localVue.use(Vuex);
 
 describe('ReceivePage', () => {
-  let actions = {
-    'connectionStatus/updateApiErrorStatus': function() {},
+  const actions = {
+    'connectionStatus/updateApiErrorStatus': jest.fn(),
+    'errors/emitError': jest.fn(),
   };
   let store;
-  let mock;
+  let axiosMock;
 
   beforeEach(() => {
-    mock = new MockAdapter(axios);
+    axiosMock = new MockAdapter(axios);
 
     store = new Vuex.Store({
       state: {
@@ -47,22 +51,27 @@ describe('ReceivePage', () => {
   });
 
   afterEach(() => {
-    mock.reset();
+    jest.clearAllMocks();
+
+    axiosMock.reset();
   });
 
-  // done callback is required for async tests
-  it.only('downloads transaction history', async () => {
-    mock
-      .onGet(/api\.ethplorer\.io\/getAddressTransactions/)
-      .reply(200, [{ id: '1', to: wallet.getChecksumAddressString() }]);
+  it('downloads transaction history', async () => {
+    expect.assertions(2);
 
-    // new wrapper must be initialized in each test AFTER setting up mock
-    const wrapper = shallow(ReceivePage, { store, localVue });
-    // Wait for promises in created() hook to resolve
-    await flushPromises();
+    const wrapper = shallow(ReceivePage, {
+      store,
+      localVue,
+    });
 
-    let elems = wrapper.vm.transactions;
-    expect(elems.length).toBe(1);
-    expect(elems[0].to).toBe(wrapper.vm.address);
+    wrapper.setComputed({
+      address: checksumAddress,
+    });
+
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.transactions).toHaveLength(1);
+    expect(wrapper.vm.transactions[0].to).toBe(wrapper.vm.address);
   });
 });

@@ -92,6 +92,10 @@ export default {
     // Generate a new HD wallet node
     // TODO encrypt seed in memory
     async createWallet() {
+      this.$ga.event({
+        eventCategory: 'onboarding',
+        eventAction: 'create_wallet',
+      });
       this.isCreating = true;
       await new Promise(res => setTimeout(res, 20));
 

@@ -20,10 +20,10 @@ exports[`ImportFromPrivateKey render should render initial state of the componen
     data-vv-as="password"
     id="jsonKeystorePassword"
     label="Wallet password"
-    name="walletPassword"
+    name="password"
     placeholder="wallet password"
     required=""
-    v-model="walletPassword"
+    v-model="password"
     validator="required|min:8"
   />
    

@@ -77,6 +77,10 @@ export default {
   }),
   methods: {
     handleSubmit() {
+      this.$ga.event({
+        eventCategory: 'onboarding',
+        eventAction: 'submit_email',
+      });
       this.$emit('confirm', this.email);
     },
     handleClose() {

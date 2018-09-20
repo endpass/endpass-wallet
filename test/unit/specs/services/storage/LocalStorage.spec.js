@@ -1,4 +1,4 @@
-import LocalStorageMock from '../../../localStorageMock';
+import LocalStorageMock from 'mocks/localStorage';
 import LocalStorage from '@/services/storage/LocalStorage';
 import { NotificationError } from '@/class';
 

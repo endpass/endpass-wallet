@@ -1,4 +1,5 @@
 import web3 from 'web3';
+
 export default {
   getMessage(field, params, data) {
     return (data && data.message) || 'Something went wrong';

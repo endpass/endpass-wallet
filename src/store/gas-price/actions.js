@@ -4,7 +4,9 @@ const getGasPrice = async ({ dispatch }) => {
   try {
     return await gasPrice.getGasPrice();
   } catch (e) {
-    dispatch('errors/emitError', e, { root: true });
+    await dispatch('errors/emitError', e, { root: true });
+
+    return null;
   }
 };
 

@@ -27,6 +27,7 @@
 <script>
 import makeBlockie from 'ethereum-blockies-base64';
 import Balance from '@/components/Balance';
+import { getShortStringWithEllipsis } from '@/utils/strings';
 
 export default {
   name: 'Account',
@@ -61,8 +62,14 @@ export default {
 
       if (this.size === 0) {
         return '';
+      } else if (this.size < 8) {
+        return `...${this.address.substr(this.address.length - this.size)}`;
       }
-      return `...${this.address.substr(this.address.length - this.size)}`;
+
+      return getShortStringWithEllipsis(
+        this.address,
+        Math.round(this.size / 2),
+      );
     },
   },
   components: { Balance },
@@ -71,6 +78,9 @@ export default {
 
 <style lang="scss">
 .account {
+  display: flex;
+  align-items: center;
+
   .media-content {
     overflow: hidden;
     text-overflow: ellipsis;

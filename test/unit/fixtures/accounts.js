@@ -66,14 +66,30 @@ export const privateKey = {"data": [239, 202, 76, 221, 49, 146, 59, 80, 244, 33,
 export const privateKeyString =
   '0xefca4cdd31923b50f4214af5d2ae10e7ac45a5019e9431cc195482d707485378';
 
-export default {
-  address,
-  addresses,
-  checksumAddress,
-  hdv3,
-  mnemonic,
-  v3,
-  v3password,
-  privateKey,
-  privateKeyString,
+export const settings = {
+  id: 'abcd-1234',
+  email: 'user@example.com',
+  net: 3,
+  networks: [
+    {
+      id: 5,
+      name: 'asdfa',
+      url: 'https://web3.example.com/rpc',
+    },
+  ],
+  settings: {
+    currency: 'USD',
+  },
+  tokens: {
+    '3': [
+      {
+        address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
+        decimals: 18,
+        logo: '/img/0xe41d2489571d322189246dafa5ebde1f4699f498.png',
+        manuallyAdded: true,
+        name: '0x Project',
+        symbol: 'ZRX',
+      },
+    ],
+  },
 };
