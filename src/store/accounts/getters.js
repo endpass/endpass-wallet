@@ -6,8 +6,7 @@ import { Wallet, Address } from '@/class';
 const getAccountAddresses = state =>
   Object.keys(state.wallets).map(wallet => wallet.toLowerCase());
 
-const isPublicAccount = state =>
-  state.address instanceof Address && !(state.wallet instanceof Wallet);
+const isPublicAccount = state => state.wallet.isPublic;
 
 const balance = (state, getters, rootState, rootGetters) => {
   if (!state.balance) return null;
@@ -31,12 +30,11 @@ const hdWallet = state => password => {
 
 const decryptedWallets = state => password =>
   Object.values(state.wallets)
-    .filter(wallet => wallet)
+    .filter(wallet => !wallet.isPublic)
     .map(wallet => keystore.decryptWallet(password, wallet.v3));
 
-const encryptedHdWallet = () => (password, decryptedHdWallet) => (
-  decryptedHdWallet && keystore.encryptHDWallet(password, decryptedHdWallet)
-);
+const encryptedHdWallet = () => (password, decryptedHdWallet) =>
+  decryptedHdWallet && keystore.encryptHDWallet(password, decryptedHdWallet);
 
 const encryptedWallets = () => (password, decryptedWallets = []) =>
   decryptedWallets.map(decryptedWallet =>

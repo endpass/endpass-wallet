@@ -31,11 +31,11 @@ const addWallet = (state, walletV3) => {
   };
 };
 
-// Adds an empty wallet in order to view a public key
+// Adds an empty Address as wallet to use public wallet functionality
 const addAddress = (state, address) => {
   state.wallets = {
     ...state.wallets,
-    [address]: null,
+    [address]: new Address(address),
   };
 };
 

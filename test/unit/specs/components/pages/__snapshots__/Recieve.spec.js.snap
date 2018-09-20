@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReceivePage render should render component 1`] = `
+<div
+  class="app-page receive-page"
+>
+  <div
+    class="section"
+  >
+    <div
+      class="container"
+    >
+      <div
+        class="card app-card"
+      >
+        <div
+          class="card-header"
+        >
+          <h2
+            class="card-header-title"
+          >
+            Receive ETH
+          </h2>
+        </div>
+         
+        <div
+          class="card-content"
+        >
+          <p>
+            Your Active Address:
+          </p>
+           
+          <!---->
+           
+          <!---->
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <div
+    class="section"
+  >
+    <div
+      class="container"
+    >
+      <!---->
+      <div
+        class="card app-card"
+      >
+        <div
+          class="card-header"
+        >
+          <h2
+            class="card-header-title"
+          >
+            Receive ETH
+          </h2>
+        </div>
+         
+        <div
+          class="card-content"
+        >
+          <!---->
+           
+          <!---->
+           
+          <div
+            class="token-list-container"
+          >
+            <!---->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <div
+    class="section"
+  >
+    <div
+      class="container"
+    >
+      <div
+        class="card app-card"
+      >
+        <div
+          class="card-header"
+        >
+          <h2
+            class="card-header-title"
+          >
+            Incoming Payment History
+          </h2>
+        </div>
+         
+        <div
+          class="card-content"
+        >
+          <ul
+            class="transactions"
+          >
+            <li>
+              <!---->
+            </li>
+            <li>
+              <!---->
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

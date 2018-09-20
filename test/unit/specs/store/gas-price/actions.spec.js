@@ -1,23 +1,33 @@
-import gasPrice from '@/services/gas-price';
+import gasPriceService from '@/services/gas-price';
 import actions from '@/store/gas-price/actions';
 
+import { gasPrice } from 'fixtures/gasPrice';
+
 describe('gas-price actions', () => {
+  let dispatch;
+
+  beforeEach(() => {
+    dispatch = jest.fn();
+  });
+
   describe('getGasPrice', () => {
     it('should resolve value from service', async () => {
       expect.assertions(1);
-      gasPrice.getGasPrice = jest.fn();
-      const price = 0;
-      gasPrice.getGasPrice.mockResolvedValueOnce(price);
-      const priceResoved = await actions.getGasPrice({});
-      expect(priceResoved).toBe(price);
+
+      const res = await actions.getGasPrice({ dispatch });
+
+      expect(res).toBe(gasPrice);
     });
+
     it('should call errors store if failed to fetch data', async () => {
       expect.assertions(1);
-      const dispatch = jest.fn();
-      gasPrice.getGasPrice = jest.fn();
-      const err = {};
-      gasPrice.getGasPrice.mockRejectedValueOnce(err);
-      const priceResoved = await actions.getGasPrice({ dispatch });
+
+      const err = new Error();
+
+      gasPriceService.getGasPrice.mockRejectedValueOnce(err);
+
+      await actions.getGasPrice({ dispatch });
+
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', err, {
         root: true,
       });

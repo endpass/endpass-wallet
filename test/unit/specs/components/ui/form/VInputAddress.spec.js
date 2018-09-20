@@ -4,7 +4,6 @@ import web3 from 'web3';
 import Vuex from 'vuex';
 
 import VInputAddress from '@/components/ui/form/VInputAddress.vue';
-let web3Instance = new web3('https://mainnet.infura.io/');
 const localVue = createLocalVue();
 
 localVue.use(VeeValidate);
@@ -25,7 +24,7 @@ describe('VInputAddress', () => {
     let store = new Vuex.Store({
       state: {
         web3: {
-          web3: web3Instance,
+          web3: web3,
         },
       },
     });

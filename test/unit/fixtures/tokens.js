@@ -17,10 +17,13 @@ const tokens = [
 ];
 
 // Tokens keyed by address, like in store.tokens.allTokens
-const allTokens = tokens.reduce((obj, item) => {
-  obj[item.address] = item;
-  return obj;
-}, {});
+const allTokens = tokens.reduce(
+  (acc, item) =>
+    Object.assign(acc, {
+      [item.address]: item,
+    }),
+  {},
+);
 
 export default {
   tokens,
