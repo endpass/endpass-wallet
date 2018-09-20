@@ -8,55 +8,63 @@ describe('Transactions History Page', () => {
     cy.login();
   });
 
-  it('should request and render transactions history', () => {
-    cy.server();
-    cy.route({
-      method: 'GET',
-      url: '/getAddressTransactions/*',
-      response: ethplorerTransactions,
-      status: 200,
-    }).as('addressTransactionsRequest');
-    cy.route({
-      method: 'GET',
-      url: '/getAddressHistory/*',
-      response: {
-        operations: ethplorerHistory,
-      },
-      status: 200,
-    }).as('addressHistoryRequest');
+  describe('Transactions history items rendering', () => {
+    it('should request and render transactions history', () => {
+      cy.route({
+        method: 'GET',
+        url: '/getAddressTransactions/*',
+        response: ethplorerTransactions,
+        status: 200,
+      }).as('addressTransactionsRequest');
+      cy.route({
+        method: 'GET',
+        url: '/getAddressHistory/*',
+        response: {
+          operations: ethplorerHistory,
+        },
+        status: 200,
+      }).as('addressHistoryRequest');
 
-    cy.visit('#/history');
-    cy.wait(['@addressHistoryRequest', '@addressTransactionsRequest'], {
-      timeout: 10000,
+      cy.visit('#/history');
+      cy.get('[data-test=page-loader]').should('not.exist', {
+        timeout: 25000,
+      });
+      cy.wait(['@addressHistoryRequest', '@addressTransactionsRequest'], {
+        timeout: 10000,
+      });
+
+      cy.get('[data-test=transactions-history-item]')
+        .its('length')
+        .should('eq', 4);
     });
 
-    cy.get('[data-test=transactions-history-item]')
-      .its('length')
-      .should('eq', 4);
-  });
+    it('should add items to history after transactions send', () => {
+      cy.visit('#/history');
+      cy.get('[data-test=page-loader]').should('not.exist', {
+        timeout: 25000,
+      });
 
-  it('should add items to history after transactions send', () => {
-    cy.visit('#/history');
+      cy.window()
+        .its('app.$store')
+        .invoke(
+          'commit',
+          'transactions/ADD_TRANSACTION',
+          ethplorerTransactions[0],
+        );
 
-    cy.window()
-      .its('app.$store')
-      .invoke(
-        'commit',
-        'transactions/ADD_TRANSACTION',
-        ethplorerTransactions[0],
-      );
-
-    cy.get('[data-test=transactions-history-item]')
-      .its('length')
-      .should('eq', 1);
+      cy.get('[data-test=transactions-history-item]')
+        .its('length')
+        .should('eq', 1);
+    });
   });
 
   describe('Transactions history actions', () => {
     beforeEach(() => {
       cy.visit('#/history');
-      cy.window()
-        .its('app.$store')
-        .as('store');
+      cy.makeStoreAlias();
+      cy.get('[data-test=page-loader]').should('not.exist', {
+        timeout: 25000,
+      });
 
       cy.get('@store').invoke('commit', 'transactions/ADD_TRANSACTION', {
         ...ethplorerTransactions[0],
@@ -66,9 +74,7 @@ describe('Transactions History Page', () => {
             ...this,
           };
         },
-        getUpGasPrice() {
-          return 0;
-        },
+        getUpGasPrice: () => 0,
       });
     });
 
@@ -82,12 +88,10 @@ describe('Transactions History Page', () => {
         cy.stub(store.state.accounts.wallet, 'validatePassword', () => true);
       });
 
-      cy.get('[data-test=password-modal]')
-        .within(() => {
-          cy.get('input[type=password]').type('12341234');
-          cy.get('[data-test=submit-password]').click();
-        })
-        .as('login');
+      cy.get('[data-test=password-modal]').within(() => {
+        cy.get('input[type=password]').type('12341234');
+        cy.get('[data-test=submit-password]').click();
+      });
 
       cy.get('@dispatch').should(
         'be.calledWith',
@@ -119,6 +123,42 @@ describe('Transactions History Page', () => {
       cy.get('@dispatch').should(
         'be.calledWith',
         'transactions/resendTransaction',
+      );
+    });
+  });
+
+  describe('Transactions history forms validation', () => {
+    beforeEach(() => {
+      cy.visit('#/history');
+      cy.get('[data-test=page-loader]').should('not.exist', {
+        timeout: 25000,
+      });
+      cy.makeStoreAlias();
+    });
+
+    it('should validate resend transaction form parameters', () => {
+      cy.get('@store').invoke('commit', 'transactions/ADD_TRANSACTION', {
+        ...ethplorerTransactions[0],
+        state: 'pending',
+        clone() {
+          return {
+            ...this,
+          };
+        },
+        getUpGasPrice: () => 0,
+      });
+
+      cy.get('[data-test=transactions-history-item]').within(() => {
+        cy.get('[data-test=transaction-resend-button]').click();
+      });
+      cy.get('[data-test=resend-modal]').within(() => {
+        cy.get('[data-test=gas-price-input]').type('{backspace}0');
+        cy.get('[data-test=gas-limit-input]').type('{backspace}0');
+        cy.get('[data-test=submit-button]').click();
+      });
+      cy.get('[data-test=password-modal]').should('not.exist');
+      cy.get('.notification.is-warning .notification-content').contains(
+        'Please correct errors.',
       );
     });
   });
