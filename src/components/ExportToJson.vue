@@ -5,6 +5,7 @@
       <v-button
         :loading="exportingJson"
         class-name="is-primary is-cta"
+        data-test="export-button"
       >
         Export
       </v-button>

@@ -179,3 +179,29 @@ Cypress.Commands.add('makeStoreAlias', () => {
     .its('app.$store')
     .as('store');
 });
+
+Cypress.Commands.add('enterValidPassword', () => {
+  cy.window()
+    .its('app.$store')
+    .as('store');
+
+  cy.get('@store').then(store => {
+    cy.stub(store.state.accounts.wallet, 'validatePassword', () => true);
+  });
+
+  cy.get('[data-test=password-modal]').within(() => {
+    cy.get('input[type=password]').type('12341234');
+    cy.get('[data-test=submit-password]').click();
+  });
+});
+
+Cypress.Commands.add('enterInvalidPassword', () => {
+  cy.window()
+    .its('app.$store')
+    .as('store');
+
+  cy.get('[data-test=password-modal]').within(() => {
+    cy.get('input[type=password]').type('12341234');
+    cy.get('[data-test=submit-password]').click();
+  });
+});
