@@ -170,3 +170,9 @@ Cypress.Commands.add('uploadFile', (selector, fileUrl, type = '') =>
     ),
   ),
 );
+
+Cypress.Commands.add('makeStoreAlias', () => {
+  cy.window()
+    .its('app.$store')
+    .as('store');
+});
