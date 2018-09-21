@@ -56,10 +56,11 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import BasePage from '@/components/pages/Base';
 import ExportToJson from '@/components/ExportToJson.vue';
 import ExportToPrivateKey from '@/components/ExportToPrivateKey.vue';
-import { mapState } from 'vuex';
+import privatePage from '@/mixins/privatePage';
 
 export default {
   name: 'export-wallet',
@@ -75,6 +76,9 @@ export default {
         state.accounts.address.getChecksumAddressString(),
     }),
   },
+
+  mixins: [privatePage],
+
   components: {
     BasePage,
     ExportToJson,
