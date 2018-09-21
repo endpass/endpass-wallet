@@ -9,6 +9,7 @@
               type="file"
               name="jsonWallet"
               @change="setFile"
+              v-validate="'required'"
             >
             <span class="file-cta">
             <span class="file-icon">
@@ -17,9 +18,10 @@
                 v-html="require('@/img/arrow-thick-top.svg')"
               />
             </span>
-            <span class="file-label">
-              {{ fileName || 'V3 JSON keystore file' }}
-            </span>
+            <span
+              class="file-label"
+              v-text="fileName"
+            />
           </span>
           </label>
         </div>
@@ -69,78 +71,80 @@ import VPassword from '@/components/ui/form/VPassword';
 import VButton from '@/components/ui/form/VButton';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
+import keystore from '@/utils/keystore';
 
 export default {
   name: 'ImportFromJson',
   data: () => ({
     isCreating: false,
     jsonKeystorePassword: '',
-    fileName: '',
     file: null,
+    fileData: null,
   }),
+  computed: {
+    fileName() {
+      const { file } = this;
+
+      return file ? file.name : 'V3 JSON keystore file';
+    },
+  },
   methods: {
     ...mapActions('accounts', ['addWalletWithV3']),
-    handlePasswordConfirm(walletPassword) {
-      const reader = new FileReader();
-      reader.onload = ({ target: { result: fileData } }) =>
-        this.addWalletWithJson(fileData, walletPassword);
-
-      try {
-        reader.readAsText(this.file);
-      } catch (e) {
-        this.errors.add({
-          field: 'fileName',
-          msg: 'File is invalid',
-          id: 'wrongFile',
-        });
-      }
-    },
-    async addWalletWithJson(fileData, walletPassword) {
+    async handlePasswordConfirm(walletPassword) {
       this.isCreating = true;
-
-      await new Promise(res => setTimeout(res, 20));
+      this.togglePasswordModal();
 
       try {
         await this.addWalletWithV3({
-          json: JSON.parse(fileData),
+          json: this.fileData,
           jsonPassword: this.jsonKeystorePassword,
           walletPassword,
         });
+
         this.$router.push('/');
       } catch (e) {
-        let error = {
+        this.errors.add({
           field: 'jsonKeystorePassword',
           msg: 'JSON password is invalid',
           id: 'wrongPass',
-        };
-
-        if (
-          e.message === 'Not a V3 wallet' ||
-          e.message.includes('Unexpected token')
-        ) {
-          error = {
-            field: 'fileName',
-            msg: 'File is invalid',
-            id: 'wrongFile',
-          };
-        }
-
-        this.errors.add(error);
-        this.togglePasswordModal();
+        });
       }
 
       this.isCreating = false;
     },
-    setFile(e) {
+    setFile({ target: { files } }) {
       this.errors.removeById('wrongFile');
+      this.fileData = null;
+      this.file = files[0];
 
-      if (e.target.files[0]) {
-        this.fileName = e.target.files[0].name;
-        this.file = e.target.files[0];
-      } else {
-        this.fileName = '';
-        this.file = null;
+      if (!this.file) {
+        return;
       }
+
+      const reader = new FileReader();
+      const fileReaderError = {
+        field: 'fileName',
+        msg: 'File is invalid',
+        id: 'wrongFile',
+      };
+
+      reader.onload = ({ target: { result } }) => {
+        try {
+          const fileData = JSON.parse(result);
+
+          if (keystore.isV3(fileData)) {
+            this.fileData = fileData;
+          } else {
+            this.errors.add(fileReaderError);
+          }
+        } catch (e) {
+          this.errors.add(fileReaderError);
+        }
+      };
+
+      reader.onerror = () => this.errors.add(fileReaderError);
+
+      reader.readAsText(this.file);
     },
   },
   watch: {

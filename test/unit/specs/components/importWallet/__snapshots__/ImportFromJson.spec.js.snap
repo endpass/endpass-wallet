@@ -1,8 +1,88 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ImportFromJson behavior should toggle password modal window 1`] = `
+<password-modal v-on:close="bound togglePasswordModal" v-on:confirm="bound handlePasswordConfirm">
+    The wallet password will be used for operations on the imported wallet
+</password-modal>
+`;
+
 exports[`ImportFromJson render should render initial state of the component 1`] = `
 <div>
-  <!---->
+  <v-form
+    v-on:submit="bound togglePasswordModal"
+  >
+    <div
+      class="field"
+    >
+      <div
+        class="file"
+      >
+        <label
+          class="file-label"
+        >
+          <input
+            aria-invalid="true"
+            aria-required="true"
+            class="file-input"
+            name="jsonWallet"
+            type="file"
+            v-on:change="bound setFile"
+            v-validate="'required'"
+          />
+           
+          <span
+            class="file-cta"
+          >
+            <span
+              class="file-icon"
+            >
+              <span
+                class="icon is-small"
+              >
+                {}
+              </span>
+            </span>
+             
+            <span
+              class="file-label"
+            >
+              V3 JSON keystore file
+            </span>
+          </span>
+        </label>
+      </div>
+       
+      <p
+        class="help is-danger"
+        style="display: none;"
+        v-show="errors.has('fileName')"
+      >
+        
+        
+      
+      </p>
+    </div>
+     
+    <v-password
+      aria-describedby="jsonKeystorePassword"
+      data-vv-as="password"
+      id="jsonKeystorePassword"
+      label="V3 JSON keystore password"
+      name="jsonKeystorePassword"
+      placeholder="V3 JSON keystore password"
+      required=""
+      v-model="jsonKeystorePassword"
+      validator="required|min:8"
+    />
+     
+    <v-button
+      class-name="is-primary is-cta"
+    >
+      
+      Import
+    
+    </v-button>
+  </v-form>
    
   <!---->
 </div>
