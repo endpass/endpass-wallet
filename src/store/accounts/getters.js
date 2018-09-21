@@ -1,12 +1,11 @@
 import web3 from 'web3';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
-import { Wallet, Address } from '@/class';
 
 const getAccountAddresses = state =>
   Object.keys(state.wallets).map(wallet => wallet.toLowerCase());
 
-const isPublicAccount = state => state.wallet.isPublic;
+const isPublicAccount = state => state.wallet && state.wallet.isPublic;
 
 const balance = (state, getters, rootState, rootGetters) => {
   if (!state.balance) return null;
