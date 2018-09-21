@@ -5,7 +5,9 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
   class="is-dark"
   v-on:close="bound close"
 >
-  <template>
+  <template
+    slot="header"
+  >
     Two Factor Authentication
   </template>
    
@@ -86,6 +88,7 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
    
   <div
     class="buttons"
+    slot="footer"
   >
     <v-button
       class-name="is-primary is-medium"
@@ -104,7 +107,9 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
   class="is-dark"
   v-on:close="bound close"
 >
-  <template>
+  <template
+    slot="header"
+  >
     Two Factor Authentication
   </template>
    
@@ -135,6 +140,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
    
   <div
     class="buttons"
+    slot="footer"
   >
     <v-button
       class-name="is-primary is-medium"
@@ -153,7 +159,9 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
   class="is-dark"
   v-on:close="bound close"
 >
-  <template>
+  <template
+    slot="header"
+  >
     Two Factor Authentication
   </template>
    
@@ -204,6 +212,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
    
   <div
     class="buttons"
+    slot="footer"
   >
     <v-button
       class-name="is-primary is-medium"
@@ -222,7 +231,9 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 3`] 
   class="is-dark"
   v-on:close="bound close"
 >
-  <template>
+  <template
+    slot="header"
+  >
     Two Factor Authentication
   </template>
    
@@ -253,6 +264,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 3`] 
    
   <div
     class="buttons"
+    slot="footer"
   >
     <v-button
       class-name="is-primary is-medium"

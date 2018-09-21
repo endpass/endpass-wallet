@@ -5,7 +5,9 @@ exports[`LoginByEmailModal render should render component 1`] = `
   class="is-dark"
   v-on:close="bound handleClose"
 >
-  <template>
+  <template
+    slot="header"
+  >
     Get Started
   </template>
    
@@ -61,6 +63,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
    
   <div
     class="buttons"
+    slot="footer"
   >
     <v-button
       class-name="is-primary is-medium"

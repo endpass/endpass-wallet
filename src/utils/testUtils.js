@@ -40,6 +40,10 @@ function convertModelToAttrs(model) {
   return model ? { 'v-model': model.expression } : {};
 }
 
+function convertSlotToAttrs(slot) {
+  return slot ? { slot } : {};
+}
+
 function generateElement(createElement, vnode) {
   const generateFunc = vnode.componentOptions
     ? generateElementFromComponent
@@ -90,7 +94,7 @@ function generateElementFromHTML(createElement, vnode) {
   }
 
   const { tag, data, children } = vnode;
-  const { directives, on, model, attrs = {} } = data;
+  const { directives, on, model, attrs = {}, slot } = data;
 
   return createElement(
     tag,
@@ -101,6 +105,7 @@ function generateElementFromHTML(createElement, vnode) {
         ...convertDirectivesToAttrs(directives),
         ...convertListenersToAttrs(on),
         ...convertModelToAttrs(model),
+        ...convertSlotToAttrs(slot),
       },
     },
     getChildrenElements(createElement, children),
@@ -108,17 +113,16 @@ function generateElementFromHTML(createElement, vnode) {
 }
 
 export function generateStubs(Component) {
-  return Object.values(Component.components).reduce((acc, stubComponent) => {
+  return Object.values(Component.components).reduce((stubs, stubComponent) => {
     let elementName;
 
     if (stubComponent.name) {
       elementName = toKebab(stubComponent.name);
     }
 
-    return Object.assign(acc, {
+    return Object.assign(stubs, {
       [elementName]: {
         render(createElement) {
-          // TODO: render name of scoped slots
           return generateElementFromComponent(createElement, this.$vnode);
         },
       },
