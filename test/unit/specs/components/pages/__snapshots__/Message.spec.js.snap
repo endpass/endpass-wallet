@@ -2,7 +2,10 @@
 
 exports[`Message page render should render the initial state of the page 1`] = `
 <base-page>
-  Message 
+  <template>
+    Message
+  </template>
+   
   <div
     class="tabs"
   >
@@ -38,7 +41,10 @@ exports[`Message page render should render the initial state of the page 1`] = `
 
 exports[`Message page render should set Sign tab 1`] = `
 <base-page>
-  Message 
+  <template>
+    Message
+  </template>
+   
   <div
     class="tabs"
   >
@@ -74,7 +80,10 @@ exports[`Message page render should set Sign tab 1`] = `
 
 exports[`Message page render should set Verify tab 1`] = `
 <base-page>
-  Message 
+  <template>
+    Message
+  </template>
+   
   <div
     class="tabs"
   >

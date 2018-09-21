@@ -23,10 +23,12 @@ function convertListenersToAttrs(listeners) {
         handlers = [handlers];
       }
 
-      const handler = handlers.find(h => h.name.includes('bound '));
+      const handler = handlers.find(
+        h => h && (h.fns || h).name.includes('bound '),
+      );
 
       if (handler) {
-        attrs[`v-on:${key}`] = handler.name;
+        attrs[`v-on:${key}`] = (handler.fns || handler).name;
       }
     });
   }
@@ -65,8 +67,10 @@ function generateElementFromComponent(
       ...convertDirectivesToAttrs(directives),
       ...convertListenersToAttrs(listeners),
       ...convertModelToAttrs(model),
+      class: data.staticClass,
     },
     hook: undefined,
+    staticClass: undefined,
   };
 
   if (listeners) {
@@ -114,17 +118,8 @@ export function generateStubs(Component) {
     return Object.assign(acc, {
       [elementName]: {
         render(createElement) {
-          const subElements = Object.values(this.$slots).reduce(
-            (elements, slot) =>
-              elements.concat(
-                slot.map(vnode => generateElement(createElement, vnode)),
-              ),
-            [],
-          );
-
-          // TODO: add scopedSlots support
-          // TODO: add support for directives and events for the stub component
-          return createElement(elementName, subElements);
+          // TODO: render name of scoped slots
+          return generateElementFromComponent(createElement, this.$vnode);
         },
       },
     });

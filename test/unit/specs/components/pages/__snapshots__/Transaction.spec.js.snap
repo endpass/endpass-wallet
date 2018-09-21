@@ -2,7 +2,10 @@
 
 exports[`Transaction page render should render the initial state of the page 1`] = `
 <base-page>
-  Transaction 
+  <template>
+    Transaction
+  </template>
+   
   <div
     class="tabs"
   >
@@ -45,7 +48,10 @@ exports[`Transaction page render should render the initial state of the page 1`]
 
 exports[`Transaction page render should set Recover tab 1`] = `
 <base-page>
-  Transaction 
+  <template>
+    Transaction
+  </template>
+   
   <div
     class="tabs"
   >
@@ -89,7 +95,10 @@ exports[`Transaction page render should set Recover tab 1`] = `
 
 exports[`Transaction page render should set Sign tab 1`] = `
 <base-page>
-  Transaction 
+  <template>
+    Transaction
+  </template>
+   
   <div
     class="tabs"
   >

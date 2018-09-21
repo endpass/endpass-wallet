@@ -38,7 +38,9 @@ exports[`TokensPage render should render component 1`] = `
                 <div
                   class="panel-block"
                 >
-                  <search-input />
+                  <search-input
+                    v-model="search"
+                  />
                 </div>
                  
                 <v-spinner
