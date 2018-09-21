@@ -169,6 +169,36 @@ describe('generateStubs', () => {
         expect(createElement.mock.calls).toEqual(expectedCalls);
       });
 
+      it('should correctly render slot name', () => {
+        const slot = 'slot';
+        const data = { slot };
+        const htmlElement = [{ tag, data }];
+        const context = {
+          $vnode: {
+            data: {},
+            componentOptions: {
+              tag: component1.name,
+              children: htmlElement,
+            },
+          },
+        };
+        const expectedCalls = [
+          [
+            tag,
+            {
+              ...data,
+              attrs: { slot },
+            },
+            undefined,
+          ],
+          [component1.name, { attrs: {} }, [tag]],
+        ];
+
+        stubs[component1.name].render.call(context, createElement);
+
+        expect(createElement.mock.calls).toEqual(expectedCalls);
+      });
+
       it('should correctly render children', () => {
         const childrenTag = 'span';
         const childrenData = {

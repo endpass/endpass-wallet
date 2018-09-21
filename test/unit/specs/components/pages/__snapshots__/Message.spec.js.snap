@@ -2,7 +2,9 @@
 
 exports[`Message page render should render the initial state of the page 1`] = `
 <base-page>
-  <template>
+  <template
+    slot="title"
+  >
     Message
   </template>
    
@@ -41,7 +43,9 @@ exports[`Message page render should render the initial state of the page 1`] = `
 
 exports[`Message page render should set Sign tab 1`] = `
 <base-page>
-  <template>
+  <template
+    slot="title"
+  >
     Message
   </template>
    
@@ -80,7 +84,9 @@ exports[`Message page render should set Sign tab 1`] = `
 
 exports[`Message page render should set Verify tab 1`] = `
 <base-page>
-  <template>
+  <template
+    slot="title"
+  >
     Message
   </template>
    
