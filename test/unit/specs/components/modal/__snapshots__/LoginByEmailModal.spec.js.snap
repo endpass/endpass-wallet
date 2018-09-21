@@ -3,8 +3,12 @@
 exports[`LoginByEmailModal render should render component 1`] = `
 <v-modal
   class="is-dark"
+  v-on:close="bound handleClose"
 >
-  Get Started 
+  <template>
+    Get Started
+  </template>
+   
   <p
     class="subtitle"
   >

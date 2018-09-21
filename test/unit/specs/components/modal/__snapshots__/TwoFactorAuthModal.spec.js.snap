@@ -3,8 +3,12 @@
 exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
 <v-modal
   class="is-dark"
+  v-on:close="bound close"
 >
-  Two Factor Authentication 
+  <template>
+    Two Factor Authentication
+  </template>
+   
   <div>
     <p
       class="lead"
@@ -98,8 +102,12 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
 exports[`TwoFactorAuthModal render should render without secret and QR code 1`] = `
 <v-modal
   class="is-dark"
+  v-on:close="bound close"
 >
-  Two Factor Authentication 
+  <template>
+    Two Factor Authentication
+  </template>
+   
   <!---->
    
   <v-form
@@ -143,8 +151,12 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
 exports[`TwoFactorAuthModal render should render without secret and QR code 2`] = `
 <v-modal
   class="is-dark"
+  v-on:close="bound close"
 >
-  Two Factor Authentication 
+  <template>
+    Two Factor Authentication
+  </template>
+   
   <div>
     <p
       class="lead"
@@ -208,8 +220,12 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
 exports[`TwoFactorAuthModal render should render without secret and QR code 3`] = `
 <v-modal
   class="is-dark"
+  v-on:close="bound close"
 >
-  Two Factor Authentication 
+  <template>
+    Two Factor Authentication
+  </template>
+   
   <!---->
    
   <v-form

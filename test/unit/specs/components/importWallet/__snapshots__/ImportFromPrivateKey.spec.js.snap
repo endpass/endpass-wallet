@@ -2,7 +2,9 @@
 
 exports[`ImportFromPrivateKey render should render initial state of the component 1`] = `
 <div>
-  <v-form>
+  <v-form
+    v-on:submit="bound togglePasswordModal"
+  >
     <v-password
       aria-describedby="privateKey"
       data-vv-as="private key"

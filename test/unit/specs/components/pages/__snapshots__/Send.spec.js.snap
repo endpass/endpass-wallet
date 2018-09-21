@@ -9,7 +9,7 @@ exports[`Send render should render ens error 1`] = `
                     <h1 class="card-header-title">Send ETH</h1>
                 </div>
                 <div class="card-content">
-                    <v-form id="sendEther">
+                    <v-form id="sendEther" v-on:submit="bound handleTransactionFormSubmit">
                         <div class="field">
                             <label class="label">
                                 To
@@ -48,7 +48,7 @@ exports[`Send render should render ens error 1`] = `
                             <div class="field advanced-toggle is-horizontal">
                                 <div class="field-label"></div>
                                 <div class="field-body">
-                                    <a class="has-text-link" v-on:click="bound toggleShowAdvanced">
+                                    <a v-on:click="bound toggleShowAdvanced" class="has-text-link">
                                         Advanced Options...
                                     </a>
                                 </div>

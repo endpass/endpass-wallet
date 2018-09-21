@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`RecoverTransaction render should disable "Recover" button 1`] = `
-<v-form>
+<v-form
+  v-on:submit="bound recoverTransaction"
+>
   <v-textarea
     label="RLP encoded transaction"
     v-model="transactionHash"
@@ -21,7 +23,9 @@ exports[`RecoverTransaction render should disable "Recover" button 1`] = `
 `;
 
 exports[`RecoverTransaction render should enable "Recover" button 1`] = `
-<v-form>
+<v-form
+  v-on:submit="bound recoverTransaction"
+>
   <v-textarea
     label="RLP encoded transaction"
     v-model="transactionHash"
@@ -40,7 +44,9 @@ exports[`RecoverTransaction render should enable "Recover" button 1`] = `
 `;
 
 exports[`RecoverTransaction render should render the initial state of the component 1`] = `
-<v-form>
+<v-form
+  v-on:submit="bound recoverTransaction"
+>
   <v-textarea
     label="RLP encoded transaction"
     v-model="transactionHash"
@@ -60,7 +66,9 @@ exports[`RecoverTransaction render should render the initial state of the compon
 `;
 
 exports[`RecoverTransaction render should show restored transaction data 1`] = `
-<v-form>
+<v-form
+  v-on:submit="bound recoverTransaction"
+>
   <v-textarea
     label="RLP encoded transaction"
     v-model="transactionHash"
