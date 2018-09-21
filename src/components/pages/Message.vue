@@ -21,6 +21,7 @@
 import BasePage from '@/components/pages/Base';
 import SignMessage from '@/components/SignMessage';
 import VerifyMessage from '@/components/VerifyMessage';
+import privatePage from '@/mixins/privatePage';
 
 const ACTION_TYPES = {
   SIGN: 'SIGN',
@@ -48,6 +49,9 @@ export default {
       this.action = ACTION_TYPES.VERIFY;
     },
   },
+
+  mixins: [privatePage],
+
   components: {
     BasePage,
     SignMessage,

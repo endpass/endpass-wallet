@@ -137,7 +137,7 @@
           </li>
           <li>
             <router-link
-              v-if="wallet"
+              v-if="wallet && !isPublicAccount"
               :to="{name: 'SendPage'}"
               class="nav-link"
               active-class="is-active"
@@ -196,34 +196,36 @@
           </li>
         </ul>
 
-        <p
-          v-if="wallet"
-          class="menu-label"
-        >
-          Tools
-        </p>
-        <ul
-          v-if="wallet"
-          class="menu-list">
-          <li>
-            <router-link
-              :to="{name:'MessagePage'}"
-              class="nav-link"
-              active-class="is-active"
-            >
-              Message
-            </router-link>
-          </li>
-          <li>
-            <router-link
-              :to="{name:'TransactionPage'}"
-              class="nav-link"
-              active-class="is-active"
-            >
-              Transaction
-            </router-link>
-          </li>
-        </ul>
+        <template v-if="!isPublicAccount">
+          <p
+            v-if="wallet"
+            class="menu-label"
+          >
+            Tools
+          </p>
+          <ul
+            v-if="wallet"
+            class="menu-list">
+            <li>
+              <router-link
+                :to="{name:'MessagePage'}"
+                class="nav-link"
+                active-class="is-active"
+              >
+                Message
+              </router-link>
+            </li>
+            <li>
+              <router-link
+                :to="{name:'TransactionPage'}"
+                class="nav-link"
+                active-class="is-active"
+              >
+                Transaction
+              </router-link>
+            </li>
+          </ul>
+        </template>
       </div>
 
       <div class="nav-sidebar-footer" />

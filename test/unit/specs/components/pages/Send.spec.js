@@ -28,27 +28,6 @@ describe('Send', () => {
         price: {
           price: 400,
         },
-        accounts: {
-          address: {
-            getChecksumAddressString() {
-              return '0x9eceefdf3554e178a6549006f2c02163e63c9fd8';
-            },
-          },
-          balance: '1000000000000000000',
-          pendingTransactions: [
-            {
-              timestamp: 1524505925,
-              from: '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b',
-              to: '0x7c59542b20002ed255598172cab48b86d865dfbb',
-              hash:
-                '0x7fcb1e71def6d0d353251831f46d60401e6321b5e0b0b135085be4688ca2a9b1',
-              value: 0.009979,
-              input: '0x',
-              success: true,
-            },
-          ],
-          wallets: () => [],
-        },
         user: {
           settings: {
             fiatCurrency: 'USD',
@@ -69,6 +48,36 @@ describe('Send', () => {
       },
       actions,
       modules: {
+        accounts: {
+          namespaced: true,
+          state: {
+            address: {
+              getChecksumAddressString() {
+                return '0x9eceefdf3554e178a6549006f2c02163e63c9fd8';
+              },
+            },
+            balance: '1000000000000000000',
+            pendingTransactions: [
+              {
+                timestamp: 1524505925,
+                from: '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b',
+                to: '0x7c59542b20002ed255598172cab48b86d865dfbb',
+                hash:
+                  '0x7fcb1e71def6d0d353251831f46d60401e6321b5e0b0b135085be4688ca2a9b1',
+                value: 0.009979,
+                input: '0x',
+                success: true,
+              },
+            ],
+            wallets: () => [],
+            wallet: {
+              isPublic: false,
+            },
+          },
+          getters: {
+            isPublicAccount: () => true,
+          },
+        },
         gasPrice: {
           namespaced: true,
           actions: {

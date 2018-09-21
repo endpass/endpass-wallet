@@ -298,6 +298,7 @@ import VSelect from '@/components/ui/form/VSelect';
 import AccountChooser from '@/components/AccountChooser';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
+import privatePage from '@/mixins/privatePage';
 import web3, { isAddressOfContract } from '@/utils/web3';
 import { getShortStringWithEllipsis } from '@/utils/strings';
 import { uniq } from '@/utils/arrays';
@@ -312,19 +313,6 @@ const defaultTnx = {
 };
 
 export default {
-  components: {
-    VForm,
-    VButton,
-    VRadio,
-    VSpinner,
-    VInput,
-    VInputAddress,
-    VSelect,
-    AccountChooser,
-    TransactionModal,
-    PasswordModal,
-  },
-
   data: () => ({
     address: '',
     isSending: false,
@@ -507,6 +495,7 @@ export default {
         }
       },
     },
+
     'transaction.tokenInfo': () => {
       this.updateEstimateGasCost();
     },
@@ -691,6 +680,21 @@ export default {
     setMaxAmount() {
       this.value = this.maxAmount;
     },
+  },
+
+  mixins: [privatePage],
+
+  components: {
+    VForm,
+    VButton,
+    VRadio,
+    VSpinner,
+    VInput,
+    VInputAddress,
+    VSelect,
+    AccountChooser,
+    TransactionModal,
+    PasswordModal,
   },
 };
 </script>

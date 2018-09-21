@@ -14,8 +14,12 @@ localVue.use(VueRouter);
 localVue.use(VeeValidate);
 
 jest.useFakeTimers();
+
 describe('ImportFromSeed', () => {
-  let wrapper, actions, router;
+  let wrapper;
+  let actions;
+  let router;
+
   beforeEach(() => {
     actions = {
       addMultiHdWallet: jest.fn(),
