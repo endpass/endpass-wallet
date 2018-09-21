@@ -43,3 +43,8 @@ code,
 .long-number:hover {
   max-width: none;
 }
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
