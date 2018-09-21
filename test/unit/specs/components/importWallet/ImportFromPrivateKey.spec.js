@@ -15,8 +15,12 @@ localVue.use(VeeValidate);
 localVue.use(VueRouter);
 
 jest.useFakeTimers();
+
 describe('ImportFromPrivateKey', () => {
-  let wrapper, actions, router;
+  let wrapper;
+  let actions;
+  let router;
+
   beforeEach(() => {
     actions = {
       addWalletWithPrivateKey: jest.fn(),
@@ -100,6 +104,7 @@ describe('ImportFromPrivateKey', () => {
 
       it('should add error to field if failed to create wallet', done => {
         expect.assertions(1);
+
         actions.addWalletWithPrivateKey.mockImplementationOnce(() => {
           throw new Error();
         });

@@ -15,6 +15,7 @@ jest.mock('@/store', () => ({
 }));
 
 describe('hasLoginGuard', () => {
+  let next;
   const to = { fullPath: 'fullPath' };
   const from = {};
   const redirectUri = {
@@ -24,19 +25,22 @@ describe('hasLoginGuard', () => {
     },
   };
 
+  beforeEach(() => {
+    next = jest.fn();
+  });
+
   it('should allow routing', async () => {
-    const next = jest.fn();
+    expect.assertions(1);
 
     getInitializedValueFromStore.mockResolvedValueOnce(true);
 
     await hasLoginGuard(to, from, next);
 
     expect(next).toHaveBeenCalledTimes(1);
-    expect(next).toHaveBeenCalledWith(undefined);
   });
 
   it('should redirect to base url', async () => {
-    const next = jest.fn();
+    expect.assertions(2);
 
     getInitializedValueFromStore.mockResolvedValueOnce(false);
 
@@ -48,26 +52,29 @@ describe('hasLoginGuard', () => {
 });
 
 describe('privateWalletGuard', () => {
-  const to = {};
+  let to;
+  let next;
   const from = { fullPath: 'fullPath' };
 
   beforeEach(() => {
+    to = {};
+    next = jest.fn();
+
     getInitializedValueFromStore.mockResolvedValueOnce();
   });
 
   it('should allow routing', async () => {
-    const next = jest.fn();
+    expect.assertions(1);
 
     store.state.accounts.wallet = {};
 
     await privateWalletGuard(to, from, next);
 
     expect(next).toHaveBeenCalledTimes(1);
-    expect(next).toHaveBeenCalledWith(undefined);
   });
 
-  it('should redirect to new wallet page', async () => {
-    const next = jest.fn();
+  it('should redirect to new wallet page if wallet empty', async () => {
+    expect.assertions(2);
 
     store.state.accounts.wallet = null;
 
@@ -75,5 +82,23 @@ describe('privateWalletGuard', () => {
 
     expect(next).toHaveBeenCalledTimes(1);
     expect(next).toHaveBeenCalledWith({ name: 'NewWallet' });
+  });
+
+  it('should redirect to home page if account is public', async () => {
+    expect.assertions(2);
+
+    Object.assign(store.state.accounts, {
+      wallet: {
+        isPublic: true,
+      },
+    });
+    to = {
+      path: '/send',
+    };
+
+    await privateWalletGuard(to, from, next);
+
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(next).toHaveBeenCalledWith({ name: 'HomePage' });
   });
 });

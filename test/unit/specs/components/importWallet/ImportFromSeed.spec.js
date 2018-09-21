@@ -14,8 +14,12 @@ localVue.use(VueRouter);
 localVue.use(VeeValidate);
 
 jest.useFakeTimers();
+
 describe('ImportFromSeed', () => {
-  let wrapper, actions, router;
+  let wrapper;
+  let actions;
+  let router;
+
   beforeEach(() => {
     actions = {
       addMultiHdWallet: jest.fn(),
@@ -96,6 +100,8 @@ describe('ImportFromSeed', () => {
       });
 
       it('should add error to field if failed to create wallet', done => {
+        expect.assertions(1);
+
         actions.addMultiHdWallet.mockImplementationOnce(() => {
           throw new Error();
         });
@@ -110,8 +116,6 @@ describe('ImportFromSeed', () => {
           done();
         });
         jest.runAllTimers();
-
-        expect.assertions(1);
       });
     });
 
