@@ -24,7 +24,13 @@
                   placeholder="0x... or ENS"
                 />
                 <p
-                  v-if="ensError"
+                  v-if="isEnsTransaction && !ensError && !isEnsAddressLoading"
+                  class="help ellipsis"
+                >
+                  Resolved ENS address: {{ transaction.to }}
+                </p>
+                <p
+                  v-if="ensError && !isEnsAddressLoading"
                   class="help is-danger"
                 >
                   {{ ensError }}

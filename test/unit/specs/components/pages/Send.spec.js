@@ -130,6 +130,23 @@ describe('Send', () => {
 
       expect(wrapper.html()).toMatchSnapshot();
     });
+
+    it('should render resolved ens address', async () => {
+      expect.assertions(1);
+
+      wrapper.setData({
+        transaction: {
+          to: '0x0',
+        },
+      });
+      wrapper.setComputed({
+        isEnsTransaction: true,
+      });
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.html()).toMatchSnapshot();
+    });
   });
 
   describe('behavior', () => {
