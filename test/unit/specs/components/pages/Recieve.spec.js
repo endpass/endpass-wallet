@@ -37,8 +37,8 @@ describe('ReceivePage', () => {
     };
 
     tokensActions = {
-      getTokensWithBalanceByAddress: jest.fn(),
-      getTokensBalancesByAddress: jest.fn(),
+      getTokensWithBalanceByAddress: jest.fn().mockResolvedValue([]),
+      getTokensBalancesByAddress: jest.fn().mockResolvedValue([]),
     };
 
     mock = new MockAdapter(axios);
