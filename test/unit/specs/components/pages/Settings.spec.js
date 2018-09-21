@@ -72,49 +72,54 @@ describe('SettingsPage', () => {
     });
   });
 
-  it('should set data from props correctly', () => {
-    expect(wrapper.vm.$data.newSettings).toEqual(wrapper.vm.settings);
+  describe('props', () => {
+    it('should set data from props correctly', () => {
+      expect(wrapper.vm.$data.newSettings).toEqual(wrapper.vm.settings);
+    });
   });
 
-  it('should call update action', () => {
-    const newSettings = {
-      fiatCurrency: 'AUD',
-    };
-
-    wrapper.setData({ newSettings });
-    wrapper.vm.updateSettings(newSettings);
-
-    expect(actions.updateSettings).toHaveBeenCalledTimes(1);
-    expect(actions.updateSettings).toBeCalledWith(
-      expect.any(Object),
-      newSettings,
-      undefined,
-    );
-  });
-
-  it('should validate settings properly', async () => {
-    wrapper = mount(SettingsPage, { store, localVue });
-
-    expect(wrapper.vm.errors.any()).toBeFalsy();
-
-    wrapper.setData({
-      newSettings: {
+  describe('behavior', () => {
+    it('should call update action with new settings', () => {
+      const newSettings = {
         fiatCurrency: 'AUD',
-      },
+      };
+
+      wrapper.setData({ newSettings });
+      wrapper.vm.updateSettings(newSettings);
+
+      expect(actions.updateSettings).toHaveBeenCalledTimes(1);
+      expect(actions.updateSettings).toBeCalledWith(
+        expect.any(Object),
+        newSettings,
+        undefined,
+      );
+      expect(actions.updateSettings.mock.calls[0][1]).not.toBe(newSettings);
     });
 
-    await wrapper.vm.$validator.validateAll();
+    it('should validate settings properly', async () => {
+      wrapper = mount(SettingsPage, { store, localVue });
 
-    expect(wrapper.vm.errors.any()).toBeFalsy();
+      expect(wrapper.vm.errors.any()).toBeFalsy();
 
-    wrapper.setData({
-      newSettings: {
-        fiatCurrency: 'USD',
-      },
+      wrapper.setData({
+        newSettings: {
+          fiatCurrency: 'AUD',
+        },
+      });
+
+      await wrapper.vm.$validator.validateAll();
+
+      expect(wrapper.vm.errors.any()).toBeFalsy();
+
+      wrapper.setData({
+        newSettings: {
+          fiatCurrency: 'USD',
+        },
+      });
+
+      await wrapper.vm.$validator.validateAll();
+
+      expect(wrapper.vm.errors.any()).toBeFalsy();
     });
-
-    await wrapper.vm.$validator.validateAll();
-
-    expect(wrapper.vm.errors.any()).toBeFalsy();
   });
 });

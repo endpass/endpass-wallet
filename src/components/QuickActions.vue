@@ -58,7 +58,7 @@
 import { mapGetters, mapState } from 'vuex';
 
 export default {
-  name: 'quick-actions',
+  name: 'QuickActions',
   data() {
     return {};
   },

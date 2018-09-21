@@ -32,7 +32,7 @@ import { BigNumber } from 'bignumber.js';
 import VSpinner from '@/components/ui/VSpinner';
 
 export default {
-  name: 'balance',
+  name: 'Balance',
   props: {
     amount: {
       default: 0,
