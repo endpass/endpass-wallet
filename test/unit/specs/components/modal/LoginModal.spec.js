@@ -101,6 +101,9 @@ describe('LoginModal', () => {
             },
           },
         },
+        actions: {
+          init: jest.fn().mockResolvedValue(),
+        },
       });
 
       wrapper = shallow(LoginModal, {
@@ -220,6 +223,18 @@ describe('LoginModal', () => {
         await wrapper.vm.handleTwoFactorAuthModalConfirm(code);
 
         expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(0);
+      });
+
+      it('should reload data after successfully login', async () => {
+        expect.assertions(1);
+
+        wrapper.setMethods({
+          reloadData: jest.fn().mockResolvedValue(),
+        });
+
+        await wrapper.vm.handleTwoFactorAuthModalConfirm(code);
+
+        expect(wrapper.vm.reloadData).toHaveBeenCalledTimes(1);
       });
     });
   });
