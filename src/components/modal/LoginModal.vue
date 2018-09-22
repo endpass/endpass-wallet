@@ -25,6 +25,9 @@ export default {
   }),
   methods: {
     ...mapActions('user', ['login', 'loginViaOTP']),
+    ...mapActions({
+      reloadData: 'init',
+    }),
     async handleLoginByEmailModalConfirm(email) {
       try {
         this.isLoading = true;
@@ -53,6 +56,8 @@ export default {
 
         await this.loginViaOTP({ code, email });
         this.handleSuccessfulLogin();
+
+        await this.reloadData();
         this.redirectPage();
       } catch (e) {
         this.handleFailedLogin(e);
