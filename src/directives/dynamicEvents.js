@@ -12,9 +12,6 @@ Vue.directive('DynamicEvents', {
           `handle-${vnode.componentInstance.$options.name}-${event}`,
         );
 
-        console.log(commonEventHandler);
-        console.log(currentComponentEventHandler);
-
         if (vnode.context[commonEventHandler]) {
           vnode.context[commonEventHandler](eventData);
         }
