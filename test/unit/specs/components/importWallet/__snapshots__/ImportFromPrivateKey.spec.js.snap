@@ -3,10 +3,12 @@
 exports[`ImportFromPrivateKey render should render initial state of the component 1`] = `
 <div>
   <v-form
+    data-test="import-private-form"
     v-on:submit="bound togglePasswordModal"
   >
     <v-password
       aria-describedby="privateKey"
+      data-test="input-private-key"
       data-vv-as="private key"
       id="privateKey"
       label="Private key"
@@ -20,6 +22,7 @@ exports[`ImportFromPrivateKey render should render initial state of the componen
      
     <v-button
       class-name="is-primary is-cta"
+      data-test="submit-import"
     >
       
       Import

@@ -3,6 +3,7 @@
 exports[`PageLoader page render should render initial state of the component 1`] = `
 <div
   class="page-loader modal is-active"
+  data-test="page-loader"
 >
   <div
     class="modal-content"

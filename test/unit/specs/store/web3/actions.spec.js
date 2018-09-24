@@ -643,7 +643,7 @@ describe('web3 actions', () => {
 
       await init({ commit, dispatch, state });
 
-      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenCalledTimes(3);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });

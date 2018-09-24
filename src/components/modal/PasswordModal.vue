@@ -18,6 +18,7 @@
             data-vv-as="password"
             placeholder="Your Wallet Password"
             required
+            data-test="input-password"
             @input="handleInput"
           />
         </v-form>

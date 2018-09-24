@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-form @submit="togglePasswordModal">
+    <v-form
+      data-test="import-private-form"
+      @submit="togglePasswordModal"
+    >
       <v-password
         id="privateKey"
         key="privateKeyUnique"
@@ -12,12 +15,14 @@
         aria-describedby="privateKey"
         placeholder="Private key"
         required
+        data-test="input-private-key"
         @input="handleInput"
       />
 
       <v-button
         :loading="isCreating"
         class-name="is-primary is-cta"
+        data-test="submit-import"
       >
         Import
       </v-button>

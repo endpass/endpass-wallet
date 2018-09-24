@@ -155,12 +155,10 @@ const init = async ({ commit, dispatch, state }) => {
     commit(mutationsTypes.CHANGE_NETWORK, activeNet);
     commit(mutationsTypes.CHANGE_CURRENCY, activeCurrency);
 
-    await dispatch(
-      'tokens/subscribeOnTokensBalancesUpdates',
-      {},
-      { root: true },
-    );
-    await dispatch('subscribeOnBlockUpdates');
+    await Promise.all([
+      dispatch('tokens/subscribeOnTokensBalancesUpdates', {}, { root: true }),
+      dispatch('subscribeOnBlockUpdates'),
+    ]);
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });
   }
