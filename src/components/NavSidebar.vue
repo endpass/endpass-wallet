@@ -98,6 +98,7 @@
 
       <div
         class="nav-sidebar-item menu"
+        data-test="nav-sidebar-menu"
         @click="closeNavMenu"
       >
         <p

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-form @submit="togglePasswordModal">
+    <v-form
+      data-test="import-json-form"
+      @submit="togglePasswordModal"
+    >
       <div class="field">
         <div class="file">
           <label class="file-label">
@@ -8,21 +11,22 @@
               class="file-input"
               type="file"
               name="jsonWallet"
-              @change="setFile"
+              data-test="input-file"
               v-validate="'required'"
+              @change="setFile"
             >
             <span class="file-cta">
-            <span class="file-icon">
+              <span class="file-icon">
+                <span
+                  class="icon is-small"
+                  v-html="require('@/img/arrow-thick-top.svg')"
+                />
+              </span>
               <span
-                class="icon is-small"
-                v-html="require('@/img/arrow-thick-top.svg')"
+                class="file-label"
+                v-text="fileName"
               />
             </span>
-            <span
-              class="file-label"
-              v-text="fileName"
-            />
-          </span>
           </label>
         </div>
         <p
@@ -43,11 +47,14 @@
         data-vv-as="password"
         aria-describedby="jsonKeystorePassword"
         placeholder="V3 JSON keystore password"
-        required />
+        required
+        data-test="input-json-file-password"
+      />
 
       <v-button
         :loading="isCreating"
         class-name="is-primary is-cta"
+        data-test="submit-import"
       >
         Import
       </v-button>

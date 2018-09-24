@@ -2,6 +2,7 @@
   <div
     v-if="isLoading"
     class="page-loader modal is-active"
+    data-test="page-loader"
   >
     <div class="modal-content">
       <div class="page-loader-logo">

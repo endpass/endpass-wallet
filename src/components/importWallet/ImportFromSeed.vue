@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-form @submit="togglePasswordModal">
+    <v-form
+      data-test="import-seed-form"
+      @submit="togglePasswordModal"
+    >
       <v-input
         id="hdkeySeed"
         key="hdkeyPhraseUnique"
@@ -12,12 +15,14 @@
         aria-describedby="hdkeyPhrase"
         placeholder="Seed phrase"
         required
+        data-test="input-seed-phrase"
         @input="handleInput"
       />
 
       <v-button
         :loading="isCreating"
         class-name="is-primary is-cta"
+        data-test="submit-import"
       >
         Import
       </v-button>

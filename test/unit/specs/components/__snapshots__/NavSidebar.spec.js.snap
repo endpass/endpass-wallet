@@ -101,6 +101,7 @@ exports[`NavSidebar render should not render items for private account if curren
      
     <div
       class="nav-sidebar-item menu"
+      data-test="nav-sidebar-menu"
     >
       <!---->
        
@@ -261,6 +262,7 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
      
     <div
       class="nav-sidebar-item menu"
+      data-test="nav-sidebar-menu"
     >
       <!---->
        

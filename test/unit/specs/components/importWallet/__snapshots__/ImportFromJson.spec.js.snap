@@ -9,6 +9,7 @@ exports[`ImportFromJson behavior should toggle password modal window 1`] = `
 exports[`ImportFromJson render should render initial state of the component 1`] = `
 <div>
   <v-form
+    data-test="import-json-form"
     v-on:submit="bound togglePasswordModal"
   >
     <div
@@ -24,6 +25,7 @@ exports[`ImportFromJson render should render initial state of the component 1`] 
             aria-invalid="true"
             aria-required="true"
             class="file-input"
+            data-test="input-file"
             name="jsonWallet"
             type="file"
             v-on:change="bound setFile"
@@ -65,6 +67,7 @@ exports[`ImportFromJson render should render initial state of the component 1`] 
      
     <v-password
       aria-describedby="jsonKeystorePassword"
+      data-test="input-json-file-password"
       data-vv-as="password"
       id="jsonKeystorePassword"
       label="V3 JSON keystore password"
@@ -77,6 +80,7 @@ exports[`ImportFromJson render should render initial state of the component 1`] 
      
     <v-button
       class-name="is-primary is-cta"
+      data-test="submit-import"
     >
       
       Import
