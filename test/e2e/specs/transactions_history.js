@@ -26,11 +26,9 @@ describe('Transactions History Page', () => {
       }).as('addressHistoryRequest');
 
       cy.visit('#/history');
-      cy.get('[data-test=page-loader]').should('not.exist', {
-        timeout: 25000,
-      });
+      cy.waitPageLoad();
       cy.wait(['@addressHistoryRequest', '@addressTransactionsRequest'], {
-        timeout: 10000,
+        timeout: 25000,
       });
 
       cy.get('[data-test=transactions-history-item]')
@@ -40,9 +38,7 @@ describe('Transactions History Page', () => {
 
     it('should add items to history after transactions send', () => {
       cy.visit('#/history');
-      cy.get('[data-test=page-loader]').should('not.exist', {
-        timeout: 25000,
-      });
+      cy.waitPageLoad();
 
       cy.window()
         .its('app.$store')
@@ -62,9 +58,7 @@ describe('Transactions History Page', () => {
     beforeEach(() => {
       cy.visit('#/history');
       cy.makeStoreAlias();
-      cy.get('[data-test=page-loader]').should('not.exist', {
-        timeout: 25000,
-      });
+      cy.waitPageLoad();
 
       cy.get('@store').invoke('commit', 'transactions/ADD_TRANSACTION', {
         ...ethplorerTransactions[0],
@@ -130,9 +124,7 @@ describe('Transactions History Page', () => {
   describe('Transactions history forms validation', () => {
     beforeEach(() => {
       cy.visit('#/history');
-      cy.get('[data-test=page-loader]').should('not.exist', {
-        timeout: 25000,
-      });
+      cy.waitPageLoad();
       cy.makeStoreAlias();
     });
 
