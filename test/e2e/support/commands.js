@@ -130,6 +130,11 @@ Cypress.Commands.add('inputPassword', () => {
   cy.get('[data-test=submit-password]').click();
 });
 
+Cypress.Commands.add('inputInvalidPassword', () => {
+  cy.get('[data-test=input-password] input').type('12341234');
+  cy.get('[data-test=submit-password]').click();
+});
+
 /**
  * Converts fixture to Blob. All file types are converted to base64 then
  * converted to a Blob using Cypress expect application/json. Json files are
@@ -178,30 +183,4 @@ Cypress.Commands.add('makeStoreAlias', () => {
   cy.window()
     .its('app.$store')
     .as('store');
-});
-
-Cypress.Commands.add('enterValidPassword', () => {
-  cy.window()
-    .its('app.$store')
-    .as('store');
-
-  cy.get('@store').then(store => {
-    cy.stub(store.state.accounts.wallet, 'validatePassword', () => true);
-  });
-
-  cy.get('[data-test=password-modal]').within(() => {
-    cy.get('input[type=password]').type('12341234');
-    cy.get('[data-test=submit-password]').click();
-  });
-});
-
-Cypress.Commands.add('enterInvalidPassword', () => {
-  cy.window()
-    .its('app.$store')
-    .as('store');
-
-  cy.get('[data-test=password-modal]').within(() => {
-    cy.get('input[type=password]').type('12341234');
-    cy.get('[data-test=submit-password]').click();
-  });
 });
