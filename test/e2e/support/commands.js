@@ -120,6 +120,9 @@ Cypress.Commands.add('getInitialData', () => {
 Cypress.Commands.add('waitPageLoad', () => {
   cy.get('main').should('be.visible');
   cy.wait(1000);
+  cy.get('[data-test=page-loader]', {
+    timeout: 25000,
+  }).should('be.not.exist');
 });
 
 Cypress.Commands.add('inputPassword', () => {
