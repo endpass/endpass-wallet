@@ -13,6 +13,7 @@
             <li>
               <a
                 :class="{'is-active':exportType==='privateKey'}"
+                data-test="export-private-key-button"
                 @click="exportType = 'privateKey'"
               >
                 Private Key
@@ -21,6 +22,7 @@
             <li>
               <a
                 :class="{'is-active':exportType==='seedPhrase'}"
+                data-test="export-seed-phrase-button"
                 @click="exportType = 'seedPhrase'"
               >
                 Seed Phrase
@@ -29,6 +31,7 @@
             <li>
               <a
                 :class="{'is-active':exportType==='json'}"
+                data-test="export-json-button"
                 @click="exportType = 'json'"
               >
                 JSON Keystore

@@ -41,6 +41,7 @@ exports[`ExportWallet page render should render initial state of the component 1
           <li>
             <a
               class="is-active"
+              data-test="export-private-key-button"
             >
               
               Private Key
@@ -51,6 +52,7 @@ exports[`ExportWallet page render should render initial state of the component 1
           <li>
             <a
               class=""
+              data-test="export-seed-phrase-button"
             >
               
               Seed Phrase
@@ -61,6 +63,7 @@ exports[`ExportWallet page render should render initial state of the component 1
           <li>
             <a
               class=""
+              data-test="export-json-button"
             >
               
               JSON Keystore

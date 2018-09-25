@@ -29,7 +29,9 @@ describe('Import Wallet Page', () => {
     cy.contains('Address').click();
     cy.get('[data-test=input-public-key]').type(checksumAddress);
     cy.get('[data-test=submit-import]').click();
-    cy.get('[data-test=address-card]')
+    cy.get('[data-test=address-card]', {
+      timeout: 25000,
+    })
       .contains(checksumAddress)
       .should('exist');
     cy.get('[data-test=nav-sidebar-menu]')
