@@ -1,14 +1,21 @@
 <template>
-  <div class="app-page receive-page" v-if="address">
+  <div
+    v-if="address"
+    class="app-page receive-page"
+  >
     <div class="section">
       <div class="container">
         <div class="card app-card">
           <div class="card-header">
             <h2 class="card-header-title">Receive ETH</h2>
           </div>
-          <div class="card-content">
+          <div
+            class="card-content"
+            data-test="current-account"
+          >
             <p>Your Active Address:</p>
-            <account v-if="address"
+            <account
+              v-if="address"
               :currency="activeCurrency.name"
               :address="address"
               :balance="balance"
@@ -21,19 +28,38 @@
 
     <div class="section">
       <div class="container">
-        <div class="card app-card" v-if="walletAddress !== address" v-for="(wallet, walletAddress) in wallets" :key="walletAddress">
+        <div
+          v-for="(wallet, walletAddress) in wallets"
+          v-if="walletAddress !== address"
+          :key="walletAddress"
+          class="card app-card"
+        >
           <div class="card-header">
             <h2 class="card-header-title">Receive ETH</h2>
           </div>
-          <div class="card-content">
+          <div
+            class="card-content"
+            data-test="account"
+          >
             <account
               :currency="activeCurrency.name"
               :address="walletAddress"
               :balance="balances[walletAddress]"
             />
-            <v-button v-if="!wallet.isPublic" @click="clickSendButton(walletAddress)" type="button" name="button">Send ethereum</v-button>
+            <v-button
+              v-if="!wallet.isPublic"
+              type="button"
+              name="button"
+              data-test="send-button"
+              @click="clickSendButton(walletAddress)"
+            >
+              Send ethereum
+            </v-button>
             <div class="token-list-container">
-              <token-list v-if="tokens[walletAddress]" :tokens="tokens[walletAddress]" />
+              <token-list
+                v-if="tokens[walletAddress]"
+                :tokens="tokens[walletAddress]"
+              />
               <v-spinner
                 v-else-if="!isTokensLoaded(walletAddress)"
                 :is-loading="!isTokensLoaded(walletAddress)"
@@ -51,10 +77,15 @@
             <h2 class="card-header-title">Incoming Payment History</h2>
           </div>
           <div class="card-content">
-            <ul class="transactions" v-if="incomingTransactions.length">
-              <li v-for="transaction in incomingTransactions"
-                :key="transaction.hash">
-                <app-transaction :transaction="transaction"></app-transaction>
+            <ul
+              v-if="incomingTransactions.length"
+              class="transactions"
+            >
+              <li
+                v-for="transaction in incomingTransactions"
+                :key="transaction.hash"
+              >
+                <app-transaction :transaction="transaction" />
               </li>
             </ul>
             <v-spinner
@@ -80,7 +111,7 @@ import Account from '@/components/Account';
 import VSpinner from '@/components/ui/VSpinner';
 
 export default {
-  name: 'receive-page',
+  name: 'ReceivePage',
   data() {
     return {
       isLoading: true,

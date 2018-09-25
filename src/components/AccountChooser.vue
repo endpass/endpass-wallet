@@ -1,5 +1,8 @@
 <template>
-  <div class="account-chooser">
+  <div
+    class="account-chooser"
+    data-test="account-chooser"
+  >
     <div class="field">
       <vue-multiselect
         ref="select"
