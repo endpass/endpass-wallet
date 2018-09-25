@@ -3,6 +3,7 @@
 exports[`AccountChooser render should render account chooser component 1`] = `
 <div
   class="account-chooser"
+  data-test="account-chooser"
 >
   <div
     class="field"
@@ -88,6 +89,7 @@ exports[`AccountChooser render should render account chooser component 1`] = `
 exports[`AccountChooser render should render error 1`] = `
 <div
   class="account-chooser"
+  data-test="account-chooser"
 >
   <div
     class="field"

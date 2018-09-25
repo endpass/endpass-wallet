@@ -25,6 +25,7 @@ exports[`ReceivePage render should render component 1`] = `
          
         <div
           class="card-content"
+          data-test="current-account"
         >
           <p>
             Your Active Address:
@@ -60,6 +61,7 @@ exports[`ReceivePage render should render component 1`] = `
          
         <div
           class="card-content"
+          data-test="account"
         >
           <!---->
            

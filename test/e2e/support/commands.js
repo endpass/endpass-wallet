@@ -184,3 +184,11 @@ Cypress.Commands.add('makeStoreAlias', () => {
     .its('app.$store')
     .as('store');
 });
+
+Cypress.Commands.add('switchAccount', () => {
+  cy.get('[data-test=account-chooser]')
+    .click()
+    .within(() => {
+      cy.get('[data-select]:not(.multiselect__option--selected)').click();
+    });
+});
