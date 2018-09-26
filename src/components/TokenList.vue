@@ -8,6 +8,7 @@
         v-for="token in selectedTokens"
         :class="itemClass"
         :key="token.address"
+        data-test="user-token"
       >
         <v-spinner
           v-if="isLoading"
@@ -68,6 +69,7 @@ export default {
     // Classes to set on token
     itemClass: {
       type: [Object, Array, String],
+      default: '',
     },
   },
   data() {
@@ -76,11 +78,18 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      tokenPrices: state => state.tokens.prices,
+      ethPrice: state => state.price.price,
+      currency: state => state.user.settings.fiatCurrency,
+    }),
+    ...mapGetters('tokens', ['tokensWithBalance']),
     // TODO test that user added tokens have balances
     selectedTokens() {
       if (Array.isArray(this.tokens)) {
         return this.tokens;
       }
+
       return this.tokensWithBalance;
     },
     // Returns a Map of token symbol to price
@@ -92,12 +101,6 @@ export default {
         ]),
       );
     },
-    ...mapState({
-      tokenPrices: state => state.tokens.prices,
-      ethPrice: state => state.price.price,
-      currency: state => state.user.settings.fiatCurrency,
-    }),
-    ...mapGetters('tokens', ['tokensWithBalance']),
   },
   methods: {
     ...mapActions('tokens', [
