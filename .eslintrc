@@ -37,6 +37,7 @@
         "order": [
           "el",
           "name",
+          "inheritAttrs",
           "inject",
           "provide",
           ["props", "propsData"],
@@ -55,7 +56,6 @@
             "filters",
             "parent",
             "extends",
-            "inheritAttrs",
             "model",
             "template",
             "render",

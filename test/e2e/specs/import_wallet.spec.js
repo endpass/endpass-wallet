@@ -14,7 +14,7 @@ describe('Import Wallet Page', () => {
 
   it('should import wallet from private key', () => {
     cy.contains('Private Key').click();
-    cy.get('[data-test=input-private-key] input').type(privateKey);
+    cy.get('[data-test=input-private-key]').type(privateKey);
     cy.get('[data-test=submit-import]').click();
     cy.inputPassword();
     cy.get('[data-test=address-card]')
@@ -62,7 +62,7 @@ describe('Import Wallet Page', () => {
       'keystore/account_import.json',
       'application/json',
     );
-    cy.get('[data-test=input-json-file-password] input').type(v3password);
+    cy.get('[data-test=input-json-file-password]').type(v3password);
     cy.get('[data-test=submit-import]').click();
     cy.inputPassword();
     cy.get('[data-test=address-card]')
@@ -81,7 +81,7 @@ describe('Import Wallet Page', () => {
     cy.contains('V3 JSON').click();
 
     // Without file
-    cy.get('[data-test=input-json-file-password] input').type(v3password);
+    cy.get('[data-test=input-json-file-password]').type(v3password);
     cy.get('[data-test=submit-import]').should('be.disabled');
 
     // With bad file
@@ -95,7 +95,7 @@ describe('Import Wallet Page', () => {
       .and('be.visible');
 
     // With bad json password
-    cy.get('[data-test=input-json-file-password] input')
+    cy.get('[data-test=input-json-file-password]')
       .clear()
       .type(badPassword);
     cy.get('[data-test=import-json-form] p:contains(least 8 characters)')
@@ -120,7 +120,7 @@ describe('Import Wallet Page', () => {
     // Wrong private key
     cy.contains('Private Key').click();
 
-    cy.get('[data-test=input-private-key] input').type(privateKey.slice(0, 10));
+    cy.get('[data-test=input-private-key]').type(privateKey.slice(0, 10));
 
     cy.get('[data-test=import-private-form]')
       .contains('not a valid private key')

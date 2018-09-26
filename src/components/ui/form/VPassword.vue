@@ -25,6 +25,7 @@ import VInput from '@/components/ui/form/VInput.vue';
 // Wrap a VInput component to turn it into a toggleable password input
 export default {
   name: 'VPassword',
+  inheritAttrs: false,
   inject: {
     $validator: '$validator',
   },

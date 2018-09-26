@@ -11,7 +11,7 @@ describe('New Wallet Page', () => {
     cy.visit('#/new');
     cy.wait(['@keystoreGetEmptyAccounts']);
 
-    cy.get('#jsonKeystorePassword input').type('12341234');
+    cy.get('[data-test=input-new-wallet-password]').type('12341234');
     cy.contains('New Wallet').click();
 
     cy.wait(['@keystoreAddAccount']);

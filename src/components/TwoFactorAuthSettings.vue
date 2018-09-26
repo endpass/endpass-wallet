@@ -6,6 +6,7 @@
         :disabled="isButtonDisabled"
         :loading="isLoading"
         class-name="is-primary is-medium"
+        data-test="button-two-factor"
       >
         {{ otpSettings.secret ? 'Enable' : 'Disable' }} Two Factor Auth
       </v-button>
