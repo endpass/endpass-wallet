@@ -9,6 +9,7 @@
           <div class="card-content">
             <v-form
               id="sendEther"
+              data-test="transaction-send-form"
               @submit="handleTransactionFormSubmit"
             >
               <div class="field">
@@ -22,6 +23,7 @@
                   :width="35"
                   :accounts="accountsOptions"
                   placeholder="0x... or ENS"
+                  data-test="transaction-address-select"
                 />
                 <p
                   v-if="isEnsTransaction && !ensError && !isEnsAddressLoading"
@@ -36,7 +38,10 @@
                   {{ ensError }}
                 </p>
               </div>
-              <div class="send-amount field is-horizontal">
+              <div
+                class="send-amount field is-horizontal"
+                data-test="transaction-amount-group-field"
+              >
                 <div class="field-label is-normal">
                   <label
                     class="label"
@@ -59,6 +64,7 @@
                     aria-describedby="value"
                     placeholder="Amount"
                     required
+                    data-test="transaction-amount-input"
                   >
                     <span
                       slot="addon"
@@ -145,6 +151,7 @@
                 <div
                   v-show="showAdvanced"
                   class="advanced-options"
+                  data-test="transaction-advanced-options"
                 >
                   <div class="field is-horizontal">
                     <div class="field-label">
@@ -164,6 +171,7 @@
                         aria-describedby="gasPrice"
                         placeholder="Gas price"
                         required
+                        data-test="transaction-gas-price-input"
                       >
                         <div
                           slot="addon"
@@ -193,6 +201,7 @@
                         aria-describedby="gasLimit"
                         placeholder="Gas limit"
                         required
+                        data-test="transaction-gas-limit-input"
                       />
                     </div>
                   </div>
@@ -214,6 +223,7 @@
                         placeholder="Nonce"
                         required
                         @input="setTrxNonce"
+                        data-test="transaction-nonce-input"
                       />
                     </div>
                   </div>
@@ -232,7 +242,9 @@
                         validator="required|hex"
                         aria-describedby="data"
                         placeholder="Data"
-                        required />
+                        required
+                        data-test="transaction-data-input"
+                      />
                     </div>
                   </div>
                 </div>
