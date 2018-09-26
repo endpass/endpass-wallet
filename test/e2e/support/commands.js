@@ -130,6 +130,11 @@ Cypress.Commands.add('inputPassword', () => {
   cy.get('[data-test=submit-password]').click();
 });
 
+Cypress.Commands.add('inputInvalidPassword', () => {
+  cy.get('[data-test=input-password] input').type('12341234');
+  cy.get('[data-test=submit-password]').click();
+});
+
 /**
  * Converts fixture to Blob. All file types are converted to base64 then
  * converted to a Blob using Cypress expect application/json. Json files are
