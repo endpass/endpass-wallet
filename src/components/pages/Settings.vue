@@ -7,24 +7,23 @@
       class="save-settings"
       @submit="updateSettings"
     >
-      <div class="field">
-        <label class="label">Email Address</label>
-        <div class="control">
-          <input
-            :value="email"
-            class="input is-static"
-            type="email"
-            readonly
-          >
-        </div>
-        <p class="help">Contact support if you need to change your email
-        address.</p>
-      </div>
+      <v-input
+        :value="email"
+        label="Email Address"
+        class-name="is-static"
+        type="email"
+        help="Contact support if you need to change your email
+        address."
+        readonly
+        data-test="input-email"
+      />
+
       <v-select
         v-model="newSettings.fiatCurrency"
         :options="availableCurrencies"
         label="Fiat Currency"
         name="fiatCurrency"
+        data-test="select-fiat"
         @input="updateSettings"
       />
 
@@ -38,11 +37,12 @@
 import { mapState, mapActions } from 'vuex';
 import BasePage from '@/components/pages/Base';
 import VForm from '@/components/ui/form/VForm.vue';
-import error from '@/mixins/error';
 import VSelect from '@/components/ui/form/VSelect.vue';
+import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
 import ChangePasswordSettings from '@/components/ChangePasswordSettings';
+import error from '@/mixins/error';
 
 export default {
   name: 'SettingsPage',
@@ -81,6 +81,7 @@ export default {
   components: {
     BasePage,
     VForm,
+    VInput,
     VSelect,
     VButton,
     TwoFactorAuthSettings,

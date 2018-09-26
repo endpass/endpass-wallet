@@ -43,6 +43,7 @@
           aria-describedby="jsonKeystorePassword"
           placeholder="wallet password"
           required
+          data-test="input-new-wallet-password"
         />
         <v-button
           :loading="isCreating"

@@ -126,12 +126,12 @@ Cypress.Commands.add('waitPageLoad', () => {
 });
 
 Cypress.Commands.add('inputPassword', () => {
-  cy.get('[data-test=input-password] input').type(v3password);
+  cy.get('[data-test=input-password]').type(v3password);
   cy.get('[data-test=submit-password]').click();
 });
 
 Cypress.Commands.add('inputInvalidPassword', () => {
-  cy.get('[data-test=input-password] input').type('12341234');
+  cy.get('[data-test=input-password]').type('12341234');
   cy.get('[data-test=submit-password]').click();
 });
 

@@ -13,6 +13,7 @@ exports[`TwoFactorAuthSettings render should render the initial state of the com
      
     <v-button
       class-name="is-primary is-medium"
+      data-test="button-two-factor"
       disabled="true"
     >
       
@@ -38,6 +39,7 @@ exports[`TwoFactorAuthSettings render should show modal window for two factor au
      
     <v-button
       class-name="is-primary is-medium"
+      data-test="button-two-factor"
       disabled="true"
     >
       
