@@ -28,6 +28,7 @@
                   <router-link
                     :to="{name: 'ExportWallet'}"
                     class="button is-warning"
+                    data-test="export-wallet-button"
                   >
                     Export Private Key
                   </router-link>
@@ -48,6 +49,7 @@
                   :to="{name:
                   'TokensPage'}"
                   class="button is-outlined is-info is-small"
+                  data-test="edit-tokens-button"
                 >
                   Edit
                 </router-link>
