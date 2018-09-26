@@ -15,16 +15,24 @@ exports[`Message page render should render the initial state of the page 1`] = `
       <li
         class="is-active"
       >
-        <a>
+        <a
+          data-test="sign-message-tab"
+        >
+          
           Sign
+        
         </a>
       </li>
        
       <li
         class=""
       >
-        <a>
+        <a
+          data-test="verify-message-tab"
+        >
+          
           Verify
+        
         </a>
       </li>
     </ul>
@@ -56,16 +64,24 @@ exports[`Message page render should set Sign tab 1`] = `
       <li
         class="is-active"
       >
-        <a>
+        <a
+          data-test="sign-message-tab"
+        >
+          
           Sign
+        
         </a>
       </li>
        
       <li
         class=""
       >
-        <a>
+        <a
+          data-test="verify-message-tab"
+        >
+          
           Verify
+        
         </a>
       </li>
     </ul>
@@ -97,16 +113,24 @@ exports[`Message page render should set Verify tab 1`] = `
       <li
         class=""
       >
-        <a>
+        <a
+          data-test="sign-message-tab"
+        >
+          
           Sign
+        
         </a>
       </li>
        
       <li
         class="is-active"
       >
-        <a>
+        <a
+          data-test="verify-message-tab"
+        >
+          
           Verify
+        
         </a>
       </li>
     </ul>

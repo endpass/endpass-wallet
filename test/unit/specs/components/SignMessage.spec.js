@@ -14,7 +14,7 @@ describe('SignMessage', () => {
       state: {
         accounts: {
           wallet: {
-            getPrivateKey: jest.fn(() => 'private key'),
+            getPrivateKeyString: jest.fn(() => 'private key string'),
           },
         },
         web3: {},
@@ -69,17 +69,19 @@ describe('SignMessage', () => {
         spyOn(wrapper.vm, '$notify');
       });
 
-      it('should sign message', () => {
+      it('should sign message', async () => {
         web3.eth.accounts.sign = jest.fn(() => signedMessage);
         const { vm } = wrapper;
 
-        vm.signMessage(password);
+        expect.assertions(2);
+
+        await vm.signMessage(password);
 
         expect(vm.signedMessage).toEqual(signedMessage);
         expect(vm.$notify).not.toHaveBeenCalled();
       });
 
-      it('should not sign message', () => {
+      it('should not sign message', async () => {
         const { vm } = wrapper;
 
         web3.eth.accounts.sign = jest.fn(() => {
@@ -88,7 +90,9 @@ describe('SignMessage', () => {
 
         global.console.error = jest.fn();
 
-        vm.signMessage(password);
+        expect.assertions(3);
+
+        await vm.signMessage(password);
 
         expect(vm.signedMessage).toBeNull();
         expect(vm.$notify).toHaveBeenCalledTimes(1);
