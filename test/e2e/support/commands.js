@@ -89,6 +89,23 @@ Cypress.Commands.add('login', () => {
   ).as('identityDeleteOtp');
 });
 
+// Sets up server and routes for an unauthorized user.
+// Usage: cy.notLogin()
+Cypress.Commands.add('preventLogin', () => {
+  cy.server();
+  cy.route({
+    url: '/identity/api/v1/accounts',
+    response: {},
+    status: 401,
+  }).as('keystoreAccountsNotLogin');
+
+  cy.route({
+    url: '/identity/api/v1/user',
+    response: {},
+    status: 401,
+  }).as('identityUserNotLogin');
+});
+
 Cypress.Commands.add('getAccountsInfo', () => {
   cy.route(
     'GET',
