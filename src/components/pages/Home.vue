@@ -56,7 +56,7 @@
               </div>
             </div>
             <div class="card-content">
-              <token-list/>
+              <tokens-list :tokens="trackedTokensWithBalance" />
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@
 <script>
 import Balance from '@/components/Balance';
 import Account from '@/components/Account';
-import TokenList from '@/components/TokenList';
+import TokensList from '@/components/TokensList';
 import { mapGetters, mapState } from 'vuex';
 
 export default {
@@ -110,6 +110,7 @@ export default {
   computed: {
     ...mapGetters('user', ['isLoggedIn']),
     ...mapGetters('accounts', ['isPublicAccount', 'balance']),
+    ...mapGetters('tokens', ['trackedTokensWithBalance']),
     ...mapState({
       activeCurrency: state => state.web3.activeCurrency,
       address: state =>
@@ -120,7 +121,7 @@ export default {
   components: {
     Account,
     Balance,
-    TokenList,
+    TokensList,
   },
 };
 </script>

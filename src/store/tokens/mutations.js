@@ -10,6 +10,7 @@ import {
   SET_LOADING,
 } from './mutations-types';
 import { Token } from '@/class';
+import { uniq } from '@/utils/arrays';
 
 // Save custom user tokens
 const saveToken = (state, { token, net }) => {
@@ -45,19 +46,25 @@ const deleteToken = ({ savedTokens, trackedTokens }, { token, net }) => {
 */
 const saveTokens = (state, tokens = {}) => {
   // Sanity check to filter out tokens with no address
-  let savedTokens = Object.keys(tokens).reduce((allTokens, net) => {
-    allTokens[net] = tokens[net]
-      .filter(token => !!token.address)
-      .map(token => new Token(token));
-    return allTokens;
-  }, {});
-  state.savedTokens = savedTokens;
+  state.savedTokens = Object.keys(tokens).reduce(
+    (acc, net) =>
+      Object.assign(acc, {
+        [net]: tokens[net]
+          .filter(token => !!token.address)
+          .map(token => new Token(token)),
+      }),
+    {},
+  );
 };
 
-//Save list of contract addresses to track
+// Save list of contract addresses to track
 const saveTrackedTokens = (state, tokenAddrs = []) => {
   // Remove duplicate addresses
-  let trackedTokens = [...new Set([...state.trackedTokens, ...tokenAddrs])];
+  const trackedTokens = [...new Set([...state.trackedTokens, ...tokenAddrs])];
+
+  console.log(trackedTokens);
+  console.log(uniq(state.trackedTokens, tokenAddrs));
+
   state.trackedTokens = trackedTokens;
 };
 
@@ -78,12 +85,12 @@ const saveTokensBalances = (state, balances) => {
 // Can be called multiple times to insert info about new tokens
 // TODO track tokens on each network
 const saveTokenInfo = (state, tokenInfos = []) => {
-  let allTokens = { ...state.allTokens };
+  const allTokens = { ...state.allTokens };
   tokenInfos.forEach(tokenInfo => {
     if (!tokenInfo.address) {
       return;
     }
-    let token = new Token(tokenInfo);
+    const token = new Token(tokenInfo);
     delete token.balance;
     Object.freeze(token);
     allTokens[token.address] = token;

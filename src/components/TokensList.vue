@@ -3,9 +3,9 @@
     class="tokens-list"
     data-test="tokens-list"
   >
-    <ul v-if="selectedTokens && selectedTokens.length">
+    <ul v-if="tokens.length > 0">
       <li
-        v-for="token in selectedTokens"
+        v-for="token in tokens"
         :class="itemClass"
         :key="token.address"
         data-test="user-token"
@@ -47,10 +47,9 @@
 </template>
 
 <script>
-import { Token } from '@/class/Token';
 import VToken from '@/components/VToken';
 import VSpinner from '@/components/ui/VSpinner';
-import { mapState, mapActions, mapGetters } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { BigNumber } from 'bignumber.js';
 import error from '@/mixins/error';
 
@@ -59,7 +58,7 @@ export default {
   props: {
     tokens: {
       type: Array,
-      default: null,
+      default: () => [],
     },
     // Show remove token button
     hasRemove: {
@@ -72,56 +71,55 @@ export default {
       default: '',
     },
   },
-  data() {
-    return {
-      isLoading: true,
-    };
-  },
+
+  data: () => ({
+    isLoading: true,
+  }),
+
   computed: {
     ...mapState({
       tokenPrices: state => state.tokens.prices,
       ethPrice: state => state.price.price,
       currency: state => state.user.settings.fiatCurrency,
     }),
-    ...mapGetters('tokens', ['tokensWithBalance']),
-    // TODO test that user added tokens have balances
-    selectedTokens() {
-      if (Array.isArray(this.tokens)) {
-        return this.tokens;
-      }
 
-      return this.tokensWithBalance;
-    },
-    // Returns a Map of token symbol to price
     prices() {
       return new Map(
-        this.selectedTokens.map(token => [
+        this.tokens.map(token => [
           token.symbol,
           this.getTokenPrice(token.symbol),
         ]),
       );
     },
   },
+
   methods: {
     ...mapActions('tokens', [
       'updateTokensPrices',
       'deleteTokenAndUnsubscribe',
     ]),
+
     // Return value of tokens in fiat
     getTokenPrice(symbol) {
       const prices = this.tokenPrices[symbol] || {};
+
       return new BigNumber(prices.ETH || 0).times(this.ethPrice).toString();
     },
+
     // Get token prices for all tokens
     async updateTokenPrice() {
       await this.updateTokensPrices();
+
       this.isLoading = false;
     },
   },
+
   mounted() {
     this.updateTokenPrice();
   },
+
   mixins: [error],
+
   components: {
     VToken,
     VSpinner,

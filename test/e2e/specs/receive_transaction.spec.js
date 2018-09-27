@@ -9,14 +9,12 @@ describe('Receive Page', () => {
   it('Should contain section with current user wallet public address and balance', () => {
     cy.get('@store').then(store => {
       const { wallet, wallets } = store.state.accounts;
-      const { address } = wallet.v3;
       const addresses = Object.keys(wallets);
 
-      addresses.splice(addresses.indexOf(address), 1);
-
-      cy.get('[data-test=current-account]').contains(address);
+      cy.get('[data-test=current-account]').contains(wallet.v3.address);
       cy.get('[data-test=account]').each((el, i) => {
-        cy.wrap(el).contains(addresses[i]);
+        // Increment because addresses includes current account address
+        cy.wrap(el).contains(addresses[i + 1]);
       });
     });
 
@@ -43,13 +41,9 @@ describe('Receive Page', () => {
     cy.get('[data-test=account] [data-test=send-button]').click();
     cy.get('@store')
       .its('state.accounts.wallet.v3.address')
-      .then(currentAddress => {
-        expect(currentAddress).not.eq(address);
-      });
+      .should('not.eq', address);
     cy.location()
       .its('href')
-      .then(href => {
-        expect(href.indexOf('send') !== -1).eq(true);
-      });
+      .should('contain', 'send');
   });
 });

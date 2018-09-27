@@ -154,7 +154,7 @@ const getTokensWithBalanceByAddress = async ({ dispatch }, { address }) => {
 
 const updateTokensPrices = async ({ state, commit, getters }) => {
   if (state.trackedTokens === null || state.trackedTokens.length === 0) return;
-  const symbols = getters.tokensWithBalance.map(token => token.symbol);
+  const symbols = getters.trackedTokensWithBalance.map(token => token.symbol);
 
   const prices = await priceService.getPrices(
     symbols,
@@ -205,6 +205,27 @@ const getTokensBalancesByAddress = async (
   }, {});
 };
 
+const getTokensFullDataByAddress = async (
+  { dispatch, commit },
+  { address },
+) => {
+  await dispatch('getTokensWithBalanceByAddress', { address });
+  // await dispatch('getTokensBalancesByAddress', {
+  //   tokens: tokens.map(token => new ERC20Token(token.address)),
+  //   address,
+  // });
+
+  // console.log(tokens, balances);
+
+  // this.tokens = tokens.map(
+  //   token =>
+  //     new Token({
+  //       ...token,
+  //       balance: balances[token.address],
+  //     }),
+  // );
+};
+
 const init = async ({ dispatch }) => {
   await dispatch('getAllTokens');
   return dispatch('subscribeOnTokensPricesUpdates');
@@ -222,5 +243,8 @@ export default {
   updateTokenPrice,
   subscribeOnTokensBalancesUpdates,
   subscribeOnTokensPricesUpdates,
+
+  getTokensFullDataByAddress,
+
   init,
 };

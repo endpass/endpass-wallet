@@ -9,7 +9,7 @@ const state = {
   trackedTokens: [],
   // all saved tokens by networks
   savedTokens: {},
-  //tokens prices by symbol
+  // tokens prices by symbol
   prices: {},
   // Token balances by contract address
   balances: {},

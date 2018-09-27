@@ -24,8 +24,8 @@
                     class="spinner-block"
                   />
                   <div class="scroller">
-                    <token-list
-                      :tokens="userTokenList"
+                    <tokens-list
+                      :tokens="userTokensList"
                       :has-remove="true"
                       :item-class="'panel-block is-clearfix is-block'"
                     />
@@ -61,7 +61,7 @@
                 <multiselect
                   :allow-empty="false"
                   :internal-search="false"
-                  :options="searchTokenList"
+                  :options="searchTokensList"
                   :options-limit="10"
                   :show-labels="false"
                   track-by="address"
@@ -94,16 +94,15 @@
 </template>
 
 <script>
+import { mapState, mapActions, mapGetters } from 'vuex';
 import Multiselect from 'vue-multiselect';
-import { BigNumber } from 'bignumber.js';
-import web3 from 'web3';
 import Balance from '@/components/Balance';
 import VToken from '@/components/VToken';
-import TokenList from '@/components/TokenList';
+import TokensList from '@/components/TokensList';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/modal/AddTokenModal';
 import VSpinner from '@/components/ui/VSpinner';
-import { mapState, mapActions, mapGetters } from 'vuex';
+import { matchString } from '@/utils/strings';
 
 export default {
   name: 'TokensPage',
@@ -124,7 +123,8 @@ export default {
       ethPrice: state => state.price.price,
       currency: state => state.user.settings.fiatCurrency,
     }),
-    ...mapGetters('tokens', ['net', 'tokensWithBalance']),
+    ...mapGetters('tokens', ['trackedTokensWithBalance']),
+
     // All tokens that are available to add
     // TODO convert all addresses to checksum in store
     filteredTokens() {
@@ -135,7 +135,7 @@ export default {
           .includes(address);
       });
     },
-    searchTokenList() {
+    searchTokensList() {
       const { searchToken } = this;
 
       if (!searchToken) {
@@ -153,19 +153,12 @@ export default {
         );
       });
     },
-    userTokenList() {
-      const { search } = this;
+    userTokensList() {
+      const { search, trackedTokensWithBalance } = this;
 
-      if (!search) {
-        return this.tokensWithBalance;
-      }
-
-      const searchLC = search.toLowerCase();
-
-      return this.tokensWithBalance.filter(
-        token =>
-          name.toLowerCase().includes(search) ||
-          token.symbol.toLowerCase().includes(searchLC),
+      return trackedTokensWithBalance.filter(
+        ({ name, symbol }) =>
+          matchString(name, search) || matchString(symbol, search),
       );
     },
   },
@@ -188,7 +181,7 @@ export default {
     Multiselect,
     VSpinner,
     VToken,
-    TokenList,
+    TokensList,
   },
 };
 </script>
@@ -197,7 +190,7 @@ export default {
 @import 'vue-multiselect/dist/vue-multiselect.min.css';
 .scroller {
   max-height: 500px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .panel {

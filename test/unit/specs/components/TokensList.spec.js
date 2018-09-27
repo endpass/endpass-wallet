@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
-import TokenList from '@/components/TokenList';
+import TokensList from '@/components/TokensList';
 import { Token } from '@/class/Token';
 import tokensFixture from 'fixtures/tokens';
 
@@ -8,7 +8,7 @@ const localVue = createLocalVue();
 
 localVue.use(Vuex);
 
-describe('TokenList', () => {
+describe('TokensList', () => {
   let actions;
   let getters;
   let wrapper;
@@ -61,7 +61,7 @@ describe('TokenList', () => {
       },
     });
 
-    wrapper = mount(TokenList, {
+    wrapper = mount(TokensList, {
       store,
       localVue,
     });

@@ -15,34 +15,27 @@ describe('Home Page', () => {
     cy.get('[data-test=export-wallet-button]').click();
     cy.location()
       .its('href')
-      .then(href => {
-        expect(href.includes('export')).eq(true);
-      });
-  });
-
-  // TODO: uncomment when tokens will render correctly
-  // it('should render user current account tokens', () => {
-  //   cy.route({
-  //     method: 'GET',
-  //     url: '/tokeninfo/api/v1/tokens',
-  //     response: {},
-  //   });
-  //   cy.get('[data-test=user-token]')
-  //     .its('length')
-  //     .should('eq', 1);
-  // });
-
-  it('should not contain export button for public account', () => {
+      .should('contain', 'export');
     cy.switchAccount();
     cy.get('[data-test=export-wallet-button]').should('not.exist');
+  });
+
+  it('should render user current account tokens', () => {
+    cy.route({
+      method: 'GET',
+      url: '/tokeninfo/api/v1/tokens',
+      response: {},
+    });
+    cy.get('@store').log();
+    cy.get('[data-test=user-token]')
+      .its('length')
+      .should('eq', 1);
   });
 
   it('should correctly navigate to add token page', () => {
     cy.get('[data-test=edit-tokens-button]').click();
     cy.location()
       .its('href')
-      .then(href => {
-        expect(href.includes('tokens')).eq(true);
-      });
+      .should('contain', 'tokens');
   });
 });

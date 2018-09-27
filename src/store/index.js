@@ -16,12 +16,10 @@ import userModule from './user';
 
 Vue.use(Vuex);
 
-const state = {
-  isPageLoading: false, //global page loading
-};
-
 const store = new Vuex.Store({
-  state,
+  state: {
+    isPageLoading: false,
+  },
   mutations,
   actions,
   modules: {
@@ -42,12 +40,11 @@ const store = new Vuex.Store({
 // This triggers when a new block is found OR network provider is changed
 store.watch(
   state => state.web3.blockNumber,
-  () => {
-    return Promise.all([
+  () =>
+    Promise.all([
       store.dispatch('accounts/updateBalance'),
       store.dispatch('tokens/updateTokensBalances'),
-    ]);
-  },
+    ]),
 );
 
 // Enable hot reloading in development

@@ -18,3 +18,5 @@ export const toCamel = string =>
   );
 
 export const toKebab = string => toWords(string).join('-');
+
+export const matchString = (a, b) => new RegExp(b, 'i').test(a);

@@ -26,11 +26,12 @@ const trackedTokens = state =>
 
 // Merges token info with balance
 // This is the only getter that includes symbol, name, etc and balance
-const tokensWithBalance = (state, { savedTokenInfos }) =>
+const trackedTokensWithBalance = (state, { savedTokenInfos }) =>
   state.trackedTokens
-    .map(address => {
-      const tokenInfo = state.allTokens[address] || savedTokenInfos[address];
-      const balance = state.balances[address];
+    .map(tokenAddress => {
+      const tokenInfo =
+        state.allTokens[tokenAddress] || savedTokenInfos[tokenAddress];
+      const balance = state.balances[tokenAddress];
 
       try {
         return new Token({
@@ -50,5 +51,5 @@ export default {
   savedCurrentNetworkTokens,
   savedTokenInfos,
   trackedTokens,
-  tokensWithBalance,
+  trackedTokensWithBalance,
 };

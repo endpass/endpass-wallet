@@ -128,41 +128,41 @@ describe('TokensPage', () => {
 
     describe('search', () => {
       it("should correctly find the user's tokens", () => {
-        expect(wrapper.vm.userTokenList).toHaveLength(2);
+        expect(wrapper.vm.userTokensList).toHaveLength(2);
 
         wrapper.setData({
           search: 'fst',
         });
 
-        expect(wrapper.vm.userTokenList).toHaveLength(1);
+        expect(wrapper.vm.userTokensList).toHaveLength(1);
       });
 
       it('should correctly find token in list', async () => {
         store.state.tokens.trackedTokens = [];
         expect(wrapper.vm.filteredTokens).toHaveLength(2);
-        expect(wrapper.vm.searchTokenList).toHaveLength(2);
+        expect(wrapper.vm.searchTokensList).toHaveLength(2);
         wrapper.setData({ searchToken: '' });
-        expect(wrapper.vm.searchTokenList).toHaveLength(2);
+        expect(wrapper.vm.searchTokensList).toHaveLength(2);
 
         wrapper.setData({
           searchToken: 'FST',
         });
 
-        expect(wrapper.vm.searchTokenList).toHaveLength(1);
-        expect(wrapper.vm.searchTokenList[0]).toEqual(tokens[0]);
+        expect(wrapper.vm.searchTokensList).toHaveLength(1);
+        expect(wrapper.vm.searchTokensList[0]).toEqual(tokens[0]);
 
         wrapper.setData({
           searchToken: '',
         });
 
-        expect(wrapper.vm.searchTokenList).toHaveLength(2);
+        expect(wrapper.vm.searchTokensList).toHaveLength(2);
 
         wrapper.setData({
           searchToken: 'second',
         });
 
-        expect(wrapper.vm.searchTokenList).toHaveLength(1);
-        expect(wrapper.vm.searchTokenList[0]).toEqual(tokens[1]);
+        expect(wrapper.vm.searchTokensList).toHaveLength(1);
+        expect(wrapper.vm.searchTokensList[0]).toEqual(tokens[1]);
       });
       it('should filter out tracked tokens', async () => {
         store.state.tokens.trackedTokens = [
@@ -174,8 +174,8 @@ describe('TokensPage', () => {
         wrapper.setData({
           searchToken: 'n',
         });
-        expect(wrapper.vm.searchTokenList).toHaveLength(1);
-        expect(wrapper.vm.searchTokenList[0]).toEqual(tokens[0]);
+        expect(wrapper.vm.searchTokensList).toHaveLength(1);
+        expect(wrapper.vm.searchTokensList[0]).toEqual(tokens[0]);
       });
     });
   });
@@ -186,7 +186,7 @@ describe('TokensPage', () => {
     });
 
     it('should call an action when changing the net id', () => {
-      expect(wrapper.vm.userTokenList).toHaveLength(2);
+      expect(wrapper.vm.userTokensList).toHaveLength(2);
 
       wrapper.setComputed({
         net: 3,

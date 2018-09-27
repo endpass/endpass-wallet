@@ -356,7 +356,7 @@ export default {
       fiatCurrency: state => state.user.settings.fiatCurrency,
       ethPrice: state => state.price.price || 0,
     }),
-    ...mapGetters('tokens', ['tokensWithBalance']),
+    ...mapGetters('tokens', ['trackedTokensWithBalance']),
     ...mapGetters('transactions', ['getAddressesFromTransactions']),
     value: {
       get() {
@@ -469,7 +469,7 @@ export default {
       ];
 
       return currencies.concat(
-        this.tokensWithBalance.map(({ symbol }) => symbol),
+        this.trackedTokensWithBalance.map(({ symbol }) => symbol),
       );
     },
     isEnsTransaction() {
