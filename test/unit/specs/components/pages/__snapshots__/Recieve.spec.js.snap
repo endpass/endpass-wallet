@@ -22,7 +22,7 @@ exports[`ReceivePage render should render component 1`] = `
             Receive ETH
           </h2>
         </div>
-         
+
         <div
           class="card-content"
           data-test="current-account"
@@ -30,15 +30,15 @@ exports[`ReceivePage render should render component 1`] = `
           <p>
             Your Active Address:
           </p>
-           
+
           <!---->
-           
+
           <!---->
         </div>
       </div>
     </div>
   </div>
-   
+
   <div
     class="section"
   >
@@ -58,17 +58,17 @@ exports[`ReceivePage render should render component 1`] = `
             Receive ETH
           </h2>
         </div>
-         
+
         <div
           class="card-content"
           data-test="account"
         >
           <!---->
-           
+
           <!---->
-           
+
           <div
-            class="token-list-container"
+            class="tokens-list-container"
           >
             <!---->
           </div>
@@ -76,7 +76,7 @@ exports[`ReceivePage render should render component 1`] = `
       </div>
     </div>
   </div>
-   
+
   <div
     class="section"
   >
@@ -95,7 +95,7 @@ exports[`ReceivePage render should render component 1`] = `
             Incoming Payment History
           </h2>
         </div>
-         
+
         <div
           class="card-content"
         >

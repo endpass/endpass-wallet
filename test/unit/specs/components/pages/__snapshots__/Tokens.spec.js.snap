@@ -28,7 +28,7 @@ exports[`TokensPage render should render component 1`] = `
                 Your Tokens
               </p>
             </div>
-             
+
             <div
               class="card-content is-narrow"
             >
@@ -43,15 +43,15 @@ exports[`TokensPage render should render component 1`] = `
                     v-model="search"
                   />
                 </div>
-                 
+
                 <v-spinner
                   class="spinner-block"
                 />
-                 
+
                 <div
                   class="scroller"
                 >
-                  <token-list
+                  <tokens-list
                     has-remove="true"
                     item-class="panel-block is-clearfix is-block"
                     tokens="[object Object],[object Object]"
@@ -61,7 +61,7 @@ exports[`TokensPage render should render component 1`] = `
             </div>
           </div>
         </div>
-         
+
         <div
           class="column is-half"
         >
@@ -74,11 +74,11 @@ exports[`TokensPage render should render component 1`] = `
               <div
                 class="card-header-title"
               >
-                
+
                 Add Token
-              
+
               </div>
-               
+
               <div
                 class="card-header-icon"
               >
@@ -86,13 +86,13 @@ exports[`TokensPage render should render component 1`] = `
                   class="button is-outlined is-info is-small"
                   data-test="add-custom-token-button"
                 >
-                  
+
                   Add Custom Token
-                
+
                 </a>
               </div>
             </div>
-             
+
             <div
               class="card-content"
             >
@@ -103,7 +103,7 @@ exports[`TokensPage render should render component 1`] = `
       </div>
     </div>
   </div>
-   
+
   <!---->
 </div>
 `;

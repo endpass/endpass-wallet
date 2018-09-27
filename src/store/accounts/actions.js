@@ -22,7 +22,7 @@ const selectWallet = async ({ commit, state, dispatch }, address) => {
   commit(SET_ADDRESS, address);
   dispatch('updateBalance');
 
-  return dispatch('tokens/subscribeOnTokensBalancesUpdates', null, {
+  await dispatch('tokens/subscribeOnTokensBalancesUpdates', null, {
     root: true,
   });
 };
