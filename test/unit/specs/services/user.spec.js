@@ -507,24 +507,22 @@ describe('User service', () => {
       const url = identityAPIUrl;
       const type = IDENTITY_MODE.CUSTOM;
       const mode = { type, serverUrl: url };
-      let spyProxyRequest;
-
-      beforeEach(() => {
-        spyProxyRequest = jest.spyOn(proxyRequest, 'setMode');
-      });
 
       afterEach(() => {
-        spyProxyRequest.mockRestore();
         localStorage.setItem.mockReset();
       });
 
       it('should set the identity mode', () => {
         expect.assertions(2);
 
+        const spyProxyRequest = jest.spyOn(proxyRequest, 'setMode');
+
         userService.setIdentityMode(type, url);
 
         expect(spyProxyRequest).toHaveBeenCalledTimes(1);
         expect(spyProxyRequest).toBeCalledWith(type, url);
+
+        spyProxyRequest.mockRestore();
       });
 
       it('should save the identity mode in the local storage', () => {

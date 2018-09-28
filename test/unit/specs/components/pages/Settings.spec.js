@@ -77,9 +77,7 @@ describe('SettingsPage', () => {
     });
 
     it('should not render otp settings when not default identity type', () => {
-      wrapper.setComputed({
-        isDefaultIdentity: false,
-      });
+      wrapper.setComputed({ isDefaultIdentity: false });
 
       expect(wrapper.find('two-factor-auth-settings').exists()).toBeFalsy();
       expect(wrapper.element).toMatchSnapshot();
