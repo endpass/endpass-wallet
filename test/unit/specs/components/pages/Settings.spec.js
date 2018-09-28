@@ -32,6 +32,7 @@ describe('SettingsPage', () => {
           otpSettings: {
             secret: 'AABC',
           },
+          identityType: 'default',
         },
         actions,
       },
@@ -68,6 +69,15 @@ describe('SettingsPage', () => {
 
   describe('render', () => {
     it('should render the initial state of the component', () => {
+      expect(wrapper.element).toMatchSnapshot();
+    });
+
+    it('should not render otp settings when not default identity type', () => {
+      wrapper.setComputed({
+        identityType: 'local',
+      });
+
+      expect(wrapper.find('two-factor-auth-settings').exists()).toBeFalsy();
       expect(wrapper.element).toMatchSnapshot();
     });
   });

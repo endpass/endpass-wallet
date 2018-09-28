@@ -22,6 +22,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
    
   <v-form
     id="loginByEmail"
+    v-model="isFormValid"
     v-on:submit="bound handleSubmit"
   >
     <v-input
@@ -37,7 +38,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
     <v-select
       label="Identity Server"
       name="currentIdentityServerType"
-      options="Endpass,Local Storage,Custom server"
+      options="[object Object],[object Object],[object Object]"
       v-model="currentIdentityServerType"
     />
      
@@ -79,6 +80,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
     <v-button
       class-name="is-primary is-medium"
       data-test="submit-login"
+      disabled="true"
       form="loginByEmail"
     >
       

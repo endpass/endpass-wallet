@@ -2,6 +2,7 @@ import { userService } from '@/services';
 import actions from '@/store/user/actions';
 import {
   SET_AUTHORIZATION_STATUS,
+  SET_IDENTITY_TYPE,
   SET_SETTINGS,
   SET_OTP_SETTINGS,
   SET_EMAIL,
@@ -73,8 +74,8 @@ describe('user actions', () => {
 
         await actions.login({ commit, dispatch }, { email, mode });
 
-        expect(commit).toHaveBeenCalledTimes(2);
-        expect(commit).toHaveBeenNthCalledWith(2, SET_EMAIL, email);
+        expect(commit).toHaveBeenCalledTimes(3);
+        expect(commit).toHaveBeenNthCalledWith(3, SET_EMAIL, email);
       });
 
       it('should set the user authorization status', async () => {
@@ -82,9 +83,9 @@ describe('user actions', () => {
 
         await actions.login({ commit, dispatch }, { email, mode });
 
-        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit).toHaveBeenCalledTimes(3);
         expect(commit).toHaveBeenNthCalledWith(
-          1,
+          2,
           SET_AUTHORIZATION_STATUS,
           true,
         );
@@ -101,7 +102,7 @@ describe('user actions', () => {
         });
       });
 
-      it('should set the user identity mode', async () => {
+      it('should set the user identity mode through the user service', async () => {
         expect.assertions(2);
 
         await actions.login({ commit, dispatch }, { email, mode });
@@ -111,6 +112,15 @@ describe('user actions', () => {
           type,
           serverUrl,
         );
+      });
+
+      it('should set the user identity type to the store', async () => {
+        expect.assertions(2);
+
+        await actions.login({ commit, dispatch }, { email, mode });
+
+        expect(commit).toHaveBeenCalledTimes(3);
+        expect(commit).toHaveBeenNthCalledWith(1, SET_IDENTITY_TYPE, type);
       });
 
       it('should save the user email through the user service', async () => {
@@ -433,8 +443,8 @@ describe('user actions', () => {
 
       await actions.initIdentityMode({ commit, dispatch });
 
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(SET_AUTHORIZATION_STATUS, true);
+      expect(commit).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenNthCalledWith(2, SET_AUTHORIZATION_STATUS, true);
     });
 
     it('should not set the auth status when default mode', async () => {
@@ -447,6 +457,18 @@ describe('user actions', () => {
       await actions.initIdentityMode({ commit, dispatch });
 
       expect(commit).toHaveBeenCalledTimes(0);
+    });
+
+    it('should set the user identity type when default mode', async () => {
+      expect.assertions(2);
+
+      const type = 'custom';
+      userService.getIdentityMode = jest.fn().mockReturnValueOnce({ type });
+
+      await actions.initIdentityMode({ commit, dispatch });
+
+      expect(commit).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenNthCalledWith(1, SET_IDENTITY_TYPE, type);
     });
 
     it('should handle error', async () => {
