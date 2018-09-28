@@ -28,13 +28,13 @@
       />
 
     </v-form>
-    <two-factor-auth-settings v-if="identityType === 'default'" />
-    <change-password-settings v-if="identityType === 'default'" />
+    <two-factor-auth-settings v-if="isDefaultIdentity" />
+    <change-password-settings v-if="isDefaultIdentity" />
   </base-page>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import BasePage from '@/components/pages/Base';
 import VForm from '@/components/ui/form/VForm.vue';
 import VSelect from '@/components/ui/form/VSelect.vue';
@@ -52,12 +52,8 @@ export default {
     },
   }),
   computed: {
-    ...mapState('user', [
-      'settings',
-      'availableCurrencies',
-      'email',
-      'identityType',
-    ]),
+    ...mapState('user', ['settings', 'availableCurrencies', 'email']),
+    ...mapGetters('user', ['isDefaultIdentity']),
     isSettingsChange() {
       return JSON.stringify(this.settings) !== JSON.stringify(this.newSettings);
     },

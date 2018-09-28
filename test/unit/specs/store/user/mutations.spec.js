@@ -1,3 +1,4 @@
+import { IDENTITY_MODE } from '@/constants';
 import mutations from '@/store/user/mutations';
 import {
   SET_AUTHORIZATION_STATUS,
@@ -60,8 +61,8 @@ describe('user mutations', () => {
 
   describe(SET_IDENTITY_TYPE, () => {
     it('should set user idenity type', () => {
-      const type = 'custom';
-      const state = { identityType: 'default' };
+      const type = IDENTITY_MODE.CUSTOM;
+      const state = { identityType: IDENTITY_MODE.DEFAULT };
 
       mutations[SET_IDENTITY_TYPE](state, type);
 
