@@ -54,7 +54,7 @@ const login = async (
   }
 };
 
-const logout = async ({ commit, dispatch }) => {
+const logout = async ({ commit, dispatch, getters }) => {
   commit(SET_EMAIL, null);
 
   try {
@@ -62,7 +62,10 @@ const logout = async ({ commit, dispatch }) => {
   } catch (e) {} // eslint-disable-line no-empty
 
   try {
-    await userService.logout();
+    if (getters.isDefaultIdentity) {
+      await userService.logout();
+    }
+
     window.location.reload();
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });

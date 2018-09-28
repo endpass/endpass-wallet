@@ -59,10 +59,13 @@ export const IDENTITY_MODE = Object.freeze({
   LOCAL: 'local',
 });
 
+export const PROXY_REQUEST_PREFIX = 'endpass-identity';
+
 export default {
   AVAILABLE_FIAT_CURRENCIES,
   MAIN_NET_ID,
   DEFAULT_NETWORKS,
   CURRENCIES,
   IDENTITY_MODE,
+  PROXY_REQUEST_PREFIX,
 };

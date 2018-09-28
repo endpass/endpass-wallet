@@ -152,10 +152,14 @@ describe('user actions', () => {
   });
 
   describe('logout', () => {
+    const getters = {
+      isDefaultIdentity: true,
+    };
+
     it('should reset the email', async () => {
       expect.assertions(2);
 
-      await actions.logout({ commit, dispatch });
+      await actions.logout({ commit, dispatch, getters });
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toBeCalledWith(SET_EMAIL, null);
@@ -164,7 +168,7 @@ describe('user actions', () => {
     it('should set the default identity mode', async () => {
       expect.assertions(2);
 
-      await actions.logout({ commit, dispatch });
+      await actions.logout({ commit, dispatch, getters });
 
       expect(userService.setIdentityMode).toHaveBeenCalledTimes(1);
       expect(userService.setIdentityMode).toBeCalledWith(IDENTITY_MODE.DEFAULT);
@@ -173,10 +177,22 @@ describe('user actions', () => {
     it('should logout through the user service', async () => {
       expect.assertions(2);
 
-      await actions.logout({ commit, dispatch });
+      await actions.logout({ commit, dispatch, getters });
 
       expect(userService.logout).toHaveBeenCalledTimes(1);
       expect(userService.logout).toBeCalledWith();
+    });
+
+    it('should not call the user service if the identity mode isn`t default', async () => {
+      expect.assertions(1);
+
+      const getters = {
+        isDefaultIdentity: false,
+      };
+
+      await actions.logout({ commit, dispatch, getters });
+
+      expect(userService.logout).toHaveBeenCalledTimes(0);
     });
 
     it('should reload the page', async () => {
@@ -184,7 +200,7 @@ describe('user actions', () => {
 
       const spy = jest.spyOn(window.location, 'reload');
 
-      await actions.logout({ commit, dispatch });
+      await actions.logout({ commit, dispatch, getters });
 
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toBeCalledWith();
@@ -198,7 +214,7 @@ describe('user actions', () => {
       const error = new Error('error');
       userService.logout.mockRejectedValueOnce(error);
 
-      await actions.logout({ commit, dispatch });
+      await actions.logout({ commit, dispatch, getters });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toBeCalledWith('errors/emitError', error, {
