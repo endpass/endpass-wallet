@@ -14,7 +14,10 @@
                   class="panel"
                 >
                   <div class="panel-block">
-                    <search-input v-model="search" />
+                    <search-input
+                      v-model="search"
+                      data-test="token-search-input"
+                    />
                   </div>
                   <v-spinner
                     :is-loading="isLoading"
@@ -31,6 +34,7 @@
                 <p
                   v-else
                   class="small"
+                  data-test="no-tokens-text"
                 >
                   You have no tokens on this network. Add some!
                 </p>
@@ -46,6 +50,7 @@
                 <div class="card-header-icon">
                   <a
                     class="button is-outlined is-info is-small"
+                    data-test="add-custom-token-button"
                     @click.prevent="openAddTokenModal()"
                   >
                     Add Custom Token
@@ -62,6 +67,7 @@
                   track-by="address"
                   label="name"
                   placeholder="Type to search tokens..."
+                  data-test="tokens-select"
                   @search-change="setSearchToken"
                   @select="saveTokenAndSubscribe({token: $event })"
                 >
