@@ -1,5 +1,5 @@
 export default class NotificationError {
-  constructor({ title, message, text, type = 'is-info' }) {
+  constructor({ title, message, text, type = 'is-info', log = false }) {
     if (!title) {
       throw new Error('Notification error needs a title');
     }
@@ -13,6 +13,7 @@ export default class NotificationError {
     this.message = message || text;
     this.text = text || message;
     this.type = type;
+    this.log = log;
 
     if (typeof Error.captureStackTrace === 'function') {
       Error.captureStackTrace(this, this.constructor);

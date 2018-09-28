@@ -417,6 +417,7 @@ describe('User service', () => {
       text: `Failed to save OTP settings.`,
       type: 'is-danger',
     });
+    const errorMessage = 'server error';
 
     it('should make correct request', async () => {
       axiosMock.onPost(url).reply(config => {
@@ -435,11 +436,19 @@ describe('User service', () => {
     });
 
     it('should handle failed POST /otp request', async () => {
-      axiosMock.onPost(url).reply(200, { success: false });
+      const error = new NotificationError({
+        ...expectedError,
+        message: `POST ${url}: ${errorMessage}`,
+      });
+
+      axiosMock
+        .onPost(url)
+        .reply(200, { success: false, message: errorMessage });
+
       try {
         await userService.setOtpSettings(secret, code);
       } catch (receivedError) {
-        expect(receivedError).toEqual(expectedError);
+        expect(receivedError).toEqual(error);
       }
     });
 
@@ -448,7 +457,7 @@ describe('User service', () => {
       try {
         await userService.setOtpSettings();
       } catch (receivedError) {
-        expect(receivedError).toEqual(expectedError);
+        expect(receivedError.text).toEqual(expectedError.text);
       }
     });
   });
@@ -464,6 +473,7 @@ describe('User service', () => {
       text: `Failed to remove OTP settings.`,
       type: 'is-danger',
     });
+    const errorMessage = 'server error';
 
     it('should make correct request', async () => {
       axiosMock.onDelete(url).reply(config => {
@@ -482,11 +492,19 @@ describe('User service', () => {
     });
 
     it('should handle failed DELETE /otp request', async () => {
-      axiosMock.onDelete(url).reply(200, { success: false });
+      const error = new NotificationError({
+        ...expectedError,
+        message: `DELETE ${url}: ${errorMessage}`,
+      });
+
+      axiosMock
+        .onDelete(url)
+        .reply(200, { success: false, message: errorMessage });
+
       try {
         await userService.deleteOtpSettings(code);
       } catch (receivedError) {
-        expect(receivedError).toEqual(expectedError);
+        expect(receivedError).toEqual(error);
       }
     });
 
@@ -495,7 +513,7 @@ describe('User service', () => {
       try {
         await userService.deleteOtpSettings(code);
       } catch (receivedError) {
-        expect(receivedError).toEqual(expectedError);
+        expect(receivedError.text).toEqual(expectedError.text);
       }
     });
   });
