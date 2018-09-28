@@ -253,4 +253,24 @@ export default {
       });
     }
   },
+
+  setIdentityMode(type, serverUrl) {
+    try {
+      const mode = JSON.stringify({ type, serverUrl });
+      localStorage.setItem('identityMode', mode);
+    } catch (e) {} // eslint-disable-line no-empty
+
+    return proxyRequest.setMode(type, serverUrl);
+  },
+
+  getIdentityMode() {
+    const defaultMode = { type: 'default' };
+
+    try {
+      const mode = localStorage.getItem('identityMode');
+      return JSON.parse(mode) || defaultMode;
+    } catch (e) {
+      return defaultMode;
+    }
+  },
 };

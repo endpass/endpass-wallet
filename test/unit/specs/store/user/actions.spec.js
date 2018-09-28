@@ -20,12 +20,11 @@ describe('user actions', () => {
   beforeEach(() => {
     commit = jest.fn();
     dispatch = jest.fn();
-    userService.setSetting = jest.fn();
+    jest.clearAllMocks();
   });
 
   describe('setAuthorizationStatus', () => {
     it('should call SET_AUTHORIZATION_STATUS mutation', () => {
-      const commit = jest.fn();
       const getters = {};
       const authorizationStatus = true;
 
@@ -42,8 +41,6 @@ describe('user actions', () => {
     });
 
     it('should not emit error', () => {
-      const commit = jest.fn();
-      const dispatch = jest.fn();
       const getters = {
         isLoggedOut: false,
       };
@@ -55,9 +52,11 @@ describe('user actions', () => {
   });
 
   describe('login', () => {
-    userService.login = jest.fn();
+    const type = 'custom';
+    const serverUrl = 'http://server';
+    const mode = { type, serverUrl };
 
-    it('should login through the user service', async () => {
+    it('should login through the user service by default', async () => {
       expect.assertions(2);
 
       const params = { email, redirectUri: '/uri' };
@@ -67,13 +66,81 @@ describe('user actions', () => {
       expect(userService.login).toHaveBeenCalledTimes(1);
       expect(userService.login).toBeCalledWith(params);
     });
+
+    describe('non default mode', () => {
+      it('should set the user email', async () => {
+        expect.assertions(2);
+
+        await actions.login({ commit, dispatch }, { email, mode });
+
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit).toHaveBeenNthCalledWith(2, SET_EMAIL, email);
+      });
+
+      it('should set the user authorization status', async () => {
+        expect.assertions(2);
+
+        await actions.login({ commit, dispatch }, { email, mode });
+
+        expect(commit).toHaveBeenCalledTimes(2);
+        expect(commit).toHaveBeenNthCalledWith(
+          1,
+          SET_AUTHORIZATION_STATUS,
+          true,
+        );
+      });
+
+      it('should reinit the store', async () => {
+        expect.assertions(2);
+
+        await actions.login({ commit, dispatch }, { email, mode });
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch).toBeCalledWith('init', null, {
+          root: true,
+        });
+      });
+
+      it('should set the user identity mode', async () => {
+        expect.assertions(2);
+
+        await actions.login({ commit, dispatch }, { email, mode });
+
+        expect(userService.setIdentityMode).toHaveBeenCalledTimes(1);
+        expect(userService.setIdentityMode).toHaveBeenCalledWith(
+          type,
+          serverUrl,
+        );
+      });
+
+      it('should save the user email through the user service', async () => {
+        expect.assertions(2);
+
+        await actions.login({ commit, dispatch }, { email, mode });
+
+        expect(userService.setSettings).toHaveBeenCalledTimes(1);
+        expect(userService.setSettings).toBeCalledWith({ email });
+      });
+
+      it('should handle error', async () => {
+        expect.assertions(2);
+
+        const error = 'error';
+        commit = jest.fn(() => {
+          throw error;
+        });
+
+        await actions.login({ commit, dispatch }, { email, mode });
+
+        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(dispatch).toBeCalledWith('errors/emitError', error, {
+          root: true,
+        });
+      });
+    });
   });
 
   describe('logout', () => {
-    beforeEach(() => {
-      userService.logout = jest.fn();
-    });
-
     it('should reset the email', async () => {
       expect.assertions(2);
 
@@ -81,6 +148,15 @@ describe('user actions', () => {
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toBeCalledWith(SET_EMAIL, null);
+    });
+
+    it('should set the default identity mode', async () => {
+      expect.assertions(2);
+
+      await actions.logout({ commit, dispatch });
+
+      expect(userService.setIdentityMode).toHaveBeenCalledTimes(1);
+      expect(userService.setIdentityMode).toBeCalledWith('default');
     });
 
     it('should logout through the user service', async () => {
@@ -122,7 +198,6 @@ describe('user actions', () => {
 
   describe('loginViaOTP', () => {
     const code = '123';
-    userService.loginViaOTP = jest.fn();
 
     it('should otp login through the user service', async () => {
       expect.assertions(2);
@@ -175,7 +250,6 @@ describe('user actions', () => {
     const secret = 'secret';
     const code = 'code';
     const otpSettings = { secret, code };
-    userService.setOtpSettings = jest.fn();
 
     it('should save the otp settings through the user service', async () => {
       expect.assertions(2);
@@ -198,7 +272,6 @@ describe('user actions', () => {
 
   describe('deleteOtpSettings', () => {
     const otpSettings = { code: 'code' };
-    userService.deleteOtpSettings = jest.fn();
 
     it('should delete the otp settings through the user service', async () => {
       expect.assertions(2);
@@ -328,6 +401,63 @@ describe('user actions', () => {
       userService.getSettings.mockRejectedValueOnce(error);
 
       await actions.setUserSettings({ commit, dispatch });
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith('errors/emitError', error, {
+        root: true,
+      });
+    });
+  });
+
+  describe('initIdentityMode', () => {
+    it('should set the identity mode', async () => {
+      expect.assertions(2);
+
+      const type = 'custom';
+      const serverUrl = 'url';
+      const mode = { type, serverUrl };
+      userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
+
+      await actions.initIdentityMode({ commit, dispatch });
+
+      expect(userService.setIdentityMode).toHaveBeenCalledTimes(1);
+      expect(userService.setIdentityMode).toHaveBeenCalledWith(type, serverUrl);
+    });
+
+    it('should set the auth status when not default mode', async () => {
+      expect.assertions(2);
+
+      const type = 'custom';
+      const mode = { type };
+      userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
+
+      await actions.initIdentityMode({ commit, dispatch });
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(SET_AUTHORIZATION_STATUS, true);
+    });
+
+    it('should not set the auth status when default mode', async () => {
+      expect.assertions(1);
+
+      const type = 'default';
+      const mode = { type };
+      userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
+
+      await actions.initIdentityMode({ commit, dispatch });
+
+      expect(commit).toHaveBeenCalledTimes(0);
+    });
+
+    it('should handle error', async () => {
+      expect.assertions(2);
+
+      const error = 'error';
+      userService.getIdentityMode = jest.fn(() => {
+        throw error;
+      });
+
+      await actions.initIdentityMode({ commit, dispatch });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toBeCalledWith('errors/emitError', error, {

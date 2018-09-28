@@ -29,12 +29,32 @@ const setAuthorizationStatus = (
   }
 };
 
-const login = (ctx, { email, redirectUri }) =>
-  userService.login({ email, redirectUri });
+const login = async (
+  { commit, dispatch },
+  { email, redirectUri, mode = {} },
+) => {
+  const { type = 'default', serverUrl } = mode;
+
+  if (type === 'default') {
+    return userService.login({ email, redirectUri });
+  }
+
+  try {
+    userService.setIdentityMode(type, serverUrl);
+    commit(SET_AUTHORIZATION_STATUS, true);
+    commit(SET_EMAIL, email);
+    await userService.setSettings({ email });
+
+    return dispatch('init', null, { root: true });
+  } catch (e) {
+    return dispatch('errors/emitError', e, { root: true });
+  }
+};
 
 const logout = async ({ commit, dispatch }) => {
   try {
     commit(SET_EMAIL, null);
+    userService.setIdentityMode('default');
     await userService.logout();
     window.location.reload();
   } catch (e) {
@@ -101,6 +121,19 @@ const setUserSettings = async ({ commit, dispatch }) => {
   }
 };
 
+const initIdentityMode = async ({ commit, dispatch }) => {
+  try {
+    const { type, serverUrl } = userService.getIdentityMode();
+    userService.setIdentityMode(type, serverUrl);
+
+    if (type !== 'default') {
+      commit(SET_AUTHORIZATION_STATUS, true);
+    }
+  } catch (e) {
+    await dispatch('errors/emitError', e, { root: true });
+  }
+};
+
 const init = async ({ dispatch }) => {
   try {
     await dispatch('setUserSettings');
@@ -119,5 +152,6 @@ export default {
   setOtpSettings,
   setUserSettings,
   deleteOtpSettings,
+  initIdentityMode,
   init,
 };
