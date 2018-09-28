@@ -28,8 +28,8 @@
       />
 
     </v-form>
-    <two-factor-auth-settings/>
-    <change-password-settings/>
+    <two-factor-auth-settings v-if="identityType === 'default'" />
+    <change-password-settings v-if="identityType === 'default'" />
   </base-page>
 </template>
 
@@ -52,7 +52,12 @@ export default {
     },
   }),
   computed: {
-    ...mapState('user', ['settings', 'availableCurrencies', 'email']),
+    ...mapState('user', [
+      'settings',
+      'availableCurrencies',
+      'email',
+      'identityType',
+    ]),
     isSettingsChange() {
       return JSON.stringify(this.settings) !== JSON.stringify(this.newSettings);
     },

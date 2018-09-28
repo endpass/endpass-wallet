@@ -1,6 +1,7 @@
 import mutations from '@/store/user/mutations';
 import {
   SET_AUTHORIZATION_STATUS,
+  SET_IDENTITY_TYPE,
   SET_EMAIL,
   SET_SETTINGS,
   SET_OTP_SETTINGS,
@@ -10,7 +11,7 @@ describe('user mutations', () => {
   describe('setAuthorizationStatus', () => {
     it('should change authorization status', () => {
       const authorizationStatus = true;
-      let state = {
+      const state = {
         authorizationStatus: false,
         prevAuthorizationStatus: null,
       };
@@ -54,6 +55,17 @@ describe('user mutations', () => {
       mutations[SET_OTP_SETTINGS](state, newOptSettings);
 
       expect(state.otpSettings).toEqual(newOptSettings);
+    });
+  });
+
+  describe(SET_IDENTITY_TYPE, () => {
+    it('should set user idenity type', () => {
+      const type = 'custom';
+      const state = { identityType: 'default' };
+
+      mutations[SET_IDENTITY_TYPE](state, type);
+
+      expect(state.identityType).toBe(type);
     });
   });
 });

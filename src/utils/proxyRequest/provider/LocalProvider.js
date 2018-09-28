@@ -8,6 +8,9 @@ export default class LocalProvider {
   Global = typeof window !== 'undefined' ? window : global;
 
   async add(params) {
+    console.log('add');
+    console.log(params);
+    console.log('------------------');
     try {
       const { url, payload, prop } = params;
       const oldData = await this.read({ url });
@@ -68,13 +71,18 @@ export default class LocalProvider {
 
       const data = this.Global.localStorage.getItem(url);
 
-      if (data !== null) {
-        try {
-          return JSON.parse(data);
-        } catch (e) {}
-      } else {
+      // If last url param === 'user' -> return default
+      if (data === null && url.match(/\/([^\/]+)\/?$/)[1] === 'user') {
+        return {};
+      }
+
+      if (data === null) {
         throw new Error('Empty');
       }
+
+      try {
+        return JSON.parse(data);
+      } catch (e) {}
 
       return data;
     } catch (e) {

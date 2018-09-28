@@ -2,6 +2,7 @@ import { userService } from '@/services';
 import { NotificationError } from '@/class';
 import {
   SET_AUTHORIZATION_STATUS,
+  SET_IDENTITY_TYPE,
   SET_EMAIL,
   SET_SETTINGS,
   SET_OTP_SETTINGS,
@@ -41,6 +42,7 @@ const login = async (
 
   try {
     userService.setIdentityMode(type, serverUrl);
+    commit(SET_IDENTITY_TYPE, type);
     commit(SET_AUTHORIZATION_STATUS, true);
     commit(SET_EMAIL, email);
     await userService.setSettings({ email });
@@ -127,6 +129,7 @@ const initIdentityMode = async ({ commit, dispatch }) => {
     userService.setIdentityMode(type, serverUrl);
 
     if (type !== 'default') {
+      commit(SET_IDENTITY_TYPE, type);
       commit(SET_AUTHORIZATION_STATUS, true);
     }
   } catch (e) {

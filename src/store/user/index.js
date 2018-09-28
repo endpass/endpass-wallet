@@ -6,6 +6,7 @@ import { AVAILABLE_FIAT_CURRENCIES } from '@/constants';
 const state = {
   prevAuthorizationStatus: null,
   authorizationStatus: null,
+  identityType: 'default',
   email: null,
   settings: {
     fiatCurrency: 'USD',

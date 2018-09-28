@@ -1,4 +1,3 @@
-import { http } from '@/utils';
 import LocalProvider from './LocalProvider';
 import ServerProvider from './ServerProvider';
 import { NotificationError } from '@/class';
@@ -69,21 +68,9 @@ export default class CustomProvider {
     return this.localProvider.write(params);
   }
 
-  remove = async params => {
-    try {
-      const { url, payload } = params;
-      const { data } = await http.delete(url, payload);
-
-      return data;
-    } catch (e) {
-      e.title = 'Error in server storage';
-      e.text =
-        "Can't remove data from server storage, maybe it is not available";
-      e.type = 'is-warning';
-
-      throw e;
-    }
-  };
+  remove(params) {
+    return this.localProvider.remove(params);
+  }
 
   clear = () => Promise.resolve({ success: true });
 }
