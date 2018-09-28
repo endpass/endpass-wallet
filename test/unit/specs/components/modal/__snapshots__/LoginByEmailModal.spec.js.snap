@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LoginByEmailModal render should display a field for custom identity server 1`] = `<v-input label="Custom Identity Server" id="customIdentityServer" name="customIdentityServer" validator="required|url:require_protocol:true" placeholder="Custom Identity Server" v-model="customIdentityServer"></v-input>`;
+exports[`LoginByEmailModal render should display a field for custom identity server 1`] = `<v-input id="customIdentityServer" label="Custom Identity Server" name="customIdentityServer" validator="required|url:require_protocol:true" placeholder="Custom Identity Server" v-model="customIdentityServer"></v-input>`;
 
 exports[`LoginByEmailModal render should render component 1`] = `
 <v-modal
