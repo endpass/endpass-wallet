@@ -1,5 +1,6 @@
 import { userService } from '@/services';
 import { NotificationError } from '@/class';
+import { IDENTITY_MODE } from '@/constants';
 import {
   SET_AUTHORIZATION_STATUS,
   SET_IDENTITY_TYPE,
@@ -34,9 +35,9 @@ const login = async (
   { commit, dispatch },
   { email, redirectUri, mode = {} },
 ) => {
-  const { type = 'default', serverUrl } = mode;
+  const { type = IDENTITY_MODE.DEFAULT, serverUrl } = mode;
 
-  if (type === 'default') {
+  if (type === IDENTITY_MODE.DEFAULT) {
     return userService.login({ email, redirectUri });
   }
 
@@ -56,7 +57,7 @@ const login = async (
 const logout = async ({ commit, dispatch }) => {
   try {
     commit(SET_EMAIL, null);
-    userService.setIdentityMode('default');
+    userService.setIdentityMode(IDENTITY_MODE.DEFAULT);
     await userService.logout();
     window.location.reload();
   } catch (e) {
@@ -128,7 +129,7 @@ const initIdentityMode = async ({ commit, dispatch }) => {
     const { type, serverUrl } = userService.getIdentityMode();
     userService.setIdentityMode(type, serverUrl);
 
-    if (type !== 'default') {
+    if (type !== IDENTITY_MODE.DEFAULT) {
       commit(SET_IDENTITY_TYPE, type);
       commit(SET_AUTHORIZATION_STATUS, true);
     }

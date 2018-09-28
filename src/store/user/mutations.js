@@ -1,3 +1,4 @@
+import { IDENTITY_MODE } from '@/constants';
 import {
   SET_AUTHORIZATION_STATUS,
   SET_EMAIL,
@@ -23,7 +24,7 @@ const setOtpSettings = (state, otpSettings) => {
   state.otpSettings = otpSettings;
 };
 
-const setIdentityType = (state, type = 'default') => {
+const setIdentityType = (state, type = IDENTITY_MODE.DEFAULT) => {
   state.identityType = type;
 };
 

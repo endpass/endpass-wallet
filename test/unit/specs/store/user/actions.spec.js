@@ -1,5 +1,6 @@
 import { userService } from '@/services';
 import actions from '@/store/user/actions';
+import { IDENTITY_MODE } from '@/constants';
 import {
   SET_AUTHORIZATION_STATUS,
   SET_IDENTITY_TYPE,
@@ -53,7 +54,7 @@ describe('user actions', () => {
   });
 
   describe('login', () => {
-    const type = 'custom';
+    const type = IDENTITY_MODE.CUSTOM;
     const serverUrl = 'http://server';
     const mode = { type, serverUrl };
 
@@ -166,7 +167,7 @@ describe('user actions', () => {
       await actions.logout({ commit, dispatch });
 
       expect(userService.setIdentityMode).toHaveBeenCalledTimes(1);
-      expect(userService.setIdentityMode).toBeCalledWith('default');
+      expect(userService.setIdentityMode).toBeCalledWith(IDENTITY_MODE.DEFAULT);
     });
 
     it('should logout through the user service', async () => {
@@ -423,7 +424,7 @@ describe('user actions', () => {
     it('should set the identity mode', async () => {
       expect.assertions(2);
 
-      const type = 'custom';
+      const type = IDENTITY_MODE.CUSTOM;
       const serverUrl = 'url';
       const mode = { type, serverUrl };
       userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
@@ -437,7 +438,7 @@ describe('user actions', () => {
     it('should set the auth status when not default mode', async () => {
       expect.assertions(2);
 
-      const type = 'custom';
+      const type = IDENTITY_MODE.CUSTOM;
       const mode = { type };
       userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
 
@@ -450,7 +451,7 @@ describe('user actions', () => {
     it('should not set the auth status when default mode', async () => {
       expect.assertions(1);
 
-      const type = 'default';
+      const type = IDENTITY_MODE.DEFAULT;
       const mode = { type };
       userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
 
@@ -462,7 +463,7 @@ describe('user actions', () => {
     it('should set the user identity type when default mode', async () => {
       expect.assertions(2);
 
-      const type = 'custom';
+      const type = IDENTITY_MODE.CUSTOM;
       userService.getIdentityMode = jest.fn().mockReturnValueOnce({ type });
 
       await actions.initIdentityMode({ commit, dispatch });
