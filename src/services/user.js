@@ -58,8 +58,12 @@ export default {
     });
   },
 
-  getSettings() {
-    return proxyRequest.read('/user');
+  async getSettings() {
+    try {
+      return await proxyRequest.read('/user');
+    } catch (e) {
+      return {};
+    }
   },
 
   async getSetting(setting) {
