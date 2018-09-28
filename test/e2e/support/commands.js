@@ -90,7 +90,7 @@ Cypress.Commands.add('login', () => {
 });
 
 // Sets up server and routes for an unauthorized user.
-// Usage: cy.notLogin()
+// Usage: cy.preventLogin()
 Cypress.Commands.add('preventLogin', () => {
   cy.server();
   cy.route({

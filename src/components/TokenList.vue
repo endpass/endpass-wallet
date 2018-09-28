@@ -1,5 +1,8 @@
 <template>
-  <div class="tokens-list">
+  <div
+    class="tokens-list"
+    data-test="tokens-list"
+  >
     <ul v-if="selectedTokens && selectedTokens.length">
       <li
         v-for="token in selectedTokens"
@@ -22,6 +25,7 @@
             slot="right"
             class="is-inline-block remove-token-button"
             title="Remove Token"
+            data-test="delete-button"
             @click="deleteTokenAndUnsubscribe({token})"
           >
             <span
