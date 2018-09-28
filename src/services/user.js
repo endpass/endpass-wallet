@@ -59,10 +59,7 @@ export default {
   },
 
   getSettings() {
-    return proxyRequest.request({
-      method: 'read',
-      url: '/user',
-    });
+    return proxyRequest.read('/user');
   },
 
   async getSetting(setting) {
@@ -71,9 +68,7 @@ export default {
   },
 
   setSettings(settings) {
-    return proxyRequest.request({
-      method: 'add',
-      url: '/user',
+    return proxyRequest.add('/user', {
       payload: settings,
       prop: 'settings',
     });
@@ -99,17 +94,12 @@ export default {
 
   // Returns addresses of all of the user's accounts
   getAccounts() {
-    return proxyRequest.request({
-      method: 'read',
-      url: '/accounts',
-    });
+    return proxyRequest.read('/accounts');
   },
 
   // Saves the encrypted keystore for an account
   setAccount(address, account) {
-    return proxyRequest.request({
-      method: 'write',
-      url: `/account/${address}`,
+    return proxyRequest.write(`/account/${address}`, {
       payload: account,
     });
   },
@@ -132,13 +122,8 @@ export default {
   // Returns the encrypted keystore for a single account
   async getAccount(address) {
     try {
-      const account = await proxyRequest.request({
-        method: 'read',
-        url: `/account/${address}`,
-      });
-      account.address = address;
-
-      return account;
+      const account = await proxyRequest.read(`/account/${address}`);
+      return { ...account, address };
     } catch (e) {
       const shortAcc = address.replace(/^(.{5}).+/, '$1…');
 
@@ -197,10 +182,7 @@ export default {
 
   async getOtpSettings() {
     try {
-      return await proxyRequest.request({
-        method: 'read',
-        url: '/otp',
-      });
+      return await proxyRequest.read('/otp');
     } catch (e) {
       throw new NotificationError({
         title: 'Error requesting two-factor authentication settings',
@@ -212,9 +194,7 @@ export default {
 
   async setOtpSettings(secret, code) {
     try {
-      const { success, message } = await proxyRequest.request({
-        method: 'write',
-        url: '/otp',
+      const { success, message } = await proxyRequest.write('/otp', {
         payload: { secret, code },
       });
 
@@ -234,9 +214,7 @@ export default {
 
   async deleteOtpSettings(code) {
     try {
-      const { success, message } = await proxyRequest.request({
-        method: 'remove',
-        url: '/otp',
+      const { success, message } = await proxyRequest.remove('/otp', {
         payload: {
           data: { code },
         },
@@ -260,9 +238,15 @@ export default {
     try {
       const mode = JSON.stringify({ type, serverUrl });
       localStorage.setItem('identityMode', mode);
-    } catch (e) {} // eslint-disable-line no-empty
-
-    return proxyRequest.setMode(type, serverUrl);
+      proxyRequest.setMode(type, serverUrl);
+    } catch (e) {
+      throw new NotificationError({
+        title: 'Error in local storage',
+        text:
+          'Can`t work in the current mode. Please change the mode or try again.',
+        type: 'is-danger',
+      });
+    }
   },
 
   getIdentityMode() {

@@ -55,9 +55,13 @@ const login = async (
 };
 
 const logout = async ({ commit, dispatch }) => {
+  commit(SET_EMAIL, null);
+
   try {
-    commit(SET_EMAIL, null);
     userService.setIdentityMode(IDENTITY_MODE.DEFAULT);
+  } catch (e) {} // eslint-disable-line no-empty
+
+  try {
     await userService.logout();
     window.location.reload();
   } catch (e) {

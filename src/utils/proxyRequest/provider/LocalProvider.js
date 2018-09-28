@@ -1,11 +1,10 @@
 import { NotificationError } from '@/class';
+import { PROXY_REQUEST_PREFIX } from '@/constants';
 
 export default class LocalProvider {
   constructor(serverUrl) {
     this.url = serverUrl;
   }
-
-  Global = typeof window !== 'undefined' ? window : global;
 
   async add(params) {
     try {
@@ -14,7 +13,7 @@ export default class LocalProvider {
       let newData;
 
       if (oldData && Array.isArray(oldData)) {
-        newData = oldData.push(payload);
+        newData = oldData.concat(payload);
       } else if (oldData && typeof oldData === 'object') {
         newData = {
           ...oldData,
@@ -30,28 +29,13 @@ export default class LocalProvider {
 
       const data = JSON.stringify(newData);
 
-      this.Global.localStorage.setItem(url, data);
+      localStorage.setItem(url, data);
 
       return { success: true };
     } catch (e) {
       throw new NotificationError({
         title: 'Error in local storage',
         text: "Can't save data to local storage, maybe it is not available",
-        type: 'is-warning',
-      });
-    }
-  }
-
-  async readProp(params) {
-    try {
-      const { prop, url } = params;
-      const data = await this.read(url);
-
-      return data[prop];
-    } catch (e) {
-      throw new NotificationError({
-        title: 'Error in local storage',
-        text: "Can't read data from local storage, maybe it is not available",
         type: 'is-warning',
       });
     }
@@ -66,7 +50,7 @@ export default class LocalProvider {
         return this.getAllAccounts();
       }
 
-      const data = this.Global.localStorage.getItem(url);
+      const data = localStorage.getItem(url);
 
       // If last url param === 'user' -> return default
       if (data === null && url.match(/\/([^\/]+)\/?$/)[1] === 'user') {
@@ -91,11 +75,7 @@ export default class LocalProvider {
     }
   }
 
-  writeProp(params) {
-    return this.write(params);
-  }
-
-  async write(params) {
+  write = async params => {
     try {
       const { payload } = params;
       let { url } = params;
@@ -106,7 +86,7 @@ export default class LocalProvider {
         url = url.replace('/accounts/', '/account/');
       }
 
-      this.Global.localStorage.setItem(url, data);
+      localStorage.setItem(url, data);
 
       return { success: true };
     } catch (e) {
@@ -116,13 +96,13 @@ export default class LocalProvider {
         type: 'is-warning',
       });
     }
-  }
+  };
 
-  async remove(params) {
+  remove = async params => {
     try {
       const { url } = params;
 
-      this.Global.localStorage.removeItem(url);
+      localStorage.removeItem(url);
 
       return { success: true };
     } catch (e) {
@@ -132,24 +112,10 @@ export default class LocalProvider {
         type: 'is-warning',
       });
     }
-  }
+  };
 
-  async clear() {
-    try {
-      this.Global.localStorage.clear();
-      return { success: true };
-    } catch (e) {
-      throw new NotificationError({
-        title: 'Error in local storage',
-        text: "Can't clear local storage, maybe it is not available",
-        type: 'is-warning',
-      });
-    }
-  }
-
-  getAllAccounts() {
-    return Object.keys(this.Global.localStorage)
+  getAllAccounts = () =>
+    Object.keys(localStorage)
       .filter(key => key.includes('/account'))
       .map(key => key.match(/\/([^\/]+)\/?$/)[1]);
-  }
 }
