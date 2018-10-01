@@ -39,6 +39,7 @@ describe('VInput', () => {
     expect(input.element.value).toBeFalsy();
     expect(input.classes()).toEqual(['input']);
     expect(wrapper.contains('p')).toBeFalsy();
+    expect(input.attributes().class).toBe('input');
 
     wrapper.setProps({
       value: 'some value',

@@ -76,9 +76,10 @@ describe('SettingsPage', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
 
-    it('should not render otp settings when not default identity type', () => {
+    it('should not render email and otp settings when not default identity type', () => {
       wrapper.setComputed({ isDefaultIdentity: false });
 
+      expect(wrapper.find('v-input[type=email]').exists()).toBeFalsy();
       expect(wrapper.find('two-factor-auth-settings').exists()).toBeFalsy();
       expect(wrapper.element).toMatchSnapshot();
     });

@@ -1,6 +1,6 @@
 import { IDENTITY_MODE } from '@/constants';
 
-const isLoggedIn = state => !!state.email;
+const isLoggedIn = state => !!state.authorizationStatus;
 
 const isLoggedOut = state =>
   !state.authorizationStatus &&

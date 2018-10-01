@@ -1,6 +1,7 @@
-import { NotificationError } from '@/class';
-import { identityAPIUrl } from '@/config';
+import axios from 'axios';
 import { http, proxyRequest } from '@/utils';
+import { identityAPIUrl } from '@/config';
+import { NotificationError } from '@/class';
 import keyUtil from '@/utils/keystore';
 import { IDENTITY_MODE } from '@/constants';
 
@@ -166,12 +167,15 @@ export default {
   // Right now, uses the first HD address found as a key
   getHDKey() {
     return this.getAccounts().then(accounts => {
-      let hdAccounts = accounts.filter(acc => keyUtil.isExtendedPublicKey(acc));
-      if (hdAccounts.length) {
-        return this.getAccount(hdAccounts[0]);
-      } else {
+      const hdAccounts = accounts.filter(acc =>
+        keyUtil.isExtendedPublicKey(acc),
+      );
+
+      if (hdAccounts.length === 0) {
         return Promise.resolve();
       }
+
+      return this.getAccount(hdAccounts[0]);
     });
   },
 
@@ -279,6 +283,47 @@ export default {
         text: `Failed to remove identity data.`,
         type: 'is-danger',
       });
+    }
+  },
+
+  async validateIdentityServer(serverUrl) {
+    try {
+      const { data: accounts } = await axios.get(`${serverUrl}/accounts`);
+
+      if (!Array.isArray(accounts) || !accounts.length) {
+        throw new NotificationError({
+          title: 'No Accounts',
+          text:
+            'Your identity server does not have any accounts. Please add some accounts with your identity provider and reload this page.',
+          type: 'is-danger',
+        });
+      }
+
+      return true;
+    } catch (e) {
+      if (e instanceof NotificationError) {
+        throw e;
+      }
+
+      const respCode = e.response && e.response.status;
+
+      switch (respCode) {
+        case 401:
+          throw new NotificationError({
+            title: 'Not Logged In',
+            text:
+              'You are not logged in at your identity server. Please log in with your identity provider, come back to this page, and try again.',
+            type: 'is-danger',
+          });
+
+        default:
+          throw new NotificationError({
+            title: 'Invalid Identity Server',
+            text:
+              'The URL you have entered does not point to a valid identity server. Please double check the address and try again.',
+            type: 'is-danger',
+          });
+      }
     }
   },
 };

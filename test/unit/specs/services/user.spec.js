@@ -1,9 +1,11 @@
+import axios from 'axios';
 import { http, proxyRequest } from '@/utils';
 import MockAdapter from 'axios-mock-adapter';
 
 import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
 import { IDENTITY_MODE } from '@/constants';
+import { addresses } from 'fixtures/accounts';
 
 const userService = require.requireActual('@/services/user').default;
 
@@ -137,11 +139,13 @@ describe('User service', () => {
     });
 
     it('should make correct request', async () => {
+      expect.assertions(1);
+
       axiosMock.onPost(url).reply(config => {
-        expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         return [200, {}];
       });
+
       await userService.logout();
     });
 
@@ -596,6 +600,77 @@ describe('User service', () => {
           await userService.deleteIdentityData();
         } catch (e) {
           expect(e).toBeInstanceOf(NotificationError);
+        }
+      });
+    });
+
+    describe('validateIdentityServer', () => {
+      const serverUrl = 'http://server.com';
+      const url = `${serverUrl}/accounts`;
+      const successResp = [...addresses];
+      const invalidResp = 'invalid response';
+
+      beforeEach(() => {
+        axiosMock = new MockAdapter(axios);
+      });
+
+      it('should make correct request', async () => {
+        expect.assertions(1);
+
+        axiosMock.onGet(url).reply(config => {
+          expect(config.url).toBe(url);
+          return [200, successResp];
+        });
+
+        await userService.validateIdentityServer(serverUrl);
+      });
+
+      it('should return true if the valid custom server', async () => {
+        expect.assertions(1);
+
+        axiosMock.onGet(url).reply(200, successResp);
+
+        const isValid = await userService.validateIdentityServer(serverUrl);
+
+        expect(isValid).toBe(true);
+      });
+
+      it('should throw an error when the response format is invalid', async () => {
+        expect.assertions(2);
+
+        axiosMock.onGet(url).reply(200, invalidResp);
+
+        try {
+          await userService.validateIdentityServer(serverUrl);
+        } catch (e) {
+          expect(e).toBeInstanceOf(NotificationError);
+          expect(e.title).toBe('No Accounts');
+        }
+      });
+
+      it('should throw an error when the response status is 401', async () => {
+        expect.assertions(2);
+
+        axiosMock.onGet(url).reply(401);
+
+        try {
+          await userService.validateIdentityServer(serverUrl);
+        } catch (e) {
+          expect(e).toBeInstanceOf(NotificationError);
+          expect(e.title).toBe('Not Logged In');
+        }
+      });
+
+      it('should throw an error when the response status is invalid', async () => {
+        expect.assertions(2);
+
+        axiosMock.onGet(url).reply(404);
+
+        try {
+          await userService.validateIdentityServer(serverUrl);
+        } catch (e) {
+          expect(e).toBeInstanceOf(NotificationError);
+          expect(e.title).toBe('Invalid Identity Server');
         }
       });
     });
