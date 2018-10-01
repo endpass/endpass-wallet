@@ -45,16 +45,26 @@ export default {
       'setOtpSettings',
       'deleteOtpSettings',
     ]),
+    ...mapActions('errors', ['emitError']),
     async handleConfirmTwoFactorAuthModal(code) {
       const { secret } = this.otpSettings;
 
       this.toggleTwoFactorAuthModal();
       this.isLoading = true;
+      try {
+        if (secret) {
+          await this.setOtpSettings({ secret, code });
+        } else {
+          await this.deleteOtpSettings({ code });
+        }
 
-      if (secret) {
-        await this.setOtpSettings({ secret, code });
-      } else {
-        await this.deleteOtpSettings({ code });
+        this.$notify({
+          title: 'Settings Saved',
+          text: 'Your settings have been saved.',
+          type: 'is-info',
+        });
+      } catch (e) {
+        this.emitError(e);
       }
 
       this.isLoading = false;
