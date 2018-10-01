@@ -18,7 +18,7 @@ describe('LoginByEmailModal', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('login-by-email-modal');
+      expect(wrapper.name()).toBe('LoginByEmailModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

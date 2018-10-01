@@ -68,8 +68,7 @@ import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
 
 export default {
-  // TODO: must be in PascalCase, breaks tests
-  name: 'two-factor-auth-modal',
+  name: 'TwoFactorAuthModal',
   props: {
     secret: String,
     email: String,
