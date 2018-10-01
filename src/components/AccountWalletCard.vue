@@ -35,7 +35,7 @@
         </v-button>
       </div>
       <div class="card-tokens">
-        <tokens-list :tokens="currentTokens" />
+        <tokens-list :tokens="accountTokensList" />
         <v-spinner
           v-if="isLoading"
           :is-loading="true"
@@ -53,7 +53,7 @@ import VSpinner from '@/components/ui/VSpinner';
 import VButton from '@/components/ui/form/VButton';
 
 export default {
-  name: 'ReceiveAccountCard',
+  name: 'AccountWalletCard',
 
   props: {
     isCurrentAccount: {
@@ -86,42 +86,37 @@ export default {
   },
 
   data: () => ({
-    tokens: [],
     isLoading: false,
   }),
 
   computed: {
-    ...mapGetters('tokens', ['trackedTokensWithBalance']),
+    ...mapGetters('tokens', ['fullTokensByAddress']),
 
-    currentTokens() {
-      if (this.isCurrentAccount) {
-        return this.trackedTokensWithBalance;
-      }
-
-      // return this.$store.getters['tokens/trackedTokensWithBalanceByAddress'](this.address);
-
-      return [];
+    accountTokens() {
+      return this.fullTokensByAddress(this.address);
     },
-  },
 
-  watch: {
-    address: {
-      async handler() {
-        if (!this.isCurrentAccount) {
-          await this.loadTokens();
-        }
-      },
-      immediate: true,
+    accountTokensList() {
+      return Object.values(this.accountTokens);
     },
   },
 
   methods: {
-    ...mapActions('tokens', ['getTokensFullDataByAddress']),
+    ...mapActions('tokens', [
+      'getTokensByAddress',
+      'getTokensBalancesByAddress',
+    ]),
 
-    async loadTokens() {
+    async loadTokensData() {
       this.isLoading = true;
 
-      await this.getTokensFullDataByAddress({
+      if (Object.keys(this.accountTokens).length === 0) {
+        await this.getTokensByAddress({
+          address: this.address,
+        });
+      }
+
+      await this.getTokensBalancesByAddress({
         address: this.address,
       });
 
@@ -131,6 +126,10 @@ export default {
     emitSend() {
       this.$emit('send');
     },
+  },
+
+  async created() {
+    await this.loadTokensData();
   },
 
   components: {

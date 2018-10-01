@@ -61,27 +61,33 @@
 </template>
 
 <script>
-import { Token } from '@/class/Token';
 import Balance from '@/components/Balance';
 import { BigNumber } from 'bignumber.js';
 
 // Displays details about a single ERC20 token
 export default {
   name: 'VToken',
+
   props: {
     token: {
-      type: Token,
+      type: Object,
       required: true,
     },
+
     // fiat currency
     currency: {
       type: String,
+      required: false,
       default: 'USD',
     },
+
     price: {
-      default: 0,
+      type: String,
+      required: false,
+      default: '0',
     },
   },
+
   computed: {
     // Return token balance in wei
     amount() {
@@ -92,9 +98,11 @@ export default {
         balanceBn = new BigNumber(this.token.balance);
       }
       const decimalsBn = new BigNumber(10).pow(this.token.decimals);
+
       return balanceBn.div(decimalsBn).toString(10);
     },
   },
+
   components: {
     Balance,
   },

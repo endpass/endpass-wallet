@@ -10,7 +10,7 @@
               </div>
               <div class="card-content is-narrow">
                 <nav
-                  v-if="isLoading || trackedTokens.length"
+                  v-if="isLoading || userTokensList.length > 0"
                   class="panel"
                 >
                   <div class="panel-block">
@@ -61,7 +61,7 @@
                 <multiselect
                   :allow-empty="false"
                   :internal-search="false"
-                  :options="searchTokensList"
+                  :options="filteredTokens"
                   :options-limit="10"
                   :show-labels="false"
                   track-by="address"
@@ -69,7 +69,7 @@
                   placeholder="Type to search tokens..."
                   data-test="tokens-select"
                   @search-change="setSearchToken"
-                  @select="saveTokenAndSubscribe({token: $event })"
+                  @select="addUserToken({token: $event })"
                 >
                   <span
                     slot="option"
@@ -106,74 +106,70 @@ import { matchString } from '@/utils/strings';
 
 export default {
   name: 'TokensPage',
-  data() {
-    return {
-      search: '',
-      searchToken: '',
-      addTokenModalOpen: false,
-    };
-  },
+
+  data: () => ({
+    search: '',
+    searchToken: '',
+    addTokenModalOpen: false,
+  }),
+
   computed: {
     ...mapState({
       prices: state => state.tokens.prices,
       allTokens: state => state.tokens.allTokens,
+      networkTokens: state => state.tokens.networkTokens,
       // []string, list of tracked tokens addresses
       trackedTokens: state => state.tokens.trackedTokens,
       isLoading: state => state.tokens.isLoading,
       ethPrice: state => state.price.price,
       currency: state => state.user.settings.fiatCurrency,
     }),
-    ...mapGetters('tokens', ['trackedTokensWithBalance']),
+    ...mapGetters('tokens', [
+      'currentNetUserTokens',
+      'allCurrentAccountTokens',
+    ]),
 
     // All tokens that are available to add
     // TODO convert all addresses to checksum in store
     filteredTokens() {
-      return Object.values(this.allTokens).filter(token => {
-        const address = token.address.toLowerCase();
-        return !this.trackedTokens
-          .map(addr => addr.toLowerCase())
-          .includes(address);
-      });
-    },
-    searchTokensList() {
-      const { searchToken } = this;
+      const { networkTokens, currentNetUserTokens, searchToken } = this;
 
-      if (!searchToken) {
-        return this.filteredTokens;
-      }
-
-      const search = searchToken.toLowerCase();
-
-      return this.filteredTokens.filter(token => {
-        const { name, symbol } = token;
-
-        return (
-          name.toLowerCase().includes(search) ||
-          symbol.toLowerCase().includes(search)
+      return Object.values(networkTokens)
+        .filter(
+          token => !Object.keys(currentNetUserTokens).includes(token.address),
+        )
+        .filter(
+          ({ name, symbol }) =>
+            matchString(name, searchToken) || matchString(symbol, searchToken),
         );
-      });
     },
-    userTokensList() {
-      const { search, trackedTokensWithBalance } = this;
 
-      return trackedTokensWithBalance.filter(
+    userTokensList() {
+      const { search, allCurrentAccountTokens } = this;
+
+      return Object.values(allCurrentAccountTokens).filter(
         ({ name, symbol }) =>
           matchString(name, search) || matchString(symbol, search),
       );
     },
   },
+
   methods: {
-    ...mapActions('tokens', ['saveTokenAndSubscribe']),
+    ...mapActions('tokens', ['addUserToken']),
+
     setSearchToken(query) {
       this.searchToken = query;
     },
+
     openAddTokenModal() {
       this.addTokenModalOpen = true;
     },
+
     closeAddTokenModal() {
       this.addTokenModalOpen = false;
     },
   },
+
   components: {
     SearchInput,
     Balance,

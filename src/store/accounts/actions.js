@@ -20,9 +20,13 @@ const { toChecksumAddress } = web3.utils;
 const selectWallet = async ({ commit, state, dispatch }, address) => {
   commit(SET_WALLET, state.wallets[address]);
   commit(SET_ADDRESS, address);
+
   dispatch('updateBalance');
 
-  await dispatch('tokens/subscribeOnTokensBalancesUpdates', null, {
+  await dispatch('tokens/getCurrentAccountTokens', null, {
+    root: true,
+  });
+  await dispatch('tokens/getCurrentAccountTokensBalances', null, {
     root: true,
   });
 };

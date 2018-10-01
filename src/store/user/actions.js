@@ -8,10 +8,8 @@ import {
   SET_SETTINGS,
   SET_OTP_SETTINGS,
 } from './mutations-types';
-import {
-  SAVE_TOKENS,
-  SAVE_TRACKED_TOKENS,
-} from '@/store/tokens/mutations-types';
+import { SET_USER_TOKENS } from '@/store/tokens/mutations-types';
+import { mapArrayByProp } from '@/utils/arrays';
 
 const setAuthorizationStatus = (
   { commit, getters },
@@ -27,7 +25,7 @@ const setAuthorizationStatus = (
       type: 'is-danger',
     });
 
-    //dispatch('errors/emitError', notificationError, { root: true });
+    // dispatch('errors/emitError', notificationError, { root: true });
   }
 };
 
@@ -124,14 +122,16 @@ const setUserSettings = async ({ commit, dispatch }) => {
     }
 
     if (tokens) {
-      commit(`tokens/${SAVE_TOKENS}`, tokens, {
-        root: true,
-      });
-      // Saved token contract addresses on all networks
-      const tokenAddrs = []
-        .concat(...Object.values(tokens))
-        .map(token => token.address);
-      commit(`tokens/${SAVE_TRACKED_TOKENS}`, tokenAddrs, { root: true });
+      const mappedTokens = Object.keys(tokens).reduce(
+        (acc, networkKey) =>
+          Object.assign(acc, {
+            [networkKey]: mapArrayByProp(tokens[networkKey], 'address'),
+          }),
+        {},
+      );
+
+      // TODO: what we must do with user tokens after account change
+      commit(`tokens/${SET_USER_TOKENS}`, mappedTokens, { root: true });
     }
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });

@@ -356,8 +356,10 @@ export default {
       fiatCurrency: state => state.user.settings.fiatCurrency,
       ethPrice: state => state.price.price || 0,
     }),
-    ...mapGetters('tokens', ['trackedTokensWithBalance']),
+    // TODO: токены текущего аккаунта с балансом
+    ...mapGetters('tokens', ['allCurrentAccountTokensWithNonZeroBalance']),
     ...mapGetters('transactions', ['getAddressesFromTransactions']),
+
     value: {
       get() {
         const { value } = this.transaction;
@@ -385,6 +387,7 @@ export default {
         this.$nextTick(() => this.$validator.validate('price'));
       },
     },
+
     price: {
       get() {
         if (this.lastInputPrice === 'amount' && this.priceInFiat > 0) {
@@ -410,6 +413,7 @@ export default {
         this.$nextTick(() => this.$validator.validate('value'));
       },
     },
+
     actualPrice() {
       let price;
       if (this.transaction.tokenInfo) {
@@ -429,11 +433,13 @@ export default {
       }
       return price.toFixed();
     },
+
     accountsOptions() {
       const { wallets, getAddressesFromTransactions } = this;
 
       return uniq(Object.keys(wallets).concat(getAddressesFromTransactions));
     },
+
     maxAmount() {
       if (this.transaction.tokenInfo) {
         return this.transaction.tokenInfo.balance || '0';
@@ -447,6 +453,7 @@ export default {
 
       return amount > 0 ? amount : 0;
     },
+
     maxPrice() {
       const balance = new BigNumber(this.maxAmount);
       const amount = balance
@@ -455,26 +462,35 @@ export default {
         .toFixed(2);
       return amount > 0 ? amount : 0;
     },
+
     decimal() {
       const { tokenInfo } = this.transaction;
       return (tokenInfo && tokenInfo.decimals) || 18;
     },
+
     tokenCurrencies() {
+      const {
+        activeCurrency,
+        allCurrentAccountTokensWithNonZeroBalance,
+      } = this;
       const currencies = [
         {
           val: null,
-          key: this.activeCurrency.name,
-          text: this.activeCurrency.name,
+          key: activeCurrency.name,
+          text: activeCurrency.name,
         },
       ];
+      const accountCurrenciesSymbols = Object.values(
+        allCurrentAccountTokensWithNonZeroBalance,
+      ).map(({ symbol }) => symbol);
 
-      return currencies.concat(
-        this.trackedTokensWithBalance.map(({ symbol }) => symbol),
-      );
+      return currencies.concat(accountCurrenciesSymbols);
     },
+
     isEnsTransaction() {
       return /^.+\.(eth|etc|test)$/.test(this.address);
     },
+
     isSendAllowed() {
       return (
         this.transaction.to &&

@@ -27,7 +27,7 @@
             class="is-inline-block remove-token-button"
             title="Remove Token"
             data-test="delete-button"
-            @click="deleteTokenAndUnsubscribe({token})"
+            @click="removeUserToken({token})"
           >
             <span
               class="icon has-text-danger is-small is-pulled-right"
@@ -94,10 +94,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('tokens', [
-      'updateTokensPrices',
-      'deleteTokenAndUnsubscribe',
-    ]),
+    ...mapActions('tokens', ['getTokensPrices', 'removeUserToken']),
 
     // Return value of tokens in fiat
     getTokenPrice(symbol) {
@@ -105,17 +102,12 @@ export default {
 
       return new BigNumber(prices.ETH || 0).times(this.ethPrice).toString();
     },
-
-    // Get token prices for all tokens
-    async updateTokenPrice() {
-      await this.updateTokensPrices();
-
-      this.isLoading = false;
-    },
   },
 
-  mounted() {
-    this.updateTokenPrice();
+  async mounted() {
+    await this.getTokensPrices(this.tokens.map(({ symbol }) => symbol));
+
+    this.isLoading = false;
   },
 
   mixins: [error],
