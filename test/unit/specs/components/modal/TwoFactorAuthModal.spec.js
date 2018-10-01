@@ -13,7 +13,7 @@ describe('TwoFactorAuthModal', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('two-factor-auth-modal');
+      expect(wrapper.name()).toBe('TwoFactorAuthModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
