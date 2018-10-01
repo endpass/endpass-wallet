@@ -257,6 +257,20 @@ describe('user actions', () => {
     });
   });
 
+  describe('validateCustomServer', () => {
+    it('should validate custom server through the user service', async () => {
+      expect.assertions(2);
+
+      const serverUrl = 'serverUrl';
+      userService.validateIdentityServer = jest.fn();
+
+      await actions.validateCustomServer(null, { serverUrl });
+
+      expect(userService.validateIdentityServer).toHaveBeenCalledTimes(1);
+      expect(userService.validateIdentityServer).toBeCalledWith(serverUrl);
+    });
+  });
+
   describe('getOtpSettings', () => {
     const otpSettings = { otp: true };
     userService.getOtpSettings = jest.fn().mockResolvedValue(otpSettings);

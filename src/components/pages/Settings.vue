@@ -8,7 +8,9 @@
       @submit="updateSettings"
     >
       <v-input
+        v-if="isDefaultIdentity"
         :value="email"
+        name="input-email"
         label="Email Address"
         class-name="is-static"
         type="email"
@@ -35,6 +37,7 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex';
+import error from '@/mixins/error';
 import BasePage from '@/components/pages/Base';
 import VForm from '@/components/ui/form/VForm.vue';
 import VSelect from '@/components/ui/form/VSelect.vue';
@@ -42,7 +45,6 @@ import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
 import ChangePasswordSettings from '@/components/ChangePasswordSettings';
-import error from '@/mixins/error';
 
 export default {
   name: 'SettingsPage',

@@ -76,6 +76,9 @@ const logout = async ({ commit, dispatch, getters }) => {
   }
 };
 
+const validateCustomServer = (ctx, { serverUrl }) =>
+  userService.validateIdentityServer(serverUrl);
+
 const loginViaOTP = (ctx, { code, email }) =>
   userService.loginViaOTP(code, email);
 
@@ -167,6 +170,7 @@ export default {
   setOtpSettings,
   setUserSettings,
   deleteOtpSettings,
+  validateCustomServer,
   initIdentityMode,
   init,
 };

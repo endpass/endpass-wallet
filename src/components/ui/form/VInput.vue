@@ -2,7 +2,7 @@
   <div class="field">
     <label
       v-if="label"
-      :class="{'has-text-danger': error || errors.has(name) }"
+      :class="{'has-text-danger': error || errors.has($attrs.name) }"
       :for="$attrs.id"
       class="label"
     >
@@ -37,10 +37,10 @@
       </div>
     </div>
     <p
-      v-if="error || errors.has(name) "
+      v-if="error || errors.has($attrs.name)"
       class="help is-danger"
     >
-      {{ error || errors.first(name) }}
+      {{ error || errors.first($attrs.name) }}
     </p>
     <p
       v-else-if="help"
@@ -65,6 +65,10 @@ export default {
     label: {
       type: String,
       default: null,
+    },
+    className: {
+      type: String,
+      default: '',
     },
     help: {
       type: String,

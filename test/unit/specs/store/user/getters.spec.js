@@ -4,13 +4,13 @@ import { IDENTITY_MODE } from '@/constants';
 describe('user getters', () => {
   describe('isLoggedIn', () => {
     it('should return false when not login', () => {
-      const state = { email: null };
+      const state = { authorizationStatus: null };
 
       expect(getters.isLoggedIn(state)).toBeFalsy();
     });
 
     it('should return true when login', () => {
-      const state = { email: 'email@email.com' };
+      const state = { authorizationStatus: true };
 
       expect(getters.isLoggedIn(state)).toBeTruthy();
     });
