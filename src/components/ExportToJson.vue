@@ -5,6 +5,7 @@
       <v-button
         :loading="exportingJson"
         class-name="is-primary is-cta"
+        data-test="export-button"
       >
         Export
       </v-button>
@@ -44,17 +45,23 @@ export default {
       this.closePasswordModal();
       if (this.wallet) {
         this.exportingJson = true;
-        await new Promise(res => setTimeout(res, 20));
+
         try {
+          await new Promise(res => setTimeout(res, 20));
+
           const v3 = await this.wallet.exportToJSON(password);
+
           this.saveJSON(v3);
         } catch (e) {
           this.exportError(e);
+        } finally {
+          this.exportingJson = false;
         }
-        this.exportingJson = false;
       }
     },
     saveJSON(data) {
+      if (!data) return;
+
       const filename = `endpass_wallet_${this.address}.json`;
       const blob = new Blob([data], { type: 'text/json' });
       const e = document.createEvent('MouseEvents');
@@ -82,16 +89,13 @@ export default {
       );
       a.dispatchEvent(e);
       a.remove();
-      this.exportingJson = false;
     },
-    exportError(e) {
-      this.exportingJson = false;
+    exportError() {
       this.$notify({
         title: 'Error exporting to JSON',
         text: 'Could not create file with your wallet. Please try again.',
         type: 'is-danger',
       });
-      console.error(e);
     },
     openPasswordModal() {
       this.passwordModalOpen = true;

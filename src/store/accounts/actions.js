@@ -4,7 +4,7 @@ import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { hdKeyMnemonic, kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
-import { Wallet } from '@/class';
+import { Wallet, NotificationError } from '@/class';
 import keystore from '@/utils/keystore';
 import {
   SET_ADDRESS,
@@ -62,6 +62,10 @@ const addWalletWithV3 = async (
       password: walletPassword,
     });
   } catch (e) {
+    if (!(e instanceof NotificationError)) {
+      throw e;
+    }
+
     return dispatch('errors/emitError', e, { root: true });
   }
 };

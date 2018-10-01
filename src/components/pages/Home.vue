@@ -5,7 +5,10 @@
       class="auth-content"
     >
 
-      <div class="section section-address">
+      <div
+        class="section section-address"
+        data-test="address-card"
+      >
         <div class="container">
           <div class="card">
             <div class="card-header">

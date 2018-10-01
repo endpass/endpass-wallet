@@ -1,5 +1,8 @@
 <template lang="html">
-  <div class="new-account-modal">
+  <div
+    class="new-account-modal"
+    data-test="resend-modal"
+  >
     <v-modal @close="close">
       <v-form
         id="sendEther"
@@ -13,6 +16,7 @@
           type="number"
           aria-describedby="gasPrice"
           placeholder="Gas price"
+          data-test="gas-price-input"
           required
         >
           <div
@@ -31,6 +35,7 @@
           type="number"
           aria-describedby="gasLimit"
           placeholder="Gas limit"
+          data-test="gas-limit-input"
           required
         />
 
@@ -42,6 +47,7 @@
         <v-button
           form="sendEther"
           class-name="is-primary is-medium"
+          data-test="submit-button"
         >
           Send
         </v-button>

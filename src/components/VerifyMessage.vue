@@ -1,18 +1,24 @@
 <template>
-  <v-form @submit="verifyMessage">
+  <v-form
+    data-test="verifying-message-form"
+    @submit="verifyMessage"
+  >
     <v-textarea
       v-model="signedMessageString"
       label="Signature"
+      data-test="signed-message-textarea"
     />
     <v-button
       :disabled="!signedMessage"
       class-name="is-primary is-medium"
+      data-test="verify-button"
     >
       Verify message
     </v-button>
     <div
       v-if="address"
       class="field"
+      data-test="address-field"
     >
       <label class="label">Address</label>
       <p>{{ address }}</p>

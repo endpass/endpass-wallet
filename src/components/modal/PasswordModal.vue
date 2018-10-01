@@ -1,5 +1,8 @@
 <template lang="html">
-  <div class="password-modal">
+  <div
+    class="password-modal"
+    data-test="password-modal"
+  >
     <v-modal @close="close">
       <template slot="header">Password confirmation required</template>
 
@@ -18,6 +21,7 @@
             data-vv-as="password"
             placeholder="Your Wallet Password"
             required
+            data-test="input-password"
             @input="handleInput"
           />
         </v-form>

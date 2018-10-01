@@ -4,40 +4,29 @@ exports[`SettingsPage render should render the initial state of the component 1`
 <base-page
   class="settings-page"
 >
-  Settings 
+  <template
+    slot="title"
+  >
+    Settings
+  </template>
+   
   <v-form
     class="save-settings"
     id="save-settings"
     v-on:submit="bound updateSettings"
   >
-    <div
-      class="field"
-    >
-      <label
-        class="label"
-      >
-        Email Address
-      </label>
-       
-      <div
-        class="control"
-      >
-        <input
-          class="input is-static"
-          readonly="readonly"
-          type="email"
-        />
-      </div>
-       
-      <p
-        class="help"
-      >
-        Contact support if you need to change your email
-      address.
-      </p>
-    </div>
+    <v-input
+      class-name="is-static"
+      data-test="input-email"
+      help="Contact support if you need to change your email
+      address."
+      label="Email Address"
+      readonly=""
+      type="email"
+    />
      
     <v-select
+      data-test="select-fiat"
       label="Fiat Currency"
       name="fiatCurrency"
       options="USD,AUD,BRL"

@@ -1,5 +1,8 @@
 <template lang="html">
-  <div class="transaction-modal">
+  <div
+    class="transaction-modal"
+    data-test="transaction-modal"
+  >
     <v-modal @close="close">
       <template slot="header">Are you sure?</template>
 
@@ -42,6 +45,7 @@
         <a
           class="button is-primary"
           @click="confirm"
+          data-test="confirm-button"
         >
           Confirm
         </a>

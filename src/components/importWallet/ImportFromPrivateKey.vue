@@ -1,54 +1,58 @@
 <template>
-  <v-form @submit="submitAddWallet">
-    <v-password
-      id="privateKey"
-      key="privateKeyUnique"
-      v-model="privateKey"
-      label="Private key"
-      name="privateKey"
-      validator="required|private_key"
-      data-vv-as="private key"
-      aria-describedby="privateKey"
-      placeholder="Private key"
-      required
-      @input="handleInput"
-    />
-    <v-password
-      id="jsonKeystorePassword"
-      v-model="password"
-      label="Wallet password"
-      name="password"
-      validator="required|min:8"
-      data-vv-as="password"
-      aria-describedby="jsonKeystorePassword"
-      placeholder="wallet password"
-      required
-    />
-    <v-button
-      :loading="isCreating"
-      class-name="is-primary is-cta"
+  <div>
+    <v-form
+      data-test="import-private-form"
+      @submit="togglePasswordModal"
     >
-      Import
-    </v-button>
-  </v-form>
+      <v-password
+        id="privateKey"
+        key="privateKeyUnique"
+        v-model="privateKey"
+        label="Private key"
+        name="privateKey"
+        validator="required|private_key"
+        data-vv-as="private key"
+        aria-describedby="privateKey"
+        placeholder="Private key"
+        required
+        data-test="input-private-key"
+        @input="handleInput"
+      />
+
+      <v-button
+        :loading="isCreating"
+        class-name="is-primary is-cta"
+        data-test="submit-import"
+      >
+        Import
+      </v-button>
+    </v-form>
+
+    <password-modal
+      v-if="isPasswordModal"
+      @close="togglePasswordModal"
+      @confirm="handlePasswordConfirm"
+    />
+  </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex';
-import VForm from '@/components/ui/form/VForm.vue';
-import VPassword from '@/components/ui/form/VPassword.vue';
-import VButton from '@/components/ui/form/VButton.vue';
+import VForm from '@/components/ui/form/VForm';
+import VPassword from '@/components/ui/form/VPassword';
+import VButton from '@/components/ui/form/VButton';
+import PasswordModal from '@/components/modal/PasswordModal';
+import modalMixin from '@/mixins/modal';
 
 export default {
   name: 'ImportFromPrivateKey',
   data: () => ({
     isCreating: false,
     privateKey: '',
-    password: '',
   }),
   methods: {
     ...mapActions('accounts', ['addWalletWithPrivateKey']),
-    async submitAddWallet() {
+    async handlePasswordConfirm(password) {
       this.isCreating = true;
 
       await new Promise(res => setTimeout(res, 20));
@@ -56,7 +60,7 @@ export default {
       try {
         this.addWalletWithPrivateKey({
           privateKey: this.privateKey.replace(/^0x/, ''),
-          password: this.password,
+          password,
         });
         this.$router.push('/');
       } catch (e) {
@@ -73,10 +77,12 @@ export default {
       this.errors.removeById('wrongPrivateKey');
     },
   },
+  mixins: [modalMixin],
   components: {
     VForm,
     VPassword,
     VButton,
+    PasswordModal,
   },
 };
 </script>

@@ -5,10 +5,20 @@
     <div class="tabs">
       <ul>
         <li :class="[ isSignTabActive ? 'is-active' : '']">
-          <a @click="setSignTabActive">Sign</a>
+          <a
+            @click="setSignTabActive"
+            data-test="sign-message-tab"
+          >
+            Sign
+          </a>
         </li>
         <li :class="[ isVerifyTabActive ? 'is-active' : '']">
-          <a @click="setVerifyTabActive">Verify</a>
+          <a
+            @click="setVerifyTabActive"
+            data-test="verify-message-tab"
+          >
+            Verify
+          </a>
         </li>
       </ul>
     </div>
@@ -21,6 +31,7 @@
 import BasePage from '@/components/pages/Base';
 import SignMessage from '@/components/SignMessage';
 import VerifyMessage from '@/components/VerifyMessage';
+import privatePage from '@/mixins/privatePage';
 
 const ACTION_TYPES = {
   SIGN: 'SIGN',
@@ -48,6 +59,9 @@ export default {
       this.action = ACTION_TYPES.VERIFY;
     },
   },
+
+  mixins: [privatePage],
+
   components: {
     BasePage,
     SignMessage,

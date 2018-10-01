@@ -16,6 +16,7 @@
     </div>
     <v-form
       id="twoFactorAuth"
+      v-model="isFormValid"
       @submit="confirm"
     >
       <div
@@ -40,6 +41,7 @@
         label="Verification Code"
         name="verificationCode"
         validator="required|digits:6"
+        data-test="input-two-auth-code"
       />
     </v-form>
     <div
@@ -48,8 +50,10 @@
     >
       <v-button
         :loading="isLoading"
+        :disabled="!isFormValid"
         form="twoFactorAuth"
         class-name="is-primary is-medium"
+        data-test="submit-two-auth-modal"
       >
         Verify
       </v-button>
@@ -77,6 +81,7 @@ export default {
   data() {
     return {
       code: null,
+      isFormValid: false,
     };
   },
   computed: {

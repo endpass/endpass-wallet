@@ -13,6 +13,7 @@
             <li>
               <a
                 :class="{'is-active':exportType==='privateKey'}"
+                data-test="export-private-key-button"
                 @click="exportType = 'privateKey'"
               >
                 Private Key
@@ -21,6 +22,7 @@
             <li>
               <a
                 :class="{'is-active':exportType==='seedPhrase'}"
+                data-test="export-seed-phrase-button"
                 @click="exportType = 'seedPhrase'"
               >
                 Seed Phrase
@@ -29,6 +31,7 @@
             <li>
               <a
                 :class="{'is-active':exportType==='json'}"
+                data-test="export-json-button"
                 @click="exportType = 'json'"
               >
                 JSON Keystore
@@ -56,10 +59,11 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import BasePage from '@/components/pages/Base';
 import ExportToJson from '@/components/ExportToJson.vue';
 import ExportToPrivateKey from '@/components/ExportToPrivateKey.vue';
-import { mapState } from 'vuex';
+import privatePage from '@/mixins/privatePage';
 
 export default {
   name: 'export-wallet',
@@ -75,6 +79,9 @@ export default {
         state.accounts.address.getChecksumAddressString(),
     }),
   },
+
+  mixins: [privatePage],
+
   components: {
     BasePage,
     ExportToJson,

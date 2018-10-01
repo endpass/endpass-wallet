@@ -14,6 +14,7 @@
               <li
                 v-for="transaction in currentNetTransactions"
                 :key="transaction.hash"
+                data-test="transactions-history-item"
               >
                 <app-transaction :transaction="transaction" />
               </li>

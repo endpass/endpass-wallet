@@ -15,8 +15,12 @@ localVue.use(VeeValidate);
 localVue.use(VueRouter);
 
 jest.useFakeTimers();
+
 describe('ImportFromPrivateKey', () => {
-  let wrapper, actions, router;
+  let wrapper;
+  let actions;
+  let router;
+
   beforeEach(() => {
     actions = {
       addWalletWithPrivateKey: jest.fn(),
@@ -51,59 +55,68 @@ describe('ImportFromPrivateKey', () => {
   });
 
   describe('methods', () => {
-    describe('addWallet', () => {
+    describe('handlePasswordConfirm', () => {
+      const password = 'password';
+
       it('should call vuex addWalletWithPrivateKey with correct arguments', done => {
-        const data = {
-          privateKey: '0xkek',
-          password: 'kek',
-        };
+        const privateKey = '0xprivateKey';
+        const expectedPrivateKey = privateKey.replace(/^0x/, '');
 
-        expect.assertions(1);
+        expect.assertions(2);
 
-        wrapper.setData(data);
-        wrapper.vm.submitAddWallet().then(() => {
-          expect(actions.addWalletWithPrivateKey).toBeCalledWith(
-            expect.any(Object),
-            expect.objectContaining({
-              privateKey: data.privateKey.replace(/^0x/, ''),
-              password: data.password,
-            }),
-            undefined,
-          );
+        wrapper.setData({ privateKey });
+        wrapper.setMethods({
+          addWalletWithPrivateKey: jest.fn(),
+        });
+
+        wrapper.vm.handlePasswordConfirm(password).then(() => {
+          expect(wrapper.vm.addWalletWithPrivateKey).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.addWalletWithPrivateKey).toBeCalledWith({
+            privateKey: expectedPrivateKey,
+            password,
+          });
           done();
         });
+
         jest.runAllTimers();
       });
 
       it('should redirect to root after successful wallet creation', done => {
         expect.assertions(2);
+
         router.push('/kek');
+
         expect(router.currentRoute.fullPath).toBe('/kek');
-        wrapper.vm.submitAddWallet().then(() => {
+        wrapper.vm.handlePasswordConfirm(password).then(() => {
           expect(router.currentRoute.fullPath).toBe('/');
           done();
         });
+
         jest.runAllTimers();
       });
 
       it('should toggle isCreating before and after wallet creation', done => {
         expect.assertions(4);
-        wrapper.vm.submitAddWallet().then(() => {
+
+        wrapper.vm.handlePasswordConfirm(password).then(() => {
           expect(actions.addWalletWithPrivateKey).toBeCalled();
           expect(wrapper.vm.isCreating).toBe(false);
           done();
         });
+
         expect(actions.addWalletWithPrivateKey).not.toBeCalled();
         expect(wrapper.vm.isCreating).toBe(true);
+
         jest.runAllTimers();
       });
 
       it('should add error to field if failed to create wallet', done => {
         expect.assertions(1);
+
         actions.addWalletWithPrivateKey.mockImplementationOnce(() => {
           throw new Error();
         });
-        wrapper.vm.submitAddWallet().catch(() => {
+        wrapper.vm.handlePasswordConfirm().catch(() => {
           expect(wrapper.vm.errors.items[0]).toEqual({
             field: 'privateKey',
             msg: 'Private key is invalid',

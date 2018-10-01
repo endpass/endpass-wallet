@@ -6,9 +6,9 @@ import Vuex from 'vuex';
 import VueRouter from 'vue-router';
 import ReceivePage from '@/components/pages/Receive.vue';
 import web3 from 'web3';
-import ethereumWalletMock from '../../../fixtures/wallet.js';
-import ethereumAddressWalletMock from '../../../fixtures/address.js';
-import transactions from '../../../fixtures/transactions.js';
+import ethereumWalletMock from 'fixtures/wallet';
+import ethereumAddressWalletMock from 'fixtures/address';
+import transactions from 'fixtures/transactions';
 
 const wallet = ethereumWalletMock;
 
@@ -37,8 +37,8 @@ describe('ReceivePage', () => {
     };
 
     tokensActions = {
-      getTokensWithBalanceByAddress: jest.fn(),
-      getTokensBalancesByAddress: jest.fn(),
+      getTokensWithBalanceByAddress: jest.fn().mockResolvedValue([]),
+      getTokensBalancesByAddress: jest.fn().mockResolvedValue([]),
     };
 
     mock = new MockAdapter(axios);
@@ -92,7 +92,7 @@ describe('ReceivePage', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('receive-page');
+      expect(wrapper.name()).toBe('ReceivePage');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

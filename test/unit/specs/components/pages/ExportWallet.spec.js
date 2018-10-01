@@ -1,25 +1,31 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import { generateStubs } from '@/utils/testUtils';
-
 import ExportWallet from '@/components/pages/ExportWallet';
+
+const localVue = createLocalVue();
+
+localVue.use(Vuex);
 
 describe('ExportWallet page', () => {
   let wrapper;
-  const localVue = createLocalVue();
-
-  localVue.use(Vuex);
+  let store;
 
   beforeEach(() => {
-    const store = new Vuex.Store({
-      state: {
-        accounts: {},
+    store = new Vuex.Store({
+      modules: {
+        accounts: {
+          namespaced: true,
+          getters: {
+            isPublicAccount: () => false,
+          },
+        },
       },
     });
     wrapper = shallow(ExportWallet, {
-      store,
       stubs: generateStubs(ExportWallet),
       localVue,
+      store,
     });
   });
 

@@ -1,5 +1,8 @@
 <template>
-  <v-form @submit="submitAddWallet">
+  <v-form
+    data-test="import-public-form"
+    @submit="submitAddWallet"
+  >
     <v-input
       id="address"
       key="publicKeyUnique"
@@ -11,11 +14,13 @@
       aria-describedby="address"
       placeholder="0x...."
       required
+      data-test="input-public-key"
       @input="handleInput"
     />
     <v-button
       :loading="isCreating"
       class-name="is-primary is-cta"
+      data-test="submit-import"
     >
       Import
     </v-button>

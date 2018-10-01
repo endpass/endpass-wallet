@@ -97,6 +97,8 @@ describe('SettingsPage', () => {
     });
 
     it('should validate settings properly', async () => {
+      expect.assertions(3);
+
       wrapper = mount(SettingsPage, { store, localVue });
 
       expect(wrapper.vm.errors.any()).toBeFalsy();

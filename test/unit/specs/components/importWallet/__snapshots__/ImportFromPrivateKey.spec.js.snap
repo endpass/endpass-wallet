@@ -1,38 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ImportFromPrivateKey render should render initial state of the component 1`] = `
-<v-form>
-  <v-password
-    aria-describedby="privateKey"
-    data-vv-as="private key"
-    id="privateKey"
-    label="Private key"
-    name="privateKey"
-    placeholder="Private key"
-    required=""
-    v-model="privateKey"
-    v-on:input="bound handleInput"
-    validator="required|private_key"
-  />
-   
-  <v-password
-    aria-describedby="jsonKeystorePassword"
-    data-vv-as="password"
-    id="jsonKeystorePassword"
-    label="Wallet password"
-    name="password"
-    placeholder="wallet password"
-    required=""
-    v-model="password"
-    validator="required|min:8"
-  />
-   
-  <v-button
-    class-name="is-primary is-cta"
+<div>
+  <v-form
+    data-test="import-private-form"
+    v-on:submit="bound togglePasswordModal"
   >
+    <v-password
+      aria-describedby="privateKey"
+      data-test="input-private-key"
+      data-vv-as="private key"
+      id="privateKey"
+      label="Private key"
+      name="privateKey"
+      placeholder="Private key"
+      required=""
+      v-model="privateKey"
+      v-on:input="bound handleInput"
+      validator="required|private_key"
+    />
+     
+    <v-button
+      class-name="is-primary is-cta"
+      data-test="submit-import"
+    >
+      
+      Import
     
-    Import
-  
-  </v-button>
-</v-form>
+    </v-button>
+  </v-form>
+   
+  <!---->
+</div>
 `;

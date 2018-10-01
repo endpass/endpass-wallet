@@ -2,7 +2,12 @@
   "env": {
     "browser": true,
     "es6": true,
-    "node": true
+    "node": true,
+    "jest": true
+  },
+  "globals": {
+    "Cypress": true,
+    "cy": true
   },
   "parserOptions": {
     "parser": "babel-eslint"
@@ -32,6 +37,7 @@
         "order": [
           "el",
           "name",
+          "inheritAttrs",
           "inject",
           "provide",
           ["props", "propsData"],
@@ -50,7 +56,6 @@
             "filters",
             "parent",
             "extends",
-            "inheritAttrs",
             "model",
             "template",
             "render",

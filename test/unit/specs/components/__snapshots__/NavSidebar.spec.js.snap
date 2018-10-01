@@ -1,5 +1,166 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`NavSidebar render should not render items for private account if current account is public 1`] = `
+<div
+  class="nav-sidebar"
+>
+  <div
+    class="navbar-brand nav-sidebar-header"
+  >
+    <a
+      class="navbar-burger"
+    >
+      <span />
+       
+      <span />
+       
+      <span />
+    </a>
+     
+    <router-link
+      class="logo logo-icon"
+      exact=""
+      to="/"
+    >
+      <img
+        alt="Endpass Wallet"
+        src="@/img/logo-light.png"
+      />
+    </router-link>
+     
+    <div
+      class="login-control"
+    >
+      <a
+        class="button is-success"
+      >
+        <span
+          class="icon is-small"
+        >
+          {}
+        </span>
+        
+        Login
+      
+      </a>
+    </div>
+  </div>
+   
+  <div
+    class="nav-sidebar-content navbar-menu"
+  >
+    <div
+      class="nav-sidebar-item network-options"
+    >
+      <div
+        class="level is-mobile"
+      >
+        <div
+          class="level-item"
+        >
+          <div
+            class="field"
+          >
+            <p
+              class="heading"
+            >
+              Chain
+            </p>
+             
+            <div
+              class="control is-expanded"
+            >
+              <!---->
+            </div>
+          </div>
+        </div>
+         
+        <div
+          class="level-item"
+        >
+          <div
+            class="field"
+          >
+            <p
+              class="heading"
+            >
+              Network
+            </p>
+             
+            <div
+              class="control is-expanded"
+            >
+              <!---->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <!---->
+     
+    <div
+      class="nav-sidebar-item menu"
+      data-test="nav-sidebar-menu"
+    >
+      <!---->
+       
+      <ul
+        class="menu-list"
+      >
+        <li>
+          <router-link
+            active-class="is-active"
+            class="nav-link"
+            exact=""
+            to="/"
+          >
+            <span
+              class="icon is-small"
+            >
+              {}
+            </span>
+            
+            Home
+          
+          </router-link>
+        </li>
+         
+        <li>
+          <!---->
+        </li>
+         
+        <li>
+          <!---->
+        </li>
+         
+        <li>
+          <!---->
+        </li>
+         
+        <li>
+          <!---->
+        </li>
+         
+        <li>
+          <!---->
+        </li>
+      </ul>
+       
+      <!---->
+    </div>
+     
+    <div
+      class="nav-sidebar-footer"
+    />
+  </div>
+   
+  <!---->
+   
+  <!---->
+</div>
+`;
+
 exports[`NavSidebar render should render initial state of the component 1`] = `
 <div
   class="nav-sidebar"
@@ -101,6 +262,7 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
      
     <div
       class="nav-sidebar-item menu"
+      data-test="nav-sidebar-menu"
     >
       <!---->
        
@@ -145,8 +307,6 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
           <!---->
         </li>
       </ul>
-       
-      <!---->
        
       <!---->
     </div>

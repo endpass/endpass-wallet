@@ -2,16 +2,19 @@
   <div>
     <v-form
       id="signing-message-form"
+      data-test="signing-message-form"
       @submit="togglePasswordModal"
     >
       <v-textarea
         v-model="message"
         label="Message"
         placeholder="This is a message that you are signing to prove that you own the address you say you own."
+        data-test="message-textarea"
       />
       <v-button
         :disabled="!message"
         class-name="is-primary is-medium"
+        data-test="sign-button"
       >
         Sign message
       </v-button>
@@ -20,6 +23,7 @@
         v-model="getSignedMessage"
         label="Signature"
         disabled
+        data-test="signed-message-textarea"
       />
     </v-form>
     <password-modal
@@ -59,12 +63,12 @@ export default {
     },
   },
   methods: {
-    signMessage(password) {
+    async signMessage(password) {
       try {
         this.togglePasswordModal();
         this.signedMessage = web3.eth.accounts.sign(
           this.message,
-          this.wallet.getPrivateKey(password),
+          await this.wallet.getPrivateKeyString(password),
         );
       } catch (error) {
         this.signedMessage = null;
