@@ -1,143 +1,282 @@
-import getters from '@/store/tokens/getters';
-import { Token, ERC20Token } from '@/class';
+/* eslint-disable import/no-named-default */
+import { default as tokensGetters } from '@/store/tokens/getters';
 
 describe('tokens getters', () => {
-  describe('net', () => {
-    it('should return net from web3', () => {
-      const rootState = {
-        web3: {
-          activeNet: {
-            id: 1,
-          },
-        },
-      };
-      expect(getters.net(1, 1, rootState)).toBe(1);
-    });
-  });
-  describe('address', () => {
-    it('should return address from accounts', () => {
-      const rootState = {
-        accounts: {
-          address: {
-            getChecksumAddressString: () => 1,
-          },
-        },
-      };
-      expect(getters.address(1, 1, rootState)).toBe(1);
-    });
-  });
-  describe('tokensWithBalance', () => {
-    let state;
-    let tokens;
-    let mockGetters;
-    beforeEach(() => {
-      state = {
-        trackedTokens: ['0x123', '0x456'],
-        allTokens: {
-          '0x123': {
-            symbol: 'ABC',
-            address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
-          },
-          '0x456': {
-            symbol: 'DEF',
-            address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
-          },
-          '0x789': {
-            symbol: 'XYZ',
-          },
-        },
-        balances: {
-          '0x123': '100',
-          '0x456': undefined,
-        },
-      };
-      mockGetters = {
-        savedTokenInfos: {
-          // User submitted token
-          '0x999': {
-            symbol: 'XYZ',
-            address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
-          },
-        },
-      };
-    });
-    it('should return all tracked tokens and default balances to 0', () => {
-      tokens = getters.tokensWithBalance(state, mockGetters);
-      expect(tokens).toHaveLength(2);
-      expect(tokens[0].balance).toEqual('100');
-      expect(tokens[1].balance).toEqual('0');
-      expect(tokens[0]).toBeInstanceOf(Token);
-    });
-    it('should merge token info from state', () => {
-      tokens = getters.tokensWithBalance(state, mockGetters);
-      expect(tokens[0].symbol).toEqual('ABC');
-      expect(tokens[1].symbol).toEqual('DEF');
-      expect(tokens[0]).toBeInstanceOf(Token);
-    });
-    it('should merge saved tokens', () => {
-      state.trackedTokens.push('0x999');
-      tokens = getters.tokensWithBalance(state, mockGetters);
-      expect(tokens).toHaveLength(3);
-      expect(tokens[2].symbol).toEqual('XYZ');
-      expect(tokens[0]).toBeInstanceOf(Token);
-    });
-  });
-  describe('trackedTokens', () => {
-    it('should return empty array if trackedTokens is null', () => {
-      const state = {
-        trackedTokens: null,
-      };
-      expect(getters.trackedTokens(state)).toMatchObject([]);
-    });
-    it('should return an array of ERC20 token objects', () => {
-      const state = {
-        trackedTokens: ['0x123', '0x456'],
-      };
-      const tokens = getters.trackedTokens(state);
-      expect(tokens).toHaveLength(2);
-      expect(tokens[0]).toBeInstanceOf(ERC20Token);
-      expect(tokens[0].address).toEqual(state.trackedTokens[0]);
-    });
-  });
-
   describe('activeCurrencyName', () => {
-    it('should return currency name from web3', () => {
+    it('should return active currency name', () => {
       const rootState = {
         web3: {
           activeCurrency: {
-            name: 'kek',
+            name: 'ETH',
           },
         },
       };
-      expect(getters.activeCurrencyName(1, 1, rootState)).toBe('kek');
+      expect(tokensGetters.activeCurrencyName(null, null, rootState)).toBe(
+        'ETH',
+      );
     });
   });
-  describe('savedCurrentNetworkTokens', () => {
-    it('should return tokens from net', () => {
+
+  describe('tokensByAddress', () => {
+    it('should return tokens by given address', () => {
       const state = {
-        savedTokens: {
-          1: 'kek',
+        networkTokens: {
+          '0x1': 'foo',
+          '0x2': 'bar',
+        },
+        tokensByAddress: {
+          '0x0': ['0x1', '0x2'],
         },
       };
-      const mockGetters = {
-        net: 1,
+      expect(tokensGetters.tokensByAddress(state)('0x0')).toEqual({
+        '0x1': 'foo',
+        '0x2': 'bar',
+      });
+    });
+
+    it('should return empty object if address tokens not exist in store', () => {
+      const state = {
+        tokensByAddress: {},
       };
-      expect(getters.savedCurrentNetworkTokens(state, mockGetters)).toBe('kek');
+
+      expect(tokensGetters.tokensByAddress(state)('0x0')).toMatchObject({});
     });
   });
-  describe('savedTokenInfos', () => {
-    it('should return tokens from net', () => {
+
+  describe('balancesByAddress', () => {
+    it('should return balances by given address', () => {
       const state = {
-        savedTokens: {
-          1: [{ address: '0x123', symbol: 'ABC' }],
+        balancesByAddress: {
+          '0x0': {
+            '0x1': '1',
+            '0x2': '2',
+          },
         },
       };
-      const mockGetters = {
-        net: 1,
-        savedCurrentNetworkTokens: state.savedTokens[1],
+
+      expect(tokensGetters.balancesByAddress(state)('0x0')).toEqual({
+        '0x1': '1',
+        '0x2': '2',
+      });
+    });
+
+    it('should return empty object if address balances not exist in store', () => {
+      const state = {
+        balancesByAddress: {},
       };
-      expect(getters.savedTokenInfos(state, mockGetters)).toEqual({
-        '0x123': { address: '0x123', symbol: 'ABC' },
+
+      expect(tokensGetters.balancesByAddress(state)('0x0')).toMatchObject({});
+    });
+  });
+
+  describe('userTokensListedByNetworks', () => {
+    it('should returns arrays of user tokens mapped by network', () => {
+      const state = {
+        userTokens: {
+          1: {
+            '0x1': '1',
+            '0x2': '2',
+          },
+          2: {
+            '0x3': '3',
+          },
+        },
+      };
+
+      expect(tokensGetters.userTokensListedByNetworks(state)).toEqual({
+        1: ['1', '2'],
+        2: ['3'],
+      });
+    });
+  });
+
+  describe('userTokenByAddress', () => {
+    it('should return token by given address from current net', () => {
+      const state = {
+        userTokens: {
+          1: {
+            '0x1': '1',
+            '0x2': '2',
+          },
+        },
+      };
+      const rootGetters = {
+        'web3/activeNetwork': 1,
+      };
+
+      expect(
+        tokensGetters.userTokenByAddress(state, null, null, rootGetters)('0x1'),
+      ).toBe('1');
+    });
+  });
+
+  describe('currentNetUserTokens', () => {
+    it('should return all user tokens from current net', () => {
+      const state = {
+        userTokens: {
+          1: {
+            '0x1': '1',
+            '0x2': '2',
+          },
+        },
+      };
+      const rootGetters = {
+        'web3/activeNetwork': 1,
+      };
+
+      expect(
+        tokensGetters.currentNetUserTokens(state, null, null, rootGetters),
+      ).toEqual({
+        '0x1': '1',
+        '0x2': '2',
+      });
+    });
+  });
+
+  describe('fullTokensByAddress', () => {
+    it('should return tokens by address with prices and balances', () => {
+      const state = {
+        prices: {
+          FOO: '2',
+        },
+        tokensByAddress: {
+          '0x0': ['0x1', '0x2'],
+        },
+      };
+      const getters = {
+        balancesByAddress: () => ({
+          '0x1': '1',
+        }),
+        tokensByAddress: () => ({
+          '0x1': {
+            address: '0x1',
+            symbol: 'FOO',
+          },
+          '0x2': {
+            address: '0x2',
+            symbol: 'BAR',
+          },
+        }),
+      };
+
+      expect(tokensGetters.fullTokensByAddress(state, getters)('0x0')).toEqual({
+        '0x1': {
+          address: '0x1',
+          price: '2',
+          balance: '1',
+          symbol: 'FOO',
+        },
+        '0x2': {
+          address: '0x2',
+          price: '0',
+          balance: '0',
+          symbol: 'BAR',
+        },
+      });
+    });
+  });
+
+  describe('allCurrentAccountTokens', () => {
+    it('should return all account tokens with user tokens', () => {
+      const getters = {
+        tokensByAddress: () => ({
+          '0x0': 'foo',
+        }),
+        currentNetUserTokens: {
+          '0x1': 'bar',
+        },
+      };
+      const rootGetters = {
+        'accounts/currentAddressString': '0x0',
+      };
+
+      expect(
+        tokensGetters.allCurrentAccountTokens(null, getters, null, rootGetters),
+      ).toEqual({
+        '0x0': 'foo',
+        '0x1': 'bar',
+      });
+    });
+  });
+
+  describe('allCurrentAccountFullTokens', () => {
+    it('should return all account tokens with balances and prices ', () => {
+      const state = {
+        prices: {
+          FOO: '2',
+        },
+      };
+      const getters = {
+        allCurrentAccountTokens: {
+          '0x1': {
+            address: '0x1',
+            symbol: 'FOO',
+          },
+          '0x2': {
+            address: '0x2',
+            symbol: 'BAR',
+          },
+        },
+        balancesByAddress: () => ({
+          '0x1': '1',
+        }),
+      };
+      const rootGetters = {
+        'accounts/currentAddressString': '0x1',
+      };
+
+      expect(
+        tokensGetters.allCurrentAccountFullTokens(
+          state,
+          getters,
+          null,
+          rootGetters,
+        ),
+      ).toEqual({
+        '0x1': {
+          address: '0x1',
+          price: '2',
+          balance: '1',
+          symbol: 'FOO',
+        },
+        '0x2': {
+          address: '0x2',
+          price: '0',
+          balance: '0',
+          symbol: 'BAR',
+        },
+      });
+    });
+  });
+
+  describe('allCurrentAccountTokensWithNonZeroBalance', () => {
+    it('should return all account tokens with non zero balances', () => {
+      const getters = {
+        allCurrentAccountFullTokens: {
+          '0x1': {
+            address: '0x1',
+            price: '2',
+            balance: '1',
+            symbol: 'FOO',
+          },
+          '0x2': {
+            address: '0x2',
+            price: '0',
+            balance: '0',
+            symbol: 'BAR',
+          },
+        },
+      };
+
+      expect(
+        tokensGetters.allCurrentAccountTokensWithNonZeroBalance(null, getters),
+      ).toEqual({
+        '0x1': {
+          address: '0x1',
+          price: '2',
+          balance: '1',
+          symbol: 'FOO',
+        },
       });
     });
   });
