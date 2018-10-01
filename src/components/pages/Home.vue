@@ -46,8 +46,7 @@
               <p class="card-header-title">Your Tokens</p>
               <div class="card-header-icon">
                 <router-link
-                  :to="{name:
-                  'TokensPage'}"
+                  :to="{name: 'TokensPage'}"
                   class="button is-outlined is-info is-small"
                   data-test="edit-tokens-button"
                 >
@@ -56,7 +55,7 @@
               </div>
             </div>
             <div class="card-content">
-              <tokens-list :tokens="trackedTokensWithBalance" />
+              <tokens-list :tokens="allCurrentAccountTokensList" />
             </div>
           </div>
         </div>
@@ -97,27 +96,45 @@
 </template>
 
 <script>
+import { mapGetters, mapState, mapActions } from 'vuex';
 import Balance from '@/components/Balance';
 import Account from '@/components/Account';
 import TokensList from '@/components/TokensList';
-import { mapGetters, mapState } from 'vuex';
 
 export default {
   name: 'Home',
-  data() {
-    return {};
-  },
+
   computed: {
     ...mapGetters('user', ['isLoggedIn']),
-    ...mapGetters('accounts', ['isPublicAccount', 'balance']),
-    ...mapGetters('tokens', ['trackedTokensWithBalance']),
+    ...mapGetters('accounts', ['accountAddress', 'isPublicAccount', 'balance']),
+    ...mapGetters('tokens', ['allCurrentAccountFullTokens']),
     ...mapState({
       activeCurrency: state => state.web3.activeCurrency,
       address: state =>
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),
     }),
+
+    allCurrentAccountTokensList() {
+      return Object.values(this.allCurrentAccountFullTokens);
+    },
   },
+
+  watch: {
+    address: {
+      async handler() {
+        if (this.address) {
+          await this.getCurrentAccountTokensBalances();
+        }
+      },
+      immediate: true,
+    },
+  },
+
+  methods: {
+    ...mapActions('tokens', ['getCurrentAccountTokensBalances']),
+  },
+
   components: {
     Account,
     Balance,

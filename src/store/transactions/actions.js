@@ -156,7 +156,7 @@ const handleBlockTransactions = (
   { dispatch, rootState, rootGetters },
   transactions,
 ) => {
-  const userAddresses = rootGetters['accounts/getAccountAddresses'];
+  const userAddresses = rootGetters['accounts/accountAddress'];
   const toUserTrx = transactions.filter(trx =>
     userAddresses.some(address => address === trx.to),
   );

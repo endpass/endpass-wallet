@@ -130,6 +130,7 @@ import web3 from '@/utils/web3';
 
 export default {
   name: 'AddTokenModal',
+
   data() {
     return {
       loadingToken: false,
@@ -150,13 +151,16 @@ export default {
     };
   },
   methods: {
-    ...mapActions('tokens', ['saveTokenAndSubscribe']),
+    ...mapActions('tokens', ['addUserToken']),
+
     resetForm() {
       Object.assign(this.$data, this.$options.data());
     },
+
     async addToken() {
-      return this.saveTokenAndSubscribe({ token: { ...this.token } });
+      return this.addUserToken({ token: { ...this.token } });
     },
+
     async createToken() {
       this.loadingToken = true;
 
@@ -193,10 +197,12 @@ export default {
         symbol: tokenInfo.symbol,
       };
     },
+
     close() {
       this.$emit('close');
     },
   },
+
   components: {
     VModal,
     VForm,

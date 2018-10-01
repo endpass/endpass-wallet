@@ -5,10 +5,9 @@
   >
     <div class="section">
       <div class="container">
-        <receive-account-card
+        <account-wallet-card
           :address="address"
           :balance="balance"
-          :tokens="trackedTokensWithBalance"
           :is-current-account="true"
           :active-currency-name="activeCurrency.name"
         />
@@ -17,13 +16,12 @@
 
     <div class="section">
       <div class="container">
-        <receive-account-card
+        <account-wallet-card
           v-for="(wallet, walletAddress) in wallets"
           v-if="walletAddress !== address"
           :key="walletAddress"
           :address="walletAddress"
           :balance="balances[walletAddress]"
-          :tokens="tokens[walletAddress]"
           :active-currency-name="activeCurrency.name"
           :allow-send="!wallet.isPublic"
           @send="clickSendButton(walletAddress)"
@@ -68,7 +66,7 @@ import VButton from '@/components/ui/form/VButton';
 import AppTransaction from '@/components/Transaction';
 import Account from '@/components/Account';
 import VSpinner from '@/components/ui/VSpinner';
-import ReceiveAccountCard from '@/components/ReceiveAccountCard';
+import AccountWalletCard from '@/components/AccountWalletCard';
 
 export default {
   name: 'ReceivePage',
@@ -77,7 +75,6 @@ export default {
     return {
       isLoading: true,
       balances: {},
-      tokens: {},
     };
   },
 
@@ -95,7 +92,6 @@ export default {
       balance: 'balance',
     }),
     ...mapGetters('transactions', ['incomingTransactions']),
-    ...mapGetters('tokens', ['trackedTokensWithBalance']),
   },
 
   watch: {
@@ -126,10 +122,6 @@ export default {
       this.$router.push('/send');
     },
 
-    isTokensLoading(address) {
-      return this.tokens[address] === undefined;
-    },
-
     async getHistory() {
       if (!this.address) {
         this.isLoading = false;
@@ -143,6 +135,7 @@ export default {
     getBalances() {
       Object.keys(this.wallets).forEach(async address => {
         const balance = await web3.eth.getBalance(address);
+
         this.$set(this.balances, address, web3.utils.fromWei(balance));
       });
     },
@@ -153,7 +146,7 @@ export default {
     AppTransaction,
     VSpinner,
     VButton,
-    ReceiveAccountCard,
+    AccountWalletCard,
   },
 };
 </script>

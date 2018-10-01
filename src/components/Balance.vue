@@ -35,23 +35,38 @@ export default {
   name: 'Balance',
   props: {
     amount: {
+      type: [Number, String],
+      required: false,
       default: 0,
     },
+
     price: {
+      type: [Number, String],
+      required: false,
       default: 1,
     },
+
     currency: {
       type: String,
+      required: false,
       default: 'ETH',
     },
+
     decimals: {
+      type: [Number, String],
+      required: false,
       default: 18,
     },
+
     round: {
+      type: [Number, String],
+      required: false,
       default: 4,
     },
+
     isLoading: {
       type: Boolean,
+      required: false,
       default: false,
     },
   },
@@ -76,7 +91,7 @@ export default {
     },
     balanceString() {
       let balanceString = this.balance
-        .toFixed(this.decimals)
+        .toFixed(parseInt(this.decimals, 10))
         .match(/^[0-9]{1,18}(\.[0-9]{0,18}[^0]{1,18}){0,1}/);
       balanceString = balanceString ? balanceString[0] : '0';
       return balanceString;

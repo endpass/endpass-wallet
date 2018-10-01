@@ -43,7 +43,7 @@ store.watch(
   () =>
     Promise.all([
       store.dispatch('accounts/updateBalance'),
-      store.dispatch('tokens/updateTokensBalances'),
+      store.dispatch('tokens/getCurrentAccountTokensBalances'),
     ]),
 );
 
@@ -64,6 +64,7 @@ if (module.hot) {
       './user',
     ],
     () => {
+      /* eslint-disable global-require */
       const newMutations = require('./mutations').default;
       const newActions = require('./actions').default;
       const newAccounts = require('./accounts').default;
@@ -75,6 +76,7 @@ if (module.hot) {
       const newErrors = require('./errors').default;
       const newConnectionStatus = require('./connection-status').default;
       const newUserModule = require('./user').default;
+
       // swap in the new actions and mutations
       store.hotUpdate({
         mutations: newMutations,

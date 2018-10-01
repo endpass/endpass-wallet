@@ -9,15 +9,22 @@ const state = {
   trackedTokens: [],
   // all saved tokens by networks
   savedTokens: {},
-  // tokens prices by symbol
-  prices: {},
   // Token balances by contract address
   balances: {},
+
   // Info about all tokens, by checksum address
   // {string: Token} - IMMUTABLE!
   allTokens: {},
-  // True if anything is loading
-  // Boolean
+  //
+  //
+  //
+  //
+  //
+  networkTokens: {},
+  userTokens: {},
+  prices: {},
+  tokensByAddress: {},
+  balancesByAddress: {},
   isLoading: false,
 };
 
