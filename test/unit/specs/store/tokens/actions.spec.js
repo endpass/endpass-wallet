@@ -28,6 +28,7 @@ describe('tokens actions', () => {
   let state;
   let getters;
   let rootState;
+
   const token = {
     address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
     symbol: 'KEK-TOKEN',

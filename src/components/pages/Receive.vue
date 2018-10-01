@@ -132,6 +132,7 @@ export default {
       this.isLoading = false;
     },
 
+    // TODO: move balances to the store, because it is not logic of view layer
     getBalances() {
       Object.keys(this.wallets).forEach(async address => {
         const balance = await web3.eth.getBalance(address);

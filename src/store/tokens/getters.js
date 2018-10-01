@@ -4,7 +4,7 @@ import { pick, pickBy } from '@/utils/objects';
 const activeCurrencyName = (state, getters, rootState) =>
   rootState.web3.activeCurrency.name;
 
-const userToknesListedByNetworks = state =>
+const userTokensListedByNetworks = state =>
   Object.keys(state.userTokens).reduce(
     (acc, key) =>
       Object.assign(acc, {
@@ -41,29 +41,13 @@ const tokensByAddress = state => address => {
 const balancesByAddress = state => address =>
   state.balancesByAddress[address] || {};
 
-const tokensWithBalancesByAddress = (state, getters) => address => {
-  const tokens = getters.tokensByAddress(address);
-  const balances = getters.balancesByAddress(address);
-
-  // TODO: remove class if it possible
-  return Object.values(tokens).map(
-    token =>
-      new Token({
-        ...token,
-        balance: balances[address][token.address],
-      }),
-  );
-};
-
 const currentNetUserTokens = (state, getters, rootState, rootGetters) =>
   state.userTokens[rootGetters['web3/activeNetwork']] || {};
 
-const allCurrentAccountTokens = (state, getters, rootState, rootGetters) => {
-  return {
-    ...getters.tokensByAddress(rootGetters['accounts/currentAddressString']),
-    ...getters.currentNetUserTokens,
-  };
-};
+const allCurrentAccountTokens = (state, getters, rootState, rootGetters) => ({
+  ...getters.tokensByAddress(rootGetters['accounts/currentAddressString']),
+  ...getters.currentNetUserTokens,
+});
 
 const fullTokensByAddress = (state, getters) => address => {
   const tokens = getters.tokensByAddress(address);
@@ -115,8 +99,7 @@ export default {
   activeCurrencyName,
   tokensByAddress,
   balancesByAddress,
-  tokensWithBalancesByAddress,
-  userToknesListedByNetworks,
+  userTokensListedByNetworks,
   userTokenByAddress,
   currentNetUserTokens,
   fullTokensByAddress,

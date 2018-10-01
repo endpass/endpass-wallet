@@ -46,7 +46,7 @@ const addUserToken = async (
 
       await userService.setSetting(
         'tokens',
-        getters.userToknesListedByNetworks,
+        getters.userTokensListedByNetworks,
       );
     } catch (err) {
       dispatch('errors/emitError', err, { root: true });
@@ -71,7 +71,7 @@ const removeUserToken = async (
       });
       await userService.setSetting(
         'tokens',
-        getters.userToknesListedByNetworks,
+        getters.userTokensListedByNetworks,
       );
     } catch (err) {
       commit(ADD_USER_TOKEN, {

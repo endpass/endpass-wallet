@@ -1,137 +1,190 @@
 import mutations from '@/store/tokens/mutations';
 import {
-  SAVE_TOKEN,
-  DELETE_TOKEN,
-  SAVE_TOKENS,
-  SAVE_TRACKED_TOKENS,
-  SAVE_TOKEN_PRICE,
-  SAVE_TOKENS_PRICES,
-  SAVE_TOKEN_INFO,
+  SET_LOADING,
+  SET_NETWORK_TOKENS,
+  ADD_NETWORK_TOKENS,
+  SET_TOKENS_PRICES,
+  SET_USER_TOKENS,
+  ADD_USER_TOKEN,
+  REMOVE_USER_TOKEN,
+  SET_TOKENS_BY_ADDRESS,
+  SET_BALANCES_BY_ADDRESS,
 } from '@/store/tokens/mutations-types';
-import { Token } from '@/class';
-import tokensFixture from 'fixtures/tokens';
+import { token, tokens, tokensPrices, balances } from 'fixtures/tokens';
 
 describe('tokens mutations', () => {
-  it('saves token', () => {
-    const token = {
-      address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
-      symbol: 'ZERO',
-      decimals: 1,
-      logo: 'kek.jpg',
-      name: 'Zero token',
-    };
-    const net = 1;
-    let state = {
-      savedTokens: {},
-    };
+  let state;
 
-    mutations[SAVE_TOKEN](state, { token, net });
-    expect(state.savedTokens[net][0]).toMatchObject(token);
-  });
-  it('deletes token', () => {
-    const token = {
-      address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
-      symbol: 'ZERO',
-      decimals: 1,
-      logo: 'kek.jpg',
-      name: 'Zero token',
+  beforeEach(() => {
+    state = {
+      networkTokens: {},
+      userTokens: {},
+      prices: {},
+      tokensByAddress: {},
+      balancesByAddress: {},
+      isLoading: false,
     };
-    const net = 1;
-    let state = {
-      savedTokens: {
-        [net]: [token],
+  });
+
+  describe('SET_LOADING', () => {
+    it('should change loading status', () => {
+      const loadingStuses = [true, false];
+
+      loadingStuses.forEach(status => {
+        mutations[SET_LOADING](state, status);
+
+        expect(state.isLoading).toBe(status);
+      });
+    });
+  });
+
+  describe('SET_NETWORK_TOKENS', () => {
+    it('should set network tokens mapped by addresses', () => {
+      mutations[SET_NETWORK_TOKENS](state, tokens);
+
+      expect(state.networkTokens).toEqual({
+        [tokens[0].address]: tokens[0],
+        [tokens[1].address]: tokens[1],
+      });
+    });
+  });
+
+  describe('ADD_NETWORK_TOKENS', () => {
+    it('should merge existing network tokens with given', () => {
+      const networkTokens = {
+        [tokens[0].address]: tokens[0],
+        [tokens[1].address]: tokens[1],
+      };
+      state.networkTokens = networkTokens;
+
+      mutations[ADD_NETWORK_TOKENS](state, {
+        [token.address]: token,
+      });
+
+      expect(state.networkTokens).toEqual({
+        ...networkTokens,
+        [token.address]: token,
+      });
+    });
+  });
+
+  describe('SET_TOKENS_PRICES', () => {
+    it('should set token prices', () => {
+      mutations[SET_TOKENS_PRICES](state, tokensPrices);
+
+      expect(state.prices).toEqual(tokensPrices);
+    });
+
+    it('should merge token prices with given', () => {
+      state.prices = tokensPrices;
+
+      mutations[SET_TOKENS_PRICES](state, {
+        '0x0': '0',
+      });
+
+      expect(state.prices).toEqual({
+        ...tokensPrices,
+        '0x0': '0',
+      });
+    });
+  });
+
+  describe('SET_USER_TOKENS', () => {
+    it('should set user tokens', () => {
+      mutations[SET_USER_TOKENS](state, tokens);
+
+      expect(state.userTokens).toEqual(tokens);
+    });
+  });
+
+  describe('ADD_USER_TOKEN', () => {
+    const userTokens = {
+      1: {
+        '0x0': 'foo',
       },
-      trackedTokens: [token.address],
+    };
+    const newToken = {
+      address: '0x1',
     };
 
-    mutations[DELETE_TOKEN](state, { token, net });
+    beforeEach(() => {
+      state.userTokens = userTokens;
+    });
 
-    expect(state.savedTokens[net]).not.toContain(token);
-    expect(state.trackedTokens).not.toContain(token.address);
+    it('should add user token to existing network', () => {
+      mutations[ADD_USER_TOKEN](state, {
+        net: 1,
+        token: newToken,
+      });
+
+      expect(state.userTokens).toEqual({
+        1: {
+          ...userTokens[1],
+          [newToken.address]: newToken,
+        },
+      });
+    });
+
+    it('should add user token and to new network if it is not exist', () => {
+      mutations[ADD_USER_TOKEN](state, {
+        net: 2,
+        token: newToken,
+      });
+
+      expect(state.userTokens).toEqual({
+        ...userTokens,
+        2: {
+          [newToken.address]: newToken,
+        },
+      });
+    });
   });
 
-  it('saves tracked token as address string', () => {
-    const tokens = [
-      {
-        address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
-        symbol: 'ZERO',
-        decimals: 1,
-        logo: 'kek.jpg',
-        name: 'Zero token',
-      },
-    ];
-    let token = tokens[0];
-    let state = {
-      trackedTokens: [],
-    };
+  describe('REMOVE_USER_TOKEN', () => {
+    it('should remove user token from given net', () => {
+      const userTokens = {
+        1: {
+          '0x0': 'foo',
+        },
+      };
+      state.userTokens = userTokens;
 
-    let address = tokens[0].address;
+      mutations[REMOVE_USER_TOKEN](state, {
+        net: 1,
+        token: {
+          address: '0x0',
+        },
+      });
 
-    mutations[SAVE_TRACKED_TOKENS](state, [address]);
-
-    expect(state.trackedTokens).toHaveLength(1);
-    expect(state.trackedTokens[0]).toEqual(address);
+      expect(state.userTokens).toMatchObject({
+        1: {},
+      });
+    });
   });
 
-  it('saves only unique tracked tokens', () => {
-    let state = {
-      trackedTokens: ['0x123', '0x456'],
-    };
-    mutations[SAVE_TRACKED_TOKENS](state, ['0x456', '0x789']);
-    expect(state.trackedTokens).toHaveLength(3);
-    expect(state.trackedTokens[2]).toEqual('0x789');
+  describe('SET_TOKENS_BY_ADDRESS', () => {
+    it('should set object by given address', () => {
+      mutations[SET_TOKENS_BY_ADDRESS](state, {
+        address: '0x0',
+        tokens,
+      });
+
+      expect(state.tokensByAddress).toEqual({
+        '0x0': tokens,
+      });
+    });
   });
 
-  it('saves tokens prices', () => {
-    const prices = [
-      {
-        price: '100',
-      },
-    ];
-    let state = {};
+  describe('SET_BALANCES_BY_ADDRESS', () => {
+    it('should set balances by given address', () => {
+      mutations[SET_BALANCES_BY_ADDRESS](state, {
+        address: '0x0',
+        balances,
+      });
 
-    mutations[SAVE_TOKENS_PRICES](state, prices);
-
-    expect(state.prices).toBe(prices);
-  });
-
-  it('saves token price', () => {
-    const price = [
-      {
-        price: '100',
-      },
-    ];
-    const symbol = 'kek';
-    let state = {};
-
-    mutations[SAVE_TOKEN_PRICE](state, { price, symbol });
-
-    expect(state.prices[symbol]).toBe(price);
-  });
-
-  it('saves and freezes token info', () => {
-    let state = {};
-    const allTokens = tokensFixture.tokens;
-    mutations[SAVE_TOKEN_INFO](state, allTokens);
-
-    let token = allTokens[0];
-
-    expect(Object.keys(state.allTokens)).toHaveLength(2);
-    expect(state.allTokens[token.address]).toBeInstanceOf(Token);
-
-    expect(Object.isFrozen(state.allTokens)).toBe(true);
-    expect(Object.isFrozen(state.allTokens[token.address])).toBe(true);
-  });
-  it('appends tokens to token info', () => {
-    let state = {};
-    let tokens = tokensFixture.tokens;
-    mutations[SAVE_TOKEN_INFO](state, tokens.slice(0, 1));
-    expect(Object.keys(state.allTokens)).toHaveLength(1);
-    expect(state.allTokens[tokens[0].address]).toMatchObject(tokens[0]);
-
-    mutations[SAVE_TOKEN_INFO](state, tokens.slice(1, 2));
-    expect(Object.keys(state.allTokens)).toHaveLength(2);
-    expect(state.allTokens[tokens[0].address]).toMatchObject(tokens[0]);
-    expect(state.allTokens[tokens[1].address]).toMatchObject(tokens[1]);
+      expect(state.balancesByAddress).toEqual({
+        '0x0': balances,
+      });
+    });
   });
 });
