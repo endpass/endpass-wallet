@@ -1,14 +1,18 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
+import Notifications from 'vue-notification';
 
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
 import { generateStubs } from '@/utils/testUtils';
 
 describe('TwoFactorAuthSettings', () => {
-  const actions = {
+  const userActions = {
     getOtpSettings: jest.fn(),
     setOtpSettings: jest.fn(),
     deleteOtpSettings: jest.fn(),
+  };
+  const errorsActions = {
+    emitError: jest.fn(),
   };
   const storeOptions = {
     modules: {
@@ -21,7 +25,11 @@ describe('TwoFactorAuthSettings', () => {
             status: null,
           },
         },
-        actions,
+        actions: userActions,
+      },
+      errors: {
+        namespaced: true,
+        actions: errorsActions,
       },
     },
   };
@@ -31,6 +39,7 @@ describe('TwoFactorAuthSettings', () => {
     const localVue = createLocalVue();
 
     localVue.use(Vuex);
+    localVue.use(Notifications);
 
     const store = new Vuex.Store(storeOptions);
 
@@ -39,12 +48,6 @@ describe('TwoFactorAuthSettings', () => {
       localVue,
       stubs: generateStubs(TwoFactorAuthSettings),
     });
-  });
-
-  afterEach(() => {
-    actions.getOtpSettings.mockClear();
-    actions.setOtpSettings.mockClear();
-    actions.deleteOtpSettings.mockClear();
   });
 
   describe('render', () => {
@@ -148,29 +151,60 @@ describe('TwoFactorAuthSettings', () => {
       const code = '123456';
 
       it('should call deleteOtpSettings', () => {
-        spyOn(wrapper.vm, 'deleteOtpSettings');
-
         wrapper.vm.handleConfirmTwoFactorAuthModal(code);
 
-        expect(wrapper.vm.deleteOtpSettings).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.deleteOtpSettings).toHaveBeenCalledWith({ code });
+        expect(userActions.deleteOtpSettings).toHaveBeenCalledTimes(1);
+        expect(userActions.deleteOtpSettings).toHaveBeenCalledWith(
+          expect.any(Object),
+          { code },
+          undefined,
+        );
+      });
+
+      it('should notify about successful update', async () => {
+        expect.assertions(1);
+        jest.spyOn(wrapper.vm, '$notify');
+
+        await wrapper.vm.handleConfirmTwoFactorAuthModal(code);
+
+        expect(wrapper.vm.$notify).toHaveBeenCalledWith({
+          title: 'Settings Saved',
+          text: 'Your settings have been saved.',
+          type: 'is-info',
+        });
+      });
+
+      it('should catch error and show notification', async () => {
+        expect.assertions(2);
+        const error = new Error();
+        userActions.deleteOtpSettings.mockRejectedValueOnce(error);
+        await wrapper.vm.handleConfirmTwoFactorAuthModal(code);
+
+        expect(errorsActions.emitError).toHaveBeenCalledTimes(1);
+        expect(errorsActions.emitError).toHaveBeenCalledWith(
+          expect.any(Object),
+          error,
+          undefined,
+        );
       });
 
       it('should call setOtpSettings', () => {
         const secret = 'secret';
-
-        spyOn(wrapper.vm, 'setOtpSettings');
 
         wrapper.setComputed({
           otpSettings: { secret },
         });
         wrapper.vm.handleConfirmTwoFactorAuthModal(code);
 
-        expect(wrapper.vm.setOtpSettings).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.setOtpSettings).toHaveBeenCalledWith({
-          code,
-          secret,
-        });
+        expect(userActions.setOtpSettings).toHaveBeenCalledTimes(1);
+        expect(userActions.setOtpSettings).toHaveBeenCalledWith(
+          expect.any(Object),
+          {
+            code,
+            secret,
+          },
+          undefined,
+        );
       });
     });
   });
