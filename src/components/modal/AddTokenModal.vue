@@ -1,5 +1,8 @@
 <template lang="html">
-  <v-modal @close="close">
+  <v-modal
+    data-test="add-token-modal"
+    @close="close"
+  >
     <template slot="header">Add custom token</template>
 
     <v-form
@@ -17,6 +20,7 @@
         name="address"
         aria-describedby="address"
         placeholder="Contract address"
+        data-test="address-input"
         required
       />
       <v-input
@@ -76,6 +80,7 @@
           :disabled="!isFormValid"
           class-name="is-primary"
           type="button"
+          data-test="find-button"
           @click.prevent="createToken"
         >
           Find
@@ -103,6 +108,7 @@
         <a
           :disabled="loadingToken"
           class="button"
+          data-test="close-button"
           @click="close"
         >
           Close

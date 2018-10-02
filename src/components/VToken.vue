@@ -1,5 +1,8 @@
 <template>
-  <div class="media token">
+  <div
+    class="media token"
+    data-test="token-item"
+  >
     <div class="media-left">
       <p class="image token-logo is-32x32">
         <img
@@ -18,7 +21,11 @@
     <div class="media-content">
       <div class="content">
         <p class="token-title">
-          <span class="token-name">{{ token.name }}</span>
+          <span
+            class="token-name"
+            data-test="token-name"
+            v-text="token.name"
+          />
         </p>
         <slot />
       </div>
