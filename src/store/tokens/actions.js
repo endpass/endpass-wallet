@@ -8,7 +8,8 @@ import {
   ADD_USER_TOKEN,
   REMOVE_USER_TOKEN,
 } from './mutations-types';
-import { ERC20Token, NotificationError } from '@/class';
+import { NotificationError } from '@/class';
+import ERC20Token from '@/class/erc20';
 import {
   tokenInfoService,
   ethplorerService,
@@ -136,10 +137,8 @@ const getCurrentAccountTokensPrices = async ({ dispatch, getters }) => {
 };
 
 const getTokensByAddress = async ({ dispatch, commit }, { address }) => {
-  let resolvedTokens = [];
-
   try {
-    resolvedTokens = await ethplorerService.getTokensWithBalance(address);
+    const resolvedTokens = await ethplorerService.getTokensWithBalance(address);
 
     dispatch(
       'connectionStatus/updateApiErrorStatus',
@@ -149,23 +148,30 @@ const getTokensByAddress = async ({ dispatch, commit }, { address }) => {
       },
       { root: true },
     );
+
+    const mappedTokens = mapArrayByProp(resolvedTokens, 'address');
+
+    commit(ADD_NETWORK_TOKENS, mappedTokens);
+    commit(SET_TOKENS_BY_ADDRESS, {
+      address,
+      tokens: Object.keys(mappedTokens),
+    });
+
+    return mappedTokens;
   } catch (e) {
     e.apiError = {
       id: 'ethplorer',
       status: false,
     };
     dispatch('errors/emitError', e, { root: true });
+
+    commit(SET_TOKENS_BY_ADDRESS, {
+      address,
+      tokens: [],
+    });
   }
 
-  const mappedTokens = mapArrayByProp(resolvedTokens, 'address');
-
-  commit(ADD_NETWORK_TOKENS, mappedTokens);
-  commit(SET_TOKENS_BY_ADDRESS, {
-    address,
-    tokens: Object.keys(mappedTokens),
-  });
-
-  return mappedTokens;
+  return {};
 };
 
 const getTokensBalancesByAddress = async (
@@ -187,12 +193,14 @@ const getTokensBalancesByAddress = async (
 const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
   if (rootGetters['web3/activeNetwork'] !== 1) return;
 
-  let tokens = [];
+  const tokens = [];
 
   try {
     commit(SET_LOADING, true);
 
-    tokens = await tokenInfoService.getTokensList();
+    const networkTokens = await tokenInfoService.getTokensList();
+
+    tokens.push(...networkTokens);
   } catch (e) {
     const error = new NotificationError({
       title: 'Failed to get list of tokens',
@@ -208,18 +216,17 @@ const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
 };
 
 const getTokensBalances = async (ctx, { address, tokens }) => {
-  const erc20Tokens = Object.keys(tokens).map(key => new ERC20Token(key));
   const balances = await Promise.all(
-    erc20Tokens.map(async erc20Token => {
+    Object.keys(tokens).map(async tokenAddress => {
       try {
-        const balance = await erc20Token.getBalance(address);
+        const balance = await ERC20Token.getBalance(address, tokenAddress);
 
         return {
-          [erc20Token.address]: balance,
+          [tokenAddress]: balance,
         };
       } catch (err) {
         return {
-          [erc20Token.address]: null,
+          [tokenAddress]: null,
         };
       }
     }),
@@ -229,11 +236,11 @@ const getTokensBalances = async (ctx, { address, tokens }) => {
   return tokensBalances;
 };
 
-const getTokensPrices = async ({ commit, getters }, tokens) => {
-  if (tokens.length === 0) return;
+const getTokensPrices = async ({ commit, getters }, tokensSymbols) => {
+  if (tokensSymbols.length === 0) return;
 
   const prices = await priceService.getPrices(
-    tokens,
+    tokensSymbols,
     getters.activeCurrencyName,
   );
 
@@ -241,15 +248,13 @@ const getTokensPrices = async ({ commit, getters }, tokens) => {
 };
 
 export default {
-  getTokensBalancesByAddress,
-  subscribeOnCurrentAccountTokensPricesUpdates,
   init,
-
-  getCurrentAccountTokens,
-  getCurrentAccountTokensBalances,
-
+  subscribeOnCurrentAccountTokensPricesUpdates,
   addUserToken,
   removeUserToken,
+  getTokensBalancesByAddress,
+  getCurrentAccountTokens,
+  getCurrentAccountTokensBalances,
   getNetworkTokens,
   getTokensByAddress,
   getTokensBalances,

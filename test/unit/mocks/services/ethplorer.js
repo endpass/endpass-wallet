@@ -1,11 +1,10 @@
-// import { Transaction } from '@/class'
-
 jest.mock('@/services/ethplorer', () => {
   /* eslint-disable global-require */
   const {
     ethplorerTransactions,
     ethplorerHistory,
   } = require('fixtures/transactions');
+  const { tokens } = require('fixtures/tokens');
 
   const { checksumAddress } = require('fixtures/accounts');
 
@@ -26,5 +25,7 @@ jest.mock('@/services/ethplorer', () => {
     ]),
 
     tokenIsNotSpam: jest.fn().mockResolvedValue(true),
+
+    getTokensWithBalance: jest.fn().mockResolvedValue(tokens),
   };
 });
