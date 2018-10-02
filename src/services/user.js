@@ -288,7 +288,9 @@ export default {
 
   async validateIdentityServer(serverUrl) {
     try {
-      const { data: accounts } = await axios.get(`${serverUrl}/accounts`);
+      const { data: accounts } = await axios.get(`${serverUrl}/accounts`, {
+        withCredentials: true,
+      });
 
       if (!Array.isArray(accounts) || !accounts.length) {
         throw new NotificationError({
