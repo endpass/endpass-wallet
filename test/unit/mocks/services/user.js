@@ -33,6 +33,10 @@ jest.mock('@/services/user', () => {
       success: true,
     }),
 
+    setSetting: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
     removeSettings: jest.fn().mockResolvedValue({
       success: true,
     }),

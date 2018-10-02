@@ -21,9 +21,10 @@ export default class ERC20Token {
   }
 
   // Returns the balance of this token at an address in wei
-  async getBalance(address) {
-    const contract = this.getContract();
-    return contract.methods.balanceOf(address).call();
+  static getBalance(address, tokenAddress) {
+    const contract = new web3.eth.Contract(erc20ABI, address);
+
+    return contract.methods.balanceOf(tokenAddress).call();
   }
 
   // Returns information about the token: name, symbol, decimals, totalSupply
