@@ -75,6 +75,11 @@ describe('LoginByEmailModal', () => {
 
     describe('handle submit modal', () => {
       const email = 'email';
+      const customIdentityServer = 'http://custom.com/api///';
+      const validCustomIdentityServer = customIdentityServer.replace(
+        /\/+$/,
+        '',
+      );
 
       it('should trigger "confirm" event', async () => {
         expect.assertions(1);
@@ -100,14 +105,13 @@ describe('LoginByEmailModal', () => {
       it('should trigger "confirm" event with custom identity server url', async () => {
         expect.assertions(1);
 
-        const customIdentityServer = 'custom identity server url';
         const currentIdentityServerType = IDENTITY_MODE.CUSTOM;
         const expected = [
           {
             email,
             mode: {
               type: currentIdentityServerType,
-              serverUrl: customIdentityServer,
+              serverUrl: validCustomIdentityServer,
             },
           },
         ];
@@ -126,7 +130,6 @@ describe('LoginByEmailModal', () => {
       it('should validate the custom server if the identity mode is custom', async () => {
         expect.assertions(2);
 
-        const customIdentityServer = 'custom identity server url';
         wrapper.vm.validateServer = jest.fn();
 
         wrapper.setData({
@@ -137,7 +140,9 @@ describe('LoginByEmailModal', () => {
         await wrapper.vm.handleSubmit();
 
         expect(wrapper.vm.validateServer).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.validateServer).toBeCalledWith(customIdentityServer);
+        expect(wrapper.vm.validateServer).toBeCalledWith(
+          validCustomIdentityServer,
+        );
       });
 
       it('should not validate the custom server if the identity mode is not custom', async () => {
@@ -160,6 +165,7 @@ describe('LoginByEmailModal', () => {
 
         wrapper.setData({
           currentIdentityServerType: IDENTITY_MODE.CUSTOM,
+          customIdentityServer,
         });
         wrapper.vm.validateServer = jest.fn().mockRejectedValueOnce(error);
         wrapper.vm.emitError = jest.fn();

@@ -157,16 +157,17 @@ export default {
           eventAction: 'submit_email',
         });
 
+        let serverUrl;
+
         if (this.isSelectCustomIdentity) {
-          await this.validateServer(this.customIdentityServer);
+          serverUrl = this.customIdentityServer.replace(/\/+$/, '');
+          await this.validateServer(serverUrl);
         }
 
         const { email } = this;
         const mode = {
           type: this.currentIdentityServerType,
-          serverUrl: this.isSelectCustomIdentity
-            ? this.customIdentityServer
-            : undefined,
+          serverUrl,
         };
 
         this.$emit('confirm', { email, mode });
