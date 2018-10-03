@@ -15,7 +15,7 @@ describe('Home Page', () => {
     cy.get('[data-test=export-wallet-button]').click();
     cy.location()
       .its('href')
-      .should('contain', 'export');
+      .should('eq', `${Cypress.config().baseUrl}/#/export`);
     cy.switchAccount();
     cy.get('[data-test=export-wallet-button]').should('not.exist');
   });
@@ -26,7 +26,6 @@ describe('Home Page', () => {
       url: '/tokeninfo/api/v1/tokens',
       response: {},
     });
-    cy.get('@store').log();
     cy.get('[data-test=user-token]')
       .its('length')
       .should('eq', 1);
@@ -36,6 +35,6 @@ describe('Home Page', () => {
     cy.get('[data-test=edit-tokens-button]').click();
     cy.location()
       .its('href')
-      .should('contain', 'tokens');
+      .should('eq', `${Cypress.config().baseUrl}/#/tokens`);
   });
 });

@@ -85,31 +85,26 @@ export default {
 
     placeholder: {
       type: String,
-      required: false,
       default: 'Select account',
     },
 
     allowEmpty: {
       type: Boolean,
-      required: false,
       default: true,
     },
 
     disabled: {
       type: Boolean,
-      required: false,
       default: false,
     },
 
     value: {
       type: String,
-      required: false,
       default: '',
     },
 
     creatable: {
       type: Boolean,
-      required: false,
       default: false,
     },
   },

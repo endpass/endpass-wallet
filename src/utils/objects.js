@@ -27,6 +27,15 @@ export const pickBy = (obj, predicate) =>
     return acc;
   }, {});
 
+export const mapValuesWith = (obj, iteratee) =>
+  Object.keys(obj).reduce(
+    (acc, key) =>
+      Object.assign(acc, {
+        [key]: iteratee(obj[key]),
+      }),
+    {},
+  );
+
 export default {
   merge,
   pick,

@@ -93,11 +93,6 @@ describe('Send Transactions Page', () => {
 
     it('should send transaction', () => {
       cy.makeStoreAlias();
-      cy.get('@store')
-        .then(store => {
-          cy.spy(store, 'dispatch').as('dispatch');
-        })
-        .invoke('commit', 'accounts/SET_BALANCE', '2000000000000000000');
 
       cy.get('[data-test=transaction-send-form]').within(() => {
         cy.get('[data-test=transaction-address-select]')
@@ -124,6 +119,12 @@ describe('Send Transactions Page', () => {
             .clear()
             .type('0x');
         });
+
+        cy.get('@store')
+          .then(store => {
+            cy.spy(store, 'dispatch').as('dispatch');
+          })
+          .invoke('commit', 'accounts/SET_BALANCE', '2000000000000000000');
 
         cy.get('[data-test=transaction-send-button]').click();
       });

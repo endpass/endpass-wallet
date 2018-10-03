@@ -10,6 +10,7 @@
           :balance="balance"
           :is-current-account="true"
           :active-currency-name="activeCurrency.name"
+          data-test="current-account"
         />
       </div>
     </div>
@@ -24,6 +25,7 @@
           :balance="balances[walletAddress]"
           :active-currency-name="activeCurrency.name"
           :allow-send="!wallet.isPublic"
+          data-test="account"
           @send="clickSendButton(walletAddress)"
         />
       </div>

@@ -10,13 +10,7 @@
         :key="token.address"
         data-test="user-token"
       >
-        <v-spinner
-          v-if="isLoading"
-          :is-loading="isLoading"
-          class="spinner"
-        />
         <v-token
-          v-else
           :token="token"
           :currency="currency"
           :price="prices.get(token.symbol)"
@@ -27,7 +21,7 @@
             class="is-inline-block remove-token-button"
             title="Remove Token"
             data-test="delete-button"
-            @click="removeUserToken({token})"
+            @click="deleteToken(token)"
           >
             <span
               class="icon has-text-danger is-small is-pulled-right"
@@ -48,7 +42,6 @@
 
 <script>
 import VToken from '@/components/VToken';
-import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapActions } from 'vuex';
 import { BigNumber } from 'bignumber.js';
 import error from '@/mixins/error';
@@ -58,7 +51,6 @@ export default {
     tokens: {
       type: Array,
       default: () => [],
-      required: false,
     },
 
     hasRemove: {
@@ -69,13 +61,8 @@ export default {
     itemClass: {
       type: [Object, Array, String],
       default: '',
-      required: false,
     },
   },
-
-  data: () => ({
-    isLoading: true,
-  }),
 
   computed: {
     ...mapState({
@@ -107,32 +94,37 @@ export default {
 
       return new BigNumber(prices.ETH || 0).times(this.ethPrice).toString();
     },
-  },
 
-  async mounted() {
-    if (this.tokens.length > 0) {
+    loadTokensPrices() {
       /**
        * It needs because list can contain custom tokens list which not belongs to current
        * user tokens
        */
-      await this.getTokensPrices(this.tokens.map(({ symbol }) => symbol));
-    }
+      this.getTokensPrices({
+        tokensSymbols: this.tokens.map(({ symbol }) => symbol),
+      });
+    },
 
-    this.isLoading = false;
+    async deleteToken(token) {
+      await this.removeUserToken({
+        token,
+      });
+    },
+  },
+
+  mounted() {
+    if (this.tokens.length > 0) {
+      this.loadTokensPrices();
+    }
   },
 
   mixins: [error],
 
   components: {
     VToken,
-    VSpinner,
   },
 };
 </script>
 
 <style lang="scss">
-.tokens-list {
-  .spinner {
-  }
-}
 </style>

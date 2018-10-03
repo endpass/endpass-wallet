@@ -1,11 +1,10 @@
+import { state as tokensState } from '@/store/tokens';
 import mutations from '@/store/tokens/mutations';
 import {
   SET_LOADING,
   ADD_NETWORK_TOKENS,
   SET_TOKENS_PRICES,
   SET_USER_TOKENS,
-  ADD_USER_TOKEN,
-  REMOVE_USER_TOKEN,
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
 } from '@/store/tokens/mutations-types';
@@ -15,21 +14,14 @@ describe('tokens mutations', () => {
   let state;
 
   beforeEach(() => {
-    state = {
-      networkTokens: {},
-      userTokens: {},
-      prices: {},
-      tokensByAddress: {},
-      balancesByAddress: {},
-      isLoading: false,
-    };
+    state = { ...tokensState };
   });
 
   describe('SET_LOADING', () => {
     it('should change loading status', () => {
-      const loadingStuses = [true, false];
+      const loadingStatuses = [true, false];
 
-      loadingStuses.forEach(status => {
+      loadingStatuses.forEach(status => {
         mutations[SET_LOADING](state, status);
 
         expect(state.isLoading).toBe(status);
@@ -82,71 +74,6 @@ describe('tokens mutations', () => {
       mutations[SET_USER_TOKENS](state, tokens);
 
       expect(state.userTokens).toEqual(tokens);
-    });
-  });
-
-  describe('ADD_USER_TOKEN', () => {
-    const userTokens = {
-      1: {
-        '0x0': 'foo',
-      },
-    };
-    const newToken = {
-      address: '0x1',
-    };
-
-    beforeEach(() => {
-      state.userTokens = userTokens;
-    });
-
-    it('should add user token to existing network', () => {
-      mutations[ADD_USER_TOKEN](state, {
-        net: 1,
-        token: newToken,
-      });
-
-      expect(state.userTokens).toEqual({
-        1: {
-          ...userTokens[1],
-          [newToken.address]: newToken,
-        },
-      });
-    });
-
-    it('should add user token and to new network if it is not exist', () => {
-      mutations[ADD_USER_TOKEN](state, {
-        net: 2,
-        token: newToken,
-      });
-
-      expect(state.userTokens).toEqual({
-        ...userTokens,
-        2: {
-          [newToken.address]: newToken,
-        },
-      });
-    });
-  });
-
-  describe('REMOVE_USER_TOKEN', () => {
-    it('should remove user token from given net', () => {
-      const userTokens = {
-        1: {
-          '0x0': 'foo',
-        },
-      };
-      state.userTokens = userTokens;
-
-      mutations[REMOVE_USER_TOKEN](state, {
-        net: 1,
-        token: {
-          address: '0x0',
-        },
-      });
-
-      expect(state.userTokens).toMatchObject({
-        1: {},
-      });
     });
   });
 

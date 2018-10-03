@@ -10,7 +10,7 @@
               </div>
               <div class="card-content is-narrow">
                 <nav
-                  v-if="isLoading || userTokensList.length > 0"
+                  v-if="isUserHasTokens"
                   class="panel"
                 >
                   <div class="panel-block">
@@ -20,14 +20,16 @@
                     />
                   </div>
                   <v-spinner
-                    :is-loading="isLoading"
+                    :is-loading="isLoading || isProcessingToken"
                     class="spinner-block"
+                    data-test="tokens-spinner"
                   />
                   <div class="scroller">
                     <tokens-list
                       :tokens="userTokensList"
                       :has-remove="true"
                       :item-class="'panel-block is-clearfix is-block'"
+                      data-test="tokens-list"
                     />
                   </div>
                 </nav>
@@ -69,7 +71,7 @@
                   placeholder="Type to search tokens..."
                   data-test="tokens-select"
                   @search-change="setNetworkTokenQuery"
-                  @select="addUserToken({token: $event })"
+                  @select="addToken"
                 >
                   <span
                     slot="option"
@@ -94,6 +96,7 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
 import { mapState, mapActions, mapGetters } from 'vuex';
 import Multiselect from 'vue-multiselect';
 import Balance from '@/components/Balance';
@@ -111,6 +114,7 @@ export default {
     userTokenQuery: '',
     networkTokenQuery: '',
     addTokenModalOpen: false,
+    isProcessingToken: false,
   }),
 
   computed: {
@@ -123,40 +127,49 @@ export default {
       ethPrice: state => state.price.price,
       currency: state => state.user.settings.fiatCurrency,
     }),
-    ...mapGetters('tokens', [
-      'currentNetUserTokens',
-      'allCurrentAccountTokens',
-    ]),
+    ...mapGetters('tokens', ['allCurrentAccountFullTokens']),
+
+    isUserHasTokens() {
+      return !isEmpty(this.allCurrentAccountFullTokens);
+    },
 
     // All tokens that are available to add
     // TODO convert all addresses to checksum in store
     filteredTokens() {
-      const { networkTokens, currentNetUserTokens, networkTokenQuery } = this;
+      const {
+        networkTokens,
+        allCurrentAccountFullTokens,
+        networkTokenQuery,
+      } = this;
 
-      return Object.values(networkTokens)
-        .filter(
-          token => !Object.keys(currentNetUserTokens).includes(token.address),
-        )
-        .filter(
-          ({ name, symbol }) =>
-            matchString(name, networkTokenQuery) ||
-            matchString(symbol, networkTokenQuery),
+      return Object.values(networkTokens).filter(token => {
+        const isUserHasToken = Object.keys(
+          allCurrentAccountFullTokens,
+        ).includes(token.address);
+        const isTokenMatchesToSearch = this.matchTokenToQuery(
+          token,
+          networkTokenQuery,
         );
+
+        return !isUserHasToken && isTokenMatchesToSearch;
+      });
     },
 
     userTokensList() {
-      const { userTokenQuery, allCurrentAccountTokens } = this;
+      const { userTokenQuery, allCurrentAccountFullTokens } = this;
 
-      return Object.values(allCurrentAccountTokens).filter(
-        ({ name, symbol }) =>
-          matchString(name, userTokenQuery) ||
-          matchString(symbol, userTokenQuery),
+      return Object.values(allCurrentAccountFullTokens).filter(token =>
+        this.matchTokenToQuery(token, userTokenQuery),
       );
     },
   },
 
   methods: {
     ...mapActions('tokens', ['addUserToken']),
+
+    matchTokenToQuery(token, query) {
+      return matchString(token.name, query) || matchString(token.symbol, query);
+    },
 
     setNetworkTokenQuery(query) {
       this.networkTokenQuery = query;
@@ -168,6 +181,11 @@ export default {
 
     closeAddTokenModal() {
       this.addTokenModalOpen = false;
+    },
+
+    async addToken(token) {
+      // TODO: add loader when adding start and make network tokens select disabled
+      await this.addUserToken({ token });
     },
   },
 
@@ -223,7 +241,7 @@ export default {
 
 .tokens-page {
   .spinner-block {
-    height: 108px;
+    height: 100%;
   }
 }
 </style>

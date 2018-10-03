@@ -1,6 +1,8 @@
-import web3 from 'web3';
-
-import { customToken, tokens } from '../fixtures/tokeninfo';
+import {
+  customToken,
+  tokens,
+  tokensMappedByAddress,
+} from '../fixtures/tokeninfo';
 
 describe('Tokens Page', () => {
   describe('the user is not authorized', () => {
@@ -31,6 +33,7 @@ describe('Tokens Page', () => {
         });
 
         cy.get('[data-test=tokens-list]').within(() => {
+          cy.get('[data-test=token-item]').should('have.length', 2);
           cy.get('[data-test=token-name]').contains(customToken.name);
         });
       });
@@ -76,25 +79,20 @@ describe('Tokens Page', () => {
 
     describe('saved tokens list', () => {
       const [token1, token2] = tokens;
-      const checksumAddresses = tokens.map(token =>
-        web3.utils.toChecksumAddress(token.address),
-      );
 
       beforeEach(() => {
-        const netID = 1;
-
         cy.makeStoreAlias();
 
         cy.get('@store').then(store => {
-          store.commit('tokens/SAVE_TOKENS', {
-            [netID]: tokens,
+          store.commit('tokens/SET_USER_TOKENS', {
+            '1': tokensMappedByAddress,
           });
-
-          store.commit('tokens/SAVE_TRACKED_TOKENS', checksumAddresses);
         });
       });
 
       it('should remove a token', () => {
+        cy.get('[data-test=tokens-spinner]').should('not.exist');
+
         cy.get('[data-test=tokens-list]').within(() => {
           cy.get('[data-test=token-name]')
             .contains(token1.name)
@@ -113,6 +111,7 @@ describe('Tokens Page', () => {
             });
         });
 
+        cy.get('[data-test=tokens-list]').should('not.exist');
         cy.get('[data-test=no-tokens-text]').contains(
           'You have no tokens on this network. Add some!',
         );

@@ -17,7 +17,9 @@ describe('Import Wallet Page', () => {
     cy.get('[data-test=input-private-key]').type(privateKey);
     cy.get('[data-test=submit-import]').click();
     cy.inputPassword();
-    cy.get('[data-test=address-card]')
+    cy.get('[data-test=address-card]', {
+      timeout: 15000,
+    })
       .contains(checksumAddress)
       .should('exist');
     cy.get('[data-test=nav-sidebar-menu]')
@@ -30,7 +32,7 @@ describe('Import Wallet Page', () => {
     cy.get('[data-test=input-public-key]').type(checksumAddress);
     cy.get('[data-test=submit-import]').click();
     cy.get('[data-test=address-card]', {
-      timeout: 25000,
+      timeout: 15000,
     })
       .contains(checksumAddress)
       .should('exist');
@@ -47,7 +49,9 @@ describe('Import Wallet Page', () => {
     cy.get('[data-test=input-seed-phrase]').type(mnemonic);
     cy.get('[data-test=submit-import]').click();
     cy.inputPassword();
-    cy.get('[data-test=address-card]')
+    cy.get('[data-test=address-card]', {
+      timeout: 15000,
+    })
       .contains(checksumAddress)
       .should('exist');
     cy.get('[data-test=nav-sidebar-menu]')
@@ -65,7 +69,9 @@ describe('Import Wallet Page', () => {
     cy.get('[data-test=input-json-file-password]').type(v3password);
     cy.get('[data-test=submit-import]').click();
     cy.inputPassword();
-    cy.get('[data-test=address-card]')
+    cy.get('[data-test=address-card]', {
+      timeout: 15000,
+    })
       .contains(checksumAddress)
       .should('exist');
     cy.get('[data-test=nav-sidebar-menu]')

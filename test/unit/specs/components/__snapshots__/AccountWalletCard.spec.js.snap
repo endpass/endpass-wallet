@@ -14,8 +14,8 @@ exports[`AccountWalletCard render should correctly render component with current
         </div>
         <!---->
         <div class="card-tokens">
+            <v-spinner></v-spinner>
             <tokens-list tokens=""></tokens-list>
-            <!---->
         </div>
     </div>
 </div>
@@ -37,27 +37,8 @@ exports[`AccountWalletCard render should correctly render component with send bu
             </v-button>
         </div>
         <div class="card-tokens">
+            <v-spinner></v-spinner>
             <tokens-list tokens=""></tokens-list>
-            <!---->
-        </div>
-    </div>
-</div>
-`;
-
-exports[`AccountWalletCard render should correctly render loading component 1`] = `
-<div class="card app-card">
-    <div class="card-header">
-        <h2 class="card-header-title">Receive ETH</h2>
-    </div>
-    <div data-test="current-account" class="card-content">
-        <!---->
-        <div class="card-section">
-            <account currency="ETH" address="0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c" balance="20"></account>
-        </div>
-        <!---->
-        <div class="card-tokens">
-            <tokens-list tokens=""></tokens-list>
-            <v-spinner is-loading="true"></v-spinner>
         </div>
     </div>
 </div>
@@ -75,8 +56,8 @@ exports[`AccountWalletCard render should render initial state of the component 1
         </div>
         <!---->
         <div class="card-tokens">
+            <v-spinner></v-spinner>
             <tokens-list tokens=""></tokens-list>
-            <!---->
         </div>
     </div>
 </div>

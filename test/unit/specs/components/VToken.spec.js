@@ -33,7 +33,7 @@ describe('Token', () => {
     expect(wrapper.find('.token-logo img').attributes().src).toBe(
       mockToken.logo,
     );
-    expect(wrapper.find('.token-name').text()).toBe(mockToken.name);
+    expect(wrapper.find('.token-title').text()).toBe(mockToken.name);
   });
   it('should show symbol if there is no balance', () => {
     const token = { ...mockToken, balance: undefined };

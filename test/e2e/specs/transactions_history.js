@@ -99,7 +99,6 @@ describe('Transactions History Page', () => {
       });
       cy.get('[data-test=resend-modal]').within(() => {
         cy.get('[data-test=gas-price-input]').type('1');
-        cy.get('[data-test=gas-limit-input]').type('1');
         cy.get('[data-test=submit-button]').click();
       });
       cy.get('[data-test=resend-modal]').should('not.visible');
@@ -145,9 +144,6 @@ describe('Transactions History Page', () => {
       });
       cy.get('[data-test=resend-modal]').within(() => {
         cy.get('[data-test=gas-price-input]')
-          .clear()
-          .type('0');
-        cy.get('[data-test=gas-limit-input]')
           .clear()
           .type('0');
         cy.get('[data-test=submit-button]').click();

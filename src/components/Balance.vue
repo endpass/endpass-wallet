@@ -36,37 +36,31 @@ export default {
   props: {
     amount: {
       type: [Number, String],
-      required: false,
       default: 0,
     },
 
     price: {
       type: [Number, String],
-      required: false,
       default: 1,
     },
 
     currency: {
       type: String,
-      required: false,
       default: 'ETH',
     },
 
     decimals: {
       type: [Number, String],
-      required: false,
       default: 18,
     },
 
     round: {
       type: [Number, String],
-      required: false,
       default: 4,
     },
 
     isLoading: {
       type: Boolean,
-      required: false,
       default: false,
     },
   },
