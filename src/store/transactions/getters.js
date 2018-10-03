@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
+import { uniq } from 'lodash';
 import web3 from '@/utils/web3';
-import { uniq } from '@/utils/arrays';
 import { MAIN_NET_ID } from '@/constants';
 
 const accountTransactions = (state, getters, rootState) => {
