@@ -12,7 +12,7 @@
         <div class="transaction-actions level is-mobile">
           <div class="level-left">
             <div class="level-item">
-              <span class="date">{{ date.fromNow() }}</span>
+              <span class="date">{{ transactionDateFromNow }}</span>
             </div>
           </div>
           <div class="level-right">
@@ -88,9 +88,9 @@
         <span class="heading status-text">{{ transaction.state }}</span>
       </div>
 
-      <div v-if="date">
+      <div v-if="transaction.date">
         <span class="text-label">Date</span>
-        <p class="date">{{ date.format("YYYY-MM-DD H:mm") }}</p>
+        <p class="date">{{ transactionFormatedDate }}</p>
       </div>
 
       <div v-if="recieve">
@@ -143,7 +143,7 @@ import PasswordModal from '@/components/modal/PasswordModal';
 import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import error from '@/mixins/error';
-import moment from 'moment';
+import { fromNow, formateDate } from '@/utils/date';
 import web3 from '@/utils/web3';
 
 export default {
@@ -219,11 +219,15 @@ export default {
         'ETH'
       );
     },
-    // Returns date as a moment.js object
-    date() {
-      return moment(this.transaction.date);
+
+    transactionFormatedDate() {
+      return formateDate(this.transaction.date);
     },
-    // To/from address of transaction
+
+    transactionDateFromNow() {
+      return fromNow(this.transaction.date);
+    },
+
     txAddress() {
       if (this.recieve) {
         return this.transaction.from;
