@@ -4,8 +4,8 @@
   "settings": {
     "currency": "USD"
   },
-  "tokens": [
-    [
+  "tokens": {
+    "1": [
       {
         "address": "0x4E84E9e5fb0A972628Cf4568c403167EF1D40431",
         "decimals": 18,
@@ -15,5 +15,5 @@
         "symbol": "$FFC"
       }
     ]
-  ]
+  }
 }
