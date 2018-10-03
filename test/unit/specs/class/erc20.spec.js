@@ -1,5 +1,6 @@
-import { ERC20Token, Token } from '@/class';
-import web3 from '@/utils/web3';
+import { Token } from '@/class';
+
+const ERC20Token = require.requireActual('@/class/erc20').default;
 
 describe('ERC20 Token', () => {
   const tokenInfo = {
@@ -14,18 +15,16 @@ describe('ERC20 Token', () => {
   let erc20;
 
   // method.call() returns given val
-  const contractMethod = function(val) {
-    return {
-      call: jest.fn(() => val),
-    };
-  };
+  const contractMethod = val => ({
+    call: jest.fn(() => val),
+  });
 
   const contractMethods = {
     name: () => contractMethod(tokenInfo.name),
     symbol: () => contractMethod(tokenInfo.symbol),
     decimals: () => contractMethod(tokenInfo.decimals),
     totalSupply: () => contractMethod(tokenInfo.totalSupply),
-    balanceOf: addr => contractMethod(tokenInfo.balance),
+    balanceOf: () => contractMethod(tokenInfo.balance),
   };
 
   beforeEach(() => {
@@ -38,19 +37,19 @@ describe('ERC20 Token', () => {
   });
 
   it('fetches contract from web3', () => {
-    let contract = erc20.getContract();
+    const contract = erc20.getContract();
     expect(contract).toBeTruthy();
 
     // Call again, contract should be cached
-    let contract2 = erc20.getContract();
+    const contract2 = erc20.getContract();
     expect(contract2).toEqual(contract);
   });
 
   it('builds Token from tokeninfo', async () => {
-    let contract = erc20.getContract();
+    const contract = erc20.getContract();
     contract.methods = contractMethods;
 
-    let token = await erc20.getToken();
+    const token = await erc20.getToken();
 
     expect(token).toBeInstanceOf(Token);
 

@@ -16,7 +16,7 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
     userService.setSetting('net', network.id),
     dispatch('subscribeOnBlockUpdates'),
     dispatch('tokens/getCurrentAccountTokens', {}, { root: true }),
-    dispatch('tokens/getCurrentAccountTokensBalances', null, {
+    dispatch('tokens/getCurrentAccountTokensData', null, {
       root: true,
     }),
   ]).catch(e => dispatch('errors/emitError', e, { root: true }));

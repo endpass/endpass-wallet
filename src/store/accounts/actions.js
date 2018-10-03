@@ -26,7 +26,7 @@ const selectWallet = async ({ commit, state, dispatch }, address) => {
   await dispatch('tokens/getCurrentAccountTokens', null, {
     root: true,
   });
-  await dispatch('tokens/getCurrentAccountTokensBalances', null, {
+  await dispatch('tokens/getCurrentAccountTokensData', null, {
     root: true,
   });
 };

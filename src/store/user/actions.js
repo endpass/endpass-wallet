@@ -83,6 +83,7 @@ const loginViaOTP = (ctx, { code, email }) =>
 const getOtpSettings = async ({ commit, dispatch }) => {
   try {
     const otpSettings = await userService.getOtpSettings();
+
     commit(SET_OTP_SETTINGS, otpSettings);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
@@ -130,7 +131,6 @@ const setUserSettings = async ({ commit, dispatch }) => {
         {},
       );
 
-      // TODO: what we must do with user tokens after account change
       commit(`tokens/${SET_USER_TOKENS}`, mappedTokens, { root: true });
     }
   } catch (e) {

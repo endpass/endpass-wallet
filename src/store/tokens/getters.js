@@ -1,4 +1,3 @@
-import { Token } from '@/class';
 import { pick, pickBy } from '@/utils/objects';
 
 const activeCurrencyName = (state, getters, rootState) =>

@@ -1,7 +1,6 @@
 import actions from '@/store/tokens/actions';
 import {
   SET_LOADING,
-  SET_NETWORK_TOKENS,
   ADD_USER_TOKEN,
   ADD_NETWORK_TOKENS,
   SET_TOKENS_BY_ADDRESS,
@@ -36,13 +35,16 @@ describe('tokens actions', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    dispatch = jest.fn();
+    commit = jest.fn();
+    rootGetters = {
+      'web3/activeNetwork': 1,
+    };
   });
 
   describe('init', () => {
     it('should request network tokens and subscrible on prices update', async () => {
       expect.assertions(3);
-
-      dispatch = jest.fn();
 
       await actions.init({ dispatch });
 
@@ -50,35 +52,26 @@ describe('tokens actions', () => {
       expect(dispatch).toHaveBeenNthCalledWith(1, 'getNetworkTokens');
       expect(dispatch).toHaveBeenNthCalledWith(
         2,
-        'subscribeOnCurrentAccountTokensPricesUpdates',
+        'subscribeOnCurrentAccountTokensUpdates',
       );
     });
   });
 
-  describe('subscribeOnCurrentAccountTokensPricesUpdates', () => {
-    it('should request prices and prices updates interval', async () => {
+  describe('subscribeOnCurrentAccountTokensUpdates', () => {
+    it('should set prices and balances updates interval', async () => {
       expect.assertions(3);
 
       jest.useFakeTimers();
-      dispatch = jest.fn();
 
-      await actions.subscribeOnCurrentAccountTokensPricesUpdates({ dispatch });
+      await actions.subscribeOnCurrentAccountTokensUpdates({ dispatch });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toHaveBeenCalledWith('getCurrentAccountTokensPrices');
+      expect(dispatch).toHaveBeenCalledWith('getCurrentAccountTokensData');
       expect(setInterval).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('addUserToken', () => {
-    beforeEach(() => {
-      dispatch = jest.fn();
-      commit = jest.fn();
-      rootGetters = {
-        'web3/activeNetwork': 1,
-      };
-    });
-
     it('should add user token if it is not exist in state', async () => {
       expect.assertions(2);
 
@@ -149,14 +142,6 @@ describe('tokens actions', () => {
   });
 
   describe('removeUserToken', () => {
-    beforeEach(() => {
-      dispatch = jest.fn();
-      commit = jest.fn();
-      rootGetters = {
-        'web3/activeNetwork': 1,
-      };
-    });
-
     it('should remove user token if it is exist in state', async () => {
       expect.assertions(3);
 
@@ -361,6 +346,22 @@ describe('tokens actions', () => {
     });
   });
 
+  describe('getCurrentAccountTokensData', () => {
+    it('should request current user tokens balances and prices', async () => {
+      await actions.getCurrentAccountTokensData({ dispatch });
+
+      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenNthCalledWith(
+        1,
+        'getCurrentAccountTokensPrices',
+      );
+      expect(dispatch).toHaveBeenNthCalledWith(
+        2,
+        'getCurrentAccountTokensBalances',
+      );
+    });
+  });
+
   describe('getNetworkTokens', () => {
     beforeEach(() => {
       rootGetters = {
@@ -377,7 +378,11 @@ describe('tokens actions', () => {
 
       expect(commit).toHaveBeenCalledTimes(3);
       expect(commit).toHaveBeenNthCalledWith(1, SET_LOADING, true);
-      expect(commit).toHaveBeenNthCalledWith(2, SET_NETWORK_TOKENS, tokens);
+      expect(commit).toHaveBeenNthCalledWith(
+        2,
+        ADD_NETWORK_TOKENS,
+        tokensMappedByAddresses,
+      );
       expect(commit).toHaveBeenNthCalledWith(3, SET_LOADING, false);
       expect(tokenInfoService.getTokensList).toHaveBeenCalled();
       expect(dispatch).not.toHaveBeenCalled();
@@ -404,7 +409,7 @@ describe('tokens actions', () => {
 
       expect(commit).toHaveBeenCalledTimes(3);
       expect(commit).toHaveBeenNthCalledWith(1, SET_LOADING, true);
-      expect(commit).toHaveBeenNthCalledWith(2, SET_NETWORK_TOKENS, []);
+      expect(commit).toHaveBeenNthCalledWith(2, ADD_NETWORK_TOKENS, {});
       expect(commit).toHaveBeenNthCalledWith(3, SET_LOADING, false);
       expect(dispatch).toHaveBeenCalled();
       expect(dispatch).toHaveBeenCalledWith(
@@ -416,13 +421,12 @@ describe('tokens actions', () => {
   });
 
   describe('getTokensByAddress', () => {
-    it('should request tokens by address, set it and returns it', async () => {
+    it('should request tokens by address and set it', async () => {
+      expect.assertions(5);
+
       ethplorerService.getTokensWithBalance.mockResolvedValueOnce(tokens);
 
-      const res = await actions.getTokensByAddress(
-        { dispatch, commit },
-        { address },
-      );
+      await actions.getTokensByAddress({ dispatch, commit }, { address });
 
       expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenNthCalledWith(
@@ -443,18 +447,16 @@ describe('tokens actions', () => {
         },
         { root: true },
       );
-      expect(res).toEqual(tokensMappedByAddresses);
     });
 
     it('should handle errors', async () => {
+      expect.assertions(4);
+
       const error = new Error();
 
       ethplorerService.getTokensWithBalance.mockRejectedValueOnce(error);
 
-      const res = await actions.getTokensByAddress(
-        { dispatch, commit },
-        { address },
-      );
+      await actions.getTokensByAddress({ dispatch, commit }, { address });
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toHaveBeenCalledWith(SET_TOKENS_BY_ADDRESS, {
@@ -465,7 +467,6 @@ describe('tokens actions', () => {
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
       });
-      expect(res).toEqual({});
     });
   });
 

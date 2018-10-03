@@ -442,7 +442,7 @@ describe('transactions store', () => {
       };
       rootGetters = {
         'transactions/pendingBalance': 0,
-        'accounts/getAccountAddresses': [address.toLowerCase()],
+        'accounts/accountAddresses': [address.toLowerCase()],
         'web3/isMainNetwork': false,
       };
     });

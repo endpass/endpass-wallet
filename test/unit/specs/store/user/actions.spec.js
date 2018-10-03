@@ -1,4 +1,4 @@
-import { userService } from '@/services';
+import userService from '@/services/user';
 import actions from '@/store/user/actions';
 import { IDENTITY_MODE } from '@/constants';
 import {
@@ -10,9 +10,12 @@ import {
 } from '@/store/user/mutations-types';
 import {
   SAVE_TOKENS,
+  SET_USER_TOKENS,
   SAVE_TRACKED_TOKENS,
 } from '@/store/tokens/mutations-types';
 import { NotificationError } from '@/class';
+import { settings, otpSettings } from 'fixtures/accounts';
+import { tokens } from 'fixtures/tokens';
 
 describe('user actions', () => {
   let commit;
@@ -20,9 +23,9 @@ describe('user actions', () => {
   const email = 'email@email.com';
 
   beforeEach(() => {
+    jest.clearAllMocks();
     commit = jest.fn();
     dispatch = jest.fn();
-    jest.clearAllMocks();
   });
 
   describe('setAuthorizationStatus', () => {
@@ -272,16 +275,13 @@ describe('user actions', () => {
   });
 
   describe('getOtpSettings', () => {
-    const otpSettings = { otp: true };
-    userService.getOtpSettings = jest.fn().mockResolvedValue(otpSettings);
-
     it('should get the otp settings through the user service', async () => {
       expect.assertions(2);
 
       await actions.getOtpSettings({ commit, dispatch });
 
       expect(userService.getOtpSettings).toHaveBeenCalledTimes(1);
-      expect(userService.getOtpSettings).toBeCalledWith();
+      expect(commit).toBeCalledWith(SET_OTP_SETTINGS, otpSettings);
     });
 
     it('should set the otp settings to store', async () => {
@@ -400,58 +400,26 @@ describe('user actions', () => {
   });
 
   describe('setUserSettings', () => {
-    const settings = { setting: 'setting' };
-    const tokens = [{ address: 'address1' }, { address: 'address2' }];
-    userService.getSettings = jest
-      .fn()
-      .mockResolvedValue({ settings, tokens, email });
-
-    it('should set the user email to the store', async () => {
-      expect.assertions(2);
+    it('should set user email, settings and tokens to the store', async () => {
+      expect.assertions(4);
 
       await actions.setUserSettings({ commit, dispatch });
 
-      expect(commit).toHaveBeenCalledTimes(4);
-      expect(commit).toHaveBeenNthCalledWith(1, SET_EMAIL, email);
-    });
-
-    it('should set the user settings to the store', async () => {
-      expect.assertions(2);
-
-      await actions.setUserSettings({ commit, dispatch });
-
-      expect(commit).toHaveBeenCalledTimes(4);
-      expect(commit).toHaveBeenNthCalledWith(2, SET_SETTINGS, settings);
-    });
-
-    it('should set the tokens to the store', async () => {
-      expect.assertions(2);
-
-      await actions.setUserSettings({ commit, dispatch });
-
-      expect(commit).toHaveBeenCalledTimes(4);
+      expect(commit).toHaveBeenCalledTimes(3);
+      expect(commit).toHaveBeenNthCalledWith(1, SET_EMAIL, settings.email);
+      expect(commit).toHaveBeenNthCalledWith(
+        2,
+        SET_SETTINGS,
+        settings.settings,
+      );
       expect(commit).toHaveBeenNthCalledWith(
         3,
-        `tokens/${SAVE_TOKENS}`,
-        tokens,
+        `tokens/${SET_USER_TOKENS}`,
         {
-          root: true,
+          [settings.net]: {
+            [settings.tokens['3'][0].address]: settings.tokens['3'][0],
+          },
         },
-      );
-    });
-
-    it('should set the tracked tokens to the store', async () => {
-      expect.assertions(2);
-
-      const tokenAddrs = tokens.map(({ address }) => address);
-
-      await actions.setUserSettings({ commit, dispatch });
-
-      expect(commit).toHaveBeenCalledTimes(4);
-      expect(commit).toHaveBeenNthCalledWith(
-        4,
-        `tokens/${SAVE_TRACKED_TOKENS}`,
-        tokenAddrs,
         { root: true },
       );
     });

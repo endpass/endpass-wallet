@@ -2,7 +2,6 @@ import {
   SET_LOADING,
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
-  SET_NETWORK_TOKENS,
   ADD_NETWORK_TOKENS,
   SET_TOKENS_PRICES,
   ADD_USER_TOKEN,
@@ -23,14 +22,14 @@ import { priceUpdateInterval } from '@/config';
 const init = async ({ dispatch }) => {
   await dispatch('getNetworkTokens');
 
-  dispatch('subscribeOnCurrentAccountTokensPricesUpdates');
+  dispatch('subscribeOnCurrentAccountTokensUpdates');
 };
 
-const subscribeOnCurrentAccountTokensPricesUpdates = ({ dispatch }) => {
-  dispatch('getCurrentAccountTokensPrices');
+const subscribeOnCurrentAccountTokensUpdates = ({ dispatch }) => {
+  dispatch('getCurrentAccountTokensData');
 
   setInterval(() => {
-    dispatch('getCurrentAccountTokensPrices');
+    dispatch('getCurrentAccountTokensData');
   }, priceUpdateInterval);
 };
 
@@ -136,6 +135,11 @@ const getCurrentAccountTokensPrices = async ({ dispatch, getters }) => {
   );
 };
 
+const getCurrentAccountTokensData = async ({ dispatch }) => {
+  await dispatch('getCurrentAccountTokensPrices');
+  await dispatch('getCurrentAccountTokensBalances');
+};
+
 const getTokensByAddress = async ({ dispatch, commit }, { address }) => {
   try {
     const resolvedTokens = await ethplorerService.getTokensWithBalance(address);
@@ -156,8 +160,6 @@ const getTokensByAddress = async ({ dispatch, commit }, { address }) => {
       address,
       tokens: Object.keys(mappedTokens),
     });
-
-    return mappedTokens;
   } catch (e) {
     e.apiError = {
       id: 'ethplorer',
@@ -170,8 +172,6 @@ const getTokensByAddress = async ({ dispatch, commit }, { address }) => {
       tokens: [],
     });
   }
-
-  return {};
 };
 
 const getTokensBalancesByAddress = async (
@@ -210,7 +210,7 @@ const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
     });
     dispatch('errors/emitError', error, { root: true });
   } finally {
-    commit(SET_NETWORK_TOKENS, tokens);
+    commit(ADD_NETWORK_TOKENS, mapArrayByProp(tokens, 'address'));
     commit(SET_LOADING, false);
   }
 };
@@ -249,7 +249,7 @@ const getTokensPrices = async ({ commit, getters }, tokensSymbols) => {
 
 export default {
   init,
-  subscribeOnCurrentAccountTokensPricesUpdates,
+  subscribeOnCurrentAccountTokensUpdates,
   addUserToken,
   removeUserToken,
   getTokensBalancesByAddress,
@@ -260,4 +260,5 @@ export default {
   getTokensBalances,
   getTokensPrices,
   getCurrentAccountTokensPrices,
+  getCurrentAccountTokensData,
 };

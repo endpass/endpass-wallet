@@ -53,22 +53,23 @@ import { mapState, mapActions } from 'vuex';
 import { BigNumber } from 'bignumber.js';
 import error from '@/mixins/error';
 
-// List of the user's active tokens
 export default {
   props: {
     tokens: {
       type: Array,
       default: () => [],
+      required: false,
     },
-    // Show remove token button
+
     hasRemove: {
       type: Boolean,
       default: false,
     },
-    // Classes to set on token
+
     itemClass: {
       type: [Object, Array, String],
       default: '',
+      required: false,
     },
   },
 
@@ -96,7 +97,11 @@ export default {
   methods: {
     ...mapActions('tokens', ['getTokensPrices', 'removeUserToken']),
 
-    // Return value of tokens in fiat
+    /**
+     * Returns value of tokens in fiat
+     * @param {String} symbol Token symbol
+     * @returns {String} Token price in fiat
+     */
     getTokenPrice(symbol) {
       const prices = this.tokenPrices[symbol] || {};
 
@@ -105,7 +110,13 @@ export default {
   },
 
   async mounted() {
-    await this.getTokensPrices(this.tokens.map(({ symbol }) => symbol));
+    if (this.tokens.length > 0) {
+      /**
+       * It needs because list can contain custom tokens list which not belongs to current
+       * user tokens
+       */
+      await this.getTokensPrices(this.tokens.map(({ symbol }) => symbol));
+    }
 
     this.isLoading = false;
   },

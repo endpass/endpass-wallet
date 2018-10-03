@@ -43,7 +43,7 @@ store.watch(
   () =>
     Promise.all([
       store.dispatch('accounts/updateBalance'),
-      store.dispatch('tokens/getCurrentAccountTokensBalances'),
+      store.dispatch('tokens/getCurrentAccountTokensData'),
     ]),
 );
 

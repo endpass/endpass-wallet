@@ -1,6 +1,6 @@
 import web3 from 'web3';
 
-const address = Uint8Array.from([
+export const address = Uint8Array.from([
   76,
   226,
   16,
@@ -23,7 +23,7 @@ const address = Uint8Array.from([
   68,
 ]);
 
-class AddressMock {
+export class AddressMock {
   getAddress() {
     return address;
   }

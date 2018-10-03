@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TokensList should render given tokens list 1`] = `
+<div class="tokens-list">
+    <ul>
+        <li data-test="user-token" class="">
+            <div class="media token">
+                <div class="media-left">
+                    <p class="image token-logo is-32x32">
+                        <img src="/img/FST.png" alt="First Token">
+                    </p>
+                </div>
+                <div class="media-content">
+                    <div class="content">
+                        <p class="token-title"><span class="token-name">First Token</span></p>
+                    </div>
+                </div>
+                <div class="media-right"><span class="token-symbol">
+      FST
+    </span>
+                    <!---->
+                    <div class="balance has-spinner is-inline-block"><span title="0" class="title amount">
+    0
+  </span> <span class="currency">
+    USD
+  </span>
+                        <!---->
+                        <!---->
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li data-test="user-token" class="">
+            <div class="media token">
+                <div class="media-left">
+                    <p class="image token-logo is-32x32"><span alt="second token" class="icon missing">{}</span></p>
+                </div>
+                <div class="media-content">
+                    <div class="content">
+                        <p class="token-title"><span class="token-name">second token</span></p>
+                    </div>
+                </div>
+                <div class="media-right"><span class="token-symbol">
+      SCDT
+    </span>
+                    <!---->
+                    <div class="balance has-spinner is-inline-block"><span title="0" class="title amount">
+    0
+  </span> <span class="currency">
+    USD
+  </span>
+                        <!---->
+                        <!---->
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+`;
