@@ -138,7 +138,7 @@ Cypress.Commands.add('waitPageLoad', () => {
   cy.get('main').should('be.visible');
   cy.wait(1000);
   cy.get('[data-test=page-loader]', {
-    timeout: 25000,
+    timeout: 50000,
   }).should('be.not.exist');
 });
 

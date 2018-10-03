@@ -94,6 +94,44 @@ const allCurrentAccountTokensWithNonZeroBalance = (state, getters) =>
     Boolean(parseInt(balance, 10)),
   );
 
+const userTokensWithToken = state => ({ net, token }) => {
+  const { userTokens } = state;
+  const targetNet = state.userTokens[net] || null;
+
+  if (targetNet) {
+    return {
+      ...userTokens,
+      [net]: {
+        ...userTokens[net],
+        [token.address]: token,
+      },
+    };
+  }
+
+  return {
+    ...userTokens,
+    [net]: {
+      [token.address]: token,
+    },
+  };
+};
+
+const userTokensWithoutToken = state => ({ net, token }) => {
+  const { userTokens } = state;
+  const targetNet = userTokens[net];
+
+  if (targetNet) {
+    const { [token.address]: removedToken, ...updatedTokens } = targetNet;
+
+    return {
+      ...userTokens,
+      [net]: updatedTokens,
+    };
+  }
+
+  return userTokens;
+};
+
 export default {
   activeCurrencyName,
   tokensByAddress,
@@ -105,4 +143,6 @@ export default {
   allCurrentAccountTokens,
   allCurrentAccountFullTokens,
   allCurrentAccountTokensWithNonZeroBalance,
+  userTokensWithToken,
+  userTokensWithoutToken,
 };

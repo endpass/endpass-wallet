@@ -35,10 +35,10 @@
         </v-button>
       </div>
       <div class="card-tokens">
-        <tokens-list :tokens="accountTokensList" />
-        <v-spinner
-          v-if="isLoading"
-          :is-loading="true"
+        <v-spinner :is-loading="isLoading" />
+        <tokens-list
+          v-if="!isLoading"
+          :tokens="accountTokensList"
         />
       </div>
     </div>
@@ -58,7 +58,6 @@ export default {
   props: {
     isCurrentAccount: {
       type: Boolean,
-      required: false,
       default: false,
     },
 
@@ -74,13 +73,11 @@ export default {
 
     balance: {
       type: String,
-      required: false,
       default: '0',
     },
 
     allowSend: {
       type: Boolean,
-      required: false,
       default: false,
     },
   },
@@ -108,16 +105,21 @@ export default {
     ]),
 
     async loadTokensData() {
+      const {
+        address,
+        accountTokens,
+        getTokensByAddress,
+        getTokensBalancesByAddress,
+      } = this;
+
       this.isLoading = true;
 
-      if (Object.keys(this.accountTokens).length === 0) {
-        await this.getTokensByAddress({
-          address: this.address,
-        });
+      if (Object.keys(accountTokens).length === 0) {
+        await getTokensByAddress({ address });
       }
 
-      await this.getTokensBalancesByAddress({
-        address: this.address,
+      await getTokensBalancesByAddress({
+        address,
       });
 
       this.isLoading = false;
@@ -128,8 +130,8 @@ export default {
     },
   },
 
-  async created() {
-    await this.loadTokensData();
+  created() {
+    this.loadTokensData();
   },
 
   components: {

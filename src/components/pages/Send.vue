@@ -356,7 +356,6 @@ export default {
       fiatCurrency: state => state.user.settings.fiatCurrency,
       ethPrice: state => state.price.price || 0,
     }),
-    // TODO: токены текущего аккаунта с балансом
     ...mapGetters('tokens', ['allCurrentAccountTokensWithNonZeroBalance']),
     ...mapGetters('transactions', ['getAddressesFromTransactions']),
 

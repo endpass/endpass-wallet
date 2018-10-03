@@ -1,10 +1,9 @@
 import actions from '@/store/tokens/actions';
 import {
   SET_LOADING,
-  ADD_USER_TOKEN,
+  SET_USER_TOKENS,
   ADD_NETWORK_TOKENS,
   SET_TOKENS_BY_ADDRESS,
-  REMOVE_USER_TOKEN,
   SET_BALANCES_BY_ADDRESS,
   SET_TOKENS_PRICES,
 } from '@/store/tokens/mutations-types';
@@ -16,11 +15,17 @@ import {
   priceService,
 } from '@/services';
 import ERC20Token from '@/class/erc20';
+import { MAIN_NET_ID } from '@/constants';
 import { address } from 'fixtures/accounts';
 import {
   tokens,
   token,
   tokensMappedByAddresses,
+  tokensMappedByNetworks,
+  expandedTokensMappedByNetworks,
+  expandedTokensListedByNetworks,
+  cuttedTokensMappedByNetworks,
+  cuttedTokensListedByNetworks,
   tokensPrices,
   balances,
 } from 'fixtures/tokens';
@@ -28,6 +33,7 @@ import {
 jest.useFakeTimers();
 
 describe('tokens actions', () => {
+  let state;
   let commit;
   let dispatch;
   let getters;
@@ -35,10 +41,13 @@ describe('tokens actions', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    state = {
+      userTokens: { ...tokensMappedByNetworks },
+    };
     dispatch = jest.fn();
     commit = jest.fn();
     rootGetters = {
-      'web3/activeNetwork': 1,
+      'web3/activeNetwork': MAIN_NET_ID,
     };
   });
 
@@ -77,21 +86,24 @@ describe('tokens actions', () => {
 
       getters = {
         userTokenByAddress: () => false,
-        userTokensListedByNetworks: () => tokens,
+        userTokensListedByNetworks: tokensMappedByNetworks,
+        userTokensWithToken: () => expandedTokensMappedByNetworks,
       };
 
       await actions.addUserToken(
-        { commit, dispatch, getters, rootGetters },
-        { token },
+        { state, commit, dispatch, getters, rootGetters },
+        {
+          token,
+        },
       );
 
-      expect(commit).toHaveBeenCalledWith(ADD_USER_TOKEN, {
-        net: 1,
-        token,
-      });
       expect(userService.setSetting).toHaveBeenCalledWith(
         'tokens',
-        getters.userTokensListedByNetworks,
+        expandedTokensListedByNetworks,
+      );
+      expect(commit).toHaveBeenCalledWith(
+        SET_USER_TOKENS,
+        expandedTokensMappedByNetworks,
       );
     });
 
@@ -100,12 +112,15 @@ describe('tokens actions', () => {
 
       getters = {
         userTokenByAddress: () => true,
-        userTokensListedByNetworks: () => tokens,
+        userTokensListedByNetworks: () => tokensMappedByNetworks,
+        userTokensWithToken: () => expandedTokensMappedByNetworks,
       };
 
       await actions.addUserToken(
-        { commit, dispatch, getters, rootGetters },
-        { token },
+        { state, commit, dispatch, getters, rootGetters },
+        {
+          token,
+        },
       );
 
       expect(commit).not.toBeCalled();
@@ -118,23 +133,20 @@ describe('tokens actions', () => {
 
       getters = {
         userTokenByAddress: () => false,
-        userTokensListedByNetworks: () => tokens,
+        userTokensListedByNetworks: () => tokensMappedByNetworks,
+        userTokensWithToken: () => expandedTokensMappedByNetworks,
       };
       userService.setSetting.mockRejectedValueOnce(error);
 
       await actions.addUserToken(
-        { commit, dispatch, getters, rootGetters },
-        { token },
+        { state, commit, dispatch, getters, rootGetters },
+        {
+          token,
+        },
       );
 
-      expect(commit).toHaveBeenCalledWith(ADD_USER_TOKEN, {
-        net: 1,
-        token,
-      });
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'tokens',
-        getters.userTokensListedByNetworks,
-      );
+      expect(commit).not.toBeCalled();
+      expect(userService.setSetting).toBeCalled();
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -147,22 +159,23 @@ describe('tokens actions', () => {
 
       getters = {
         userTokenByAddress: () => true,
-        userTokensListedByNetworks: () => tokens,
+        userTokensListedByNetworks: tokensMappedByNetworks,
+        userTokensWithoutToken: () => cuttedTokensMappedByNetworks,
       };
 
       await actions.removeUserToken(
-        { commit, dispatch, getters, rootGetters },
-        { token },
+        { state, commit, dispatch, getters, rootGetters },
+        { token: tokens[0] },
       );
 
       expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(REMOVE_USER_TOKEN, {
-        net: 1,
-        token,
-      });
       expect(userService.setSetting).toHaveBeenCalledWith(
         'tokens',
-        getters.userTokensListedByNetworks,
+        cuttedTokensListedByNetworks,
+      );
+      expect(commit).toHaveBeenCalledWith(
+        SET_USER_TOKENS,
+        cuttedTokensMappedByNetworks,
       );
     });
 
@@ -172,45 +185,35 @@ describe('tokens actions', () => {
       getters = {
         userTokenByAddress: () => false,
         userTokensListedByNetworks: () => tokens,
+        userTokensWithoutToken: () => cuttedTokensMappedByNetworks,
       };
 
       await actions.removeUserToken(
-        { commit, dispatch, getters, rootGetters },
-        { token },
+        { state, commit, dispatch, getters, rootGetters },
+        { token: tokens[0] },
       );
 
       expect(commit).not.toBeCalled();
     });
 
-    it('should handle error and restore removed token', async () => {
-      expect.assertions(5);
+    it('should handle error', async () => {
+      expect.assertions(2);
 
       const error = new Error();
 
       getters = {
         userTokenByAddress: () => true,
-        userTokensListedByNetworks: () => tokens,
+        userTokensListedByNetworks: tokensMappedByNetworks,
+        userTokensWithoutToken: () => cuttedTokensMappedByNetworks,
       };
       userService.setSetting.mockRejectedValueOnce(error);
 
       await actions.removeUserToken(
-        { commit, dispatch, getters, rootGetters },
-        { token },
+        { state, commit, dispatch, getters, rootGetters },
+        { token: tokens[0] },
       );
 
-      expect(commit).toHaveBeenCalledTimes(2);
-      expect(commit).toHaveBeenNthCalledWith(1, REMOVE_USER_TOKEN, {
-        net: 1,
-        token,
-      });
-      expect(commit).toHaveBeenNthCalledWith(2, ADD_USER_TOKEN, {
-        net: 1,
-        token,
-      });
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'tokens',
-        getters.userTokensListedByNetworks,
-      );
+      expect(commit).not.toBeCalled();
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -363,12 +366,6 @@ describe('tokens actions', () => {
   });
 
   describe('getNetworkTokens', () => {
-    beforeEach(() => {
-      rootGetters = {
-        'web3/activeNetwork': 1,
-      };
-    });
-
     it('should request and set network tokens', async () => {
       expect.assertions(6);
 
@@ -401,17 +398,15 @@ describe('tokens actions', () => {
     });
 
     it('should handle error and set empty object as network tokens', async () => {
-      expect.assertions(6);
+      expect.assertions(4);
 
       tokenInfoService.getTokensList.mockRejectedValueOnce();
 
       await actions.getNetworkTokens({ commit, dispatch, rootGetters });
 
-      expect(commit).toHaveBeenCalledTimes(3);
+      expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenNthCalledWith(1, SET_LOADING, true);
-      expect(commit).toHaveBeenNthCalledWith(2, ADD_NETWORK_TOKENS, {});
-      expect(commit).toHaveBeenNthCalledWith(3, SET_LOADING, false);
-      expect(dispatch).toHaveBeenCalled();
+      expect(commit).toHaveBeenNthCalledWith(2, SET_LOADING, false);
       expect(dispatch).toHaveBeenCalledWith(
         'errors/emitError',
         expect.any(NotificationError),
@@ -450,7 +445,7 @@ describe('tokens actions', () => {
     });
 
     it('should handle errors', async () => {
-      expect.assertions(4);
+      expect.assertions(3);
 
       const error = new Error();
 
@@ -458,11 +453,7 @@ describe('tokens actions', () => {
 
       await actions.getTokensByAddress({ dispatch, commit }, { address });
 
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(SET_TOKENS_BY_ADDRESS, {
-        address,
-        tokens: [],
-      });
+      expect(commit).not.toBeCalled();
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
@@ -523,7 +514,10 @@ describe('tokens actions', () => {
       };
       priceService.getPrices.mockResolvedValueOnce(tokensPrices);
 
-      await actions.getTokensPrices({ commit, getters }, tokens);
+      await actions.getTokensPrices(
+        { commit, getters },
+        { tokensSymbols: tokens },
+      );
 
       expect(priceService.getPrices).toHaveBeenCalledWith(tokens, 'ETH');
       expect(commit).toHaveBeenCalledWith(SET_TOKENS_PRICES, tokensPrices);
@@ -532,7 +526,7 @@ describe('tokens actions', () => {
     it('should not do anything if given tokens symbols are empty', async () => {
       expect.assertions(2);
 
-      await actions.getTokensPrices({ commit, getters }, []);
+      await actions.getTokensPrices({ commit, getters }, { tokensSymbols: [] });
 
       expect(priceService.getPrices).not.toBeCalled();
       expect(commit).not.toBeCalled();
@@ -549,10 +543,9 @@ describe('tokens actions', () => {
 
       await actions.getCurrentAccountTokensPrices({ dispatch, getters });
 
-      expect(dispatch).toHaveBeenCalledWith(
-        'getTokensPrices',
-        tokens.map(({ symbol }) => symbol),
-      );
+      expect(dispatch).toHaveBeenCalledWith('getTokensPrices', {
+        tokensSymbols: tokens.map(({ symbol }) => symbol),
+      });
     });
   });
 });

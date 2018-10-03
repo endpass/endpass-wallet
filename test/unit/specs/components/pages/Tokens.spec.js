@@ -1,7 +1,7 @@
-import { shallow, createLocalVue, mount } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
-import validation from '@/validation';
+import '@/validation';
 import { allTokens, tokens, tokensMappedByAddresses } from 'fixtures/tokens';
 
 import TokensPage from '@/components/pages/Tokens.vue';
@@ -30,8 +30,7 @@ describe('TokensPage', () => {
     getters = {
       savedCurrentNetworkTokens: () => [{}],
       net: () => 1,
-      allCurrentAccountTokens: () => tokensMappedByAddresses,
-      currentNetUserTokens: () => tokensMappedByAddresses,
+      allCurrentAccountFullTokens: () => tokensMappedByAddresses,
     };
 
     store = new Vuex.Store({
@@ -101,6 +100,7 @@ describe('TokensPage', () => {
         expect(wrapper.find('v-spinner').attributes()).toEqual({
           'is-loading': 'true',
           class: 'spinner-block',
+          'data-test': 'tokens-spinner',
         });
       });
 
@@ -111,6 +111,7 @@ describe('TokensPage', () => {
 
         expect(wrapper.find('v-spinner').attributes()).toEqual({
           class: 'spinner-block',
+          'data-test': 'tokens-spinner',
         });
       });
     });
@@ -132,9 +133,9 @@ describe('TokensPage', () => {
         expect(wrapper.vm.userTokensList).toHaveLength(1);
       });
 
-      it('should correctly find token in list', async () => {
+      it('should correctly find token in list', () => {
         wrapper.setComputed({
-          currentNetUserTokens: {},
+          allCurrentAccountFullTokens: {},
         });
 
         expect(wrapper.vm.filteredTokens).toHaveLength(2);
@@ -166,7 +167,7 @@ describe('TokensPage', () => {
 
       it('should filter out user tokens', async () => {
         wrapper.setComputed({
-          currentNetUserTokens: {},
+          allCurrentAccountFullTokens: {},
         });
 
         expect(wrapper.vm.filteredTokens).toHaveLength(2);

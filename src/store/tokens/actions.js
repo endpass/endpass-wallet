@@ -4,8 +4,7 @@ import {
   SET_BALANCES_BY_ADDRESS,
   ADD_NETWORK_TOKENS,
   SET_TOKENS_PRICES,
-  ADD_USER_TOKEN,
-  REMOVE_USER_TOKEN,
+  SET_USER_TOKENS,
 } from './mutations-types';
 import { NotificationError } from '@/class';
 import ERC20Token from '@/class/erc20';
@@ -15,9 +14,10 @@ import {
   priceService,
   userService,
 } from '@/services';
-import { merge } from '@/utils/objects';
+import { merge, mapValuesWith } from '@/utils/objects';
 import { mapArrayByProp } from '@/utils/arrays';
 import { priceUpdateInterval } from '@/config';
+import { MAIN_NET_ID } from '@/constants';
 
 const init = async ({ dispatch }) => {
   await dispatch('getNetworkTokens');
@@ -39,15 +39,17 @@ const addUserToken = async (
 ) => {
   if (!getters.userTokenByAddress(token.address)) {
     try {
-      commit(ADD_USER_TOKEN, {
+      const updatedTokens = getters.userTokensWithToken({
         net: rootGetters['web3/activeNetwork'],
         token,
       });
 
       await userService.setSetting(
         'tokens',
-        getters.userTokensListedByNetworks,
+        mapValuesWith(updatedTokens, prop => Object.values(prop)),
       );
+
+      commit(SET_USER_TOKENS, updatedTokens);
     } catch (err) {
       dispatch('errors/emitError', err, { root: true });
     }
@@ -60,24 +62,18 @@ const removeUserToken = async (
 ) => {
   if (getters.userTokenByAddress(token.address)) {
     try {
-      /**
-       * TODO: может быть лучше сделать геттер, который будет возвращать токены без переданного значения
-       * Сейчас в случае ошибки все будет прыгать и токен будет возвращаться на место.
-       * Не круто
-       */
-      commit(REMOVE_USER_TOKEN, {
+      const updatedTokens = getters.userTokensWithoutToken({
         net: rootGetters['web3/activeNetwork'],
         token,
       });
+
       await userService.setSetting(
         'tokens',
-        getters.userTokensListedByNetworks,
+        mapValuesWith(updatedTokens, prop => Object.values(prop)),
       );
+
+      commit(SET_USER_TOKENS, updatedTokens);
     } catch (err) {
-      commit(ADD_USER_TOKEN, {
-        net: rootGetters['web3/activeNetwork'],
-        token,
-      });
       dispatch('errors/emitError', err, { root: true });
     }
   }
@@ -129,10 +125,11 @@ const getCurrentAccountTokensBalances = async ({
 };
 
 const getCurrentAccountTokensPrices = async ({ dispatch, getters }) => {
-  await dispatch(
-    'getTokensPrices',
-    Object.values(getters.allCurrentAccountTokens).map(({ symbol }) => symbol),
-  );
+  await dispatch('getTokensPrices', {
+    tokensSymbols: Object.values(getters.allCurrentAccountTokens).map(
+      ({ symbol }) => symbol,
+    ),
+  });
 };
 
 const getCurrentAccountTokensData = async ({ dispatch }) => {
@@ -161,16 +158,12 @@ const getTokensByAddress = async ({ dispatch, commit }, { address }) => {
       tokens: Object.keys(mappedTokens),
     });
   } catch (e) {
+    // May be we must set empty array to user tokens
     e.apiError = {
       id: 'ethplorer',
       status: false,
     };
     dispatch('errors/emitError', e, { root: true });
-
-    commit(SET_TOKENS_BY_ADDRESS, {
-      address,
-      tokens: [],
-    });
   }
 };
 
@@ -191,16 +184,14 @@ const getTokensBalancesByAddress = async (
 };
 
 const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
-  if (rootGetters['web3/activeNetwork'] !== 1) return;
-
-  const tokens = [];
+  if (rootGetters['web3/activeNetwork'] !== MAIN_NET_ID) return;
 
   try {
     commit(SET_LOADING, true);
 
     const networkTokens = await tokenInfoService.getTokensList();
 
-    tokens.push(...networkTokens);
+    commit(ADD_NETWORK_TOKENS, mapArrayByProp(networkTokens, 'address'));
   } catch (e) {
     const error = new NotificationError({
       title: 'Failed to get list of tokens',
@@ -210,7 +201,6 @@ const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
     });
     dispatch('errors/emitError', error, { root: true });
   } finally {
-    commit(ADD_NETWORK_TOKENS, mapArrayByProp(tokens, 'address'));
     commit(SET_LOADING, false);
   }
 };
@@ -236,7 +226,7 @@ const getTokensBalances = async (ctx, { address, tokens }) => {
   return tokensBalances;
 };
 
-const getTokensPrices = async ({ commit, getters }, tokensSymbols) => {
+const getTokensPrices = async ({ commit, getters }, { tokensSymbols }) => {
   if (tokensSymbols.length === 0) return;
 
   const prices = await priceService.getPrices(

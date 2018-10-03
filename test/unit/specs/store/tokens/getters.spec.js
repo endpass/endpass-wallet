@@ -1,5 +1,33 @@
 /* eslint-disable import/no-named-default */
-import { default as tokensGetters } from '@/store/tokens/getters';
+import tokensGetters from '@/store/tokens/getters';
+import { MAIN_NET_ID } from '@/constants';
+import {
+  token,
+  tokens,
+  tokensMappedByNetworks,
+  expandedTokensMappedByNetworks,
+  cuttedTokensMappedByNetworks,
+} from 'fixtures/tokens';
+
+const networkTokens = {
+  '0x1': 'foo',
+  '0x2': 'bar',
+};
+const userTokensByNetwork = {
+  1: {
+    '0x1': 'foo',
+    '0x2': 'bar',
+  },
+  2: {
+    '0x3': 'baz',
+  },
+};
+const balancesByAddress = {
+  '0x0': {
+    '0x1': '1',
+    '0x2': '2',
+  },
+};
 
 describe('tokens getters', () => {
   describe('activeCurrencyName', () => {
@@ -20,18 +48,14 @@ describe('tokens getters', () => {
   describe('tokensByAddress', () => {
     it('should return tokens by given address', () => {
       const state = {
-        networkTokens: {
-          '0x1': 'foo',
-          '0x2': 'bar',
-        },
+        networkTokens,
         tokensByAddress: {
           '0x0': ['0x1', '0x2'],
         },
       };
-      expect(tokensGetters.tokensByAddress(state)('0x0')).toEqual({
-        '0x1': 'foo',
-        '0x2': 'bar',
-      });
+      expect(tokensGetters.tokensByAddress(state)('0x0')).toEqual(
+        networkTokens,
+      );
     });
 
     it('should return empty object if address tokens not exist in store', () => {
@@ -46,18 +70,12 @@ describe('tokens getters', () => {
   describe('balancesByAddress', () => {
     it('should return balances by given address', () => {
       const state = {
-        balancesByAddress: {
-          '0x0': {
-            '0x1': '1',
-            '0x2': '2',
-          },
-        },
+        balancesByAddress,
       };
 
-      expect(tokensGetters.balancesByAddress(state)('0x0')).toEqual({
-        '0x1': '1',
-        '0x2': '2',
-      });
+      expect(tokensGetters.balancesByAddress(state)('0x0')).toEqual(
+        balancesByAddress['0x0'],
+      );
     });
 
     it('should return empty object if address balances not exist in store', () => {
@@ -72,20 +90,12 @@ describe('tokens getters', () => {
   describe('userTokensListedByNetworks', () => {
     it('should returns arrays of user tokens mapped by network', () => {
       const state = {
-        userTokens: {
-          1: {
-            '0x1': '1',
-            '0x2': '2',
-          },
-          2: {
-            '0x3': '3',
-          },
-        },
+        userTokens: userTokensByNetwork,
       };
 
       expect(tokensGetters.userTokensListedByNetworks(state)).toEqual({
-        1: ['1', '2'],
-        2: ['3'],
+        1: Object.values(userTokensByNetwork[1]),
+        2: Object.values(userTokensByNetwork[2]),
       });
     });
   });
@@ -94,10 +104,7 @@ describe('tokens getters', () => {
     it('should return token by given address from current net', () => {
       const state = {
         userTokens: {
-          1: {
-            '0x1': '1',
-            '0x2': '2',
-          },
+          1: userTokensByNetwork[1],
         },
       };
       const rootGetters = {
@@ -106,19 +113,14 @@ describe('tokens getters', () => {
 
       expect(
         tokensGetters.userTokenByAddress(state, null, null, rootGetters)('0x1'),
-      ).toBe('1');
+      ).toBe(userTokensByNetwork[1]['0x1']);
     });
   });
 
   describe('currentNetUserTokens', () => {
     it('should return all user tokens from current net', () => {
       const state = {
-        userTokens: {
-          1: {
-            '0x1': '1',
-            '0x2': '2',
-          },
-        },
+        userTokens: userTokensByNetwork,
       };
       const rootGetters = {
         'web3/activeNetwork': 1,
@@ -126,10 +128,7 @@ describe('tokens getters', () => {
 
       expect(
         tokensGetters.currentNetUserTokens(state, null, null, rootGetters),
-      ).toEqual({
-        '0x1': '1',
-        '0x2': '2',
-      });
+      ).toEqual(userTokensByNetwork[1]);
     });
   });
 
@@ -180,10 +179,10 @@ describe('tokens getters', () => {
     it('should return all account tokens with user tokens', () => {
       const getters = {
         tokensByAddress: () => ({
-          '0x0': 'foo',
+          '0x1': networkTokens['0x1'],
         }),
         currentNetUserTokens: {
-          '0x1': 'bar',
+          '0x2': networkTokens['0x2'],
         },
       };
       const rootGetters = {
@@ -192,10 +191,7 @@ describe('tokens getters', () => {
 
       expect(
         tokensGetters.allCurrentAccountTokens(null, getters, null, rootGetters),
-      ).toEqual({
-        '0x0': 'foo',
-        '0x1': 'bar',
-      });
+      ).toEqual(networkTokens);
     });
   });
 
@@ -278,6 +274,36 @@ describe('tokens getters', () => {
           symbol: 'FOO',
         },
       });
+    });
+  });
+
+  describe('userTokensWithToken', () => {
+    it('should returns user tokens with given token for given net', () => {
+      const state = {
+        userTokens: tokensMappedByNetworks,
+      };
+
+      expect(
+        tokensGetters.userTokensWithToken(state)({
+          net: MAIN_NET_ID,
+          token,
+        }),
+      ).toEqual(expandedTokensMappedByNetworks);
+    });
+  });
+
+  describe('userTokensWithoutToken', () => {
+    it('should returns user tokens without given token for given net', () => {
+      const state = {
+        userTokens: tokensMappedByNetworks,
+      };
+
+      expect(
+        tokensGetters.userTokensWithoutToken(state)({
+          net: MAIN_NET_ID,
+          token: tokens[0],
+        }),
+      ).toEqual(cuttedTokensMappedByNetworks);
     });
   });
 });

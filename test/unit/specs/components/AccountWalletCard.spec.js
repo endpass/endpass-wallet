@@ -13,19 +13,21 @@ describe('AccountWalletCard', () => {
   let wrapper;
   let store;
   let options;
+  let tokensActions;
 
   beforeEach(() => {
+    tokensActions = {
+      getTokensByAddress: jest.fn(),
+      getTokensBalancesByAddress: jest.fn(),
+    };
     store = new Vuex.Store({
       modules: {
         tokens: {
           namespaced: true,
           getters: {
-            fullTokensByAddress: () => () => ({}),
+            fullTokensByAddress: jest.fn(() => () => ({})),
           },
-          actions: {
-            getTokensByAddress: jest.fn(),
-            getTokensBalancesByAddress: jest.fn(),
-          },
+          actions: tokensActions,
         },
       },
     });
@@ -35,31 +37,27 @@ describe('AccountWalletCard', () => {
         balance: '20',
         address,
       },
-      stubs: generateStubs(AccountWalletCard),
       store,
       localVue,
     };
-
-    wrapper = shallow(AccountWalletCard, options);
 
     jest.clearAllMocks();
   });
 
   describe('render', () => {
+    beforeEach(() => {
+      wrapper = shallow(AccountWalletCard, {
+        ...options,
+        stubs: generateStubs(AccountWalletCard),
+      });
+    });
+
     it('should be a Vue component', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
       expect(wrapper.name()).toBe('AccountWalletCard');
     });
 
     it('should render initial state of the component', () => {
-      expect(wrapper.html()).toMatchSnapshot();
-    });
-
-    it('should correctly render loading component', () => {
-      wrapper.setData({
-        isLoading: true,
-      });
-
       expect(wrapper.html()).toMatchSnapshot();
     });
 
@@ -81,10 +79,25 @@ describe('AccountWalletCard', () => {
 
       expect(wrapper.html()).toMatchSnapshot();
     });
+
+    it('should not render tokens list during loading', () => {
+      wrapper.setData({
+        isLoading: true,
+      });
+
+      expect(wrapper.find('tokens-list').exists()).toBe(false);
+    });
+
+    it('should render tokens list if it is not loading', () => {
+      wrapper.setData({
+        isLoading: false,
+      });
+
+      expect(wrapper.find('tokens-list').exists()).toBe(true);
+    });
   });
 
   describe('behavior', () => {
-    // TODO: methods are not correclty called in create hook vie test utils render
     it('should load tokens data on component create if tokens are empty', async () => {
       expect.assertions(2);
 
@@ -94,17 +107,11 @@ describe('AccountWalletCard', () => {
           accountTokens: () => ({}),
         },
       });
-      wrapper.vm.getTokensByAddress = jest.fn();
-      wrapper.vm.getTokensBalancesByAddress = jest.fn();
 
-      await wrapper.vm.loadTokensData();
+      await global.flushPromises();
 
-      expect(wrapper.vm.getTokensByAddress).toHaveBeenCalledWith({
-        address,
-      });
-      expect(wrapper.vm.getTokensBalancesByAddress).toHaveBeenCalledWith({
-        address,
-      });
+      expect(tokensActions.getTokensByAddress).toBeCalled();
+      expect(tokensActions.getTokensBalancesByAddress).toBeCalled();
     });
 
     it('should not load tokens data on component create if tokens are not empty', async () => {
@@ -117,15 +124,10 @@ describe('AccountWalletCard', () => {
         },
       });
 
-      wrapper.vm.getTokensByAddress = jest.fn();
-      wrapper.vm.getTokensBalancesByAddress = jest.fn();
+      await global.flushPromises();
 
-      await wrapper.vm.loadTokensData();
-
-      expect(wrapper.vm.getTokensByAddress).not.toBeCalled();
-      expect(wrapper.vm.getTokensBalancesByAddress).toBeCalledWith({
-        address,
-      });
+      expect(tokensActions.getTokensByAddress).not.toBeCalled();
+      expect(tokensActions.getTokensBalancesByAddress).toBeCalled();
     });
   });
 });
