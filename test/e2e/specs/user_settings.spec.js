@@ -36,14 +36,14 @@ describe('Settings Page', () => {
     cy.get('[data-test=submit-two-auth-modal]').click();
     cy.get('[data-test=button-two-factor]').should('contain', 'Disable');
     cy.get(
-      '.notification.app-notification.is-info .notification-content',
+      '[data-test=app-notification] .is-info .notification-content',
     ).contains('Your settings have been saved.');
     // Disable otp
     cy.get('[data-test=button-two-factor]').click();
     cy.get('[data-test=input-two-auth-code]').type('123456{enter}');
     cy.get('[data-test=button-two-factor]').should('contain', 'Enable');
     cy.get(
-      '.notification.app-notification.is-info .notification-content',
+      '[data-test=app-notification] .is-info .notification-content',
     ).contains('Your settings have been saved.');
   });
 
