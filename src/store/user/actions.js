@@ -55,22 +55,14 @@ const getOtpSettings = async ({ commit, dispatch }) => {
 };
 
 const setOtpSettings = async ({ commit, dispatch }, { secret, code }) => {
-  try {
-    await userService.setOtpSettings(secret, code);
-    commit(SET_OTP_SETTINGS, { status: 'enabled' });
-  } catch (e) {
-    dispatch('errors/emitError', e, { root: true });
-  }
+  await userService.setOtpSettings(secret, code);
+  commit(SET_OTP_SETTINGS, { status: 'enabled' });
 };
 
 const deleteOtpSettings = async ({ commit, dispatch }, { code }) => {
-  try {
-    await userService.deleteOtpSettings(code);
-    commit(SET_OTP_SETTINGS, {});
-    await dispatch('getOtpSettings');
-  } catch (e) {
-    dispatch('errors/emitError', e, { root: true });
-  }
+  await userService.deleteOtpSettings(code);
+  commit(SET_OTP_SETTINGS, {});
+  await dispatch('getOtpSettings');
 };
 
 const updateSettings = async ({ commit, dispatch }, settings) => {

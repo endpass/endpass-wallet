@@ -19,6 +19,7 @@
           :duration="5000"
           position="top center"
           width="100%"
+          data-test="app-notification"
           classes="app-notification"
         />
 

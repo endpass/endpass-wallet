@@ -194,20 +194,6 @@ describe('user actions', () => {
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toBeCalledWith(SET_OTP_SETTINGS, { status: 'enabled' });
     });
-
-    it('should handle errors', async () => {
-      expect.assertions(2);
-
-      const error = new Error('error');
-      userService.setOtpSettings.mockRejectedValueOnce(error);
-
-      await actions.setOtpSettings({ commit, dispatch }, otpSettings);
-
-      expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toBeCalledWith('errors/emitError', error, {
-        root: true,
-      });
-    });
   });
 
   describe('deleteOtpSettings', () => {
@@ -239,20 +225,6 @@ describe('user actions', () => {
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toBeCalledWith('getOtpSettings');
-    });
-
-    it('should handle errors', async () => {
-      expect.assertions(2);
-
-      const error = new Error('error');
-      userService.deleteOtpSettings.mockRejectedValueOnce(error);
-
-      await actions.deleteOtpSettings({ commit, dispatch }, otpSettings);
-
-      expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toBeCalledWith('errors/emitError', error, {
-        root: true,
-      });
     });
   });
 
