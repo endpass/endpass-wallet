@@ -298,8 +298,9 @@
 
 <script>
 import { BigNumber } from 'bignumber.js';
-import { Transaction, ENSResolver } from '@/class';
 import { mapState, mapActions, mapGetters } from 'vuex';
+import { uniq } from 'lodash';
+import { Transaction, ENSResolver } from '@/class';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';
 import VInput from '@/components/ui/form/VInput.vue';
@@ -313,7 +314,6 @@ import PasswordModal from '@/components/modal/PasswordModal';
 import privatePage from '@/mixins/privatePage';
 import web3, { isAddressOfContract } from '@/utils/web3';
 import { getShortStringWithEllipsis } from '@/utils/strings';
-import { uniq } from '@/utils/arrays';
 
 const defaultTnx = {
   gasPrice: '40',

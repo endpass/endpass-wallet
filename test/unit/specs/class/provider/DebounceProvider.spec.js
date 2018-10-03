@@ -1,7 +1,7 @@
 import DebounceProvider from '@/class/provider/DebounceProvider';
-import debounce from 'lodash.debounce';
+import debounce from 'lodash/debounce';
 
-jest.mock('lodash.debounce', () => jest.fn(fn => fn));
+jest.mock('lodash/debounce', () => jest.fn(fn => fn));
 
 describe('DebounceProvider Class', () => {
   let provider;
