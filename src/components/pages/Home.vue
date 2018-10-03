@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState, mapActions } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import Balance from '@/components/Balance';
 import Account from '@/components/Account';
 import TokensList from '@/components/TokensList';
@@ -118,21 +118,6 @@ export default {
     allCurrentAccountTokensList() {
       return Object.values(this.allCurrentAccountFullTokens);
     },
-  },
-
-  watch: {
-    address: {
-      async handler() {
-        if (this.address) {
-          await this.getCurrentAccountTokensBalances();
-        }
-      },
-      immediate: true,
-    },
-  },
-
-  methods: {
-    ...mapActions('tokens', ['getCurrentAccountTokensBalances']),
   },
 
   components: {

@@ -1,8 +1,7 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import TokensList from '@/components/TokensList';
-import { Token } from '@/class/Token';
-import tokensFixture from 'fixtures/tokens';
+import { tokens } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
 
@@ -10,16 +9,13 @@ localVue.use(Vuex);
 
 describe('TokensList', () => {
   let actions;
-  let getters;
   let wrapper;
   let store;
 
-  let numTokens = tokensFixture.tokens.length;
-
   beforeEach(() => {
     actions = {
-      updateTokensPrices: jest.fn(),
-      deleteTokenAndUnsubscribe: jest.fn(),
+      getTokensPrices: jest.fn(),
+      removeUserToken: jest.fn(),
     };
 
     store = new Vuex.Store({
@@ -39,15 +35,12 @@ describe('TokensList', () => {
               FST: { ETH: 2 }, // price of token in ETH
             },
           },
-          getters: {
-            tokensWithBalance: () => tokensFixture.tokens,
-          },
           actions,
         },
         price: {
           namespaced: true,
           state: {
-            price: 1, //Ethereum price
+            price: 1, // Ethereum price
           },
         },
         errors: {
@@ -64,13 +57,14 @@ describe('TokensList', () => {
     wrapper = mount(TokensList, {
       store,
       localVue,
+      propsData: {
+        tokens,
+      },
     });
   });
 
   it('fetches token prices on mount', async () => {
-    expect(wrapper.vm.selectedTokens.length).toBe(numTokens);
-    await flushPromises();
-    expect(actions.updateTokensPrices).toHaveBeenCalledTimes(1);
+    expect(actions.getTokensPrices).toHaveBeenCalled();
   });
 
   it('correctly calculates token fiat price', () => {
@@ -78,17 +72,8 @@ describe('TokensList', () => {
     expect(wrapper.vm.getTokenPrice('BADSYMBOL')).toBe('0');
   });
 
-  it('maps token prices', () => {
-    let priceMap = wrapper.vm.prices;
-    expect(priceMap.size).toBe(numTokens);
-    expect(priceMap).toBeInstanceOf(Map);
-    expect(priceMap.get('FST')).toBe('2');
-  });
-
-  it('allows setting custom token list', () => {
-    wrapper.setProps({ tokens: tokensFixture.tokens.slice(0, 1) });
-    expect(wrapper.vm.selectedTokens).toHaveLength(1);
-    expect(wrapper.vm.selectedTokens[0]).toEqual(tokensFixture.tokens[0]);
+  it('should render given tokens list', () => {
+    expect(wrapper.html()).toMatchSnapshot();
   });
 
   it('should not show remove token button by default', () => {
@@ -96,13 +81,17 @@ describe('TokensList', () => {
   });
 
   it('should call remove action', () => {
-    wrapper.setProps({ hasRemove: true });
+    wrapper.setProps({
+      hasRemove: true,
+    });
     wrapper.find('.remove-token-button').trigger('click');
 
-    expect(actions.deleteTokenAndUnsubscribe).toHaveBeenCalledTimes(1);
-    expect(actions.deleteTokenAndUnsubscribe).toBeCalledWith(
+    expect(actions.removeUserToken).toHaveBeenCalledTimes(1);
+    expect(actions.removeUserToken).toBeCalledWith(
       expect.any(Object),
-      { token: wrapper.vm.selectedTokens[0] },
+      {
+        token: tokens[0],
+      },
       undefined,
     );
   });

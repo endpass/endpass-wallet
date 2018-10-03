@@ -61,12 +61,12 @@ describe('Accounts actions', () => {
       expect(dispatch).toHaveBeenNthCalledWith(1, 'updateBalance');
     });
 
-    it('should subscribe on token balance', () => {
+    it('should get current account tokens balance', () => {
       actions.selectWallet({ commit, dispatch, state }, checksumAddress);
 
       expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenLastCalledWith(
-        'tokens/subscribeOnTokensBalancesUpdates',
+        'tokens/getCurrentAccountTokens',
         null,
         { root: true },
       );

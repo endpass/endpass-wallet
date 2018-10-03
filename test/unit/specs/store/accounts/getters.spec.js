@@ -4,17 +4,17 @@ import getters from '@/store/accounts/getters';
 import { Wallet, Address } from '@/class';
 
 describe('Accounts getters', () => {
-  describe('getAccountAddresses', () => {
+  describe('accountAddresses', () => {
     it('should return empty array', () => {
       const state = { wallets: {} };
 
-      expect(getters.getAccountAddresses(state)).toEqual([]);
+      expect(getters.accountAddresses(state)).toEqual([]);
     });
 
     it('should return an array of addresses', () => {
       const state = { wallets: { '123': '321', '234': '432' } };
 
-      expect(getters.getAccountAddresses(state)).toEqual(['123', '234']);
+      expect(getters.accountAddresses(state)).toEqual(['123', '234']);
     });
   });
 

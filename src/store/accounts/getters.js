@@ -2,7 +2,7 @@ import web3 from 'web3';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
 
-const accountAddress = state =>
+const accountAddresses = state =>
   Object.keys(state.wallets).map(wallet => wallet.toLowerCase());
 
 const currentAddressString = state =>
@@ -44,7 +44,7 @@ const encryptedWallets = () => (password, decryptedWallets = []) =>
   );
 
 export default {
-  accountAddress,
+  accountAddresses,
   currentAddressString,
   isPublicAccount,
   balance,

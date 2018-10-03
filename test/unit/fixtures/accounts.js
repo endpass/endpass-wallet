@@ -93,3 +93,7 @@ export const settings = {
     ],
   },
 };
+
+export const otpSettings = {
+  otp: true,
+};

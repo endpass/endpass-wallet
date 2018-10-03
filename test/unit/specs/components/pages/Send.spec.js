@@ -95,7 +95,7 @@ describe('Send', () => {
         tokens: {
           namespaced: true,
           getters: {
-            tokensWithBalance: () => [
+            allCurrentAccountTokensWithNonZeroBalance: () => [
               {
                 symbol: 'AAA',
                 address: '0xB6eD7644C69416d67B522e20bC294A9a9B405B31',

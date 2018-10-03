@@ -15,7 +15,7 @@
                 >
                   <div class="panel-block">
                     <search-input
-                      v-model="search"
+                      v-model="userTokenQuery"
                       data-test="token-search-input"
                     />
                   </div>
@@ -68,7 +68,7 @@
                   label="name"
                   placeholder="Type to search tokens..."
                   data-test="tokens-select"
-                  @search-change="setSearchToken"
+                  @search-change="setNetworkTokenQuery"
                   @select="addUserToken({token: $event })"
                 >
                   <span
@@ -108,8 +108,8 @@ export default {
   name: 'TokensPage',
 
   data: () => ({
-    search: '',
-    searchToken: '',
+    userTokenQuery: '',
+    networkTokenQuery: '',
     addTokenModalOpen: false,
   }),
 
@@ -119,7 +119,6 @@ export default {
       allTokens: state => state.tokens.allTokens,
       networkTokens: state => state.tokens.networkTokens,
       // []string, list of tracked tokens addresses
-      trackedTokens: state => state.tokens.trackedTokens,
       isLoading: state => state.tokens.isLoading,
       ethPrice: state => state.price.price,
       currency: state => state.user.settings.fiatCurrency,
@@ -132,7 +131,7 @@ export default {
     // All tokens that are available to add
     // TODO convert all addresses to checksum in store
     filteredTokens() {
-      const { networkTokens, currentNetUserTokens, searchToken } = this;
+      const { networkTokens, currentNetUserTokens, networkTokenQuery } = this;
 
       return Object.values(networkTokens)
         .filter(
@@ -140,16 +139,18 @@ export default {
         )
         .filter(
           ({ name, symbol }) =>
-            matchString(name, searchToken) || matchString(symbol, searchToken),
+            matchString(name, networkTokenQuery) ||
+            matchString(symbol, networkTokenQuery),
         );
     },
 
     userTokensList() {
-      const { search, allCurrentAccountTokens } = this;
+      const { userTokenQuery, allCurrentAccountTokens } = this;
 
       return Object.values(allCurrentAccountTokens).filter(
         ({ name, symbol }) =>
-          matchString(name, search) || matchString(symbol, search),
+          matchString(name, userTokenQuery) ||
+          matchString(symbol, userTokenQuery),
       );
     },
   },
@@ -157,8 +158,8 @@ export default {
   methods: {
     ...mapActions('tokens', ['addUserToken']),
 
-    setSearchToken(query) {
-      this.searchToken = query;
+    setNetworkTokenQuery(query) {
+      this.networkTokenQuery = query;
     },
 
     openAddTokenModal() {

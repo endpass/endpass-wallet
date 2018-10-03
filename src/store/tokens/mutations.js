@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import {
   SET_LOADING,
-  SET_NETWORK_TOKENS,
   ADD_NETWORK_TOKENS,
   SET_TOKENS_PRICES,
   SET_USER_TOKENS,
@@ -10,17 +9,9 @@ import {
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
 } from './mutations-types';
-import { mapArrayByProp } from '@/utils/arrays';
-
-const setNetworkTokens = (state, tokens) => {
-  state.networkTokens = mapArrayByProp(tokens, 'address');
-};
 
 const addNetworkTokens = (state, tokens) => {
-  Vue.set(state, 'networkTokens', {
-    ...state.networkTokens,
-    ...tokens,
-  });
+  Object.assign(state.networkTokens, tokens);
 };
 
 const setLoading = (state, isLoading) => {
@@ -68,7 +59,6 @@ const setBalancesByAddress = (state, { address, balances }) => {
 
 export default {
   SET_LOADING: setLoading,
-  SET_NETWORK_TOKENS: setNetworkTokens,
   ADD_NETWORK_TOKENS: addNetworkTokens,
   SET_TOKENS_PRICES: setTokensPrices,
   SET_USER_TOKENS: setUserTokens,

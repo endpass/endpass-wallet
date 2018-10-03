@@ -1,7 +1,6 @@
 import mutations from '@/store/tokens/mutations';
 import {
   SET_LOADING,
-  SET_NETWORK_TOKENS,
   ADD_NETWORK_TOKENS,
   SET_TOKENS_PRICES,
   SET_USER_TOKENS,
@@ -34,17 +33,6 @@ describe('tokens mutations', () => {
         mutations[SET_LOADING](state, status);
 
         expect(state.isLoading).toBe(status);
-      });
-    });
-  });
-
-  describe('SET_NETWORK_TOKENS', () => {
-    it('should set network tokens mapped by addresses', () => {
-      mutations[SET_NETWORK_TOKENS](state, tokens);
-
-      expect(state.networkTokens).toEqual({
-        [tokens[0].address]: tokens[0],
-        [tokens[1].address]: tokens[1],
       });
     });
   });

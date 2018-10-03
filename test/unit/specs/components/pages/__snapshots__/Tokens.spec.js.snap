@@ -40,7 +40,7 @@ exports[`TokensPage render should render component 1`] = `
                 >
                   <search-input
                     data-test="token-search-input"
-                    v-model="search"
+                    v-model="userTokenQuery"
                   />
                 </div>
 

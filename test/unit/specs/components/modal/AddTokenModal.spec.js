@@ -94,12 +94,12 @@ describe('AddTokenModal', () => {
     });
 
     it('should add token to the store', async () => {
-      const saveTokenAndSubscribe = jest.fn();
+      const addUserToken = jest.fn();
       wrapper.setData({ token: fakeToken });
-      wrapper.setMethods({ saveTokenAndSubscribe });
+      wrapper.setMethods({ addUserToken });
 
       await wrapper.vm.addToken();
-      expect(saveTokenAndSubscribe).toHaveBeenCalledWith({ token: fakeToken });
+      expect(addUserToken).toHaveBeenCalledWith({ token: fakeToken });
     });
   });
 });
