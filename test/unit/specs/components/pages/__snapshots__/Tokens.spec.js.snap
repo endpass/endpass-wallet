@@ -39,6 +39,7 @@ exports[`TokensPage render should render component 1`] = `
                   class="panel-block"
                 >
                   <search-input
+                    data-test="token-search-input"
                     v-model="search"
                   />
                 </div>
@@ -83,6 +84,7 @@ exports[`TokensPage render should render component 1`] = `
               >
                 <a
                   class="button is-outlined is-info is-small"
+                  data-test="add-custom-token-button"
                 >
                   
                   Add Custom Token
