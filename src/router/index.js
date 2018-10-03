@@ -1,19 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import multiguard from 'vue-router-multiguard';
-
-import HomePage from '@/components/pages/Home';
-import SendPage from '@/components/pages/Send';
-import HistoryPage from '@/components/pages/History';
-import ReceivePage from '@/components/pages/Receive';
-import TokensPage from '@/components/pages/Tokens';
-import NewWallet from '@/components/pages/NewWallet';
-import ImportWallet from '@/components/pages/ImportWallet';
-import ExportWallet from '@/components/pages/ExportWallet';
-import SettingsPage from '@/components/pages/Settings';
-import MessagePage from '@/components/pages/Message';
-import TransactionPage from '@/components/pages/Transaction';
-
 import { hasLoginGuard, privateWalletGuard } from './guards';
 
 Vue.use(Router);
@@ -23,66 +10,77 @@ export default new Router({
     {
       path: '/',
       name: 'HomePage',
-      component: HomePage,
+      component: () =>
+        import(/* webpackChunkName: "HomePage" */ '@/components/pages/Home'),
     },
     {
       path: '/send',
       name: 'SendPage',
-      component: SendPage,
+      component: () =>
+        import(/* webpackChunkName: "SendPage" */ '@/components/pages/Send'),
       beforeEnter: multiguard([hasLoginGuard, privateWalletGuard]),
     },
     {
       path: '/tokens',
       name: 'TokensPage',
-      component: TokensPage,
+      component: () =>
+        import(/* webpackChunkName: "TokensPage" */ '@/components/pages/Tokens'),
       beforeEnter: hasLoginGuard,
     },
     {
       path: '/history',
       name: 'HistoryPage',
-      component: HistoryPage,
+      component: () =>
+        import(/* webpackChunkName: "HistoryPage" */ '@/components/pages/History'),
       beforeEnter: hasLoginGuard,
     },
     {
       path: '/receive',
       name: 'ReceivePage',
-      component: ReceivePage,
+      component: () =>
+        import(/* webpackChunkName: "ReceivePage" */ '@/components/pages/Receive'),
       beforeEnter: hasLoginGuard,
     },
     {
       path: '/new',
       name: 'NewWallet',
-      component: NewWallet,
+      component: () =>
+        import(/* webpackChunkName: "NewWalletPage" */ '@/components/pages/NewWallet'),
       beforeEnter: hasLoginGuard,
     },
     {
       path: '/import',
       name: 'ImportWallet',
-      component: ImportWallet,
+      component: () =>
+        import(/* webpackChunkName: "ImportWalletPage" */ '@/components/pages/ImportWallet'),
       beforeEnter: hasLoginGuard,
     },
     {
       path: '/export',
       name: 'ExportWallet',
-      component: ExportWallet,
+      component: () =>
+        import(/* webpackChunkName: "ExportWalletPage" */ '@/components/pages/ExportWallet'),
       beforeEnter: multiguard([hasLoginGuard, privateWalletGuard]),
     },
     {
       path: '/settings',
       name: 'SettingsPage',
-      component: SettingsPage,
+      component: () =>
+        import(/* webpackChunkName: "SettingsPage" */ '@/components/pages/Settings'),
       beforeEnter: hasLoginGuard,
     },
     {
       path: '/message',
       name: 'MessagePage',
-      component: MessagePage,
+      component: () =>
+        import(/* webpackChunkName: "MessagePage" */ '@/components/pages/Message'),
       beforeEnter: multiguard([hasLoginGuard, privateWalletGuard]),
     },
     {
       path: '/transaction',
       name: 'TransactionPage',
-      component: TransactionPage,
+      component: () =>
+        import(/* webpackChunkName: "TransactionPage" */ '@/components/pages/Transaction'),
       beforeEnter: multiguard([hasLoginGuard, privateWalletGuard]),
     },
   ],
