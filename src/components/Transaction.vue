@@ -135,23 +135,24 @@
 </template>
 
 <script>
+import dayjs from 'dayjs';
 import Account from '@/components/Account';
-import Tx from 'ethereumjs-tx';
-import { Transaction } from '@/class';
 import ResendModal from '@/components/modal/ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';
-import error from '@/mixins/error';
 import { fromNow, formateDate } from '@/utils/date';
+import { getShortStringWithEllipsis } from '@/utils/strings';
 import web3 from '@/utils/web3';
 
 export default {
   props: {
     transaction: {
+      type: Object,
       required: true,
     },
   },
+
   data() {
     return {
       resendModalOpen: false,
@@ -159,6 +160,8 @@ export default {
       isExpanded: false, // details are expanded
       transactionToSend: null,
       state: null,
+      displayDate: this.transaction.date,
+      dateTimer: null,
     };
   },
   computed: {
@@ -221,11 +224,11 @@ export default {
     },
 
     transactionFormatedDate() {
-      return formateDate(this.transaction.date);
+      return formateDate(this.displayDate);
     },
 
     transactionDateFromNow() {
-      return fromNow(this.transaction.date);
+      return fromNow(this.displayDate);
     },
 
     txAddress() {
@@ -235,6 +238,7 @@ export default {
       return this.transaction.to;
     },
   },
+
   methods: {
     ...mapActions('transactions', ['resendTransaction', 'cancelTransaction']),
     requestPassword() {
@@ -297,6 +301,20 @@ export default {
       return web3.utils.hexToString(dataString);
     },
   },
+
+  created() {
+    this.dateTimer = setInterval(() => {
+      this.displayDate = dayjs(this.transaction.date)
+        .add(1, 'minute')
+        .toDate();
+    }, dayjs().minute());
+  },
+
+  beforeDestroy() {
+    clearInterval(this.dateTimer);
+    this.dateTimer = null;
+  },
+
   components: {
     Account,
     ResendModal,
@@ -306,8 +324,8 @@ export default {
   filters: {
     truncateHash(value) {
       if (!value) return '';
-      value = value.toString();
-      return `${value.substr(0, 4)}...${value.substr(value.length - 8)}`;
+
+      return getShortStringWithEllipsis(value.toString());
     },
   },
 };
