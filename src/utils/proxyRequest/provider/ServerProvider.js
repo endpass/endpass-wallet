@@ -59,4 +59,6 @@ export default class ServerProvider {
       throw e;
     }
   };
+
+  clear = async () => ({ success: true });
 }

@@ -154,6 +154,7 @@ describe('user actions', () => {
   describe('logout', () => {
     const getters = {
       isDefaultIdentity: true,
+      isLocalIdentity: true,
     };
 
     it('should reset the email', async () => {
@@ -163,6 +164,26 @@ describe('user actions', () => {
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toBeCalledWith(SET_EMAIL, null);
+    });
+
+    it('should delete identity data when the identity mode is local', async () => {
+      expect.assertions(1);
+
+      const getters = { isLocalIdentity: true };
+
+      await actions.logout({ commit, dispatch, getters });
+
+      expect(userService.deleteIdentityData).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not delete identity data when the identity mode isn`t local', async () => {
+      expect.assertions(1);
+
+      const getters = { isLocalIdentity: false };
+
+      await actions.logout({ commit, dispatch, getters });
+
+      expect(userService.deleteIdentityData).not.toBeCalled();
     });
 
     it('should set the default identity mode', async () => {

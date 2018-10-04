@@ -158,6 +158,8 @@ exports[`NavSidebar render should not render items for private account if curren
   <!---->
    
   <!---->
+   
+  <!---->
 </div>
 `;
 
@@ -315,6 +317,8 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
       class="nav-sidebar-footer"
     />
   </div>
+   
+  <!---->
    
   <!---->
    

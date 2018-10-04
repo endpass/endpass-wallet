@@ -8,6 +8,7 @@ describe('Modal mixin', () => {
         isPasswordModal: false,
         isTwoFactorAuthModal: false,
         isLoginModal: false,
+        isConfirmLogoutModal: false,
       };
 
       expect(data).toEqual(expected);
@@ -57,6 +58,21 @@ describe('Modal mixin', () => {
 
         toggleLoginModal.call(context);
         expect(context.isLoginModal).toBeFalsy();
+      });
+    });
+
+    describe('toggleConfirmLogoutModal', () => {
+      it('should toggle modal window for logout', () => {
+        const { toggleConfirmLogoutModal } = modalMixin.methods;
+        const context = {
+          isConfirmLogoutModal: false,
+        };
+
+        toggleConfirmLogoutModal.call(context);
+        expect(context.isConfirmLogoutModal).toBeTruthy();
+
+        toggleConfirmLogoutModal.call(context);
+        expect(context.isConfirmLogoutModal).toBeFalsy();
       });
     });
   });

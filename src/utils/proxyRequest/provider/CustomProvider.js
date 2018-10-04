@@ -51,4 +51,6 @@ export default class CustomProvider {
   remove(params) {
     return this.localProvider.remove(params);
   }
+
+  clear = async () => ({ success: true });
 }

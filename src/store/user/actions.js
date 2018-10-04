@@ -58,10 +58,14 @@ const logout = async ({ commit, dispatch, getters }) => {
   commit(SET_EMAIL, null);
 
   try {
-    userService.setIdentityMode(IDENTITY_MODE.DEFAULT);
-  } catch (e) {} // eslint-disable-line no-empty
+    if (getters.isLocalIdentity) {
+      await userService.deleteIdentityData();
+    }
 
-  try {
+    try {
+      userService.setIdentityMode(IDENTITY_MODE.DEFAULT);
+    } catch (e) {} // eslint-disable-line no-empty
+
     if (getters.isDefaultIdentity) {
       await userService.logout();
     }
