@@ -78,4 +78,10 @@ export default class ProxyRequest {
       url,
     });
   }
+
+  clear() {
+    return this.request({
+      method: 'clear',
+    });
+  }
 }

@@ -73,6 +73,8 @@ jest.mock('@/services/user', () => {
     setIdentityMode: jest.fn().mockReturnValue(),
 
     getIdentityMode: jest.fn().mockReturnValue({ type: 'default' }),
+
+    deleteIdentityData: jest.fn().mockResolvedValue(),
   };
 });
 

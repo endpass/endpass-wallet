@@ -35,7 +35,7 @@
           v-else
           class="button"
           to=""
-          @click.prevent="logout()"
+          @click.prevent="handleLogout"
         >
           <span
             class="icon is-small"
@@ -244,6 +244,12 @@
       v-if="isLoginModal"
       @close="toggleLoginModal"
     />
+
+    <confirm-logout-modal
+      v-if="isConfirmLogoutModal"
+      @confirm="logout"
+      @close="toggleConfirmLogoutModal"
+    />
   </div>
 </template>
 
@@ -253,6 +259,7 @@ import ProviderSelect from '@/components/bar/ProviderSelect.vue';
 import CurrencySelect from '@/components/bar/CurrencySelect.vue';
 import AccountChooser from '@/components/AccountChooser';
 import LoginModal from '@/components/modal/LoginModal';
+import ConfirmLogoutModal from '@/components/modal/ConfirmLogoutModal';
 import modalMixin from '@/mixins/modal';
 import NewAccountModal from '@/components/modal/NewAccountModal';
 
@@ -273,7 +280,12 @@ export default {
       email: state => state.user.email,
       identityType: state => state.user.identityType,
     }),
-    ...mapGetters('user', ['isLoggedOut', 'isLoggedIn', 'isCustomIdentity']),
+    ...mapGetters('user', [
+      'isLoggedOut',
+      'isLoggedIn',
+      'isCustomIdentity',
+      'isLocalIdentity',
+    ]),
     ...mapGetters('accounts', ['isPublicAccount']),
 
     walletsOptions() {
@@ -290,7 +302,13 @@ export default {
       },
     },
   },
-
+  watch: {
+    isLoggedOut(value) {
+      if (value) {
+        this.isLoginModal = true;
+      }
+    },
+  },
   methods: {
     ...mapActions('user', ['logout']),
     ...mapActions('accounts', ['selectWallet']),
@@ -309,17 +327,18 @@ export default {
     closeNewAccountModal() {
       this.newAccountModalOpen = false;
     },
-  },
-  watch: {
-    isLoggedOut(value) {
-      if (value) {
-        this.isLoginModal = true;
+    handleLogout() {
+      if (this.isLocalIdentity) {
+        this.toggleConfirmLogoutModal();
+      } else {
+        this.logout();
       }
     },
   },
   mixins: [modalMixin],
   components: {
     ProviderSelect,
+    ConfirmLogoutModal,
     CurrencySelect,
     AccountChooser,
     LoginModal,

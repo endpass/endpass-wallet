@@ -10,9 +10,12 @@ const isCustomIdentity = state => state.identityType === IDENTITY_MODE.CUSTOM;
 
 const isDefaultIdentity = state => state.identityType === IDENTITY_MODE.DEFAULT;
 
+const isLocalIdentity = state => state.identityType === IDENTITY_MODE.LOCAL;
+
 export default {
   isLoggedIn,
   isLoggedOut,
   isCustomIdentity,
   isDefaultIdentity,
+  isLocalIdentity,
 };

@@ -88,7 +88,7 @@ export default class LocalProvider {
   write = async params => {
     try {
       const { payload } = params;
-      let { url } = params;
+      const { url } = params;
       const data = JSON.stringify(payload);
 
       localStorage.setItem(url, data);
@@ -114,6 +114,23 @@ export default class LocalProvider {
       throw new NotificationError({
         title: 'Error in local storage',
         text: "Can't remove data from local storage, maybe it is not available",
+        type: 'is-warning',
+      });
+    }
+  };
+
+  clear = async () => {
+    try {
+      Object.keys(localStorage)
+        .filter(key => key.includes(PROXY_REQUEST_PREFIX))
+        .forEach(key => localStorage.removeItem(key));
+
+      return { success: true };
+    } catch (e) {
+      throw new NotificationError({
+        title: 'Error in local storage',
+        text:
+          "Can't clear data in the local storage, maybe it is not available",
         type: 'is-warning',
       });
     }

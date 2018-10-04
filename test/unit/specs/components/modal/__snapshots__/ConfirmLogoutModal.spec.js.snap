@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfirmModal render should render component 1`] = `
+<confirm-modal
+  v-on:close="bound handleClose"
+  v-on:confirm="bound handleConfirm"
+>
+  <p
+    class="subtitle"
+  >
+    
+    This will DELETE all data in local storage permanently.
+  
+  </p>
+</confirm-modal>
+`;

@@ -3,6 +3,7 @@ export default {
     isPasswordModal: false,
     isTwoFactorAuthModal: false,
     isLoginModal: false,
+    isConfirmLogoutModal: false,
   }),
   methods: {
     togglePasswordModal() {
@@ -13,6 +14,9 @@ export default {
     },
     toggleLoginModal() {
       this.isLoginModal = !this.isLoginModal;
+    },
+    toggleConfirmLogoutModal() {
+      this.isConfirmLogoutModal = !this.isConfirmLogoutModal;
     },
   },
 };

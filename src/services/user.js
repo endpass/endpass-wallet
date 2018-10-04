@@ -267,4 +267,18 @@ export default {
       return defaultMode;
     }
   },
+
+  async deleteIdentityData() {
+    try {
+      await proxyRequest.clear();
+    } catch (e) {
+      throw new NotificationError({
+        log: true,
+        message: e.message,
+        title: 'Error deleting identity data',
+        text: `Failed to remove identity data.`,
+        type: 'is-danger',
+      });
+    }
+  },
 };

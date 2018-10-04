@@ -573,5 +573,31 @@ describe('User service', () => {
         expect(mode).toEqual({ type: IDENTITY_MODE.DEFAULT });
       });
     });
+
+    describe('deleteIdentityData', () => {
+      beforeEach(() => {
+        proxyRequest.clear = jest.fn();
+      });
+
+      it('should delete identity mode data', async () => {
+        expect.assertions(1);
+
+        await userService.deleteIdentityData();
+
+        expect(proxyRequest.clear).toHaveBeenCalledTimes(1);
+      });
+
+      it('should handle errors', async () => {
+        expect.assertions(1);
+
+        proxyRequest.clear.mockRejectedValueOnce(new Error());
+
+        try {
+          await userService.deleteIdentityData();
+        } catch (e) {
+          expect(e).toBeInstanceOf(NotificationError);
+        }
+      });
+    });
   });
 });

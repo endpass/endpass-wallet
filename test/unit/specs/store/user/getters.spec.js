@@ -76,4 +76,22 @@ describe('user getters', () => {
       expect(getters.isDefaultIdentity(state)).toBeTruthy();
     });
   });
+
+  describe('isLocalIdentity', () => {
+    it('should return false', () => {
+      const state = {
+        identityType: IDENTITY_MODE.CUSTOM,
+      };
+
+      expect(getters.isLocalIdentity(state)).toBeFalsy();
+    });
+
+    it('should return true', () => {
+      const state = {
+        identityType: IDENTITY_MODE.LOCAL,
+      };
+
+      expect(getters.isLocalIdentity(state)).toBeTruthy();
+    });
+  });
 });
