@@ -108,11 +108,13 @@
         <span class="">{{ transaction.nonce }}</span>
       </div>
 
-      <div v-if="transaction.data">
+      <div
+        v-if="parsedData"
+      >
         <span class="text-label">Data</span>
-        <span class="code">
-          {{ parseData(transaction.data) }}
-        </span>
+        <p class="code">
+          {{ parsedData }}
+        </p>
       </div>
     </div>
 
@@ -224,7 +226,7 @@ export default {
     },
 
     transactionFormatedDate() {
-      return formateDate(this.displayDate);
+      return formateDate(this.transaction.date);
     },
 
     transactionDateFromNow() {
@@ -236,6 +238,12 @@ export default {
         return this.transaction.from;
       }
       return this.transaction.to;
+    },
+
+    parsedData() {
+      const dataString = this.transaction.data || '0x';
+
+      return web3.utils.hexToString(dataString);
     },
   },
 
@@ -296,18 +304,15 @@ export default {
       this.transactionToSend.state = null;
       this.requestPassword();
     },
-    parseData() {
-      const dataString = this.transaction.data || '0x';
-      return web3.utils.hexToString(dataString);
+    incrementDIsplayDate() {
+      this.displayDate = dayjs(this.transaction.date)
+        .add(10, 's')
+        .toDate();
     },
   },
 
   created() {
-    this.dateTimer = setInterval(() => {
-      this.displayDate = dayjs(this.transaction.date)
-        .add(1, 'minute')
-        .toDate();
-    }, dayjs().minute());
+    this.dateTimer = setInterval(this.incrementDIsplayDate, 10000);
   },
 
   beforeDestroy() {
