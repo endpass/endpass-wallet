@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import Web3 from 'web3';
 
 import web3 from '@/utils/web3';
@@ -15,6 +16,7 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
   return Promise.all([
     userService.setSetting('net', network.id),
     dispatch('subscribeOnBlockUpdates'),
+    dispatch('tokens/getNetworkTokens', {}, { root: true }),
     dispatch('tokens/getCurrentAccountTokens', {}, { root: true }),
     dispatch('tokens/getCurrentAccountTokensData', null, {
       root: true,

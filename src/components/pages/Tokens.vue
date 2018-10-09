@@ -106,6 +106,7 @@ import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/modal/AddTokenModal';
 import VSpinner from '@/components/ui/VSpinner';
 import { matchString } from '@/utils/strings';
+import { MAIN_NET_ID } from '@/constants';
 
 export default {
   name: 'TokensPage',
@@ -122,6 +123,7 @@ export default {
       prices: state => state.tokens.prices,
       allTokens: state => state.tokens.allTokens,
       networkTokens: state => state.tokens.networkTokens,
+      activeNetId: state => state.web3.activeNet.id,
       // []string, list of tracked tokens addresses
       isLoading: state => state.tokens.isLoading,
       ethPrice: state => state.price.price,
@@ -141,6 +143,10 @@ export default {
         allCurrentAccountFullTokens,
         networkTokenQuery,
       } = this;
+
+      if (this.activeNetId !== MAIN_NET_ID) {
+        return [];
+      }
 
       return Object.values(networkTokens).filter(token => {
         const isUserHasToken = Object.keys(
