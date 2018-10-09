@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import {
   SET_LOADING,
   SET_TOKENS_BY_ADDRESS,
@@ -183,8 +184,10 @@ const getTokensBalancesByAddress = async (
   });
 };
 
-const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
-  if (rootGetters['web3/activeNetwork'] !== MAIN_NET_ID) return;
+const getNetworkTokens = async ({ state, commit, dispatch, rootGetters }) => {
+  const isMainNetwork = rootGetters['web3/activeNetwork'] === MAIN_NET_ID;
+
+  if (!isMainNetwork || !isEmpty(state.networkTokens)) return;
 
   try {
     commit(SET_LOADING, true);

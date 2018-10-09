@@ -366,12 +366,18 @@ describe('tokens actions', () => {
   });
 
   describe('getNetworkTokens', () => {
+    beforeEach(() => {
+      state = {
+        networkTokens: {},
+      };
+    });
+
     it('should request and set network tokens', async () => {
       expect.assertions(6);
 
       tokenInfoService.getTokensList.mockResolvedValueOnce(tokens);
 
-      await actions.getNetworkTokens({ commit, dispatch, rootGetters });
+      await actions.getNetworkTokens({ state, commit, dispatch, rootGetters });
 
       expect(commit).toHaveBeenCalledTimes(3);
       expect(commit).toHaveBeenNthCalledWith(1, SET_LOADING, true);
@@ -390,7 +396,24 @@ describe('tokens actions', () => {
         'web3/activeNetwork': 0,
       };
 
-      await actions.getNetworkTokens({ commit, dispatch, rootGetters });
+      await actions.getNetworkTokens({ state, commit, dispatch, rootGetters });
+
+      expect(commit).not.toBeCalled();
+      expect(dispatch).not.toBeCalled();
+      expect(tokenInfoService.getTokensList).not.toBeCalled();
+    });
+
+    it('should not do anything if network tokens are not empty', async () => {
+      state = {
+        networkTokens: {
+          foo: 'bar',
+        },
+      };
+      rootGetters = {
+        'web3/activeNetwork': 0,
+      };
+
+      await actions.getNetworkTokens({ state, commit, dispatch, rootGetters });
 
       expect(commit).not.toBeCalled();
       expect(dispatch).not.toBeCalled();
@@ -402,7 +425,7 @@ describe('tokens actions', () => {
 
       tokenInfoService.getTokensList.mockRejectedValueOnce();
 
-      await actions.getNetworkTokens({ commit, dispatch, rootGetters });
+      await actions.getNetworkTokens({ state, commit, dispatch, rootGetters });
 
       expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenNthCalledWith(1, SET_LOADING, true);

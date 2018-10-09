@@ -58,6 +58,14 @@ describe('TokensPage', () => {
             price: null,
           },
         },
+        web3: {
+          namespaced: true,
+          state: {
+            activeNet: {
+              id: 1,
+            },
+          },
+        },
       },
     });
 
@@ -178,6 +186,14 @@ describe('TokensPage', () => {
 
         expect(wrapper.vm.filteredTokens).toHaveLength(1);
         expect(wrapper.vm.filteredTokens[0]).toEqual(tokens[0]);
+      });
+
+      it('should contains empty array if current net is not main', () => {
+        wrapper.setComputed({
+          activeNetId: 3,
+        });
+
+        expect(wrapper.vm.filteredTokens).toEqual([]);
       });
     });
   });
