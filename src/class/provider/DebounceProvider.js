@@ -1,4 +1,4 @@
-import debounce from 'lodash.debounce';
+import { debounce } from 'lodash';
 
 export default class DebounceProvider {
   constructor() {
@@ -58,9 +58,10 @@ export default class DebounceProvider {
   }
 
   toHashString(str) {
-    var hash = 0,
-      i,
-      chr;
+    let hash = 0;
+    let i;
+    let chr;
+
     if (this.length === 0) return hash;
     for (i = 0; i < str.length; i++) {
       chr = str.charCodeAt(i);

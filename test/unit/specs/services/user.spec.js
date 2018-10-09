@@ -1,8 +1,11 @@
-import { http } from '@/utils';
+import axios from 'axios';
+import { http, proxyRequest } from '@/utils';
 import MockAdapter from 'axios-mock-adapter';
 
 import { NotificationError } from '@/class';
 import { identityAPIUrl } from '@/config';
+import { IDENTITY_MODE } from '@/constants';
+import { addresses } from 'fixtures/accounts';
 
 const userService = require.requireActual('@/services/user').default;
 
@@ -136,11 +139,13 @@ describe('User service', () => {
     });
 
     it('should make correct request', async () => {
+      expect.assertions(1);
+
       axiosMock.onPost(url).reply(config => {
-        expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         return [200, {}];
       });
+
       await userService.logout();
     });
 
@@ -416,6 +421,7 @@ describe('User service', () => {
       text: `Failed to save OTP settings.`,
       type: 'is-danger',
     });
+    const errorMessage = 'server error';
 
     it('should make correct request', async () => {
       axiosMock.onPost(url).reply(config => {
@@ -434,11 +440,19 @@ describe('User service', () => {
     });
 
     it('should handle failed POST /otp request', async () => {
-      axiosMock.onPost(url).reply(200, { success: false });
+      const error = new NotificationError({
+        ...expectedError,
+        message: `POST ${url}: ${errorMessage}`,
+      });
+
+      axiosMock
+        .onPost(url)
+        .reply(200, { success: false, message: errorMessage });
+
       try {
         await userService.setOtpSettings(secret, code);
       } catch (receivedError) {
-        expect(receivedError).toEqual(expectedError);
+        expect(receivedError).toEqual(error);
       }
     });
 
@@ -447,7 +461,7 @@ describe('User service', () => {
       try {
         await userService.setOtpSettings();
       } catch (receivedError) {
-        expect(receivedError).toEqual(expectedError);
+        expect(receivedError.text).toEqual(expectedError.text);
       }
     });
   });
@@ -463,6 +477,7 @@ describe('User service', () => {
       text: `Failed to remove OTP settings.`,
       type: 'is-danger',
     });
+    const errorMessage = 'server error';
 
     it('should make correct request', async () => {
       axiosMock.onDelete(url).reply(config => {
@@ -481,11 +496,19 @@ describe('User service', () => {
     });
 
     it('should handle failed DELETE /otp request', async () => {
-      axiosMock.onDelete(url).reply(200, { success: false });
+      const error = new NotificationError({
+        ...expectedError,
+        message: `DELETE ${url}: ${errorMessage}`,
+      });
+
+      axiosMock
+        .onDelete(url)
+        .reply(200, { success: false, message: errorMessage });
+
       try {
         await userService.deleteOtpSettings(code);
       } catch (receivedError) {
-        expect(receivedError).toEqual(expectedError);
+        expect(receivedError).toEqual(error);
       }
     });
 
@@ -494,8 +517,162 @@ describe('User service', () => {
       try {
         await userService.deleteOtpSettings(code);
       } catch (receivedError) {
-        expect(receivedError).toEqual(expectedError);
+        expect(receivedError.text).toEqual(expectedError.text);
       }
+    });
+  });
+
+  describe('Identity mode', () => {
+    const identityModeKey = 'identityMode';
+
+    describe('setIdentityMode', () => {
+      const url = identityAPIUrl;
+      const type = IDENTITY_MODE.CUSTOM;
+      const mode = { type, serverUrl: url };
+
+      afterEach(() => {
+        localStorage.setItem.mockReset();
+      });
+
+      it('should set the identity mode', () => {
+        expect.assertions(2);
+
+        const spyProxyRequest = jest.spyOn(proxyRequest, 'setMode');
+
+        userService.setIdentityMode(type, url);
+
+        expect(spyProxyRequest).toHaveBeenCalledTimes(1);
+        expect(spyProxyRequest).toBeCalledWith(type, url);
+
+        spyProxyRequest.mockRestore();
+      });
+
+      it('should save the identity mode in the local storage', () => {
+        expect.assertions(2);
+
+        userService.setIdentityMode(type, url);
+
+        const expected = JSON.stringify(mode);
+
+        expect(localStorage.setItem).toHaveBeenCalledTimes(1);
+        expect(localStorage.setItem).toBeCalledWith(identityModeKey, expected);
+      });
+    });
+
+    describe('getIdentityMode', () => {
+      afterEach(() => {
+        localStorage.getItem.mockReset();
+      });
+
+      it('should get the identity mode', () => {
+        userService.getIdentityMode();
+
+        expect(localStorage.getItem).toHaveBeenCalledTimes(1);
+        expect(localStorage.getItem).toBeCalledWith(identityModeKey);
+      });
+
+      it('should return default identity mode', () => {
+        const mode = userService.getIdentityMode();
+
+        expect(mode).toEqual({ type: IDENTITY_MODE.DEFAULT });
+      });
+    });
+
+    describe('deleteIdentityData', () => {
+      beforeEach(() => {
+        proxyRequest.clear = jest.fn();
+      });
+
+      it('should delete identity mode data', async () => {
+        expect.assertions(1);
+
+        await userService.deleteIdentityData();
+
+        expect(proxyRequest.clear).toHaveBeenCalledTimes(1);
+      });
+
+      it('should handle errors', async () => {
+        expect.assertions(1);
+
+        proxyRequest.clear.mockRejectedValueOnce(new Error());
+
+        try {
+          await userService.deleteIdentityData();
+        } catch (e) {
+          expect(e).toBeInstanceOf(NotificationError);
+        }
+      });
+    });
+
+    describe('validateIdentityServer', () => {
+      const serverUrl = 'http://server.com';
+      const url = `${serverUrl}/accounts`;
+      const successResp = [...addresses];
+      const invalidResp = 'invalid response';
+
+      beforeEach(() => {
+        axiosMock = new MockAdapter(axios);
+      });
+
+      it('should make correct request', async () => {
+        expect.assertions(1);
+
+        axiosMock.onGet(url).reply(config => {
+          expect(config.url).toBe(url);
+          return [200, successResp];
+        });
+
+        await userService.validateIdentityServer(serverUrl);
+      });
+
+      it('should return true if the valid custom server', async () => {
+        expect.assertions(1);
+
+        axiosMock.onGet(url).reply(200, successResp);
+
+        const isValid = await userService.validateIdentityServer(serverUrl);
+
+        expect(isValid).toBe(true);
+      });
+
+      it('should throw an error when the response format is invalid', async () => {
+        expect.assertions(2);
+
+        axiosMock.onGet(url).reply(200, invalidResp);
+
+        try {
+          await userService.validateIdentityServer(serverUrl);
+        } catch (e) {
+          expect(e).toBeInstanceOf(NotificationError);
+          expect(e.title).toBe('No Accounts');
+        }
+      });
+
+      it('should throw an error when the response status is 401', async () => {
+        expect.assertions(2);
+
+        axiosMock.onGet(url).reply(401);
+
+        try {
+          await userService.validateIdentityServer(serverUrl);
+        } catch (e) {
+          expect(e).toBeInstanceOf(NotificationError);
+          expect(e.title).toBe('Not Logged In');
+        }
+      });
+
+      it('should throw an error when the response status is invalid', async () => {
+        expect.assertions(2);
+
+        axiosMock.onGet(url).reply(404);
+
+        try {
+          await userService.validateIdentityServer(serverUrl);
+        } catch (e) {
+          expect(e).toBeInstanceOf(NotificationError);
+          expect(e.title).toBe('Invalid Identity Server');
+        }
+      });
     });
   });
 });

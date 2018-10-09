@@ -1,7 +1,9 @@
 import { userService } from '@/services';
 import { NotificationError } from '@/class';
+import { IDENTITY_MODE } from '@/constants';
 import {
   SET_AUTHORIZATION_STATUS,
+  SET_IDENTITY_TYPE,
   SET_EMAIL,
   SET_SETTINGS,
   SET_OTP_SETTINGS,
@@ -29,18 +31,53 @@ const setAuthorizationStatus = (
   }
 };
 
-const login = (ctx, { email, redirectUri }) =>
-  userService.login({ email, redirectUri });
+const login = async (
+  { commit, dispatch },
+  { email, redirectUri, mode = {} },
+) => {
+  const { type = IDENTITY_MODE.DEFAULT, serverUrl } = mode;
 
-const logout = async ({ commit, dispatch }) => {
+  if (type === IDENTITY_MODE.DEFAULT) {
+    return userService.login({ email, redirectUri });
+  }
+
   try {
-    commit(SET_EMAIL, null);
-    await userService.logout();
+    userService.setIdentityMode(type, serverUrl);
+    commit(SET_IDENTITY_TYPE, type);
+    commit(SET_AUTHORIZATION_STATUS, true);
+    commit(SET_EMAIL, email);
+    await userService.setSettings({ email });
+
+    return dispatch('init', null, { root: true });
+  } catch (e) {
+    return dispatch('errors/emitError', e, { root: true });
+  }
+};
+
+const logout = async ({ commit, dispatch, getters }) => {
+  commit(SET_EMAIL, null);
+
+  try {
+    if (getters.isLocalIdentity) {
+      await userService.deleteIdentityData();
+    }
+
+    try {
+      userService.setIdentityMode(IDENTITY_MODE.DEFAULT);
+    } catch (e) {} // eslint-disable-line no-empty
+
+    if (getters.isDefaultIdentity) {
+      await userService.logout();
+    }
+
     window.location.reload();
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
   }
 };
+
+const validateCustomServer = (ctx, { serverUrl }) =>
+  userService.validateIdentityServer(serverUrl);
 
 const loginViaOTP = (ctx, { code, email }) =>
   userService.loginViaOTP(code, email);
@@ -101,6 +138,20 @@ const setUserSettings = async ({ commit, dispatch }) => {
   }
 };
 
+const initIdentityMode = async ({ commit, dispatch }) => {
+  try {
+    const { type, serverUrl } = userService.getIdentityMode();
+    userService.setIdentityMode(type, serverUrl);
+
+    if (type !== IDENTITY_MODE.DEFAULT) {
+      commit(SET_IDENTITY_TYPE, type);
+      commit(SET_AUTHORIZATION_STATUS, true);
+    }
+  } catch (e) {
+    await dispatch('errors/emitError', e, { root: true });
+  }
+};
+
 const init = async ({ dispatch }) => {
   try {
     await dispatch('setUserSettings');
@@ -119,5 +170,7 @@ export default {
   setOtpSettings,
   setUserSettings,
   deleteOtpSettings,
+  validateCustomServer,
+  initIdentityMode,
   init,
 };

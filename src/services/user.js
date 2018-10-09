@@ -1,7 +1,9 @@
-import { NotificationError } from '@/class';
+import axios from 'axios';
+import { http, proxyRequest } from '@/utils';
 import { identityAPIUrl } from '@/config';
-import { http } from '@/utils';
+import { NotificationError } from '@/class';
 import keyUtil from '@/utils/keystore';
+import { IDENTITY_MODE } from '@/constants';
 
 export default {
   async login({ email, redirectUri = '/' }) {
@@ -57,27 +59,24 @@ export default {
     });
   },
 
-  getSettings() {
-    return http.get(`${identityAPIUrl}/user`).then(({ data }) => data);
+  async getSettings() {
+    try {
+      return await proxyRequest.read('/user');
+    } catch (e) {
+      return {};
+    }
   },
 
-  getSetting(setting) {
-    return this.getSettings().then(data => {
-      return data[setting];
-    });
+  async getSetting(setting) {
+    const allSettings = await this.getSettings();
+    return allSettings[setting];
   },
 
   setSettings(settings) {
-    return http
-      .post(`${identityAPIUrl}/user`, settings)
-      .then(({ data }) => data)
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Error in server storage',
-          text: "Can't save data to server storage, maybe it is not available",
-          type: 'is-warning',
-        });
-      });
+    return proxyRequest.add('/user', {
+      payload: settings,
+      prop: 'settings',
+    });
   },
 
   setSetting(prop, data) {
@@ -100,14 +99,14 @@ export default {
 
   // Returns addresses of all of the user's accounts
   getAccounts() {
-    return http.get(`${identityAPIUrl}/accounts`).then(res => res.data);
+    return proxyRequest.read('/accounts');
   },
 
   // Saves the encrypted keystore for an account
   setAccount(address, account) {
-    return http
-      .post(`${identityAPIUrl}/account/${address}`, account)
-      .then(res => res.data);
+    return proxyRequest.write(`/account/${address}`, {
+      payload: account,
+    });
   },
 
   // Update the encrypted keystore for an existing accounts
@@ -126,23 +125,19 @@ export default {
   },
 
   // Returns the encrypted keystore for a single account
-  getAccount(address) {
-    return http
-      .get(`${identityAPIUrl}/account/${address}`)
-      .then(res => {
-        let account = res.data;
-        account.address = address;
-        return account;
-      })
-      .catch(() => {
-        const shortAcc = address.replace(/^(.{5}).+/, '$1…');
+  async getAccount(address) {
+    try {
+      const account = await proxyRequest.read(`/account/${address}`);
+      return { ...account, address };
+    } catch (e) {
+      const shortAcc = address.replace(/^(.{5}).+/, '$1…');
 
-        throw new NotificationError({
-          title: 'Account request error',
-          text: `Failed to get account ${shortAcc}. Please, reload page`,
-          type: 'is-danger',
-        });
+      throw new NotificationError({
+        title: 'Account request error',
+        text: `Failed to get account ${shortAcc}. Please, reload page`,
+        type: 'is-danger',
       });
+    }
   },
 
   // Returns encrypted keystores for all non HD accounts
@@ -172,12 +167,15 @@ export default {
   // Right now, uses the first HD address found as a key
   getHDKey() {
     return this.getAccounts().then(accounts => {
-      let hdAccounts = accounts.filter(acc => keyUtil.isExtendedPublicKey(acc));
-      if (hdAccounts.length) {
-        return this.getAccount(hdAccounts[0]);
-      } else {
+      const hdAccounts = accounts.filter(acc =>
+        keyUtil.isExtendedPublicKey(acc),
+      );
+
+      if (hdAccounts.length === 0) {
         return Promise.resolve();
       }
+
+      return this.getAccount(hdAccounts[0]);
     });
   },
 
@@ -190,56 +188,144 @@ export default {
       .catch(() => {});
   },
 
-  getOtpSettings() {
-    return http
-      .get(`${identityAPIUrl}/otp`)
-      .then(res => res.data)
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Error requesting two-factor authentication settings',
-          text: `Failed to get OTP settings.`,
-          type: 'is-danger',
-        });
+  async getOtpSettings() {
+    try {
+      return await proxyRequest.read('/otp');
+    } catch (e) {
+      throw new NotificationError({
+        title: 'Error requesting two-factor authentication settings',
+        text: `Failed to get OTP settings.`,
+        type: 'is-danger',
       });
+    }
   },
 
-  setOtpSettings(secret, code) {
-    return http
-      .post(`${identityAPIUrl}/otp`, { secret, code })
-      .then(({ data: { success, message } }) => {
-        if (!success) {
-          console.warn(`POST ${identityAPIUrl}/otp: ${message}`);
-          return Promise.reject();
-        }
-        return { success };
-      })
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Error saving two-factor authentication settings',
-          text: `Failed to save OTP settings.`,
-          type: 'is-danger',
-        });
+  async setOtpSettings(secret, code) {
+    try {
+      const { success, message } = await proxyRequest.write('/otp', {
+        payload: { secret, code },
       });
+
+      if (!success) {
+        throw new Error(`POST ${identityAPIUrl}/otp: ${message}`);
+      }
+
+      return { success };
+    } catch (e) {
+      throw new NotificationError({
+        log: true,
+        message: e.message,
+        title: 'Error saving two-factor authentication settings',
+        text: `Failed to save OTP settings.`,
+        type: 'is-danger',
+      });
+    }
   },
 
-  deleteOtpSettings(code) {
-    return http
-      .delete(`${identityAPIUrl}/otp`, {
-        data: { code },
-      })
-      .then(({ data: { success, message } }) => {
-        if (!success) {
-          console.warn(`DELETE ${identityAPIUrl}/otp: ${message}`);
-          return Promise.reject();
-        }
-        return { success };
-      })
-      .catch(() => {
+  async deleteOtpSettings(code) {
+    try {
+      const { success, message } = await proxyRequest.remove('/otp', {
+        payload: {
+          data: { code },
+        },
+      });
+
+      if (!success) {
+        throw new Error(`DELETE ${identityAPIUrl}/otp: ${message}`);
+      }
+
+      return { success };
+    } catch (e) {
+      throw new NotificationError({
+        log: true,
+        message: e.message,
+        title: 'Error removing two-factor authentication settings',
+        text: `Failed to remove OTP settings.`,
+        type: 'is-danger',
+      });
+    }
+  },
+
+  setIdentityMode(type, serverUrl) {
+    try {
+      const mode = JSON.stringify({ type, serverUrl });
+      localStorage.setItem('identityMode', mode);
+      proxyRequest.setMode(type, serverUrl);
+    } catch (e) {
+      throw new NotificationError({
+        title: 'Error in local storage',
+        text:
+          'Can`t work in the current mode. Please change the mode or try again.',
+        type: 'is-danger',
+      });
+    }
+  },
+
+  getIdentityMode() {
+    const defaultMode = { type: IDENTITY_MODE.DEFAULT };
+
+    try {
+      const mode = localStorage.getItem('identityMode');
+      return JSON.parse(mode) || defaultMode;
+    } catch (e) {
+      return defaultMode;
+    }
+  },
+
+  async deleteIdentityData() {
+    try {
+      await proxyRequest.clear();
+    } catch (e) {
+      throw new NotificationError({
+        log: true,
+        message: e.message,
+        title: 'Error deleting identity data',
+        text: `Failed to remove identity data.`,
+        type: 'is-danger',
+      });
+    }
+  },
+
+  async validateIdentityServer(serverUrl) {
+    try {
+      const { data: accounts } = await axios.get(`${serverUrl}/accounts`, {
+        withCredentials: true,
+      });
+
+      if (!Array.isArray(accounts) || !accounts.length) {
         throw new NotificationError({
-          title: 'Error removing two-factor authentication settings',
-          text: `Failed to remove OTP settings.`,
+          title: 'No Accounts',
+          text:
+            'Your identity server does not have any accounts. Please add some accounts with your identity provider and reload this page.',
           type: 'is-danger',
         });
-      });
+      }
+
+      return true;
+    } catch (e) {
+      if (e instanceof NotificationError) {
+        throw e;
+      }
+
+      const respCode = e.response && e.response.status;
+
+      switch (respCode) {
+        case 401:
+          throw new NotificationError({
+            title: 'Not Logged In',
+            text:
+              'You are not logged in at your identity server. Please log in with your identity provider, come back to this page, and try again.',
+            type: 'is-danger',
+          });
+
+        default:
+          throw new NotificationError({
+            title: 'Invalid Identity Server',
+            text:
+              'The URL you have entered does not point to a valid identity server. Please double check the address and try again.',
+            type: 'is-danger',
+          });
+      }
+    }
   },
 };

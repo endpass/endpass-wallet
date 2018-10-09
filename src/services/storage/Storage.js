@@ -1,4 +1,4 @@
-import debounce from 'lodash.debounce';
+import { debounce } from 'lodash';
 import StubStorage from './StubStorage';
 
 export default class Storage {

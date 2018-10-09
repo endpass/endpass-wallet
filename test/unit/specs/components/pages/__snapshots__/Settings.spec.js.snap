@@ -1,5 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`SettingsPage render should not render email and otp settings when not default identity type 1`] = `
+<base-page
+  class="settings-page"
+>
+  <template
+    slot="title"
+  >
+    Settings
+  </template>
+   
+  <v-form
+    class="save-settings"
+    id="save-settings"
+    v-on:submit="bound updateSettings"
+  >
+    <!---->
+     
+    <v-select
+      data-test="select-fiat"
+      label="Fiat Currency"
+      name="fiatCurrency"
+      options="USD,AUD,BRL"
+      v-model="newSettings.fiatCurrency"
+      v-on:input="bound updateSettings"
+    />
+  </v-form>
+   
+  <!---->
+   
+  <!---->
+</base-page>
+`;
+
 exports[`SettingsPage render should render the initial state of the component 1`] = `
 <base-page
   class="settings-page"
@@ -21,6 +54,7 @@ exports[`SettingsPage render should render the initial state of the component 1`
       help="Contact support if you need to change your email
       address."
       label="Email Address"
+      name="input-email"
       readonly=""
       type="email"
     />
