@@ -1,4 +1,5 @@
 import { infuraConf } from '@/config';
+export { INPAGE_EVENT } from './InpageProvider';
 
 export const MAIN_NET_ID = 1;
 
