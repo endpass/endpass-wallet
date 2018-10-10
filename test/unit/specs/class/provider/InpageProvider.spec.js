@@ -32,50 +32,27 @@ describe('InpageProvider', () => {
       eventEmitter.emit(INPAGE_EVENT.RESPONSE, payload);
       expect(provider.handleResponse).toHaveBeenCalledWith(payload);
     });
-
-    it('should bind emitError to error event', () => {
-      const payload = {},
-        error = {};
-      provider.handleError = jest.fn();
-      eventEmitter.emit(INPAGE_EVENT.ERROR, payload, error);
-      expect(provider.handleError).toHaveBeenCalledWith(payload, error);
-    });
   });
 
   describe('methods', () => {
     describe('handleResponse', () => {
       it('should call callback by payload id', () => {
-        const payload = { id: 'kek' };
-        const callback = jest.fn();
-        provider.pendingRequestsHandlers[payload.id] = callback;
+        const result = { id: 'kek' },
+          error = {},
+          payload = { result, error },
+          callback = jest.fn();
+        provider.pendingRequestsHandlers[result.id] = callback;
         provider.handleResponse(payload);
-        expect(callback).toHaveBeenCalledWith(null, payload);
+        expect(callback).toHaveBeenCalledWith(error, result);
       });
 
       it('should delete pointers by id', () => {
-        const payload = { id: 'kek' };
-        provider.pendingRequestsHandlers[payload.id] = jest.fn();
+        const result = { id: 'kek' },
+          error = {},
+          payload = { result, error };
+        provider.pendingRequestsHandlers[result.id] = jest.fn();
         provider.handleResponse(payload);
-        expect(provider.pendingRequestsHandlers).not.toHaveProperty(payload.id);
-      });
-    });
-
-    describe('handleError', () => {
-      it('should call callback by payload id', () => {
-        const payload = { id: 'kek' },
-          error = {};
-        const callback = jest.fn();
-        provider.pendingRequestsHandlers[payload.id] = callback;
-        provider.handleError(error, payload);
-        expect(callback).toHaveBeenCalledWith(error, payload);
-      });
-
-      it('should delete pointers by id', () => {
-        const payload = { id: 'kek' },
-          error = {};
-        provider.pendingRequestsHandlers[payload.id] = jest.fn();
-        provider.handleError(error, payload);
-        expect(provider.pendingRequestsHandlers).not.toHaveProperty(payload.id);
+        expect(provider.pendingRequestsHandlers).not.toHaveProperty(result.id);
       });
     });
 
@@ -103,16 +80,6 @@ describe('InpageProvider', () => {
           settings.selectedAddress,
         );
         expect(provider.settings.networkVersion).toBe(settings.networkVersion);
-      });
-    });
-
-    describe('emitError', () => {
-      it('should throw error', () => {
-        const error = new Error('kek');
-        function emitError() {
-          provider.emitError(error);
-        }
-        expect(emitError).toThrowError(Error);
       });
     });
 

@@ -11,22 +11,14 @@ export default class InpageProvider {
     eventEmitter.on(INPAGE_EVENT.RESPONSE, payload => {
       this.handleResponse(payload);
     });
-    eventEmitter.on(INPAGE_EVENT.ERROR, (error, payload) => {
-      this.handleError(error, payload);
-    });
     this.eventEmitter = eventEmitter;
     this.pendingRequestsHandlers = {};
     this.settings = {};
   }
 
-  handleResponse(payload) {
-    this.pendingRequestsHandlers[payload.id](null, payload);
-    delete this.pendingRequestsHandlers[payload.id];
-  }
-
-  handleError(error, payload) {
-    this.pendingRequestsHandlers[payload.id](error, payload);
-    delete this.pendingRequestsHandlers[payload.id];
+  handleResponse({ error, result }) {
+    this.pendingRequestsHandlers[result.id](error, result);
+    delete this.pendingRequestsHandlers[result.id];
   }
 
   updateSettings({ selectedAddress, networkVersion }) {
