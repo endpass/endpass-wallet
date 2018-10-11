@@ -397,23 +397,6 @@ describe('tokens actions', () => {
       expect(tokenInfoService.getTokensList).not.toBeCalled();
     });
 
-    it('should not do anything if network tokens are not empty', async () => {
-      state = {
-        networkTokens: {
-          foo: 'bar',
-        },
-      };
-      rootGetters = {
-        'web3/activeNetwork': 0,
-      };
-
-      await actions.getNetworkTokens({ state, commit, dispatch, rootGetters });
-
-      expect(commit).not.toBeCalled();
-      expect(dispatch).not.toBeCalled();
-      expect(tokenInfoService.getTokensList).not.toBeCalled();
-    });
-
     it('should handle error and set empty object as network tokens', async () => {
       expect.assertions(4);
 
