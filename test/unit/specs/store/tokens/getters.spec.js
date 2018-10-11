@@ -87,19 +87,6 @@ describe('tokens getters', () => {
     });
   });
 
-  describe('userTokensListedByNetworks', () => {
-    it('should returns arrays of user tokens mapped by network', () => {
-      const state = {
-        userTokens: userTokensByNetwork,
-      };
-
-      expect(tokensGetters.userTokensListedByNetworks(state)).toEqual({
-        1: Object.values(userTokensByNetwork[1]),
-        2: Object.values(userTokensByNetwork[2]),
-      });
-    });
-  });
-
   describe('userTokenByAddress', () => {
     it('should return token by given address from current net', () => {
       const state = {

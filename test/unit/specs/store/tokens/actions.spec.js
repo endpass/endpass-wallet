@@ -86,7 +86,6 @@ describe('tokens actions', () => {
 
       getters = {
         userTokenByAddress: () => false,
-        userTokensListedByNetworks: tokensMappedByNetworks,
         userTokensWithToken: () => expandedTokensMappedByNetworks,
       };
 
@@ -112,7 +111,6 @@ describe('tokens actions', () => {
 
       getters = {
         userTokenByAddress: () => true,
-        userTokensListedByNetworks: () => tokensMappedByNetworks,
         userTokensWithToken: () => expandedTokensMappedByNetworks,
       };
 
@@ -133,7 +131,6 @@ describe('tokens actions', () => {
 
       getters = {
         userTokenByAddress: () => false,
-        userTokensListedByNetworks: () => tokensMappedByNetworks,
         userTokensWithToken: () => expandedTokensMappedByNetworks,
       };
       userService.setSetting.mockRejectedValueOnce(error);
@@ -159,7 +156,6 @@ describe('tokens actions', () => {
 
       getters = {
         userTokenByAddress: () => true,
-        userTokensListedByNetworks: tokensMappedByNetworks,
         userTokensWithoutToken: () => cuttedTokensMappedByNetworks,
       };
 
@@ -184,7 +180,6 @@ describe('tokens actions', () => {
 
       getters = {
         userTokenByAddress: () => false,
-        userTokensListedByNetworks: () => tokens,
         userTokensWithoutToken: () => cuttedTokensMappedByNetworks,
       };
 
@@ -203,7 +198,6 @@ describe('tokens actions', () => {
 
       getters = {
         userTokenByAddress: () => true,
-        userTokensListedByNetworks: tokensMappedByNetworks,
         userTokensWithoutToken: () => cuttedTokensMappedByNetworks,
       };
       userService.setSetting.mockRejectedValueOnce(error);

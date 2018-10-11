@@ -3,15 +3,6 @@ import { pick, pickBy } from '@/utils/objects';
 const activeCurrencyName = (state, getters, rootState) =>
   rootState.web3.activeCurrency.name;
 
-const userTokensListedByNetworks = state =>
-  Object.keys(state.userTokens).reduce(
-    (acc, key) =>
-      Object.assign(acc, {
-        [key]: Object.values(state.userTokens[key]),
-      }),
-    {},
-  );
-
 const userTokenByAddress = (
   state,
   getters,
@@ -136,7 +127,6 @@ export default {
   activeCurrencyName,
   tokensByAddress,
   balancesByAddress,
-  userTokensListedByNetworks,
   userTokenByAddress,
   currentNetUserTokens,
   fullTokensByAddress,
