@@ -3,7 +3,7 @@ import mutations from '@/store/tokens/mutations';
 import {
   SET_LOADING,
   ADD_NETWORK_TOKENS,
-  SET_TOKENS_PRICES,
+  ADD_TOKENS_PRICES,
   SET_USER_TOKENS,
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
@@ -48,9 +48,9 @@ describe('tokens mutations', () => {
     });
   });
 
-  describe('SET_TOKENS_PRICES', () => {
+  describe('ADD_TOKENS_PRICES', () => {
     it('should set token prices', () => {
-      mutations[SET_TOKENS_PRICES](state, tokensPrices);
+      mutations[ADD_TOKENS_PRICES](state, tokensPrices);
 
       expect(state.prices).toEqual(tokensPrices);
     });
@@ -58,7 +58,7 @@ describe('tokens mutations', () => {
     it('should merge token prices with given', () => {
       state.prices = tokensPrices;
 
-      mutations[SET_TOKENS_PRICES](state, {
+      mutations[ADD_TOKENS_PRICES](state, {
         '0x0': '0',
       });
 

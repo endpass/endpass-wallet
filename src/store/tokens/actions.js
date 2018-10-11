@@ -4,7 +4,7 @@ import {
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
   ADD_NETWORK_TOKENS,
-  SET_TOKENS_PRICES,
+  ADD_TOKENS_PRICES,
   SET_USER_TOKENS,
 } from './mutations-types';
 import { NotificationError } from '@/class';
@@ -232,12 +232,16 @@ const getTokensBalances = async (ctx, { address, tokens }) => {
 const getTokensPrices = async ({ commit, getters }, { tokensSymbols }) => {
   if (tokensSymbols.length === 0) return;
 
-  const prices = await priceService.getPrices(
-    tokensSymbols,
-    getters.activeCurrencyName,
-  );
+  try {
+    const prices = await priceService.getPrices(
+      tokensSymbols,
+      getters.activeCurrencyName,
+    );
 
-  commit(SET_TOKENS_PRICES, prices);
+    commit(ADD_TOKENS_PRICES, prices);
+  } catch (err) {
+    commit(ADD_TOKENS_PRICES, {});
+  }
 };
 
 export default {
