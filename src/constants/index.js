@@ -79,6 +79,12 @@ export const WALLET_TYPE = Object.freeze({
   ...HARDWARE_WALLET_TYPE,
 });
 
+export const DAPP_WHITELISTED_METHODS = [
+  'eth_personalSign',
+  'eth_signTypedData',
+  'eth_sendTransaction',
+];
+
 export default {
   AVAILABLE_FIAT_CURRENCIES,
   MAIN_NET_ID,
@@ -92,4 +98,5 @@ export default {
   HARDWARE_DERIVIATION_PATH,
   HARDWARE_WALLET_TYPE,
   WALLET_TYPE,
+  DAPP_WHITELISTED_METHODS,
 };

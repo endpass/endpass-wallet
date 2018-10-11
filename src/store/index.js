@@ -12,7 +12,8 @@ import price from './price';
 import transactions from './transactions';
 import errors from './errors';
 import connectionStatus from './connection-status';
-import userModule from './user';
+import user from './user';
+import dapp from './dapp';
 
 Vue.use(Vuex);
 
@@ -29,7 +30,8 @@ const store = new Vuex.Store({
     transactions,
     errors,
     connectionStatus,
-    user: userModule,
+    user,
+    dapp,
   },
   strict: !ENV.isProduction,
   mutations,
@@ -62,6 +64,7 @@ if (module.hot) {
       './errors',
       './connection-status',
       './user',
+      './dapp',
     ],
     () => {
       /* eslint-disable global-require */
@@ -76,6 +79,7 @@ if (module.hot) {
       const newErrors = require('./errors').default;
       const newConnectionStatus = require('./connection-status').default;
       const newUserModule = require('./user').default;
+      const newDappModule = require('./dapp').default;
 
       // swap in the new actions and mutations
       store.hotUpdate({
@@ -91,6 +95,7 @@ if (module.hot) {
           errors: newErrors,
           connectionStatus: newConnectionStatus,
           user: newUserModule,
+          dapp: newDappModule,
         },
       });
     },
