@@ -1,6 +1,6 @@
 import InpageProvider from '@/class/provider/InpageProvider';
 import { EventEmitter } from '@/class';
-import { INPAGE_EVENT } from '@/constants';
+import { INPAGE_EVENT, INPAGE_ID_PREFIX } from '@/constants';
 
 describe('InpageProvider', () => {
   let provider, eventEmitter;
@@ -94,7 +94,7 @@ describe('InpageProvider', () => {
       it('should emit request event with payload', () => {
         const payload = { id: 'kek' },
           callback = jest.fn(),
-          expectedPayload = { id: 'ep_kek' };
+          expectedPayload = { id: `${INPAGE_ID_PREFIX}kek` };
         provider.eventEmitter.emit = jest.fn();
         provider.sendAsync(payload, callback);
         expect(provider.eventEmitter.emit).toHaveBeenCalledWith(
