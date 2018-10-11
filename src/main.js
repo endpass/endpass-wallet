@@ -10,7 +10,7 @@ import App from './App';
 import './validation';
 import './directives';
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = NODE_ENV === 'production';
 
 Vue.config.productionTip = false;
 Vue.config.performance = true;
@@ -35,7 +35,7 @@ const app = new Vue({
   render: h => h(App),
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (NODE_ENV !== 'production') {
   window.app = app;
 }
 

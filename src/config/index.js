@@ -4,7 +4,8 @@ import testEnv from './test.env';
 
 let env;
 
-switch (process.env.NODE_ENV) {
+// NODE_ENV from webpack DefinePlugin or Jest globals
+switch (NODE_ENV) {
   case 'production':
     env = prodEnv;
     break;
@@ -41,4 +42,4 @@ export const {
   intercomAppId,
 } = env;
 
-export const isProduction = process.env.NODE_ENV === 'production';
+export const isProduction = NODE_ENV === 'production';

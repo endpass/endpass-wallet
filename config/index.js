@@ -86,5 +86,24 @@ module.exports = {
     // `npm run build --report`
     // Set to `true` or `false` to always turn it on or off
     bundleAnalyzerReport: process.env.npm_config_report,
+
+    //Entrys with rollbar file
+    entry: {
+      app: './src/main.js',
+      rollbar: './static/rollbar.js',
+    },
+
+    //Order of chunks is important
+    chunks: ['manifest', 'vendor', 'rollbar', 'app'],
+  },
+
+  test: {
+    //Webpack entrys
+    entry: {
+      app: './src/main.js',
+    },
+
+    //Order of chunks is important
+    chunks: ['manifest', 'vendor', 'app'],
   },
 };
