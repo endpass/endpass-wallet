@@ -83,5 +83,12 @@ export default new Router({
         import(/* webpackChunkName: "TransactionPage" */ '@/components/pages/Transaction'),
       beforeEnter: multiguard([hasLoginGuard, privateWalletGuard]),
     },
+    {
+      path: '/dapp',
+      name: 'DappPage',
+      component: () =>
+        import(/* webpackChunkName: "TransactionPage" */ '@/components/pages/Dapp'),
+      beforeEnter: multiguard([hasLoginGuard, privateWalletGuard]),
+    },
   ],
 });
