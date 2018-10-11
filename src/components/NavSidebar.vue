@@ -209,7 +209,17 @@
           </p>
           <ul
             v-if="wallet"
-            class="menu-list">
+            class="menu-list"
+          >
+            <li>
+              <router-link
+                :to="{name:'DappPage'}"
+                class="nav-link"
+                active-class="is-active"
+              >
+                Dapp
+              </router-link>
+            </li>
             <li>
               <router-link
                 :to="{name:'MessagePage'}"

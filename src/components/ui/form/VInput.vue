@@ -22,6 +22,7 @@
           :data-vv-as="$attrs['data-vv-as'] || label"
           :class="classes"
           :name="name"
+          :placeholder="placeholder"
           v-bind="$attrs"
           class="input"
           @blur="$emit('blur', $event.target.value)"
@@ -85,6 +86,10 @@ export default {
     className: {
       type: String,
       default: '',
+    },
+    placeholder: {
+      type: String,
+      required: false,
     },
   },
   computed: {
