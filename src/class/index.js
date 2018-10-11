@@ -10,3 +10,4 @@ export { Wallet } from './wallet';
 export { ENSResolver } from './ens';
 export { Token } from './Token';
 export { default as ERC20Token } from './erc20';
+export { default as dappBridge } from './dappBridge';

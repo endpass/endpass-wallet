@@ -3,7 +3,7 @@ import { INPAGE_EVENT, INPAGE_ID_PREFIX } from '@/constants';
 
 export default class InpageProvider {
   constructor(eventEmitter) {
-    if (!eventEmitter instanceof EventEmitter)
+    if (!(eventEmitter instanceof EventEmitter))
       throw new Error("Event emitter isn't provided");
     eventEmitter.on(INPAGE_EVENT.SETTINGS, payload => {
       this.updateSettings(payload);
@@ -71,7 +71,7 @@ export default class InpageProvider {
     return {
       id: payload.id,
       jsonrpc: payload.jsonrpc,
-      result: result,
+      result,
     };
   }
 }
