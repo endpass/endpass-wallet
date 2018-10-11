@@ -184,10 +184,10 @@ const getTokensBalancesByAddress = async (
   });
 };
 
-const getNetworkTokens = async ({ state, commit, dispatch, rootGetters }) => {
+const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
   const isMainNetwork = rootGetters['web3/activeNetwork'] === MAIN_NET_ID;
 
-  if (!isMainNetwork || !isEmpty(state.networkTokens)) return;
+  if (!isMainNetwork) return;
 
   try {
     commit(SET_LOADING, true);
