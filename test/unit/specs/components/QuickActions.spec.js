@@ -34,7 +34,7 @@ describe('QuickActions', () => {
   describe('render', () => {
     it('should be a Vue component', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
-      expect(wrapper.name()).toBe('quick-actions');
+      expect(wrapper.name()).toBe('QuickActions');
     });
 
     it('should render initial state of the component', () => {

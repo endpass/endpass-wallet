@@ -12,7 +12,7 @@ describe('Balance', () => {
 
     it('should be a Vue component', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
-      expect(wrapper.name()).toBe('balance');
+      expect(wrapper.name()).toBe('Balance');
     });
 
     it('should render initial state of the component', () => {

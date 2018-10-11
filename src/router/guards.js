@@ -8,7 +8,13 @@ export async function privateWalletGuard(to, from, next) {
 
   await getInitializedValueFromStore(accounts, 'address');
 
-  next(accounts.wallet ? undefined : { name: 'NewWallet' });
+  if (!accounts.wallet) {
+    next({ name: 'NewWallet' });
+  } else if (accounts.wallet.isPublic) {
+    next({ name: 'HomePage' });
+  } else {
+    next();
+  }
 }
 
 // Is logged in on the identity server
@@ -24,5 +30,5 @@ export async function hasLoginGuard(to, from, next) {
     'authorizationStatus',
   );
 
-  next(authorizationStatus ? undefined : redirectUri);
+  next(!authorizationStatus ? redirectUri : undefined);
 }

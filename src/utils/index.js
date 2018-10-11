@@ -4,6 +4,7 @@ import { DEFAULT_NETWORKS } from '@/constants';
 export { default as http } from './http';
 export { default as web3 } from './web3';
 export { default as keystore } from './keystore';
+export { default as proxyRequest } from './proxyRequest';
 
 export const getInitializedValueFromStore = (module, field) =>
   new Promise(resolve => {

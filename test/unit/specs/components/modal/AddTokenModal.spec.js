@@ -60,6 +60,8 @@ describe('AddTokenModal', () => {
 
   describe('behavior', () => {
     it('should set the token data from the contract', async () => {
+      expect.assertions(3);
+
       await wrapper.vm.setTokenData(fakeToken);
 
       expect(wrapper.vm.token.symbol).toBe('SYMBOL');
@@ -76,6 +78,8 @@ describe('AddTokenModal', () => {
     // });
 
     it('should correctly reset the contract data', async () => {
+      expect.assertions(3);
+
       await wrapper.vm.setTokenData(fakeToken);
       wrapper.vm.resetForm();
 
@@ -85,6 +89,8 @@ describe('AddTokenModal', () => {
     });
 
     it('correctly resets empty flags', async () => {
+      expect.assertions(3);
+
       await wrapper.vm.setTokenData(fakeEmptyTokenData);
       wrapper.vm.resetForm();
 
@@ -94,12 +100,14 @@ describe('AddTokenModal', () => {
     });
 
     it('should add token to the store', async () => {
-      const saveTokenAndSubscribe = jest.fn();
+      expect.assertions(1);
+
+      const addUserToken = jest.fn();
       wrapper.setData({ token: fakeToken });
-      wrapper.setMethods({ saveTokenAndSubscribe });
+      wrapper.setMethods({ addUserToken });
 
       await wrapper.vm.addToken();
-      expect(saveTokenAndSubscribe).toHaveBeenCalledWith({ token: fakeToken });
+      expect(addUserToken).toHaveBeenCalledWith({ token: fakeToken });
     });
   });
 });

@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import { EventEmitter, NotificationError, Transaction } from '@/class';
 import ethplorerService from '@/services/ethplorer';
 import web3 from '@/utils/web3';
@@ -10,8 +11,9 @@ import {
 
 const getNonceInBlock = async ({ rootState }) => {
   const address = rootState.accounts.address.getChecksumAddressString();
+  const nonce = await web3.eth.getTransactionCount(address);
 
-  return web3.eth.getTransactionCount(address);
+  return nonce.toString();
 };
 
 const getNextNonce = async ({ state, dispatch }) => {
@@ -21,12 +23,13 @@ const getNextNonce = async ({ state, dispatch }) => {
     .sort((a, b) => (a > b ? 1 : -1))
     .reduce((acc, tnxNonce) => {
       if (acc === tnxNonce) {
-        return tnxNonce + 1;
+        return BigNumber(tnxNonce)
+          .plus('1')
+          .toString();
       }
 
       return acc;
-    }, nonce)
-    .toString();
+    }, nonce);
 
   return actualNonce;
 };
@@ -112,21 +115,17 @@ const handleSendingError = (
 };
 
 // Transaction history from ethplorer
-const getTransactionHistory = async ({ commit, dispatch, rootState }) => {
+const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
   if (!rootState.accounts.address) return;
 
   try {
     const { address } = rootState.accounts;
     const addressCheckSum = address.getChecksumAddressString();
-    const [transactions, history] = await Promise.all([
-      ethplorerService.getInfo(addressCheckSum),
-      ethplorerService.getHistory(addressCheckSum),
-    ]);
-    const allTrx = transactions
-      .concat(history)
-      .map(trx => new Transaction(trx));
-
-    commit(SET_TRANSACTION_HISTORY, allTrx);
+    let transactions = await ethplorerService.getTransactionHistory(
+      addressCheckSum,
+    );
+    transactions = transactions.map(trx => new Transaction(trx));
+    commit(SET_TRANSACTION_HISTORY, transactions);
     dispatch(
       'connectionStatus/updateApiErrorStatus',
       {
@@ -157,7 +156,7 @@ const handleBlockTransactions = (
   { dispatch, rootState, rootGetters },
   transactions,
 ) => {
-  const userAddresses = rootGetters['accounts/getAccountAddresses'];
+  const userAddresses = rootGetters['accounts/accountAddresses'];
   const toUserTrx = transactions.filter(trx =>
     userAddresses.some(address => address === trx.to),
   );
@@ -185,7 +184,7 @@ const handleBlockTransactions = (
     rootGetters['web3/isMainNetwork'] &&
     trxAddresses.some(trxAddress => trxAddress === address)
   ) {
-    dispatch('getTransactionHistory');
+    dispatch('updateTransactionHistory');
   }
 };
 
@@ -264,7 +263,7 @@ const handleTransactionCancelingHash = async (
   const { nonce, hash } = getters.getPendingTransactionByHash(transaction.hash);
   const nonceInBlock = await dispatch('getNonceInBlock');
 
-  if (nonce == nonceInBlock) {
+  if (nonce === nonceInBlock) {
     const shortTnx = hash.slice(0, 10);
     const error = new NotificationError({
       title: 'Try to cancel the transaction',
@@ -339,7 +338,7 @@ export default {
   getNonceInBlock,
   getNextNonce,
   sendSignedTransaction,
-  getTransactionHistory,
+  updateTransactionHistory,
   sendTransaction,
   cancelTransaction,
   resendTransaction,

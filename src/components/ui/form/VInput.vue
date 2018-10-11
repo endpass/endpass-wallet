@@ -2,7 +2,7 @@
   <div class="field">
     <label
       v-if="label"
-      :class="{'has-text-danger': error || errors.has(name) }"
+      :class="{'has-text-danger': error || errors.has($attrs.name) }"
       :for="$attrs.id"
       class="label"
     >
@@ -19,8 +19,9 @@
         <input
           v-validate="validator"
           :value="innerValue"
-          :data-vv-as="name"
-          :class="{'is-danger': error || errors.has(name) }"
+          :data-vv-as="$attrs['data-vv-as'] || label"
+          :class="classes"
+          :name="name"
           v-bind="$attrs"
           class="input"
           @blur="$emit('blur', $event.target.value)"
@@ -36,10 +37,10 @@
       </div>
     </div>
     <p
-      v-if="error || errors.has(name) "
+      v-if="error || errors.has($attrs.name)"
       class="help is-danger"
     >
-      {{ error || errors.first(name) }}
+      {{ error || errors.first($attrs.name) }}
     </p>
     <p
       v-else-if="help"
@@ -65,6 +66,10 @@ export default {
       type: String,
       default: null,
     },
+    className: {
+      type: String,
+      default: '',
+    },
     help: {
       type: String,
       default: null,
@@ -77,6 +82,10 @@ export default {
       type: String,
       default: null,
     },
+    className: {
+      type: String,
+      default: '',
+    },
   },
   computed: {
     innerValue: {
@@ -88,13 +97,20 @@ export default {
       },
     },
     name() {
-      return this.$attrs.name || this.label;
+      return this.$attrs.name || this.label.replace(' ', '');
     },
     listeners() {
       return {
         ...this.$listeners,
         input: event => this.$emit('input', event.target.value),
       };
+    },
+    classes() {
+      const classes = this.className.split(' ');
+      return [
+        ...classes,
+        { 'is-danger': this.error || this.errors.has(this.name) },
+      ];
     },
   },
   inheritAttrs: false,

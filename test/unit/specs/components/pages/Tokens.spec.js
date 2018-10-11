@@ -1,8 +1,8 @@
-import { shallow, createLocalVue, mount } from '@vue/test-utils';
+import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
-import validation from '@/validation';
-import tokensFixture from 'fixtures/tokens';
+import '@/validation';
+import { allTokens, tokens, tokensMappedByAddresses } from 'fixtures/tokens';
 
 import TokensPage from '@/components/pages/Tokens.vue';
 import { generateStubs } from '@/utils/testUtils';
@@ -18,24 +18,19 @@ describe('TokensPage', () => {
   let getters;
   let store;
   let options;
-  let tokens;
 
   beforeEach(() => {
-    tokens = tokensFixture.tokens;
-
     actions = {
       updateTokenPrice: jest.fn(),
       saveTokenAndSubscribe: jest.fn(),
       deleteTokenAndUnsubscribe: jest.fn(),
-      getAllTokens: jest.fn(() => tokensFixture.allTokens),
+      getAllTokens: jest.fn(() => allTokens),
     };
 
     getters = {
       savedCurrentNetworkTokens: () => [{}],
-      trackedTokens: state => state.trackedTokens || [],
       net: () => 1,
-      tokensWithBalance: state =>
-        state.trackedTokens.map(address => state.allTokens[address]),
+      allCurrentAccountFullTokens: () => tokensMappedByAddresses,
     };
 
     store = new Vuex.Store({
@@ -51,9 +46,8 @@ describe('TokensPage', () => {
         tokens: {
           namespaced: true,
           state: {
-            trackedTokens: tokens.map(token => token.address),
             prices: null,
-            allTokens: tokensFixture.allTokens,
+            networkTokens: tokensMappedByAddresses,
           },
           actions,
           getters,
@@ -62,6 +56,14 @@ describe('TokensPage', () => {
           namespaced: true,
           state: {
             price: null,
+          },
+        },
+        web3: {
+          namespaced: true,
+          state: {
+            activeNet: {
+              id: 1,
+            },
           },
         },
       },
@@ -106,6 +108,7 @@ describe('TokensPage', () => {
         expect(wrapper.find('v-spinner').attributes()).toEqual({
           'is-loading': 'true',
           class: 'spinner-block',
+          'data-test': 'tokens-spinner',
         });
       });
 
@@ -116,6 +119,7 @@ describe('TokensPage', () => {
 
         expect(wrapper.find('v-spinner').attributes()).toEqual({
           class: 'spinner-block',
+          'data-test': 'tokens-spinner',
         });
       });
     });
@@ -127,72 +131,70 @@ describe('TokensPage', () => {
     });
 
     describe('search', () => {
-      it("should correctly find the user's tokens", () => {
-        expect(wrapper.vm.userTokenList).toHaveLength(2);
+      it('should correctly find the user tokens', () => {
+        expect(wrapper.vm.userTokensList).toHaveLength(2);
 
         wrapper.setData({
-          search: 'fst',
+          userTokenQuery: 'fst',
         });
 
-        expect(wrapper.vm.userTokenList).toHaveLength(1);
+        expect(wrapper.vm.userTokensList).toHaveLength(1);
       });
 
-      it('should correctly find token in list', async () => {
-        store.state.tokens.trackedTokens = [];
+      it('should correctly find token in list', () => {
+        wrapper.setComputed({
+          allCurrentAccountFullTokens: {},
+        });
+
         expect(wrapper.vm.filteredTokens).toHaveLength(2);
-        expect(wrapper.vm.searchTokenList).toHaveLength(2);
-        wrapper.setData({ searchToken: '' });
-        expect(wrapper.vm.searchTokenList).toHaveLength(2);
+        wrapper.setData({
+          networkTokenQuery: '',
+        });
+        expect(wrapper.vm.filteredTokens).toHaveLength(2);
 
         wrapper.setData({
-          searchToken: 'FST',
+          networkTokenQuery: 'FST',
         });
 
-        expect(wrapper.vm.searchTokenList).toHaveLength(1);
-        expect(wrapper.vm.searchTokenList[0]).toEqual(tokens[0]);
-
-        wrapper.setData({
-          searchToken: '',
-        });
-
-        expect(wrapper.vm.searchTokenList).toHaveLength(2);
-
-        wrapper.setData({
-          searchToken: 'second',
-        });
-
-        expect(wrapper.vm.searchTokenList).toHaveLength(1);
-        expect(wrapper.vm.searchTokenList[0]).toEqual(tokens[1]);
-      });
-      it('should filter out tracked tokens', async () => {
-        store.state.tokens.trackedTokens = [
-          '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
-        ];
         expect(wrapper.vm.filteredTokens).toHaveLength(1);
         expect(wrapper.vm.filteredTokens[0]).toEqual(tokens[0]);
 
         wrapper.setData({
-          searchToken: 'n',
+          networkTokenQuery: '',
         });
-        expect(wrapper.vm.searchTokenList).toHaveLength(1);
-        expect(wrapper.vm.searchTokenList[0]).toEqual(tokens[0]);
-      });
-    });
-  });
 
-  describe('props', () => {
-    beforeEach(() => {
-      wrapper = shallow(TokensPage, options);
-    });
+        expect(wrapper.vm.filteredTokens).toHaveLength(2);
 
-    it('should call an action when changing the net id', () => {
-      expect(wrapper.vm.userTokenList).toHaveLength(2);
+        wrapper.setData({
+          networkTokenQuery: 'second',
+        });
 
-      wrapper.setComputed({
-        net: 3,
+        expect(wrapper.vm.filteredTokens).toHaveLength(1);
+        expect(wrapper.vm.filteredTokens[0]).toEqual(tokens[1]);
       });
 
-      expect(actions.getAllTokens).toHaveBeenCalledTimes(0);
+      it('should filter out user tokens', async () => {
+        wrapper.setComputed({
+          allCurrentAccountFullTokens: {},
+        });
+
+        expect(wrapper.vm.filteredTokens).toHaveLength(2);
+
+        wrapper.setData({
+          networkTokenQuery: 'first',
+        });
+
+        expect(wrapper.vm.filteredTokens).toHaveLength(1);
+        expect(wrapper.vm.filteredTokens[0]).toEqual(tokens[0]);
+      });
+
+      it('should contains empty array if current net is not main', () => {
+        wrapper.setComputed({
+          activeNetId: 3,
+        });
+
+        expect(wrapper.vm.filteredTokens).toEqual([]);
+      });
     });
   });
 });

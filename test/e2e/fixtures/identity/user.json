@@ -3,5 +3,17 @@
   "email": "user@example.com",
   "settings": {
     "currency": "USD"
+  },
+  "tokens": {
+    "1": [
+      {
+        "address": "0x4E84E9e5fb0A972628Cf4568c403167EF1D40431",
+        "decimals": 18,
+        "logo": "",
+        "manuallyAdded": false,
+        "name": "$Fluzcoin",
+        "symbol": "$FFC"
+      }
+    ]
   }
 }

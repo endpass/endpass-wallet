@@ -12,7 +12,7 @@
         <div class="transaction-actions level is-mobile">
           <div class="level-left">
             <div class="level-item">
-              <span class="date">{{ date.fromNow() }}</span>
+              <span class="date">{{ transactionDateFromNow }}</span>
             </div>
           </div>
           <div class="level-right">
@@ -28,26 +28,34 @@
                 :disabled="isSyncing"
                 class="level-item has-text-info"
                 title="Resend"
+                role="button"
+                data-test="transaction-resend-button"
                 @click="resend"
               >
                 <span
                   class="icon is-small"
                   v-html="require('@/img/loop.svg')"
                 />
-                <span class="caption is-hidden-mobile">Resend</span>
+                <span class="caption is-hidden-mobile">
+                  Resend
+                </span>
               </a>
               <a
                 v-if="transaction.state === 'pending' && !isPublicAccount"
                 :disabled="isSyncing"
                 class="level-item has-text-danger"
                 title="Cancel"
+                role="button"
+                data-test="transaction-cancel-button"
                 @click="cancel"
               >
                 <span
                   class="icon is-small"
                   v-html="require('@/img/ban.svg')"
                 />
-                <span class="caption is-hidden-mobile">Cancel</span>
+                <span class="caption is-hidden-mobile">
+                  Cancel
+                </span>
               </a>
             </template>
 
@@ -80,9 +88,9 @@
         <span class="heading status-text">{{ transaction.state }}</span>
       </div>
 
-      <div v-if="date">
+      <div v-if="transaction.date">
         <span class="text-label">Date</span>
-        <p class="date">{{ date.format("YYYY-MM-DD H:mm") }}</p>
+        <p class="date">{{ transactionFormatedDate }}</p>
       </div>
 
       <div v-if="recieve">
@@ -100,11 +108,13 @@
         <span class="">{{ transaction.nonce }}</span>
       </div>
 
-      <div v-if="transaction.data">
+      <div
+        v-if="parsedData"
+      >
         <span class="text-label">Data</span>
-        <span class="code">
-          {{ parseData(transaction.data) }}
-        </span>
+        <p class="code">
+          {{ parsedData }}
+        </p>
       </div>
     </div>
 
@@ -127,23 +137,24 @@
 </template>
 
 <script>
+import dayjs from 'dayjs';
 import Account from '@/components/Account';
-import Tx from 'ethereumjs-tx';
-import { Transaction } from '@/class';
 import ResendModal from '@/components/modal/ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';
-import error from '@/mixins/error';
-import moment from 'moment';
+import { fromNow, formateDate } from '@/utils/date';
+import { getShortStringWithEllipsis } from '@/utils/strings';
 import web3 from '@/utils/web3';
 
 export default {
   props: {
     transaction: {
+      type: Object,
       required: true,
     },
   },
+
   data() {
     return {
       resendModalOpen: false,
@@ -151,6 +162,8 @@ export default {
       isExpanded: false, // details are expanded
       transactionToSend: null,
       state: null,
+      displayDate: this.transaction.date,
+      dateTimer: null,
     };
   },
   computed: {
@@ -211,26 +224,31 @@ export default {
         'ETH'
       );
     },
-    // Returns date as a moment.js object
-    date() {
-      return moment(this.transaction.date);
+
+    transactionFormatedDate() {
+      return formateDate(this.transaction.date);
     },
-    // To/from address of transaction
+
+    transactionDateFromNow() {
+      return fromNow(this.displayDate);
+    },
+
     txAddress() {
       if (this.recieve) {
         return this.transaction.from;
       }
       return this.transaction.to;
     },
+
+    parsedData() {
+      const dataString = this.transaction.data || '0x';
+
+      return web3.utils.hexToString(dataString);
+    },
   },
+
   methods: {
     ...mapActions('transactions', ['resendTransaction', 'cancelTransaction']),
-    resend() {
-      this.transactionToSend = this.transaction.clone();
-      this.transactionToSend.state = null;
-      this.resendModalOpen = true;
-      this.state = 'resent';
-    },
     requestPassword() {
       this.passwordModalOpen = true;
     },
@@ -269,6 +287,12 @@ export default {
     closeResendModal() {
       this.resendModalOpen = false;
     },
+    resend() {
+      this.transactionToSend = this.transaction.clone();
+      this.transactionToSend.state = null;
+      this.resendModalOpen = true;
+      this.state = 'resent';
+    },
     cancel() {
       if (this.transaction.state !== 'pending') return;
 
@@ -280,11 +304,22 @@ export default {
       this.transactionToSend.state = null;
       this.requestPassword();
     },
-    parseData() {
-      const dataString = this.transaction.data || '0x';
-      return web3.utils.hexToString(dataString);
+    incrementDIsplayDate() {
+      this.displayDate = dayjs(this.transaction.date)
+        .add(10, 's')
+        .toDate();
     },
   },
+
+  created() {
+    this.dateTimer = setInterval(this.incrementDIsplayDate, 10000);
+  },
+
+  beforeDestroy() {
+    clearInterval(this.dateTimer);
+    this.dateTimer = null;
+  },
+
   components: {
     Account,
     ResendModal,
@@ -294,8 +329,8 @@ export default {
   filters: {
     truncateHash(value) {
       if (!value) return '';
-      value = value.toString();
-      return `${value.substr(0, 4)}...${value.substr(value.length - 8)}`;
+
+      return getShortStringWithEllipsis(value.toString());
     },
   },
 };

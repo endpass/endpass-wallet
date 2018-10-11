@@ -4,6 +4,7 @@ import Notifications from 'vue-notification';
 import VeeValidate from 'vee-validate';
 // import validation from '@/validation';
 
+import { IDENTITY_MODE } from '@/constants';
 import SettingsPage from '@/components/pages/Settings.vue';
 import { generateStubs } from '@/utils/testUtils';
 
@@ -32,6 +33,10 @@ describe('SettingsPage', () => {
           otpSettings: {
             secret: 'AABC',
           },
+          identityType: IDENTITY_MODE.DEFAULT,
+        },
+        getters: {
+          isDefaultIdentity: () => true,
         },
         actions,
       },
@@ -70,51 +75,66 @@ describe('SettingsPage', () => {
     it('should render the initial state of the component', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
+
+    it('should not render email and otp settings when not default identity type', () => {
+      wrapper.setComputed({ isDefaultIdentity: false });
+
+      expect(wrapper.find('v-input[type=email]').exists()).toBeFalsy();
+      expect(wrapper.find('two-factor-auth-settings').exists()).toBeFalsy();
+      expect(wrapper.element).toMatchSnapshot();
+    });
   });
 
-  it('should set data from props correctly', () => {
-    expect(wrapper.vm.$data.newSettings).toEqual(wrapper.vm.settings);
+  describe('props', () => {
+    it('should set data from props correctly', () => {
+      expect(wrapper.vm.$data.newSettings).toEqual(wrapper.vm.settings);
+    });
   });
 
-  it('should call update action', () => {
-    const newSettings = {
-      fiatCurrency: 'AUD',
-    };
-
-    wrapper.setData({ newSettings });
-    wrapper.vm.updateSettings(newSettings);
-
-    expect(actions.updateSettings).toHaveBeenCalledTimes(1);
-    expect(actions.updateSettings).toBeCalledWith(
-      expect.any(Object),
-      newSettings,
-      undefined,
-    );
-  });
-
-  it('should validate settings properly', async () => {
-    wrapper = mount(SettingsPage, { store, localVue });
-
-    expect(wrapper.vm.errors.any()).toBeFalsy();
-
-    wrapper.setData({
-      newSettings: {
+  describe('behavior', () => {
+    it('should call update action with new settings', () => {
+      const newSettings = {
         fiatCurrency: 'AUD',
-      },
+      };
+
+      wrapper.setData({ newSettings });
+      wrapper.vm.updateSettings(newSettings);
+
+      expect(actions.updateSettings).toHaveBeenCalledTimes(1);
+      expect(actions.updateSettings).toBeCalledWith(
+        expect.any(Object),
+        newSettings,
+        undefined,
+      );
+      expect(actions.updateSettings.mock.calls[0][1]).not.toBe(newSettings);
     });
 
-    await wrapper.vm.$validator.validateAll();
+    it('should validate settings properly', async () => {
+      expect.assertions(3);
 
-    expect(wrapper.vm.errors.any()).toBeFalsy();
+      wrapper = mount(SettingsPage, { store, localVue });
 
-    wrapper.setData({
-      newSettings: {
-        fiatCurrency: 'USD',
-      },
+      expect(wrapper.vm.errors.any()).toBeFalsy();
+
+      wrapper.setData({
+        newSettings: {
+          fiatCurrency: 'AUD',
+        },
+      });
+
+      await wrapper.vm.$validator.validateAll();
+
+      expect(wrapper.vm.errors.any()).toBeFalsy();
+
+      wrapper.setData({
+        newSettings: {
+          fiatCurrency: 'USD',
+        },
+      });
+
+      await wrapper.vm.$validator.validateAll();
+
+      expect(wrapper.vm.errors.any()).toBeFalsy();
     });
-
-    await wrapper.vm.$validator.validateAll();
-
-    expect(wrapper.vm.errors.any()).toBeFalsy();
   });
 });

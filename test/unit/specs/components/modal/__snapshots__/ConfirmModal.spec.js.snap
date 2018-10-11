@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfirmModal render should render component 1`] = `
+<v-modal
+  class="is-dark"
+  v-on:close="bound handleClose"
+>
+  <template
+    slot="header"
+  >
+    Are you sure?
+  </template>
+    
+  <div
+    class="buttons"
+    slot="footer"
+  >
+    <v-button
+      class-name="is-primary is-medium"
+      data-test="submit-logout"
+      v-on:click="bound handleConfirm"
+    >
+      
+      Confirm
+    
+    </v-button>
+     
+    <v-button
+      class-name="is-medium"
+      data-test="submit-logout"
+      v-on:click="bound handleClose"
+    >
+      
+      Cancel
+    
+    </v-button>
+  </div>
+</v-modal>
+`;

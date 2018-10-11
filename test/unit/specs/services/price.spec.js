@@ -1,5 +1,11 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import {
+  fiatPriceAPIUrl,
+  fiatPriceMultiAPIUrl,
+  serviceThrottleTimeout,
+} from '@/config';
+const priceService = require.requireActual('@/services/price').default;
 
 jest.mock('throttled-queue', function() {
   return function() {
@@ -8,13 +14,6 @@ jest.mock('throttled-queue', function() {
     };
   };
 });
-
-import {
-  fiatPriceAPIUrl,
-  fiatPriceMultiAPIUrl,
-  serviceThrottleTimeout,
-} from '@/config';
-import priceService from '@/services/price';
 
 describe('Price service', () => {
   let mock;
@@ -37,22 +36,20 @@ describe('Price service', () => {
     //    done();
     //  });
     //});
-    it('should make correct request', done => {
+    it('should make correct request', async () => {
       const symbol = 'ETH',
         currencies = ['KEK', 'CHPOK'];
-      priceService.getPrice(symbol, currencies);
+      expect.assertions(3);
       mock.onGet(fiatPriceAPIUrl).reply(config => {
-        setTimeout(() => {
-          expect(config.method).toBe('get');
-          expect(config.url).toBe(fiatPriceAPIUrl);
-          expect(config.params).toEqual({
-            fsym: symbol,
-            tsyms: currencies,
-          });
-          done();
-        }, serviceThrottleTimeout);
+        expect(config.method).toBe('get');
+        expect(config.url).toBe(fiatPriceAPIUrl);
+        expect(config.params).toEqual({
+          fsym: symbol,
+          tsyms: currencies,
+        });
         return [200, {}];
       });
+      await priceService.getPrice(symbol, currencies);
     });
   });
 
@@ -68,22 +65,21 @@ describe('Price service', () => {
     //  });
     //});
 
-    it('should make correct request', done => {
+    it('should make correct request', async () => {
       const symbol = 'ETH',
         currencies = ['KEK', 'CHPOK'];
-      priceService.getPrices(symbol, currencies);
+      expect.assertions(3);
       mock.onGet(fiatPriceMultiAPIUrl).reply(config => {
-        setTimeout(() => {
-          expect(config.method).toBe('get');
-          expect(config.url).toBe(fiatPriceMultiAPIUrl);
-          expect(config.params).toEqual({
-            fsyms: symbol,
-            tsyms: currencies,
-          });
-          done();
-        }, serviceThrottleTimeout);
+        expect(config.method).toBe('get');
+        expect(config.url).toBe(fiatPriceMultiAPIUrl);
+        expect(config.params).toEqual({
+          fsyms: symbol,
+          tsyms: currencies,
+        });
         return [200, {}];
       });
+
+      await priceService.getPrices(symbol, currencies);
     });
   });
 });

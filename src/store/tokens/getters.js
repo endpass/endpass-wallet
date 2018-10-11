@@ -1,54 +1,138 @@
-import { BigNumber } from 'bignumber.js';
-import { Token, ERC20Token } from '@/class';
+import { pick, pickBy } from '@/utils/objects';
 
-const net = (state, getters, rootState) => rootState.web3.activeNet.id;
+const activeCurrencyName = (state, getters, rootState) =>
+  rootState.web3.activeCurrency.name;
 
-const savedCurrentNetworkTokens = (state, { net }) =>
-  state.savedTokens[net] || [];
+const userTokenByAddress = (
+  state,
+  getters,
+  rootState,
+  rootGetters,
+) => tokenAddress => {
+  const targetNetTokens = state.userTokens[rootGetters['web3/activeNetwork']];
 
-// Like allTokens, but for user saved tokens
-// Returns object keyed by address {address: Token}
-const savedTokenInfos = (state, { savedCurrentNetworkTokens }) =>
-  savedCurrentNetworkTokens.reduce((obj, item) => {
-    obj[item.address] = item;
-    return obj;
+  if (!targetNetTokens) {
+    return null;
+  }
+
+  return targetNetTokens[tokenAddress] || null;
+};
+
+const tokensByAddress = state => address => {
+  const tokensList = state.tokensByAddress[address];
+
+  if (!tokensList) {
+    return {};
+  }
+
+  return pick(state.networkTokens, tokensList);
+};
+
+const balancesByAddress = state => address =>
+  state.balancesByAddress[address] || {};
+
+const currentNetUserTokens = (state, getters, rootState, rootGetters) =>
+  state.userTokens[rootGetters['web3/activeNetwork']] || {};
+
+const allCurrentAccountTokens = (state, getters, rootState, rootGetters) => ({
+  ...getters.tokensByAddress(rootGetters['accounts/currentAddressString']),
+  ...getters.currentNetUserTokens,
+});
+
+const fullTokensByAddress = (state, getters) => address => {
+  const tokens = getters.tokensByAddress(address);
+  const balances = getters.balancesByAddress(address);
+
+  return Object.keys(tokens).reduce((acc, key) => {
+    const token = tokens[key];
+
+    return Object.assign(acc, {
+      [key]: {
+        ...token,
+        balance: balances[key] || '0',
+        price: state.prices[token.symbol] || '0',
+      },
+    });
   }, {});
+};
 
-const activeCurrencyName = (state, getters, { web3 }) =>
-  web3.activeCurrency.name;
+const allCurrentAccountFullTokens = (
+  state,
+  getters,
+  rootState,
+  rootGetters,
+) => {
+  const tokens = getters.allCurrentAccountTokens;
+  const balances = getters.balancesByAddress(
+    rootGetters['accounts/currentAddressString'],
+  );
 
-const address = (state, getters, { accounts }) =>
-  accounts.address && accounts.address.getChecksumAddressString();
+  return Object.keys(tokens).reduce((acc, key) => {
+    const token = tokens[key];
 
-// Returns []ERC20Token
-const trackedTokens = state =>
-  (state.trackedTokens || []).map(address => new ERC20Token(address));
+    return Object.assign(acc, {
+      [key]: {
+        ...token,
+        balance: balances[key] || '0',
+        price: state.prices[token.symbol] || '0',
+      },
+    });
+  }, {});
+};
 
-// Merges token info with balance
-// This is the only getter that includes symbol, name, etc and balance
-const tokensWithBalance = (state, { savedTokenInfos }) =>
-  state.trackedTokens
-    .map(address => {
-      const tokenInfo = state.allTokens[address] || savedTokenInfos[address];
-      const balance = state.balances[address];
+const allCurrentAccountTokensWithNonZeroBalance = (state, getters) =>
+  pickBy(getters.allCurrentAccountFullTokens, ({ balance }) =>
+    Boolean(parseInt(balance, 10)),
+  );
 
-      try {
-        return new Token({
-          ...tokenInfo, // Info from token info API
-          balance, // Balance updated as of last block
-        });
-      } catch (err) {
-        return null;
-      }
-    })
-    .filter(token => Boolean(token));
+const userTokensWithToken = state => ({ net, token }) => {
+  const { userTokens } = state;
+  const targetNet = state.userTokens[net] || null;
+
+  if (targetNet) {
+    return {
+      ...userTokens,
+      [net]: {
+        ...userTokens[net],
+        [token.address]: token,
+      },
+    };
+  }
+
+  return {
+    ...userTokens,
+    [net]: {
+      [token.address]: token,
+    },
+  };
+};
+
+const userTokensWithoutToken = state => ({ net, token }) => {
+  const { userTokens } = state;
+  const targetNet = userTokens[net];
+
+  if (targetNet) {
+    const { [token.address]: removedToken, ...updatedTokens } = targetNet;
+
+    return {
+      ...userTokens,
+      [net]: updatedTokens,
+    };
+  }
+
+  return userTokens;
+};
 
 export default {
-  net,
-  address,
   activeCurrencyName,
-  savedCurrentNetworkTokens,
-  savedTokenInfos,
-  trackedTokens,
-  tokensWithBalance,
+  tokensByAddress,
+  balancesByAddress,
+  userTokenByAddress,
+  currentNetUserTokens,
+  fullTokensByAddress,
+  allCurrentAccountTokens,
+  allCurrentAccountFullTokens,
+  allCurrentAccountTokensWithNonZeroBalance,
+  userTokensWithToken,
+  userTokensWithoutToken,
 };

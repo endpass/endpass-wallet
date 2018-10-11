@@ -1,37 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ImportFromSeed render should render initial state of the component 1`] = `
-<v-form>
-  <v-input
-    aria-describedby="hdkeyPhrase"
-    data-vv-as="seed phrase"
-    id="hdkeySeed"
-    label="Seed phrase"
-    name="hdkeyPhrase"
-    placeholder="Seed phrase"
-    required=""
-    v-model="key"
-    v-on:input="bound handleInput"
-    validator="required|seed_phrase"
-  />
-   
-  <v-password
-    aria-describedby="jsonKeystorePassword"
-    data-vv-as="password"
-    label="Wallet password"
-    name="password"
-    placeholder="wallet password"
-    required=""
-    v-model="password"
-    validator="required|min:8"
-  />
-   
-  <v-button
-    class-name="is-primary is-cta"
+<div>
+  <v-form
+    data-test="import-seed-form"
+    v-on:submit="bound togglePasswordModal"
   >
+    <v-input
+      aria-describedby="hdkeyPhrase"
+      data-test="input-seed-phrase"
+      data-vv-as="seed phrase"
+      id="hdkeySeed"
+      label="Seed phrase"
+      name="hdkeyPhrase"
+      placeholder="Seed phrase"
+      required=""
+      v-model="key"
+      v-on:input="bound handleInput"
+      validator="required|seed_phrase"
+    />
+     
+    <v-button
+      class-name="is-primary is-cta"
+      data-test="submit-import"
+    >
+      
+      Import
     
-    Import
-  
-  </v-button>
-</v-form>
+    </v-button>
+  </v-form>
+   
+  <!---->
+</div>
 `;

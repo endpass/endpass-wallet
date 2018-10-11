@@ -26,6 +26,7 @@
 import BasePage from '@/components/pages/Base';
 import SignTransaction from '@/components/SignTransaction';
 import RecoverTransaction from '@/components/RecoverTransaction';
+import privatePage from '@/mixins/privatePage';
 
 export default {
   name: 'TransactionPage',
@@ -53,6 +54,8 @@ export default {
       return this.currentTab === tab;
     },
   },
+
+  mixins: [privatePage],
 
   components: {
     BasePage,

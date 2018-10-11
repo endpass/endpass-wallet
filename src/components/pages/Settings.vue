@@ -7,39 +7,41 @@
       class="save-settings"
       @submit="updateSettings"
     >
-      <div class="field">
-        <label class="label">Email Address</label>
-        <div class="control">
-          <input
-            :value="email"
-            class="input is-static"
-            type="email"
-            readonly
-          >
-        </div>
-        <p class="help">Contact support if you need to change your email
-        address.</p>
-      </div>
+      <v-input
+        v-if="isDefaultIdentity"
+        :value="email"
+        name="input-email"
+        label="Email Address"
+        class-name="is-static"
+        type="email"
+        help="Contact support if you need to change your email
+        address."
+        readonly
+        data-test="input-email"
+      />
+
       <v-select
         v-model="newSettings.fiatCurrency"
         :options="availableCurrencies"
         label="Fiat Currency"
         name="fiatCurrency"
+        data-test="select-fiat"
         @input="updateSettings"
       />
 
     </v-form>
-    <two-factor-auth-settings/>
-    <change-password-settings/>
+    <two-factor-auth-settings v-if="isDefaultIdentity" />
+    <change-password-settings v-if="isDefaultIdentity" />
   </base-page>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
+import error from '@/mixins/error';
 import BasePage from '@/components/pages/Base';
 import VForm from '@/components/ui/form/VForm.vue';
-import error from '@/mixins/error';
 import VSelect from '@/components/ui/form/VSelect.vue';
+import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
 import ChangePasswordSettings from '@/components/ChangePasswordSettings';
@@ -53,6 +55,7 @@ export default {
   }),
   computed: {
     ...mapState('user', ['settings', 'availableCurrencies', 'email']),
+    ...mapGetters('user', ['isDefaultIdentity']),
     isSettingsChange() {
       return JSON.stringify(this.settings) !== JSON.stringify(this.newSettings);
     },
@@ -61,13 +64,12 @@ export default {
     ...mapActions('user', {
       updateSettingsInStore: 'updateSettings',
     }),
-    updateSettings() {
-      this.updateSettingsInStore(this.newSettings).then(() => {
-        this.$notify({
-          title: 'Settings Saved',
-          text: 'Your settings have been saved.',
-          type: 'is-info',
-        });
+    async updateSettings() {
+      await this.updateSettingsInStore({ ...this.newSettings });
+      this.$notify({
+        title: 'Settings Saved',
+        text: 'Your settings have been saved.',
+        type: 'is-info',
       });
     },
   },
@@ -82,6 +84,7 @@ export default {
   components: {
     BasePage,
     VForm,
+    VInput,
     VSelect,
     VButton,
     TwoFactorAuthSettings,

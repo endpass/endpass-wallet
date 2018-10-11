@@ -1,72 +1,200 @@
+import { isEmpty } from 'lodash';
 import {
-  SAVE_TOKEN,
-  SAVE_TOKENS,
-  DELETE_TOKEN,
-  SAVE_TOKENS_PRICES,
-  SAVE_TOKENS_BALANCES,
-  SAVE_TOKEN_PRICE,
-  SAVE_TRACKED_TOKENS,
-  SAVE_TOKEN_INFO,
   SET_LOADING,
+  SET_TOKENS_BY_ADDRESS,
+  SET_BALANCES_BY_ADDRESS,
+  ADD_NETWORK_TOKENS,
+  ADD_TOKENS_PRICES,
+  SET_USER_TOKENS,
 } from './mutations-types';
-import { Token, NotificationError } from '@/class';
+import { NotificationError } from '@/class';
+import ERC20Token from '@/class/erc20';
 import {
   tokenInfoService,
   ethplorerService,
   priceService,
   userService,
 } from '@/services';
-import web3 from '@/utils/web3';
+import { merge, mapValuesWith } from '@/utils/objects';
+import { mapArrayByProp } from '@/utils/arrays';
 import { priceUpdateInterval } from '@/config';
+import { MAIN_NET_ID } from '@/constants';
 
-const saveTokenAndSubscribe = async (
-  { state, commit, getters, dispatch },
+const init = async ({ dispatch }) => {
+  await dispatch('getNetworkTokens');
+
+  dispatch('subscribeOnCurrentAccountTokensUpdates');
+};
+
+const subscribeOnCurrentAccountTokensUpdates = ({ dispatch }) => {
+  dispatch('getCurrentAccountTokensData');
+
+  setInterval(() => {
+    dispatch('getCurrentAccountTokensData');
+  }, priceUpdateInterval);
+};
+
+const addUserToken = async (
+  { commit, dispatch, getters, rootGetters },
   { token },
 ) => {
-  const { net } = getters;
-
-  // Check if already subscribed to token
-  const tokenExist = state.trackedTokens.indexOf(token.address) !== -1;
-  if (!tokenExist) {
+  if (!getters.userTokenByAddress(token.address)) {
     try {
-      commit(SAVE_TOKEN, { token, net });
-      commit(SAVE_TRACKED_TOKENS, [token.address]);
-      await userService.setSetting('tokens', state.savedTokens);
-    } catch (e) {
-      dispatch('errors/emitError', e, { root: true });
+      const updatedTokens = getters.userTokensWithToken({
+        net: rootGetters['web3/activeNetwork'],
+        token,
+      });
+
+      await userService.setSetting(
+        'tokens',
+        mapValuesWith(updatedTokens, prop => Object.values(prop)),
+      );
+
+      commit(SET_USER_TOKENS, updatedTokens);
+    } catch (err) {
+      dispatch('errors/emitError', err, { root: true });
     }
   }
 };
 
-const deleteTokenAndUnsubscribe = async (
-  { commit, getters, state, dispatch },
+const removeUserToken = async (
+  { commit, getters, dispatch, rootGetters },
   { token },
 ) => {
-  const { net } = getters;
+  if (getters.userTokenByAddress(token.address)) {
+    try {
+      const updatedTokens = getters.userTokensWithoutToken({
+        net: rootGetters['web3/activeNetwork'],
+        token,
+      });
+
+      await userService.setSetting(
+        'tokens',
+        mapValuesWith(updatedTokens, prop => Object.values(prop)),
+      );
+
+      commit(SET_USER_TOKENS, updatedTokens);
+    } catch (err) {
+      dispatch('errors/emitError', err, { root: true });
+    }
+  }
+};
+
+const getCurrentAccountTokens = async ({ commit, dispatch, rootGetters }) => {
+  const address = rootGetters['accounts/currentAddressString'];
+
+  if (!address) return;
 
   try {
-    const newTokensData = Object.assign({}, state.savedTokens);
-    const deletionTokenIndex = newTokensData[net].findIndex(
-      savedToken => savedToken.address === token.address,
+    commit(SET_LOADING, true);
+
+    await dispatch('getTokensByAddress', {
+      address,
+    });
+  } catch (err) {
+    const error = new NotificationError({
+      title: 'Failed token subscription',
+      text: "Token information won't be updated. Please reload page.",
+      type: 'is-warning',
+    });
+    dispatch('errors/emitError', error, { root: true });
+  } finally {
+    commit(SET_LOADING, false);
+  }
+};
+
+const getCurrentAccountTokensBalances = async ({
+  dispatch,
+  commit,
+  getters,
+  rootGetters,
+}) => {
+  const address = rootGetters['accounts/currentAddressString'];
+
+  if (!address) return;
+
+  const tokens = getters.allCurrentAccountTokens;
+  const tokensBalances = await dispatch('getTokensBalances', {
+    address,
+    tokens,
+  });
+
+  commit(SET_BALANCES_BY_ADDRESS, {
+    balances: tokensBalances,
+    address,
+  });
+};
+
+const getCurrentAccountTokensPrices = async ({ dispatch, getters }) => {
+  await dispatch('getTokensPrices', {
+    tokensSymbols: Object.values(getters.allCurrentAccountTokens).map(
+      ({ symbol }) => symbol,
+    ),
+  });
+};
+
+const getCurrentAccountTokensData = async ({ dispatch }) => {
+  await dispatch('getCurrentAccountTokensPrices');
+  await dispatch('getCurrentAccountTokensBalances');
+};
+
+const getTokensByAddress = async ({ dispatch, commit }, { address }) => {
+  try {
+    const resolvedTokens = await ethplorerService.getTokensWithBalance(address);
+
+    dispatch(
+      'connectionStatus/updateApiErrorStatus',
+      {
+        id: 'ethplorer',
+        status: true,
+      },
+      { root: true },
     );
-    newTokensData[net] = newTokensData[net].slice(0);
-    newTokensData[net].splice(deletionTokenIndex, 1);
-    await userService.setSetting('tokens', newTokensData);
-    commit(DELETE_TOKEN, { token, net });
+
+    const mappedTokens = mapArrayByProp(resolvedTokens, 'address');
+
+    commit(ADD_NETWORK_TOKENS, mappedTokens);
+    commit(SET_TOKENS_BY_ADDRESS, {
+      address,
+      tokens: Object.keys(mappedTokens),
+    });
   } catch (e) {
+    // May be we must set empty array to user tokens
+    e.apiError = {
+      id: 'ethplorer',
+      status: false,
+    };
     dispatch('errors/emitError', e, { root: true });
   }
 };
 
-// Get public info like name and logo about all standard ERC20 tokens
-const getAllTokens = async ({ commit, dispatch, getters }) => {
-  if (getters.net !== 1) {
-    return [];
-  }
-  commit(SET_LOADING, true);
-  let tokens = [];
+const getTokensBalancesByAddress = async (
+  { commit, dispatch, getters },
+  { address },
+) => {
+  const tokens = getters.tokensByAddress(address);
+  const tokensBalances = await dispatch('getTokensBalances', {
+    address,
+    tokens,
+  });
+
+  commit(SET_BALANCES_BY_ADDRESS, {
+    address,
+    balances: tokensBalances,
+  });
+};
+
+const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
+  const isMainNetwork = rootGetters['web3/activeNetwork'] === MAIN_NET_ID;
+
+  if (!isMainNetwork) return;
+
   try {
-    tokens = await tokenInfoService.getTokensList();
+    commit(SET_LOADING, true);
+
+    const networkTokens = await tokenInfoService.getTokensList();
+
+    commit(ADD_NETWORK_TOKENS, mapArrayByProp(networkTokens, 'address'));
   } catch (e) {
     const error = new NotificationError({
       title: 'Failed to get list of tokens',
@@ -76,134 +204,58 @@ const getAllTokens = async ({ commit, dispatch, getters }) => {
     });
     dispatch('errors/emitError', error, { root: true });
   } finally {
-    commit(SAVE_TOKEN_INFO, tokens);
     commit(SET_LOADING, false);
   }
 };
 
-const subscribeOnTokensBalancesUpdates = async ({
-  dispatch,
-  state,
-  commit,
-  getters,
-}) => {
-  if (!getters.address) {
-    return;
-  }
-  try {
-    // Save tokens with balance
-    await dispatch('getTokensWithBalance');
-  } catch (e) {
-    const error = new NotificationError({
-      title: 'Failed token subscription',
-      text: "Token information won't be updated. Please reload page.",
-      type: 'is-warning',
-    });
-    dispatch('errors/emitError', error, { root: true });
-  }
-  return dispatch('updateTokensBalances');
-};
-
-// Fetch non zero token balances of the given address
-const getTokensWithBalance = async ({ state, getters, dispatch, commit }) => {
-  commit(SET_LOADING, true);
-  const { address } = getters;
-  if (!address) {
-    return [];
-  }
-  let tokensWithBalance = [];
-  try {
-    tokensWithBalance = await ethplorerService.getTokensWithBalance(address);
-    dispatch(
-      'connectionStatus/updateApiErrorStatus',
-      {
-        id: 'ethplorer',
-        status: true,
-      },
-      { root: true },
-    );
-  } catch (e) {
-    e.apiError = {
-      id: 'ethplorer',
-      status: false,
-    };
-    dispatch('errors/emitError', e, { root: true });
-  }
-
-  tokensWithBalance = tokensWithBalance
-    .filter(token => !!token.address)
-    .map(token => {
-      token.address = web3.utils.toChecksumAddress(token.address);
-      return token;
-    });
-
-  commit(SAVE_TOKEN_INFO, tokensWithBalance);
-
-  const tokenAddrs = tokensWithBalance.map(token => token.address);
-  // Add unique addresses to tracked tokens list
-  commit(SAVE_TRACKED_TOKENS, tokenAddrs);
-
-  commit(SET_LOADING, false);
-};
-
-const updateTokensPrices = async ({ state, commit, getters }) => {
-  if (state.trackedTokens === null || state.trackedTokens.length === 0) return;
-  const symbols = getters.tokensWithBalance.map(token => token.symbol);
-
-  const prices = await priceService.getPrices(
-    symbols,
-    getters.activeCurrencyName,
-  );
-  commit(SAVE_TOKENS_PRICES, prices);
-};
-const updateTokenPrice = async ({ commit, getters }, { symbol }) => {
-  const price = await priceService.getPrice(symbol, getters.activeCurrencyName);
-  commit(SAVE_TOKEN_PRICE, { symbol, price });
-};
-const subscribeOnTokensPricesUpdates = ({ dispatch }) => {
-  dispatch('updateTokensPrices');
-  setInterval(() => {
-    dispatch('updateTokensPrices');
-  }, priceUpdateInterval);
-};
-
-//TODO test and rename to SAVE_BALANCES
-const updateTokensBalances = async ({ commit, getters }) => {
-  const erc20s = getters.trackedTokens;
-  const allBalances = await Promise.all(
-    erc20s.map(async erc20 => {
+const getTokensBalances = async (ctx, { address, tokens }) => {
+  const balances = await Promise.all(
+    Object.keys(tokens).map(async tokenAddress => {
       try {
-        let balance = await erc20.getBalance(getters.address);
-        return [erc20.address, balance];
-      } catch (e) {
-        return [erc20.address, null];
+        const balance = await ERC20Token.getBalance(address, tokenAddress);
+
+        return {
+          [tokenAddress]: balance,
+        };
+      } catch (err) {
+        return {
+          [tokenAddress]: null,
+        };
       }
     }),
   );
+  const tokensBalances = merge(...balances);
 
-  // In format {address: balance}
-  const balances = allBalances.reduce((obj, item) => {
-    obj[item[0]] = item[1];
-    return obj;
-  }, {});
-
-  commit(SAVE_TOKENS_BALANCES, balances);
+  return tokensBalances;
 };
 
-const init = async ({ dispatch }) => {
-  await dispatch('getAllTokens');
-  return dispatch('subscribeOnTokensPricesUpdates');
+const getTokensPrices = async ({ commit, getters }, { tokensSymbols }) => {
+  if (tokensSymbols.length === 0) return;
+
+  try {
+    const prices = await priceService.getPrices(
+      tokensSymbols,
+      getters.activeCurrencyName,
+    );
+
+    commit(ADD_TOKENS_PRICES, prices);
+  } catch (err) {
+    commit(ADD_TOKENS_PRICES, {});
+  }
 };
 
 export default {
-  getAllTokens,
-  saveTokenAndSubscribe,
-  deleteTokenAndUnsubscribe,
-  getTokensWithBalance,
-  updateTokensPrices,
-  updateTokensBalances,
-  updateTokenPrice,
-  subscribeOnTokensBalancesUpdates,
-  subscribeOnTokensPricesUpdates,
   init,
+  subscribeOnCurrentAccountTokensUpdates,
+  addUserToken,
+  removeUserToken,
+  getTokensBalancesByAddress,
+  getCurrentAccountTokens,
+  getCurrentAccountTokensBalances,
+  getNetworkTokens,
+  getTokensByAddress,
+  getTokensBalances,
+  getTokensPrices,
+  getCurrentAccountTokensPrices,
+  getCurrentAccountTokensData,
 };

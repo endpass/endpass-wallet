@@ -1,69 +1,135 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
-import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
 import Vuex from 'vuex';
+import VueRouter from 'vue-router';
 import ReceivePage from '@/components/pages/Receive.vue';
-import web3 from 'web3';
-import ethereumWalletMock from '../../../fixtures/wallet.js';
-
-const wallet = ethereumWalletMock;
+import ethereumWalletMock from 'fixtures/wallet';
+import ethereumAddressWalletMock from 'fixtures/address';
+import transactions from 'fixtures/transactions';
 
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
+localVue.use(VueRouter);
 
 describe('ReceivePage', () => {
-  let actions = {
-    'connectionStatus/updateApiErrorStatus': function() {},
-  };
   let store;
-  let mock;
+  let trxActions;
+  let accountsActions;
+  let tokensActions;
+  let wrapper;
+  let router;
+
+  const walletAddress = ethereumWalletMock.getChecksumAddressString();
+  const publicWalletAddress = ethereumAddressWalletMock.getChecksumAddressString();
 
   beforeEach(() => {
-    mock = new MockAdapter(axios);
+    trxActions = {
+      updateTransactionHistory: jest.fn(),
+    };
 
+    accountsActions = {
+      selectWallet: jest.fn(),
+    };
+
+    tokensActions = {
+      getTokensWithBalanceByAddress: jest.fn().mockResolvedValue([]),
+      getTokensBalancesByAddress: jest.fn().mockResolvedValue([]),
+    };
+
+    router = new VueRouter();
     store = new Vuex.Store({
-      state: {
+      modules: {
         web3: {
-          web3,
-          activeCurrency: {
-            name: 'ETH',
+          namespaced: true,
+          state: {
+            activeCurrency: 'KEK',
+            activeNet: {
+              id: 1,
+            },
           },
         },
-      },
-      actions,
-      modules: {
+        tokens: {
+          namespaced: true,
+          actions: tokensActions,
+        },
+        transactions: {
+          namespaced: true,
+          getters: {
+            incomingTransactions: jest
+              .fn()
+              .mockReturnValue(transactions.ethplorerTransactions),
+          },
+          actions: trxActions,
+        },
         accounts: {
           namespaced: true,
           state: {
-            address: wallet,
+            address: ethereumWalletMock,
+            wallets: {
+              [walletAddress]: ethereumWalletMock,
+              [publicWalletAddress]: ethereumAddressWalletMock,
+            },
           },
+          actions: accountsActions,
           getters: {
             balance: jest.fn(),
           },
         },
       },
     });
+    wrapper = shallow(ReceivePage, {
+      localVue,
+      store,
+      router,
+    });
   });
 
-  afterEach(() => {
-    mock.reset();
+  describe('render', () => {
+    it('should be a Vue component', () => {
+      expect(wrapper.name()).toBe('ReceivePage');
+      expect(wrapper.isVueInstance()).toBeTruthy();
+    });
+
+    it('should render component', () => {
+      expect(wrapper.element).toMatchSnapshot();
+    });
   });
 
-  // done callback is required for async tests
-  it.only('downloads transaction history', async () => {
-    mock
-      .onGet(/api\.ethplorer\.io\/getAddressTransactions/)
-      .reply(200, [{ id: '1', to: wallet.getChecksumAddressString() }]);
+  describe('methods', () => {
+    describe('getHistory', () => {
+      it('should not call updateTransactionHistory if address is not present', async () => {
+        expect.assertions(1);
+        trxActions.updateTransactionHistory.mockClear();
+        wrapper.setComputed({
+          address: null,
+        });
+        await wrapper.vm.getHistory();
+        expect(trxActions.updateTransactionHistory).not.toHaveBeenCalled();
+      });
 
-    // new wrapper must be initialized in each test AFTER setting up mock
-    const wrapper = shallow(ReceivePage, { store, localVue });
-    wrapper.vm.getTransactions();
-    // Wait for promises in created() hook to resolve
-    await flushPromises();
+      it('should call updateTransactionHistory', async () => {
+        expect.assertions(1);
+        await wrapper.vm.getHistory();
+        expect(trxActions.updateTransactionHistory).toHaveBeenCalled();
+      });
+    });
 
-    let elems = wrapper.vm.transactions;
-    expect(elems.length).toBe(1);
-    expect(elems[0].to).toBe(wrapper.vm.address);
+    describe('clickSendButton', () => {
+      it('should call select wallet with passed address', () => {
+        wrapper.vm.clickSendButton(walletAddress);
+        expect(accountsActions.selectWallet).toHaveBeenCalledWith(
+          expect.any(Object),
+          walletAddress,
+          undefined,
+        );
+      });
+
+      it('should redirect to send', () => {
+        router.push('/kek');
+        expect(router.currentRoute.fullPath).toBe('/kek');
+        wrapper.vm.clickSendButton(walletAddress);
+        expect(router.currentRoute.fullPath).toBe('/send');
+      });
+    });
   });
 });

@@ -2,12 +2,13 @@ import Vue from 'vue';
 import Intercom from 'vue-intercom';
 import VueAnalytics from 'vue-analytics';
 import Notifications from 'vue-notification';
+import { googleAnalyticsId, intercomAppId } from '@/config';
+
 import router from './router';
 import store from './store';
-import validation from './validation';
 import App from './App';
+import './validation';
 import './directives';
-import { googleAnalyticsId, intercomAppId } from '@/config';
 
 const isProduction = process.env.NODE_ENV === 'production';
 

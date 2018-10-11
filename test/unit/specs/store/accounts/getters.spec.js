@@ -4,31 +4,31 @@ import getters from '@/store/accounts/getters';
 import { Wallet, Address } from '@/class';
 
 describe('Accounts getters', () => {
-  describe('getAccountAddresses', () => {
+  describe('accountAddresses', () => {
     it('should return empty array', () => {
       const state = { wallets: {} };
 
-      expect(getters.getAccountAddresses(state)).toEqual([]);
+      expect(getters.accountAddresses(state)).toEqual([]);
     });
 
     it('should return an array of addresses', () => {
       const state = { wallets: { '123': '321', '234': '432' } };
 
-      expect(getters.getAccountAddresses(state)).toEqual(['123', '234']);
+      expect(getters.accountAddresses(state)).toEqual(['123', '234']);
     });
   });
 
   describe('isPublicAccount', () => {
     it('should return true when the account is public', () => {
       const { address } = v3;
-      const state = { address: new Address(address), wallet: null };
+      const state = { wallet: new Address(address) };
 
       expect(getters.isPublicAccount(state)).toBeTruthy();
     });
 
     it('should return false when the account is not public', () => {
       const { address } = v3;
-      const state = { address: new Address(address), wallet: new Wallet(v3) };
+      const state = { wallet: new Wallet(v3) };
 
       expect(getters.isPublicAccount(state)).toBeFalsy();
     });

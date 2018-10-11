@@ -25,11 +25,14 @@ export default {
   }),
   methods: {
     ...mapActions('user', ['login', 'loginViaOTP']),
-    async handleLoginByEmailModalConfirm(email) {
+    ...mapActions({
+      reloadData: 'init',
+    }),
+    async handleLoginByEmailModalConfirm({ email, mode }) {
       try {
         this.isLoading = true;
         const { redirect_uri: redirectUri } = this.$route.query;
-        const challengeType = await this.login({ email, redirectUri });
+        const challengeType = await this.login({ email, redirectUri, mode });
 
         if (challengeType === 'otp') {
           this.email = email;
@@ -53,6 +56,8 @@ export default {
 
         await this.loginViaOTP({ code, email });
         this.handleSuccessfulLogin();
+
+        await this.reloadData();
         this.redirectPage();
       } catch (e) {
         this.handleFailedLogin(e);

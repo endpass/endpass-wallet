@@ -37,18 +37,22 @@ describe('VInput', () => {
     expect(wrapper.contains('label')).toBeFalsy();
     expect(input.attributes().type).toBe('text');
     expect(input.element.value).toBeFalsy();
+    expect(input.classes()).toEqual(['input']);
     expect(wrapper.contains('p')).toBeFalsy();
+    expect(input.attributes().class).toBe('input');
 
     wrapper.setProps({
       value: 'some value',
       label: 'Some Label',
       help: 'help text',
+      className: 'class name',
     });
 
     expect(wrapper.find('p.help').text()).toBe('help text');
     expect(wrapper.find('label').text()).toBe('Some Label');
     expect(input.element.value).toBe('some value');
     expect(input.attributes().type).toBe('text');
+    expect(input.classes()).toEqual(['input', 'class', 'name']);
 
     wrapper.setProps({ error: 'Some error' });
     expect(wrapper.find('p.help').text()).toBe('Some error');

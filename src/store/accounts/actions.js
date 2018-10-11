@@ -4,7 +4,7 @@ import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { hdKeyMnemonic, kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
-import { Wallet } from '@/class';
+import { Wallet, NotificationError } from '@/class';
 import keystore from '@/utils/keystore';
 import {
   SET_ADDRESS,
@@ -20,9 +20,13 @@ const { toChecksumAddress } = web3.utils;
 const selectWallet = async ({ commit, state, dispatch }, address) => {
   commit(SET_WALLET, state.wallets[address]);
   commit(SET_ADDRESS, address);
+
   dispatch('updateBalance');
 
-  return dispatch('tokens/subscribeOnTokensBalancesUpdates', null, {
+  await dispatch('tokens/getCurrentAccountTokens', null, {
+    root: true,
+  });
+  await dispatch('tokens/getCurrentAccountTokensData', null, {
     root: true,
   });
 };
@@ -62,6 +66,10 @@ const addWalletWithV3 = async (
       password: walletPassword,
     });
   } catch (e) {
+    if (!(e instanceof NotificationError)) {
+      throw e;
+    }
+
     return dispatch('errors/emitError', e, { root: true });
   }
 };
@@ -201,9 +209,9 @@ const updateBalance = async ({ commit, dispatch, state }) => {
   if (!state.address) {
     return;
   }
+  const address = state.address.getChecksumAddressString();
 
   try {
-    const address = state.address.getChecksumAddressString();
     const balance = await web3.eth.getBalance(address);
     commit(SET_BALANCE, balance);
   } catch (e) {

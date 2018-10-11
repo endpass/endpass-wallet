@@ -1,15 +1,15 @@
 import { userService } from '@/services';
 import { NotificationError } from '@/class';
+import { IDENTITY_MODE } from '@/constants';
 import {
   SET_AUTHORIZATION_STATUS,
+  SET_IDENTITY_TYPE,
   SET_EMAIL,
   SET_SETTINGS,
   SET_OTP_SETTINGS,
 } from './mutations-types';
-import {
-  SAVE_TOKENS,
-  SAVE_TRACKED_TOKENS,
-} from '@/store/tokens/mutations-types';
+import { SET_USER_TOKENS } from '@/store/tokens/mutations-types';
+import { mapArrayByProp } from '@/utils/arrays';
 
 const setAuthorizationStatus = (
   { commit, getters },
@@ -25,22 +25,57 @@ const setAuthorizationStatus = (
       type: 'is-danger',
     });
 
-    //dispatch('errors/emitError', notificationError, { root: true });
+    // dispatch('errors/emitError', notificationError, { root: true });
   }
 };
 
-const login = (ctx, { email, redirectUri }) =>
-  userService.login({ email, redirectUri });
+const login = async (
+  { commit, dispatch },
+  { email, redirectUri, mode = {} },
+) => {
+  const { type = IDENTITY_MODE.DEFAULT, serverUrl } = mode;
 
-const logout = async ({ commit, dispatch }) => {
+  if (type === IDENTITY_MODE.DEFAULT) {
+    return userService.login({ email, redirectUri });
+  }
+
   try {
-    commit(SET_EMAIL, null);
-    await userService.logout();
+    userService.setIdentityMode(type, serverUrl);
+    commit(SET_IDENTITY_TYPE, type);
+    commit(SET_AUTHORIZATION_STATUS, true);
+    commit(SET_EMAIL, email);
+    await userService.setSettings({ email });
+
+    return dispatch('init', null, { root: true });
+  } catch (e) {
+    return dispatch('errors/emitError', e, { root: true });
+  }
+};
+
+const logout = async ({ commit, dispatch, getters }) => {
+  commit(SET_EMAIL, null);
+
+  try {
+    if (getters.isLocalIdentity) {
+      await userService.deleteIdentityData();
+    }
+
+    try {
+      userService.setIdentityMode(IDENTITY_MODE.DEFAULT);
+    } catch (e) {} // eslint-disable-line no-empty
+
+    if (getters.isDefaultIdentity) {
+      await userService.logout();
+    }
+
     window.location.reload();
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
   }
 };
+
+const validateCustomServer = (ctx, { serverUrl }) =>
+  userService.validateIdentityServer(serverUrl);
 
 const loginViaOTP = (ctx, { code, email }) =>
   userService.loginViaOTP(code, email);
@@ -48,6 +83,7 @@ const loginViaOTP = (ctx, { code, email }) =>
 const getOtpSettings = async ({ commit, dispatch }) => {
   try {
     const otpSettings = await userService.getOtpSettings();
+
     commit(SET_OTP_SETTINGS, otpSettings);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
@@ -55,22 +91,14 @@ const getOtpSettings = async ({ commit, dispatch }) => {
 };
 
 const setOtpSettings = async ({ commit, dispatch }, { secret, code }) => {
-  try {
-    await userService.setOtpSettings(secret, code);
-    commit(SET_OTP_SETTINGS, { status: 'enabled' });
-  } catch (e) {
-    dispatch('errors/emitError', e, { root: true });
-  }
+  await userService.setOtpSettings(secret, code);
+  commit(SET_OTP_SETTINGS, { status: 'enabled' });
 };
 
 const deleteOtpSettings = async ({ commit, dispatch }, { code }) => {
-  try {
-    await userService.deleteOtpSettings(code);
-    commit(SET_OTP_SETTINGS, {});
-    await dispatch('getOtpSettings');
-  } catch (e) {
-    dispatch('errors/emitError', e, { root: true });
-  }
+  await userService.deleteOtpSettings(code);
+  commit(SET_OTP_SETTINGS, {});
+  await dispatch('getOtpSettings');
 };
 
 const updateSettings = async ({ commit, dispatch }, settings) => {
@@ -95,14 +123,29 @@ const setUserSettings = async ({ commit, dispatch }) => {
     }
 
     if (tokens) {
-      commit(`tokens/${SAVE_TOKENS}`, tokens, {
-        root: true,
-      });
-      // Saved token contract addresses on all networks
-      const tokenAddrs = []
-        .concat(...Object.values(tokens))
-        .map(token => token.address);
-      commit(`tokens/${SAVE_TRACKED_TOKENS}`, tokenAddrs, { root: true });
+      const mappedTokens = Object.keys(tokens).reduce(
+        (acc, networkKey) =>
+          Object.assign(acc, {
+            [networkKey]: mapArrayByProp(tokens[networkKey], 'address'),
+          }),
+        {},
+      );
+
+      commit(`tokens/${SET_USER_TOKENS}`, mappedTokens, { root: true });
+    }
+  } catch (e) {
+    await dispatch('errors/emitError', e, { root: true });
+  }
+};
+
+const initIdentityMode = async ({ commit, dispatch }) => {
+  try {
+    const { type, serverUrl } = userService.getIdentityMode();
+    userService.setIdentityMode(type, serverUrl);
+
+    if (type !== IDENTITY_MODE.DEFAULT) {
+      commit(SET_IDENTITY_TYPE, type);
+      commit(SET_AUTHORIZATION_STATUS, true);
     }
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });
@@ -127,5 +170,7 @@ export default {
   setOtpSettings,
   setUserSettings,
   deleteOtpSettings,
+  validateCustomServer,
+  initIdentityMode,
   init,
 };

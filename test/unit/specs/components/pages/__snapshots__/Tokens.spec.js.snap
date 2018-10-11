@@ -38,17 +38,22 @@ exports[`TokensPage render should render component 1`] = `
                 <div
                   class="panel-block"
                 >
-                  <search-input />
+                  <search-input
+                    data-test="token-search-input"
+                    v-model="userTokenQuery"
+                  />
                 </div>
                  
                 <v-spinner
                   class="spinner-block"
+                  data-test="tokens-spinner"
                 />
                  
                 <div
                   class="scroller"
                 >
-                  <token-list
+                  <tokens-list
+                    data-test="tokens-list"
                     has-remove="true"
                     item-class="panel-block is-clearfix is-block"
                     tokens="[object Object],[object Object]"
@@ -81,6 +86,7 @@ exports[`TokensPage render should render component 1`] = `
               >
                 <a
                   class="button is-outlined is-info is-small"
+                  data-test="add-custom-token-button"
                 >
                   
                   Add Custom Token

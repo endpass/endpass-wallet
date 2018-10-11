@@ -59,14 +59,16 @@ describe('web3 actions', () => {
       expect(userService.setSetting).toHaveBeenCalledWith('net', networkId);
     });
 
-    it('should dispatch subscribeOnBlockUpdates and tokens/subscribeOnTokensBalancesUpdates actions', async () => {
+    it('should dispatch subscribeOnBlockUpdates, tokens/getCurrentAccountTokens and tokens/getCurrentAccountTokensData actions', async () => {
       expect.assertions(1);
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
       expect(dispatch.mock.calls).toEqual([
         ['subscribeOnBlockUpdates'],
-        ['tokens/subscribeOnTokensBalancesUpdates', {}, { root: true }],
+        ['tokens/getNetworkTokens', {}, { root: true }],
+        ['tokens/getCurrentAccountTokens', {}, { root: true }],
+        ['tokens/getCurrentAccountTokensData', null, { root: true }],
       ]);
     });
 
@@ -79,7 +81,7 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(dispatch).toHaveBeenCalledTimes(3);
+      expect(dispatch).toHaveBeenCalledTimes(5);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -89,7 +91,7 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(dispatch).toHaveBeenCalledTimes(3);
+      expect(dispatch).toHaveBeenCalledTimes(5);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -613,13 +615,13 @@ describe('web3 actions', () => {
       ]);
     });
 
-    it('should dispatch subscribeOnTokensBalancesUpdates and subscribeOnBlockUpdates actions', async () => {
+    it('should dispatch getCurrentAccountTokens and subscribeOnBlockUpdates actions', async () => {
       expect.assertions(1);
 
       await init({ commit, dispatch, state });
 
       expect(dispatch.mock.calls).toEqual([
-        ['tokens/subscribeOnTokensBalancesUpdates', {}, { root: true }],
+        ['tokens/getCurrentAccountTokens', {}, { root: true }],
         ['subscribeOnBlockUpdates'],
       ]);
     });
@@ -643,7 +645,7 @@ describe('web3 actions', () => {
 
       await init({ commit, dispatch, state });
 
-      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenCalledTimes(3);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });

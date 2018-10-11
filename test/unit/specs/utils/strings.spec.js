@@ -3,6 +3,7 @@ import {
   toKebab,
   toCamel,
   toWords,
+  matchString,
 } from '@/utils/strings';
 
 describe('getShortStringWithEllipsis', () => {
@@ -66,5 +67,14 @@ describe('toKebab', () => {
     strings.forEach(string => {
       expect(toKebab(string)).toEqual('not-in-kebab-case');
     });
+  });
+});
+
+describe('matchString', () => {
+  it('should correctly match substrings in strings', () => {
+    expect(matchString('HELLO world', 'hello')).toBe(true);
+    expect(matchString('hello world', 'WORLD')).toBe(true);
+    expect(matchString('HELLO world', 'goodbye')).toBe(false);
+    expect(matchString('HELLO world', 'ell')).toBe(true);
   });
 });

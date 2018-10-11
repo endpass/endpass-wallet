@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import Web3 from 'web3';
 
 import web3 from '@/utils/web3';
@@ -15,7 +16,11 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
   return Promise.all([
     userService.setSetting('net', network.id),
     dispatch('subscribeOnBlockUpdates'),
-    dispatch('tokens/subscribeOnTokensBalancesUpdates', {}, { root: true }),
+    dispatch('tokens/getNetworkTokens', {}, { root: true }),
+    dispatch('tokens/getCurrentAccountTokens', {}, { root: true }),
+    dispatch('tokens/getCurrentAccountTokensData', null, {
+      root: true,
+    }),
   ]).catch(e => dispatch('errors/emitError', e, { root: true }));
 };
 
@@ -155,12 +160,10 @@ const init = async ({ commit, dispatch, state }) => {
     commit(mutationsTypes.CHANGE_NETWORK, activeNet);
     commit(mutationsTypes.CHANGE_CURRENCY, activeCurrency);
 
-    await dispatch(
-      'tokens/subscribeOnTokensBalancesUpdates',
-      {},
-      { root: true },
-    );
-    await dispatch('subscribeOnBlockUpdates');
+    await Promise.all([
+      dispatch('tokens/getCurrentAccountTokens', {}, { root: true }),
+      dispatch('subscribeOnBlockUpdates'),
+    ]);
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });
   }

@@ -1,4 +1,5 @@
 import { BigNumber } from 'bignumber.js';
+import { uniq } from 'lodash';
 import web3 from '@/utils/web3';
 import { MAIN_NET_ID } from '@/constants';
 
@@ -79,6 +80,16 @@ const currentNetTransactions = (state, getters, rootState) => {
   );
 };
 
+const incomingTransactions = (state, getters, rootState) => {
+  if (!rootState.accounts.address) {
+    return [];
+  }
+
+  const address = rootState.accounts.address.getChecksumAddressString();
+
+  return getters.currentNetTransactions.filter(({ to }) => to === address);
+};
+
 const getPendingTransactions = state => state.pendingTransactions;
 
 const getTransactionByHash = state => hash =>
@@ -87,12 +98,29 @@ const getTransactionByHash = state => hash =>
 const getPendingTransactionByHash = state => hash =>
   state.pendingTransactions.find(trx => trx.hash === hash);
 
+const getAddressesFromTransactionsHistory = state =>
+  uniq(state.transactionHistory.map(({ to }) => to));
+
+const getAddressesFromPendingTransactions = state =>
+  uniq(state.pendingTransactions.map(({ to }) => to));
+
+const getAddressesFromTransactions = (state, getters) =>
+  uniq(
+    getters.getAddressesFromTransactionsHistory.concat(
+      getters.getAddressesFromPendingTransactions,
+    ),
+  );
+
 export default {
+  getPendingTransactions,
+  getPendingTransactionByHash,
+  getTransactionByHash,
+  getAddressesFromTransactionsHistory,
+  getAddressesFromPendingTransactions,
+  getAddressesFromTransactions,
   pendingBalance,
   filteredHistoryTransactions,
   currentNetTransactions,
   accountTransactions,
-  getPendingTransactions,
-  getPendingTransactionByHash,
-  getTransactionByHash,
+  incomingTransactions,
 };

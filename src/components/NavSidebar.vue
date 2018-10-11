@@ -35,7 +35,8 @@
           v-else
           class="button"
           to=""
-          @click.prevent="logout()">
+          @click.prevent="handleLogout"
+        >
           <span
             class="icon is-small"
             v-html="require('@/img/account-logout.svg')"
@@ -78,7 +79,10 @@
           <div class="column">
             <p class="menu-label">Accounts</p>
           </div>
-          <div class="column">
+          <div
+            v-if="!isCustomIdentity"
+            class="column"
+          >
             <a
               class="button is-outlined is-small is-info"
               @click="openNewAccountModal"
@@ -87,11 +91,17 @@
             </a>
           </div>
         </div>
-        <account-chooser :width="4"/>
+        <account-chooser
+          v-model="activeAddress"
+          :width="4"
+          :accounts="walletsOptions"
+          :allow-empty="false"
+        />
       </div>
 
       <div
         class="nav-sidebar-item menu"
+        data-test="nav-sidebar-menu"
         @click="closeNavMenu"
       >
         <p
@@ -131,7 +141,7 @@
           </li>
           <li>
             <router-link
-              v-if="wallet"
+              v-if="wallet && !isPublicAccount"
               :to="{name: 'SendPage'}"
               class="nav-link"
               active-class="is-active"
@@ -190,34 +200,36 @@
           </li>
         </ul>
 
-        <p
-          v-if="wallet"
-          class="menu-label"
-        >
-          Tools
-        </p>
-        <ul
-          v-if="wallet"
-          class="menu-list">
-          <li>
-            <router-link
-              :to="{name:'MessagePage'}"
-              class="nav-link"
-              active-class="is-active"
-            >
-              Message
-            </router-link>
-          </li>
-          <li>
-            <router-link
-              :to="{name:'TransactionPage'}"
-              class="nav-link"
-              active-class="is-active"
-            >
-              Transaction
-            </router-link>
-          </li>
-        </ul>
+        <template v-if="!isPublicAccount">
+          <p
+            v-if="wallet"
+            class="menu-label"
+          >
+            Tools
+          </p>
+          <ul
+            v-if="wallet"
+            class="menu-list">
+            <li>
+              <router-link
+                :to="{name:'MessagePage'}"
+                class="nav-link"
+                active-class="is-active"
+              >
+                Message
+              </router-link>
+            </li>
+            <li>
+              <router-link
+                :to="{name:'TransactionPage'}"
+                class="nav-link"
+                active-class="is-active"
+              >
+                Transaction
+              </router-link>
+            </li>
+          </ul>
+        </template>
       </div>
 
       <div class="nav-sidebar-footer" />
@@ -232,6 +244,12 @@
       v-if="isLoginModal"
       @close="toggleLoginModal"
     />
+
+    <confirm-logout-modal
+      v-if="isConfirmLogoutModal"
+      @confirm="logout"
+      @close="toggleConfirmLogoutModal"
+    />
   </div>
 </template>
 
@@ -239,44 +257,49 @@
 import { mapGetters, mapActions, mapState } from 'vuex';
 import ProviderSelect from '@/components/bar/ProviderSelect.vue';
 import CurrencySelect from '@/components/bar/CurrencySelect.vue';
-import AccountChooser from '@/components/bar/AccountChooser.vue';
+import AccountChooser from '@/components/AccountChooser';
 import LoginModal from '@/components/modal/LoginModal';
+import ConfirmLogoutModal from '@/components/modal/ConfirmLogoutModal';
 import modalMixin from '@/mixins/modal';
 import NewAccountModal from '@/components/modal/NewAccountModal';
 
 export default {
-  name: 'nav-sidebar',
-  data() {
-    return {
-      navMenuActive: false,
-      newAccountModalOpen: false,
-    };
-  },
+  name: 'NavSidebar',
+  data: () => ({
+    navMenuActive: false,
+    newAccountModalOpen: false,
+  }),
   computed: {
     ...mapState({
       hdKey: state => state.accounts.hdKey,
       wallet: state => state.accounts.wallet,
+      wallets: state => state.accounts.wallets,
       address: state =>
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),
       email: state => state.user.email,
+      identityType: state => state.user.identityType,
     }),
-    ...mapGetters('user', ['isLoggedOut', 'isLoggedIn']),
+    ...mapGetters('user', [
+      'isLoggedOut',
+      'isLoggedIn',
+      'isCustomIdentity',
+      'isLocalIdentity',
+    ]),
     ...mapGetters('accounts', ['isPublicAccount']),
-  },
-  methods: {
-    ...mapActions('user', ['logout']),
-    toggleNavMenu() {
-      this.navMenuActive = !this.navMenuActive;
+
+    walletsOptions() {
+      return Object.keys(this.wallets);
     },
-    closeNavMenu() {
-      this.navMenuActive = false;
-    },
-    openNewAccountModal() {
-      this.newAccountModalOpen = true;
-    },
-    closeNewAccountModal() {
-      this.newAccountModalOpen = false;
+
+    activeAddress: {
+      get() {
+        return this.address;
+      },
+
+      set(newValue) {
+        this.selectWallet(newValue);
+      },
     },
   },
   watch: {
@@ -286,9 +309,36 @@ export default {
       }
     },
   },
+  methods: {
+    ...mapActions('user', ['logout']),
+    ...mapActions('accounts', ['selectWallet']),
+    toggleNavMenu() {
+      this.navMenuActive = !this.navMenuActive;
+    },
+
+    closeNavMenu() {
+      this.navMenuActive = false;
+    },
+
+    openNewAccountModal() {
+      this.newAccountModalOpen = true;
+    },
+
+    closeNewAccountModal() {
+      this.newAccountModalOpen = false;
+    },
+    handleLogout() {
+      if (this.isLocalIdentity) {
+        this.toggleConfirmLogoutModal();
+      } else {
+        this.logout();
+      }
+    },
+  },
   mixins: [modalMixin],
   components: {
     ProviderSelect,
+    ConfirmLogoutModal,
     CurrencySelect,
     AccountChooser,
     LoginModal,

@@ -23,10 +23,12 @@ function convertListenersToAttrs(listeners) {
         handlers = [handlers];
       }
 
-      const handler = handlers.find(h => h.name.includes('bound '));
+      const handler = handlers.find(
+        h => h && (h.fns || h).name.includes('bound '),
+      );
 
       if (handler) {
-        attrs[`v-on:${key}`] = handler.name;
+        attrs[`v-on:${key}`] = (handler.fns || handler).name;
       }
     });
   }
@@ -36,6 +38,10 @@ function convertListenersToAttrs(listeners) {
 
 function convertModelToAttrs(model) {
   return model ? { 'v-model': model.expression } : {};
+}
+
+function convertSlotToAttrs(slot) {
+  return slot ? { slot } : {};
 }
 
 function generateElement(createElement, vnode) {
@@ -65,8 +71,10 @@ function generateElementFromComponent(
       ...convertDirectivesToAttrs(directives),
       ...convertListenersToAttrs(listeners),
       ...convertModelToAttrs(model),
+      class: data.staticClass,
     },
     hook: undefined,
+    staticClass: undefined,
   };
 
   if (listeners) {
@@ -86,7 +94,7 @@ function generateElementFromHTML(createElement, vnode) {
   }
 
   const { tag, data, children } = vnode;
-  const { directives, on, model, attrs = {} } = data;
+  const { directives, on, model, attrs = {}, slot } = data;
 
   return createElement(
     tag,
@@ -97,6 +105,7 @@ function generateElementFromHTML(createElement, vnode) {
         ...convertDirectivesToAttrs(directives),
         ...convertListenersToAttrs(on),
         ...convertModelToAttrs(model),
+        ...convertSlotToAttrs(slot),
       },
     },
     getChildrenElements(createElement, children),
@@ -104,27 +113,17 @@ function generateElementFromHTML(createElement, vnode) {
 }
 
 export function generateStubs(Component) {
-  return Object.values(Component.components).reduce((acc, stubComponent) => {
+  return Object.values(Component.components).reduce((stubs, stubComponent) => {
     let elementName;
 
     if (stubComponent.name) {
       elementName = toKebab(stubComponent.name);
     }
 
-    return Object.assign(acc, {
+    return Object.assign(stubs, {
       [elementName]: {
         render(createElement) {
-          const subElements = Object.values(this.$slots).reduce(
-            (elements, slot) =>
-              elements.concat(
-                slot.map(vnode => generateElement(createElement, vnode)),
-              ),
-            [],
-          );
-
-          // TODO: add scopedSlots support
-          // TODO: add support for directives and events for the stub component
-          return createElement(elementName, subElements);
+          return generateElementFromComponent(createElement, this.$vnode);
         },
       },
     });

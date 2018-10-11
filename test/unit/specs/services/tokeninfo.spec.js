@@ -1,10 +1,11 @@
 import MockAdapter from 'axios-mock-adapter';
 import { tokenInfoAPIUrl, tokenImageUrl } from '@/config';
-import tokenInfo from '@/services/tokeninfo';
 import tokensFixture from 'fixtures/tokens';
 
+const tokenInfo = require.requireActual('@/services/tokeninfo').default;
+
 describe('token info service', () => {
-  const tokens = tokensFixture.tokens;
+  const { tokens } = tokensFixture;
   const tokensURL = `${tokenInfoAPIUrl}/tokens`;
 
   let mock;
@@ -28,7 +29,7 @@ describe('token info service', () => {
 
   it('should get list of tokens', async () => {
     mock.onGet(tokensURL).reply(200, tokens);
-    let tokensList = await tokenInfo._getTokens();
+    const tokensList = await tokenInfo._getTokens();
     expect(tokensList).toEqual(tokens);
   });
 
@@ -44,7 +45,7 @@ describe('token info service', () => {
 
   it('return parsed list of tokens', async () => {
     mock.onGet(tokensURL).reply(200, tokens);
-    let tokensList = await tokenInfo.getTokensList();
+    const tokensList = await tokenInfo.getTokensList();
     expect(tokensList).toHaveLength(tokens.length);
     expect(tokensList[0].symbol).toBe(tokens[0].symbol);
     // Not equal because they are parsed

@@ -1,19 +1,29 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`LoginByEmailModal render should display a field for custom identity server 1`] = `<v-input id="customIdentityServer" label="Custom Identity Server" name="customIdentityServer" validator="required|url:require_protocol:true" placeholder="Custom Identity Server" help="Example: https://yourserver.com/api" v-model="customIdentityServer"></v-input>`;
+
 exports[`LoginByEmailModal render should render component 1`] = `
 <v-modal
   class="is-dark"
+  v-on:close="bound handleClose"
 >
-  Get Started 
+  <template
+    slot="header"
+  >
+    Get Started
+  </template>
+   
   <p
     class="subtitle"
   >
-    Please enter your email address below to access your
-  wallet or create a new one.
+    
+    Please enter your email address below to access your wallet or create a new one.
+  
   </p>
    
   <v-form
     id="loginByEmail"
+    v-model="isFormValid"
     v-on:submit="bound handleSubmit"
   >
     <v-input
@@ -25,6 +35,15 @@ exports[`LoginByEmailModal render should render component 1`] = `
       v-model="email"
       validator="required|email"
     />
+     
+    <v-select
+      label="Identity Server"
+      name="currentIdentityServerType"
+      options="[object Object],[object Object],[object Object]"
+      v-model="currentIdentityServerType"
+    />
+     
+    <!---->
      
     <v-checkbox
       v-model="termsAccepted"
@@ -57,10 +76,12 @@ exports[`LoginByEmailModal render should render component 1`] = `
    
   <div
     class="buttons"
+    slot="footer"
   >
     <v-button
       class-name="is-primary is-medium"
       data-test="submit-login"
+      disabled="true"
       form="loginByEmail"
     >
       

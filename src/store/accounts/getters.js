@@ -1,13 +1,14 @@
 import web3 from 'web3';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
-import { Wallet, Address } from '@/class';
 
-const getAccountAddresses = state =>
+const accountAddresses = state =>
   Object.keys(state.wallets).map(wallet => wallet.toLowerCase());
 
-const isPublicAccount = state =>
-  state.address instanceof Address && !(state.wallet instanceof Wallet);
+const currentAddressString = state =>
+  state.address && state.address.getChecksumAddressString();
+
+const isPublicAccount = state => state.wallet && state.wallet.isPublic;
 
 const balance = (state, getters, rootState, rootGetters) => {
   if (!state.balance) return null;
@@ -31,7 +32,7 @@ const hdWallet = state => password => {
 
 const decryptedWallets = state => password =>
   Object.values(state.wallets)
-    .filter(wallet => wallet)
+    .filter(wallet => !wallet.isPublic)
     .map(wallet => keystore.decryptWallet(password, wallet.v3));
 
 const encryptedHdWallet = () => (password, decryptedHdWallet) =>
@@ -43,7 +44,8 @@ const encryptedWallets = () => (password, decryptedWallets = []) =>
   );
 
 export default {
-  getAccountAddresses,
+  accountAddresses,
+  currentAddressString,
   isPublicAccount,
   balance,
   hdWallet,

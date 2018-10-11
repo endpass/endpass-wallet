@@ -5,6 +5,7 @@
       <a
         :class="{'is-loading' : exportingKey }"
         class="button is-primary"
+        data-test="export-button"
         @click="openPasswordModal"
       >
         Show Private Key
@@ -13,10 +14,14 @@
     <div v-else>
       <p class="subtitle">Your private key is below. Do not share it with
       anyone!</p>
-      <p class="code">{{ privateKey }}</p>
+      <p
+        class="code"
+        data-test="private-key-code"
+      >{{ privateKey }}</p>
       <p>
         <a
           class="button is-light"
+          data-test="hide-button"
           @click="privateKey=null"
         >
           Close

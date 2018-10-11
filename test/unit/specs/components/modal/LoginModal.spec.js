@@ -8,6 +8,18 @@ import ConfirmEmailModal from '@/components/modal/ConfirmEmailModal';
 import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
 import { generateStubs } from '@/utils/testUtils';
 
+jest.mock('@/components/modal/LoginByEmailModal', () => ({
+  name: 'login-by-email-modal',
+}));
+
+jest.mock('@/components/modal/ConfirmEmailModal', () => ({
+  name: 'confirm-email-modal',
+}));
+
+jest.mock('@/components/modal/TwoFactorAuthModal', () => ({
+  name: 'two-factor-auth-modal',
+}));
+
 describe('LoginModal', () => {
   let wrapper;
 
@@ -37,10 +49,10 @@ describe('LoginModal', () => {
 
     it('should render ConfirmEmailModal component', () => {
       wrapper.setData({
-        currentModal: LoginByEmailModal.name,
+        currentModal: ConfirmEmailModal.name,
       });
 
-      expect(wrapper.is(LoginByEmailModal.name)).toBeTruthy();
+      expect(wrapper.is(ConfirmEmailModal.name)).toBeTruthy();
     });
 
     it('should render TwoFactorAuthModal component', () => {
@@ -100,6 +112,9 @@ describe('LoginModal', () => {
               emitError: jest.fn(),
             },
           },
+        },
+        actions: {
+          init: jest.fn().mockResolvedValue(),
         },
       });
 
@@ -220,6 +235,18 @@ describe('LoginModal', () => {
         await wrapper.vm.handleTwoFactorAuthModalConfirm(code);
 
         expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(0);
+      });
+
+      it('should reload data after successfully login', async () => {
+        expect.assertions(1);
+
+        wrapper.setMethods({
+          reloadData: jest.fn().mockResolvedValue(),
+        });
+
+        await wrapper.vm.handleTwoFactorAuthModalConfirm(code);
+
+        expect(wrapper.vm.reloadData).toHaveBeenCalledTimes(1);
       });
     });
   });

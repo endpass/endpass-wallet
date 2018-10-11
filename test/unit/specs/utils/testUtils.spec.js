@@ -31,24 +31,6 @@ describe('generateStubs', () => {
       createElement = jest.fn(tag => tag);
     });
 
-    it('should create the correct number of subelements', () => {
-      const context = {
-        $slots: {
-          default: [{}, {}],
-          footer: [{}],
-        },
-      };
-      const expectedElements = [{}, {}, {}];
-
-      stubs[component1.name].render.call(context, createElement);
-
-      expect(createElement).toHaveBeenCalledTimes(1);
-      expect(createElement).toHaveBeenCalledWith(
-        component1.name,
-        expectedElements,
-      );
-    });
-
     describe('render html elements', () => {
       const tag = 'div';
 
@@ -58,13 +40,19 @@ describe('generateStubs', () => {
             type: 'button',
           },
         };
-        const slot = [{ tag, data }];
+        const htmlElement = [{ tag, data }];
         const context = {
-          $slots: { slot },
+          $vnode: {
+            data: {},
+            componentOptions: {
+              tag: component1.name,
+              children: htmlElement,
+            },
+          },
         };
         const expectedCalls = [
           [tag, data, undefined],
-          [component1.name, [tag]],
+          [component1.name, { attrs: {} }, [tag]],
         ];
 
         stubs[component1.name].render.call(context, createElement);
@@ -80,9 +68,15 @@ describe('generateStubs', () => {
         const data = {
           directives: [directive],
         };
-        const slot = [{ tag, data }];
+        const htmlElement = [{ tag, data }];
         const context = {
-          $slots: { slot },
+          $vnode: {
+            data: {},
+            componentOptions: {
+              tag: component1.name,
+              children: htmlElement,
+            },
+          },
         };
         const expectedCalls = [
           [
@@ -95,7 +89,7 @@ describe('generateStubs', () => {
             },
             undefined,
           ],
-          [component1.name, [tag]],
+          [component1.name, { attrs: {} }, [tag]],
         ];
 
         stubs[component1.name].render.call(context, createElement);
@@ -105,14 +99,21 @@ describe('generateStubs', () => {
 
       it('should correctly render event listeners', () => {
         const on = {
-          click: { name: 'bound hadleclock' },
+          click: { fns: { name: 'bound hadleclock' } },
           focus: { name: 'focus' },
           input: [{ name: 'input' }, { name: 'bound handleInput' }],
+          confirm: undefined,
         };
         const data = { on };
-        const slot = [{ tag, data }];
+        const htmlElement = [{ tag, data }];
         const context = {
-          $slots: { slot },
+          $vnode: {
+            data: {},
+            componentOptions: {
+              tag: component1.name,
+              children: htmlElement,
+            },
+          },
         };
         const expectedCalls = [
           [
@@ -126,7 +127,7 @@ describe('generateStubs', () => {
             },
             undefined,
           ],
-          [component1.name, [tag]],
+          [component1.name, { attrs: {} }, [tag]],
         ];
 
         stubs[component1.name].render.call(context, createElement);
@@ -139,9 +140,15 @@ describe('generateStubs', () => {
           expression: 'expression',
         };
         const data = { model };
-        const slot = [{ tag, data }];
+        const htmlElement = [{ tag, data }];
         const context = {
-          $slots: { slot },
+          $vnode: {
+            data: {},
+            componentOptions: {
+              tag: component1.name,
+              children: htmlElement,
+            },
+          },
         };
         const expectedCalls = [
           [
@@ -154,7 +161,37 @@ describe('generateStubs', () => {
             },
             undefined,
           ],
-          [component1.name, [tag]],
+          [component1.name, { attrs: {} }, [tag]],
+        ];
+
+        stubs[component1.name].render.call(context, createElement);
+
+        expect(createElement.mock.calls).toEqual(expectedCalls);
+      });
+
+      it('should correctly render slot name', () => {
+        const slot = 'slot';
+        const data = { slot };
+        const htmlElement = [{ tag, data }];
+        const context = {
+          $vnode: {
+            data: {},
+            componentOptions: {
+              tag: component1.name,
+              children: htmlElement,
+            },
+          },
+        };
+        const expectedCalls = [
+          [
+            tag,
+            {
+              ...data,
+              attrs: { slot },
+            },
+            undefined,
+          ],
+          [component1.name, { attrs: {} }, [tag]],
         ];
 
         stubs[component1.name].render.call(context, createElement);
@@ -171,14 +208,20 @@ describe('generateStubs', () => {
         const data = {
           attrs: {},
         };
-        const slot = [{ tag, data, children }];
+        const htmlElement = [{ tag, data, children }];
         const context = {
-          $slots: { slot },
+          $vnode: {
+            data: {},
+            componentOptions: {
+              tag: component1.name,
+              children: htmlElement,
+            },
+          },
         };
         const expectedCalls = [
           [childrenTag, childrenData, undefined],
           [tag, data, [childrenTag, {}]],
-          [component1.name, [tag]],
+          [component1.name, { attrs: {} }, [tag]],
         ];
 
         stubs[component1.name].render.call(context, createElement);
@@ -197,14 +240,10 @@ describe('generateStubs', () => {
           },
         };
         const componentOptions = { tag };
-        const slot = [{ tag, data, componentOptions }];
         const context = {
-          $slots: { slot },
+          $vnode: { data, componentOptions },
         };
-        const expectedCalls = [
-          [tag, data, undefined],
-          [component1.name, [tag]],
-        ];
+        const expectedCalls = [[tag, data, undefined]];
 
         stubs[component1.name].render.call(context, createElement);
 
@@ -220,9 +259,8 @@ describe('generateStubs', () => {
           directives: [directive],
         };
         const componentOptions = { tag };
-        const slot = [{ tag, data, componentOptions }];
         const context = {
-          $slots: { slot },
+          $vnode: { data, componentOptions },
         };
         const expectedCalls = [
           [
@@ -235,7 +273,6 @@ describe('generateStubs', () => {
             },
             undefined,
           ],
-          [component1.name, [tag]],
         ];
 
         stubs[component1.name].render.call(context, createElement);
@@ -245,15 +282,15 @@ describe('generateStubs', () => {
 
       it('should correctly render event listeners', () => {
         const listeners = {
-          click: { name: 'bound hadleclock' },
+          click: { fns: { name: 'bound hadleclock' } },
           focus: { name: 'focus' },
           input: [{ name: 'input' }, { name: 'bound handleInput' }],
+          confirm: undefined,
         };
         const data = {};
         const componentOptions = { tag, listeners };
-        const slot = [{ tag, data, componentOptions }];
         const context = {
-          $slots: { slot },
+          $vnode: { data, componentOptions },
         };
         const expectedCalls = [
           [
@@ -268,7 +305,6 @@ describe('generateStubs', () => {
             },
             undefined,
           ],
-          [component1.name, [tag]],
         ];
 
         stubs[component1.name].render.call(context, createElement);
@@ -282,9 +318,8 @@ describe('generateStubs', () => {
         };
         const data = { model };
         const componentOptions = { tag };
-        const slot = [{ tag, data, componentOptions }];
         const context = {
-          $slots: { slot },
+          $vnode: { data, componentOptions },
         };
         const expectedCalls = [
           [
@@ -297,7 +332,6 @@ describe('generateStubs', () => {
             },
             undefined,
           ],
-          [component1.name, [tag]],
         ];
 
         stubs[component1.name].render.call(context, createElement);
@@ -319,14 +353,12 @@ describe('generateStubs', () => {
           attrs: {},
         };
         const componentOptions = { tag, children };
-        const slot = [{ tag, data, componentOptions }];
         const context = {
-          $slots: { slot },
+          $vnode: { data, componentOptions },
         };
         const expectedCalls = [
           [childrenTag, childrenData, undefined],
           [tag, data, [childrenTag, {}]],
-          [component1.name, [tag]],
         ];
 
         stubs[component1.name].render.call(context, createElement);

@@ -1,9 +1,9 @@
 import Vue from 'vue';
+import validation from '@/validation';
 import Vuex from 'vuex';
-import web3 from 'web3';
+import Web3 from 'web3';
 import { shallow, createLocalVue, mount } from '@vue/test-utils';
 import Notifications from 'vue-notification';
-import validation from '@/validation';
 import { Transaction } from '@/class';
 import { generateStubs } from '@/utils/testUtils';
 
@@ -20,33 +20,13 @@ describe('Send', () => {
   let actions;
   let store;
   let wrapper;
-  let web3Instance = new web3('https://mainnet.infura.io/');
+  const web3Instance = new Web3('https://mainnet.infura.io/');
 
   beforeEach(() => {
     store = new Vuex.Store({
       state: {
         price: {
           price: 400,
-        },
-        accounts: {
-          address: {
-            getChecksumAddressString() {
-              return '0x9eceefdf3554e178a6549006f2c02163e63c9fd8';
-            },
-          },
-          balance: '1000000000000000000',
-          pendingTransactions: [
-            {
-              timestamp: 1524505925,
-              from: '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b',
-              to: '0x7c59542b20002ed255598172cab48b86d865dfbb',
-              hash:
-                '0x7fcb1e71def6d0d353251831f46d60401e6321b5e0b0b135085be4688ca2a9b1',
-              value: 0.009979,
-              input: '0x',
-              success: true,
-            },
-          ],
         },
         user: {
           settings: {
@@ -68,6 +48,36 @@ describe('Send', () => {
       },
       actions,
       modules: {
+        accounts: {
+          namespaced: true,
+          state: {
+            address: {
+              getChecksumAddressString() {
+                return '0x9eceefdf3554e178a6549006f2c02163e63c9fd8';
+              },
+            },
+            balance: '1000000000000000000',
+            pendingTransactions: [
+              {
+                timestamp: 1524505925,
+                from: '0x4bd5c3e7e4d6b3df23e9da5b42e5e4daa3d2579b',
+                to: '0x7c59542b20002ed255598172cab48b86d865dfbb',
+                hash:
+                  '0x7fcb1e71def6d0d353251831f46d60401e6321b5e0b0b135085be4688ca2a9b1',
+                value: 0.009979,
+                input: '0x',
+                success: true,
+              },
+            ],
+            wallets: () => [],
+            wallet: {
+              isPublic: false,
+            },
+          },
+          getters: {
+            isPublicAccount: () => true,
+          },
+        },
         gasPrice: {
           namespaced: true,
           actions: {
@@ -85,15 +95,13 @@ describe('Send', () => {
         tokens: {
           namespaced: true,
           getters: {
-            tokensWithBalance: () => {
-              return [
-                {
-                  symbol: 'AAA',
-                  address: '0xB6eD7644C69416d67B522e20bC294A9a9B405B31',
-                  decimals: 8,
-                },
-              ];
-            },
+            allCurrentAccountTokensWithNonZeroBalance: () => [
+              {
+                symbol: 'AAA',
+                address: '0xB6eD7644C69416d67B522e20bC294A9a9B405B31',
+                decimals: 8,
+              },
+            ],
           },
         },
         transactions: {
@@ -102,10 +110,52 @@ describe('Send', () => {
             getNextNonce: jest.fn(),
             getNonceInBlock: jest.fn(),
           },
+          getters: {
+            getAddressesFromTransactions: () => [],
+          },
         },
       },
     });
     wrapper = shallow(Send, { store, localVue });
+  });
+
+  describe('render', () => {
+    beforeEach(() => {
+      wrapper = shallow(Send, {
+        store,
+        localVue,
+        stubs: generateStubs(Send),
+      });
+    });
+
+    it('should render ens error', async () => {
+      expect.assertions(1);
+
+      wrapper.setData({
+        ensError: 'foo',
+      });
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.html()).toMatchSnapshot();
+    });
+
+    it('should render resolved ens address', async () => {
+      expect.assertions(1);
+
+      wrapper.setData({
+        transaction: {
+          to: '0x0',
+        },
+      });
+      wrapper.setComputed({
+        isEnsTransaction: true,
+      });
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.html()).toMatchSnapshot();
+    });
   });
 
   describe('behavior', () => {
@@ -152,9 +202,6 @@ describe('Send', () => {
         },
         value: '1.5',
       });
-
-      wrapper.vm.$refs.address.$el.querySelector('input').value =
-        '0xE824633E6d247e64ba2cD841D8270505770d53fE';
 
       await wrapper.vm.$validator.validateAll();
 
@@ -209,7 +256,7 @@ describe('Send', () => {
         localVue,
       });
 
-      const inputIdArr = ['address', 'gasPrice', 'gasLimit', 'value'];
+      const inputIdArr = ['gasPrice', 'gasLimit', 'value'];
 
       inputIdArr
         .map(inputId => wrapper.find(`#${inputId}`))
@@ -293,16 +340,41 @@ describe('Send', () => {
 
     it('should update user nonce when changing the address', async () => {
       wrapper.vm.getNextNonce = jest.fn().mockResolvedValueOnce('2');
-      wrapper.setComputed({ address: '0xddddd' });
+      wrapper.setData({ address: '0xddddd' });
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.$data.userNonce).toBe('2');
 
       wrapper.vm.getNextNonce.mockResolvedValueOnce('7');
-      wrapper.setComputed({ address: '0xkdjf' });
+      wrapper.setData({ address: '0xkdjf' });
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.$data.userNonce).toBe('7');
+    });
+
+    it('should call get ENS after each network change', async () => {
+      expect.assertions(1);
+
+      wrapper.setData({
+        address: 'ether.eth',
+      });
+
+      wrapper.vm.getEnsAddress = jest.fn();
+
+      wrapper.setComputed({
+        isEnsTransaction: true,
+        activeNet: {
+          id: 2,
+        },
+      });
+      wrapper.setComputed({
+        isEnsTransaction: true,
+        activeNet: {
+          id: 3,
+        },
+      });
+
+      expect(wrapper.vm.getEnsAddress).toHaveBeenCalledTimes(2);
     });
   });
 });

@@ -1,4 +1,5 @@
 import { infuraConf } from '@/config';
+export { INPAGE_EVENT, INPAGE_ID_PREFIX } from './InpageProvider';
 
 export const MAIN_NET_ID = 1;
 
@@ -53,9 +54,19 @@ export const AVAILABLE_FIAT_CURRENCIES = Object.freeze(
   ['USD', 'AUD', 'BRL', 'CAD', 'CHF', 'CLP', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'JPY', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD', 'PHP', 'PKR', 'PLN', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'TWD', 'ZAR'],
 );
 
+export const IDENTITY_MODE = Object.freeze({
+  DEFAULT: 'default',
+  CUSTOM: 'custom',
+  LOCAL: 'local',
+});
+
+export const PROXY_REQUEST_PREFIX = 'endpass-identity';
+
 export default {
   AVAILABLE_FIAT_CURRENCIES,
   MAIN_NET_ID,
   DEFAULT_NETWORKS,
   CURRENCIES,
+  IDENTITY_MODE,
+  PROXY_REQUEST_PREFIX,
 };

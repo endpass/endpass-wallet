@@ -10,27 +10,33 @@
               </div>
               <div class="card-content is-narrow">
                 <nav
-                  v-if="isLoading || trackedTokens.length"
+                  v-if="isUserHasTokens"
                   class="panel"
                 >
                   <div class="panel-block">
-                    <search-input v-model="search" />
+                    <search-input
+                      v-model="userTokenQuery"
+                      data-test="token-search-input"
+                    />
                   </div>
                   <v-spinner
-                    :is-loading="isLoading"
+                    :is-loading="isLoading || isProcessingToken"
                     class="spinner-block"
+                    data-test="tokens-spinner"
                   />
                   <div class="scroller">
-                    <token-list
-                      :tokens="userTokenList"
+                    <tokens-list
+                      :tokens="userTokensList"
                       :has-remove="true"
                       :item-class="'panel-block is-clearfix is-block'"
+                      data-test="tokens-list"
                     />
                   </div>
                 </nav>
                 <p
                   v-else
                   class="small"
+                  data-test="no-tokens-text"
                 >
                   You have no tokens on this network. Add some!
                 </p>
@@ -46,6 +52,7 @@
                 <div class="card-header-icon">
                   <a
                     class="button is-outlined is-info is-small"
+                    data-test="add-custom-token-button"
                     @click.prevent="openAddTokenModal()"
                   >
                     Add Custom Token
@@ -56,14 +63,15 @@
                 <multiselect
                   :allow-empty="false"
                   :internal-search="false"
-                  :options="searchTokenList"
+                  :options="filteredTokens"
                   :options-limit="10"
                   :show-labels="false"
                   track-by="address"
                   label="name"
                   placeholder="Type to search tokens..."
-                  @search-change="setSearchToken"
-                  @select="saveTokenAndSubscribe({token: $event })"
+                  data-test="tokens-select"
+                  @search-change="setNetworkTokenQuery"
+                  @select="addToken"
                 >
                   <span
                     slot="option"
@@ -88,93 +96,105 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import Multiselect from 'vue-multiselect';
-import { BigNumber } from 'bignumber.js';
-import web3 from 'web3';
 import Balance from '@/components/Balance';
 import VToken from '@/components/VToken';
-import TokenList from '@/components/TokenList';
+import TokensList from '@/components/TokensList';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/modal/AddTokenModal';
 import VSpinner from '@/components/ui/VSpinner';
-import { mapState, mapActions, mapGetters } from 'vuex';
+import { matchString } from '@/utils/strings';
+import { MAIN_NET_ID } from '@/constants';
 
 export default {
   name: 'TokensPage',
-  data() {
-    return {
-      search: '',
-      searchToken: '',
-      addTokenModalOpen: false,
-    };
-  },
+
+  data: () => ({
+    userTokenQuery: '',
+    networkTokenQuery: '',
+    addTokenModalOpen: false,
+    isProcessingToken: false,
+  }),
+
   computed: {
     ...mapState({
       prices: state => state.tokens.prices,
       allTokens: state => state.tokens.allTokens,
+      networkTokens: state => state.tokens.networkTokens,
+      activeNetId: state => state.web3.activeNet.id,
       // []string, list of tracked tokens addresses
-      trackedTokens: state => state.tokens.trackedTokens,
       isLoading: state => state.tokens.isLoading,
       ethPrice: state => state.price.price,
       currency: state => state.user.settings.fiatCurrency,
     }),
-    ...mapGetters('tokens', ['net', 'tokensWithBalance']),
+    ...mapGetters('tokens', ['allCurrentAccountFullTokens']),
+
+    isUserHasTokens() {
+      return !isEmpty(this.allCurrentAccountFullTokens);
+    },
+
     // All tokens that are available to add
     // TODO convert all addresses to checksum in store
     filteredTokens() {
-      return Object.values(this.allTokens).filter(token => {
-        const address = token.address.toLowerCase();
-        return !this.trackedTokens
-          .map(addr => addr.toLowerCase())
-          .includes(address);
-      });
-    },
-    searchTokenList() {
-      const { searchToken } = this;
+      const {
+        networkTokens,
+        allCurrentAccountFullTokens,
+        networkTokenQuery,
+      } = this;
 
-      if (!searchToken) {
-        return this.filteredTokens;
+      if (this.activeNetId !== MAIN_NET_ID) {
+        return [];
       }
 
-      const search = searchToken.toLowerCase();
-
-      return this.filteredTokens.filter(token => {
-        const { name, symbol } = token;
-
-        return (
-          name.toLowerCase().includes(search) ||
-          symbol.toLowerCase().includes(search)
+      return Object.values(networkTokens).filter(token => {
+        const isUserHasToken = Object.keys(
+          allCurrentAccountFullTokens,
+        ).includes(token.address);
+        const isTokenMatchesToSearch = this.matchTokenToQuery(
+          token,
+          networkTokenQuery,
         );
+
+        return !isUserHasToken && isTokenMatchesToSearch;
       });
     },
-    userTokenList() {
-      const { search } = this;
 
-      if (!search) {
-        return this.tokensWithBalance;
-      }
+    userTokensList() {
+      const { userTokenQuery, allCurrentAccountFullTokens } = this;
 
-      const searchLC = search.toLowerCase();
-
-      return this.tokensWithBalance.filter(
-        token =>
-          name.toLowerCase().includes(search) ||
-          token.symbol.toLowerCase().includes(searchLC),
+      return Object.values(allCurrentAccountFullTokens).filter(token =>
+        this.matchTokenToQuery(token, userTokenQuery),
       );
     },
   },
+
   methods: {
-    ...mapActions('tokens', ['saveTokenAndSubscribe']),
-    setSearchToken(query) {
-      this.searchToken = query;
+    ...mapActions('tokens', ['addUserToken']),
+
+    matchTokenToQuery(token, query) {
+      return matchString(token.name, query) || matchString(token.symbol, query);
     },
+
+    setNetworkTokenQuery(query) {
+      this.networkTokenQuery = query;
+    },
+
     openAddTokenModal() {
       this.addTokenModalOpen = true;
     },
+
     closeAddTokenModal() {
       this.addTokenModalOpen = false;
     },
+
+    async addToken(token) {
+      // TODO: add loader when adding start and make network tokens select disabled
+      await this.addUserToken({ token });
+    },
   },
+
   components: {
     SearchInput,
     Balance,
@@ -182,7 +202,7 @@ export default {
     Multiselect,
     VSpinner,
     VToken,
-    TokenList,
+    TokensList,
   },
 };
 </script>
@@ -191,7 +211,7 @@ export default {
 @import 'vue-multiselect/dist/vue-multiselect.min.css';
 .scroller {
   max-height: 500px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .panel {
@@ -227,7 +247,7 @@ export default {
 
 .tokens-page {
   .spinner-block {
-    height: 108px;
+    height: 100%;
   }
 }
 </style>

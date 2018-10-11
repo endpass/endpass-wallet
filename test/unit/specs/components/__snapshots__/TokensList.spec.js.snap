@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TokensList render should render given tokens list 1`] = `
+<div data-test="tokens-list" class="tokens-list">
+    <ul>
+        <li data-test="user-token" class="">
+            <v-token token="[object Object]" currency="USD" price="2">
+                <!---->
+            </v-token>
+        </li>
+        <li data-test="user-token" class="">
+            <v-token token="[object Object]" currency="USD" price="0">
+                <!---->
+            </v-token>
+        </li>
+    </ul>
+</div>
+`;

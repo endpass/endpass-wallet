@@ -15,15 +15,20 @@ const commit = (type, payload) => mutations[type](payload);
 
 describe('Root Store actions', () => {
   it('initializes state and shows loading indicator', async () => {
+    expect.assertions(11);
+
     await actions.init({ dispatch, commit });
+
     expect(mutations[START_PAGE_LOADING]).toHaveBeenCalledTimes(1);
     expect(mutations[STOP_PAGE_LOADING]).toHaveBeenCalledTimes(1);
 
-    //Errors should be initialized first
-    expect(dispatch).toHaveBeenNthCalledWith(1, 'web3/init');
-    expect(dispatch).toHaveBeenNthCalledWith(2, 'accounts/init');
+    // User identity mode should be initialized first
+    expect(dispatch).toHaveBeenNthCalledWith(1, 'user/initIdentityMode');
+    expect(dispatch).toHaveBeenNthCalledWith(2, 'web3/init');
+    expect(dispatch).toHaveBeenNthCalledWith(3, 'accounts/init');
 
     // Initialize all other stores
+    expect(dispatch).toHaveBeenCalledWith('user/initIdentityMode');
     expect(dispatch).toHaveBeenCalledWith('accounts/init');
     expect(dispatch).toHaveBeenCalledWith('web3/init');
     expect(dispatch).toHaveBeenCalledWith('tokens/init');

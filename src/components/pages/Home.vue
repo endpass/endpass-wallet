@@ -5,7 +5,10 @@
       class="auth-content"
     >
 
-      <div class="section section-address">
+      <div
+        class="section section-address"
+        data-test="address-card"
+      >
         <div class="container">
           <div class="card">
             <div class="card-header">
@@ -25,6 +28,7 @@
                   <router-link
                     :to="{name: 'ExportWallet'}"
                     class="button is-warning"
+                    data-test="export-wallet-button"
                   >
                     Export Private Key
                   </router-link>
@@ -42,16 +46,16 @@
               <p class="card-header-title">Your Tokens</p>
               <div class="card-header-icon">
                 <router-link
-                  :to="{name:
-                  'TokensPage'}"
+                  :to="{name: 'TokensPage'}"
                   class="button is-outlined is-info is-small"
+                  data-test="edit-tokens-button"
                 >
                   Edit
                 </router-link>
               </div>
             </div>
             <div class="card-content">
-              <token-list/>
+              <tokens-list :tokens="allCurrentAccountTokensList" />
             </div>
           </div>
         </div>
@@ -92,30 +96,34 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex';
 import Balance from '@/components/Balance';
 import Account from '@/components/Account';
-import TokenList from '@/components/TokenList';
-import { mapGetters, mapState } from 'vuex';
+import TokensList from '@/components/TokensList';
 
 export default {
   name: 'Home',
-  data() {
-    return {};
-  },
+
   computed: {
     ...mapGetters('user', ['isLoggedIn']),
-    ...mapGetters('accounts', ['isPublicAccount', 'balance']),
+    ...mapGetters('accounts', ['accountAddress', 'isPublicAccount', 'balance']),
+    ...mapGetters('tokens', ['allCurrentAccountFullTokens']),
     ...mapState({
       activeCurrency: state => state.web3.activeCurrency,
       address: state =>
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),
     }),
+
+    allCurrentAccountTokensList() {
+      return Object.values(this.allCurrentAccountFullTokens);
+    },
   },
+
   components: {
     Account,
     Balance,
-    TokenList,
+    TokensList,
   },
 };
 </script>

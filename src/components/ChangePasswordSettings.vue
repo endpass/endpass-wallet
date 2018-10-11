@@ -1,20 +1,29 @@
 <template>
   <v-form @submit="handleFormSubmit">
     <label class="label">Change Password</label>
-    <v-password v-model="oldPassword"
-                name="oldPassword"
-                validator="required|min:8"
-                placeholder="Old Password"
-                :disabled="isLoading"
+    <v-password
+      v-model="oldPassword"
+      :disabled="isLoading"
+      name="oldPassword"
+      validator="required|min:8"
+      data-vv-as="Old Password"
+      placeholder="Old Password"
+      data-test="input-old-password"
     />
-    <v-password v-model="newPassword"
-                name="newPassword"
-                validator="required|min:8"
-                placeholder="New Password"
-                :disabled="isLoading"
+    <v-password
+      v-model="newPassword"
+      :disabled="isLoading"
+      name="newPassword"
+      validator="required|min:8"
+      data-vv-as="New Password"
+      placeholder="New Password"
+      data-test="input-new-password"
     />
-    <v-button className="is-primary is-medium"
-              :loading="isLoading">
+    <v-button
+      :loading="isLoading"
+      class-name="is-primary is-medium"
+      data-test="submit-change-password"
+    >
       Change Password
     </v-button>
   </v-form>

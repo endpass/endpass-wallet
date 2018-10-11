@@ -6,17 +6,17 @@ import {
   START_LOADING,
   STOP_LOADING,
   SET_INTERVAL,
-} from './mutations-types.js';
+} from './mutations-types';
 
 const updatePrice = async ({ commit, getters, dispatch }) => {
   try {
     commit(START_LOADING);
-    let price = await priceService.getPrice(
+    const price = await priceService.getPrice(
       getters.activeCurrencyName,
       getters.fiatCurrency,
     );
     commit(SET_PRICE, price[getters.fiatCurrency]);
-    commit(SET_UPDATE_TIME, new Date().time);
+    commit(SET_UPDATE_TIME, new Date().getTime());
     dispatch(
       'connectionStatus/updateApiErrorStatus',
       {

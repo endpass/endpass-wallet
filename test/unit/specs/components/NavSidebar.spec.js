@@ -1,16 +1,17 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
-
 import Vuex from 'vuex';
+import { shallow, createLocalVue } from '@vue/test-utils';
+import NavSidebar from '@/components/NavSidebar';
+
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
 
-import NavSidebar from '@/components/NavSidebar';
-
 describe('NavSidebar', () => {
   let wrapper;
+  let store;
+
   beforeEach(() => {
-    const storeOptions = {
+    store = new Vuex.Store({
       modules: {
         user: {
           namespaced: true,
@@ -25,24 +26,33 @@ describe('NavSidebar', () => {
             logout: jest.fn(),
           },
           getters: {
-            isPublicAccount: jest.fn(),
+            isPublicAccount: jest.fn().mockReturnValue(true),
           },
         },
       },
-    };
-    const store = new Vuex.Store(storeOptions);
+    });
     wrapper = shallow(NavSidebar, {
       localVue,
       store,
     });
   });
+
   describe('render', () => {
     it('should be a Vue component', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
-      expect(wrapper.name()).toBe('nav-sidebar');
+      expect(wrapper.name()).toBe('NavSidebar');
     });
 
     it('should render initial state of the component', () => {
+      expect(wrapper.element).toMatchSnapshot();
+    });
+
+    it('should not render items for private account if current account is public', () => {
+      wrapper = shallow(NavSidebar, {
+        localVue,
+        store,
+      });
+
       expect(wrapper.element).toMatchSnapshot();
     });
   });

@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`RecoverTransaction render should disable "Recover" button 1`] = `
-<v-form>
+<v-form
+  v-on:submit="bound recoverTransaction"
+>
   <v-textarea
     label="RLP encoded transaction"
     v-model="transactionHash"
@@ -21,7 +23,9 @@ exports[`RecoverTransaction render should disable "Recover" button 1`] = `
 `;
 
 exports[`RecoverTransaction render should enable "Recover" button 1`] = `
-<v-form>
+<v-form
+  v-on:submit="bound recoverTransaction"
+>
   <v-textarea
     label="RLP encoded transaction"
     v-model="transactionHash"
@@ -40,7 +44,9 @@ exports[`RecoverTransaction render should enable "Recover" button 1`] = `
 `;
 
 exports[`RecoverTransaction render should render the initial state of the component 1`] = `
-<v-form>
+<v-form
+  v-on:submit="bound recoverTransaction"
+>
   <v-textarea
     label="RLP encoded transaction"
     v-model="transactionHash"
@@ -60,7 +66,9 @@ exports[`RecoverTransaction render should render the initial state of the compon
 `;
 
 exports[`RecoverTransaction render should show restored transaction data 1`] = `
-<v-form>
+<v-form
+  v-on:submit="bound recoverTransaction"
+>
   <v-textarea
     label="RLP encoded transaction"
     v-model="transactionHash"
@@ -88,7 +96,7 @@ exports[`RecoverTransaction render should show restored transaction data 1`] = `
       class="code"
     >
       
-      {"timestamp":1535035155,"from":"0xb14ab53e38da1c172f877dbc6d65e4a1b0474c3c","to":"0xb41e54248facd542165a4fcb53fb980e4ac88db5","hash":"0x53d26efcde07f1b2b68f3e1de93b730deabd1094970d9a68efb799e048e00892","value":0.048671,"input":"0x","success":true}
+      {"timestamp":1535035155,"from":"0xb14ab53e38da1c172f877dbc6d65e4a1b0474c3c","to":"0x9ECEEfDF3554E178a6549006F2C02163E63C9fd8","hash":"0x53d26efcde07f1b2b68f3e1de93b730deabd1094970d9a68efb799e048e00892","value":0.048671,"input":"0x","success":true}
     
     </p>
   </div>

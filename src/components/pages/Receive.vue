@@ -1,20 +1,33 @@
 <template>
-  <div class="app-page receive-page" v-if="address">
+  <div
+    v-if="address"
+    class="app-page receive-page"
+  >
     <div class="section">
       <div class="container">
-        <div class="card app-card">
-          <div class="card-header">
-            <h2 class="card-header-title">Receive ETH</h2>
-          </div>
-          <div class="card-content">
-            <p>Your Wallet Address:</p>
-            <account
-              :currency="activeCurrency.name"
-              :address="address"
-              :balance="balance"
-            />
-          </div>
-        </div>
+        <account-wallet-card
+          :address="address"
+          :balance="balance"
+          :is-current-account="true"
+          :active-currency-name="activeCurrency.name"
+          data-test="current-account"
+        />
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="container">
+        <account-wallet-card
+          v-for="(wallet, walletAddress) in wallets"
+          v-if="walletAddress !== address"
+          :key="walletAddress"
+          :address="walletAddress"
+          :balance="balances[walletAddress]"
+          :active-currency-name="activeCurrency.name"
+          :allow-send="!wallet.isPublic"
+          data-test="account"
+          @send="clickSendButton(walletAddress)"
+        />
       </div>
     </div>
 
@@ -26,16 +39,20 @@
           </div>
           <div class="card-content">
             <ul
-              v-if="processedTransactions.length"
+              v-if="incomingTransactions.length"
               class="transactions"
             >
               <li
-                v-for="transaction in processedTransactions"
+                v-for="transaction in incomingTransactions"
                 :key="transaction.hash"
               >
                 <app-transaction :transaction="transaction" />
               </li>
             </ul>
+            <v-spinner
+              v-else-if="isLoading"
+              :is-loading="isLoading"
+            />
             <p v-else>This account has no transactions.</p>
           </div>
         </div>
@@ -45,70 +62,94 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
-import appTransaction from '@/components/Transaction';
+import { mapState, mapGetters, mapActions } from 'vuex';
+import web3 from '@/utils/web3';
+import VButton from '@/components/ui/form/VButton';
+import AppTransaction from '@/components/Transaction';
 import Account from '@/components/Account';
-import EthplorerService from '@/services/ethplorer';
+import VSpinner from '@/components/ui/VSpinner';
+import AccountWalletCard from '@/components/AccountWalletCard';
 
 export default {
+  name: 'ReceivePage',
+
   data() {
     return {
-      transactions: [],
+      isLoading: true,
+      balances: {},
     };
   },
+
   computed: {
     ...mapState({
       activeCurrency: state => state.web3.activeCurrency,
       address: state =>
         state.accounts.address &&
         state.accounts.address.getChecksumAddressString(),
+      wallets: state => state.accounts.wallets,
+      wallet: state => state.accounts.wallet,
+      activeNetId: state => state.web3.activeNet.id,
     }),
     ...mapGetters('accounts', {
       balance: 'balance',
     }),
-    processedTransactions() {
-      const trxArr = [...this.transactions];
+    ...mapGetters('transactions', ['incomingTransactions']),
+  },
 
-      return trxArr.sort((trx1, trx2) => trx2.timestamp - trx1.timestamp);
-    },
-  },
-  methods: {
-    getTransactions() {
-      EthplorerService.getInfo(this.address)
-        .then(transactions => {
-          this.transactions = transactions.filter(
-            trx => trx.to === this.address,
-          );
-          this.$store.dispatch('connectionStatus/updateApiErrorStatus', {
-            id: 'ethplorer',
-            status: true,
-          });
-        })
-        .catch(e => {
-          this.$notify({
-            title: 'Failed to get transaction information',
-            text:
-              'An error occurred while retrieving transaction information. Please try again.',
-            type: 'is-warning',
-          });
-          e.apiError = {
-            id: 'ethplorer',
-            status: false,
-          };
-          this.$store.dispatch('errors/emitError', e, { root: true });
-          console.error(e);
-        });
-    },
-  },
   watch: {
-    address: function(val, oldVal) {
-      this.getTransactions();
+    address: {
+      handler: 'getHistory',
+      immediate: true,
+    },
+
+    wallet: {
+      handler() {
+        this.updateTransactionHistory();
+      },
+      immediate: true,
+    },
+
+    activeNetId: {
+      handler: 'getBalances',
+      immediate: true,
     },
   },
-  created() {},
+
+  methods: {
+    ...mapActions('transactions', ['updateTransactionHistory']),
+    ...mapActions('accounts', ['selectWallet']),
+
+    async clickSendButton(address) {
+      this.selectWallet(address);
+      this.$router.push('/send');
+    },
+
+    async getHistory() {
+      if (!this.address) {
+        this.isLoading = false;
+        return;
+      }
+      this.isLoading = true;
+      await this.updateTransactionHistory();
+      this.isLoading = false;
+    },
+
+    // TODO: move balances to the store, because it is not logic of view layer
+    getBalances() {
+      Object.keys(this.wallets).forEach(async address => {
+        const balance = await web3.eth.getBalance(address);
+
+        this.$set(this.balances, address, web3.utils.fromWei(balance));
+      });
+    },
+  },
+
   components: {
     Account,
-    appTransaction,
+    AppTransaction,
+    VSpinner,
+    VButton,
+    AccountWalletCard,
   },
 };
 </script>
