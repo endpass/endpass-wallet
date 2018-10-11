@@ -17,8 +17,10 @@ export default class InpageProvider {
   }
 
   handleResponse({ error, result }) {
-    this.pendingRequestsHandlers[result.id](error, result);
-    delete this.pendingRequestsHandlers[result.id];
+    const resultClone = Object.assign({}, result);
+    resultClone.id = resultClone.id.replace(/^ep_/, '');
+    this.pendingRequestsHandlers[resultClone.id](error, result);
+    delete this.pendingRequestsHandlers[resultClone.id];
   }
 
   updateSettings({ selectedAddress, networkVersion }) {
@@ -32,8 +34,10 @@ export default class InpageProvider {
   }
 
   sendAsync(payload, callback) {
+    const payloadClone = Object.assign({}, payload);
     this.pendingRequestsHandlers[payload.id] = callback;
-    this.eventEmitter.emit(INPAGE_EVENT.REQUEST, payload);
+    payloadClone.id = 'ep_' + payload.id;
+    this.eventEmitter.emit(INPAGE_EVENT.REQUEST, payloadClone);
   }
 
   isConnected() {

@@ -93,12 +93,13 @@ describe('InpageProvider', () => {
 
       it('should emit request event with payload', () => {
         const payload = { id: 'kek' },
-          callback = jest.fn();
+          callback = jest.fn(),
+          expectedPayload = { id: 'ep_kek' };
         provider.eventEmitter.emit = jest.fn();
         provider.sendAsync(payload, callback);
         expect(provider.eventEmitter.emit).toHaveBeenCalledWith(
           INPAGE_EVENT.REQUEST,
-          payload,
+          expectedPayload,
         );
       });
     });
