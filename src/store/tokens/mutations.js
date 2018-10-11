@@ -2,7 +2,7 @@ import Vue from 'vue';
 import {
   SET_LOADING,
   ADD_NETWORK_TOKENS,
-  SET_TOKENS_PRICES,
+  ADD_TOKENS_PRICES,
   SET_USER_TOKENS,
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
@@ -16,7 +16,7 @@ const setLoading = (state, isLoading) => {
   state.isLoading = isLoading;
 };
 
-const setTokensPrices = (state, prices) => {
+const addTokensPrices = (state, prices) => {
   Object.assign(state.prices, prices);
 };
 
@@ -35,7 +35,7 @@ const setBalancesByAddress = (state, { address, balances }) => {
 export default {
   [SET_LOADING]: setLoading,
   [ADD_NETWORK_TOKENS]: addNetworkTokens,
-  [SET_TOKENS_PRICES]: setTokensPrices,
+  [ADD_TOKENS_PRICES]: addTokensPrices,
   [SET_USER_TOKENS]: setUserTokens,
   [SET_TOKENS_BY_ADDRESS]: setTokensByAddress,
   [SET_BALANCES_BY_ADDRESS]: setBalancesByAddress,

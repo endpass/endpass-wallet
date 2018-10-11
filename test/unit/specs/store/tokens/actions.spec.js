@@ -5,7 +5,7 @@ import {
   ADD_NETWORK_TOKENS,
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
-  SET_TOKENS_PRICES,
+  ADD_TOKENS_PRICES,
 } from '@/store/tokens/mutations-types';
 import { NotificationError } from '@/class';
 import {
@@ -537,7 +537,7 @@ describe('tokens actions', () => {
       );
 
       expect(priceService.getPrices).toHaveBeenCalledWith(tokens, 'ETH');
-      expect(commit).toHaveBeenCalledWith(SET_TOKENS_PRICES, tokensPrices);
+      expect(commit).toHaveBeenCalledWith(ADD_TOKENS_PRICES, tokensPrices);
     });
 
     it('should not do anything if given tokens symbols are empty', async () => {

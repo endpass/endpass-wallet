@@ -93,8 +93,7 @@ describe('Tokens Page', () => {
       it('should remove a token', () => {
         cy.get('[data-test=tokens-spinner]').should('not.exist');
 
-        cy.get('[data-test=tokens-list] [data-test=token-name]')
-          .contains(token1.name)
+        cy.contains(token1.name)
           .parents('[data-test=token-item]')
           .within(() => {
             cy.get('[data-test=delete-button]').click();
@@ -105,8 +104,7 @@ describe('Tokens Page', () => {
           token1.name,
         );
 
-        cy.get('[data-test=tokens-list] [data-test=token-name]')
-          .contains(token2.name)
+        cy.contains(token2.name)
           .parents('[data-test=token-item]')
           .within(() => {
             cy.get('[data-test=delete-button]').click();
