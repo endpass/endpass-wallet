@@ -1,7 +1,7 @@
 const hdKeyMnemonic = {
   // phrase: '', //BIP39 mnemonic
   // seed: '', //Derived from mnemonic phrase
-  path: `m/44'/60'/0'/0`, //Derivation path
+  path: `m/44'/60'/0'/0`, // Derivation path
 };
 const infuraConf = {
   key: 'zU4GTAQ0LjJNKddbyztc',
@@ -47,7 +47,6 @@ module.exports = {
   identityAPIUrl,
   tokenImageUrl,
   tokenInfoAPIUrl,
-  fiatPriceAPIUrl,
   kdfParams,
   googleAnalyticsId,
   intercomAppId,
