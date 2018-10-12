@@ -1,12 +1,11 @@
 import MockAdapter from 'axios-mock-adapter';
-import { tokenInfoAPIUrl, tokenImageUrl } from '@/config';
 import tokensFixture from 'fixtures/tokens';
 
 const tokenInfo = require.requireActual('@/services/tokeninfo').default;
 
 describe('token info service', () => {
   const { tokens } = tokensFixture;
-  const tokensURL = `${tokenInfoAPIUrl}/tokens`;
+  const tokensURL = `${env.tokenInfoAPIUrl}/tokens`;
 
   let mock;
   beforeEach(() => {
@@ -20,7 +19,7 @@ describe('token info service', () => {
   it('should make correct request', async () => {
     mock.onGet(tokensURL).reply(config => {
       expect(config.method).toBe('get');
-      expect(config.baseURL).toBe(tokenInfoAPIUrl);
+      expect(config.baseURL).toBe(env.tokenInfoAPIUrl);
       expect(config.url).toBe('/tokens');
       return [200, tokens];
     });
@@ -36,7 +35,7 @@ describe('token info service', () => {
   it('should parse token object', () => {
     let parsedToken = tokenInfo._parseToken(tokens[0]);
     // Also make sure it does not mutate the original tokens list
-    expect(parsedToken.logo).toBe(`${tokenImageUrl}${tokens[0].logo}`);
+    expect(parsedToken.logo).toBe(`${env.tokenImageUrl}${tokens[0].logo}`);
 
     // This one does not have a logo
     parsedToken = tokenInfo._parseToken(tokens[1]);

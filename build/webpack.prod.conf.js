@@ -3,6 +3,7 @@ const path = require('path');
 const utils = require('./utils');
 const webpack = require('webpack');
 const config = require('../config');
+const env = require('../config/prod.env');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -31,6 +32,8 @@ const webpackConfig = merge(baseWebpackConfig, {
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
+      isProduction: true,
+      env: JSON.stringify(env),
       NODE_ENV: JSON.stringify(process.env.NODE_ENV),
       GIT_COMMIT_HASH: JSON.stringify(gitCommitHash),
     }),

@@ -1,6 +1,5 @@
 import actions from '@/store/price/actions';
 import priceService from '@/services/price';
-import { priceUpdateInterval } from '@/config';
 import {
   SET_PRICE,
   SET_UPDATE_TIME,
@@ -72,7 +71,7 @@ describe('price actions', () => {
 
       expect(setInterval).toHaveBeenCalledWith(
         expect.any(Function),
-        priceUpdateInterval,
+        env.priceUpdateInterval,
       );
       expect(dispatch).toHaveBeenCalledWith('updatePrice');
       expect(commit.mock.calls[0][0]).toBe(SET_INTERVAL);

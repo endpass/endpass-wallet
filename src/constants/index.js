@@ -1,29 +1,27 @@
-import { infuraConf } from '@/config';
 export { INPAGE_EVENT } from './InpageProvider';
 
 export const MAIN_NET_ID = 1;
-
 export const DEFAULT_NETWORKS = Object.freeze([
   {
     id: 1,
     networkType: 'main',
     currency: 1,
     name: 'Main',
-    url: `https://mainnet.infura.io/${infuraConf.key}`,
+    url: `https://mainnet.infura.io/${env.infuraConf.key}`,
   },
   {
     name: 'Ropsten',
     currency: 2,
     networkType: 'ropsten',
     id: 3,
-    url: `https://ropsten.infura.io/${infuraConf.key}`,
+    url: `https://ropsten.infura.io/${env.infuraConf.key}`,
   },
   {
     name: 'Rinkeby',
     currency: 2,
     networkType: 'rinkeby',
     id: 4,
-    url: `https://rinkeby.infura.io/${infuraConf.key}`,
+    url: `https://rinkeby.infura.io/${env.infuraConf.key}`,
   },
   {
     name: 'Ethereum classic',

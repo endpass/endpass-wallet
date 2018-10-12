@@ -3,7 +3,6 @@ import Web3 from 'web3';
 import actions from '@/store/web3/actions';
 import * as mutationsTypes from '@/store/web3/mutations-types';
 import { userService } from '@/services';
-import { blockUpdateInterval } from '@/config';
 import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
 
 jest.mock('@/services', () => ({
@@ -508,7 +507,7 @@ describe('web3 actions', () => {
       expect(setInterval).toHaveBeenCalledTimes(1);
       expect(setInterval).toHaveBeenCalledWith(
         expect.any(Function),
-        blockUpdateInterval,
+        env.blockUpdateInterval,
       );
     });
 

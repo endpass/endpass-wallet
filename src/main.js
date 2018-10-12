@@ -2,7 +2,6 @@ import Vue from 'vue';
 import Intercom from 'vue-intercom';
 import VueAnalytics from 'vue-analytics';
 import Notifications from 'vue-notification';
-import { googleAnalyticsId, intercomAppId } from '@/config';
 
 import router from './router';
 import store from './store';
@@ -18,14 +17,14 @@ Vue.config.performance = true;
 Vue.use(Notifications);
 
 Vue.use(VueAnalytics, {
-  id: googleAnalyticsId,
+  id: env.googleAnalyticsId,
   router,
   debug: {
     sendHitTask: isProduction,
   },
 });
 
-Vue.use(Intercom, { appId: intercomAppId });
+Vue.use(Intercom, { appId: env.intercomAppId });
 
 /* eslint-disable no-new */
 const app = new Vue({

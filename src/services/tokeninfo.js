@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { tokenInfoAPIUrl, tokenImageUrl } from '@/config';
 
 export default {
   // Axios instance for this service
   http: axios.create({
-    baseURL: tokenInfoAPIUrl,
+    baseURL: env.tokenInfoAPIUrl,
     timeout: 15000,
   }),
 
@@ -20,7 +19,7 @@ export default {
   _parseToken(token) {
     return {
       ...token,
-      logo: token.logo ? `${tokenImageUrl}${token.logo}` : '',
+      logo: token.logo ? `${env.tokenImageUrl}${token.logo}` : '',
     };
   },
 };

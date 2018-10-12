@@ -1,5 +1,4 @@
 import Tx from 'ethereumjs-tx';
-import { kdfParams } from '@/config';
 import web3 from 'web3';
 import keyUtil from '@/utils/keystore';
 

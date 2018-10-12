@@ -101,7 +101,6 @@ import VButton from '@/components/ui/form/VButton';
 import VCheckbox from '@/components/ui/form/VCheckbox';
 import VSelect from '@/components/ui/form/VSelect';
 import { IDENTITY_MODE } from '@/constants';
-import { isProduction } from '@/config';
 import { mapActions } from 'vuex';
 import error from '@/mixins/error';
 

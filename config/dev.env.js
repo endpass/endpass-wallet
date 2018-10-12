@@ -1,3 +1,6 @@
+const merge = require('webpack-merge');
+const prodEnv = require('./prod.env');
+
 const identityAPIUrl = '/identity/api/v1';
 const tokenImageUrl = 'https://tokeninfo-dev.endpass.com';
 const tokenInfoAPIUrl = '/tokeninfo/api/v1';
@@ -11,11 +14,11 @@ const kdfParams = {
   n: 1024, // low for development
 };
 
-export default {
+module.exports = merge(prodEnv, {
   cryptoDataAPIUrl,
   identityAPIUrl,
   tokenImageUrl,
   tokenInfoAPIUrl,
   kdfParams,
   intercomAppId,
-};
+});

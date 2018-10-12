@@ -2,6 +2,7 @@
 const utils = require('./utils');
 const webpack = require('webpack');
 const config = require('../config');
+const env = require('../config/dev.env');
 const merge = require('webpack-merge');
 const path = require('path');
 const baseWebpackConfig = require('./webpack.base.conf');
@@ -52,7 +53,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   },
   plugins: [
     new webpack.DefinePlugin({
+      isProduction: JSON.stringify(false),
       NODE_ENV: JSON.stringify('dev'),
+      env: JSON.stringify(env),
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.

@@ -1,5 +1,5 @@
 const path = require('path');
-
+const env = require('../../config/test.env');
 module.exports = {
   rootDir: path.resolve(__dirname, '../../'),
   moduleFileExtensions: ['js', 'json', 'vue', 'ts', 'tsx', 'jsx', 'node'],
@@ -18,6 +18,8 @@ module.exports = {
   //globals as webpack DefinePlugin mocks
   globals: {
     NODE_ENV: 'testing',
+    env,
+    isProduction: false,
   },
   transformIgnorePatterns: ['node_modules/(?!vue-timers)'],
   snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],

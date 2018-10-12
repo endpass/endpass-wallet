@@ -33,7 +33,7 @@ const kdfParams = {
 const googleAnalyticsId = 'UA-115004766-3';
 const intercomAppId = 'ap1xxb8t';
 
-export default {
+module.exports = {
   hdKeyMnemonic,
   infuraConf,
   serviceThrottleTimeout,

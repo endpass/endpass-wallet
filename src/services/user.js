@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { http, proxyRequest } from '@/utils';
-import { identityAPIUrl } from '@/config';
 import { NotificationError } from '@/class';
 import keyUtil from '@/utils/keystore';
 import { IDENTITY_MODE } from '@/constants';
@@ -9,7 +8,9 @@ export default {
   async login({ email, redirectUri = '/' }) {
     try {
       const encodedUri = encodeURIComponent(redirectUri);
-      const requestUrl = `${identityAPIUrl}/auth?redirect_uri=${encodedUri}`;
+      const requestUrl = `${
+        env.identityAPIUrl
+      }/auth?redirect_uri=${encodedUri}`;
       const { data } = await http.post(requestUrl, { email });
       const { success, challenge } = data;
 
@@ -29,7 +30,7 @@ export default {
 
   loginViaOTP(code, email) {
     return http
-      .post(`${identityAPIUrl}/token`, {
+      .post(`${env.identityAPIUrl}/token`, {
         challenge_type: 'otp',
         code,
         email,
@@ -50,7 +51,7 @@ export default {
   },
 
   logout() {
-    return http.post(`${identityAPIUrl}/logout`).catch(() => {
+    return http.post(`${env.identityAPIUrl}/logout`).catch(() => {
       throw new NotificationError({
         title: 'Log out error',
         text: 'Failed to log out. Please, try again',
@@ -91,7 +92,7 @@ export default {
   //   });
 
   //   return http
-  //     .delete(`${identityAPIUrl}/user`, propsArr)
+  //     .delete(`${env.identityAPIUrl}/user`, propsArr)
   //     .then(res => res.data)
   //     .then(console.log)
   //     .catch(console.log);
@@ -113,7 +114,7 @@ export default {
   async updateAccounts(accounts) {
     try {
       return await http
-        .post(`${identityAPIUrl}/accounts`, accounts)
+        .post(`${env.identityAPIUrl}/accounts`, accounts)
         .then(({ data }) => data);
     } catch (error) {
       throw new NotificationError({
@@ -207,7 +208,7 @@ export default {
       });
 
       if (!success) {
-        throw new Error(`POST ${identityAPIUrl}/otp: ${message}`);
+        throw new Error(`POST ${env.identityAPIUrl}/otp: ${message}`);
       }
 
       return { success };
@@ -231,7 +232,7 @@ export default {
       });
 
       if (!success) {
-        throw new Error(`DELETE ${identityAPIUrl}/otp: ${message}`);
+        throw new Error(`DELETE ${env.identityAPIUrl}/otp: ${message}`);
       }
 
       return { success };

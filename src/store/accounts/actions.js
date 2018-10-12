@@ -2,7 +2,6 @@ import { userService } from '@/services';
 import web3 from '@/utils/web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
-import { hdKeyMnemonic, kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
 import { Wallet, NotificationError } from '@/class';
 import keystore from '@/utils/keystore';
@@ -148,7 +147,7 @@ const addHdWallet = async ({ commit, dispatch }, { key, password }) => {
   try {
     const seed = Bip39.mnemonicToSeed(key);
     const hdKey = HDKey.fromMasterSeed(seed);
-    const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
+    const hdWallet = hdKey.derivePath(env.hdKeyMnemonic.path);
     // Encrypt extended private key
     const json = keystore.encryptHDWallet(password, hdWallet);
 
@@ -163,12 +162,12 @@ const addHdWallet = async ({ commit, dispatch }, { key, password }) => {
 const addMultiHdWallet = async ({ dispatch }, { key, password }) => {
   const seed = Bip39.mnemonicToSeed(key);
   const hdKey = HDKey.fromMasterSeed(seed);
-  const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
+  const hdWallet = hdKey.derivePath(env.hdKeyMnemonic.path);
 
   /* eslint-disable no-await-in-loop */
   for (let index = 0; index < 5; index++) {
     const wallet = hdWallet.deriveChild(index).getWallet();
-    const walletV3 = wallet.toV3(Buffer.from(password), kdfParams);
+    const walletV3 = wallet.toV3(Buffer.from(password), env.kdfParams);
     const { address } = walletV3;
 
     if (index === 0) {
