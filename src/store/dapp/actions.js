@@ -28,14 +28,14 @@ const sendSettings = (ctx, payload) => {
   dappBridge.emit(INPAGE_EVENT.SETTINGS, payload);
 };
 
-const sendResponse = ({ commit }, payload) => {
-  console.log('response', payload);
+const sendResponse = ({ commit }, transaction) => {
+  console.log('response', transaction);
   // dappBridge.emit(INPAGE_EVENT.RESPONSE, payload);
   // commit(REMOVE_TRANSACTION, payload);
 };
 
-const cancelTransaction = ({ commit }, payload) => {
-  console.log('cancel', payload);
+const cancelTransaction = ({ commit }, transaction) => {
+  console.log('cancel', transaction);
 };
 
 export default {
