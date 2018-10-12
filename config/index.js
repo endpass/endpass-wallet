@@ -1,4 +1,3 @@
-'use strict';
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
 
@@ -10,6 +9,14 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
+      '/proxy': {
+        target: 'https://wildproxy-dev.endpass.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/proxy': '',
+        },
+        cookieDomainRewrite: 'localhost',
+      },
       '/identity/api/v1': {
         target: 'https://identity-dev.endpass.com',
         changeOrigin: true,
