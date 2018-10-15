@@ -9,8 +9,6 @@ import App from './App';
 import './validation';
 import './directives';
 
-const isProduction = NODE_ENV === 'production';
-
 Vue.config.productionTip = false;
 Vue.config.performance = true;
 
