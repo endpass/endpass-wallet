@@ -34,7 +34,7 @@ const app = new Vue({
   render: h => h(App),
 });
 
-if (isProduction) {
+if (!isProduction) {
   window.app = app;
 }
 
