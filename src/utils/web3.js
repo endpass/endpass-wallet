@@ -28,4 +28,9 @@ export const isAddressOfContract = async address => {
   return res !== '0x';
 };
 
+// Make web3 global for integration tests
+if (window.Cypress) {
+  window.web3 = web3;
+}
+
 export default web3;
