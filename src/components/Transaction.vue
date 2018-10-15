@@ -18,7 +18,6 @@
           <div class="level-right">
             <v-spinner
               v-if="isHavePendingRelatedTransaction && transaction.state === 'pending'"
-              :is-loading="isHavePendingRelatedTransaction"
               :label="pendingActionText"
               class="level-item has-text-info actions-loader"
             />
