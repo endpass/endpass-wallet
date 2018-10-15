@@ -20,10 +20,7 @@
               </li>
             </ul>
             <p v-else-if="!isHistoryAvailable">Transaction history is only supported on the main network.</p>
-            <v-spinner
-              v-else-if="isLoading"
-              :is-loading="isLoading"
-            />
+            <v-spinner v-else-if="isLoading" />
             <p v-else>This account has no transactions.</p>
           </div>
         </div>

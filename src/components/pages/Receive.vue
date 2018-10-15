@@ -49,10 +49,7 @@
                 <app-transaction :transaction="transaction" />
               </li>
             </ul>
-            <v-spinner
-              v-else-if="isLoading"
-              :is-loading="isLoading"
-            />
+            <v-spinner v-else-if="isLoading" />
             <p v-else>This account has no transactions.</p>
           </div>
         </div>

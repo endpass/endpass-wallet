@@ -22,7 +22,7 @@
       />
     </a>
     <v-spinner
-      :is-loading="isLoading"
+      v-if="isLoading"
       class="is-transparent"
     />
   </div>

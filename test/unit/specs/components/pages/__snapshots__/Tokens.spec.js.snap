@@ -44,10 +44,7 @@ exports[`TokensPage render should render component 1`] = `
                   />
                 </div>
                  
-                <v-spinner
-                  class="spinner-block"
-                  data-test="tokens-spinner"
-                />
+                <!---->
                  
                 <div
                   class="scroller"

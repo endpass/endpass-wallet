@@ -122,10 +122,7 @@
                     v-model="transaction.gasPrice"
                     name="priority"
                   />
-                  <v-spinner
-                    v-else-if="isLoadingGasPrice"
-                    :is-loading="isLoadingGasPrice"
-                  />
+                  <v-spinner v-else-if="isLoadingGasPrice" />
                   <p
                     v-else
                     class="help is-danger"
