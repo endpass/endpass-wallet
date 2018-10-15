@@ -54,7 +54,6 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   plugins: [
     new webpack.DefinePlugin({
       isProduction: JSON.stringify(false),
-      NODE_ENV: JSON.stringify('dev'),
       ENV: JSON.stringify(env),
     }),
     new webpack.HotModuleReplacementPlugin(),

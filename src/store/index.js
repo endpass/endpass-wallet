@@ -33,7 +33,7 @@ const store = new Vuex.Store({
     connectionStatus,
     user: userModule,
   },
-  strict: NODE_ENV !== 'production',
+  strict: !isProduction,
 });
 
 // Dispatch on change in block number

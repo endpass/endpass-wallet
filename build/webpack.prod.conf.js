@@ -34,7 +34,6 @@ const webpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       isProduction: JSON.stringify(isProduction),
       ENV: JSON.stringify(env),
-      NODE_ENV: JSON.stringify(process.env.NODE_ENV),
       GIT_COMMIT_HASH: JSON.stringify(gitCommitHash),
     }),
     new UglifyJsPlugin({
