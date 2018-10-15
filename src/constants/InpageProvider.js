@@ -7,3 +7,5 @@ export const INPAGE_EVENT = Object.freeze({
   RESPONSE,
   REQUEST,
 });
+
+export const INPAGE_ID_PREFIX = 'ep_';
