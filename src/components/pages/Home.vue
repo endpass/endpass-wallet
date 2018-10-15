@@ -39,7 +39,10 @@
         </div>
       </div>
 
-      <div class="section section-tokens">
+      <div
+        v-if="currentNetUserTokensList.length > 0"
+        class="section section-tokens"
+      >
         <div class="container">
           <div class="card">
             <div class="card-header">
@@ -55,7 +58,20 @@
               </div>
             </div>
             <div class="card-content">
-              <tokens-list :tokens="allCurrentAccountTokensList" />
+              <tokens-list :tokens="currentNetUserTokensList" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section section-tokens">
+        <div class="container">
+          <div class="card">
+            <div class="card-header">
+              <p class="card-header-title">Current Account Tokens ({{ currentAddressString }})</p>
+            </div>
+            <div class="card-content">
+              <tokens-list :tokens="currentAccountTokensList" />
             </div>
           </div>
         </div>
@@ -106,8 +122,16 @@ export default {
 
   computed: {
     ...mapGetters('user', ['isLoggedIn']),
-    ...mapGetters('accounts', ['accountAddress', 'isPublicAccount', 'balance']),
-    ...mapGetters('tokens', ['allCurrentAccountFullTokens']),
+    ...mapGetters('accounts', [
+      'currentAddressString',
+      'isPublicAccount',
+      'balance',
+    ]),
+    ...mapGetters('tokens', [
+      'allCurrentAccountFullTokens',
+      'currentNetUserFullTokens',
+      'currentAccountFullTokens',
+    ]),
     ...mapState({
       activeCurrency: state => state.web3.activeCurrency,
       address: state =>
@@ -115,8 +139,12 @@ export default {
         state.accounts.address.getChecksumAddressString(),
     }),
 
-    allCurrentAccountTokensList() {
-      return Object.values(this.allCurrentAccountFullTokens);
+    currentNetUserTokensList() {
+      return Object.values(this.currentNetUserFullTokens);
+    },
+
+    currentAccountTokensList() {
+      return Object.values(this.currentAccountFullTokens);
     },
   },
 
