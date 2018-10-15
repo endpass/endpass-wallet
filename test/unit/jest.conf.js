@@ -1,5 +1,5 @@
 const path = require('path');
-const env = require('../../config/test.env');
+const ENV = require('../../config/test.env');
 module.exports = {
   rootDir: path.resolve(__dirname, '../../'),
   moduleFileExtensions: ['js', 'json', 'vue', 'ts', 'tsx', 'jsx', 'node'],
@@ -18,7 +18,7 @@ module.exports = {
   //globals as webpack DefinePlugin mocks
   globals: {
     NODE_ENV: 'testing',
-    env,
+    ENV,
     isProduction: false,
   },
   transformIgnorePatterns: ['node_modules/(?!vue-timers)'],
