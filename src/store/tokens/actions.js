@@ -30,7 +30,7 @@ const subscribeOnCurrentAccountTokensUpdates = ({ dispatch }) => {
 
   setInterval(() => {
     dispatch('getCurrentAccountTokensData');
-  }, env.priceUpdateInterval);
+  }, ENV.priceUpdateInterval);
 };
 
 const addUserToken = async (

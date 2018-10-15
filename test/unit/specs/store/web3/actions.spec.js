@@ -507,7 +507,7 @@ describe('web3 actions', () => {
       expect(setInterval).toHaveBeenCalledTimes(1);
       expect(setInterval).toHaveBeenCalledWith(
         expect.any(Function),
-        env.blockUpdateInterval,
+        ENV.blockUpdateInterval,
       );
     });
 

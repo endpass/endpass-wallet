@@ -35,9 +35,9 @@ describe('Price service', () => {
       const symbol = 'ETH',
         currencies = ['KEK', 'CHPOK'];
       expect.assertions(3);
-      mock.onGet(env.fiatPriceAPIUrl).reply(config => {
+      mock.onGet(ENV.fiatPriceAPIUrl).reply(config => {
         expect(config.method).toBe('get');
-        expect(config.url).toBe(env.fiatPriceAPIUrl);
+        expect(config.url).toBe(ENV.fiatPriceAPIUrl);
         expect(config.params).toEqual({
           fsym: symbol,
           tsyms: currencies,
@@ -64,9 +64,9 @@ describe('Price service', () => {
       const symbol = 'ETH',
         currencies = ['KEK', 'CHPOK'];
       expect.assertions(3);
-      mock.onGet(env.fiatPriceMultiAPIUrl).reply(config => {
+      mock.onGet(ENV.fiatPriceMultiAPIUrl).reply(config => {
         expect(config.method).toBe('get');
-        expect(config.url).toBe(env.fiatPriceMultiAPIUrl);
+        expect(config.url).toBe(ENV.fiatPriceMultiAPIUrl);
         expect(config.params).toEqual({
           fsyms: symbol,
           tsyms: currencies,

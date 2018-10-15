@@ -39,7 +39,7 @@ describe('web3 getters', () => {
 
       network = {
         id: 1,
-        url: `https://mainnet.infura.io/${env.infuraConf.key}`,
+        url: `https://mainnet.infura.io/${ENV.infuraConf.key}`,
       };
 
       expect(isCustomNetwork()(network)).toBeFalsy();

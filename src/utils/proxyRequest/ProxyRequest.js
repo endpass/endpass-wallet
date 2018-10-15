@@ -10,7 +10,7 @@ export default class ProxyRequest {
   }
 
   setMode(type = IDENTITY_MODE.DEFAULT, serverUrl) {
-    const url = serverUrl || env.identityAPIUrl;
+    const url = serverUrl || ENV.identityAPIUrl;
 
     switch (type) {
       case IDENTITY_MODE.CUSTOM:

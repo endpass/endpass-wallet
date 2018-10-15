@@ -71,7 +71,7 @@ describe('price actions', () => {
 
       expect(setInterval).toHaveBeenCalledWith(
         expect.any(Function),
-        env.priceUpdateInterval,
+        ENV.priceUpdateInterval,
       );
       expect(dispatch).toHaveBeenCalledWith('updatePrice');
       expect(commit.mock.calls[0][0]).toBe(SET_INTERVAL);

@@ -17,7 +17,7 @@ describe('gas price service', () => {
     const response = {
       low: 1,
     };
-    mock.onGet(`${env.cryptoDataAPIUrl}/gas/price`).reply(200, response);
+    mock.onGet(`${ENV.cryptoDataAPIUrl}/gas/price`).reply(200, response);
     return expect(gasPrice.getGasPrice()).resolves.toEqual(response);
   });
 });

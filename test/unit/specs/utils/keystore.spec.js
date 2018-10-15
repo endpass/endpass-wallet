@@ -23,7 +23,7 @@ describe('keystore', () => {
     console.log(json, json.crypto);
     expect(json.address).toBeUndefined();
     expect(json.crypto.ciphertext).toBeTruthy();
-    expect(json.crypto.kdfparams.n).toBe(env.kdfParams.n);
+    expect(json.crypto.kdfparams.n).toBe(ENV.kdfParams.n);
 
     let xPrvOut = keystore.decrypt(password, json);
     expect(xPrvOut.length).toBe(78);

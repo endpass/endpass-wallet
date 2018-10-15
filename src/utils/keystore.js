@@ -19,8 +19,8 @@ export default {
     // Generate random salt and iv for each encryption
     let dk = keythereum.create();
     let options = {
-      kdf: env.kdfParams.kdf,
-      kdfparams: env.kdfParams,
+      kdf: ENV.kdfParams.kdf,
+      kdfparams: ENV.kdfParams,
     };
     let encrypted = keythereum.dump(
       password,

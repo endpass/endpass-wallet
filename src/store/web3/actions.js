@@ -131,7 +131,7 @@ const subscribeOnBlockUpdates = async ({ commit, dispatch }) => {
 
   const interval = setInterval(async () => {
     commit(mutationsTypes.SET_BLOCK_NUMBER, await web3.eth.getBlockNumber());
-  }, env.blockUpdateInterval);
+  }, ENV.blockUpdateInterval);
 
   commit(mutationsTypes.SET_INTERVAL, interval);
 };

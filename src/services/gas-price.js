@@ -4,7 +4,7 @@ import { NotificationError } from '@/class';
 export default {
   getGasPrice(address) {
     return axios
-      .get(`${env.cryptoDataAPIUrl}/gas/price`)
+      .get(`${ENV.cryptoDataAPIUrl}/gas/price`)
       .then(resp => resp.data)
       .catch(e => {
         throw new NotificationError({

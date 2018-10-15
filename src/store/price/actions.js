@@ -39,7 +39,7 @@ const updatePrice = async ({ commit, getters, dispatch }) => {
 const subscribeOnPriceUpdates = ({ commit, dispatch }) => {
   const interval = setInterval(() => {
     dispatch('updatePrice');
-  }, env.priceUpdateInterval);
+  }, ENV.priceUpdateInterval);
   commit(SET_INTERVAL, interval);
 };
 

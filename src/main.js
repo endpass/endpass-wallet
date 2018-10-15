@@ -17,14 +17,14 @@ Vue.config.performance = true;
 Vue.use(Notifications);
 
 Vue.use(VueAnalytics, {
-  id: env.googleAnalyticsId,
+  id: ENV.googleAnalyticsId,
   router,
   debug: {
     sendHitTask: isProduction,
   },
 });
 
-Vue.use(Intercom, { appId: env.intercomAppId });
+Vue.use(Intercom, { appId: ENV.intercomAppId });
 
 /* eslint-disable no-new */
 const app = new Vue({

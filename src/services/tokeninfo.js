@@ -3,7 +3,7 @@ import axios from 'axios';
 export default {
   // Axios instance for this service
   http: axios.create({
-    baseURL: env.tokenInfoAPIUrl,
+    baseURL: ENV.tokenInfoAPIUrl,
     timeout: 15000,
   }),
 
@@ -19,7 +19,7 @@ export default {
   _parseToken(token) {
     return {
       ...token,
-      logo: token.logo ? `${env.tokenImageUrl}${token.logo}` : '',
+      logo: token.logo ? `${ENV.tokenImageUrl}${token.logo}` : '',
     };
   },
 };

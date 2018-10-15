@@ -9,7 +9,7 @@ export default {
     try {
       const encodedUri = encodeURIComponent(redirectUri);
       const requestUrl = `${
-        env.identityAPIUrl
+        ENV.identityAPIUrl
       }/auth?redirect_uri=${encodedUri}`;
       const { data } = await http.post(requestUrl, { email });
       const { success, challenge } = data;
@@ -30,7 +30,7 @@ export default {
 
   loginViaOTP(code, email) {
     return http
-      .post(`${env.identityAPIUrl}/token`, {
+      .post(`${ENV.identityAPIUrl}/token`, {
         challenge_type: 'otp',
         code,
         email,
@@ -51,7 +51,7 @@ export default {
   },
 
   logout() {
-    return http.post(`${env.identityAPIUrl}/logout`).catch(() => {
+    return http.post(`${ENV.identityAPIUrl}/logout`).catch(() => {
       throw new NotificationError({
         title: 'Log out error',
         text: 'Failed to log out. Please, try again',
@@ -92,7 +92,7 @@ export default {
   //   });
 
   //   return http
-  //     .delete(`${env.identityAPIUrl}/user`, propsArr)
+  //     .delete(`${ENV.identityAPIUrl}/user`, propsArr)
   //     .then(res => res.data)
   //     .then(console.log)
   //     .catch(console.log);
@@ -114,7 +114,7 @@ export default {
   async updateAccounts(accounts) {
     try {
       return await http
-        .post(`${env.identityAPIUrl}/accounts`, accounts)
+        .post(`${ENV.identityAPIUrl}/accounts`, accounts)
         .then(({ data }) => data);
     } catch (error) {
       throw new NotificationError({
@@ -208,7 +208,7 @@ export default {
       });
 
       if (!success) {
-        throw new Error(`POST ${env.identityAPIUrl}/otp: ${message}`);
+        throw new Error(`POST ${ENV.identityAPIUrl}/otp: ${message}`);
       }
 
       return { success };
@@ -232,7 +232,7 @@ export default {
       });
 
       if (!success) {
-        throw new Error(`DELETE ${env.identityAPIUrl}/otp: ${message}`);
+        throw new Error(`DELETE ${ENV.identityAPIUrl}/otp: ${message}`);
       }
 
       return { success };

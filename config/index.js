@@ -97,7 +97,7 @@ module.exports = {
     chunks: ['manifest', 'vendor', 'rollbar', 'app'],
   },
 
-  test: {
+  staging: {
     //Webpack entrys
     entry: {
       app: './src/main.js',

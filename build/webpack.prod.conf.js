@@ -22,7 +22,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       usePostCSS: true,
     }),
   },
-  entry: isProduction ? config.build.entry : config.test.entry,
+  entry: isProduction ? config.build.entry : config.staging.entry,
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
     path: config.build.assetsRoot,
@@ -32,8 +32,8 @@ const webpackConfig = merge(baseWebpackConfig, {
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
-      isProduction: true,
-      env: JSON.stringify(env),
+      isProduction,
+      ENV: JSON.stringify(env),
       NODE_ENV: JSON.stringify(process.env.NODE_ENV),
       GIT_COMMIT_HASH: JSON.stringify(gitCommitHash),
     }),
@@ -70,7 +70,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         process.env.NODE_ENV === 'testing' ? 'index.html' : config.build.index,
       template: 'index.html',
       inject: true,
-      chunks: isProduction ? config.build.chunks : config.test.chunks,
+      chunks: isProduction ? config.build.chunks : config.staging.chunks,
       chunksSortMode: 'manual',
       minify: {
         removeComments: true,

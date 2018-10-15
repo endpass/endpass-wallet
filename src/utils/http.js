@@ -15,7 +15,7 @@ function handleResponseError(error) {
 
   if (
     (!response || response.status === 401) &&
-    config.url.includes(env.identityAPIUrl)
+    config.url.includes(ENV.identityAPIUrl)
   ) {
     store.dispatch({
       type: 'user/setAuthorizationStatus',
@@ -33,7 +33,7 @@ function handleResponseSuccess(response) {
 
   if (
     status === 200 &&
-    config.url.includes(env.identityAPIUrl) &&
+    config.url.includes(ENV.identityAPIUrl) &&
     !ignorePath
   ) {
     store.dispatch({

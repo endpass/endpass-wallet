@@ -1,7 +1,7 @@
 import axios from 'axios';
 import throttledQueue from 'throttled-queue';
 
-const throttle = throttledQueue(3, env.serviceThrottleTimeout);
+const throttle = throttledQueue(3, ENV.serviceThrottleTimeout);
 
 export default {
   getPrice(symbol, currencies) {
@@ -11,7 +11,7 @@ export default {
       }
       throttle(() => {
         axios
-          .get(env.fiatPriceAPIUrl, {
+          .get(ENV.fiatPriceAPIUrl, {
             params: {
               fsym: symbol,
               tsyms: currencies,
@@ -42,7 +42,7 @@ export default {
 
       throttle(() => {
         axios
-          .get(env.fiatPriceMultiAPIUrl, {
+          .get(ENV.fiatPriceMultiAPIUrl, {
             params: {
               fsyms: symbols.toString(),
               tsyms: currency,

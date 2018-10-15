@@ -18,7 +18,7 @@ describe('axios instance', () => {
 
       describe('fulfilled', () => {
         it('should dispatch action', () => {
-          const config = { url: env.identityAPIUrl };
+          const config = { url: ENV.identityAPIUrl };
           const status = 200;
 
           fulfilled({ status, config });
@@ -31,19 +31,19 @@ describe('axios instance', () => {
         });
 
         it('should not dispatch action', () => {
-          const config = { url: env.identityAPIUrl };
+          const config = { url: ENV.identityAPIUrl };
           let status = 301;
 
           fulfilled({ status, config });
           expect(store.dispatch).toHaveBeenCalledTimes(0);
 
           status = 200;
-          config.url = `${env.identityAPIUrl}/auth`;
+          config.url = `${ENV.identityAPIUrl}/auth`;
           fulfilled({ status, config });
 
           expect(store.dispatch).toHaveBeenCalledTimes(0);
 
-          config.url = `${env.identityAPIUrl}/token`;
+          config.url = `${ENV.identityAPIUrl}/token`;
           fulfilled({ status, config });
 
           expect(store.dispatch).toHaveBeenCalledTimes(0);
@@ -58,7 +58,7 @@ describe('axios instance', () => {
       describe('rejected', () => {
         it('should dispatch action', async () => {
           const response = { status: 401 };
-          const config = { url: env.identityAPIUrl };
+          const config = { url: ENV.identityAPIUrl };
 
           try {
             await rejected({ response, config });
