@@ -25,6 +25,16 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import path from 'path';
 import { v3password } from '../fixtures/accounts';
+import {
+  syncing,
+  blockNumber,
+  getBalance_b14ab,
+  getTransactionCount_b14ab,
+  call_b14ab,
+  estimateGas_b14ab_31ea8,
+  sendRawTransaction_b14ab_31ea8,
+  getTransactionReceipt_b14ab_31ea8,
+} from '../fixtures/web3';
 
 // Sets up server and routes to stub logged in user with fixtures.
 // Usage: cy.login()
@@ -207,5 +217,36 @@ Cypress.Commands.add('switchAccount', () => {
     .click()
     .within(() => {
       cy.get('[data-select]:not(.multiselect__option--selected)').click();
+    });
+});
+
+// Mock web3 requests. Use after the cy.visit() command
+Cypress.Commands.add('mockWeb3Provider', () => {
+  cy.window()
+    .its('web3.currentProvider')
+    .then(provider => {
+      provider.mockResolvedValue(syncing.payload, syncing.result);
+      provider.mockResolvedValue(blockNumber.payload, blockNumber.result);
+      provider.mockResolvedValue(
+        getBalance_b14ab.payload,
+        getBalance_b14ab.result,
+      );
+      provider.mockResolvedValue(
+        getTransactionCount_b14ab.payload,
+        getTransactionCount_b14ab.result,
+      );
+      provider.mockResolvedValue(call_b14ab.payload, call_b14ab.result);
+      provider.mockResolvedValue(
+        estimateGas_b14ab_31ea8.payload,
+        estimateGas_b14ab_31ea8.result,
+      );
+      provider.mockResolvedValue(
+        sendRawTransaction_b14ab_31ea8.payload,
+        sendRawTransaction_b14ab_31ea8.result,
+      );
+      provider.mockResolvedValue(
+        getTransactionReceipt_b14ab_31ea8.payload,
+        getTransactionReceipt_b14ab_31ea8.result,
+      );
     });
 });
