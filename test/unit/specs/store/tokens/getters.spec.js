@@ -1,10 +1,15 @@
 /* eslint-disable import/no-named-default */
 import tokensGetters from '@/store/tokens/getters';
 import { MAIN_NET_ID } from '@/constants';
+import { address } from 'fixtures/accounts';
 import {
   token,
   tokens,
+  tokensBalances,
+  tokensPricesBySymbols,
   tokensMappedByNetworks,
+  tokensMappedByAddresses,
+  fullTokensMappedByAddresses,
   expandedTokensMappedByNetworks,
   cuttedTokensMappedByNetworks,
 } from 'fixtures/tokens';
@@ -119,116 +124,157 @@ describe('tokens getters', () => {
     });
   });
 
-  describe('fullTokensByAddress', () => {
-    it('should return tokens by address with prices and balances', () => {
-      const state = {
-        prices: {
-          FOO: '2',
-        },
-        tokensByAddress: {
-          '0x0': ['0x1', '0x2'],
-        },
-      };
+  describe('currentAccountTokens', () => {
+    it('should returns current account tokens by tokensByAddress getter', () => {
       const getters = {
-        balancesByAddress: () => ({
-          '0x1': '1',
-        }),
-        tokensByAddress: () => ({
-          '0x1': {
-            address: '0x1',
-            symbol: 'FOO',
-          },
-          '0x2': {
-            address: '0x2',
-            symbol: 'BAR',
-          },
-        }),
+        tokensByAddress: jest.fn(() => tokensMappedByAddresses),
+      };
+      const rootGetters = {
+        'accounts/currentAddressString': address,
       };
 
-      expect(tokensGetters.fullTokensByAddress(state, getters)('0x0')).toEqual({
-        '0x1': {
-          address: '0x1',
-          price: '2',
-          balance: '1',
-          symbol: 'FOO',
-        },
-        '0x2': {
-          address: '0x2',
-          price: '0',
-          balance: '0',
-          symbol: 'BAR',
-        },
-      });
+      expect(
+        tokensGetters.currentAccountTokens(null, getters, null, rootGetters),
+      ).toEqual(tokensMappedByAddresses);
+      expect(getters.tokensByAddress).toBeCalledTimes(1);
+      expect(getters.tokensByAddress).toBeCalledWith(address);
+    });
+  });
+
+  describe('currentNetUserFullTokens', () => {
+    it('should returns current account tokens by fullTokensByAddress', () => {
+      const getters = {
+        currentNetUserTokens: tokensMappedByAddresses,
+        fullTokens: jest.fn(() => tokensMappedByAddresses),
+      };
+      const rootGetters = {
+        'accounts/currentAddressString': address,
+      };
+
+      expect(
+        tokensGetters.currentNetUserFullTokens(
+          null,
+          getters,
+          null,
+          rootGetters,
+        ),
+      ).toEqual(tokensMappedByAddresses);
+      expect(getters.fullTokens).toBeCalledTimes(1);
+      expect(getters.fullTokens).toBeCalledWith(
+        address,
+        tokensMappedByAddresses,
+      );
+    });
+  });
+
+  describe('currentAccountFullTokens', () => {
+    it('should return current account tokens with all info received by fullTokensByAddress', () => {
+      const getters = {
+        fullTokensByAddress: jest.fn(() => tokensMappedByAddresses),
+      };
+      const rootGetters = {
+        'accounts/currentAddressString': address,
+      };
+
+      expect(
+        tokensGetters.currentAccountFullTokens(
+          null,
+          getters,
+          null,
+          rootGetters,
+        ),
+      ).toEqual(tokensMappedByAddresses);
+      expect(getters.fullTokensByAddress).toBeCalledTimes(1);
+      expect(getters.fullTokensByAddress).toBeCalledWith(address);
+    });
+  });
+
+  describe('fullTokens', () => {
+    it('should returns given tokens with prices and balances', () => {
+      const state = {
+        prices: tokensPricesBySymbols,
+      };
+      const getters = {
+        balancesByAddress: jest.fn(() => tokensBalances),
+      };
+
+      expect(
+        tokensGetters.fullTokens(state, getters)(
+          address,
+          tokensMappedByAddresses,
+        ),
+      ).toEqual(fullTokensMappedByAddresses);
+      expect(getters.balancesByAddress).toBeCalledTimes(1);
+      expect(getters.balancesByAddress).toBeCalledWith(address);
+    });
+  });
+
+  describe('fullTokensByAddress', () => {
+    it('should return tokens by address with fullTokens getter', () => {
+      const getters = {
+        tokensByAddress: jest.fn(() => tokensMappedByAddresses),
+        fullTokens: jest.fn(() => fullTokensMappedByAddresses),
+      };
+
+      expect(tokensGetters.fullTokensByAddress(null, getters)(address)).toEqual(
+        fullTokensMappedByAddresses,
+      );
+      expect(getters.tokensByAddress).toBeCalledTimes(1);
+      expect(getters.tokensByAddress).toBeCalledWith(address);
+      expect(getters.fullTokens).toBeCalledTimes(1);
+      expect(getters.fullTokens).toBeCalledWith(
+        address,
+        tokensMappedByAddresses,
+      );
     });
   });
 
   describe('allCurrentAccountTokens', () => {
     it('should return all account tokens with user tokens', () => {
       const getters = {
-        tokensByAddress: () => ({
-          '0x1': networkTokens['0x1'],
-        }),
+        currentAccountTokens: {
+          '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144':
+            tokensMappedByAddresses[
+              '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144'
+            ],
+        },
         currentNetUserTokens: {
-          '0x2': networkTokens['0x2'],
+          '0xE41d2489571d322189246DaFA5ebDe1F4699F498':
+            tokensMappedByAddresses[
+              '0xE41d2489571d322189246DaFA5ebDe1F4699F498'
+            ],
         },
       };
-      const rootGetters = {
-        'accounts/currentAddressString': '0x0',
-      };
 
-      expect(
-        tokensGetters.allCurrentAccountTokens(null, getters, null, rootGetters),
-      ).toEqual(networkTokens);
+      expect(tokensGetters.allCurrentAccountTokens(null, getters)).toEqual(
+        tokensMappedByAddresses,
+      );
     });
   });
 
   describe('allCurrentAccountFullTokens', () => {
     it('should return all account tokens with balances and prices ', () => {
-      const state = {
-        prices: {
-          FOO: '2',
-        },
-      };
       const getters = {
-        allCurrentAccountTokens: {
-          '0x1': {
-            address: '0x1',
-            symbol: 'FOO',
-          },
-          '0x2': {
-            address: '0x2',
-            symbol: 'BAR',
-          },
-        },
-        balancesByAddress: () => ({
-          '0x1': '1',
-        }),
+        allCurrentAccountTokens: tokensMappedByAddresses,
+        fullTokens: jest.fn(() => fullTokensMappedByAddresses),
       };
       const rootGetters = {
-        'accounts/currentAddressString': '0x1',
+        'accounts/currentAddressString': address,
       };
 
       expect(
         tokensGetters.allCurrentAccountFullTokens(
-          state,
+          null,
           getters,
           null,
           rootGetters,
         ),
-      ).toEqual({
-        '0x1': {
-          address: '0x1',
-          price: '2',
-          balance: '1',
-          symbol: 'FOO',
-        },
-        '0x2': {
-          address: '0x2',
-          price: '0',
-          balance: '0',
-          symbol: 'BAR',
-        },
-      });
+      ).toEqual(fullTokensMappedByAddresses);
+      expect(getters.fullTokens).toBeCalledTimes(1);
+      expect(getters.fullTokens).toBeCalledWith(
+        address,
+        tokensMappedByAddresses,
+      );
     });
   });
 

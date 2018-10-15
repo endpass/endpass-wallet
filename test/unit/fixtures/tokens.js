@@ -52,6 +52,37 @@ export const tokensMappedByAddresses = {
   },
 };
 
+export const tokensBalances = {
+  '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144': '0',
+  '0xE41d2489571d322189246DaFA5ebDe1F4699F498': '1000',
+};
+
+export const tokensPricesBySymbols = {
+  FST: '10',
+  SCDT: 2,
+};
+
+export const fullTokensMappedByAddresses = {
+  '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144': {
+    ...tokensMappedByAddresses['0x4Ce2109f8DB1190cd44BC6554E35642214FbE144'],
+    balance: tokensBalances['0x4Ce2109f8DB1190cd44BC6554E35642214FbE144'],
+    price:
+      tokensPricesBySymbols[
+        tokensMappedByAddresses['0x4Ce2109f8DB1190cd44BC6554E35642214FbE144']
+          .symbol
+      ],
+  },
+  '0xE41d2489571d322189246DaFA5ebDe1F4699F498': {
+    ...tokensMappedByAddresses['0xE41d2489571d322189246DaFA5ebDe1F4699F498'],
+    balance: tokensBalances['0xE41d2489571d322189246DaFA5ebDe1F4699F498'],
+    price:
+      tokensPricesBySymbols[
+        tokensMappedByAddresses['0xE41d2489571d322189246DaFA5ebDe1F4699F498']
+          .symbol
+      ],
+  },
+};
+
 export const tokensByUserAddresses = {
   '0x0': Object.keys(tokensMappedByAddresses),
 };
@@ -98,12 +129,15 @@ export default {
   tokens,
   token,
   tokensPrices,
+  tokensPricesBySymbols,
   tokensMappedByAddresses,
   tokensMappedByNetworks,
   tokensListsMappedByNetworks,
   cuttedTokensMappedByNetworks,
   expandedTokensMappedByNetworks,
+  fullTokensMappedByAddresses,
   tokensByUserAddresses,
+  tokensBalances,
   balances,
   allTokens,
 };
