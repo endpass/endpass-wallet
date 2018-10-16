@@ -1,5 +1,4 @@
 import priceService from '@/services/price';
-import { priceUpdateInterval } from '@/config';
 import {
   SET_PRICE,
   SET_UPDATE_TIME,
@@ -40,7 +39,7 @@ const updatePrice = async ({ commit, getters, dispatch }) => {
 const subscribeOnPriceUpdates = ({ commit, dispatch }) => {
   const interval = setInterval(() => {
     dispatch('updatePrice');
-  }, priceUpdateInterval);
+  }, ENV.priceUpdateInterval);
   commit(SET_INTERVAL, interval);
 };
 

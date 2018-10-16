@@ -1,4 +1,3 @@
-import { isEmpty } from 'lodash';
 import {
   SET_LOADING,
   SET_TOKENS_BY_ADDRESS,
@@ -17,7 +16,6 @@ import {
 } from '@/services';
 import { merge, mapValuesWith } from '@/utils/objects';
 import { mapArrayByProp } from '@/utils/arrays';
-import { priceUpdateInterval } from '@/config';
 import { MAIN_NET_ID } from '@/constants';
 
 const init = async ({ dispatch }) => {
@@ -31,7 +29,7 @@ const subscribeOnCurrentAccountTokensUpdates = ({ dispatch }) => {
 
   setInterval(() => {
     dispatch('getCurrentAccountTokensData');
-  }, priceUpdateInterval);
+  }, ENV.priceUpdateInterval);
 };
 
 const addUserToken = async (

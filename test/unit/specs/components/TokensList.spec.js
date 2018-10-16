@@ -2,7 +2,7 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import TokensList from '@/components/TokensList';
 import { generateStubs } from '@/utils/testUtils';
-import { tokens } from 'fixtures/tokens';
+import { tokens, fullTokensMappedByAddresses } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
 
@@ -35,6 +35,9 @@ describe('TokensList', () => {
             prices: {
               FST: { ETH: 2 }, // price of token in ETH
             },
+          },
+          getters: {
+            currentNetUserFullTokens: () => fullTokensMappedByAddresses,
           },
           actions,
         },
@@ -85,17 +88,24 @@ describe('TokensList', () => {
       expect(wrapper.vm.getTokenPrice('BADSYMBOL')).toBe('0');
     });
 
-    it('should call remove action', () => {
+    it('should render remove button only for user tokens with non zero balance', () => {
       wrapper.setProps({
         hasRemove: true,
+        tokens: Object.values(fullTokensMappedByAddresses),
       });
+      wrapper.setComputed({
+        currentNetUserFullTokens: fullTokensMappedByAddresses,
+      });
+
+      expect(wrapper.findAll('.remove-token-button')).toHaveLength(1);
+
       wrapper.find('.remove-token-button').trigger('click');
 
       expect(actions.removeUserToken).toHaveBeenCalledTimes(1);
       expect(actions.removeUserToken).toBeCalledWith(
         expect.any(Object),
         {
-          token: tokens[0],
+          token: Object.values(fullTokensMappedByAddresses)[0],
         },
         undefined,
       );

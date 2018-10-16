@@ -27,20 +27,6 @@ describe('VSpinner', () => {
       });
     });
 
-    describe('isLoading', () => {
-      it('should render component', () => {
-        wrapper.setProps({ isLoading: true });
-
-        expect(wrapper.element).toMatchSnapshot();
-      });
-
-      it('should not render component', () => {
-        wrapper.setProps({ isLoading: false });
-
-        expect(wrapper.element).toMatchSnapshot();
-      });
-    });
-
     describe('label', () => {
       beforeEach(() => {
         wrapper.setProps({ isLoading: true });

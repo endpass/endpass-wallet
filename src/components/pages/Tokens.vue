@@ -20,7 +20,7 @@
                     />
                   </div>
                   <v-spinner
-                    :is-loading="isLoading || isProcessingToken"
+                    v-if="isLoading || isProcessingToken"
                     class="spinner-block"
                     data-test="tokens-spinner"
                   />

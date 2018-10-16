@@ -5,7 +5,6 @@ import {
   ADD_API_ERROR_ID,
   REMOVE_API_ERROR_ID,
 } from './mutations-types.js';
-import { blockUpdateInterval } from '@/config';
 
 //status - Boolean; false - api is not responding
 const updateApiErrorStatus = ({ commit, state }, { id, status }) => {
@@ -31,7 +30,7 @@ const subscribeOnSyncStatus = async ({ getters, commit, dispatch }) => {
       commit(SET_WEB3_CONNECTION_STATUS, true);
       setTimeout(() => {
         dispatch('subscribeOnSyncStatus');
-      }, blockUpdateInterval);
+      }, ENV.blockUpdateInterval);
     } else {
       dispatch('subscribeOnSyncStatus');
     }
@@ -40,7 +39,7 @@ const subscribeOnSyncStatus = async ({ getters, commit, dispatch }) => {
     dispatch('errors/emitError', e, { root: true });
     setTimeout(() => {
       dispatch('subscribeOnSyncStatus');
-    }, blockUpdateInterval);
+    }, ENV.blockUpdateInterval);
   }
 };
 

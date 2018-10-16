@@ -1,7 +1,6 @@
 import { CustomProvider, LocalProvider, ServerProvider } from './provider';
 import { Decorator, ProviderUrlDecorator } from './decorator';
 import { NotificationError } from '@/class';
-import { identityAPIUrl } from '@/config';
 import { IDENTITY_MODE } from '@/constants';
 
 export default class ProxyRequest {
@@ -11,7 +10,7 @@ export default class ProxyRequest {
   }
 
   setMode(type = IDENTITY_MODE.DEFAULT, serverUrl) {
-    const url = serverUrl || identityAPIUrl;
+    const url = serverUrl || ENV.identityAPIUrl;
 
     switch (type) {
       case IDENTITY_MODE.CUSTOM:
