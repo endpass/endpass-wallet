@@ -10,6 +10,7 @@ const kdfParams = {
   kdf: 'scrypt',
   n: 4,
 };
+const isProduction = false;
 
 module.exports = merge(prodEnv, {
   identityAPIUrl,
@@ -17,4 +18,5 @@ module.exports = merge(prodEnv, {
   tokenInfoAPIUrl,
   cryptoDataAPIUrl,
   kdfParams,
+  isProduction,
 });

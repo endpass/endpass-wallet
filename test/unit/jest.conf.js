@@ -17,9 +17,7 @@ module.exports = {
   },
   //globals as webpack DefinePlugin mocks
   globals: {
-    NODE_ENV: 'testing',
     ENV,
-    isProduction: false,
   },
   transformIgnorePatterns: ['node_modules/(?!vue-timers)'],
   snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],

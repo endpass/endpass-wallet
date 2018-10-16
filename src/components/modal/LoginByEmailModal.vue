@@ -108,7 +108,7 @@ const availableIdentityServerTypes = [
   { text: 'Endpass', val: IDENTITY_MODE.DEFAULT },
   { text: 'Local Storage', val: IDENTITY_MODE.LOCAL },
   { text: 'Custom server', val: IDENTITY_MODE.CUSTOM },
-].filter(mode => !(isProduction && mode.val === IDENTITY_MODE.LOCAL));
+].filter(mode => !(ENV.isProduction && mode.val === IDENTITY_MODE.LOCAL));
 
 export default {
   name: 'LoginByEmailModal',

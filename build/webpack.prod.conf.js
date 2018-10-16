@@ -32,7 +32,6 @@ const webpackConfig = merge(baseWebpackConfig, {
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
-      isProduction: JSON.stringify(isProduction),
       ENV: JSON.stringify(env),
       GIT_COMMIT_HASH: JSON.stringify(gitCommitHash),
     }),

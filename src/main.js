@@ -18,7 +18,7 @@ Vue.use(VueAnalytics, {
   id: ENV.googleAnalyticsId,
   router,
   debug: {
-    sendHitTask: isProduction,
+    sendHitTask: ENV.isProduction,
   },
 });
 
@@ -32,7 +32,7 @@ const app = new Vue({
   render: h => h(App),
 });
 
-if (!isProduction) {
+if (!ENV.isProduction) {
   window.app = app;
 }
 

@@ -14,6 +14,8 @@ const kdfParams = {
   n: 1024, // low for development
 };
 
+const isProduction = false;
+
 module.exports = merge(prodEnv, {
   cryptoDataAPIUrl,
   identityAPIUrl,
@@ -21,4 +23,5 @@ module.exports = merge(prodEnv, {
   tokenInfoAPIUrl,
   kdfParams,
   intercomAppId,
+  isProduction,
 });

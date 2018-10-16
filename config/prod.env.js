@@ -33,6 +33,8 @@ const kdfParams = {
 const googleAnalyticsId = 'UA-115004766-3';
 const intercomAppId = 'ap1xxb8t';
 
+const isProduction = true;
+
 module.exports = {
   hdKeyMnemonic,
   infuraConf,
@@ -49,4 +51,5 @@ module.exports = {
   kdfParams,
   googleAnalyticsId,
   intercomAppId,
+  isProduction,
 };
