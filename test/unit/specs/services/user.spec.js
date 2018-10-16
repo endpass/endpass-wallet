@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { http, proxyRequest } from '@/utils';
+import { proxyRequest } from '@/utils';
 import MockAdapter from 'axios-mock-adapter';
 
 import { NotificationError } from '@/class';
+import { httpIdentity } from '@/class/singleton';
 import { IDENTITY_MODE } from '@/constants';
 import { addresses } from 'fixtures/accounts';
 
@@ -12,7 +13,7 @@ describe('User service', () => {
   let axiosMock;
 
   beforeEach(() => {
-    axiosMock = new MockAdapter(http);
+    axiosMock = new MockAdapter(httpIdentity);
   });
 
   describe('login', () => {

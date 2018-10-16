@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { http, proxyRequest } from '@/utils';
+import { proxyRequest } from '@/utils';
 import { NotificationError } from '@/class';
+import { httpIdentity } from '@/class/singleton';
 import keyUtil from '@/utils/keystore';
 import { IDENTITY_MODE } from '@/constants';
 
@@ -11,7 +12,7 @@ export default {
       const requestUrl = `${
         ENV.identityAPIUrl
       }/auth?redirect_uri=${encodedUri}`;
-      const { data } = await http.post(requestUrl, { email });
+      const { data } = await httpIdentity.post(requestUrl, { email });
       const { success, challenge } = data;
 
       if (!success) {
@@ -29,7 +30,7 @@ export default {
   },
 
   loginViaOTP(code, email) {
-    return http
+    return httpIdentity
       .post(`${ENV.identityAPIUrl}/token`, {
         challenge_type: 'otp',
         code,
@@ -51,7 +52,7 @@ export default {
   },
 
   logout() {
-    return http.post(`${ENV.identityAPIUrl}/logout`).catch(() => {
+    return httpIdentity.post(`${ENV.identityAPIUrl}/logout`).catch(() => {
       throw new NotificationError({
         title: 'Log out error',
         text: 'Failed to log out. Please, try again',
@@ -91,7 +92,7 @@ export default {
   //     success: true,
   //   });
 
-  //   return http
+  //   return httpIdentity
   //     .delete(`${ENV.identityAPIUrl}/user`, propsArr)
   //     .then(res => res.data)
   //     .then(console.log)
@@ -113,7 +114,7 @@ export default {
   // Update the encrypted keystore for an existing accounts
   async updateAccounts(accounts) {
     try {
-      return await http
+      return await httpIdentity
         .post(`${ENV.identityAPIUrl}/accounts`, accounts)
         .then(({ data }) => data);
     } catch (error) {
