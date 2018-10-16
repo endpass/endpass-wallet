@@ -1,5 +1,6 @@
-import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+
+import { http } from '@/class/singleton';
 const priceService = require.requireActual('@/services/price').default;
 
 jest.mock('throttled-queue', function() {
@@ -13,7 +14,7 @@ jest.mock('throttled-queue', function() {
 describe('Price service', () => {
   let mock;
   beforeEach(() => {
-    mock = new MockAdapter(axios);
+    mock = new MockAdapter(http);
   });
 
   afterEach(() => {

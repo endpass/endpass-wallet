@@ -1,4 +1,5 @@
-import axios from 'axios';
+import { http } from '@/class/singleton';
+
 import throttledQueue from 'throttled-queue';
 
 const throttle = throttledQueue(3, ENV.serviceThrottleTimeout);
@@ -10,7 +11,7 @@ export default {
         return res({ [currencies]: 0 });
       }
       throttle(() => {
-        axios
+        http
           .get(ENV.fiatPriceAPIUrl, {
             params: {
               fsym: symbol,
@@ -41,7 +42,7 @@ export default {
       }
 
       throttle(() => {
-        axios
+        http
           .get(ENV.fiatPriceMultiAPIUrl, {
             params: {
               fsyms: symbols.toString(),

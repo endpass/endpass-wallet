@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { http } from '@/class/singleton';
 import throttledQueue from 'throttled-queue';
 
 const throttle = throttledQueue(1, 5000);
@@ -7,7 +7,7 @@ export default {
   getTokensWithBalance(address) {
     return new Promise((res, rej) => {
       throttle(() => {
-        axios
+        http
           .get(`https://api.ethplorer.io/getAddressInfo/${address}`, {
             params: {
               limit: 50,
@@ -28,7 +28,7 @@ export default {
   getHistory(address) {
     return new Promise((res, rej) => {
       throttle(() => {
-        axios
+        http
           .get(`https://api.ethplorer.io/getAddressHistory/${address}`, {
             params: {
               limit: 50,
@@ -43,7 +43,7 @@ export default {
   getInfo(address) {
     return new Promise((res, rej) => {
       throttle(() => {
-        axios
+        http
           .get(`https://api.ethplorer.io/getAddressTransactions/${address}`, {
             params: {
               limit: 50,

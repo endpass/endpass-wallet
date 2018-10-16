@@ -1,9 +1,9 @@
-import axios from 'axios';
+import { http } from '@/class/singleton';
 import { NotificationError } from '@/class';
 
 export default {
   getGasPrice(address) {
-    return axios
+    return http
       .get(`${ENV.cryptoDataAPIUrl}/gas/price`)
       .then(resp => resp.data)
       .catch(e => {
