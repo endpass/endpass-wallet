@@ -1,4 +1,5 @@
-import { userService } from '@/services';
+import { isEmpty, find, get } from 'lodash';
+import { userService, localSettingsService } from '@/services';
 import web3 from '@/utils/web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
@@ -20,6 +21,9 @@ const selectWallet = async ({ commit, state, dispatch }, address) => {
   commit(SET_WALLET, state.wallets[address]);
   commit(SET_ADDRESS, address);
 
+  localSettingsService.save({
+    activeAccount: address,
+  });
   dispatch('updateBalance');
 
   await dispatch('tokens/getCurrentAccountTokens', null, {
@@ -96,6 +100,7 @@ const addWalletWithPublicKey = async (
   // TODO convert public key to address, accept xPub key
   try {
     const address = web3.utils.toChecksumAddress(publicKeyOrAddress);
+
     await userService.setAccount(address, null);
     commit(ADD_ADDRESS, address);
 
@@ -143,7 +148,7 @@ const saveWallet = async ({ dispatch }, { json }) => {
   await dispatch('commitWallet', { wallet: json });
 };
 
-const addHdWallet = async ({ commit, dispatch }, { key, password }) => {
+const addHdWallet = async ({ dispatch }, { key, password }) => {
   try {
     const seed = Bip39.mnemonicToSeed(key);
     const hdKey = HDKey.fromMasterSeed(seed);
@@ -246,16 +251,26 @@ const setUserWallets = async ({ commit, dispatch }) => {
     // Fetch and save regular accounts
     const accounts = await userService.getV3Accounts();
 
-    if (accounts && accounts.length) {
-      accounts.forEach(account => {
-        if (keystore.isV3(account)) {
-          // Encrypted private key
-          commit(ADD_WALLET, account);
-        } else {
-          // Read-only public key
-          commit(ADD_ADDRESS, account.address);
-        }
-      });
+    if (isEmpty(accounts)) return;
+
+    const activeAccount = get(localSettingsService.load(), 'activeAccount');
+    const isAccountExist =
+      activeAccount &&
+      find(accounts, ({ address }) => address === activeAccount);
+
+    accounts.forEach(account => {
+      if (keystore.isV3(account)) {
+        // Encrypted private key
+        commit(ADD_WALLET, account);
+      } else {
+        // Read-only public key
+        commit(ADD_ADDRESS, account.address);
+      }
+    });
+
+    if (isAccountExist) {
+      await dispatch('selectWallet', activeAccount);
+    } else {
       await dispatch('selectWallet', accounts[0].address);
     }
   } catch (e) {

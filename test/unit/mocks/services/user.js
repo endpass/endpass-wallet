@@ -39,10 +39,6 @@ jest.mock('@/services/user', () => {
       success: true,
     }),
 
-    setSetting: jest.fn().mockResolvedValue({
-      success: true,
-    }),
-
     removeSettings: jest.fn().mockResolvedValue({
       success: true,
     }),
@@ -77,10 +73,6 @@ jest.mock('@/services/user', () => {
     }),
 
     getOtpSettings: jest.fn().mockResolvedValue(otpSettings),
-
-    loginViaOTP: jest.fn().mockResolvedValue({
-      success: true,
-    }),
 
     deleteOtpSettings: jest.fn().mockResolvedValue({
       success: true,
