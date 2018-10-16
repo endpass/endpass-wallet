@@ -27,9 +27,9 @@ const setInterval = (state, interval) => {
 };
 
 export default {
-  SET_PRICE: setPrice,
-  SET_UPDATE_TIME: setUpdateTime,
-  START_LOADING: startLoading,
-  STOP_LOADING: stopLoading,
-  SET_INTERVAL: setInterval,
+  [SET_PRICE]: setPrice,
+  [SET_UPDATE_TIME]: setUpdateTime,
+  [START_LOADING]: startLoading,
+  [STOP_LOADING]: stopLoading,
+  [SET_INTERVAL]: setInterval,
 };
