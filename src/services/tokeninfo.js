@@ -1,13 +1,7 @@
-import axios from 'axios';
 import web3 from '@/utils/web3';
+import { http } from '@/class/singleton';
 
 export default {
-  // Axios instance for this service
-  http: axios.create({
-    baseURL: ENV.tokenInfoAPIUrl,
-    timeout: 15000,
-  }),
-
   getTokensList() {
     return this._getTokens().then(tokens =>
       tokens.map(this._parseToken).filter(this._checkAddress),
@@ -16,7 +10,7 @@ export default {
 
   // Get list of all tokens with infos
   _getTokens() {
-    return this.http.get(`/tokens`).then(resp => resp.data);
+    return http.get(`${ENV.tokenInfoAPIUrl}/tokens`).then(resp => resp.data);
   },
   // formats a token
   _parseToken(token) {

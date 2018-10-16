@@ -1,12 +1,13 @@
-import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+
+import { http } from '@/class/singleton';
 
 const gasPrice = require.requireActual('@/services/gas-price').default;
 
 describe('gas price service', () => {
   let mock;
   beforeEach(() => {
-    mock = new MockAdapter(axios);
+    mock = new MockAdapter(http);
   });
 
   afterEach(() => {

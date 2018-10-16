@@ -6,7 +6,7 @@ jest.mock('@/store', () => ({
   dispatch: jest.fn(),
 }));
 
-describe('axios instance', () => {
+describe('httpIdentity', () => {
   describe('defaults', () => {
     const { defaults } = httpIdentity;
 

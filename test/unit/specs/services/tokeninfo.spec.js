@@ -1,4 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
+
+import { http } from '@/class/singleton';
 import tokensFixture from 'fixtures/tokens';
 
 const tokenInfo = require.requireActual('@/services/tokeninfo').default;
@@ -9,7 +11,7 @@ describe('token info service', () => {
 
   let mock;
   beforeEach(() => {
-    mock = new MockAdapter(tokenInfo.http);
+    mock = new MockAdapter(http);
   });
 
   afterEach(() => {
@@ -17,11 +19,9 @@ describe('token info service', () => {
   });
 
   it('should make correct request', async () => {
-    expect.assertions(3);
+    expect.assertions(1);
     mock.onGet(tokensURL).reply(config => {
       expect(config.method).toBe('get');
-      expect(config.baseURL).toBe(ENV.tokenInfoAPIUrl);
-      expect(config.url).toBe('/tokens');
       return [200, tokens];
     });
     await tokenInfo.getTokensList();
