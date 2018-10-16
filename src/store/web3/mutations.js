@@ -1,6 +1,13 @@
 import web3 from '@/utils/web3';
 
-import * as mutationsTypes from './mutations-types';
+import {
+  CHANGE_NETWORK,
+  CHANGE_CURRENCY,
+  SET_NETWORKS,
+  SET_BLOCK_NUMBER,
+  SET_INTERVAL,
+} from './mutations-types';
+
 import { providerFactory } from '@/class';
 
 const changeNetwork = (state, network) => {
@@ -33,9 +40,9 @@ const setInterval = (state, interval) => {
 };
 
 export default {
-  [mutationsTypes.CHANGE_NETWORK]: changeNetwork,
-  [mutationsTypes.CHANGE_CURRENCY]: changeCurrency,
-  [mutationsTypes.SET_NETWORKS]: setNetworks,
-  [mutationsTypes.SET_BLOCK_NUMBER]: setBlockNumber,
-  [mutationsTypes.SET_INTERVAL]: setInterval,
+  [CHANGE_NETWORK]: changeNetwork,
+  [CHANGE_CURRENCY]: changeCurrency,
+  [SET_NETWORKS]: setNetworks,
+  [SET_BLOCK_NUMBER]: setBlockNumber,
+  [SET_INTERVAL]: setInterval,
 };
