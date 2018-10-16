@@ -2,7 +2,6 @@ import keythereum from 'keythereum';
 import bs58check from 'bs58check';
 import EthWallet from 'ethereumjs-wallet';
 import HDKey from 'ethereumjs-wallet/hdkey';
-import { kdfParams } from '@/config';
 
 // Monkey patch keythereum to skip generating address for private keys
 // This allows us to encrypt private keys of arbitrary length, and
@@ -20,8 +19,8 @@ export default {
     // Generate random salt and iv for each encryption
     let dk = keythereum.create();
     let options = {
-      kdf: kdfParams.kdf,
-      kdfparams: kdfParams,
+      kdf: ENV.kdfParams.kdf,
+      kdfparams: ENV.kdfParams,
     };
     let encrypted = keythereum.dump(
       password,
