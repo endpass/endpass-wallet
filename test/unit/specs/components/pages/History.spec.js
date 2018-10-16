@@ -117,9 +117,7 @@ describe('HistoryPage', () => {
           currentNetTransactions: [],
         });
 
-        expect(wrapper.find('v-spinner').attributes()).toEqual({
-          'is-loading': 'true',
-        });
+        expect(wrapper.find('v-spinner').exists()).toBe(true);
       });
 
       it('should not render v-spinner', () => {

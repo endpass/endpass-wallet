@@ -1,7 +1,5 @@
 <template>
-  <div
-    v-if="isLoading"
-    class="v-spinner is-overlay">
+  <div class="v-spinner is-overlay">
     <div class="spinner loader" />
     <p
       v-if="label"
@@ -15,11 +13,8 @@
 <script>
 export default {
   name: 'VSpinner',
+
   props: {
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
     label: {
       type: String,
       default: '',
