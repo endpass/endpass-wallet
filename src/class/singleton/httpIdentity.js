@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+import { REQUEST_TIMEOUT_MSEC } from '@/constants';
 import store from '@/store';
 
 const identityConfig = {
@@ -8,6 +9,7 @@ const identityConfig = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
+  timeout: REQUEST_TIMEOUT_MSEC,
 };
 
 function handleResponseError(error) {

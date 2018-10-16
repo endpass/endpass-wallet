@@ -1,13 +1,35 @@
-import http from '@/utils/http';
+import { httpIdentity } from '@/class/singleton';
 import store from '@/store';
+import { REQUEST_TIMEOUT_MSEC } from '@/constants';
 
 jest.mock('@/store', () => ({
   dispatch: jest.fn(),
 }));
 
 describe('axios instance', () => {
+  describe('defaults', () => {
+    const { defaults } = httpIdentity;
+
+    it('should have the correct withCredentials option', () => {
+      expect(defaults.withCredentials).toBeTruthy();
+    });
+
+    it('should have the correct timeout option', () => {
+      expect(defaults.timeout).toBe(30000);
+    });
+
+    it('should have the correct headers option', () => {
+      expect(defaults.headers).toEqual(
+        expect.objectContaining({
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        }),
+      );
+    });
+  });
+
   describe('interceptors', () => {
-    const interceptors = http.interceptors;
+    const { interceptors } = httpIdentity;
 
     beforeEach(() => {
       store.dispatch.mockClear();
