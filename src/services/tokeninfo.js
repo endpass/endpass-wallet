@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { tokenInfoAPIUrl, tokenImageUrl } from '@/config';
+import web3 from 'web3';
 
 export default {
   // Axios instance for this service
@@ -9,7 +10,9 @@ export default {
   }),
 
   getTokensList() {
-    return this._getTokens().then(tokens => tokens.map(this._parseToken));
+    return this._getTokens().then(tokens =>
+      tokens.map(this._parseToken).filter(this._checkAddress),
+    );
   },
 
   // Get list of all tokens with infos
@@ -22,5 +25,8 @@ export default {
       ...token,
       logo: token.logo ? `${tokenImageUrl}${token.logo}` : '',
     };
+  },
+  _checkAddress(token) {
+    return web3.utils.isAddress(token.address);
   },
 };

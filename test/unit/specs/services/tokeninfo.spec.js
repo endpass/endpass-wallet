@@ -51,4 +51,13 @@ describe('token info service', () => {
     // Not equal because they are parsed
     expect(tokensList[0].logo).not.toBe(tokens[0].logo);
   });
+  it('filters wrong addressers', async () => {
+    const brokenToken = {
+      address: 'kek',
+    };
+    mock.onGet(tokensURL).reply(200, [...tokens, brokenToken]);
+    const tokensList = await tokenInfo.getTokensList();
+    expect(tokensList).toHaveLength(tokens.length);
+    expect(tokensList).not.toContain(brokenToken);
+  });
 });
