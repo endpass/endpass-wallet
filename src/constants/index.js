@@ -60,6 +60,10 @@ export const IDENTITY_MODE = Object.freeze({
 
 export const PROXY_REQUEST_PREFIX = 'endpass-identity';
 
+export const STORAGE_USER_META_KEY = 'endpass-user-meta';
+
+export const AVAILABLE_USER_META_PROPS = ['activeAccount'];
+
 export default {
   AVAILABLE_FIAT_CURRENCIES,
   MAIN_NET_ID,
@@ -67,4 +71,6 @@ export default {
   CURRENCIES,
   IDENTITY_MODE,
   PROXY_REQUEST_PREFIX,
+  STORAGE_USER_META_KEY,
+  AVAILABLE_USER_META_PROPS,
 };

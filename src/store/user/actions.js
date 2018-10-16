@@ -18,6 +18,7 @@ const setAuthorizationStatus = (
   commit(SET_AUTHORIZATION_STATUS, authorizationStatus);
 
   if (getters.isLoggedOut) {
+    /* eslint-disable-next-line */
     const notificationError = new NotificationError({
       title: 'Auth error',
       text:
