@@ -90,6 +90,22 @@ describe('web3 mutations', () => {
     });
   });
 
+  describe('setHandledBlockNumber', () => {
+    const setHandledBlockNumber =
+      mutations[mutationsTypes.SET_HANDLED_BLOCK_NUMBER];
+
+    it('should set last handled block number', () => {
+      const state = {
+        handledBlockNumber: 0,
+      };
+      const handledBlockNumber = 1;
+
+      setHandledBlockNumber(state, handledBlockNumber);
+
+      expect(state.handledBlockNumber).toBe(handledBlockNumber);
+    });
+  });
+
   describe('setInterval', () => {
     const setInterval = mutations[mutationsTypes.SET_INTERVAL];
 

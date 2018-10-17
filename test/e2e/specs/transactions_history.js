@@ -120,6 +120,62 @@ describe('Transactions History Page', () => {
     });
   });
 
+  describe('Incoming transactions', () => {
+    beforeEach(() => {
+      cy.visit('#/history');
+      cy.makeStoreAlias();
+      cy.waitPageLoad();
+    });
+
+    it('should show notification and add to history', () => {
+      cy.get('@store').invoke(
+        'dispatch',
+        'transactions/handleBlockTransactions',
+        {
+          transactions: [ethplorerTransactions[0]],
+          networkId: 1,
+        },
+      );
+
+      cy.get('.notification').should('not.exist');
+      cy.get('[data-test=transactions-history-item]').should('not.exist');
+
+      cy.get('@store').invoke(
+        'dispatch',
+        'transactions/handleBlockTransactions',
+        {
+          transactions: ethplorerTransactions,
+          networkId: 3,
+        },
+      );
+
+      cy.get('.notification.is-info').contains('Incoming transaction');
+      cy.get('[data-test=transactions-history-item]').should('not.exist');
+
+      cy.get('@store').invoke(
+        'dispatch',
+        'transactions/handleBlockTransactions',
+        {
+          transactions: ethplorerTransactions,
+          networkId: 1,
+        },
+      );
+
+      cy.get('.notification.is-info').should('have.length', 2);
+      cy.get('[data-test=transactions-history-item]')
+        .should('have.length', 1)
+        .and('be.visible');
+      cy.get(
+        '[data-test=transactions-history-item] [data-test="account-address"]',
+      ).then(transactionHeader => {
+        const address = transactionHeader.text().toUpperCase();
+        const expected = ethplorerTransactions[1].from.toUpperCase();
+
+        cy.wrap(address).should('to.contain', expected);
+      });
+    });
+  });
+
   describe('Transactions history forms validation', () => {
     beforeEach(() => {
       cy.visit('#/history');
