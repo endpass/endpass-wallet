@@ -177,8 +177,8 @@ describe('transactions actions', () => {
   describe('handleBlockTransactions', () => {
     it('should show notification of incoming transactions', () => {
       actions.handleBlockTransactions(
-        { dispatch, rootState, rootGetters },
-        ethplorerTransactions,
+        { commit, dispatch, rootState, rootGetters },
+        { transactions: ethplorerTransactions },
       );
 
       expect(dispatch).toHaveBeenCalledTimes(1);
@@ -192,6 +192,7 @@ describe('transactions actions', () => {
     it('should update transaction history', () => {
       actions.handleBlockTransactions(
         {
+          commit,
           dispatch,
           rootState,
           rootGetters: {
@@ -199,7 +200,7 @@ describe('transactions actions', () => {
             'web3/isMainNetwork': true,
           },
         },
-        ethplorerTransactions,
+        { transactions: ethplorerTransactions },
       );
 
       expect(dispatch).toHaveBeenCalledTimes(2);
@@ -210,6 +211,22 @@ describe('transactions actions', () => {
         { root: true },
       );
       expect(dispatch).toHaveBeenNthCalledWith(2, 'updateTransactionHistory');
+    });
+
+    it('should add transaction to history with network id', () => {
+      const networkId = 2;
+      const expectedTrx = new Transaction({
+        ...ethplorerTransactions[1],
+        networkId,
+      });
+
+      actions.handleBlockTransactions(
+        { commit, dispatch, rootState, rootGetters },
+        { transactions: ethplorerTransactions, networkId },
+      );
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toBeCalledWith(ADD_TRANSACTION, expectedTrx);
     });
   });
 

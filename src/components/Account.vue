@@ -10,7 +10,12 @@
     </div>
     <div class="media-content">
       <div class="content">
-        <h5 class="address">{{ addressFmt }}</h5>
+        <h5
+          class="address"
+          data-test="account-address"
+        >
+          {{ addressFmt }}
+        </h5>
         <slot />
       </div>
     </div>

@@ -9,6 +9,8 @@ import {
   SET_TRANSACTION_HISTORY,
 } from './mutations-types';
 
+const { toChecksumAddress } = web3.utils;
+
 const getNonceInBlock = async ({ rootState }) => {
   const address = rootState.accounts.address.getChecksumAddressString();
   const nonce = await web3.eth.getTransactionCount(address);
@@ -153,15 +155,19 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
 
 // Show notification of incoming transactions from block
 const handleBlockTransactions = (
-  { dispatch, rootState, rootGetters },
-  transactions,
+  { dispatch, commit, rootState, rootGetters },
+  { transactions, networkId },
 ) => {
   const userAddresses = rootGetters['accounts/accountAddresses'];
   const toUserTrx = transactions.filter(trx =>
-    userAddresses.some(address => address === trx.to),
+    userAddresses.some(
+      address => toChecksumAddress(address) === toChecksumAddress(trx.to),
+    ),
   );
 
   toUserTrx.forEach(trx => {
+    commit(ADD_TRANSACTION, new Transaction({ ...trx, networkId }));
+
     const { hash, to } = trx;
     const shortAddress = getShortStringWithEllipsis(to);
     const shortHash = getShortStringWithEllipsis(hash);
