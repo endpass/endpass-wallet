@@ -33,7 +33,7 @@ describe('user getters', () => {
     });
 
     it('should return true', () => {
-      let state = {
+      const state = {
         authorizationStatus: false,
       };
 

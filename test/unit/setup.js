@@ -11,11 +11,13 @@ import 'mocks/services/ethplorer';
 import 'mocks/services/gas-price';
 import 'mocks/services/price';
 import 'mocks/services/tokeninfo';
+import 'mocks/services/localSettings';
 
 /**
  * Classes mocks
  */
 import 'mocks/class/erc20';
+import 'mocks/class/storage/LocalStorage';
 
 Vue.config.productionTip = false;
 

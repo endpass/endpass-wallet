@@ -1,4 +1,5 @@
-import { userService } from '@/services';
+import { isEmpty } from 'lodash';
+import { userService, localSettingsService } from '@/services';
 import web3 from '@/utils/web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
@@ -16,10 +17,16 @@ import {
 
 const { toChecksumAddress } = web3.utils;
 
-const selectWallet = async ({ commit, state, dispatch }, address) => {
+const selectWallet = async (
+  { commit, state, dispatch, rootState },
+  address,
+) => {
   commit(SET_WALLET, state.wallets[address]);
   commit(SET_ADDRESS, address);
 
+  localSettingsService.save(rootState.user.email, {
+    activeAccount: address,
+  });
   dispatch('updateBalance');
 
   await dispatch('tokens/getCurrentAccountTokens', null, {
@@ -96,6 +103,7 @@ const addWalletWithPublicKey = async (
   // TODO convert public key to address, accept xPub key
   try {
     const address = web3.utils.toChecksumAddress(publicKeyOrAddress);
+
     await userService.setAccount(address, null);
     commit(ADD_ADDRESS, address);
 
@@ -143,7 +151,7 @@ const saveWallet = async ({ dispatch }, { json }) => {
   await dispatch('commitWallet', { wallet: json });
 };
 
-const addHdWallet = async ({ commit, dispatch }, { key, password }) => {
+const addHdWallet = async ({ dispatch }, { key, password }) => {
   try {
     const seed = Bip39.mnemonicToSeed(key);
     const hdKey = HDKey.fromMasterSeed(seed);
@@ -241,21 +249,32 @@ const setUserHdKey = async ({ commit, dispatch }) => {
   }
 };
 
-const setUserWallets = async ({ commit, dispatch }) => {
+const setUserWallets = async ({ commit, dispatch, rootState }) => {
   try {
     // Fetch and save regular accounts
     const accounts = await userService.getV3Accounts();
 
-    if (accounts && accounts.length) {
-      accounts.forEach(account => {
-        if (keystore.isV3(account)) {
-          // Encrypted private key
-          commit(ADD_WALLET, account);
-        } else {
-          // Read-only public key
-          commit(ADD_ADDRESS, account.address);
-        }
-      });
+    if (isEmpty(accounts)) return;
+
+    const localSettings = localSettingsService.load(rootState.user.email);
+    const isAccountExist =
+      localSettings &&
+      localSettings.activeAccount &&
+      accounts.find(({ address }) => address === localSettings.activeAccount);
+
+    accounts.forEach(account => {
+      if (keystore.isV3(account)) {
+        // Encrypted private key
+        commit(ADD_WALLET, account);
+      } else {
+        // Read-only public key
+        commit(ADD_ADDRESS, account.address);
+      }
+    });
+
+    if (isAccountExist) {
+      await dispatch('selectWallet', localSettings.activeAccount);
+    } else {
       await dispatch('selectWallet', accounts[0].address);
     }
   } catch (e) {
