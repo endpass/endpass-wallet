@@ -228,6 +228,15 @@ describe('transactions actions', () => {
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toBeCalledWith(ADD_TRANSACTION, expectedTrx);
     });
+
+    it('should not handle transaction when "to" is null', () => {
+      actions.handleBlockTransactions(
+        { commit, dispatch, rootState, rootGetters },
+        { transactions: [{ ...ethplorerTransactions[1], to: null }] },
+      );
+
+      expect(commit).toHaveBeenCalledTimes(0);
+    });
   });
 
   describe('sendSignedTransaction', () => {
