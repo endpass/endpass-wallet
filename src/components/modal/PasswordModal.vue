@@ -23,6 +23,7 @@
             required
             data-test="input-password"
             @input="handleInput"
+            autofocus
           />
         </v-form>
       </div>

@@ -17,6 +17,7 @@
           aria-describedby="gasPrice"
           placeholder="Gas price"
           data-test="gas-price-input"
+          autofocus
           required
         >
           <div

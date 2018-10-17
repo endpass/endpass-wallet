@@ -98,6 +98,7 @@ describe('Transactions History Page', () => {
         cy.get('[data-test=transaction-resend-button]').click();
       });
       cy.get('[data-test=resend-modal]').within(() => {
+        cy.focused().should('have.attr', 'data-test', 'gas-price-input');
         cy.get('[data-test=gas-price-input]').type('1');
         cy.get('[data-test=submit-button]').click();
       });

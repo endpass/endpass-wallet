@@ -25,6 +25,7 @@ describe('Tokens Page', () => {
         cy.get('[data-test=add-custom-token-button]').click();
 
         cy.get('[data-test=add-token-modal]').within(() => {
+          cy.focused().should('have.attr', 'data-test', 'address-input');
           cy.get('[data-test=find-button]').should('be.disabled');
 
           cy.get('[data-test=address-input]').type(customToken.address);

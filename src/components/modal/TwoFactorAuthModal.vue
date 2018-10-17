@@ -42,6 +42,7 @@
         name="verificationCode"
         validator="required|digits:6"
         data-test="input-two-auth-code"
+        autofocus
       />
     </v-form>
     <div
