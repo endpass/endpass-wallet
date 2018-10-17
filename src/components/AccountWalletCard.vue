@@ -35,7 +35,7 @@
         </v-button>
       </div>
       <div class="card-tokens">
-        <v-spinner :is-loading="isLoading" />
+        <v-spinner v-if="isLoading" />
         <tokens-list
           v-if="!isLoading"
           :tokens="accountTokensList"

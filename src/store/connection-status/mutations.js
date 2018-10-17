@@ -29,9 +29,9 @@ const removeApiErrorId = (state, id) => {
 };
 
 export default {
-  SET_WEB3_CONNECTION_STATUS: setWeb3ConnectionStatus,
-  SET_API_CONNECTION_STATUS: setApiConnectionStatus,
-  SET_SYNC_STATUS: setSyncStatus,
-  ADD_API_ERROR_ID: addApiErrorId,
-  REMOVE_API_ERROR_ID: removeApiErrorId,
+  [SET_WEB3_CONNECTION_STATUS]: setWeb3ConnectionStatus,
+  [SET_API_CONNECTION_STATUS]: setApiConnectionStatus,
+  [SET_SYNC_STATUS]: setSyncStatus,
+  [ADD_API_ERROR_ID]: addApiErrorId,
+  [REMOVE_API_ERROR_ID]: removeApiErrorId,
 };

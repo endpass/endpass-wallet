@@ -1,7 +1,22 @@
-'use strict';
 const merge = require('webpack-merge');
-const devEnv = require('./dev.env');
+const prodEnv = require('./prod.env');
 
-module.exports = merge(devEnv, {
-  NODE_ENV: '"testing"',
+const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1';
+const tokenImageUrl = 'https://tokeninfo-dev.endpass.com';
+const tokenInfoAPIUrl = 'https://tokeninfo-dev.endpass.com/api/v1';
+const cryptoDataAPIUrl = 'https://cryptodata-dev.endpass.com/api/v1';
+
+const kdfParams = {
+  kdf: 'scrypt',
+  n: 4,
+};
+const isProduction = false;
+
+module.exports = merge(prodEnv, {
+  identityAPIUrl,
+  tokenImageUrl,
+  tokenInfoAPIUrl,
+  cryptoDataAPIUrl,
+  kdfParams,
+  isProduction,
 });

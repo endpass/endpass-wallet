@@ -105,11 +105,7 @@ describe('TokensPage', () => {
           isLoading: true,
         });
 
-        expect(wrapper.find('v-spinner').attributes()).toEqual({
-          'is-loading': 'true',
-          class: 'spinner-block',
-          'data-test': 'tokens-spinner',
-        });
+        expect(wrapper.find('v-spinner').exists()).toBe(true);
       });
 
       it('should not render v-spinner', () => {
@@ -117,10 +113,7 @@ describe('TokensPage', () => {
           isLoading: false,
         });
 
-        expect(wrapper.find('v-spinner').attributes()).toEqual({
-          class: 'spinner-block',
-          'data-test': 'tokens-spinner',
-        });
+        expect(wrapper.find('v-spinner').exists()).toBe(false);
       });
     });
   });

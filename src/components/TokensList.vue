@@ -16,7 +16,7 @@
           :price="prices.get(token.symbol)"
         >
           <a
-            v-if="hasRemove"
+            v-if="isTokenCanBeDeleted(token)"
             slot="right"
             class="is-inline-block remove-token-button"
             title="Remove Token"
@@ -42,7 +42,7 @@
 
 <script>
 import VToken from '@/components/VToken';
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import { BigNumber } from 'bignumber.js';
 import error from '@/mixins/error';
 
@@ -65,10 +65,12 @@ export default {
   },
 
   computed: {
+    ...mapGetters('tokens', ['currentNetUserFullTokens']),
     ...mapState({
       tokenPrices: state => state.tokens.prices,
       ethPrice: state => state.price.price,
       currency: state => state.user.settings.fiatCurrency,
+      userTokens: state => state.tokens.userTokens,
     }),
 
     prices() {
@@ -83,6 +85,16 @@ export default {
 
   methods: {
     ...mapActions('tokens', ['getTokensPrices', 'removeUserToken']),
+
+    isTokenCanBeDeleted(token) {
+      const { hasRemove, currentNetUserFullTokens } = this;
+
+      return (
+        hasRemove &&
+        currentNetUserFullTokens[token.address] &&
+        token.balance === '0'
+      );
+    },
 
     /**
      * Returns value of tokens in fiat

@@ -4,7 +4,6 @@ import Web3 from 'web3';
 import web3 from '@/utils/web3';
 import { userService } from '@/services';
 import { providerFactory } from '@/class';
-import { blockUpdateInterval } from '@/config';
 import * as mutationsTypes from './mutations-types';
 import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
 
@@ -132,7 +131,7 @@ const subscribeOnBlockUpdates = async ({ commit, dispatch }) => {
 
   const interval = setInterval(async () => {
     commit(mutationsTypes.SET_BLOCK_NUMBER, await web3.eth.getBlockNumber());
-  }, blockUpdateInterval);
+  }, ENV.blockUpdateInterval);
 
   commit(mutationsTypes.SET_INTERVAL, interval);
 };
