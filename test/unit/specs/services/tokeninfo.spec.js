@@ -18,6 +18,7 @@ describe('token info service', () => {
   });
 
   it('should make correct request', async () => {
+    expect.assertions(3);
     mock.onGet(tokensURL).reply(config => {
       expect(config.method).toBe('get');
       expect(config.baseURL).toBe(tokenInfoAPIUrl);
@@ -28,6 +29,7 @@ describe('token info service', () => {
   });
 
   it('should get list of tokens', async () => {
+    expect.assertions(1);
     mock.onGet(tokensURL).reply(200, tokens);
     const tokensList = await tokenInfo._getTokens();
     expect(tokensList).toEqual(tokens);
@@ -43,7 +45,8 @@ describe('token info service', () => {
     expect(parsedToken.logo).toBeFalsy();
   });
 
-  it('return parsed list of tokens', async () => {
+  it('should return parsed list of tokens', async () => {
+    expect.assertions(3);
     mock.onGet(tokensURL).reply(200, tokens);
     const tokensList = await tokenInfo.getTokensList();
     expect(tokensList).toHaveLength(tokens.length);
@@ -51,7 +54,8 @@ describe('token info service', () => {
     // Not equal because they are parsed
     expect(tokensList[0].logo).not.toBe(tokens[0].logo);
   });
-  it('filters wrong addressers', async () => {
+  it('should filter wrong addresses', async () => {
+    expect.assertions(2);
     const brokenToken = {
       address: 'kek',
     };

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { tokenInfoAPIUrl, tokenImageUrl } from '@/config';
-import web3 from 'web3';
+import web3 from '@/utils/web3';
 
 export default {
   // Axios instance for this service
