@@ -66,6 +66,8 @@ export const privateKey = {"data": [239, 202, 76, 221, 49, 146, 59, 80, 244, 33,
 export const privateKeyString =
   '0xefca4cdd31923b50f4214af5d2ae10e7ac45a5019e9431cc195482d707485378';
 
+export const email = 'user@example.com';
+
 export const settings = {
   id: 'abcd-1234',
   email: 'user@example.com',

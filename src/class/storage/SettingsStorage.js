@@ -8,37 +8,41 @@ class SettingsStorage {
     }
 
     this.storage = storage;
-    this.storageKey = `${window.location.host}:${STORAGE_USER_META_KEY}`;
 
     this.save = this.save.bind(this);
     this.load = this.load.bind(this);
     this.clear = this.clear.bind(this);
   }
 
-  save(meta) {
+  /* eslint-disable-next-line */
+  getStorageKey(key) {
+    return `${key}:${STORAGE_USER_META_KEY}`;
+  }
+
+  save(key, meta) {
     if (!this.storage.save) {
       throw new Error('Provided storage does not implements save method!');
     }
 
     const pickedMeta = pick(meta, AVAILABLE_USER_META_PROPS);
 
-    this.storage.save(this.storageKey, pickedMeta);
+    this.storage.save(this.getStorageKey(key), pickedMeta);
   }
 
-  load() {
+  load(key) {
     if (!this.storage.load) {
       throw new Error('Provided storage does not implements load method!');
     }
 
-    return this.storage.load(this.storageKey);
+    return this.storage.load(this.getStorageKey(key));
   }
 
-  clear() {
+  clear(key) {
     if (!this.storage.remove) {
       throw new Error('Provided storage does not implements remove method!');
     }
 
-    this.storage.remove(this.storageKey);
+    this.storage.remove(this.getStorageKey(key));
   }
 }
 

@@ -1,6 +1,10 @@
 import { SettingsStorage, LocalStorage } from '@/class/storage';
+import { STORAGE_USER_META_KEY } from '@/constants';
 
 describe('SettingsStorage', () => {
+  const key = 'foo';
+  const storageKey = `${key}:${STORAGE_USER_META_KEY}`;
+
   describe('creating instance', () => {
     it('should throw error if storage is not passed to constructor', () => {
       expect(() => {
@@ -16,9 +20,9 @@ describe('SettingsStorage', () => {
         storage: LocalStorage,
       });
 
-      settingsStorage.save({ activeAccount: 'bar' });
+      settingsStorage.save(key, { activeAccount: 'bar' });
 
-      expect(LocalStorage.save).toHaveBeenCalledWith(expect.any(String), {
+      expect(LocalStorage.save).toHaveBeenCalledWith(storageKey, {
         activeAccount: 'bar',
       });
     });
@@ -38,9 +42,9 @@ describe('SettingsStorage', () => {
         storage: LocalStorage,
       });
 
-      settingsStorage.load();
+      settingsStorage.load(key);
 
-      expect(LocalStorage.load).toHaveBeenCalledWith(expect.any(String));
+      expect(LocalStorage.load).toHaveBeenCalledWith(storageKey);
     });
 
     it('should throw error if load method is not implemented in passed storage', () => {
@@ -58,9 +62,9 @@ describe('SettingsStorage', () => {
         storage: LocalStorage,
       });
 
-      settingsStorage.clear();
+      settingsStorage.clear(key);
 
-      expect(LocalStorage.remove).toHaveBeenCalledWith(expect.any(String));
+      expect(LocalStorage.remove).toHaveBeenCalledWith(storageKey);
     });
 
     it('should throw error if remove method is not implemented in passed storage', () => {

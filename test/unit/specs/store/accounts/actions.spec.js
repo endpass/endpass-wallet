@@ -1,6 +1,6 @@
 import web3 from '@/utils/web3';
-import keyUtil from '@/utils/keystore';
 import {
+  email,
   addresses,
   v3password,
   mnemonic,
@@ -41,12 +41,20 @@ describe('Accounts actions', () => {
         [checksumAddress]: wallet,
       },
     };
+    const rootState = {
+      user: {
+        email,
+      },
+    };
 
     it('should set wallet and call saveMeta with selected address', () => {
-      actions.selectWallet({ commit, dispatch, state }, checksumAddress);
+      actions.selectWallet(
+        { state, commit, dispatch, rootState },
+        checksumAddress,
+      );
 
       expect(localSettingsService.save).toHaveBeenCalledTimes(1);
-      expect(localSettingsService.save).toHaveBeenCalledWith({
+      expect(localSettingsService.save).toHaveBeenCalledWith(email, {
         activeAccount: checksumAddress,
       });
       expect(commit).toHaveBeenCalledTimes(2);
@@ -54,21 +62,30 @@ describe('Accounts actions', () => {
     });
 
     it('should set address', () => {
-      actions.selectWallet({ commit, dispatch, state }, checksumAddress);
+      actions.selectWallet(
+        { commit, dispatch, state, rootState },
+        checksumAddress,
+      );
 
       expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenNthCalledWith(2, SET_ADDRESS, checksumAddress);
     });
 
     it('should update balance', () => {
-      actions.selectWallet({ commit, dispatch, state }, checksumAddress);
+      actions.selectWallet(
+        { commit, dispatch, state, rootState },
+        checksumAddress,
+      );
 
       expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'updateBalance');
     });
 
     it('should get current account tokens balance', () => {
-      actions.selectWallet({ commit, dispatch, state }, checksumAddress);
+      actions.selectWallet(
+        { commit, dispatch, state, rootState },
+        checksumAddress,
+      );
 
       expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenLastCalledWith(
@@ -253,7 +270,7 @@ describe('Accounts actions', () => {
 
       const error = new Error('error');
       const spy = jest
-        .spyOn(keyUtil, 'encryptWallet')
+        .spyOn(keystore, 'encryptWallet')
         .mockImplementation(() => {
           throw error;
         });
@@ -335,7 +352,7 @@ describe('Accounts actions', () => {
     it('should generate wallet from hd key', async () => {
       expect.assertions(2);
 
-      const hdWallet = keyUtil.decryptHDWallet(v3password, hdv3);
+      const hdWallet = keystore.decryptHDWallet(v3password, hdv3);
       const state = { hdKey: {}, wallets: {} };
       const getters = {
         hdWallet: () => hdWallet,
@@ -370,7 +387,6 @@ describe('Accounts actions', () => {
 
   describe('commitWallet', () => {
     const { commitWallet } = actions;
-    const commit = jest.fn();
     const walletAddress = 'address';
     const wallet = {
       address: walletAddress,
@@ -443,7 +459,6 @@ describe('Accounts actions', () => {
     const json = {
       address: 'address',
     };
-    const dispatch = jest.fn();
 
     beforeEach(() => {
       dispatch.mockClear();
@@ -794,15 +809,21 @@ describe('Accounts actions', () => {
   });
 
   describe('setUserWallets', () => {
+    const rootState = {
+      user: {
+        email,
+      },
+    };
+
     it('should request user accounts and save it to the store', async () => {
       expect.assertions(6);
 
-      await actions.setUserWallets({ commit, dispatch });
+      await actions.setUserWallets({ commit, dispatch, rootState });
 
       expect(userService.getV3Accounts).toHaveBeenCalled();
       expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenNthCalledWith(1, ADD_ADDRESS, hdv3.address);
-      expect(commit).toHaveBeenNthCalledWith(2, ADD_ADDRESS, addresses[1]);
+      expect(commit).toHaveBeenNthCalledWith(2, ADD_ADDRESS, v3.address);
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('selectWallet', addresses[1]);
     });
@@ -812,7 +833,7 @@ describe('Accounts actions', () => {
 
       userService.getV3Accounts.mockResolvedValueOnce([]);
 
-      await actions.setUserWallets({ commit, dispatch });
+      await actions.setUserWallets({ commit, dispatch, rootState });
 
       expect(commit).not.toHaveBeenCalled();
       expect(dispatch).not.toHaveBeenCalled();
@@ -825,7 +846,7 @@ describe('Accounts actions', () => {
 
       userService.getV3Accounts.mockRejectedValueOnce(error);
 
-      await actions.setUserWallets({ commit, dispatch });
+      await actions.setUserWallets({ commit, dispatch, rootState });
 
       expect(commit).not.toHaveBeenCalled();
       expect(dispatch).toHaveBeenCalledTimes(1);
