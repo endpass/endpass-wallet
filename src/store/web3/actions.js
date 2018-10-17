@@ -4,13 +4,20 @@ import Web3 from 'web3';
 import web3 from '@/utils/web3';
 import { userService } from '@/services';
 import { providerFactory } from '@/class';
-import * as mutationsTypes from './mutations-types';
+import {
+  CHANGE_NETWORK,
+  CHANGE_CURRENCY,
+  SET_NETWORKS,
+  SET_BLOCK_NUMBER,
+  SET_HANDLED_BLOCK_NUMBER,
+  SET_INTERVAL,
+} from './mutations-types';
 import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
 
 const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
   const network = getters.networks.find(net => net.url === networkUrl);
 
-  commit(mutationsTypes.CHANGE_NETWORK, network);
+  commit(CHANGE_NETWORK, network);
 
   return Promise.all([
     userService.setSetting('net', network.id),
@@ -29,7 +36,7 @@ const changeCurrency = async (
 ) => {
   const currency = CURRENCIES.find(currency => currency.id === currencyId);
 
-  commit(mutationsTypes.CHANGE_CURRENCY, currency);
+  commit(CHANGE_CURRENCY, currency);
 
   if (state.activeNet.currency !== currency.id) {
     await dispatch('changeNetwork', {
@@ -47,7 +54,7 @@ const addNetwork = async ({ state, commit, dispatch }, { network }) => {
       networksToSave,
     );
 
-    commit(mutationsTypes.SET_NETWORKS, networksToSave);
+    commit(SET_NETWORKS, networksToSave);
 
     await dispatch('changeNetwork', {
       networkUrl: network.url,
@@ -80,7 +87,7 @@ const updateNetwork = async (
       networksToSave,
     );
 
-    commit(mutationsTypes.SET_NETWORKS, networksToSave);
+    commit(SET_NETWORKS, networksToSave);
 
     if (oldNetwork.url === state.activeNet.url) {
       await dispatch('changeNetwork', { networkUrl: network.url });
@@ -106,7 +113,7 @@ const deleteNetwork = async (
       networksToSave,
     );
 
-    commit(mutationsTypes.SET_NETWORKS, networksToSave);
+    commit(SET_NETWORKS, networksToSave);
 
     if (network.url === state.activeNet.url) {
       await dispatch('changeNetwork', { networkUrl: getters.networks[0].url });
@@ -126,14 +133,18 @@ const validateNetwork = (context, { network }) => {
   return Promise.all([net.getNetworkType(), net.getId()]);
 };
 
-const subscribeOnBlockUpdates = async ({ commit, dispatch }) => {
+const subscribeOnBlockUpdates = async ({ commit, dispatch, getters }) => {
   await dispatch('unsubscribeOnBlockUpdates');
 
   const interval = setInterval(async () => {
-    commit(mutationsTypes.SET_BLOCK_NUMBER, await web3.eth.getBlockNumber());
+    const networkId = getters.activeNetwork;
+    const blockNumber = await web3.eth.getBlockNumber();
+
+    commit(SET_BLOCK_NUMBER, blockNumber);
+    dispatch('handleLastBlock', { blockNumber, networkId });
   }, ENV.blockUpdateInterval);
 
-  commit(mutationsTypes.SET_INTERVAL, interval);
+  commit(SET_INTERVAL, interval);
 };
 
 const unsubscribeOnBlockUpdates = async ({ state, commit }) => {
@@ -142,7 +153,32 @@ const unsubscribeOnBlockUpdates = async ({ state, commit }) => {
   }
 
   clearInterval(state.interval);
-  commit(mutationsTypes.SET_INTERVAL, null);
+  commit(SET_INTERVAL, null);
+};
+
+const handleLastBlock = async (
+  { state, commit, dispatch },
+  { blockNumber, networkId },
+) => {
+  if (state.handledBlockNumber === null) {
+    commit(SET_HANDLED_BLOCK_NUMBER, blockNumber - 1);
+  }
+
+  const { handledBlockNumber } = state;
+
+  if (handledBlockNumber === blockNumber) return;
+
+  for (let i = handledBlockNumber + 1; i <= blockNumber; i += 1) {
+    web3.eth.getBlock(i, true).then(({ transactions }) => {
+      dispatch(
+        'transactions/handleBlockTransactions',
+        { transactions, networkId },
+        { root: true },
+      );
+    });
+  }
+
+  commit(SET_HANDLED_BLOCK_NUMBER, blockNumber);
 };
 
 const init = async ({ commit, dispatch, state }) => {
@@ -155,9 +191,9 @@ const init = async ({ commit, dispatch, state }) => {
       CURRENCIES.find(currency => activeNet.currency === currency.id) ||
       state.activeCurrency;
 
-    commit(mutationsTypes.SET_NETWORKS, networks);
-    commit(mutationsTypes.CHANGE_NETWORK, activeNet);
-    commit(mutationsTypes.CHANGE_CURRENCY, activeCurrency);
+    commit(SET_NETWORKS, networks);
+    commit(CHANGE_NETWORK, activeNet);
+    commit(CHANGE_CURRENCY, activeCurrency);
 
     await Promise.all([
       dispatch('tokens/getCurrentAccountTokens', {}, { root: true }),
@@ -177,5 +213,6 @@ export default {
   validateNetwork,
   subscribeOnBlockUpdates,
   unsubscribeOnBlockUpdates,
+  handleLastBlock,
   init,
 };

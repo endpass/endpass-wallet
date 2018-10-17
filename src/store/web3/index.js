@@ -6,6 +6,7 @@ import mutations from './mutations';
 const state = {
   storedNetworks: [],
   blockNumber: 0,
+  handledBlockNumber: null,
   activeNet: {},
   interval: null,
   activeCurrency: CURRENCIES[0],

@@ -5,6 +5,7 @@ import {
   CHANGE_CURRENCY,
   SET_NETWORKS,
   SET_BLOCK_NUMBER,
+  SET_HANDLED_BLOCK_NUMBER,
   SET_INTERVAL,
 } from './mutations-types';
 
@@ -31,6 +32,10 @@ const setBlockNumber = (state, number) => {
   state.blockNumber = number;
 };
 
+const setHandledBlockNumber = (state, number) => {
+  state.handledBlockNumber = number;
+};
+
 const setNetworks = (state, networks) => {
   state.storedNetworks = networks;
 };
@@ -44,5 +49,6 @@ export default {
   [CHANGE_CURRENCY]: changeCurrency,
   [SET_NETWORKS]: setNetworks,
   [SET_BLOCK_NUMBER]: setBlockNumber,
+  [SET_HANDLED_BLOCK_NUMBER]: setHandledBlockNumber,
   [SET_INTERVAL]: setInterval,
 };
