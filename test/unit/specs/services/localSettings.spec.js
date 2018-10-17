@@ -1,29 +1,30 @@
 import LocalStorage from '@/class/storage/LocalStorage';
+import { STORAGE_USER_META_KEY } from '@/constants';
 
 const localSettings = require.requireActual('@/services/localSettings').default;
 
 describe('localSettings', () => {
+  const key = 'foo';
+  const storageKey = `${key}:${STORAGE_USER_META_KEY}`;
+
   describe('save', () => {
     it('should call the same storage method on save', () => {
       const dataToSave = {
         activeAccount: 'bar',
       };
 
-      localSettings.save(dataToSave);
+      localSettings.save(key, dataToSave);
 
-      expect(LocalStorage.save).toHaveBeenCalledWith(
-        expect.any(String),
-        dataToSave,
-      );
+      expect(LocalStorage.save).toHaveBeenCalledWith(storageKey, dataToSave);
     });
 
     it('should pick only allowed props from payload (activeAccount)', () => {
-      localSettings.save({
+      localSettings.save(key, {
         foo: 'bar',
         activeAccount: 'baz',
       });
 
-      expect(LocalStorage.save).toHaveBeenCalledWith(expect.any(String), {
+      expect(LocalStorage.save).toHaveBeenCalledWith(storageKey, {
         activeAccount: 'baz',
       });
     });
@@ -31,17 +32,17 @@ describe('localSettings', () => {
 
   describe('load', () => {
     it('should call the same storage method on load', () => {
-      localSettings.load();
+      localSettings.load(key);
 
-      expect(LocalStorage.load).toHaveBeenCalledWith(expect.any(String));
+      expect(LocalStorage.load).toHaveBeenCalledWith(storageKey);
     });
   });
 
   describe('clear', () => {
     it('should call remove storage method on clear', () => {
-      localSettings.clear();
+      localSettings.clear(key);
 
-      expect(LocalStorage.remove).toHaveBeenCalledWith(expect.any(String));
+      expect(LocalStorage.remove).toHaveBeenCalledWith(storageKey);
     });
   });
 });

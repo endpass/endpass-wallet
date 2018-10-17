@@ -1,4 +1,4 @@
-import { isEmpty, find, get } from 'lodash';
+import { isEmpty } from 'lodash';
 import { userService, localSettingsService } from '@/services';
 import web3 from '@/utils/web3';
 import Bip39 from 'bip39';
@@ -17,11 +17,14 @@ import {
 
 const { toChecksumAddress } = web3.utils;
 
-const selectWallet = async ({ commit, state, dispatch }, address) => {
+const selectWallet = async (
+  { commit, state, dispatch, rootState },
+  address,
+) => {
   commit(SET_WALLET, state.wallets[address]);
   commit(SET_ADDRESS, address);
 
-  localSettingsService.save({
+  localSettingsService.save(rootState.user.email, {
     activeAccount: address,
   });
   dispatch('updateBalance');
@@ -246,17 +249,18 @@ const setUserHdKey = async ({ commit, dispatch }) => {
   }
 };
 
-const setUserWallets = async ({ commit, dispatch }) => {
+const setUserWallets = async ({ commit, dispatch, rootState }) => {
   try {
     // Fetch and save regular accounts
     const accounts = await userService.getV3Accounts();
 
     if (isEmpty(accounts)) return;
 
-    const activeAccount = get(localSettingsService.load(), 'activeAccount');
+    const localSettings = localSettingsService.load(rootState.user.email);
     const isAccountExist =
-      activeAccount &&
-      find(accounts, ({ address }) => address === activeAccount);
+      localSettings &&
+      localSettings.activeAccount &&
+      accounts.find(({ address }) => address === localSettings.activeAccount);
 
     accounts.forEach(account => {
       if (keystore.isV3(account)) {
@@ -269,7 +273,7 @@ const setUserWallets = async ({ commit, dispatch }) => {
     });
 
     if (isAccountExist) {
-      await dispatch('selectWallet', activeAccount);
+      await dispatch('selectWallet', localSettings.activeAccount);
     } else {
       await dispatch('selectWallet', accounts[0].address);
     }
