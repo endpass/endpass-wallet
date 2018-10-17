@@ -168,8 +168,21 @@ const handleLastBlock = async (
 
   if (handledBlockNumber === blockNumber) return;
 
+  // Trying to get the block again if wrong response
+  async function getBlockSafely(num) {
+    try {
+      const block = await web3.eth.getBlock(num, true);
+
+      if (!block) throw new Error('Bad block');
+
+      return block;
+    } catch (error) {
+      return getBlockSafely(num);
+    }
+  }
+
   for (let i = handledBlockNumber + 1; i <= blockNumber; i += 1) {
-    web3.eth.getBlock(i, true).then(({ transactions }) => {
+    getBlockSafely(i).then(({ transactions }) => {
       dispatch(
         'transactions/handleBlockTransactions',
         { transactions, networkId },

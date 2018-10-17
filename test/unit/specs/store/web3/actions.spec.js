@@ -600,10 +600,12 @@ describe('web3 actions', () => {
     });
 
     it('should handle transactions', async () => {
-      expect.assertions(2);
+      expect.assertions(3);
 
       const networkId = 2;
-      const transactions = { ...ethplorerTransactions };
+      const transactions = [...ethplorerTransactions];
+      Web3.eth.getBlock.mockResolvedValueOnce(null);
+      Web3.eth.getBlock.mockRejectedValueOnce();
       Web3.eth.getBlock.mockResolvedValueOnce({ transactions });
 
       await handleLastBlock(
@@ -611,6 +613,9 @@ describe('web3 actions', () => {
         { blockNumber, networkId },
       );
 
+      await global.flushPromises();
+
+      expect(Web3.eth.getBlock).toHaveBeenCalledTimes(3);
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toBeCalledWith(
         'transactions/handleBlockTransactions',

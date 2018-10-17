@@ -159,10 +159,12 @@ const handleBlockTransactions = (
   { transactions, networkId },
 ) => {
   const userAddresses = rootGetters['accounts/accountAddresses'];
-  const toUserTrx = transactions.filter(trx =>
-    userAddresses.some(
-      address => toChecksumAddress(address) === toChecksumAddress(trx.to),
-    ),
+  const toUserTrx = transactions.filter(
+    trx =>
+      trx.to &&
+      userAddresses.some(
+        address => toChecksumAddress(address) === toChecksumAddress(trx.to),
+      ),
   );
 
   toUserTrx.forEach(trx => {
