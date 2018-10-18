@@ -26,10 +26,6 @@ describe('web3 mutations', () => {
       expect(state.activeNet).toEqual(network);
     });
 
-    it('should destroy DebounceProvider instance', () => {
-      expect(Web3.currentProvider.destroy).toHaveBeenCalledTimes(1);
-    });
-
     it('should set web3 provider', () => {
       const provider = providerFactory(network.url);
 

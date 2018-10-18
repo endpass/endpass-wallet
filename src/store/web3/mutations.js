@@ -12,16 +12,8 @@ import {
 import { providerFactory } from '@/class';
 
 const changeNetwork = (state, network) => {
-  const provider = providerFactory(network.url);
-
   state.activeNet = network;
-
-  // The DebounceProvider instance needs to be destroyed
-  if (web3.currentProvider && web3.currentProvider.destroy) {
-    web3.currentProvider.destroy();
-  }
-
-  web3.setProvider(provider);
+  web3.setProvider(providerFactory(network.url));
 };
 
 const changeCurrency = (state, currency) => {
