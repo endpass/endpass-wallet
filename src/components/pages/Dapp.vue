@@ -32,48 +32,33 @@
         </p>
       </div>
     </div>
-    <password-modal
-      v-if="currentRequest"
-      title="Opened dapp requests your password"
+    <!-- <password-modal
       @confirm="confirmSign"
       @close="cancelSign"
-    >
-      <transaction-table
-        v-if="isCurrentRequestTransaction"
-        :currency="activeCurrency"
-        :transaction="currentRequest"
-      />
-    </password-modal>
+    /> -->
   </div>
 </template>
 
 <script>
 import { isEmpty, get } from 'lodash';
-import { mapActions, mapState, mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
 import VInput from '@/components/ui/form/VInput';
 import PasswordModal from '@/components/modal/PasswordModal';
-import TransactionTable from '@/components/TransactionTable';
 import privatePage from '@/mixins/privatePage';
 
 export default {
   name: 'Dapp',
 
   data: () => ({
-    // url: 'https://www.cryptokitties.co',
-    url: 'https://explorer.bounties.network/explorer',
+    url: 'https://www.cryptokitties.co',
     loading: false,
     loaded: false,
     error: null,
   }),
 
   computed: {
-    ...mapState({
-      activeCurrency: state => state.web3.activeCurrency,
-    }),
-    ...mapGetters('dapp', ['currentRequest']),
-
-    isCurrentRequestTransaction() {
-      return this.currentRequest.method === 'eth_sendTransaction';
+    currentTransactionToSign() {
+      return this.$store.state.dapp.currentTransactionToSign[0];
     },
 
     dappUrl() {
@@ -82,12 +67,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('dapp', [
-      'inject',
-      'reset',
-      'processCurrentRequest',
-      'cancelCurrentRequest',
-    ]),
+    ...mapActions('dapp', ['inject', 'sendResponse', 'cancelTransaction']),
 
     async loadDapp() {
       if (isEmpty(this.url) || !isEmpty(this.$validator.errors.items)) return;
@@ -96,7 +76,7 @@ export default {
 
       await this.$nextTick();
 
-      await this.inject(this.$refs.dapp.contentWindow);
+      this.inject(this.$refs.dapp.contentWindow);
     },
 
     onDappLoad() {
@@ -130,21 +110,19 @@ export default {
     onChangeUrlInput() {
       if (this.loaded) {
         this.loaded = false;
-        this.reset();
       }
     },
 
-    async confirmSign(password) {
-      await this.processCurrentRequest(password);
+    confirmSign() {
+      // TODO sign transaction and send response
+      console.log('sign', this.currentTransactionToSign);
     },
 
-    async cancelSign() {
-      await this.cancelCurrentRequest();
+    cancelSign() {
+      // TODO cancel transaction and send response
+      console.log('cancel', this.currentTransactionToSign);
+      // this.cancelTransaction(this.currentTransactionToSign);
     },
-  },
-
-  beforeDestroy() {
-    this.reset();
   },
 
   mixins: [privatePage],
@@ -152,7 +130,6 @@ export default {
   components: {
     VInput,
     PasswordModal,
-    TransactionTable,
   },
 };
 </script>

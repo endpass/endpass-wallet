@@ -4,12 +4,11 @@
     data-test="password-modal"
   >
     <v-modal @close="close">
-      <template slot="header">
-        {{ title }}
-      </template>
+      <template slot="header">Password confirmation required</template>
 
       <div>
-        <p class="subtitle">Please enter your wallet password to continue.</p>
+        <p class="subtitle">Please enter your wallet password to
+        continue.</p>
         <v-form
           id="password-form"
           @submit="confirm"
@@ -23,8 +22,8 @@
             placeholder="Your Wallet Password"
             required
             data-test="input-password"
-            autofocus
             @input="handleInput"
+            autofocus
           />
         </v-form>
       </div>
@@ -54,14 +53,6 @@ import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
   name: 'PasswordModal',
-
-  props: {
-    title: {
-      type: String,
-      default: 'Please enter your wallet password to continue',
-    },
-  },
-
   data() {
     return {
       jsonKeystorePassword: '',
@@ -70,25 +61,23 @@ export default {
   },
   methods: {
     ...mapActions('accounts', ['validatePassword']),
-
-    async confirm() {
+    confirm() {
+      this.processingConfirmation = true;
       const { jsonKeystorePassword: password } = this;
 
-      try {
-        this.processingConfirmation = true;
-
-        await this.validatePassword(password);
-
-        this.$emit('confirm', password);
-      } catch (err) {
-        this.errors.add({
-          field: 'jsonKeystorePassword',
-          msg: 'Password is invalid',
-          id: 'wrongPassword',
+      this.validatePassword(password)
+        .then(() => {
+          this.processingConfirmation = false;
+          this.$emit('confirm', password);
+        })
+        .catch(() => {
+          this.processingConfirmation = false;
+          this.errors.add({
+            field: 'jsonKeystorePassword',
+            msg: 'Password is invalid',
+            id: 'wrongPassword',
+          });
         });
-      } finally {
-        this.processingConfirmation = false;
-      }
     },
     close() {
       this.$emit('close');
