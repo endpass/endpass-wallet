@@ -1,32 +1,20 @@
 import {
   ethplorerHistory,
   ethplorerTransactions,
+  transactionToSend,
 } from '../fixtures/transactions';
 
 describe('Transactions History Page', () => {
   beforeEach(() => {
-    cy.login();
+    cy.getInitialData();
+    cy.visit('#/history');
+    cy.mockWeb3Requests();
+    cy.makeStoreAlias();
+    cy.waitPageLoad();
   });
 
   describe('Transactions history items rendering', () => {
     it('should request and render transactions history', () => {
-      cy.route({
-        method: 'GET',
-        url: '/getAddressTransactions/*',
-        response: ethplorerTransactions,
-        status: 200,
-      }).as('addressTransactionsRequest');
-      cy.route({
-        method: 'GET',
-        url: '/getAddressHistory/*',
-        response: {
-          operations: ethplorerHistory,
-        },
-        status: 200,
-      }).as('addressHistoryRequest');
-
-      cy.visit('#/history');
-      cy.waitPageLoad();
       cy.wait(['@addressHistoryRequest', '@addressTransactionsRequest'], {
         timeout: 25000,
       });
@@ -37,16 +25,11 @@ describe('Transactions History Page', () => {
     });
 
     it('should add items to history after transactions send', () => {
-      cy.visit('#/history');
-      cy.waitPageLoad();
-
-      cy.window()
-        .its('app.$store')
-        .invoke(
-          'commit',
-          'transactions/ADD_TRANSACTION',
-          ethplorerTransactions[0],
-        );
+      cy.get('@store').invoke(
+        'commit',
+        'transactions/ADD_TRANSACTION',
+        transactionToSend,
+      );
 
       cy.get('[data-test=transactions-history-item]')
         .its('length')
@@ -56,19 +39,9 @@ describe('Transactions History Page', () => {
 
   describe('Transactions history actions', () => {
     beforeEach(() => {
-      cy.visit('#/history');
-      cy.makeStoreAlias();
-      cy.waitPageLoad();
-
       cy.get('@store').invoke('commit', 'transactions/ADD_TRANSACTION', {
-        ...ethplorerTransactions[0],
+        ...transactionToSend,
         state: 'pending',
-        clone() {
-          return {
-            ...this,
-          };
-        },
-        getUpGasPrice: () => 0,
       });
     });
 
@@ -77,19 +50,10 @@ describe('Transactions History Page', () => {
         cy.get('[data-test=transaction-cancel-button]').click();
       });
 
-      cy.get('@store').then(store => {
-        cy.spy(store, 'dispatch').as('dispatch');
-        cy.stub(store.state.accounts.wallet, 'validatePassword', () => true);
-      });
+      cy.inputPassword();
 
-      cy.get('[data-test=password-modal]').within(() => {
-        cy.get('input[type=password]').type('12341234');
-        cy.get('[data-test=submit-password]').click();
-      });
-
-      cy.get('@dispatch').should(
-        'be.calledWith',
-        'transactions/cancelTransaction',
+      cy.get('[data-test=app-notification] .is-info').contains(
+        'Transaction was canceled',
       );
     });
 
@@ -99,35 +63,22 @@ describe('Transactions History Page', () => {
       });
       cy.get('[data-test=resend-modal]').within(() => {
         cy.focused().should('have.attr', 'data-test', 'gas-price-input');
-        cy.get('[data-test=gas-price-input]').type('1');
+        cy.get('[data-test=gas-price-input]')
+          .clear()
+          .type(transactionToSend.gasPrice);
         cy.get('[data-test=submit-button]').click();
       });
       cy.get('[data-test=resend-modal]').should('not.visible');
 
-      cy.get('@store').then(store => {
-        cy.spy(store, 'dispatch').as('dispatch');
-        cy.stub(store.state.accounts.wallet, 'validatePassword', () => true);
-      });
+      cy.inputPassword();
 
-      cy.get('[data-test=password-modal]').within(() => {
-        cy.get('input[type=password]').type('12341234');
-        cy.get('[data-test=submit-password]').click();
-      });
-
-      cy.get('@dispatch').should(
-        'be.calledWith',
-        'transactions/resendTransaction',
+      cy.get('[data-test=app-notification] .is-info').contains(
+        'Transaction was resent',
       );
     });
   });
 
   describe('Incoming transactions', () => {
-    beforeEach(() => {
-      cy.visit('#/history');
-      cy.makeStoreAlias();
-      cy.waitPageLoad();
-    });
-
     it('should show notification and add to history', () => {
       cy.get('@store').invoke(
         'dispatch',
@@ -178,22 +129,10 @@ describe('Transactions History Page', () => {
   });
 
   describe('Transactions history forms validation', () => {
-    beforeEach(() => {
-      cy.visit('#/history');
-      cy.waitPageLoad();
-      cy.makeStoreAlias();
-    });
-
     it('should validate resend transaction form parameters', () => {
       cy.get('@store').invoke('commit', 'transactions/ADD_TRANSACTION', {
-        ...ethplorerTransactions[0],
+        ...transactionToSend,
         state: 'pending',
-        clone() {
-          return {
-            ...this,
-          };
-        },
-        getUpGasPrice: () => 0,
       });
 
       cy.get('[data-test=transactions-history-item]').within(() => {

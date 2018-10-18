@@ -19,7 +19,9 @@ class DappBridge extends EventEmitter {
   }
 
   handleRequest(payload) {
-    this.requestHandler(payload);
+    if (this.requestHandler) {
+      this.requestHandler(payload);
+    }
   }
 
   emitResponse(payload) {

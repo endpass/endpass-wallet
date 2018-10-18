@@ -16,15 +16,17 @@ export default class InpageProvider {
     this.eventEmitter = eventEmitter;
     this.pendingRequestsHandlers = {};
     this.settings = {};
+    this.isMetaMask = true;
   }
 
-  handleResponse({ error, result }) {
-    const resultClone = Object.assign({}, result);
-
-    resultClone.id = resultClone.id.replace(INPAGE_ID_PREFIX, '');
-    this.pendingRequestsHandlers[resultClone.id](error, result);
-
-    delete this.pendingRequestsHandlers[resultClone.id];
+  handleResponse({ error, id, result, jsonrpc }) {
+    const trxId = id.replace(INPAGE_ID_PREFIX, '');
+    this.pendingRequestsHandlers[trxId](error, {
+      id: parseInt(trxId),
+      result,
+      jsonrpc,
+    });
+    delete this.pendingRequestsHandlers[trxId];
   }
 
   updateSettings({ selectedAddress, networkVersion }) {
@@ -69,26 +71,20 @@ export default class InpageProvider {
   }
 
   sendAsync(payload, callback) {
-    console.log('send async', payload);
-
-    const payloadClone = { ...payload };
-    const processedPayload = this.processPayload(payloadClone);
-
+    const processedPayload = this.processPayload({ ...payload });
     if (processedPayload.result !== null) {
-      callback(processedPayload);
+      callback(null, processedPayload);
     } else {
       this.pendingRequestsHandlers[payload.id] = callback;
-      payloadClone.id = `${INPAGE_ID_PREFIX}${payload.id}`;
       this.eventEmitter.emit(INPAGE_EVENT.REQUEST, {
         ...payload,
+        jsonrpc: payload.jsonrpc,
         id: `${INPAGE_ID_PREFIX}${payload.id}`,
       });
     }
   }
 
   send(payload) {
-    console.log('send', payload);
-
     return this.processPayload(payload);
   }
 

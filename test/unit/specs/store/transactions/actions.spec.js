@@ -7,10 +7,19 @@ import {
 } from '@/store/transactions/mutations-types';
 
 import ethplorerService from '@/services/ethplorer';
-import { EventEmitter, Transaction, NotificationError } from '@/class';
+import {
+  EventEmitter,
+  Transaction,
+  TransactionFactory,
+  NotificationError,
+} from '@/class';
 
 import { address } from 'fixtures/accounts';
-import { ethplorerHistory, ethplorerTransactions } from 'fixtures/transactions';
+import {
+  blockTransactions,
+  ethplorerHistory,
+  ethplorerTransactions,
+} from 'fixtures/transactions';
 
 const { state: transactionsState, actions } = state;
 
@@ -177,7 +186,7 @@ describe('transactions actions', () => {
   describe('handleBlockTransactions', () => {
     it('should show notification of incoming transactions', () => {
       actions.handleBlockTransactions(
-        { commit, dispatch, rootState, rootGetters },
+        { state: stateInstance, commit, dispatch, rootState, rootGetters },
         { transactions: ethplorerTransactions },
       );
 
@@ -192,6 +201,7 @@ describe('transactions actions', () => {
     it('should update transaction history', () => {
       actions.handleBlockTransactions(
         {
+          state: stateInstance,
           commit,
           dispatch,
           rootState,
@@ -215,18 +225,49 @@ describe('transactions actions', () => {
 
     it('should add transaction to history with network id', () => {
       const networkId = 2;
-      const expectedTrx = new Transaction({
-        ...ethplorerTransactions[1],
+
+      const constantDate = new Date('2018-01-01T12:00:00');
+      const dateMock = jest
+        .spyOn(global, 'Date')
+        .mockImplementation(() => constantDate);
+
+      actions.handleBlockTransactions(
+        { state: stateInstance, commit, dispatch, rootState, rootGetters },
+        { transactions: blockTransactions, networkId },
+      );
+
+      const expectedTrx = TransactionFactory.fromBlock({
+        ...blockTransactions[0],
         networkId,
       });
 
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toBeCalledWith(ADD_TRANSACTION, expectedTrx);
+
+      dateMock.mockRestore();
+    });
+
+    it('should add Transaction instance to history', () => {
       actions.handleBlockTransactions(
-        { commit, dispatch, rootState, rootGetters },
-        { transactions: ethplorerTransactions, networkId },
+        { state: stateInstance, commit, dispatch, rootState, rootGetters },
+        { transactions: ethplorerTransactions },
       );
 
       expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toBeCalledWith(ADD_TRANSACTION, expectedTrx);
+      expect(commit).toBeCalledWith(ADD_TRANSACTION, expect.any(Transaction));
+    });
+
+    it('should not add existing transactions in history', () => {
+      Object.assign(stateInstance, {
+        pendingTransactions: [ethplorerTransactions[1]],
+      });
+
+      actions.handleBlockTransactions(
+        { state: stateInstance, commit, dispatch, rootState, rootGetters },
+        { transactions: [ethplorerTransactions[1]] },
+      );
+
+      expect(commit).toHaveBeenCalledTimes(0);
     });
 
     it('should not handle transaction when "to" is null', () => {
