@@ -83,6 +83,7 @@ export const pendingTransactions = [
     state: 'pending',
     valueWei: '2',
     gasCost: '5',
+    hash: '0xea9ac0110e2cab67d43188375acfe4f474b20ca5453a4eb68d9089bb9a9e40f3',
   },
   {
     to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
@@ -92,6 +93,7 @@ export const pendingTransactions = [
     state: 'pending',
     valueWei: '2',
     gasCost: '5',
+    hash: '0x766a342b3e1f460d768873e8f1b1867097bbf2ca78425dd3c9a924aa5e83637a',
   },
   {
     to: '0x1de2109f8db1190cd44bc6554e35642214fbe144',
@@ -102,6 +104,7 @@ export const pendingTransactions = [
     valueWei: '2',
     gasCost: '5',
     date: new Date('01/03/2001'),
+    hash: '0xe595e9c4b7188dc5bd7efcd39c1704f3507cad6c53d2ef01889942e7c0e6c8ef',
   },
   {
     to: '0x1ce2109f8db1190cd44bc6554e35642214fbe144',
@@ -112,6 +115,7 @@ export const pendingTransactions = [
     valueWei: '1',
     gasCost: '6',
     date: new Date('01/01/2001'),
+    hash: '0x9d92b835d8b9fab8c27d45045ed61d728ec6280c60b792b2a623ad600d911261',
   },
 ];
 

@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { uniq } from 'lodash';
+import { uniq, uniqBy } from 'lodash';
 import web3 from '@/utils/web3';
 import { MAIN_NET_ID } from '@/constants';
 
@@ -16,7 +16,7 @@ const accountTransactions = (state, getters, rootState) => {
     transactions.push(...getters.filteredHistoryTransactions);
   }
 
-  return transactions
+  const allAccountTrx = transactions
     .filter(trx => {
       const { to, from, state: trxStatus } = trx;
 
@@ -37,6 +37,8 @@ const accountTransactions = (state, getters, rootState) => {
 
       return trx2.date - trx1.date;
     });
+
+  return uniqBy(allAccountTrx, 'hash');
 };
 
 const pendingBalance = (state, getters, rootState) => {
