@@ -66,7 +66,10 @@ export default {
     async signMessage(password) {
       try {
         this.togglePasswordModal();
-        this.signedMessage = await this.wallet.sign(this.message, password);
+        this.signedMessage = web3.eth.accounts.sign(
+          this.message,
+          await this.wallet.getPrivateKeyString(password),
+        );
       } catch (error) {
         this.signedMessage = null;
         this.$notify({
