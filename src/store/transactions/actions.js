@@ -161,7 +161,8 @@ const handleBlockTransactions = (
   const userAddresses = rootGetters['accounts/accountAddresses'];
   const toUserTrx = transactions.filter(trx =>
     userAddresses.some(
-      address => toChecksumAddress(address) === toChecksumAddress(trx.to),
+      address =>
+        trx.to && toChecksumAddress(address) === toChecksumAddress(trx.to),
     ),
   );
 

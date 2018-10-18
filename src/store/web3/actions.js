@@ -169,10 +169,10 @@ const handleLastBlock = async (
   if (handledBlockNumber === blockNumber) return;
 
   for (let i = handledBlockNumber + 1; i <= blockNumber; i += 1) {
-    web3.eth.getBlock(i, true).then(({ transactions }) => {
+    web3.eth.getBlock(i, true).then(res => {
       dispatch(
         'transactions/handleBlockTransactions',
-        { transactions, networkId },
+        { transactions: res.transactions || [], networkId },
         { root: true },
       );
     });
