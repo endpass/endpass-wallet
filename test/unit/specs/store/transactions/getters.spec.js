@@ -94,15 +94,18 @@ describe('transactions getters', () => {
         to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
         from: checksumAddress,
         date: new Date('01/01/2001'),
+        hash: '1',
       };
       const trx2 = {
         to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
         from: checksumAddress,
         date: new Date('01/01/2010'),
+        hash: '2',
       };
       const trx3 = {
         to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
         from: checksumAddress,
+        hash: '3',
       };
 
       stateInstance = {
@@ -127,6 +130,42 @@ describe('transactions getters', () => {
       );
 
       expect(transactions).toStrictEqual([trx3, trx2, trx1]);
+    });
+
+    it('should not return duplicate transactions with equal hash', () => {
+      const trx1 = {
+        to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
+        from: checksumAddress,
+        hash: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
+      };
+      const trx2 = {
+        to: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
+        from: checksumAddress,
+        hash: '0x2ce2109f8db1190cd44bc6554e35642214fbe144',
+      };
+
+      stateInstance = {
+        pendingTransactions: [trx1, trx2],
+      };
+
+      const transactions = state.getters.accountTransactions(
+        stateInstance,
+        {},
+        {
+          accounts: {
+            address: {
+              getChecksumAddressString() {
+                return checksumAddress;
+              },
+            },
+          },
+          web3: {
+            activeNet: { id: 2 },
+          },
+        },
+      );
+
+      expect(transactions).toHaveLength(1);
     });
   });
 
