@@ -7,7 +7,8 @@ export const DEFAULT_NETWORKS = Object.freeze([
     networkType: 'main',
     currency: 1,
     name: 'Main',
-    url: `https://mainnet.infura.io/${ENV.infuraConf.key}`,
+    url: 'wss://eth-mainnet.endpass.com',
+    // url: `https://mainnet.infura.io/${ENV.infuraConf.key}`,
   },
   {
     name: 'Ropsten',
@@ -67,6 +68,7 @@ export const AVAILABLE_USER_META_PROPS = ['activeAccount'];
 export const REQUEST_TIMEOUT_MSEC = 30000;
 
 export const DAPP_WHITELISTED_METHODS = [
+  'personal_sign',
   'eth_personalSign',
   'eth_signTypedData',
   'eth_sendTransaction',

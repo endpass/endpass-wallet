@@ -1,10 +1,11 @@
 import Tx from 'ethereumjs-tx';
-import web3 from 'web3';
+import web3 from '@/utils/web3';
+// import web3i from '';
 import keyUtil from '@/utils/keystore';
 
 // A Wallet represents a single Ethereum account that can send transactions
 // All methods are async and return promises
-export class Wallet {
+export default class Wallet {
   constructor(v3Keystore) {
     this.isPublic = false;
     this.v3 = v3Keystore;
@@ -35,6 +36,28 @@ export class Wallet {
     } catch (e) {
       throw new Error('Invalid password');
     }
+  }
+
+  async sign(data, password) {
+    const privateKey = await this.getPrivateKeyString(password);
+
+    return web3.eth.accounts.sign(data, privateKey);
+  }
+
+  recover(message, signature) {
+    return web3.eth.accounts.recover(message, signature);
+  }
+
+  async ecRecover(message, signature) {
+    const res = await web3.eth.personal.ecRecover(message, signature);
+
+    return res;
+  }
+
+  async personalSign(data, password) {
+    const res = await web3.eth.personal.sign(data, this.v3.address, password);
+
+    return res;
   }
 
   async signTransaction(transaction, password) {
