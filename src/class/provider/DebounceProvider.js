@@ -31,7 +31,6 @@ export default class DebounceProvider {
       const send = (...args) => {
         this.parent[method](args[0], (e, result) => {
           if (!get(this, `cache.${cacheKey}.buffer`)) return;
-          console.log(get(this, `cache.${cacheKey}.buffer`));
 
           const dfdArr = [...this.cache[cacheKey].buffer];
           this.cache[cacheKey].buffer = [];

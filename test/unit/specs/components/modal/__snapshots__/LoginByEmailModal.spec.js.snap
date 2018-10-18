@@ -27,6 +27,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
     v-on:submit="bound handleSubmit"
   >
     <v-input
+      autofocus=""
       help="Your email address may be used to help recover your
              wallet in case you lose access."
       label="Email"

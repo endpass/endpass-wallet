@@ -22,6 +22,7 @@
         placeholder="Contract address"
         data-test="address-input"
         required
+        autofocus
       />
       <v-input
         v-validate="'required|numeric|integer|between:0,18'"

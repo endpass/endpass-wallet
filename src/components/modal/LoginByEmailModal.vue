@@ -24,6 +24,7 @@
       @submit="handleSubmit"
     >
       <v-input
+        autofocus
         v-if="isSelectDefaultIdentity"
         key="email-input"
         v-model="email"
