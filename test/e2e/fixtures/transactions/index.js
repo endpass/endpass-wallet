@@ -1,3 +1,7 @@
+import { address } from '../accounts';
+import activeAccount from '../keystore/account_1';
+import gasPrice from '../cryptodata/gasprice';
+
 export const ethplorerHistory = [
   {
     timestamp: 1535036970,
@@ -79,3 +83,25 @@ export const ethplorerTransactions = [
     gasLimit: 1,
   },
 ];
+
+export const transactionToSend = {
+  gasPrice: gasPrice.medium,
+  gasLimit: '22000',
+  value: '1',
+  tokenInfo: undefined,
+  from: activeAccount.address,
+  to: address,
+  data: '0x',
+  networkId: 1,
+  clone() {
+    return {
+      ...this,
+    };
+  },
+  getUpGasPrice() {
+    return this.gasPrice;
+  },
+  getApiObject() {
+    return this;
+  },
+};
