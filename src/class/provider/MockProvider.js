@@ -79,7 +79,11 @@ export default class MockProvider {
     } else {
       console.warn('Unmock async web3 request', payload);
 
-      return this.parent.sendAsync(payload, callback);
+      callback(null, {
+        id: payload.id,
+        jsonrpc: payload.jsonrpc,
+        result: null,
+      });
     }
   }
 }

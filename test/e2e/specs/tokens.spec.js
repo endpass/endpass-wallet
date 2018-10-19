@@ -9,6 +9,7 @@ describe('Tokens Page', () => {
     it('should redirect to root', () => {
       cy.preventLogin();
       cy.visit('#/tokens');
+      cy.mockWeb3Requests();
       cy.url().should('include', '/#/?redirect_uri=%2Ftokens');
     });
   });
@@ -17,6 +18,7 @@ describe('Tokens Page', () => {
     beforeEach(() => {
       cy.getInitialData();
       cy.visit('#/tokens');
+      cy.mockWeb3Requests();
       cy.waitPageLoad();
     });
 
