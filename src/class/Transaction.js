@@ -227,4 +227,10 @@ export default class Transaction {
 
     return new Transaction(tnxData);
   }
+
+  static isEqual(trx1, trx2) {
+    return (
+      `${trx1.networkId}-${trx1.hash}` === `${trx2.networkId}-${trx2.hash}`
+    );
+  }
 }
