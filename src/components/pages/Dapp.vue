@@ -50,7 +50,7 @@ export default {
   name: 'Dapp',
 
   data: () => ({
-    url: '',
+    url: 'https://www.cryptokitties.co',
     loading: false,
     loaded: false,
     error: null,
@@ -62,35 +62,34 @@ export default {
     },
 
     dappUrl() {
-      return `/proxy/${this.url}`;
+      return `/${this.url}`;
     },
   },
 
   methods: {
-    ...mapActions('dapp', [
-      'attach',
-      'detach',
-      'sendResponse',
-      'cancelTransaction',
-    ]),
+    ...mapActions('dapp', ['inject', 'sendResponse', 'cancelTransaction']),
 
     async loadDapp() {
-      if (!isEmpty(this.$validator.errors.items)) return;
+      if (isEmpty(this.url) || !isEmpty(this.$validator.errors.items)) return;
 
       this.loading = true;
+
+      await this.$nextTick();
+
+      this.inject(this.$refs.dapp.contentWindow);
     },
 
     onDappLoad() {
       const { dapp } = this.$refs;
 
       try {
-        get(dapp.contentWindow, 'location.href');
-
-        dapp.contentWindow.endpassDappBridge = window.endpassDappBridge;
+        /**
+         * If contentWindow property is not accessable it should throw error
+         */
+        get(dapp.contentWindow, 'location');
 
         this.loaded = true;
       } catch (err) {
-        console.log(err);
         this.error = err;
         this.loaded = false;
       } finally {
@@ -103,7 +102,9 @@ export default {
         this.error = null;
       }
 
-      this.loadDapp();
+      if (this.dappUrl.replace(/^\//, '') !== this.url || !this.loaded) {
+        this.loadDapp();
+      }
     },
 
     onChangeUrlInput() {
@@ -122,14 +123,6 @@ export default {
       console.log('cancel', this.currentTransactionToSign);
       // this.cancelTransaction(this.currentTransactionToSign);
     },
-  },
-
-  created() {
-    this.attach();
-  },
-
-  beforeDestroy() {
-    this.detach();
   },
 
   mixins: [privatePage],

@@ -1,37 +1,41 @@
+import { pick } from 'lodash';
+import web3, { createWeb3Instance } from '@/utils/web3';
 import { dappBridge } from '@/class';
-import { INPAGE_EVENT, DAPP_WHITELISTED_METHODS } from '@/constants';
-import {
-  CHANGE_INIT_STATUS,
-  ADD_TRANSACTION,
-  REMOVE_TRANSACTION,
-} from './mutations-types';
+import InpageProvider from '@/class/provider/InpageProvider';
+import { INPAGE_EVENT } from '@/constants';
+// import {
+//   CHANGE_INIT_STATUS,
+//   ADD_TRANSACTION,
+//   REMOVE_TRANSACTION,
+// } from './mutations-types';
 
-const attach = ({ state, commit }) => {
-  if (!state.inited) {
-    dappBridge.on(INPAGE_EVENT.REQUEST, payload => {
-      if (DAPP_WHITELISTED_METHODS.includes(payload.methd)) {
-        commit(ADD_TRANSACTION, payload);
-      }
-    });
+const inject = ({ dispatch, rootGetters, rootState }, dappWindow) => {
+  const inpageProvider = new InpageProvider(dappBridge);
 
-    commit(CHANGE_INIT_STATUS, true);
-  }
+  // TODO: create web3 instance and replace personal methods and properties
 
-  window.endpassDappBridge = dappBridge;
+  inpageProvider.updateSettings({
+    selectedAddress: rootGetters['accounts/currentAddressString'],
+    networkVersion: rootGetters['web3/activeNetwork'],
+  });
+
+  Object.assign(dappWindow, {
+    web3: createWeb3Instance(inpageProvider),
+  });
+
+  dappBridge.setRequestHandler(payload => dispatch('handleRequest', payload));
 };
 
-const detach = () => {
-  window.endpassDappBridge = undefined;
+const handleRequest = ({ dispatch, rootGetters }, payload) => {
+  console.log('request', payload.method);
 };
 
 const sendSettings = (ctx, payload) => {
-  dappBridge.emit(INPAGE_EVENT.SETTINGS, payload);
+  dappBridge.emitSettings(payload);
 };
 
 const sendResponse = ({ commit }, transaction) => {
-  console.log('response', transaction);
-  // dappBridge.emit(INPAGE_EVENT.RESPONSE, payload);
-  // commit(REMOVE_TRANSACTION, payload);
+  dappBridge.emitResponse(transaction);
 };
 
 const cancelTransaction = ({ commit }, transaction) => {
@@ -39,8 +43,8 @@ const cancelTransaction = ({ commit }, transaction) => {
 };
 
 export default {
-  attach,
-  detach,
+  inject,
+  handleRequest,
   sendSettings,
   sendResponse,
   cancelTransaction,
