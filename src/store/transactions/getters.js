@@ -1,7 +1,8 @@
 import { BigNumber } from 'bignumber.js';
-import { uniq, uniqBy } from 'lodash';
+import { uniq, uniqWith } from 'lodash';
 import web3 from '@/utils/web3';
 import { MAIN_NET_ID } from '@/constants';
+import { Transaction } from '@/class';
 
 const accountTransactions = (state, getters, rootState) => {
   if (!rootState.accounts.address) {
@@ -38,7 +39,7 @@ const accountTransactions = (state, getters, rootState) => {
       return trx2.date - trx1.date;
     });
 
-  return uniqBy(allAccountTrx, 'hash');
+  return uniqWith(allAccountTrx, Transaction.isEqual);
 };
 
 const pendingBalance = (state, getters, rootState) => {
@@ -67,10 +68,12 @@ const pendingBalance = (state, getters, rootState) => {
 
 // Exclude trx that exist in pendingTransactions
 const filteredHistoryTransactions = state => {
-  const isInPending = itemHash =>
-    state.pendingTransactions.some(({ hash }) => hash === itemHash);
+  const isInPending = trx =>
+    state.pendingTransactions.some(pendingTrx =>
+      Transaction.isEqual(trx, pendingTrx),
+    );
 
-  return state.transactionHistory.filter(({ hash }) => !isInPending(hash));
+  return state.transactionHistory.filter(trx => !isInPending(trx));
 };
 
 // Trx for the current network
