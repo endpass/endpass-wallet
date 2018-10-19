@@ -2,6 +2,7 @@ describe('Navigation sidebar', () => {
   beforeEach(() => {
     cy.login();
     cy.visit('#/');
+    cy.mockWeb3Requests();
   });
 
   it('should show sidebar controls', () => {

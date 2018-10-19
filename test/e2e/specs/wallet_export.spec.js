@@ -4,6 +4,7 @@ describe('Export wallet page', () => {
   beforeEach(() => {
     cy.login();
     cy.visit('#/export');
+    cy.mockWeb3Requests();
     cy.waitPageLoad();
     cy.makeStoreAlias();
   });

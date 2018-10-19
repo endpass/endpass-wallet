@@ -9,6 +9,7 @@ describe('Import Wallet Page', () => {
   beforeEach(() => {
     cy.getInitialData();
     cy.visit('#/import');
+    cy.mockWeb3Requests();
     cy.waitPageLoad();
   });
 

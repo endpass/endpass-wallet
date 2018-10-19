@@ -10,6 +10,7 @@ describe('Settings Page', () => {
   beforeEach(() => {
     cy.getInitialData();
     cy.visit('#/settings');
+    cy.mockWeb3Requests();
     cy.waitPageLoad();
   });
 

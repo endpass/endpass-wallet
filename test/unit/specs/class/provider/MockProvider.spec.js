@@ -102,19 +102,19 @@ describe('MockProvider', () => {
         params,
       };
 
-      it('should call parent method', () => {
-        const payload = {};
+      it('should handle unmocked requests', () => {
         const callback = jest.fn();
 
         console.warn = jest.fn();
 
         provider.sendAsync(payload, callback);
 
-        expect(provider.parent.sendAsync).toHaveBeenCalledTimes(1);
-        expect(provider.parent.sendAsync).toHaveBeenCalledWith(
-          payload,
-          callback,
-        );
+        expect(callback).toHaveBeenCalledTimes(1);
+        expect(callback).toHaveBeenCalledWith(null, {
+          id: payload.id,
+          jsonrpc: payload.jsonrpc,
+          result: null,
+        });
       });
 
       it('should correctly process a mocked request', async () => {
