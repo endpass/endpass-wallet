@@ -8,16 +8,9 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {
-      '/proxy': {
-        target: 'https://wildproxy-dev.endpass.com',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/proxy': '',
-        },
-        cookieDomainRewrite: 'localhost',
-      },
-      '/identity/api/v1': {
+    proxyTable: [
+      {
+        context: '/identity/api/v1',
         target: 'https://identity-dev.endpass.com',
         changeOrigin: true,
         pathRewrite: {
@@ -25,21 +18,29 @@ module.exports = {
         },
         cookieDomainRewrite: 'localhost',
       },
-      '/tokeninfo/api/v1': {
+      {
+        context: '/tokeninfo/api/v1',
         target: 'https://tokeninfo-dev.endpass.com',
         changeOrigin: true,
         pathRewrite: {
           '^/tokeninfo/api/v1': '/api/v1',
         },
       },
-      '/gasprice/api/v1': {
+      {
+        context: '/gasprice/api/v1',
         target: 'https://cryptodata-dev.endpass.com',
         changeOrigin: true,
         pathRewrite: {
           '^/gasprice/api/v1': '/api/v1',
         },
       },
-    },
+      {
+        context: '^/https?**',
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        cookieDomainRewrite: 'localhost',
+      },
+    ],
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
@@ -94,23 +95,23 @@ module.exports = {
     // Set to `true` or `false` to always turn it on or off
     bundleAnalyzerReport: process.env.npm_config_report,
 
-    //Entrys with rollbar file
+    // Entrys with rollbar file
     entry: {
       app: './src/main.js',
       rollbar: './static/rollbar.js',
     },
 
-    //Order of chunks is important
+    // Order of chunks is important
     chunks: ['manifest', 'vendor', 'rollbar', 'app'],
   },
 
   staging: {
-    //Webpack entrys
+    // Webpack entrys
     entry: {
       app: './src/main.js',
     },
 
-    //Order of chunks is important
+    // Order of chunks is important
     chunks: ['manifest', 'vendor', 'app'],
   },
 };
