@@ -1,27 +1,21 @@
-import {
-  CHANGE_INIT_STATUS,
-  ADD_TRANSACTION,
-  REMOVE_TRANSACTION,
-} from './mutations-types';
+import { ADD_REQUEST, REMOVE_REQUEST } from './mutations-types';
 
-const changeInitStatus = (state, status) => {
-  state.inited = status;
+const addRequest = (state, { id, request }) => {
+  Object.assign(state.requests, {
+    [id]: request,
+  });
+  state.list.push(id);
 };
 
-const addTransaction = (state, transaction) => {
-  state.queue.push(transaction);
-};
+const removeRequest = (state, id) => {
+  const requestIdx = state.list.findIndex(requestId => requestId === id);
 
-const removeTransaction = (state, transaction) => {
-  const transactionIdx = state.queue.findIndex(({ id }) => transaction.id);
-
-  if (transactionIdx !== -1) {
-    state.queue.splice(transactionIdx, 1);
+  if (requestIdx !== -1) {
+    state.list.splice(requestIdx, 1);
   }
 };
 
 export default {
-  [CHANGE_INIT_STATUS]: changeInitStatus,
-  [ADD_TRANSACTION]: addTransaction,
-  [REMOVE_TRANSACTION]: removeTransaction,
+  [ADD_REQUEST]: addRequest,
+  [REMOVE_REQUEST]: removeRequest,
 };

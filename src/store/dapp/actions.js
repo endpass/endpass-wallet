@@ -2,17 +2,11 @@ import { pick } from 'lodash';
 import web3, { createWeb3Instance } from '@/utils/web3';
 import { dappBridge } from '@/class';
 import InpageProvider from '@/class/provider/InpageProvider';
-import { INPAGE_EVENT } from '@/constants';
-// import {
-//   CHANGE_INIT_STATUS,
-//   ADD_TRANSACTION,
-//   REMOVE_TRANSACTION,
-// } from './mutations-types';
+import { INPAGE_EVENT, DAPP_WHITELISTED_METHODS } from '@/constants';
+import { ADD_REQUEST, REMOVE_REQUEST } from './mutations-types';
 
-const inject = ({ dispatch, rootGetters, rootState }, dappWindow) => {
+const inject = ({ dispatch, rootGetters }, dappWindow) => {
   const inpageProvider = new InpageProvider(dappBridge);
-
-  // TODO: create web3 instance and replace personal methods and properties
 
   inpageProvider.updateSettings({
     selectedAddress: rootGetters['accounts/currentAddressString'],
@@ -26,20 +20,99 @@ const inject = ({ dispatch, rootGetters, rootState }, dappWindow) => {
   dappBridge.setRequestHandler(payload => dispatch('handleRequest', payload));
 };
 
-const handleRequest = ({ dispatch, rootGetters }, payload) => {
-  console.log('request', payload.method);
+const handleRequest = async ({ dispatch, commit }, { id, ...request }) => {
+  if (DAPP_WHITELISTED_METHODS.includes(request.method)) {
+    commit(ADD_REQUEST, {
+      id,
+      request,
+    });
+  } else {
+    const res = await dispatch('sendRequestToNetwork', request);
+
+    if (res) {
+      await dispatch('sendResponse', {
+        payload: res,
+        id,
+      });
+    }
+  }
 };
 
-const sendSettings = (ctx, payload) => {
-  dappBridge.emitSettings(payload);
+const sendSettings = ({ getters }) => {
+  dappBridge.emitSettings({
+    selectedAddress: getters['accounts/currentAddressString'],
+    networkVersion: getters['web3/activeNetwork'],
+  });
 };
 
-const sendResponse = ({ commit }, transaction) => {
-  dappBridge.emitResponse(transaction);
+const sendResponse = (ctx, payload) => {
+  dappBridge.emitResponse(payload);
 };
 
-const cancelTransaction = ({ commit }, transaction) => {
-  console.log('cancel', transaction);
+const processCurrentRequest = async (
+  { commit, dispatch, getters, rootState, rootGetters },
+  password,
+) => {
+  const requestId = getters.currentRequestId;
+  const request = getters.currentRequest;
+  const { wallet } = rootState.accounts;
+
+  if (request.method === 'eth_sendTransaction') {
+    console.log('sign transaction', request);
+    // const { wallet } = rootState.accounts;
+    // const nonce = await dispatch('transactions/getNextNonce', null, {
+    //   root: true,
+    // });
+    // const signedRequest = await wallet.signTransaction(
+    //   Object.assign(request, {
+    //     nonce,
+    //   }).getApiObject(web3.eth),
+    //   password,
+    // );
+
+    // console.log('transaction', signedRequest)
+  } else {
+    const currentAddress = rootGetters['accounts/currentAddressString'];
+    const [data, address] = request.params;
+
+    if (currentAddress === web3.utils.toChecksumAddress(address)) {
+      const res = await web3.eth.personal.sign(data, currentAddress, password);
+      console.log(res);
+      // const res = await wallet.sign(data, password);
+
+      console.log(res, request);
+
+      dispatch('sendResponse', {
+        id: requestId,
+        result: res.signature,
+      });
+    } else {
+      console.log('different address, throwing error');
+    }
+  }
+
+  commit(REMOVE_REQUEST, requestId);
+};
+
+// TODO: отправлять только транзакции и запросы, которые не требуют подписи
+const sendRequestToNetwork = (ctx, request) => {
+  console.log('send', request);
+  // new Promise((resolve, reject) => {
+  //   web3.currentProvider.sendAsync(request, res => {
+  //     console.log(request, res);
+
+  //     return resolve(null);
+  //   });
+};
+
+const cancelCurrentRequest = ({ commit, dispatch, getters }) => {
+  const requestId = getters.currentRequestId;
+
+  dispatch('sendResponse', {
+    id: requestId,
+    error: 'canceled',
+  });
+  commit(REMOVE_REQUEST, requestId);
 };
 
 export default {
@@ -47,5 +120,8 @@ export default {
   handleRequest,
   sendSettings,
   sendResponse,
-  cancelTransaction,
+
+  processCurrentRequest,
+  sendRequestToNetwork,
+  cancelCurrentRequest,
 };

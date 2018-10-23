@@ -18,13 +18,14 @@ export default class InpageProvider {
     this.settings = {};
   }
 
-  handleResponse({ error, result }) {
-    const resultClone = Object.assign({}, result);
+  handleResponse({ error, id, result }) {
+    const trxId = id.replace(INPAGE_ID_PREFIX, '');
 
-    resultClone.id = resultClone.id.replace(INPAGE_ID_PREFIX, '');
-    this.pendingRequestsHandlers[resultClone.id](error, result);
+    if (this.pendingRequestsHandlers[trxId]) {
+      this.pendingRequestsHandlers[trxId](error, result);
 
-    delete this.pendingRequestsHandlers[resultClone.id];
+      delete this.pendingRequestsHandlers[trxId];
+    }
   }
 
   updateSettings({ selectedAddress, networkVersion }) {
@@ -69,16 +70,12 @@ export default class InpageProvider {
   }
 
   sendAsync(payload, callback) {
-    console.log('send async', payload);
-
-    const payloadClone = { ...payload };
-    const processedPayload = this.processPayload(payloadClone);
+    const processedPayload = this.processPayload({ ...payload });
 
     if (processedPayload.result !== null) {
       callback(null, processedPayload);
     } else {
       this.pendingRequestsHandlers[payload.id] = callback;
-      payloadClone.id = `${INPAGE_ID_PREFIX}${payload.id}`;
       this.eventEmitter.emit(INPAGE_EVENT.REQUEST, {
         ...payload,
         id: `${INPAGE_ID_PREFIX}${payload.id}`,

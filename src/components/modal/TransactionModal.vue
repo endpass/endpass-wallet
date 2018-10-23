@@ -7,35 +7,10 @@
       <template slot="header">Are you sure?</template>
 
       <div>
-        <table class="table">
-          <thead>
-            <tr>
-              <th colspan="2">Transaction</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th>To</th>
-              <th>{{ transaction.to }}</th>
-            </tr>
-            <tr>
-              <th>Amount</th>
-              <th>{{ transaction.value }} {{ transaction.tokenInfo && transaction.tokenInfo.symbol || activeCurrency.name }}</th>
-            </tr>
-            <tr>
-              <th>Gas price</th>
-              <th>{{ transaction.gasPrice }} GWEI</th>
-            </tr>
-            <tr>
-              <th>Gas limit</th>
-              <th>{{ transaction.gasLimit }}</th>
-            </tr>
-            <tr>
-              <th>Data</th>
-              <th>{{ transaction.data }}</th>
-            </tr>
-          </tbody>
-        </table>
+        <transaction-table
+          :transaction="transaction"
+          :currency="activeCurrency"
+        />
       </div>
 
       <div
@@ -44,8 +19,8 @@
       >
         <a
           class="button is-primary"
-          @click="confirm"
           data-test="confirm-button"
+          @click="confirm"
         >
           Confirm
         </a>
@@ -64,9 +39,10 @@
 <script>
 import { mapState } from 'vuex';
 import VModal from '@/components/ui/VModal';
+import TransactionTable from '@/components/TransactionTable';
 
 export default {
-  name: 'transaction-modal',
+  name: 'TransactionModal',
   props: {
     transaction: {
       type: Object,
@@ -88,6 +64,7 @@ export default {
   },
   components: {
     VModal,
+    TransactionTable,
   },
 };
 </script>
