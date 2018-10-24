@@ -7,7 +7,8 @@ export const DEFAULT_NETWORKS = Object.freeze([
     networkType: 'main',
     currency: 1,
     name: 'Main',
-    url: `https://mainnet.infura.io/${ENV.infuraConf.key}`,
+    // url: `https://mainnet.infura.io/${ENV.infuraConf.key}`,
+    url: `http://35.175.5.10:8545/${ENV.infuraConf.key}`,
   },
   {
     name: 'Ropsten',

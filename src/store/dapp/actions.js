@@ -1,5 +1,7 @@
 import { pick } from 'lodash';
+import keccak from 'keccak';
 import web3, { createWeb3Instance } from '@/utils/web3';
+import { hexToMsg } from '@/utils/hex';
 import { dappBridge } from '@/class';
 import InpageProvider from '@/class/provider/InpageProvider';
 import { INPAGE_EVENT, DAPP_WHITELISTED_METHODS } from '@/constants';
@@ -76,11 +78,13 @@ const processCurrentRequest = async (
     const [data, address] = request.params;
 
     if (currentAddress === web3.utils.toChecksumAddress(address)) {
-      const res = await web3.eth.personal.sign(data, currentAddress, password);
-      console.log(res);
-      // const res = await wallet.sign(data, password);
+      const res = await wallet.sign(hexToMsg(data), password);
+      const ver = await web3.eth.personal.ecRecover(
+        hexToMsg(data),
+        res.signature,
+      );
 
-      console.log(res, request);
+      console.log(data, res, ver);
 
       dispatch('sendResponse', {
         id: requestId,

@@ -94,7 +94,7 @@ export default {
 
       await this.$nextTick();
 
-      this.inject(this.$refs.dapp.contentWindow);
+      await this.inject(this.$refs.dapp.contentWindow);
     },
 
     onDappLoad() {
