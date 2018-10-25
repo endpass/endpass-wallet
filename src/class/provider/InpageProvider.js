@@ -21,11 +21,13 @@ export default class InpageProvider {
   handleResponse({ error, id, result }) {
     const trxId = id.replace(INPAGE_ID_PREFIX, '');
 
-    if (this.pendingRequestsHandlers[trxId]) {
-      this.pendingRequestsHandlers[trxId](error, result);
+    console.log(id, result);
 
-      delete this.pendingRequestsHandlers[trxId];
-    }
+    this.pendingRequestsHandlers[trxId](error, {
+      id: trxId,
+      result,
+    });
+    delete this.pendingRequestsHandlers[trxId];
   }
 
   updateSettings({ selectedAddress, networkVersion }) {
@@ -70,6 +72,8 @@ export default class InpageProvider {
   }
 
   sendAsync(payload, callback) {
+    console.log('send async', payload);
+
     const processedPayload = this.processPayload({ ...payload });
 
     if (processedPayload.result !== null) {

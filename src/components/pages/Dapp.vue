@@ -59,7 +59,8 @@ export default {
   name: 'Dapp',
 
   data: () => ({
-    url: 'https://www.cryptokitties.co',
+    // url: 'https://www.cryptokitties.co',
+    url: 'https://explorer.bounties.network/explorer',
     loading: false,
     loaded: false,
     error: null,

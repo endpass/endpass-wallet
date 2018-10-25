@@ -39,9 +39,19 @@ export default class Wallet {
   }
 
   async sign(data, password) {
-    const privateKey = await this.getPrivateKey(password);
+    const privateKey = await this.getPrivateKeyString(password);
 
     return web3.eth.accounts.sign(data, privateKey);
+  }
+
+  recover(message) {
+    return web3.eth.accounts.recover(message);
+  }
+
+  async personalSign(data, password) {
+    const res = await web3.eth.personal.sign(data, this.v3.address, password);
+
+    return res;
   }
 
   async signTransaction(transaction, password) {

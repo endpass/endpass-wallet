@@ -1,4 +1,8 @@
-import { ADD_REQUEST, REMOVE_REQUEST } from './mutations-types';
+import {
+  ADD_REQUEST,
+  REMOVE_REQUEST,
+  CHANGE_INJECT_STATUS,
+} from './mutations-types';
 
 const addRequest = (state, { id, request }) => {
   Object.assign(state.requests, {
@@ -15,7 +19,12 @@ const removeRequest = (state, id) => {
   }
 };
 
+const changeInitStatus = (state, status) => {
+  state.injected = status;
+};
+
 export default {
   [ADD_REQUEST]: addRequest,
   [REMOVE_REQUEST]: removeRequest,
+  [CHANGE_INJECT_STATUS]: changeInitStatus,
 };

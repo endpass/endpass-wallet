@@ -1,13 +1,22 @@
-import { pick } from 'lodash';
+import { pick, isEqual } from 'lodash';
 import keccak from 'keccak';
 import web3, { createWeb3Instance } from '@/utils/web3';
 import { hexToMsg } from '@/utils/hex';
 import { dappBridge } from '@/class';
 import InpageProvider from '@/class/provider/InpageProvider';
 import { INPAGE_EVENT, DAPP_WHITELISTED_METHODS } from '@/constants';
-import { ADD_REQUEST, REMOVE_REQUEST } from './mutations-types';
+import {
+  ADD_REQUEST,
+  REMOVE_REQUEST,
+  CHANGE_INJECT_STATUS,
+} from './mutations-types';
 
-const inject = ({ dispatch, rootGetters }, dappWindow) => {
+const inject = ({ state, commit, dispatch, rootGetters }, dappWindow) => {
+  if (state.injected) return;
+
+  // TODO: change injected to false on dapp close or leaving page
+  commit(CHANGE_INJECT_STATUS, true);
+
   const inpageProvider = new InpageProvider(dappBridge);
 
   inpageProvider.updateSettings({
@@ -78,24 +87,30 @@ const processCurrentRequest = async (
     const [data, address] = request.params;
 
     if (currentAddress === web3.utils.toChecksumAddress(address)) {
-      const res = await wallet.sign(hexToMsg(data), password);
-      const ver = await web3.eth.personal.ecRecover(
-        hexToMsg(data),
-        res.signature,
-      );
+      const res1 = await wallet.personalSign(data, password);
+      const res2 = await wallet.sign(hexToMsg(data), password);
 
-      console.log(data, res, ver);
+      console.log(res1, res2);
+      console.log(isEqual(JSON.stringify(res1)), isEqual(JSON.stringify(res2)));
 
-      dispatch('sendResponse', {
-        id: requestId,
-        result: res.signature,
-      });
+      // console.log(res);
+      // const ver = await web3.eth.personal.ecRecover(
+      //   hexToMsg(data),
+      //   res.signature,
+      // );
+
+      // console.log('with ecRecov', data, res, ver);
+
+      // dispatch('sendResponse', {
+      //   id: requestId,
+      //   result: res.signature,
+      // });
     } else {
       console.log('different address, throwing error');
     }
   }
 
-  commit(REMOVE_REQUEST, requestId);
+  // commit(REMOVE_REQUEST, requestId);
 };
 
 // TODO: отправлять только транзакции и запросы, которые не требуют подписи
@@ -115,6 +130,7 @@ const cancelCurrentRequest = ({ commit, dispatch, getters }) => {
   dispatch('sendResponse', {
     id: requestId,
     error: 'canceled',
+    result: {},
   });
   commit(REMOVE_REQUEST, requestId);
 };
