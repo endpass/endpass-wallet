@@ -27,7 +27,9 @@ export default class LedgerWallet {
         type: 'is-danger',
       });
     } finally {
-      await transport.close().catch(console.log);
+      if (transport && transport.close) {
+        await transport.close().catch(console.log);
+      }
     }
   }
 
@@ -68,7 +70,9 @@ export default class LedgerWallet {
         type: 'is-danger',
       });
     } finally {
-      await transport.close().catch(console.log);
+      if (transport && transport.close) {
+        await transport.close().catch(console.log);
+      }
     }
   }
 }
