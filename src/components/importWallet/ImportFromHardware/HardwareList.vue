@@ -66,6 +66,7 @@ export default {
         });
         this.isLoading = false;
       } catch (error) {
+        console.log('err', error);
         this.$notify(error);
       }
     },
