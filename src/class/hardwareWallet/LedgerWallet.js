@@ -36,6 +36,39 @@ export default class LedgerWallet {
   }
 
   static async signTransaction(transaction, index) {
-    throw new Error('Not implemented');
+    let transport;
+
+    try {
+      transport = await LedgerTransport.create();
+      const eth = new Eth(transport);
+      const tempTx = new Tx(transaction);
+
+      const payload = await eth.signTransaction(
+        `${HARDWARE_DERIVIATION_PATH}${index}`,
+        `${tempTx.serialize().toString('hex')}`,
+      );
+
+      if (!payload) {
+        throw new Error('Bad Trezor response');
+      }
+
+      const sign = {
+        r: payload.r,
+        s: payload.s,
+        v: payload.v,
+      };
+      const tx = new Tx({ ...transaction, ...sign });
+
+      return `0x${tx.serialize().toString('hex')}`;
+    } catch (error) {
+      console.log(error);
+      throw new NotificationError({
+        title: 'Access error',
+        text: `An error occurred while getting access to hardware device. Please, try again.`,
+        type: 'is-danger',
+      });
+    } finally {
+      await transport.close().catch(console.log);
+    }
   }
 }
