@@ -44,8 +44,14 @@ export default class Wallet {
     return web3.eth.accounts.sign(data, privateKey);
   }
 
-  recover(message) {
-    return web3.eth.accounts.recover(message);
+  recover(message, signature) {
+    return web3.eth.accounts.recover(message, signature);
+  }
+
+  async ecRecover(message, signature) {
+    const res = await web3.eth.personal.ecRecover(message, signature);
+
+    return res;
   }
 
   async personalSign(data, password) {

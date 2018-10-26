@@ -21,7 +21,7 @@ export default class InpageProvider {
   handleResponse({ error, id, result }) {
     const trxId = id.replace(INPAGE_ID_PREFIX, '');
 
-    console.log(id, result);
+    console.log('response', this.pendingRequestsHandlers, id, result);
 
     this.pendingRequestsHandlers[trxId](error, {
       id: trxId,
@@ -72,13 +72,13 @@ export default class InpageProvider {
   }
 
   sendAsync(payload, callback) {
-    console.log('send async', payload);
-
     const processedPayload = this.processPayload({ ...payload });
 
     if (processedPayload.result !== null) {
       callback(null, processedPayload);
     } else {
+      console.log('send async', payload);
+
       this.pendingRequestsHandlers[payload.id] = callback;
       this.eventEmitter.emit(INPAGE_EVENT.REQUEST, {
         ...payload,

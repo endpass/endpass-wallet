@@ -1,5 +1,3 @@
-import { pick, isEqual } from 'lodash';
-import keccak from 'keccak';
 import web3, { createWeb3Instance } from '@/utils/web3';
 import { hexToMsg } from '@/utils/hex';
 import { dappBridge } from '@/class';
@@ -14,7 +12,6 @@ import {
 const inject = ({ state, commit, dispatch, rootGetters }, dappWindow) => {
   if (state.injected) return;
 
-  // TODO: change injected to false on dapp close or leaving page
   commit(CHANGE_INJECT_STATUS, true);
 
   const inpageProvider = new InpageProvider(dappBridge);
@@ -31,6 +28,10 @@ const inject = ({ state, commit, dispatch, rootGetters }, dappWindow) => {
   dappBridge.setRequestHandler(payload => dispatch('handleRequest', payload));
 };
 
+const reset = ({ commit }) => {
+  commit(CHANGE_INJECT_STATUS, false);
+};
+
 const handleRequest = async ({ dispatch, commit }, { id, ...request }) => {
   if (DAPP_WHITELISTED_METHODS.includes(request.method)) {
     commit(ADD_REQUEST, {
@@ -38,11 +39,15 @@ const handleRequest = async ({ dispatch, commit }, { id, ...request }) => {
       request,
     });
   } else {
-    const res = await dispatch('sendRequestToNetwork', request);
+    const res = await dispatch('sendRequestToNetwork', {
+      ...request,
+      jsonrpc: '2.0',
+      id,
+    });
 
     if (res) {
       await dispatch('sendResponse', {
-        payload: res,
+        ...res,
         id,
       });
     }
@@ -87,42 +92,30 @@ const processCurrentRequest = async (
     const [data, address] = request.params;
 
     if (currentAddress === web3.utils.toChecksumAddress(address)) {
-      const res1 = await wallet.personalSign(data, password);
-      const res2 = await wallet.sign(hexToMsg(data), password);
+      const res = await wallet.sign(hexToMsg(data), password);
 
-      console.log(res1, res2);
-      console.log(isEqual(JSON.stringify(res1)), isEqual(JSON.stringify(res2)));
-
-      // console.log(res);
-      // const ver = await web3.eth.personal.ecRecover(
-      //   hexToMsg(data),
-      //   res.signature,
-      // );
-
-      // console.log('with ecRecov', data, res, ver);
-
-      // dispatch('sendResponse', {
-      //   id: requestId,
-      //   result: res.signature,
-      // });
+      dispatch('sendResponse', {
+        id: requestId,
+        result: res.signature,
+      });
     } else {
       console.log('different address, throwing error');
     }
   }
 
-  // commit(REMOVE_REQUEST, requestId);
+  commit(REMOVE_REQUEST, requestId);
 };
 
-// TODO: отправлять только транзакции и запросы, которые не требуют подписи
-const sendRequestToNetwork = (ctx, request) => {
-  console.log('send', request);
-  // new Promise((resolve, reject) => {
-  //   web3.currentProvider.sendAsync(request, res => {
-  //     console.log(request, res);
+const sendRequestToNetwork = (ctx, request) =>
+  new Promise((resolve, reject) => {
+    web3.currentProvider.sendAsync(request, (err, res) => {
+      if (err) {
+        return reject(err);
+      }
 
-  //     return resolve(null);
-  //   });
-};
+      return resolve(res);
+    });
+  });
 
 const cancelCurrentRequest = ({ commit, dispatch, getters }) => {
   const requestId = getters.currentRequestId;
@@ -137,6 +130,7 @@ const cancelCurrentRequest = ({ commit, dispatch, getters }) => {
 
 export default {
   inject,
+  reset,
   handleRequest,
   sendSettings,
   sendResponse,

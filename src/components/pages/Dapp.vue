@@ -84,6 +84,7 @@ export default {
   methods: {
     ...mapActions('dapp', [
       'inject',
+      'reset',
       'processCurrentRequest',
       'cancelCurrentRequest',
     ]),
@@ -129,6 +130,7 @@ export default {
     onChangeUrlInput() {
       if (this.loaded) {
         this.loaded = false;
+        this.reset();
       }
     },
 
@@ -139,6 +141,10 @@ export default {
     async cancelSign() {
       await this.cancelCurrentRequest();
     },
+  },
+
+  beforeDestroy() {
+    this.reset();
   },
 
   mixins: [privatePage],
