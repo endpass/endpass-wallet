@@ -7,14 +7,14 @@ export const DEFAULT_NETWORKS = Object.freeze([
     networkType: 'main',
     currency: 1,
     name: 'Main',
-    url: `https://mainnet.infura.io/${ENV.infuraConf.key}`,
+    url: 'wss://eth-mainnet.endpass.com',
   },
   {
     name: 'Ropsten',
     currency: 2,
     networkType: 'ropsten',
     id: 3,
-    url: `https://ropsten.infura.io/${ENV.infuraConf.key}`,
+    url: 'wss://eth-ropsten.endpass.com',
   },
   {
     name: 'Rinkeby',
@@ -28,7 +28,7 @@ export const DEFAULT_NETWORKS = Object.freeze([
     currency: 3,
     networkType: 'ethClassic',
     id: 61,
-    url: 'https://etc-geth.0xinfra.com',
+    url: 'wss://etc-mainnet.endpass.com/',
   },
 ]);
 
