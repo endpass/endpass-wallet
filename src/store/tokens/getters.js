@@ -1,4 +1,5 @@
-import { pick, pickBy } from '@/utils/objects';
+import { get, pick, pickBy, uniq } from 'lodash';
+import { BigNumber } from 'bignumber.js';
 
 const activeCurrencyName = (state, getters, rootState) =>
   rootState.web3.activeCurrency.name;
@@ -133,6 +134,35 @@ const userTokensWithoutToken = state => ({ net, token }) => {
   return userTokens;
 };
 
+const currentAccountTokensCurrencies = (state, getters, rootState) => {
+  const { activeCurrency } = rootState.web3;
+  const currencies = [
+    {
+      val: null,
+      key: activeCurrency.name,
+      text: activeCurrency.name,
+    },
+  ];
+
+  return uniq(
+    currencies.concat(
+      Object.values(getters.allCurrentAccountTokensWithNonZeroBalance).map(
+        ({ symbol }) => symbol,
+      ),
+    ),
+  );
+};
+
+const currentAccountTokenBySymbol = (state, getters) => symbol => {
+  const token = Object.values(
+    getters.allCurrentAccountTokensWithNonZeroBalance,
+  ).find(accountToken => accountToken.symbol === symbol);
+
+  if (!token) return null;
+
+  return token;
+};
+
 export default {
   activeCurrencyName,
   currentNetUserTokens,
@@ -149,4 +179,6 @@ export default {
   allCurrentAccountTokensWithNonZeroBalance,
   userTokensWithToken,
   userTokensWithoutToken,
+  currentAccountTokensCurrencies,
+  currentAccountTokenBySymbol,
 };

@@ -51,6 +51,7 @@
 </template>
 
 <script>
+import { kebabCase } from 'lodash';
 import { ENSResolver } from '@/class';
 import { mapState } from 'vuex';
 import web3 from '@/utils/web3';
@@ -133,15 +134,13 @@ export default {
       return Object.keys(this.$props).reduce(
         (res, prop) => ({
           ...res,
-          [this.camelToKebab(prop)]: this.$props[prop],
+          [kebabCase(prop)]: this.$props[prop],
         }),
         {},
       );
     },
   },
   methods: {
-    camelToKebab: str => str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`),
-
     async updateENS() {
       if (!this.innerValue.match(/^.+\.(eth|etc)$/)) return;
 

@@ -103,26 +103,33 @@ const getTransactionByHash = state => hash =>
 const getPendingTransactionByHash = state => hash =>
   state.pendingTransactions.find(trx => trx.hash === hash);
 
-const getAddressesFromTransactionsHistory = state =>
+const addressesFromTransactionsHistory = state =>
   uniq(state.transactionHistory.map(({ to }) => to));
 
 const getAddressesFromPendingTransactions = state =>
   uniq(state.pendingTransactions.map(({ to }) => to));
 
-const getAddressesFromTransactions = (state, getters) =>
+const addressesFromTransactions = (state, getters) =>
   uniq(
-    getters.getAddressesFromTransactionsHistory.concat(
+    getters.addressesFromTransactionsHistory.concat(
       getters.getAddressesFromPendingTransactions,
     ),
+  );
+
+const allowedToSendAddresses = (state, getters, rootState) =>
+  uniq(
+    Object.keys(rootState.accounts.wallets),
+    getters.addressesFromTransactions,
   );
 
 export default {
   getPendingTransactions,
   getPendingTransactionByHash,
   getTransactionByHash,
-  getAddressesFromTransactionsHistory,
+  addressesFromTransactionsHistory,
   getAddressesFromPendingTransactions,
-  getAddressesFromTransactions,
+  addressesFromTransactions,
+  allowedToSendAddresses,
   pendingBalance,
   filteredHistoryTransactions,
   currentNetTransactions,

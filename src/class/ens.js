@@ -12,24 +12,27 @@ const registryAddresses = {
   '61': '0xb96836a066ef81ea038280c733f833f69c23efde',
 };
 
-export class ENSResolver {
+export default class ENSResolver {
   constructor(web3) {
-    this.NameNotFound = new Error("Name isn't resolvable");
+    this.web3 = web3;
+  }
 
-    this.getAddress = async function(name) {
-      const registryContract = new web3.eth.Contract(ABI);
-      const node = namehash.hash(name);
-      const netId = await web3.eth.net.getId();
+  async getAddress(name) {
+    const { Contract, net } = this.web3.eth;
+    const registryContract = new Contract(ABI);
+    const netId = await net.getId();
+    const node = namehash.hash(name);
 
-      registryContract.options.address = registryAddresses[netId];
+    Object.assign(registryContract.options, {
+      address: registryAddresses[netId],
+    });
 
-      const address = await registryContract.methods.resolver(node).call();
+    const address = await registryContract.methods.resolver(node).call();
 
-      if (address == '0x0000000000000000000000000000000000000000') {
-        throw this.NameNotFound;
-      }
+    if (address === '0x0000000000000000000000000000000000000000') {
+      throw new Error("Name isn't resolvable");
+    }
 
-      return address;
-    };
+    return address;
   }
 }
