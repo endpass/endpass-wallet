@@ -73,9 +73,8 @@ export default class InpageProvider {
 
     const payloadClone = { ...payload };
     const processedPayload = this.processPayload(payloadClone);
-
     if (processedPayload.result !== null) {
-      callback(processedPayload);
+      callback(null, processedPayload);
     } else {
       this.pendingRequestsHandlers[payload.id] = callback;
       payloadClone.id = `${INPAGE_ID_PREFIX}${payload.id}`;

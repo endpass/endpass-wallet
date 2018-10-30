@@ -56,7 +56,8 @@
     "vue-router-multiguard": "^1.0.3",
     "vue-timers": "^1.7.3",
     "vuex": "^3.0.1",
-    "web3": "^1.0.0-beta.33"
+    "web3": "^1.0.0-beta.33",
+    "web3-dapp": "npm:web3@0.19"
   },
   "devDependencies": {
     "@vue/test-utils": "1.0.0-beta.10",

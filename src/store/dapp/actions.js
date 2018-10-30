@@ -1,5 +1,5 @@
 import { pick } from 'lodash';
-import web3, { createWeb3Instance } from '@/utils/web3';
+import web3Dapp from 'web3-dapp';
 import { dappBridge } from '@/class';
 import InpageProvider from '@/class/provider/InpageProvider';
 import { INPAGE_EVENT } from '@/constants';
@@ -20,7 +20,7 @@ const inject = ({ dispatch, rootGetters, rootState }, dappWindow) => {
   });
 
   Object.assign(dappWindow, {
-    web3: createWeb3Instance(inpageProvider),
+    web3: new web3Dapp(inpageProvider),
   });
 
   dappBridge.setRequestHandler(payload => dispatch('handleRequest', payload));
