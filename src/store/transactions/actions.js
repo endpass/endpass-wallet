@@ -1,5 +1,10 @@
 import { BigNumber } from 'bignumber.js';
-import { EventEmitter, NotificationError, Transaction } from '@/class';
+import {
+  EventEmitter,
+  NotificationError,
+  Transaction,
+  TransactionFactory,
+} from '@/class';
 import ethplorerService from '@/services/ethplorer';
 import web3 from '@/utils/web3';
 import { getShortStringWithEllipsis } from '@/utils/strings';
@@ -155,7 +160,7 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
 
 // Show notification of incoming transactions from block
 const handleBlockTransactions = (
-  { dispatch, commit, rootState, rootGetters },
+  { state, dispatch, commit, rootState, rootGetters },
   { transactions, networkId },
 ) => {
   const userAddresses = rootGetters['accounts/accountAddresses'];
@@ -167,8 +172,22 @@ const handleBlockTransactions = (
       ),
   );
 
+  if (!toUserTrx.length) return;
+
+  const { pendingTransactions, transactionHistory } = state;
+  const allTrx = [...pendingTransactions, ...transactionHistory];
+
   toUserTrx.forEach(trx => {
-    commit(ADD_TRANSACTION, new Transaction({ ...trx, networkId }));
+    const isTrxExist = allTrx.some(trxInList =>
+      Transaction.isEqual(trx, trxInList),
+    );
+
+    if (!isTrxExist) {
+      commit(
+        ADD_TRANSACTION,
+        TransactionFactory.fromBlock({ ...trx, networkId }),
+      );
+    }
 
     const { hash, to } = trx;
     const shortAddress = getShortStringWithEllipsis(to);

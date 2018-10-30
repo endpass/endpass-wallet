@@ -265,6 +265,7 @@
             <div
               v-if="transactionHash"
               class="transaction-status message is-success"
+              data-test="transaction-status"
             >
               <div class="message-header">
                 <p>Transaction Sent!</p>

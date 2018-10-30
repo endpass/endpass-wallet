@@ -1,5 +1,5 @@
 // Account address
-export const address = '0x31ea8795EE32D782C8ff41a5C68Dcbf0F5B27f6d';
+export const address = '0x31ea8795ee32d782c8ff41a5c68dcbf0f5b27f6d';
 export const checksumAddress = '0x31ea8795EE32D782C8ff41a5C68Dcbf0F5B27f6d';
 
 export const v3password = 'password123';

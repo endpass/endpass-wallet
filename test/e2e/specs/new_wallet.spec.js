@@ -9,6 +9,7 @@ describe('New Wallet Page', () => {
     }).as('keystoreGetEmptyAccounts');
 
     cy.visit('#/new');
+    cy.mockWeb3Requests();
     cy.wait(['@keystoreGetEmptyAccounts']);
 
     cy.get('[data-test=input-new-wallet-password]').type('12341234');
