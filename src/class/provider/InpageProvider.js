@@ -18,14 +18,15 @@ export default class InpageProvider {
     this.settings = {};
   }
 
-  handleResponse({ error, id, result }) {
+  handleResponse({ error, id, result, jsonrpc }) {
     const trxId = id.replace(INPAGE_ID_PREFIX, '');
 
-    console.log('response', this.pendingRequestsHandlers, id, result);
+    console.log('response', this.pendingRequestsHandlers, id, result, jsonrpc);
 
     this.pendingRequestsHandlers[trxId](error, {
       id: trxId,
       result,
+      jsonrpc,
     });
     delete this.pendingRequestsHandlers[trxId];
   }
@@ -75,13 +76,16 @@ export default class InpageProvider {
     const processedPayload = this.processPayload({ ...payload });
 
     if (processedPayload.result !== null) {
+      console.log('send', processedPayload);
       callback(null, processedPayload);
     } else {
       console.log('send async', payload);
-
+      console.log(callback, payload.id, 'kek');
       this.pendingRequestsHandlers[payload.id] = callback;
+      console.log(payload.jsonrpc);
       this.eventEmitter.emit(INPAGE_EVENT.REQUEST, {
         ...payload,
+        jsonrpc: payload.jsonrpc,
         id: `${INPAGE_ID_PREFIX}${payload.id}`,
       });
     }

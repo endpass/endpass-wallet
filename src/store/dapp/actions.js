@@ -1,3 +1,4 @@
+import web3Dapp from 'web3-dapp';
 import web3, { createWeb3Instance } from '@/utils/web3';
 import { hexToMsg } from '@/utils/hex';
 import { dappBridge } from '@/class';
@@ -17,12 +18,12 @@ const inject = ({ state, commit, dispatch, rootGetters }, dappWindow) => {
   const inpageProvider = new InpageProvider(dappBridge);
 
   inpageProvider.updateSettings({
-    selectedAddress: rootGetters['accounts/currentAddressString'],
+    selectedAddress: rootGetters['accounts/currentAddressString'].toLowerCase(),
     networkVersion: rootGetters['web3/activeNetwork'],
   });
 
   Object.assign(dappWindow, {
-    web3: createWeb3Instance(inpageProvider),
+    web3: new web3Dapp(inpageProvider),
   });
 
   dappBridge.setRequestHandler(payload => dispatch('handleRequest', payload));
@@ -41,7 +42,6 @@ const handleRequest = async ({ dispatch, commit }, { id, ...request }) => {
   } else {
     const res = await dispatch('sendRequestToNetwork', {
       ...request,
-      jsonrpc: '2.0',
       id,
     });
 
@@ -92,10 +92,11 @@ const processCurrentRequest = async (
     const [data, address] = request.params;
 
     if (currentAddress === web3.utils.toChecksumAddress(address)) {
-      const res = await wallet.sign(hexToMsg(data), password);
+      const res = await wallet.sign(data, password);
 
       dispatch('sendResponse', {
         id: requestId,
+        jsonrpc: getters.currentRequest.jsonrpc,
         result: res.signature,
       });
     } else {

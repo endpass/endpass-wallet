@@ -70,6 +70,7 @@ export const REQUEST_TIMEOUT_MSEC = 30000;
 export const DAPP_WHITELISTED_METHODS = [
   'personal_sign',
   'eth_personalSign',
+  'eth_sign',
   'eth_signTypedData',
   'eth_sendTransaction',
 ];
