@@ -3,7 +3,6 @@ const path = require('path');
 const utils = require('./utils');
 const webpack = require('webpack');
 const config = require('../config');
-const env = require('../config/prod.env');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -14,6 +13,10 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const gitCommitHash = utils.getCommitHash();
 
 const isProduction = process.env.NODE_ENV === 'production';
+
+const env = isProduction
+  ? require('../config/prod.env')
+  : require('../config/test.env');
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({
