@@ -44,9 +44,11 @@
       @change-token="changeTokenInfo"
     />
 
-    <!-- <transaction-priority-options
-
-    /> -->
+    <transaction-priority-options
+      v-model="transaction.gasPrice"
+      :is-loading="isLoadingGasPrice"
+      :prices="prices"
+    />
 
     <!-- <transaction-advanced-options
       :transaction="transaction"
@@ -144,59 +146,6 @@ export default {
     isEnsTransaction() {
       return /^.+\.(eth|etc|test)$/.test(this.address);
     },
-
-    // suggestedGasPrices() {
-    //   const { prices } = this;
-
-    //   if (prices) {
-    //     return [
-    //       {
-    //         val: prices.low.toString(),
-    //         key: 'Low',
-    //         help: `${prices.low} Gwei`,
-    //       },
-    //       {
-    //         val: prices.medium.toString(),
-    //         key: 'Medium',
-    //         help: `${prices.medium} Gwei`,
-    //       },
-    //       {
-    //         val: prices.high.toString(),
-    //         key: 'High',
-    //         help: `${prices.high} Gwei`,
-    //       },
-    //     ];
-    //   }
-
-    //   return [];
-    // },
-
-    // price: {
-    //   get() {
-    //     if (this.lastInputPrice === 'amount' && this.priceInFiat > 0) {
-    //       const { value } = this;
-    //       const price = this.actualPrice;
-
-    //       return BigNumber(value)
-    //         .times(price)
-    //         .toFixed(2);
-    //     }
-
-    //     return this.priceInFiat;
-    //   },
-
-    //   set(newValue) {
-    //     const price = this.actualPrice;
-
-    //     this.priceInFiat = newValue;
-    //     this.lastInputPrice = 'fiat';
-    //     this.transaction.value = BigNumber(newValue || '0')
-    //       .div(price)
-    //       .toFixed(newValue > 0 ? this.decimal : 0);
-
-    //     // this.$nextTick(() => this.$validator.validate('value'));
-    //   },
-    // },
   },
 
   watch: {
@@ -286,22 +235,22 @@ export default {
     //   console.log(options);
     // },
 
-    // async loadGasPrice() {
-    //   try {
-    //     this.isLoadingGasPrice = true;
+    async loadGasPrice() {
+      try {
+        this.isLoadingGasPrice = true;
 
-    //     this.prices = await this.getGasPrice();
-    //     this.transaction.gasPrice = this.prices.medium.toString();
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
+        this.prices = await this.getGasPrice();
+        this.transaction.gasPrice = this.prices.medium.toString();
+      } catch (err) {
+        console.error(err);
+      }
 
-    //   this.isLoadingGasPrice = false;
-    // },
+      this.isLoadingGasPrice = false;
+    },
   },
 
   async created() {
-    // await this.loadGasPrice();
+    await this.loadGasPrice();
     // await this.updateUserNonce();
   },
 
