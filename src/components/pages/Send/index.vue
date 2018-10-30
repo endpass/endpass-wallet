@@ -107,138 +107,10 @@ export default {
     ...mapGetters('tokens', ['allCurrentAccountTokensWithNonZeroBalance']),
     ...mapGetters('transactions', ['addressesFromTransactions']),
 
-    value: {
-      get() {
-        const { value } = this.transaction;
-
-        if (this.lastInputPrice === 'fiat' && value > 0) {
-          const tokenPrice = this.actualPrice;
-          const { price, decimal } = this;
-
-          return BigNumber(price)
-            .div(tokenPrice)
-            .toFixed(decimal);
-        }
-
-        return value;
-      },
-      set(newValue) {
-        const price = this.actualPrice;
-
-        this.transaction.value = newValue;
-        this.lastInputPrice = 'amount';
-        this.priceInFiat = BigNumber(newValue || '0')
-          .times(price)
-          .toFixed(2);
-
-        // this.$nextTick(() => this.$validator.validate('price'));
-      },
-    },
-
-    price: {
-      get() {
-        if (this.lastInputPrice === 'amount' && this.priceInFiat > 0) {
-          const { value } = this;
-          const price = this.actualPrice;
-
-          return BigNumber(value)
-            .times(price)
-            .toFixed(2);
-        }
-
-        return this.priceInFiat;
-      },
-
-      set(newValue) {
-        const price = this.actualPrice;
-
-        this.priceInFiat = newValue;
-        this.lastInputPrice = 'fiat';
-        this.transaction.value = BigNumber(newValue || '0')
-          .div(price)
-          .toFixed(newValue > 0 ? this.decimal : 0);
-
-        // this.$nextTick(() => this.$validator.validate('value'));
-      },
-    },
-
-    actualPrice() {
-      const { transaction, ethPrice } = this;
-
-      if (transaction.tokenInfo) {
-        console.log(transaction.tokenInfo);
-        // price =
-        //   this.tokenPrices[this.transaction.tokenInfo.symbol] &&
-        //   this.tokenPrices[this.transaction.tokenInfo.symbol][
-        //     this.activeCurrency.name
-        //   ]
-        //     ? BigNumber(
-        //         this.tokenPrices[this.transaction.tokenInfo.symbol][
-        //           this.activeCurrency.name
-        //         ],
-        //       ).times(this.ethPrice)
-        //     : 0;
-      }
-
-      return ethPrice.toFixed();
-    },
-
     accountsOptions() {
       const { wallets, addressesFromTransactions } = this;
 
       return uniq(Object.keys(wallets).concat(addressesFromTransactions));
-    },
-
-    maxAmount() {
-      if (this.transaction.tokenInfo) {
-        return this.transaction.tokenInfo.balance || '0';
-      }
-
-      const { fromWei } = web3.utils;
-      const balanceBN = BigNumber(this.balance || '0');
-      const estimateGasCostBN = BigNumber(this.estimateGasCost || '0');
-      const amountBN = balanceBN.minus(estimateGasCostBN);
-      const amount = fromWei(amountBN.toFixed());
-
-      return amount > 0 ? amount : 0;
-    },
-
-    maxPrice() {
-      const balance = new BigNumber(this.maxAmount);
-      const amount = balance
-        .times(this.ethPrice)
-        .minus('0.01')
-        .toFixed(2);
-      return amount > 0 ? amount : 0;
-    },
-
-    decimal() {
-      const { tokenInfo } = this.transaction;
-
-      return (tokenInfo && tokenInfo.decimals) || 18;
-    },
-
-    tokenCurrencies() {
-      const {
-        activeCurrency,
-        allCurrentAccountTokensWithNonZeroBalance,
-      } = this;
-      const currencies = [
-        {
-          val: null,
-          key: activeCurrency.name,
-          text: activeCurrency.name,
-        },
-      ];
-      const accountCurrenciesSymbols = Object.values(
-        allCurrentAccountTokensWithNonZeroBalance,
-      ).map(({ symbol }) => symbol);
-
-      return currencies.concat(accountCurrenciesSymbols);
-    },
-
-    isEnsTransaction() {
-      return /^.+\.(eth|etc|test)$/.test(this.address);
     },
 
     isSendAllowed() {
@@ -251,39 +123,39 @@ export default {
     },
   },
 
-  watch: {
-    async address() {
-      if (this.isEnsTransaction) {
-        this.transaction.to = await this.getEnsAddress();
-        this.updateEstimateGasCost();
-      } else if (!this.errors.has('address')) {
-        this.ensError = null;
-        this.transaction.to = this.address;
-        this.updateEstimateGasCost();
-      }
-    },
+  // watch: {
+  //   async address() {
+  //     if (this.isEnsTransaction) {
+  //       this.transaction.to = await this.getEnsAddress();
+  //       this.updateEstimateGasCost();
+  //     } else if (!this.errors.has('address')) {
+  //       this.ensError = null;
+  //       this.transaction.to = this.address;
+  //       this.updateEstimateGasCost();
+  //     }
+  //   },
 
-    'transaction.data': {
-      async handler() {
-        await this.$nextTick();
-        await this.$nextTick();
+  //   'transaction.data': {
+  //     async handler() {
+  //       await this.$nextTick();
+  //       await this.$nextTick();
 
-        if (!this.errors.has('data')) {
-          this.updateEstimateGasCost();
-        }
-      },
-    },
+  //       if (!this.errors.has('data')) {
+  //         this.updateEstimateGasCost();
+  //       }
+  //     },
+  //   },
 
-    'transaction.tokenInfo': () => {
-      this.updateEstimateGasCost();
-    },
+  //   'transaction.tokenInfo': () => {
+  //     this.updateEstimateGasCost();
+  //   },
 
-    async activeNet(newValue, prevValue) {
-      if (this.isEnsTransaction && newValue.id !== prevValue.id) {
-        this.transaction.to = await this.getEnsAddress();
-      }
-    },
-  },
+  //   async activeNet(newValue, prevValue) {
+  //     if (this.isEnsTransaction && newValue.id !== prevValue.id) {
+  //       this.transaction.to = await this.getEnsAddress();
+  //     }
+  //   },
+  // },
 
   methods: {
     ...mapActions('transactions', [
@@ -292,9 +164,11 @@ export default {
       'getNonceInBlock',
     ]),
     ...mapActions('gasPrice', ['getGasPrice']),
+
     setTrxNonce(nonce) {
       this.transaction.nonce = nonce;
     },
+
     async getEnsAddress() {
       this.isEnsAddressLoading = true;
 
@@ -311,6 +185,7 @@ export default {
         this.isEnsAddressLoading = false;
       }
     },
+
     async resetForm() {
       this.$validator.pause();
       await this.$nextTick();
@@ -327,15 +202,19 @@ export default {
     toggleTransactionModal() {
       this.isTransactionModal = !this.isTransactionModal;
     },
+
     togglePasswordModal() {
       this.isPasswordModal = !this.isPasswordModal;
     },
+
     toggleShowAdvanced() {
       this.showAdvanced = !this.showAdvanced;
     },
+
     requestPassword() {
       this.togglePasswordModal();
     },
+
     async confirmTransactionSend(password) {
       this.isSending = true;
       this.transaction.from = this.activeAddress;
@@ -378,27 +257,10 @@ export default {
       this.togglePasswordModal();
     },
 
-    async updateEstimateGasCost() {
-      const { transaction } = this;
-
-      try {
-        this.estimateGasCost = await transaction.getFullPrice(web3.eth);
-      } catch (err) {
-        const isContract = await isAddressOfContract(transaction.to);
-
-        if (!isContract && err.message.includes('always failing transaction')) {
-          this.ensError = 'Transaction will always fail, try other address.';
-        }
-      }
-    },
     updateUserNonce() {
       this.getNextNonce().then(nonce => {
         this.userNonce = nonce;
       });
-    },
-    // Sets transaction value to the maximum amount
-    setMaxAmount() {
-      this.value = this.maxAmount;
     },
   },
 
@@ -433,21 +295,6 @@ export default {
     //   this.nextNonceInBlock = await this.getNonceInBlock();
     //   this.$validator.validate('nonce');
     // }, 2000);
-
-    this.$watch(
-      vm => [vm.balance, vm.$data.estimateGasCost].join(),
-      () => {
-        if (BigNumber(this.estimateGasCost).gt(this.balance)) {
-          this.errors.add({
-            field: 'value',
-            msg: 'Insufficient funds',
-            id: 'insufficientBalance',
-          });
-        } else {
-          this.errors.removeById('insufficientBalance');
-        }
-      },
-    );
 
     this.$watch(
       vm => [vm.activeNet.id, vm.address].join(),
