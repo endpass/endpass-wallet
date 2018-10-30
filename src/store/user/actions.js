@@ -1,3 +1,4 @@
+import { mapKeys, mapValues } from 'lodash';
 import { userService } from '@/services';
 import { NotificationError } from '@/class';
 import { IDENTITY_MODE } from '@/constants';
@@ -124,12 +125,8 @@ const setUserSettings = async ({ commit, dispatch }) => {
     }
 
     if (tokens) {
-      const mappedTokens = Object.keys(tokens).reduce(
-        (acc, networkKey) =>
-          Object.assign(acc, {
-            [networkKey]: mapArrayByProp(tokens[networkKey], 'address'),
-          }),
-        {},
+      const mappedTokens = mapValues(tokens, (netTokens, netKey) =>
+        mapKeys(tokens[netKey], 'address'),
       );
 
       commit(`tokens/${SET_USER_TOKENS}`, mappedTokens, { root: true });

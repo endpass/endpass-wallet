@@ -111,7 +111,7 @@ describe('Send', () => {
             getNonceInBlock: jest.fn(),
           },
           getters: {
-            getAddressesFromTransactions: () => [],
+            addressesFromTransactions: () => [],
           },
         },
       },

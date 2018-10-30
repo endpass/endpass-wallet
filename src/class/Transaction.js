@@ -1,9 +1,7 @@
-import web3 from 'web3';
 import { ERC20Token, Token } from '@/class';
 import { isNumeric } from '@/utils/numbers';
+import web3 from '@/utils/web3';
 import { BigNumber } from 'bignumber.js';
-
-const { numberToHex, toWei } = web3.utils;
 
 export default class Transaction {
   constructor({
@@ -109,7 +107,7 @@ export default class Transaction {
   get gasPriceWei() {
     if (!isNumeric(this.gasPrice)) return '0';
 
-    return toWei(this.gasPrice, 'Gwei');
+    return web3.utils.toWei(this.gasPrice, 'Gwei');
   }
 
   set gasLimit(limit) {
@@ -156,34 +154,34 @@ export default class Transaction {
     return data;
   }
 
-  async getFullPrice(eth) {
-    const estimation = await this.estimateGas(eth);
+  async getFullPrice() {
+    const estimation = await this.estimateGas();
 
     return BigNumber(this.gasPriceWei)
       .times(estimation)
       .toFixed();
   }
 
-  async estimateGas(eth) {
+  async estimateGas() {
     const estimationParams = {
-      data: this.getValidData(eth),
+      data: this.getValidData(),
       to: this.validTo,
     };
-    const estimatedGas = await eth.estimateGas(estimationParams);
+    const estimatedGas = await web3.eth.estimateGas(estimationParams);
 
     return estimatedGas;
   }
 
-  getApiObject(eth) {
-    this.data = this.getValidData(eth);
+  getApiObject() {
+    this.data = this.getValidData();
     let tnxData = {
       from: this.from,
       to: this.validTo,
-      gasPrice: numberToHex(this.gasPriceWei),
-      value: numberToHex(this.valueWei),
-      gasLimit: numberToHex(this.gasLimit || 0),
+      gasPrice: web3.eth.numberToHex(this.gasPriceWei),
+      value: web3.eth.numberToHex(this.valueWei),
+      gasLimit: web3.eth.numberToHex(this.gasLimit || 0),
       data: this.data,
-      nonce: numberToHex(this.nonce),
+      nonce: web3.eth.numberToHex(this.nonce),
     };
 
     if (this.tokenInfo) {

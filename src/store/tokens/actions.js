@@ -1,3 +1,4 @@
+import { mapValues } from 'lodash';
 import {
   SET_LOADING,
   SET_TOKENS_BY_ADDRESS,
@@ -14,7 +15,7 @@ import {
   priceService,
   userService,
 } from '@/services';
-import { merge, mapValuesWith } from '@/utils/objects';
+import { merge } from '@/utils/objects';
 import { mapArrayByProp } from '@/utils/arrays';
 import { MAIN_NET_ID } from '@/constants';
 
@@ -45,7 +46,7 @@ const addUserToken = async (
 
       await userService.setSetting(
         'tokens',
-        mapValuesWith(updatedTokens, prop => Object.values(prop)),
+        mapValues(updatedTokens, Object.values),
       );
 
       commit(SET_USER_TOKENS, updatedTokens);
@@ -68,7 +69,7 @@ const removeUserToken = async (
 
       await userService.setSetting(
         'tokens',
-        mapValuesWith(updatedTokens, prop => Object.values(prop)),
+        mapValues(updatedTokens, Object.values),
       );
 
       commit(SET_USER_TOKENS, updatedTokens);

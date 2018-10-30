@@ -10,6 +10,7 @@
       <select
         v-validate="validator"
         v-model="selected"
+        :disabled="disabled"
         :name="name"
         :data-vv-as="label || name"
       >
@@ -66,6 +67,10 @@ export default {
     error: {
       type: String,
       default: null,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

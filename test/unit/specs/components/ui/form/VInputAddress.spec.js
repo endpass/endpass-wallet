@@ -1,9 +1,11 @@
+import { kebabCase } from 'lodash';
 import { shallow, createLocalVue } from '@vue/test-utils';
 import VeeValidate from 'vee-validate';
 import web3 from 'web3';
 import Vuex from 'vuex';
 
 import VInputAddress from '@/components/ui/form/VInputAddress.vue';
+
 const localVue = createLocalVue();
 
 localVue.use(VeeValidate);
@@ -21,10 +23,10 @@ describe('VInputAddress', () => {
   };
 
   beforeEach(() => {
-    let store = new Vuex.Store({
+    const store = new Vuex.Store({
       state: {
         web3: {
-          web3: web3,
+          web3,
         },
       },
     });
@@ -42,9 +44,6 @@ describe('VInputAddress', () => {
   });
 
   it('should render props', () => {
-    const camelToKebab = str =>
-      str.replace(/([A-Z])/g, g => `-${g[0].toLowerCase()}`);
-
     const input = wrapper.find('input');
 
     expect(wrapper.contains('label')).toBeFalsy();
@@ -61,7 +60,7 @@ describe('VInputAddress', () => {
     wrapper.setProps({ error: 'Some error' });
 
     Object.keys(options).forEach(prop => {
-      expect(input.attributes()[camelToKebab(prop)]).toBe(options[prop]);
+      expect(input.attributes()[kebabCase(prop)]).toBe(options[prop]);
     });
   });
 

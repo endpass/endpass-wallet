@@ -22,6 +22,8 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
   return Promise.all([
     userService.setSetting('net', network.id),
     dispatch('subscribeOnBlockUpdates'),
+    dispatch('price/updatePrice', {}, { root: true }),
+    dispatch('accounts/updateBalance', {}, { root: true }),
     dispatch('tokens/getNetworkTokens', {}, { root: true }),
     dispatch('tokens/getCurrentAccountTokens', {}, { root: true }),
     dispatch('tokens/getCurrentAccountTokensData', null, {
