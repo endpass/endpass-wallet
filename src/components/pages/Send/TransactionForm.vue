@@ -50,16 +50,16 @@
       :prices="prices"
     />
 
-    <!-- <transaction-advanced-options
+    <transaction-advanced-options
       :transaction="transaction"
       @change="handleAdvancedChange"
-    /> -->
+    />
 
     <div class="field is-horizontal">
       <div class="field-label" />
       <div class="field-body">
-        <!-- :disabled="!isSendAllowed" -->
         <v-button
+          :disabled="!isSendAllowed"
           :loading="isLoading"
           class-name="is-success is-medium is-cta"
           data-test="transaction-send-button"
@@ -73,11 +73,8 @@
 
 <script>
 import { mapGetters, mapState, mapActions } from 'vuex';
-import { BigNumber } from 'bignumber.js';
-
 import web3, { isAddressOfContract } from '@/utils/web3';
-import { Transaction, ENSResolver } from '@/class';
-
+import { ENSResolver } from '@/class';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';
 import VSelect from '@/components/ui/form/VSelect';
@@ -86,65 +83,61 @@ import VSpinner from '@/components/ui/VSpinner';
 import VInputAddress from '@/components/ui/form/VInputAddress.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import AccountChooser from '@/components/AccountChooser';
-
 import TransactionAdvancedOptions from './TransactionAdvancedOptions';
 import TransactionAmountOptions from './TransactionAmountOptions';
 import TransactionPriorityOptions from './TransactionPriorityOptions';
 
-const defaultTx = {
-  tokenInfo: null,
-  gasPrice: '40',
-  gasLimit: '22000',
-  value: '0',
-  to: '',
-  data: '0x',
-};
-
 export default {
+  name: 'TransactionForm',
+
   props: {
     isLoading: {
       type: Boolean,
       default: false,
     },
+
+    transaction: {
+      type: Object,
+      required: true,
+    },
   },
 
   data: () => ({
-    transaction: new Transaction(defaultTx),
     ensResolver: new ENSResolver(web3),
 
     address: '',
+
     prices: null,
-    userNonce: null,
+
     estimatedGasCost: 0,
     ensError: null,
     isEnsAddressLoading: false,
     isLoadingGasPrice: true,
-
-    nextNonceInBlock: 0,
     nonceInterval: null,
-    lastInputPrice: 'amount',
-
-    showAdvanced: false,
   }),
 
   computed: {
     ...mapState({
       balance: state => state.accounts.balance,
-      activeCurrency: state => state.web3.activeCurrency,
       activeNet: state => state.web3.activeNet,
       fiatCurrency: state => state.user.settings.fiatCurrency,
-      wallets: state => state.accounts.wallets,
       ethPrice: state => state.price.price || 0,
+      isSyncing: state => !!state.connectionStatus.isSyncing,
     }),
     ...mapGetters('transactions', ['allowedToSendAddresses']),
     ...mapGetters('tokens', [
-      'allCurrentAccountTokensWithNonZeroBalance',
       'currentAccountTokensCurrencies',
       'currentAccountTokenBySymbol',
     ]),
 
     isEnsTransaction() {
       return /^.+\.(eth|etc|test)$/.test(this.address);
+    },
+
+    isSendAllowed() {
+      const { transaction, isSyncing, isEnsAddressLoading, ensError } = this;
+
+      return transaction.to && !isSyncing && !ensError && !isEnsAddressLoading;
     },
   },
 
@@ -153,7 +146,7 @@ export default {
       if (this.isEnsTransaction) {
         this.transaction.to = await this.resolveEnsAddress();
         this.estimateGasCost();
-      } else if (!this.errors.has('address')) {
+      } else if (!this.errors.has('address') && this.address) {
         this.ensError = null;
         this.transaction.to = this.address;
         this.estimateGasCost();
@@ -171,10 +164,17 @@ export default {
         this.estimateGasCost();
       },
     },
+
+    'transaction.to': {
+      handler() {
+        if (this.address !== this.transaction.to) {
+          this.address = this.transaction.to;
+        }
+      },
+    },
   },
 
   methods: {
-    ...mapActions('transactions', ['getNextNonce', 'getNonceInBlock']),
     ...mapActions('gasPrice', ['getGasPrice']),
 
     changeTokenInfo(value) {
@@ -188,7 +188,7 @@ export default {
     },
 
     handleFormSubmit() {
-      console.log('transaction submit', this.transaction);
+      this.emitTransactionSubmit();
     },
 
     async resolveEnsAddress() {
@@ -221,37 +221,26 @@ export default {
       }
     },
 
-    // async updateUserNonce() {
-    //   const res = await this.getNextNonce();
-
-    //   this.userNonce = res;
-    // },
-
-    // setMaxAmount() {
-    //   this.value = this.maxAmount;
-    // },
-
-    // handleAdvancedChange(options) {
-    //   console.log(options);
-    // },
+    handleAdvancedChange(options) {
+      Object.assign(this.transaction, options);
+    },
 
     async loadGasPrice() {
-      try {
-        this.isLoadingGasPrice = true;
+      this.isLoadingGasPrice = true;
 
-        this.prices = await this.getGasPrice();
-        this.transaction.gasPrice = this.prices.medium.toString();
-      } catch (err) {
-        console.error(err);
-      }
+      this.prices = await this.getGasPrice();
+      this.transaction.gasPrice = this.prices.medium.toString();
 
       this.isLoadingGasPrice = false;
+    },
+
+    emitTransactionSubmit() {
+      this.$emit('submit', this.transaction);
     },
   },
 
   async created() {
     await this.loadGasPrice();
-    // await this.updateUserNonce();
   },
 
   components: {
@@ -263,7 +252,6 @@ export default {
     VInputAddress,
     VButton,
     AccountChooser,
-
     TransactionAdvancedOptions,
     TransactionAmountOptions,
     TransactionPriorityOptions,

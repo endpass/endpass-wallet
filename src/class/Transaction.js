@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import { ERC20Token, Token } from '@/class';
 import { isNumeric } from '@/utils/numbers';
 import web3 from '@/utils/web3';
@@ -137,8 +138,7 @@ export default class Transaction {
   }
 
   get token() {
-    const token = this.tokenInfo && this.tokenInfo.symbol;
-    return token || 'ETH';
+    return get(this, 'tokenInfo.symbol') || 'ETH';
   }
 
   getValidData() {
@@ -177,11 +177,11 @@ export default class Transaction {
     let tnxData = {
       from: this.from,
       to: this.validTo,
-      gasPrice: web3.eth.numberToHex(this.gasPriceWei),
-      value: web3.eth.numberToHex(this.valueWei),
-      gasLimit: web3.eth.numberToHex(this.gasLimit || 0),
+      gasPrice: web3.utils.numberToHex(this.gasPriceWei),
+      value: web3.utils.numberToHex(this.valueWei),
+      gasLimit: web3.utils.numberToHex(this.gasLimit || 0),
+      nonce: web3.utils.numberToHex(this.nonce),
       data: this.data,
-      nonce: web3.eth.numberToHex(this.nonce),
     };
 
     if (this.tokenInfo) {

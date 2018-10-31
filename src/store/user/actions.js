@@ -10,7 +10,7 @@ import {
   SET_OTP_SETTINGS,
 } from './mutations-types';
 import { SET_USER_TOKENS } from '@/store/tokens/mutations-types';
-import { mapArrayByProp } from '@/utils/arrays';
+import { makeConsistentToken } from '@/utils/tokens';
 
 const setAuthorizationStatus = (
   { commit, getters },
@@ -125,8 +125,11 @@ const setUserSettings = async ({ commit, dispatch }) => {
     }
 
     if (tokens) {
-      const mappedTokens = mapValues(tokens, (netTokens, netKey) =>
-        mapKeys(tokens[netKey], 'address'),
+      const normalizedTokens = mapValues(tokens, netTokens =>
+        netTokens.map(token => makeConsistentToken(token)),
+      );
+      const mappedTokens = mapValues(normalizedTokens, netTokens =>
+        mapKeys(netTokens, 'address'),
       );
 
       commit(`tokens/${SET_USER_TOKENS}`, mappedTokens, { root: true });
