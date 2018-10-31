@@ -132,6 +132,7 @@ export default {
   },
 
   data: () => ({
+    // ? Move to props
     isLoading: false,
     lastChangedPriceType: 'amount',
     price: 0,
@@ -230,7 +231,9 @@ export default {
     },
 
     setMaxAmount() {
-      this.emitInputValue(this.maxAmount);
+      if (!this.disabled) {
+        this.emitInputValue(this.maxAmount);
+      }
     },
 
     getAmountFromPrice() {

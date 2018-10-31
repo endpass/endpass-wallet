@@ -77,7 +77,7 @@
         <div class="field-body">
           <v-input
             id="nonce"
-            v-model="form.userNonce"
+            v-model="form.nonce"
             :validator="`required|numeric|integer|min_value:${nextNonceInBlock}`"
             :disabled="isLoading"
             name="nonce"
@@ -115,6 +115,7 @@
 </template>
 
 <script>
+import { pick } from 'lodash';
 import { mapActions } from 'vuex';
 import VInput from '@/components/ui/form/VInput.vue';
 import VSpinner from '@/components/ui/VSpinner';
@@ -133,14 +134,14 @@ export default {
     form: {
       tokenInfo: null,
       data: '0x',
-      nonce: 0,
+      nonce: '0',
       gasPrice: 0,
       gasLimit: 0,
-      userNonce: null,
     },
 
     nonceInterval: null,
     nextNonceInBlock: 0,
+    // ?
     isLoading: false,
     isCollapsed: true,
   }),
@@ -156,17 +157,33 @@ export default {
   },
 
   watch: {
-    transaction() {
-      console.log('transaction update', this.transaction);
+    'transaction.gasPrice': {
+      handler() {
+        const { gasPrice } = this.transaction;
+
+        this.form.gasPrice = gasPrice;
+      },
     },
 
-    form() {
-      this.emitChange();
+    'transaction.nonce': {
+      handler() {
+        const { nonce } = this.transaction;
+
+        this.form.nonce = nonce;
+        this.$validator.validate('nonce');
+      },
+    },
+
+    form: {
+      handler() {
+        this.emitChange();
+      },
+      deep: true,
     },
   },
 
   methods: {
-    ...mapActions('transactions', ['getNextNonce', 'getNonceInBlock']),
+    ...mapActions('transactions', ['getNonceInBlock']),
 
     toggle() {
       this.isCollapsed = !this.isCollapsed;
@@ -177,10 +194,14 @@ export default {
     },
   },
 
-  created() {
+  async created() {
+    Object.assign(
+      this.form,
+      pick(this.transaction, ['gasPrice', 'gasLimit', 'nonce']),
+    );
+
     this.nonceInterval = setInterval(async () => {
       this.nextNonceInBlock = await this.getNonceInBlock();
-      this.$validator.validate('nonce');
     }, 2000);
   },
 
@@ -193,6 +214,7 @@ export default {
 
 <style lang="scss">
 .advanced-options-container {
+  margin-bottom: 0.75rem;
 }
 .advanced-options {
   overflow: hidden;

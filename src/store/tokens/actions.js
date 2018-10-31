@@ -17,6 +17,7 @@ import {
 } from '@/services';
 import { merge } from '@/utils/objects';
 import { mapArrayByProp } from '@/utils/arrays';
+import { makeConsistentToken } from '@/utils/tokens';
 import { MAIN_NET_ID } from '@/constants';
 
 const init = async ({ dispatch }) => {
@@ -37,11 +38,13 @@ const addUserToken = async (
   { commit, dispatch, getters, rootGetters },
   { token },
 ) => {
-  if (!getters.userTokenByAddress(token.address)) {
+  const consistentToken = makeConsistentToken(token);
+
+  if (!getters.userTokenByAddress(consistentToken.address)) {
     try {
       const updatedTokens = getters.userTokensWithToken({
         net: rootGetters['web3/activeNetwork'],
-        token,
+        token: consistentToken,
       });
 
       await userService.setSetting(
@@ -60,11 +63,13 @@ const removeUserToken = async (
   { commit, getters, dispatch, rootGetters },
   { token },
 ) => {
-  if (getters.userTokenByAddress(token.address)) {
+  const consistentToken = makeConsistentToken(token);
+
+  if (getters.userTokenByAddress(consistentToken.address)) {
     try {
       const updatedTokens = getters.userTokensWithoutToken({
         net: rootGetters['web3/activeNetwork'],
-        token,
+        token: consistentToken,
       });
 
       await userService.setSetting(

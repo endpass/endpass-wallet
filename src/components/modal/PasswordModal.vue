@@ -22,8 +22,8 @@
             placeholder="Your Wallet Password"
             required
             data-test="input-password"
-            @input="handleInput"
             autofocus
+            @input="handleInput"
           />
         </v-form>
       </div>
@@ -61,27 +61,31 @@ export default {
   },
   methods: {
     ...mapActions('accounts', ['validatePassword']),
-    confirm() {
-      this.processingConfirmation = true;
-      const { jsonKeystorePassword: password } = this;
 
-      this.validatePassword(password)
-        .then(() => {
-          this.processingConfirmation = false;
-          this.$emit('confirm', password);
-        })
-        .catch(() => {
-          this.processingConfirmation = false;
-          this.errors.add({
-            field: 'jsonKeystorePassword',
-            msg: 'Password is invalid',
-            id: 'wrongPassword',
-          });
+    async confirm() {
+      try {
+        this.processingConfirmation = true;
+
+        const { jsonKeystorePassword: password } = this;
+
+        await this.validatePassword(password);
+
+        this.$emit('confirm', password);
+      } catch (err) {
+        this.errors.add({
+          field: 'jsonKeystorePassword',
+          msg: 'Password is invalid',
+          id: 'wrongPassword',
         });
+      } finally {
+        this.processingConfirmation = false;
+      }
     },
+
     close() {
       this.$emit('close');
     },
+
     handleInput() {
       this.errors.removeById('wrongPassword');
     },

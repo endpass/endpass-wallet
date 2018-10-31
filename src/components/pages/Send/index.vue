@@ -7,9 +7,12 @@
             <h1 class="card-header-title">Send ETH</h1>
           </div>
           <div class="card-content">
-            <transaction-form />
+            <transaction-form
+              :transaction="transaction"
+              @submit="handleTransactionSend"
+            />
 
-            <!-- <div
+            <div
               v-if="transactionHash"
               class="transaction-status message is-success"
               data-test="transaction-status"
@@ -22,30 +25,28 @@
                 <p class="label">Transaction Id</p>
                 <p class="code">{{ transactionHash }}</p>
               </div>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- <transaction-modal
-      v-if="isTransactionModal"
+    <transaction-modal
+      v-if="isWaitingConfirm"
       :transaction="transaction"
       @confirm="confirmTransaction"
-      @close="toggleTransactionModal"
+      @close="cancelTransaction"
     />
     <password-modal
-      v-if="isPasswordModal"
-      @confirm="confirmTransactionSend"
-      @close="togglePasswordModal"
-    /> -->
+      v-if="isTransactionConfirmed"
+      @confirm="sendConfirmedTransaction"
+      @close="cancelTransaction"
+    />
   </div>
 </template>
 
 <script>
-import { BigNumber } from 'bignumber.js';
-import { mapState, mapActions, mapGetters } from 'vuex';
-import { uniq } from 'lodash';
-import { Transaction, ENSResolver } from '@/class';
+import { mapState, mapActions } from 'vuex';
+import { TransactionFactory } from '@/class';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';
 import VSelect from '@/components/ui/form/VSelect';
@@ -57,174 +58,74 @@ import AccountChooser from '@/components/AccountChooser';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import privatePage from '@/mixins/privatePage';
-import web3, { isAddressOfContract } from '@/utils/web3';
 import { getShortStringWithEllipsis } from '@/utils/strings';
-
 import TransactionForm from './TransactionForm';
 
-const defaultTnx = {
+const defaultTx = {
+  tokenInfo: null,
   gasPrice: '40',
   gasLimit: '22000',
   value: '0',
-  tokenInfo: undefined,
+  nonce: 0,
   to: '',
   data: '0x',
 };
 
 export default {
   data: () => ({
-    transaction: null,
-
-    address: '',
-    isSending: false,
-    estimateGasCost: 0,
-    priceInFiat: '0.00',
+    transaction: { ...defaultTx },
     transactionHash: null,
-    nextNonceInBlock: 0,
-    userNonce: null,
-    isLoadingGasPrice: true,
-    lastInputPrice: 'amount',
-    isTransactionModal: false,
-    isPasswordModal: false,
-    showAdvanced: false,
-    suggestedGasPrices: null,
-    isEnsAddressLoading: false,
-    ensError: null,
+    isSending: false,
+    isWaitingConfirm: false,
+    isTransactionConfirmed: false,
   }),
 
   computed: {
     ...mapState({
-      wallets: state => state.accounts.wallets,
-      tokenPrices: state => state.tokens.prices,
-      balance: state => state.accounts.balance,
       activeAddress: state => state.accounts.address.getChecksumAddressString(),
-      activeCurrency: state => state.web3.activeCurrency,
       activeNet: state => state.web3.activeNet,
-      isSyncing: state => !!state.connectionStatus.isSyncing,
-      fiatCurrency: state => state.user.settings.fiatCurrency,
-      ethPrice: state => state.price.price || 0,
     }),
-    ...mapGetters('tokens', ['allCurrentAccountTokensWithNonZeroBalance']),
-    ...mapGetters('transactions', ['addressesFromTransactions']),
+  },
 
-    accountsOptions() {
-      const { wallets, addressesFromTransactions } = this;
-
-      return uniq(Object.keys(wallets).concat(addressesFromTransactions));
+  watch: {
+    async activeAddress() {
+      this.transaction.nonce = await this.getNextNonce();
     },
 
-    isSendAllowed() {
-      return (
-        this.transaction.to &&
-        !this.isSyncing &&
-        !this.ensError &&
-        !this.isEnsAddressLoading
-      );
+    async activeNet() {
+      this.transaction.nonce = await this.getNextNonce();
     },
   },
 
-  // watch: {
-  //   async address() {
-  //     if (this.isEnsTransaction) {
-  //       this.transaction.to = await this.getEnsAddress();
-  //       this.updateEstimateGasCost();
-  //     } else if (!this.errors.has('address')) {
-  //       this.ensError = null;
-  //       this.transaction.to = this.address;
-  //       this.updateEstimateGasCost();
-  //     }
-  //   },
-
-  //   'transaction.data': {
-  //     async handler() {
-  //       await this.$nextTick();
-  //       await this.$nextTick();
-
-  //       if (!this.errors.has('data')) {
-  //         this.updateEstimateGasCost();
-  //       }
-  //     },
-  //   },
-
-  //   'transaction.tokenInfo': () => {
-  //     this.updateEstimateGasCost();
-  //   },
-
-  //   async activeNet(newValue, prevValue) {
-  //     if (this.isEnsTransaction && newValue.id !== prevValue.id) {
-  //       this.transaction.to = await this.getEnsAddress();
-  //     }
-  //   },
-  // },
-
   methods: {
-    ...mapActions('transactions', [
-      'sendTransaction',
-      'getNextNonce',
-      'getNonceInBlock',
-    ]),
+    ...mapActions('transactions', ['sendTransaction', 'getNextNonce']),
     ...mapActions('gasPrice', ['getGasPrice']),
 
-    setTrxNonce(nonce) {
-      this.transaction.nonce = nonce;
+    handleTransactionSend() {
+      this.isWaitingConfirm = true;
     },
 
-    async getEnsAddress() {
-      this.isEnsAddressLoading = true;
-
-      try {
-        const ensAddress = await this.$ens.getAddress(this.address);
-        this.ensError = null;
-
-        return ensAddress;
-      } catch (err) {
-        this.ensError = `ENS ${this.address} can not be resolved.`;
-
-        return '';
-      } finally {
-        this.isEnsAddressLoading = false;
-      }
+    cancelTransaction() {
+      this.isWaitingConfirm = false;
+      this.isTransactionConfirmed = false;
     },
 
-    async resetForm() {
-      this.$validator.pause();
-      await this.$nextTick();
-      this.address = '';
-      this.transaction = new Transaction(defaultTnx);
-      await this.$nextTick();
-      this.$validator.resume();
-      this.$validator.flag('address', {
-        valid: false,
-      });
-      this.updateUserNonce();
+    async confirmTransaction() {
+      this.isWaitingConfirm = false;
+      this.isTransactionConfirmed = true;
     },
 
-    toggleTransactionModal() {
-      this.isTransactionModal = !this.isTransactionModal;
-    },
-
-    togglePasswordModal() {
-      this.isPasswordModal = !this.isPasswordModal;
-    },
-
-    toggleShowAdvanced() {
-      this.showAdvanced = !this.showAdvanced;
-    },
-
-    requestPassword() {
-      this.togglePasswordModal();
-    },
-
-    async confirmTransactionSend(password) {
+    async sendConfirmedTransaction(password) {
       this.isSending = true;
-      this.transaction.from = this.activeAddress;
-      this.transaction.networkId = this.activeNet.id;
 
-      this.togglePasswordModal();
+      Object.assign(this.transaction, {
+        from: this.activeAddress,
+        networkId: this.activeNet.id,
+      });
 
       try {
         const hash = await this.sendTransaction({
-          transaction: this.transaction,
+          transaction: TransactionFactory.fromSendForm(this.transaction),
           password,
         });
         const shortHash = getShortStringWithEllipsis(hash);
@@ -244,6 +145,8 @@ export default {
         });
       } finally {
         this.isSending = false;
+        this.isTransactionConfirmed = false;
+        this.isWaitingConfirm = false;
         this.resetForm();
       }
     },
@@ -252,60 +155,13 @@ export default {
       this.toggleTransactionModal();
     },
 
-    confirmTransaction() {
-      this.toggleTransactionModal();
-      this.togglePasswordModal();
-    },
-
-    updateUserNonce() {
-      this.getNextNonce().then(nonce => {
-        this.userNonce = nonce;
-      });
+    resetForm() {
+      this.transaction = { ...defaultTx };
     },
   },
 
-  created() {
-    this.updateUserNonce();
-    this.getGasPrice()
-      .then(prices => {
-        this.suggestedGasPrices = [
-          {
-            val: prices.low.toString(),
-            key: 'Low',
-            help: `${prices.low} Gwei`,
-          },
-          {
-            val: prices.medium.toString(),
-            key: 'Medium',
-            help: `${prices.medium} Gwei`,
-          },
-          {
-            val: prices.high.toString(),
-            key: 'High',
-            help: `${prices.high} Gwei`,
-          },
-        ];
-        this.transaction.gasPrice = prices.medium.toString();
-      })
-      .catch(() => {
-        this.isLoadingGasPrice = false;
-      });
-
-    // this.interval = setInterval(async () => {
-    //   this.nextNonceInBlock = await this.getNonceInBlock();
-    //   this.$validator.validate('nonce');
-    // }, 2000);
-
-    this.$watch(
-      vm => [vm.activeNet.id, vm.address].join(),
-      this.updateUserNonce,
-    );
-
-    this.$ens = new ENSResolver(web3);
-  },
-
-  beforeDestroy() {
-    clearInterval(this.interval);
+  async created() {
+    this.transaction.nonce = await this.getNextNonce();
   },
 
   mixins: [privatePage],
@@ -321,7 +177,6 @@ export default {
     AccountChooser,
     TransactionModal,
     PasswordModal,
-
     TransactionForm,
   },
 };

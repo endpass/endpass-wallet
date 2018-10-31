@@ -2,6 +2,10 @@ import { BigNumber } from 'bignumber.js';
 import { Transaction } from '@/class';
 
 export default class TransactionFactory {
+  static fromSendForm(trx) {
+    return new Transaction(trx);
+  }
+
   static fromBlock(trx) {
     const { value: valueWei, gasPrice, nonce } = trx;
     const adaptTrx = new Transaction(trx);
