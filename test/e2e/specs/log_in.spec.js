@@ -12,6 +12,7 @@ describe('Log In To an Existing Account', () => {
     cy.route('POST', '/identity/api/v1/auth', 'fixture:identity/auth');
 
     cy.visit('#/');
+    cy.mockWeb3Requests();
     cy.get('[data-test=login-modal] input[name=email]').type(
       'user@example.com{enter}',
     );
@@ -21,6 +22,7 @@ describe('Log In To an Existing Account', () => {
     cy.login();
 
     cy.visit('#/');
+    cy.mockWeb3Requests();
     cy.get('[data-test=login-modal]').should('not.exist');
   });
 });

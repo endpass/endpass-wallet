@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 import DebounceProvider from './DebounceProvider';
+import MockProvider from './MockProvider';
 import providerMixin from './providerMixin';
 
 const { HttpProvider, WebsocketProvider, IpcProvider } = Web3.providers;
@@ -9,6 +10,7 @@ WebsocketProvider.prototype.sendAsync = WebsocketProvider.prototype.send;
 IpcProvider.prototype.sendAsync = IpcProvider.prototype.send;
 
 export default url => {
+  const AdditionalProvider = window.Cypress ? MockProvider : DebounceProvider;
   let BaseProvider;
 
   switch (true) {
@@ -28,7 +30,7 @@ export default url => {
       throw 'Invalid url or path parameter for the provider';
   }
 
-  const Provider = providerMixin(BaseProvider, DebounceProvider);
+  const Provider = providerMixin(BaseProvider, AdditionalProvider);
 
   return new Provider(url);
 };

@@ -16,7 +16,6 @@ const inject = ({ state, commit, dispatch, rootGetters }, dappWindow) => {
   commit(CHANGE_INJECT_STATUS, true);
 
   const inpageProvider = new InpageProvider(dappBridge);
-  console.log(inpageProvider);
   inpageProvider.updateSettings({
     selectedAddress: rootGetters['accounts/currentAddressString'].toLowerCase(),
     networkVersion: rootGetters['web3/activeNetwork'],

@@ -1,18 +1,21 @@
-import { address, v3password } from '../fixtures/accounts';
+import { address } from '../fixtures/accounts';
+import { transactionToSend } from '../fixtures/transactions';
 
 describe('Send Transactions Page', () => {
   describe('the user is not authorized', () => {
     it('should redirect to root', () => {
       cy.preventLogin();
       cy.visit('#/send');
+      cy.mockWeb3Requests();
       cy.url().should('include', '/#/?redirect_uri=%2Fsend');
     });
   });
 
   describe('the user is authorized', () => {
-    before(() => {
+    beforeEach(() => {
       cy.getInitialData();
       cy.visit('#/send');
+      cy.mockWeb3Requests();
       cy.waitPageLoad();
     });
 
@@ -94,37 +97,22 @@ describe('Send Transactions Page', () => {
     it('should send transaction', () => {
       cy.makeStoreAlias();
 
+      cy.get('@store').invoke(
+        'commit',
+        'accounts/SET_BALANCE',
+        '2000000000000000000',
+      );
+
       cy.get('[data-test=transaction-send-form]').within(() => {
         cy.get('[data-test=transaction-address-select]')
           .click()
           .within(() => {
-            cy.get('.multiselect__input').type(address);
+            cy.get('.multiselect__input').type(transactionToSend.to);
           });
 
         cy.get('[data-test=transaction-amount-input]')
           .clear()
-          .type(1);
-
-        cy.get('[data-test=transaction-advanced-options]').within(() => {
-          cy.get('[data-test=transaction-gas-price-input]')
-            .clear()
-            .type(10);
-          cy.get('[data-test=transaction-gas-limit-input]')
-            .clear()
-            .type(22000);
-          cy.get('[data-test=transaction-nonce-input]')
-            .clear()
-            .type(0);
-          cy.get('[data-test=transaction-data-input]')
-            .clear()
-            .type('0x');
-        });
-
-        cy.get('@store')
-          .then(store => {
-            cy.spy(store, 'dispatch').as('dispatch');
-          })
-          .invoke('commit', 'accounts/SET_BALANCE', '2000000000000000000');
+          .type(transactionToSend.value);
 
         cy.get('[data-test=transaction-send-button]').click();
       });
@@ -135,10 +123,11 @@ describe('Send Transactions Page', () => {
 
       cy.inputPassword();
 
-      cy.get('@dispatch').should(
-        'be.calledWith',
-        'transactions/sendTransaction',
+      cy.get('[data-test=app-notification] .is-info').contains(
+        'Transaction 0x63...42a7 sent',
       );
+
+      cy.get('[data-test=transaction-status]').should('be.visible');
     });
   });
 });
