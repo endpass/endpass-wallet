@@ -16,15 +16,13 @@ export default class InpageProvider {
     this.eventEmitter = eventEmitter;
     this.pendingRequestsHandlers = {};
     this.settings = {};
+    this.isMetaMask = true;
   }
 
   handleResponse({ error, id, result, jsonrpc }) {
     const trxId = id.replace(INPAGE_ID_PREFIX, '');
-
-    console.log('response', this.pendingRequestsHandlers, id, result, jsonrpc);
-
     this.pendingRequestsHandlers[trxId](error, {
-      id: trxId,
+      id: parseInt(trxId),
       result,
       jsonrpc,
     });
@@ -74,15 +72,10 @@ export default class InpageProvider {
 
   sendAsync(payload, callback) {
     const processedPayload = this.processPayload({ ...payload });
-
     if (processedPayload.result !== null) {
-      console.log('send', processedPayload);
       callback(null, processedPayload);
     } else {
-      console.log('send async', payload);
-      console.log(callback, payload.id, 'kek');
       this.pendingRequestsHandlers[payload.id] = callback;
-      console.log(payload.jsonrpc);
       this.eventEmitter.emit(INPAGE_EVENT.REQUEST, {
         ...payload,
         jsonrpc: payload.jsonrpc,
@@ -92,8 +85,6 @@ export default class InpageProvider {
   }
 
   send(payload) {
-    console.log('send', payload);
-
     return this.processPayload(payload);
   }
 
