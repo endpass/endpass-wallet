@@ -1,5 +1,5 @@
 <template>
-<div
+  <div
     class="send-amount field is-horizontal"
     data-test="transaction-amount-group-field"
   >
@@ -86,7 +86,22 @@ export default {
 
   props: {
     value: {
+      type: [String, Number],
+      required: true,
+    },
+
+    ethPrice: {
+      type: Number,
+      required: true,
+    },
+
+    fiatCurrency: {
       type: String,
+      required: true,
+    },
+
+    activeNet: {
+      type: Object,
       required: true,
     },
 
@@ -98,16 +113,6 @@ export default {
     currentToken: {
       type: Object,
       default: null,
-    },
-
-    ethPrice: {
-      type: Number,
-      required: true,
-    },
-
-    fiatCurrency: {
-      type: String,
-      required: true,
     },
 
     balance: {
@@ -125,15 +130,13 @@ export default {
       default: false,
     },
 
-    activeNet: {
-      type: Object,
-      required: true,
+    isLoading: {
+      type: Boolean,
+      default: false,
     },
   },
 
   data: () => ({
-    // ? Move to props
-    isLoading: false,
     lastChangedPriceType: 'amount',
     price: 0,
   }),
@@ -167,8 +170,8 @@ export default {
         return 0;
       }
 
-      const balanceBn = new BigNumber(tokenBalance);
-      const decimalsBn = new BigNumber(10).pow(this.decimal);
+      const balanceBn = BigNumber(tokenBalance);
+      const decimalsBn = BigNumber(10).pow(this.decimal);
 
       return balanceBn.div(decimalsBn).toString(10);
     },
@@ -180,10 +183,12 @@ export default {
         // TODO: change ETH price getting logic
         const tokenPrice = get(currentToken, 'price.ETH') || 0;
 
-        return new BigNumber(tokenPrice * maxAmount).times(ethPrice).toFixed(2);
+        return BigNumber(tokenPrice * maxAmount)
+          .times(ethPrice)
+          .toFixed(2);
       }
 
-      const maxAmountBn = new BigNumber(maxAmount);
+      const maxAmountBn = BigNumber(maxAmount);
       const amount = maxAmountBn
         .times(ethPrice)
         .minus('0.01')
@@ -198,9 +203,10 @@ export default {
       this.resetAmountOptions();
     },
 
-    activeNet() {
-      this.emitChangeTokenInfo(this.tokensCurrencies[0]);
-      this.resetAmountOptions();
+    activeNet(newValue, prevValue) {
+      if (newValue.id !== prevValue.id) {
+        this.emitChangeTokenInfo(this.tokensCurrencies[0]);
+      }
     },
 
     value() {
@@ -243,12 +249,12 @@ export default {
       if (currentToken) {
         const tokenPrice = get(currentToken, 'price.ETH') || 0;
 
-        amount = new BigNumber(price)
+        amount = BigNumber(price)
           .div(ethPrice)
           .div(tokenPrice)
           .toFixed(parseInt(this.decimal, 10));
       } else {
-        amount = new BigNumber(price)
+        amount = BigNumber(price)
           .div(ethPrice)
           .toFixed(parseInt(this.decimal, 10));
       }
@@ -262,11 +268,13 @@ export default {
       if (currentToken) {
         const tokenPrice = get(currentToken, 'price.ETH') || 0;
 
-        this.price = new BigNumber(value * tokenPrice)
+        this.price = BigNumber(value * tokenPrice)
           .times(ethPrice)
           .toFixed(2);
       } else {
-        this.price = new BigNumber(value).times(ethPrice).toFixed(2);
+        this.price = BigNumber(value)
+          .times(ethPrice)
+          .toFixed(2);
       }
     },
 

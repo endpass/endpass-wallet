@@ -62,7 +62,7 @@ describe('InfoBar', () => {
     });
 
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('info-bar');
+      expect(wrapper.name()).toBe('InfoBar');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

@@ -41,6 +41,7 @@
       :estimated-gas-cost="estimatedGasCost"
       :disabled="!address"
       :active-net="activeNet"
+      :is-loading="isLoading"
       @change-token="changeTokenInfo"
     />
 
@@ -52,6 +53,8 @@
 
     <transaction-advanced-options
       :transaction="transaction"
+      :current-token="transaction.tokenInfo"
+      :is-loading="isLoading"
       @change="handleAdvancedChange"
     />
 
@@ -73,8 +76,9 @@
 
 <script>
 import { mapGetters, mapState, mapActions } from 'vuex';
-import web3, { isAddressOfContract } from '@/utils/web3';
+import web3 from '@/utils/web3';
 import { ENSResolver } from '@/class';
+import TransactionsUtils from '@/class/transaction/TransactionsUtils';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';
 import VSelect from '@/components/ui/form/VSelect';
@@ -83,9 +87,9 @@ import VSpinner from '@/components/ui/VSpinner';
 import VInputAddress from '@/components/ui/form/VInputAddress.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import AccountChooser from '@/components/AccountChooser';
-import TransactionAdvancedOptions from './TransactionAdvancedOptions';
-import TransactionAmountOptions from './TransactionAmountOptions';
-import TransactionPriorityOptions from './TransactionPriorityOptions';
+import TransactionAdvancedOptions from './TransactionAdvancedOptions.vue';
+import TransactionAmountOptions from './TransactionAmountOptions.vue';
+import TransactionPriorityOptions from './TransactionPriorityOptions.vue';
 
 export default {
   name: 'TransactionForm',
@@ -104,11 +108,8 @@ export default {
 
   data: () => ({
     ensResolver: new ENSResolver(web3),
-
     address: '',
-
     prices: null,
-
     estimatedGasCost: 0,
     ensError: null,
     isEnsAddressLoading: false,
@@ -155,7 +156,7 @@ export default {
 
     async activeNet(newValue, prevValue) {
       if (this.isEnsTransaction && newValue.id !== prevValue.id) {
-        this.transaction.to = await this.getEnsAddress();
+        this.transaction.to = await this.resolveEnsAddress();
       }
     },
 
@@ -167,8 +168,8 @@ export default {
 
     'transaction.to': {
       handler() {
-        if (this.address !== this.transaction.to) {
-          this.address = this.transaction.to;
+        if (!this.transaction.to) {
+          this.address = '';
         }
       },
     },
@@ -211,9 +212,13 @@ export default {
 
     async estimateGasCost() {
       try {
-        this.estimatedGasCost = await this.transaction.getFullPrice();
+        this.estimatedGasCost = await TransactionsUtils.getFullPrice(
+          this.transaction,
+        );
       } catch (err) {
-        const isContract = await isAddressOfContract(this.transaction.to);
+        const isContract = await TransactionsUtils.isTransactionToContract(
+          this.transaction,
+        );
 
         if (!isContract && err.message.includes('always failing transaction')) {
           this.ensError = 'Transaction will always fail, try other address.';

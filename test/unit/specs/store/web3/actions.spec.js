@@ -60,6 +60,8 @@ describe('web3 actions', () => {
 
       expect(dispatch.mock.calls).toEqual([
         ['subscribeOnBlockUpdates'],
+        ['price/updatePrice', {}, { root: true }],
+        ['accounts/updateBalance', {}, { root: true }],
         ['tokens/getNetworkTokens', {}, { root: true }],
         ['tokens/getCurrentAccountTokens', {}, { root: true }],
         ['tokens/getCurrentAccountTokensData', null, { root: true }],
@@ -75,7 +77,7 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(dispatch).toHaveBeenCalledTimes(5);
+      expect(dispatch).toHaveBeenCalledTimes(7);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -85,7 +87,7 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(dispatch).toHaveBeenCalledTimes(5);
+      expect(dispatch).toHaveBeenCalledTimes(7);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });

@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Send – TransactionPriorityOptions render should not render options if prices are empty 1`] = `
+<div class="priority-options field is-horizontal">
+    <div class="field-label">
+        <label class="label">Priority</label>
+    </div>
+    <div class="field-body">
+        <p class="help is-danger">
+            Unable to load suggested gas price, please set gas price manually.
+        </p>
+    </div>
+</div>
+`;
+
+exports[`Send – TransactionPriorityOptions render should render correctly prices 1`] = `
+<div class="priority-options field is-horizontal">
+    <div class="field-label">
+        <label class="label">Priority</label>
+    </div>
+    <div class="field-body">
+        <v-radio id="priority" options="[object Object],[object Object],[object Object]" value="3" name="priority" v-on:input="bound emitPriorityInput"></v-radio>
+    </div>
+</div>
+`;
