@@ -1,3 +1,18 @@
+export const transactionHash =
+  '0x631cf7bb186019649920b09a7d5394c206cfe8aec55b3c1e8f0cc876def942a7';
+
+export const shortTransactionHash = '0x63...42a7';
+
+export const transaction = {
+  tokenInfo: null,
+  gasPrice: '40',
+  gasLimit: '22000',
+  nonce: 0,
+  value: '0',
+  to: '',
+  data: '0x',
+};
+
 export const ethplorerHistory = [
   {
     timestamp: 1535036970,
@@ -150,6 +165,9 @@ export const blockTransactions = [
 ];
 
 export default {
+  transaction,
+  transactionHash,
+  shortTransactionHash,
   blockTransactions,
   ethplorerHistory,
   ethplorerTransactions,

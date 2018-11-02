@@ -91,13 +91,15 @@
         </div>
       </div>
 
-      <div class="field is-horizontal">
+      <div
+        v-show="!currentToken"
+        class="field is-horizontal"
+      >
         <div class="field-label">
           <label class="label">Data</label>
         </div>
         <div class="field-body">
           <v-input
-            v-show="!form.tokenInfo"
             id="data"
             v-model="form.data"
             :disabled="isLoading"
@@ -128,11 +130,20 @@ export default {
       type: Object,
       required: true,
     },
+
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
+
+    currentToken: {
+      type: Object,
+      default: null,
+    },
   },
 
   data: () => ({
     form: {
-      tokenInfo: null,
       data: '0x',
       nonce: '0',
       gasPrice: 0,
@@ -141,8 +152,6 @@ export default {
 
     nonceInterval: null,
     nextNonceInBlock: 0,
-    // ?
-    isLoading: false,
     isCollapsed: true,
   }),
 
