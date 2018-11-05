@@ -1,5 +1,5 @@
 import { isNil } from 'lodash';
-import { Transaction } from '@/class';
+import { TransactionFactory } from '@/class';
 
 const currentRequestId = state => state.list[0] || null;
 
@@ -11,9 +11,7 @@ const currentRequest = (state, getters) => {
   const nextRequest = state.requests[nextRequestId];
 
   if (nextRequest.method === 'eth_sendTransaction') {
-    return Object.assign({}, nextRequest, {
-      transaction: new Transaction(nextRequest.params[0]),
-    });
+    return TransactionFactory.fromBlock(nextRequest);
   }
 
   return nextRequest;

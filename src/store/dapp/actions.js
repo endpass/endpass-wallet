@@ -78,23 +78,16 @@ const processCurrentRequest = async (
       root: true,
     });
     const signedTx = await wallet.signTransaction(
-      Object.assign({}, request.transaction.getApiObject(web3.eth), {
+      Object.assign(request, {
         nonce,
-      }),
+      }).getApiObject(web3.eth),
       password,
     );
-    const promise = web3.eth.sendSignedTransaction(signedTx);
-    promise.then(receipt => {
+    web3.eth.sendSignedTransaction(signedTx).then(receipt => {
       dispatch('sendResponse', {
         id: requestId,
         jsonrpc: getters.currentRequest.jsonrpc,
         result: receipt.transactionHash,
-      });
-    });
-    promise.on('error', error => {
-      dispatch('sendResponse', {
-        id: requestId,
-        error,
       });
     });
   } else {
