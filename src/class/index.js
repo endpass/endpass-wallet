@@ -1,5 +1,8 @@
 export { providerFactory } from './provider';
 export { default as Transaction } from './Transaction';
+export {
+  default as TransactionFactory,
+} from './transaction/TransactionFactory';
 export { default as EventEmitter } from './EventEmitter';
 export { NotificationError } from './error';
 export { Address } from './address';

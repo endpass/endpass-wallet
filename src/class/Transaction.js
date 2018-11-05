@@ -3,7 +3,7 @@ import { ERC20Token, Token } from '@/class';
 import { isNumeric } from '@/utils/numbers';
 import { BigNumber } from 'bignumber.js';
 
-const { numberToHex, hexToNumber, toWei, fromWei, isHex } = web3.utils;
+const { numberToHex, toWei } = web3.utils;
 
 export default class Transaction {
   constructor({
@@ -25,16 +25,16 @@ export default class Transaction {
   }) {
     if (tokenInfo) {
       this.tokenInfo = new Token(tokenInfo);
-      this.valueWei = isHex(valueWei) ? valueWei : value;
+      this.valueWei = value;
     } else {
-      this.value = isHex(value) ? fromWei(value) : value;
+      this.value = value;
     }
 
     this.data = data || input;
     this.from = from;
     this.networkId = networkId;
-    this.gasPrice = isHex(gasPrice) ? fromWei(gasPrice, 'Gwei') : gasLimit;
-    this.gasLimit = isHex(gasLimit) ? hexToNumber(gasLimit) : gasLimit;
+    this.gasPrice = gasPrice;
+    this.gasLimit = gasLimit;
     this.hash = hash || transactionHash;
     this.nonce = nonce;
     this.state = success === false ? 'error' : state;
