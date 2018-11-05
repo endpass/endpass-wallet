@@ -28,6 +28,10 @@ class DappBridge extends EventEmitter {
     this.emit(INPAGE_EVENT.RESPONSE, payload);
   }
 
+  emitError(payload) {
+    this.emit(INPAGE_EVENT.ERROR, payload);
+  }
+
   emitSettings(payload) {
     this.emit(INPAGE_EVENT.SETTINGS, payload);
   }

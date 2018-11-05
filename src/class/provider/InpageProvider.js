@@ -21,12 +21,14 @@ export default class InpageProvider {
 
   handleResponse({ error, id, result, jsonrpc }) {
     const trxId = id.replace(INPAGE_ID_PREFIX, '');
-    this.pendingRequestsHandlers[trxId](error, {
-      id: parseInt(trxId),
-      result,
-      jsonrpc,
-    });
-    delete this.pendingRequestsHandlers[trxId];
+    if (this.pendingRequestsHandlers[trxId]) {
+      this.pendingRequestsHandlers[trxId](error, {
+        id: parseInt(trxId),
+        result,
+        jsonrpc,
+      });
+      delete this.pendingRequestsHandlers[trxId];
+    }
   }
 
   updateSettings({ selectedAddress, networkVersion }) {
@@ -78,7 +80,6 @@ export default class InpageProvider {
       this.pendingRequestsHandlers[payload.id] = callback;
       this.eventEmitter.emit(INPAGE_EVENT.REQUEST, {
         ...payload,
-        jsonrpc: payload.jsonrpc,
         id: `${INPAGE_ID_PREFIX}${payload.id}`,
       });
     }

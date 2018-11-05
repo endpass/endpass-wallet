@@ -41,7 +41,7 @@
       <transaction-table
         v-if="isCurrentRequestTransaction"
         :currency="activeCurrency"
-        :transaction="currentRequest"
+        :transaction="currentRequest.transaction"
       />
     </password-modal>
   </div>

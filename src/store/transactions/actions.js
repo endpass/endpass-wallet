@@ -1,10 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import {
-  EventEmitter,
-  NotificationError,
-  Transaction,
-  TransactionFactory,
-} from '@/class';
+import { EventEmitter, NotificationError, Transaction } from '@/class';
 import ethplorerService from '@/services/ethplorer';
 import web3 from '@/utils/web3';
 import { getShortStringWithEllipsis } from '@/utils/strings';
@@ -183,10 +178,7 @@ const handleBlockTransactions = (
     );
 
     if (!isTrxExist) {
-      commit(
-        ADD_TRANSACTION,
-        TransactionFactory.fromBlock({ ...trx, networkId }),
-      );
+      commit(ADD_TRANSACTION, new Transaction({ ...trx, networkId }));
     }
 
     const { hash, to } = trx;
