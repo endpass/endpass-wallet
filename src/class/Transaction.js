@@ -38,10 +38,92 @@ export default class Transaction {
     this.nonce = nonce;
     this.state = success === false ? 'error' : state;
     this.to = to;
+
     if (timestamp) {
       this.date = new Date(timestamp * 1000);
     }
   }
+
+  /**
+   * Static methods
+   */
+
+  static async isTransactionToContract(transaction) {
+    const res = await web3.eth.getCode(transaction.to);
+
+    return res !== '0x';
+  }
+
+  static getValidTo(transaction) {
+    const { to } = transaction;
+
+    if (!to) {
+      return undefined;
+    }
+
+    if (/^0x/i.test(to)) {
+      return to;
+    }
+
+    return `0x${to}`;
+  }
+
+  static getValidData(transaction) {
+    const { data, tokenInfo, validTo } = transaction;
+
+    if (!transaction.tokenInfo) {
+      return data;
+    }
+
+    const erc20 = new ERC20Token(tokenInfo.address);
+    const contract = erc20.getContract();
+    const transactionValueInWei = Transaction.getTransactonValueInWei(
+      transaction,
+    );
+
+    return contract.methods
+      .transfer(validTo, transactionValueInWei)
+      .encodeABI();
+  }
+
+  static getPriceWei(transaction) {
+    if (!isNumeric(transaction.gasPrice)) return '0';
+
+    return web3.utils.toWei(transaction.gasPrice, 'Gwei');
+  }
+
+  static getTransactonValueInWei(transaction) {
+    const { value, tokenInfo } = transaction;
+
+    if (!isNumeric(value)) {
+      return '0';
+    }
+
+    const multiplier = tokenInfo
+      ? BigNumber('10').pow(tokenInfo.decimals || 0)
+      : BigNumber('10').pow(18);
+
+    return BigNumber(value)
+      .times(multiplier)
+      .toFixed(0);
+  }
+
+  static async getGasFullPrice(transaction) {
+    const estimationParams = {
+      data: Transaction.getValidData(transaction),
+      to: Transaction.getValidTo(transaction),
+    };
+    const estimatedGas = await web3.eth.estimateGas(estimationParams);
+    const gasPriceWei = Transaction.getPriceWei(transaction);
+
+    return BigNumber(gasPriceWei)
+      .times(estimatedGas)
+      .toFixed();
+  }
+
+  /**
+   * Instance methods and props
+   */
 
   set value(value) {
     this._value = String(value);

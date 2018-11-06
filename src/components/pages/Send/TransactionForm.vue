@@ -75,10 +75,10 @@
 </template>
 
 <script>
+import { debounce } from 'lodash';
 import { mapGetters, mapState, mapActions } from 'vuex';
 import web3 from '@/utils/web3';
-import { ENSResolver } from '@/class';
-import TransactionsUtils from '@/class/transaction/TransactionsUtils';
+import { ENSResolver, Transaction } from '@/class';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';
 import VSelect from '@/components/ui/form/VSelect';
@@ -112,9 +112,10 @@ export default {
     prices: null,
     estimatedGasCost: 0,
     ensError: null,
+    nonceInterval: null,
     isEnsAddressLoading: false,
     isLoadingGasPrice: true,
-    nonceInterval: null,
+    isEstimationInProcess: false,
   }),
 
   computed: {
@@ -136,9 +137,21 @@ export default {
     },
 
     isSendAllowed() {
-      const { transaction, isSyncing, isEnsAddressLoading, ensError } = this;
+      const {
+        transaction,
+        ensError,
+        isSyncing,
+        isEnsAddressLoading,
+        isEstimationInProcess,
+      } = this;
 
-      return transaction.to && !isSyncing && !ensError && !isEnsAddressLoading;
+      return (
+        transaction.to &&
+        !isSyncing &&
+        !ensError &&
+        !isEnsAddressLoading &&
+        !isEstimationInProcess
+      );
     },
   },
 
@@ -146,11 +159,11 @@ export default {
     async address() {
       if (this.isEnsTransaction) {
         this.transaction.to = await this.resolveEnsAddress();
-        this.estimateGasCost();
+        this.debouncedGasCostEstimation();
       } else if (!this.errors.has('address') && this.address) {
         this.ensError = null;
         this.transaction.to = this.address;
-        this.estimateGasCost();
+        this.debouncedGasCostEstimation();
       }
     },
 
@@ -160,17 +173,29 @@ export default {
       }
     },
 
-    'transaction.tokenInfo': {
-      handler() {
-        this.estimateGasCost();
-      },
-    },
-
     'transaction.to': {
       handler() {
         if (!this.transaction.to) {
           this.address = '';
         }
+      },
+    },
+
+    'transaction.tokenInfo': {
+      handler() {
+        this.debouncedGasCostEstimation();
+      },
+    },
+
+    'transaction.gasPrice': {
+      handler() {
+        this.debouncedGasCostEstimation();
+      },
+    },
+
+    'transaction.gasLimit': {
+      handler() {
+        this.debouncedGasCostEstimation();
       },
     },
   },
@@ -210,19 +235,29 @@ export default {
       }
     },
 
+    debouncedGasCostEstimation: debounce(function() {
+      this.estimateGasCost();
+    }, 500),
+
     async estimateGasCost() {
+      this.isEstimationInProcess = true;
+
       try {
-        this.estimatedGasCost = await TransactionsUtils.getFullPrice(
+        this.estimatedGasCost = await Transaction.getGasFullPrice(
           this.transaction,
         );
       } catch (err) {
-        const isContract = await TransactionsUtils.isTransactionToContract(
+        const isContract = await Transaction.isTransactionToContract(
           this.transaction,
         );
 
         if (!isContract && err.message.includes('always failing transaction')) {
           this.ensError = 'Transaction will always fail, try other address.';
         }
+
+        this.estimatedGasCost = 0;
+      } finally {
+        this.isEstimationInProcess = false;
       }
     },
 
