@@ -173,10 +173,6 @@ class EthereumWalletMock {
     return JSON.stringify(this.toV3());
   }
 
-  recover() {
-    return this.getAddress();
-  }
-
   toV3() {
     return {
       version: 3,

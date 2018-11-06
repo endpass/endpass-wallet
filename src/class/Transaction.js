@@ -25,7 +25,7 @@ export default class Transaction {
   }) {
     if (tokenInfo) {
       this.tokenInfo = new Token(tokenInfo);
-      this.valueWei = isHexStrict(value) ? fromWei(value) : value;
+      this.valueWei = isHexStrict(valueWei) ? valueWei : value;
     } else {
       this.value = isHexStrict(value) ? fromWei(value) : value;
     }

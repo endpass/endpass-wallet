@@ -37,36 +37,30 @@ describe('InpageProvider', () => {
   describe('methods', () => {
     describe('handleResponse', () => {
       it('should call callback by payload id', () => {
-        const result = {},
+        const result = { id: 'kek' },
           error = {},
-          jsonrpc = '1',
-          id = '2',
-          callback = jest.fn(),
-          payload = { id, result, error, jsonrpc };
-        provider.pendingRequestsHandlers[id] = callback;
+          payload = { result, error },
+          callback = jest.fn();
+        provider.pendingRequestsHandlers[result.id] = callback;
         provider.handleResponse(payload);
-        expect(callback).toHaveBeenCalledWith(error, {
-          result,
-          id: parseInt(id),
-          jsonrpc,
-        });
+        expect(callback).toHaveBeenCalledWith(error, result);
       });
 
       it('should delete pointers by id', () => {
-        const result = {},
+        const result = { id: 'kek' },
           error = {},
-          payload = { id: '1', result, error };
-        provider.pendingRequestsHandlers[payload.id] = jest.fn();
+          payload = { result, error };
+        provider.pendingRequestsHandlers[result.id] = jest.fn();
         provider.handleResponse(payload);
-        expect(provider.pendingRequestsHandlers).not.toHaveProperty(payload.id);
+        expect(provider.pendingRequestsHandlers).not.toHaveProperty(result.id);
       });
     });
 
     describe('updateSettings', () => {
       it('should set selectedAddress and networkVersion', () => {
         const settings = {
-          selectedAddress: '2',
-          networkVersion: '1',
+          selectedAddress: 'eke',
+          networkVersion: 'kek',
         };
         provider.updateSettings(settings);
         expect(provider.settings.selectedAddress).toBe(
@@ -77,8 +71,8 @@ describe('InpageProvider', () => {
 
       it('should set selectedAddress and networkVersion as undefined', () => {
         const settings = {
-          selectedAddress: '2',
-          networkVersion: '1',
+          selectedAddress: 'eke',
+          networkVersion: 'kek',
         };
         provider.updateSettings(settings);
         provider.updateSettings({});
@@ -91,16 +85,16 @@ describe('InpageProvider', () => {
 
     describe('sendAsync', () => {
       it('should save callback', () => {
-        const payload = { id: '1' },
+        const payload = { id: 'kek' },
           callback = jest.fn();
         provider.sendAsync(payload, callback);
         expect(provider.pendingRequestsHandlers[payload.id]).toBe(callback);
       });
 
       it('should emit request event with payload', () => {
-        const payload = { id: '1' },
+        const payload = { id: 'kek' },
           callback = jest.fn(),
-          expectedPayload = { id: `${INPAGE_ID_PREFIX}${payload.id}` };
+          expectedPayload = { id: `${INPAGE_ID_PREFIX}kek` };
         provider.eventEmitter.emit = jest.fn();
         provider.sendAsync(payload, callback);
         expect(provider.eventEmitter.emit).toHaveBeenCalledWith(
@@ -118,7 +112,7 @@ describe('InpageProvider', () => {
 
     describe('send', () => {
       it('should return result by method', () => {
-        const payload = { id: '1' },
+        const payload = { id: 'kek' },
           callback = jest.fn();
         provider.sendAsync(payload, callback);
         expect(provider.pendingRequestsHandlers[payload.id]).toBe(callback);
@@ -133,7 +127,7 @@ describe('InpageProvider', () => {
         expect(provider.send({ method }).result).toBe(null);
         provider.settings = {
           selectedAddress: 'eke',
-          networkVersion: '1',
+          networkVersion: 'kek',
         };
         method = 'eth_accounts';
         expect(provider.send({ method }).result).toEqual([
