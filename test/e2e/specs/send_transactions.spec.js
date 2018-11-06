@@ -31,14 +31,10 @@ describe('Send Transactions Page', () => {
 
         // Amount validation
         cy.get('[data-test=transaction-amount-group-field]').within(() => {
-          cy.get('[data-test=transaction-amount-input]').clear();
-          cy.contains('The amount field is required');
-
-          cy.get('[data-test=transaction-amount-input]').type(1);
-          cy.contains('The amount field must be between');
+          cy.get('[data-test=transaction-amount-input]').should('be.disabled');
         });
 
-        cy.contains('Advanced Options').click();
+        cy.get('[data-test=transaction-advanced-options-button]').click();
 
         cy.get('[data-test=transaction-advanced-options]').within(() => {
           // Gas price validation
@@ -107,7 +103,9 @@ describe('Send Transactions Page', () => {
         cy.get('[data-test=transaction-address-select]')
           .click()
           .within(() => {
-            cy.get('.multiselect__input').type(transactionToSend.to);
+            cy.get('.multiselect__input')
+              .type(transactionToSend.to)
+              .blur();
           });
 
         cy.get('[data-test=transaction-amount-input]')
