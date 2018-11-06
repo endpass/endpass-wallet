@@ -2,10 +2,10 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import SignMessage from '@/components/SignMessage';
 import { generateStubs } from '@/utils/testUtils';
-import web3 from '@/utils/web3';
 
 describe('SignMessage', () => {
   const signedMessage = {};
+  const sign = jest.fn().mockResolvedValue(signedMessage);
   let wrapper;
 
   beforeEach(() => {
@@ -15,6 +15,7 @@ describe('SignMessage', () => {
         accounts: {
           wallet: {
             getPrivateKeyString: jest.fn(() => 'private key string'),
+            sign,
           },
         },
         web3: {},
@@ -66,14 +67,13 @@ describe('SignMessage', () => {
       const password = 'password';
 
       beforeEach(() => {
-        spyOn(wrapper.vm, '$notify');
+        jest.spyOn(wrapper.vm, '$notify');
       });
 
       it('should sign message', async () => {
-        web3.eth.accounts.sign = jest.fn(() => signedMessage);
-        const { vm } = wrapper;
-
         expect.assertions(2);
+
+        const { vm } = wrapper;
 
         await vm.signMessage(password);
 
@@ -82,15 +82,13 @@ describe('SignMessage', () => {
       });
 
       it('should not sign message', async () => {
+        expect.assertions(3);
+
         const { vm } = wrapper;
 
-        web3.eth.accounts.sign = jest.fn(() => {
-          throw new Error();
-        });
+        sign.mockRejectedValueOnce(new Error());
 
         global.console.error = jest.fn();
-
-        expect.assertions(3);
 
         await vm.signMessage(password);
 

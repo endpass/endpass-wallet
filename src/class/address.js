@@ -54,6 +54,11 @@ export default class Address {
     return web3.utils.toChecksumAddress(this.getAddressString());
   }
 
+  // (Message) => Promise<SignedMessage>
+  sign(message) {
+    return this.signStrategy.sign(message, this.info.index);
+  }
+
   // (Transaction) => Promise<SignedTrx>
   signTransaction(transaction) {
     return this.signStrategy.signTransaction(transaction, this.info.index);
