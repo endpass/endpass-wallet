@@ -18,7 +18,6 @@ import 'mocks/services/localSettings';
  */
 import 'mocks/class/erc20';
 import 'mocks/class/storage/LocalStorage';
-import 'mocks/class/transaction/TransactionsUtils';
 
 Vue.config.productionTip = false;
 

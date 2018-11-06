@@ -26,6 +26,7 @@
 
 <script>
 import VRadio from '@/components/ui/form/VRadio';
+import VSpinner from '@/components/ui/VSpinner';
 
 export default {
   name: 'TransactionPriorityOptions',
@@ -83,6 +84,7 @@ export default {
 
   components: {
     VRadio,
+    VSpinner,
   },
 };
 </script>

@@ -1,75 +1,90 @@
 <template>
-  <div
-    class="send-amount field is-horizontal"
-    data-test="transaction-amount-group-field"
-  >
-    <div class="field-label is-normal">
-      <label
-        class="label"
-        for="amount"
-      >
-        Amount
-      </label>
-    </div>
-    <div class="field-body">
-      <v-input
-        id="value"
-        :value="value"
-        :validator="`required|decimal:${decimal}|between:0,${maxAmount}`"
-        :disabled="isLoading || disabled"
-        type="number"
-        data-vv-as="amount"
-        min="0"
-        step="any"
-        name="value"
-        aria-describedby="value"
-        placeholder="Amount"
-        required
-        data-test="transaction-amount-input"
-        @input="handleAmountInput"
-      >
-        <span
-          slot="addon"
-          class="select"
+  <div class="send-amount ">
+    <div
+      class="field is-horizontal"
+      data-test="transaction-amount-group-field"
+    >
+      <div class="field-label is-normal">
+        <label
+          class="label"
+          for="amount"
         >
-          <v-select
-            :value="currentTokenSymbol"
-            :options="tokensCurrencies"
-            :disabled="disabled"
-            name="currencies"
-            @input="emitChangeTokenInfo"
+          Amount
+        </label>
+      </div>
+      <div class="field-body">
+        <v-input
+          id="value"
+          :value="value"
+          :validator="`required|decimal:${decimal}|between:0,${maxAmount}`"
+          :disabled="isLoading || disabled"
+          type="number"
+          data-vv-as="amount"
+          min="0"
+          step="any"
+          name="value"
+          aria-describedby="value"
+          placeholder="Amount"
+          required
+          data-test="transaction-amount-input"
+          @input="handleAmountInput"
+        >
+          <span
+            slot="addon"
+            class="select"
+          >
+            <v-select
+              :value="currentTokenSymbol"
+              :options="tokensCurrencies"
+              :disabled="disabled"
+              name="currencies"
+              @input="emitChangeTokenInfo"
+            />
+          </span>
+          <a
+            slot="icon"
+            title="Send entire balance"
+            role="button"
+            class="amount-max-button icon is-small is-right"
+            @click="setMaxAmount"
+            v-html="require('@/img/arrow-thick-top.svg')"
           />
-        </span>
-        <a
-          slot="icon"
-          title="Send entire balance"
-          role="button"
-          class="amount-max-button icon is-small is-right"
-          @click="setMaxAmount"
-          v-html="require('@/img/arrow-thick-top.svg')"
-        />
-      </v-input>
-      <v-input
-        id="price"
-        :value="price"
-        :validator="`required|decimal:2|between:0,${maxPrice}`"
-        :disabled="!ethPrice || disabled"
-        type="number"
-        min="0"
-        step="0.01"
-        name="price"
-        aria-describedby="price"
-        placeholder="Price"
-        required
-        @input="handlePriceInput"
-      >
-        <div
-          slot="addon"
-          class="amount-fiat-currency control"
+        </v-input>
+        <v-input
+          id="price"
+          :value="price"
+          :validator="`required|decimal:2|between:0,${maxPrice}`"
+          :disabled="!ethPrice || disabled"
+          type="number"
+          min="0"
+          step="0.01"
+          name="price"
+          aria-describedby="price"
+          placeholder="Price"
+          required
+          @input="handlePriceInput"
         >
-          {{ fiatCurrency }}
-        </div>
-      </v-input>
+          <div
+            slot="addon"
+            class="amount-fiat-currency control"
+          >
+            {{ fiatCurrency }}
+          </div>
+        </v-input>
+      </div>
+    </div>
+    <div class="field is-horizontal">
+      <div class="field-label">
+        <label class="label">Gas Fee</label>
+      </div>
+      <div class="field-body">
+        <v-input
+          v-model="gasFee"
+          :disabled="true"
+          name="gasFee"
+          type="number"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -91,7 +106,7 @@ export default {
     },
 
     ethPrice: {
-      type: Number,
+      type: [String, Number],
       required: true,
     },
 
@@ -116,13 +131,13 @@ export default {
     },
 
     balance: {
-      type: String,
+      type: [String, Number],
       default: '0',
     },
 
     estimatedGasCost: {
       type: [String, Number],
-      default: 0,
+      default: '0',
     },
 
     disabled: {
@@ -152,6 +167,10 @@ export default {
       return get(currentToken, 'decimals') || 18;
     },
 
+    gasFee() {
+      return web3.utils.fromWei(BigNumber(this.estimatedGasCost).toFixed());
+    },
+
     maxAmount() {
       const { currentToken, balance, estimatedGasCost } = this;
       const tokenBalance = get(currentToken, 'balance') || 0;
@@ -159,7 +178,7 @@ export default {
       if (!currentToken) {
         const { fromWei } = web3.utils;
         const balanceBN = BigNumber(balance || '0');
-        const estimatedGasCostBN = BigNumber(estimatedGasCost || '0');
+        const estimatedGasCostBN = BigNumber(estimatedGasCost);
         const amountBN = balanceBN.minus(estimatedGasCostBN);
         const amount = fromWei(amountBN.toFixed());
 
@@ -206,6 +225,12 @@ export default {
     activeNet(newValue, prevValue) {
       if (newValue.id !== prevValue.id) {
         this.emitChangeTokenInfo(this.tokensCurrencies[0]);
+      }
+    },
+
+    maxAmount() {
+      if (BigNumber(this.value).gt(this.maxAmount)) {
+        this.emitInputValue(this.maxAmount);
       }
     },
 

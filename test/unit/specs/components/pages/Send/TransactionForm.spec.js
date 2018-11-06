@@ -4,7 +4,7 @@ import VeeValidate from 'vee-validate';
 import { shallow, createLocalVue } from '@vue/test-utils';
 import { generateStubs } from '@/utils/testUtils';
 import TransactionForm from '@/components/pages/Send/TransactionForm.vue';
-import TransactionsUtils from '@/class/transaction/TransactionsUtils';
+import Transaction from '@/class/Transaction';
 import { transaction } from 'fixtures/transactions';
 import { address } from 'fixtures/accounts';
 import { token, tokens } from 'fixtures/tokens';
@@ -245,32 +245,36 @@ describe('Send – TransactionForm', () => {
       });
 
       describe('estimateGasCost', () => {
+        beforeAll(() => {
+          Transaction.getGasFullPrice = jest.fn();
+          Transaction.isTransactionToContract = jest.fn();
+        });
+
         it('should estimate gas cost for transaction', async () => {
           expect.assertions(2);
 
-          TransactionsUtils.getFullPrice.mockResolvedValueOnce(1);
+          Transaction.getGasFullPrice.mockResolvedValueOnce(1);
 
           await wrapper.vm.estimateGasCost();
 
-          expect(TransactionsUtils.getFullPrice).toBeCalledWith(
-            transactionProp,
-          );
+          expect(Transaction.getGasFullPrice).toBeCalledWith(transactionProp);
           expect(wrapper.vm.estimatedGasCost).toBe(1);
         });
 
         it('should handle error', async () => {
           expect.assertions(3);
 
+          const error = new Error();
           const previousEstimatedGas = wrapper.vm.estimatedGasCost;
           const previousEnsError = wrapper.vm.ensError;
 
-          TransactionsUtils.getFullPrice.mockRejectedValueOnce();
+          Transaction.getGasFullPrice.mockRejectedValueOnce(error);
 
           await wrapper.vm.estimateGasCost();
 
           expect(wrapper.vm.estimatedGasCost).toBe(previousEstimatedGas);
           expect(wrapper.vm.ensError).toBe(previousEnsError);
-          expect(TransactionsUtils.isTransactionToContract).toBeCalledWith(
+          expect(Transaction.isTransactionToContract).toBeCalledWith(
             wrapper.vm.transaction,
           );
         });
@@ -281,10 +285,8 @@ describe('Send – TransactionForm', () => {
           const error = new Error('always failing transaction');
           const previousEstimatedGas = wrapper.vm.estimatedGasCost;
 
-          TransactionsUtils.getFullPrice.mockRejectedValueOnce(error);
-          TransactionsUtils.isTransactionToContract.mockResolvedValueOnce(
-            false,
-          );
+          Transaction.getGasFullPrice.mockRejectedValueOnce(error);
+          Transaction.isTransactionToContract.mockResolvedValueOnce(false);
 
           await wrapper.vm.estimateGasCost();
 
@@ -292,7 +294,7 @@ describe('Send – TransactionForm', () => {
           expect(wrapper.vm.ensError).toBe(
             'Transaction will always fail, try other address.',
           );
-          expect(TransactionsUtils.isTransactionToContract).toBeCalledWith(
+          expect(Transaction.isTransactionToContract).toBeCalledWith(
             wrapper.vm.transaction,
           );
         });
@@ -313,7 +315,7 @@ describe('Send – TransactionForm', () => {
 
     describe('watchers', () => {
       beforeEach(() => {
-        jest.spyOn(wrapper.vm, 'estimateGasCost');
+        jest.spyOn(wrapper.vm, 'debouncedGasCostEstimation');
         jest.spyOn(wrapper.vm, 'resolveEnsAddress');
       });
 
@@ -325,7 +327,7 @@ describe('Send – TransactionForm', () => {
           },
         });
 
-        expect(wrapper.vm.estimateGasCost).toBeCalledTimes(1);
+        expect(wrapper.vm.debouncedGasCostEstimation).toBeCalledTimes(1);
       });
 
       it('should set address as empty string if transaction to is not exist', () => {
@@ -357,7 +359,7 @@ describe('Send – TransactionForm', () => {
         await global.flushPromises();
 
         expect(wrapper.vm.resolveEnsAddress).toBeCalledTimes(1);
-        expect(wrapper.vm.estimateGasCost).toBeCalledTimes(1);
+        expect(wrapper.vm.debouncedGasCostEstimation).toBeCalledTimes(1);
       });
 
       it('should request gas cost and set address to transaction on changing address', () => {
@@ -368,7 +370,7 @@ describe('Send – TransactionForm', () => {
         });
 
         expect(wrapper.vm.transaction.to).toBe(address);
-        expect(wrapper.vm.estimateGasCost).toBeCalledTimes(1);
+        expect(wrapper.vm.debouncedGasCostEstimation).toBeCalledTimes(1);
       });
 
       it('should resolve ens address on change active network if current address is ens', async () => {
