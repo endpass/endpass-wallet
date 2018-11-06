@@ -115,6 +115,7 @@ Cypress.Commands.add('login', () => {
     '/identity/api/v1/otp',
     'fixture:identity/success.json',
   ).as('identityDeleteOtp');
+  cy.route('GET', /\/account\/(\w+)\/info$/, {}).as('accountInfo');
 });
 
 // Sets up server and routes for an unauthorized user.
