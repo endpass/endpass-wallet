@@ -5,6 +5,8 @@
       <div class="field-body">
         <a
           class="has-text-link"
+          role="button"
+          data-test="transaction-advanced-options-button"
           @click="toggle"
         >
           {{ togglerText }}
