@@ -7,12 +7,7 @@ import {
 } from '@/store/transactions/mutations-types';
 
 import ethplorerService from '@/services/ethplorer';
-import {
-  EventEmitter,
-  Transaction,
-  TransactionFactory,
-  NotificationError,
-} from '@/class';
+import { EventEmitter, Transaction, NotificationError } from '@/class';
 
 import { address } from 'fixtures/accounts';
 import {
@@ -236,7 +231,7 @@ describe('transactions actions', () => {
         { transactions: blockTransactions, networkId },
       );
 
-      const expectedTrx = TransactionFactory.fromBlock({
+      const expectedTrx = new Transaction({
         ...blockTransactions[0],
         networkId,
       });
