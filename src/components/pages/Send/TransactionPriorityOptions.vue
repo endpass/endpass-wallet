@@ -31,6 +31,8 @@ import VSpinner from '@/components/ui/VSpinner';
 export default {
   name: 'TransactionPriorityOptions',
 
+  inject: ['$validator'],
+
   props: {
     isLoading: {
       type: Boolean,

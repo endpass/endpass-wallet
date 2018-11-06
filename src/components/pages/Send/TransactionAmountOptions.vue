@@ -99,6 +99,8 @@ import VSelect from '@/components/ui/form/VSelect';
 export default {
   name: 'TransactionAmountOptions',
 
+  inject: ['$validator'],
+
   props: {
     value: {
       type: [String, Number],

@@ -94,6 +94,8 @@ import TransactionPriorityOptions from './TransactionPriorityOptions.vue';
 export default {
   name: 'TransactionForm',
 
+  inject: ['$validator'],
+
   props: {
     isLoading: {
       type: Boolean,

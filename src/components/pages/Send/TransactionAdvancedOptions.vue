@@ -127,6 +127,8 @@ import VSpinner from '@/components/ui/VSpinner';
 export default {
   name: 'AdvancedTransactionOptions',
 
+  inject: ['$validator'],
+
   props: {
     transaction: {
       type: Object,
