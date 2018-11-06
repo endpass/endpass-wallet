@@ -11,7 +11,9 @@ const currentRequest = (state, getters) => {
   const nextRequest = state.requests[nextRequestId];
 
   if (nextRequest.method === 'eth_sendTransaction') {
-    return TransactionFactory.fromBlock(nextRequest);
+    return Object.assign({}, nextRequest, {
+      transaction: TransactionFactory.fromBlock(nextRequest.params[0]),
+    });
   }
 
   return nextRequest;

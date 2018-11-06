@@ -73,19 +73,30 @@ const processCurrentRequest = async (
   const { wallet } = rootState.accounts;
 
   if (request.method === 'eth_sendTransaction') {
-    console.log('sign transaction', request);
-    // const { wallet } = rootState.accounts;
-    // const nonce = await dispatch('transactions/getNextNonce', null, {
-    //   root: true,
-    // });
-    // const signedRequest = await wallet.signTransaction(
-    //   Object.assign(request, {
-    //     nonce,
-    //   }).getApiObject(web3.eth),
-    //   password,
-    // );
-
-    // console.log('transaction', signedRequest)
+    const { wallet } = rootState.accounts;
+    const nonce = await dispatch('transactions/getNextNonce', null, {
+      root: true,
+    });
+    const signedTx = await wallet.signTransaction(
+      Object.assign({}, request.transaction, {
+        nonce,
+      }),
+      password,
+    );
+    const promise = web3.eth.sendSignedTransaction(signedTx);
+    promise.then(receipt => {
+      dispatch('sendResponse', {
+        id: requestId,
+        jsonrpc: getters.currentRequest.jsonrpc,
+        result: receipt.transactionHash,
+      });
+    });
+    promise.on('error', error => {
+      dispatch('sendResponse', {
+        id: requestId,
+        error,
+      });
+    });
   } else {
     const currentAddress = rootGetters['accounts/currentAddressString'];
     const [data, address] = request.params;
@@ -134,7 +145,6 @@ export default {
   handleRequest,
   sendSettings,
   sendResponse,
-
   processCurrentRequest,
   sendRequestToNetwork,
   cancelCurrentRequest,
