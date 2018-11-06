@@ -7,7 +7,6 @@ export const DEFAULT_NETWORKS = Object.freeze([
     networkType: 'main',
     currency: 1,
     name: 'Main',
-    // url: 'wss://eth-mainnet.endpass.com',
     url: `https://mainnet.infura.io/${ENV.infuraConf.key}`,
   },
   {

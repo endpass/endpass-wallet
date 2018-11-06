@@ -7,10 +7,10 @@ import web3 from '@/utils/web3';
 describe('SignMessage', () => {
   const signedMessage = {};
   let wrapper;
-
+  let $store;
   beforeEach(() => {
     const localVue = createLocalVue();
-    const $store = {
+    $store = {
       state: {
         accounts: {
           wallet: {
@@ -70,7 +70,7 @@ describe('SignMessage', () => {
       });
 
       it('should sign message', async () => {
-        web3.eth.accounts.sign = jest.fn(() => signedMessage);
+        $store.state.accounts.wallet.sign = jest.fn(() => signedMessage);
         const { vm } = wrapper;
 
         expect.assertions(2);
