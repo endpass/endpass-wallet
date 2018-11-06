@@ -169,6 +169,10 @@ class EthereumWalletMock {
     return 'UTC--2018-06-03T20-33-08.306Z--9eceefdf3554e178a6549006f2c02163e63c9fd8';
   }
 
+  recover() {
+    return this.getAddress();
+  }
+
   toV3String() {
     return JSON.stringify(this.toV3());
   }

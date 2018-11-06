@@ -67,6 +67,7 @@ export const AVAILABLE_USER_META_PROPS = ['activeAccount'];
 export const REQUEST_TIMEOUT_MSEC = 30000;
 
 export const DAPP_WHITELISTED_METHODS = [
+  'personal_sign',
   'eth_personalSign',
   'eth_signTypedData',
   'eth_sendTransaction',
