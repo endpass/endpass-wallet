@@ -13,7 +13,7 @@
         />
       </div>
 
-      <div class="column">
+      <div class="column has-spinner">
         <div class="import-wallet">
           <component :is="importComponent" />
         </div>
@@ -30,6 +30,7 @@ import ImportFromSeed from '@/components/importWallet/ImportFromSeed';
 import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
 import ImportFromPublicKey from '@/components/importWallet/ImportFromPublicKey';
 import ImportFromJson from '@/components/importWallet/ImportFromJson';
+import ImportFromHardware from '@/components/importWallet/ImportFromHardware';
 
 export default {
   data: () => ({
@@ -39,6 +40,7 @@ export default {
       privateKey: 'Private Key',
       json: 'V3 JSON keystore',
       address: 'Address (view only)',
+      hardware: 'Hardware',
     },
   }),
   computed: {
@@ -53,6 +55,9 @@ export default {
         case 'address':
           return 'ImportFromPublicKey';
 
+        case 'hardware':
+          return 'ImportFromHardware';
+
         default:
           return 'ImportFromSeed';
       }
@@ -65,6 +70,7 @@ export default {
     ImportFromPrivateKey,
     ImportFromPublicKey,
     ImportFromJson,
+    ImportFromHardware,
   },
 };
 </script>

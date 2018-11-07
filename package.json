@@ -46,6 +46,7 @@
     "moment": "^2.22.2",
     "secp256k1": "^3.5.2",
     "throttled-queue": "^1.0.5",
+    "trezor-connect": "^6.0.0",
     "vee-validate": "^2.0.9",
     "vue": "^2.5.2",
     "vue-analytics": "^5.12.2",

@@ -66,6 +66,16 @@ export const AVAILABLE_USER_META_PROPS = ['activeAccount'];
 
 export const REQUEST_TIMEOUT_MSEC = 30000;
 
+export const HARDWARE_WALLET_TYPE = Object.freeze({
+  TREZOR: 'TrezorAccount',
+  LEDGER: 'LedgerAccount',
+});
+
+export const WALLET_TYPE = Object.freeze({
+  PUBLIC: 'PublicAccount',
+  ...HARDWARE_WALLET_TYPE,
+});
+
 export default {
   AVAILABLE_FIAT_CURRENCIES,
   MAIN_NET_ID,
@@ -76,4 +86,6 @@ export default {
   STORAGE_USER_META_KEY,
   AVAILABLE_USER_META_PROPS,
   REQUEST_TIMEOUT_MSEC,
+  HARDWARE_WALLET_TYPE,
+  WALLET_TYPE,
 };

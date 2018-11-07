@@ -54,10 +54,12 @@ const sendSignedTransaction = async (
       Object.assign(transaction, { nonce });
     }
 
-    const signedTx = await wallet.signTransaction(
-      transaction.getApiObject(web3.eth),
-      password,
-    );
+    const preTrx = {
+      ...transaction.getApiObject(web3.eth),
+      chainId: transaction.networkId,
+    };
+
+    const signedTx = await wallet.signTransaction(preTrx, password);
     const sendEvent = new EventEmitter();
     let hash;
 

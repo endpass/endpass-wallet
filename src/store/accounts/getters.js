@@ -1,6 +1,8 @@
+import { get } from 'lodash';
 import web3 from 'web3';
 import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
+import { HARDWARE_WALLET_TYPE } from '@/constants';
 
 const accountAddresses = state =>
   Object.keys(state.wallets).map(wallet => wallet.toLowerCase());
@@ -9,6 +11,11 @@ const currentAddressString = state =>
   state.address && state.address.getChecksumAddressString();
 
 const isPublicAccount = state => state.wallet && state.wallet.isPublic;
+
+const isHardwareAccount = state => {
+  const type = get(state.wallet, 'info.type');
+  return Object.values(HARDWARE_WALLET_TYPE).includes(type);
+};
 
 const balance = (state, getters, rootState, rootGetters) => {
   if (!state.balance) return null;
@@ -47,6 +54,7 @@ export default {
   accountAddresses,
   currentAddressString,
   isPublicAccount,
+  isHardwareAccount,
   balance,
   hdWallet,
   decryptedWallets,

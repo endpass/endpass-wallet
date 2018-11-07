@@ -53,11 +53,7 @@ jest.mock('@/services/user', () => {
 
     getAccounts: jest.fn().mockResolvedValue(addresses),
 
-    getV3Accounts: jest
-      .fn()
-      .mockResolvedValue(
-        addresses.map(address => getAccountByAddress(address)),
-      ),
+    getV3Accounts: jest.fn().mockResolvedValue([v3]),
 
     getFullUserInfo: jest
       .fn()
