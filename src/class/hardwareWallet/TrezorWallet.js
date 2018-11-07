@@ -1,12 +1,13 @@
 import TrezorConnect from 'trezor-connect';
 import Tx from 'ethereumjs-tx';
 import { NotificationError } from '@/class';
+import { HARDWARE_DERIVIATION_PATH } from '@/constants';
 
 export default class TrezorWallet {
   static async getNextWallets({ offset = 0, limit = 10 }) {
     try {
       const bundleParams = [...Array(limit)].map((_, i) => ({
-        path: `m/44'/60'/${offset + i}`,
+        path: `${HARDWARE_DERIVIATION_PATH}${offset + i}`,
         showOnTrezor: false,
       }));
 
@@ -33,17 +34,13 @@ export default class TrezorWallet {
   }
 
   static async signTransaction(transaction, index) {
-    const {
-      payload,
-      error,
-      status = true,
-    } = await TrezorConnect.ethereumSignTransaction({
-      path: `m/44'/60'/${index}'`,
+    const { payload } = await TrezorConnect.ethereumSignTransaction({
+      path: `${HARDWARE_DERIVIATION_PATH}${index}`,
       transaction,
     });
 
-    if (!status || error) {
-      throw new Error(error || 'Bad Trezor response');
+    if (payload.error) {
+      throw new Error(payload.error || 'Bad Trezor response');
     }
 
     const sign = {
@@ -51,7 +48,6 @@ export default class TrezorWallet {
       s: payload.s,
       v: payload.v,
     };
-
     const tx = new Tx({ ...transaction, ...sign });
 
     return `0x${tx.serialize().toString('hex')}`;
