@@ -14,11 +14,12 @@ describe('Accounts mutations', () => {
   describe(ADD_ADDRESS, () => {
     it('should add wallet', () => {
       const state = { wallets: {} };
+      const payload = { address: checksumAddress };
 
-      mutations[ADD_ADDRESS](state, checksumAddress);
+      mutations[ADD_ADDRESS](state, payload);
 
       expect(state.wallets).toEqual({
-        [checksumAddress]: new Address(checksumAddress),
+        [checksumAddress]: new Address(payload),
       });
     });
   });

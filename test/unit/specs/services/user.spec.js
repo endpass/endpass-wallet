@@ -255,10 +255,12 @@ describe('User service', () => {
     });
 
     it('should handle successfull GET /account request', async () => {
+      expect.assertions(1);
+
       axiosMock.onGet(url).reply(200, successResp);
       const account = await userService.getAccount(address);
       // Address should be automatically appended by getAccount
-      expect(account).toEqual({ address });
+      expect(account).toEqual({ address, info: {} });
     });
 
     it('should handle rejected GET /account request', async () => {
@@ -289,11 +291,24 @@ describe('User service', () => {
       });
       await userService.setAccount(address, account);
     });
+  });
 
-    it('should handle successful POST /account request', async () => {
-      axiosMock.onPost(url).reply(200, successResp);
-      const resp = await userService.setAccount(address, account);
-      expect(resp).toEqual(successResp);
+  describe('setAccountInfo', () => {
+    const address = '0x123';
+    // Account data can be anything
+    const url = `${ENV.identityAPIUrl}/account/${address}/info`;
+    const info = { one: 'two' };
+    const successResp = {
+      success: true,
+    };
+
+    it('should make correct request', async () => {
+      axiosMock.onPost(url).reply(config => {
+        expect(config.method).toBe('post');
+        expect(config.data).toBe(JSON.stringify(info));
+        return [200, successResp];
+      });
+      await userService.setAccountInfo(address, info);
     });
   });
 
@@ -352,15 +367,19 @@ describe('User service', () => {
     const addrs = ['0x123', 'xpubabcde', '0x456'];
 
     it('should return keystores for regular accounts only', async () => {
+      expect.assertions(3);
+
       axiosMock.onGet(`${ENV.identityAPIUrl}/accounts`).reply(200, addrs);
       axiosMock
         .onGet(new RegExp(`${ENV.identityAPIUrl}/account/.+`))
         .reply(200, {});
 
       const accounts = await userService.getV3Accounts();
+      const info = {};
+
       expect(accounts.length).toBe(2);
-      expect(accounts[0]).toEqual({ address: '0x123' });
-      expect(accounts[1]).toEqual({ address: '0x456' });
+      expect(accounts[0]).toEqual({ address: '0x123', info });
+      expect(accounts[1]).toEqual({ address: '0x456', info });
     });
 
     it('should return the HD key if it exists', async () => {

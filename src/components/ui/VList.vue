@@ -34,8 +34,12 @@ export default {
       default: null,
     },
     list: {
-      type: Object,
+      type: [Object, Array],
       default: () => ({}),
+    },
+    hasDefaultActive: {
+      type: Boolean,
+      default: true,
     },
   },
   data: () => ({
@@ -52,7 +56,11 @@ export default {
     },
     list: {
       handler(val) {
-        this.active = Object.keys(val).find(v => !!v);
+        if (this.hasDefaultActive) {
+          this.active = Object.keys(val).find(v => !!v);
+        } else {
+          this.active = null;
+        }
       },
       immediate: true,
     },
