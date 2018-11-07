@@ -66,6 +66,8 @@ export const AVAILABLE_USER_META_PROPS = ['activeAccount'];
 
 export const REQUEST_TIMEOUT_MSEC = 30000;
 
+export const HARDWARE_DERIVIATION_PATH = `m/44'/60'/0'/0/`;
+
 export const HARDWARE_WALLET_TYPE = Object.freeze({
   TREZOR: 'TrezorAccount',
   LEDGER: 'LedgerAccount',
@@ -86,6 +88,7 @@ export default {
   STORAGE_USER_META_KEY,
   AVAILABLE_USER_META_PROPS,
   REQUEST_TIMEOUT_MSEC,
+  HARDWARE_DERIVIATION_PATH,
   HARDWARE_WALLET_TYPE,
   WALLET_TYPE,
 };

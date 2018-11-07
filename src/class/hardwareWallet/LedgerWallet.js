@@ -2,6 +2,7 @@ import LedgerTransport from '@ledgerhq/hw-transport-u2f'; // for browser
 import Eth from '@ledgerhq/hw-app-eth';
 import Tx from 'ethereumjs-tx';
 import { NotificationError } from '@/class';
+import { HARDWARE_DERIVIATION_PATH } from '@/constants';
 
 export default class LedgerWallet {
   static async getNextWallets({ offset = 0, limit = 10 }) {
@@ -12,8 +13,7 @@ export default class LedgerWallet {
       const eth = new Eth(transport);
 
       const addressesPromises = [...Array(limit)]
-        .map((_, i) => offset + i)
-        .map(idx => `m/44'/60'/${idx}'/0/0`)
+        .map((_, i) => `${HARDWARE_DERIVIATION_PATH}${offset + i}`)
         .map(path => eth.getAddress(path, false, false));
 
       const payload = await Promise.all(addressesPromises);
