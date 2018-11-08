@@ -54,27 +54,27 @@ export default {
     suggestedGasPrices() {
       const { prices } = this;
 
-      if (prices) {
-        return [
-          {
-            val: prices.low.toString(),
-            key: 'Low',
-            help: `${prices.low} Gwei`,
-          },
-          {
-            val: prices.medium.toString(),
-            key: 'Medium',
-            help: `${prices.medium} Gwei`,
-          },
-          {
-            val: prices.high.toString(),
-            key: 'High',
-            help: `${prices.high} Gwei`,
-          },
-        ];
+      if (!prices) {
+        return null;
       }
 
-      return null;
+      return [
+        {
+          val: prices.low.toString(),
+          key: 'Low',
+          help: `${prices.low} Gwei`,
+        },
+        {
+          val: prices.medium.toString(),
+          key: 'Medium',
+          help: `${prices.medium} Gwei`,
+        },
+        {
+          val: prices.high.toString(),
+          key: 'High',
+          help: `${prices.high} Gwei`,
+        },
+      ];
     },
   },
 

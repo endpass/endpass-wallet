@@ -7,7 +7,7 @@ import {
   ADD_TOKENS_PRICES,
   SET_USER_TOKENS,
 } from './mutations-types';
-import { NotificationError } from '@/class';
+import { NotificationError, Token } from '@/class';
 import ERC20Token from '@/class/erc20';
 import {
   tokenInfoService,
@@ -17,7 +17,6 @@ import {
 } from '@/services';
 import { merge } from '@/utils/objects';
 import { mapArrayByProp } from '@/utils/arrays';
-import { makeConsistentToken } from '@/utils/tokens';
 import { MAIN_NET_ID } from '@/constants';
 
 const init = async ({ dispatch }) => {
@@ -38,7 +37,7 @@ const addUserToken = async (
   { commit, dispatch, getters, rootGetters },
   { token },
 ) => {
-  const consistentToken = makeConsistentToken(token);
+  const consistentToken = Token.getConsistent(token);
 
   if (!getters.userTokenByAddress(consistentToken.address)) {
     try {
@@ -63,7 +62,7 @@ const removeUserToken = async (
   { commit, getters, dispatch, rootGetters },
   { token },
 ) => {
-  const consistentToken = makeConsistentToken(token);
+  const consistentToken = Token.getConsistent(token);
 
   if (getters.userTokenByAddress(consistentToken.address)) {
     try {

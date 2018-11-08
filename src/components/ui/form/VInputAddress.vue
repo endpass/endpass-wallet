@@ -160,7 +160,7 @@ export default {
       });
 
       try {
-        const address = await this.$ens.getAddress(this.innerValue);
+        const address = await ENSResolver.getAddress(this.innerValue);
 
         this.$validator.flag(name, {
           valid: true,
@@ -179,9 +179,6 @@ export default {
         this.pendingEns = false;
       }
     },
-  },
-  created() {
-    this.$ens = new ENSResolver(web3);
   },
 };
 </script>

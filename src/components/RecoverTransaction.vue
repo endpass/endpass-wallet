@@ -29,6 +29,8 @@ import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
 
+const { toChecksumAddress } = web3.utils;
+
 export default {
   name: 'RecoverTransaction',
 
@@ -49,7 +51,7 @@ export default {
         const decodedTransaction = decodeTx(this.transactionHash);
 
         Object.assign(decodedTransaction, {
-          to: web3.utils.toChecksumAddress(decodedTransaction.to),
+          to: toChecksumAddress(decodedTransaction.to),
         });
 
         this.recoveredTransaction = decodedTransaction;

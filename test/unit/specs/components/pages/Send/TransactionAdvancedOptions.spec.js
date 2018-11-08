@@ -20,6 +20,9 @@ describe('Send – TransactionAdvancedOptions', () => {
     wrapper = shallow(TransactionAdvancedOptions, {
       stubs: generateStubs(TransactionAdvancedOptions),
       propsData: mountProps,
+      provide: () => ({
+        $validator: new VeeValidate.Validator(),
+      }),
       localVue,
     });
   });

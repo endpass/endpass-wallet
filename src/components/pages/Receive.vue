@@ -67,6 +67,8 @@ import Account from '@/components/Account';
 import VSpinner from '@/components/ui/VSpinner';
 import AccountWalletCard from '@/components/AccountWalletCard';
 
+const { fromWei } = web3.utils;
+
 export default {
   name: 'ReceivePage',
 
@@ -136,7 +138,7 @@ export default {
       Object.keys(this.wallets).forEach(async address => {
         const balance = await web3.eth.getBalance(address);
 
-        this.$set(this.balances, address, web3.utils.fromWei(balance));
+        this.$set(this.balances, address, fromWei(balance));
       });
     },
   },

@@ -1,6 +1,8 @@
 import web3 from '@/utils/web3';
 import { http } from '@/class/singleton';
 
+const { isAddress } = web3.utils;
+
 export default {
   getTokensList() {
     return this._getTokens().then(tokens =>
@@ -20,6 +22,6 @@ export default {
     };
   },
   _checkAddress(token) {
-    return web3.utils.isAddress(token.address);
+    return isAddress(token.address);
   },
 };

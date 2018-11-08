@@ -4,6 +4,8 @@ import { BigNumber } from 'bignumber.js';
 import keystore from '@/utils/keystore';
 import { HARDWARE_WALLET_TYPE } from '@/constants';
 
+const { fromWei } = web3.utils;
+
 const accountAddresses = state =>
   Object.keys(state.wallets).map(wallet => wallet.toLowerCase());
 
@@ -25,7 +27,7 @@ const balance = (state, getters, rootState, rootGetters) => {
     .minus(pendingBalance)
     .toFixed();
 
-  return web3.utils.fromWei(balanceWei);
+  return fromWei(balanceWei);
 };
 
 // Returns a decrypted HD Wallet

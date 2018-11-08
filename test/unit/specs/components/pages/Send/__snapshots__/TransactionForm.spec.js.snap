@@ -38,7 +38,7 @@ exports[`Send – TransactionForm render should render message if ens address re
         </p>
         <!---->
     </div>
-    <transaction-amount-options current-token="[object Object]" fiat-currency="USD" eth-price="10" balance="1000000" estimated-gas-cost="0" disabled="true" active-net="[object Object]" v-on:change-token="bound changeTokenInfo" v-model="transaction.value"></transaction-amount-options>
+    <transaction-amount-options current-token="[object Object]" fiat-currency="USD" eth-price="10" balance="1000000" estimated-gas-cost="0" disabled="true" active-net="[object Object]" show-fee="true" v-on:change-token="bound changeTokenInfo" v-model="transaction.value"></transaction-amount-options>
     <transaction-priority-options is-loading="true" v-model="transaction.gasPrice"></transaction-priority-options>
     <transaction-advanced-options v-on:change="bound handleAdvancedChange"></transaction-advanced-options>
     <div class="field is-horizontal">

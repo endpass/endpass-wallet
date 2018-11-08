@@ -14,6 +14,8 @@ import {
   SET_TRANSACTION_HISTORY,
 } from './mutations-types';
 
+const { toChecksumAddress } = web3.utils;
+
 const getNonceInBlock = async ({ rootState }) => {
   const address = rootState.accounts.address.getChecksumAddressString();
   const nonce = await web3.eth.getTransactionCount(address);
@@ -170,9 +172,7 @@ const handleBlockTransactions = (
     trx =>
       trx.to &&
       userAddresses.some(
-        address =>
-          web3.utils.toChecksumAddress(address) ===
-          web3.utils.toChecksumAddress(trx.to),
+        address => toChecksumAddress(address) === toChecksumAddress(trx.to),
       ),
   );
 

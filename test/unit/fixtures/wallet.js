@@ -1,5 +1,7 @@
 import web3 from 'web3';
 
+const { toChecksumAddress } = web3.utils;
+
 const privKey = Uint8Array.from([
   252,
   66,
@@ -140,7 +142,7 @@ class EthereumWalletMock {
   }
 
   getChecksumAddressString() {
-    return web3.utils.toChecksumAddress(
+    return toChecksumAddress(
       `0x${Buffer.from(this.getAddress()).toString('hex')}`,
     );
   }

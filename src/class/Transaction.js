@@ -4,6 +4,8 @@ import { isNumeric } from '@/utils/numbers';
 import web3 from '@/utils/web3';
 import { BigNumber } from 'bignumber.js';
 
+const { toWei, numberToHex, isAddress, toChecksumAddress } = web3.utils;
+
 export default class Transaction {
   constructor({
     data,
@@ -69,12 +71,13 @@ export default class Transaction {
   }
 
   static getValidData(transaction) {
-    const { data, tokenInfo, validTo } = transaction;
+    const { data, tokenInfo } = transaction;
 
     if (!transaction.tokenInfo) {
       return data;
     }
 
+    const validTo = Transaction.getValidTo(transaction);
     const erc20 = new ERC20Token(tokenInfo.address);
     const contract = erc20.getContract();
     const transactionValueInWei = Transaction.getTransactonValueInWei(
@@ -89,7 +92,7 @@ export default class Transaction {
   static getPriceWei(transaction) {
     if (!isNumeric(transaction.gasPrice)) return '0';
 
-    return web3.utils.toWei(transaction.gasPrice, 'Gwei');
+    return toWei(transaction.gasPrice.toString(), 'Gwei');
   }
 
   static getTransactonValueInWei(transaction) {
@@ -170,7 +173,7 @@ export default class Transaction {
   }
 
   set to(to) {
-    this._to = web3.utils.isAddress(to) ? web3.utils.toChecksumAddress(to) : to;
+    this._to = isAddress(to) ? toChecksumAddress(to) : to;
   }
 
   get to() {
@@ -178,9 +181,7 @@ export default class Transaction {
   }
 
   set from(from) {
-    this._from = web3.utils.isAddress(from)
-      ? web3.utils.toChecksumAddress(from)
-      : from;
+    this._from = isAddress(from) ? toChecksumAddress(from) : from;
   }
 
   get from() {
@@ -190,7 +191,7 @@ export default class Transaction {
   get gasPriceWei() {
     if (!isNumeric(this.gasPrice)) return '0';
 
-    return web3.utils.toWei(this.gasPrice, 'Gwei');
+    return toWei(this.gasPrice, 'Gwei');
   }
 
   set gasLimit(limit) {
@@ -259,10 +260,10 @@ export default class Transaction {
     let tnxData = {
       from: this.from,
       to: this.validTo,
-      gasPrice: web3.utils.numberToHex(this.gasPriceWei),
-      value: web3.utils.numberToHex(this.valueWei),
-      gasLimit: web3.utils.numberToHex(this.gasLimit || 0),
-      nonce: web3.utils.numberToHex(this.nonce),
+      gasPrice: numberToHex(this.gasPriceWei),
+      value: numberToHex(this.valueWei),
+      gasLimit: numberToHex(this.gasLimit || 0),
+      nonce: numberToHex(this.nonce),
       data: this.data,
     };
 
