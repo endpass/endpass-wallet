@@ -187,7 +187,7 @@ describe('transactions actions', () => {
     it('should show notification of incoming transactions', () => {
       actions.handleBlockTransactions(
         { state: stateInstance, commit, dispatch, rootState, rootGetters },
-        { transactions: ethplorerTransactions },
+        { transactions: blockTransactions },
       );
 
       expect(dispatch).toHaveBeenCalledTimes(1);
@@ -210,7 +210,7 @@ describe('transactions actions', () => {
             'web3/isMainNetwork': true,
           },
         },
-        { transactions: ethplorerTransactions },
+        { transactions: blockTransactions },
       );
 
       expect(dispatch).toHaveBeenCalledTimes(2);
@@ -224,8 +224,6 @@ describe('transactions actions', () => {
     });
 
     it('should add transaction to history with network id', () => {
-      const networkId = 2;
-
       const constantDate = new Date('2018-01-01T12:00:00');
       const dateMock = jest
         .spyOn(global, 'Date')
@@ -233,12 +231,11 @@ describe('transactions actions', () => {
 
       actions.handleBlockTransactions(
         { state: stateInstance, commit, dispatch, rootState, rootGetters },
-        { transactions: blockTransactions, networkId },
+        { transactions: blockTransactions },
       );
 
       const expectedTrx = TransactionFactory.fromBlock({
         ...blockTransactions[0],
-        networkId,
       });
 
       expect(commit).toHaveBeenCalledTimes(1);
@@ -250,7 +247,7 @@ describe('transactions actions', () => {
     it('should add Transaction instance to history', () => {
       actions.handleBlockTransactions(
         { state: stateInstance, commit, dispatch, rootState, rootGetters },
-        { transactions: ethplorerTransactions },
+        { transactions: blockTransactions },
       );
 
       expect(commit).toHaveBeenCalledTimes(1);
@@ -258,13 +255,15 @@ describe('transactions actions', () => {
     });
 
     it('should not add existing transactions in history', () => {
+      const existingTrx = TransactionFactory.fromBlock(blockTransactions[0]);
+
       Object.assign(stateInstance, {
-        pendingTransactions: [ethplorerTransactions[1]],
+        pendingTransactions: [existingTrx],
       });
 
       actions.handleBlockTransactions(
         { state: stateInstance, commit, dispatch, rootState, rootGetters },
-        { transactions: [ethplorerTransactions[1]] },
+        { transactions: [blockTransactions[0]] },
       );
 
       expect(commit).toHaveBeenCalledTimes(0);
