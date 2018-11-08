@@ -15,7 +15,7 @@ import {
   ADD_ADDRESS,
 } from './mutations-types';
 
-const { toChecksumAddress } = web3.utils;
+const { toChecksumAddress, fromWei } = web3.utils;
 
 const selectWallet = async (
   { commit, state, dispatch, rootState },
@@ -246,7 +246,7 @@ const updateBalance = async ({ commit, dispatch, state }) => {
 
 const getBalanceByAddress = async (ctx, { address }) => {
   const balanceWei = await web3.eth.getBalance(address);
-  return web3.utils.fromWei(balanceWei);
+  return fromWei(balanceWei);
 };
 
 const validatePassword = async ({ state, getters }, password) => {

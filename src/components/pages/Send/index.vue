@@ -59,7 +59,7 @@ import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import privatePage from '@/mixins/privatePage';
 import { getShortStringWithEllipsis } from '@/utils/strings';
-import TransactionForm from './TransactionForm.vue';
+import TransactionForm from './TransactionForm';
 
 const defaultTx = {
   tokenInfo: null,

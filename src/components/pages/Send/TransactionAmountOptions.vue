@@ -73,7 +73,10 @@
         </v-input>
       </div>
     </div>
-    <div class="field is-horizontal">
+    <div
+      v-show="showFee"
+      class="field is-horizontal"
+    >
       <div class="field-label">
         <label class="label">Gas Fee</label>
       </div>
@@ -95,6 +98,8 @@ import { BigNumber } from 'bignumber.js';
 import web3 from '@/utils/web3';
 import VInput from '@/components/ui/form/VInput';
 import VSelect from '@/components/ui/form/VSelect';
+
+const { fromWei } = web3.utils;
 
 export default {
   name: 'TransactionAmountOptions',
@@ -151,6 +156,11 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    showFee: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data: () => ({
@@ -170,7 +180,7 @@ export default {
     },
 
     gasFee() {
-      return web3.utils.fromWei(BigNumber(this.estimatedGasCost).toFixed());
+      return fromWei(BigNumber(this.estimatedGasCost).toFixed());
     },
 
     maxAmount() {
@@ -178,7 +188,6 @@ export default {
       const tokenBalance = get(currentToken, 'balance') || 0;
 
       if (!currentToken) {
-        const { fromWei } = web3.utils;
         const balanceBN = BigNumber(balance || '0');
         const estimatedGasCostBN = BigNumber(estimatedGasCost);
         const amountBN = balanceBN.minus(estimatedGasCostBN);
@@ -204,7 +213,8 @@ export default {
         // TODO: change ETH price getting logic
         const tokenPrice = get(currentToken, 'price.ETH') || 0;
 
-        return BigNumber(tokenPrice * maxAmount)
+        return BigNumber(tokenPrice)
+          .times(maxAmount)
           .times(ethPrice)
           .toFixed(2);
       }
@@ -295,7 +305,8 @@ export default {
       if (currentToken) {
         const tokenPrice = get(currentToken, 'price.ETH') || 0;
 
-        this.price = BigNumber(value * tokenPrice)
+        this.price = BigNumber(value)
+          .times(tokenPrice)
           .times(ethPrice)
           .toFixed(2);
       } else {

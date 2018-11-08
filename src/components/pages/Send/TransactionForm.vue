@@ -42,6 +42,7 @@
       :disabled="!address"
       :active-net="activeNet"
       :is-loading="isLoading"
+      :show-fee="!!transaction.to"
       @change-token="changeTokenInfo"
     />
 
@@ -77,7 +78,6 @@
 <script>
 import { debounce } from 'lodash';
 import { mapGetters, mapState, mapActions } from 'vuex';
-import web3 from '@/utils/web3';
 import { ENSResolver, Transaction } from '@/class';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';
@@ -109,12 +109,10 @@ export default {
   },
 
   data: () => ({
-    ensResolver: new ENSResolver(web3),
     address: '',
     prices: null,
     estimatedGasCost: 0,
     ensError: null,
-    nonceInterval: null,
     isEnsAddressLoading: false,
     isLoadingGasPrice: true,
     isEstimationInProcess: false,
@@ -161,18 +159,42 @@ export default {
     async address() {
       if (this.isEnsTransaction) {
         this.transaction.to = await this.resolveEnsAddress();
-        this.debouncedGasCostEstimation();
       } else if (!this.errors.has('address') && this.address) {
         this.ensError = null;
         this.transaction.to = this.address;
-        this.debouncedGasCostEstimation();
       }
+
+      this.debouncedGasCostEstimation(1);
     },
 
     async activeNet(newValue, prevValue) {
-      if (this.isEnsTransaction && newValue.id !== prevValue.id) {
+      const isNetworkChanged = newValue.id !== prevValue.id;
+
+      if (!isNetworkChanged) return;
+
+      if (this.isEnsTransaction) {
         this.transaction.to = await this.resolveEnsAddress();
       }
+
+      this.debouncedGasCostEstimation(2);
+    },
+
+    'transaction.tokenInfo': {
+      handler() {
+        this.debouncedGasCostEstimation(3);
+      },
+    },
+
+    'transaction.gasPrice': {
+      handler() {
+        this.debouncedGasCostEstimation(4);
+      },
+    },
+
+    'transaction.gasLimit': {
+      handler() {
+        this.debouncedGasCostEstimation(5);
+      },
     },
 
     'transaction.to': {
@@ -180,24 +202,6 @@ export default {
         if (!this.transaction.to) {
           this.address = '';
         }
-      },
-    },
-
-    'transaction.tokenInfo': {
-      handler() {
-        this.debouncedGasCostEstimation();
-      },
-    },
-
-    'transaction.gasPrice': {
-      handler() {
-        this.debouncedGasCostEstimation();
-      },
-    },
-
-    'transaction.gasLimit': {
-      handler() {
-        this.debouncedGasCostEstimation();
       },
     },
   },
@@ -223,7 +227,7 @@ export default {
       this.isEnsAddressLoading = true;
 
       try {
-        const ensAddress = await this.ensResolver.getAddress(this.address);
+        const ensAddress = await ENSResolver.getAddress(this.address);
 
         this.ensError = null;
 
@@ -242,6 +246,8 @@ export default {
     }, 500),
 
     async estimateGasCost() {
+      if (!this.transaction.to) return;
+
       this.isEstimationInProcess = true;
 
       try {
@@ -249,6 +255,9 @@ export default {
           this.transaction,
         );
       } catch (err) {
+        // TODO: проверить на реальном эфире, отправляется ли. Если да, при ошибке запрещать отправку
+        console.log(err);
+
         const isContract = await Transaction.isTransactionToContract(
           this.transaction,
         );

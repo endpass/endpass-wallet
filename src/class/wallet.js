@@ -2,6 +2,8 @@ import Tx from 'ethereumjs-tx';
 import web3 from '@/utils/web3';
 import keyUtil from '@/utils/keystore';
 
+const { bytesToHex } = web3.utils;
+
 // A Wallet represents a single Ethereum account that can send transactions
 // All methods are async and return promises
 export default class Wallet {
@@ -16,7 +18,7 @@ export default class Wallet {
 
   async getPrivateKeyString(password) {
     const privateKey = await this.getPrivateKey(password);
-    return web3.utils.bytesToHex(privateKey);
+    return bytesToHex(privateKey);
   }
 
   // () => Promise<String>

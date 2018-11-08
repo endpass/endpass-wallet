@@ -31,6 +31,9 @@ describe('Send – TransactionAmountOptions', () => {
     wrapper = shallow(TransactionAmountOptions, {
       stubs: generateStubs(TransactionAmountOptions),
       propsData: mountProps,
+      provide: () => ({
+        $validator: new VeeValidate.Validator(),
+      }),
       localVue,
     });
   });
@@ -65,6 +68,9 @@ describe('Send – TransactionAmountOptions', () => {
         it('should not do anything if disabled prop is truthy', () => {
           wrapper = shallow(TransactionAmountOptions, {
             stubs: generateStubs(TransactionAmountOptions),
+            provide: () => ({
+              $validator: new VeeValidate.Validator(),
+            }),
             propsData: {
               ...mountProps,
               disabled: true,
@@ -86,6 +92,9 @@ describe('Send – TransactionAmountOptions', () => {
           wrapper = shallow(TransactionAmountOptions, {
             stubs: generateStubs(TransactionAmountOptions),
             propsData: mountProps,
+            provide: () => ({
+              $validator: new VeeValidate.Validator(),
+            }),
             data: {
               price: 200,
             },
@@ -110,6 +119,9 @@ describe('Send – TransactionAmountOptions', () => {
               ...mountProps,
               currentToken: null,
             },
+            provide: () => ({
+              $validator: new VeeValidate.Validator(),
+            }),
             data: {
               price: 200,
             },
@@ -172,6 +184,9 @@ describe('Send – TransactionAmountOptions', () => {
         beforeEach(() => {
           wrapper = shallow(TransactionAmountOptions, {
             stubs: generateStubs(TransactionAmountOptions),
+            provide: () => ({
+              $validator: new VeeValidate.Validator(),
+            }),
             propsData: {
               ...mountProps,
               balance: 10,

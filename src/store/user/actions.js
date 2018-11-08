@@ -1,6 +1,6 @@
 import { mapKeys, mapValues } from 'lodash';
 import { userService } from '@/services';
-import { NotificationError } from '@/class';
+import { NotificationError, Token } from '@/class';
 import { IDENTITY_MODE } from '@/constants';
 import {
   SET_AUTHORIZATION_STATUS,
@@ -10,7 +10,6 @@ import {
   SET_OTP_SETTINGS,
 } from './mutations-types';
 import { SET_USER_TOKENS } from '@/store/tokens/mutations-types';
-import { makeConsistentToken } from '@/utils/tokens';
 
 const setAuthorizationStatus = (
   { commit, getters },
@@ -126,7 +125,7 @@ const setUserSettings = async ({ commit, dispatch }) => {
 
     if (tokens) {
       const normalizedTokens = mapValues(tokens, netTokens =>
-        netTokens.map(token => makeConsistentToken(token)),
+        netTokens.map(token => Token.getConsistent(token)),
       );
       const mappedTokens = mapValues(normalizedTokens, netTokens =>
         mapKeys(netTokens, 'address'),

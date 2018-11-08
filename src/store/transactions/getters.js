@@ -4,6 +4,8 @@ import web3 from '@/utils/web3';
 import { MAIN_NET_ID } from '@/constants';
 import { Transaction } from '@/class';
 
+const { toChecksumAddress } = web3.utils;
+
 const accountTransactions = (state, getters, rootState) => {
   if (!rootState.accounts.address) {
     return [];
@@ -22,9 +24,8 @@ const accountTransactions = (state, getters, rootState) => {
       const { to, from, state: trxStatus } = trx;
 
       return (
-        web3.utils.toChecksumAddress(from) === address ||
-        (trxStatus === 'success' &&
-          web3.utils.toChecksumAddress(to) === address)
+        toChecksumAddress(from) === address ||
+        (trxStatus === 'success' && toChecksumAddress(to) === address)
       );
     })
     .sort((trx1, trx2) => {

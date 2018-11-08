@@ -81,7 +81,7 @@ describe('Tokens Page', () => {
     });
 
     describe('saved tokens list', () => {
-      const [token1, token2] = tokens;
+      const [token1] = tokens;
 
       beforeEach(() => {
         cy.makeStoreAlias();
@@ -106,12 +106,6 @@ describe('Tokens Page', () => {
           'not.contain',
           token1.name,
         );
-
-        cy.contains(token2.name)
-          .parents('[data-test=token-item]')
-          .within(() => {
-            cy.get('[data-test=delete-button]').click();
-          });
 
         cy.get('[data-test=tokens-list]').should('not.exist');
         cy.get('[data-test=no-tokens-text]').contains(

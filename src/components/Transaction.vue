@@ -146,6 +146,8 @@ import { fromNow, formateDate } from '@/utils/date';
 import { getShortStringWithEllipsis } from '@/utils/strings';
 import web3 from '@/utils/web3';
 
+const { hexToString } = web3.utils;
+
 export default {
   props: {
     transaction: {
@@ -242,7 +244,7 @@ export default {
     parsedData() {
       const dataString = this.transaction.data || '0x';
 
-      return web3.utils.hexToString(dataString);
+      return hexToString(dataString);
     },
   },
 

@@ -1,5 +1,6 @@
 import namehash from 'eth-ens-namehash';
 import ABI from '@/abi/ens.json';
+import { web3 } from '@/utils';
 
 const registryAddresses = {
   // Mainnet
@@ -13,12 +14,8 @@ const registryAddresses = {
 };
 
 export default class ENSResolver {
-  constructor(web3) {
-    this.web3 = web3;
-  }
-
-  async getAddress(name) {
-    const { Contract, net } = this.web3.eth;
+  static async getAddress(name) {
+    const { Contract, net } = web3.eth;
     const registryContract = new Contract(ABI);
     const netId = await net.getId();
     const node = namehash.hash(name);

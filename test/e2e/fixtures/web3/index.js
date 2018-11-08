@@ -1,8 +1,9 @@
-import Web3 from 'web3';
-
+import web3 from 'web3';
 import addressInfo_b14ab from '../addressinfo/b14ab';
 import addressInfo_31ea8 from '../addressinfo/31ea8';
 import { address } from '../accounts';
+
+const { toWei } = web3.utils;
 
 const BLOCK_NUMBER = '0x4051fb';
 const BLOCK_HASH =
@@ -43,7 +44,7 @@ export const getBalance_b14ab = {
     method: 'eth_getBalance',
     params: [addressInfo_b14ab.address, 'latest'],
   },
-  result: Web3.utils.toWei(String(addressInfo_b14ab.ETH.balance), 'ether'),
+  result: toWei(String(addressInfo_b14ab.ETH.balance), 'ether'),
 };
 
 export const getBalance_31ea8 = {
@@ -51,7 +52,7 @@ export const getBalance_31ea8 = {
     method: 'eth_getBalance',
     params: [address, 'latest'],
   },
-  result: Web3.utils.toWei('1', 'ether'),
+  result: toWei('1', 'ether'),
 };
 
 export const getBalance_6bbf1 = {
@@ -59,7 +60,7 @@ export const getBalance_6bbf1 = {
     method: 'eth_getBalance',
     params: ['0x6bbf1dea0d21eafd232e281a196e6f11906054df', 'latest'],
   },
-  result: Web3.utils.toWei('2', 'ether'),
+  result: toWei('2', 'ether'),
 };
 
 export const getTransactionCount_b14ab = {

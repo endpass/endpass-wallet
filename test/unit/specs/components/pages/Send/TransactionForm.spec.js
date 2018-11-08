@@ -5,15 +5,11 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import { generateStubs } from '@/utils/testUtils';
 import TransactionForm from '@/components/pages/Send/TransactionForm.vue';
 import Transaction from '@/class/Transaction';
+import ENSResolver from '@/class/ens';
 import { transaction } from 'fixtures/transactions';
 import { address } from 'fixtures/accounts';
 import { token, tokens } from 'fixtures/tokens';
 import { gasPrice } from 'fixtures/gasPrice';
-
-// ! can drop other tests with web3
-jest.mock('@/utils/web3', () => ({
-  isAddressOfContract: jest.fn(() => true),
-}));
 
 const localVue = createLocalVue();
 
@@ -87,17 +83,15 @@ describe('Send – TransactionForm', () => {
     wrapper = shallow(TransactionForm, {
       store,
       localVue,
+      provide: () => ({
+        $validator: new VeeValidate.Validator(),
+      }),
       stubs: generateStubs(TransactionForm),
       propsData: {
         transaction: transactionProp,
       },
-      provide: () => ({
-        $validator: new VeeValidate.Validator(),
-      }),
     });
   });
-
-  afterAll(() => {});
 
   describe('render', () => {
     beforeEach(() => {
@@ -114,6 +108,9 @@ describe('Send – TransactionForm', () => {
       wrapper = shallow(TransactionForm, {
         store,
         localVue,
+        provide: () => ({
+          $validator: new VeeValidate.Validator(),
+        }),
         stubs: generateStubs(TransactionForm),
         propsData: {
           transaction: {
@@ -185,6 +182,9 @@ describe('Send – TransactionForm', () => {
           wrapper = shallow(TransactionForm, {
             store,
             localVue,
+            provide: () => ({
+              $validator: new VeeValidate.Validator(),
+            }),
             stubs: generateStubs(TransactionForm),
             propsData: {
               transaction: transactionProp,
@@ -208,16 +208,6 @@ describe('Send – TransactionForm', () => {
       });
 
       describe('resolveEnsAddress', () => {
-        const getAddressMock = jest.fn().mockResolvedValue(address);
-
-        beforeEach(() => {
-          wrapper.setData({
-            ensResolver: {
-              getAddress: getAddressMock,
-            },
-          });
-        });
-
         it('shound resolve address and return it without error', async () => {
           expect.assertions(2);
 
@@ -233,7 +223,7 @@ describe('Send – TransactionForm', () => {
           wrapper.setData({
             address: 'hello.eth',
           });
-          getAddressMock.mockRejectedValueOnce();
+          ENSResolver.getAddress.mockRejectedValueOnce(new Error());
 
           const res = await wrapper.vm.resolveEnsAddress();
 
