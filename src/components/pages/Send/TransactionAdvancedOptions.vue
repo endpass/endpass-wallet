@@ -193,6 +193,14 @@ export default {
       },
       deep: true,
     },
+
+    nextNonceInBlock() {
+      const { form, nextNonceInBlock } = this;
+
+      if (form.nonce < nextNonceInBlock) {
+        this.form.nonce = nextNonceInBlock;
+      }
+    },
   },
 
   methods: {

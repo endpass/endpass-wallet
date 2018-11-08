@@ -89,6 +89,19 @@ describe('Send – TransactionAdvancedOptions', () => {
 
         expect(wrapper.vm.form.nonce).toBe(999);
       });
+
+      it('should update form nonce if next nonce in block is greater', () => {
+        wrapper.setData({
+          form: {
+            nonce: 10,
+          },
+        });
+        wrapper.setData({
+          nextNonceInBlock: 15,
+        });
+
+        expect(wrapper.vm.form.nonce).toBe(15);
+      });
     });
   });
 });
