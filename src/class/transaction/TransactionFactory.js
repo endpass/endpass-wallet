@@ -1,5 +1,7 @@
-import { BigNumber } from 'bignumber.js';
 import { Transaction } from '@/class';
+import web3 from '@/utils/web3';
+
+const { hexToNumber, fromWei } = web3.utils;
 
 export default class TransactionFactory {
   static fromSendForm(trx) {
@@ -7,17 +9,16 @@ export default class TransactionFactory {
   }
 
   static fromBlock(trx) {
-    const { value: valueWei, gasPrice, nonce } = trx;
-    const adaptTrx = new Transaction(trx);
-    const gweiMultiplier = BigNumber('10').pow(9);
+    const { value: valueWei, gasPrice, nonce, chainId } = trx;
 
-    adaptTrx.valueWei = valueWei;
-    adaptTrx.date = new Date();
-    adaptTrx.nonce = String(nonce);
-    adaptTrx.gasPrice = BigNumber(gasPrice)
-      .div(gweiMultiplier)
-      .toFixed();
+    const adaptData = {
+      networkId: hexToNumber(chainId),
+      valueWei,
+      date: new Date(),
+      nonce: String(nonce),
+      gasPrice: fromWei(gasPrice, 'Gwei'),
+    };
 
-    return adaptTrx;
+    return Object.assign(new Transaction(trx), adaptData);
   }
 }

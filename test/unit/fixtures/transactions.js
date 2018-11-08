@@ -148,6 +148,7 @@ export const blockTransactions = [
     to: '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c',
     transactionIndex: 1,
     value: '1000000000000000',
+    chainId: '0x3',
   },
   {
     blockHash:
@@ -161,6 +162,7 @@ export const blockTransactions = [
     nonce: 593,
     to: '0xE824633E6d247e64ba2cD841D8270505770d53fE',
     value: '1000000000000000',
+    chainId: '0x3',
   },
 ];
 

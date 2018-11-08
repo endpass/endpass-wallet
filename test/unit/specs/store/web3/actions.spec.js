@@ -4,7 +4,10 @@ import actions from '@/store/web3/actions';
 import * as mutationsTypes from '@/store/web3/mutations-types';
 import { userService } from '@/services';
 import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
-import { ethplorerTransactions } from 'fixtures/transactions';
+import {
+  ethplorerTransactions,
+  blockTransactions,
+} from 'fixtures/transactions';
 
 jest.mock('@/services', () => ({
   userService: {
@@ -604,16 +607,13 @@ describe('web3 actions', () => {
     it('should handle transactions', async () => {
       expect.assertions(3);
 
-      const networkId = 2;
-      const transactions = [...ethplorerTransactions];
+      const transactions = [...blockTransactions];
+
       Web3.eth.getBlock.mockResolvedValueOnce(null);
       Web3.eth.getBlock.mockRejectedValueOnce();
       Web3.eth.getBlock.mockResolvedValueOnce({ transactions });
 
-      await handleLastBlock(
-        { state, commit, dispatch },
-        { blockNumber, networkId },
-      );
+      await handleLastBlock({ state, commit, dispatch }, { blockNumber });
 
       await global.flushPromises();
 
@@ -621,7 +621,7 @@ describe('web3 actions', () => {
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toBeCalledWith(
         'transactions/handleBlockTransactions',
-        { transactions, networkId },
+        { transactions },
         { root: true },
       );
     });
