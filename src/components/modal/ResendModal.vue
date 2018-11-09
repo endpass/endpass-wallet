@@ -58,16 +58,16 @@
 </template>
 
 <script>
-import web3 from 'web3';
 import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
-import { Transaction } from '@/class';
 
 export default {
-  name: 'resend-modal',
+  name: 'ResendModal',
+
   props: ['transaction'],
+
   data() {
     return {
       newTransaction: null,

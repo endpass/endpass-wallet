@@ -91,7 +91,7 @@ const getOtpSettings = async ({ commit, dispatch }) => {
   }
 };
 
-const setOtpSettings = async ({ commit, dispatch }, { secret, code }) => {
+const setOtpSettings = async ({ commit }, { secret, code }) => {
   await userService.setOtpSettings(secret, code);
   commit(SET_OTP_SETTINGS, { status: 'enabled' });
 };

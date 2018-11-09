@@ -89,10 +89,12 @@ export default {
 
   watch: {
     async activeAddress() {
+      this.transactionHash = null;
       this.transaction.nonce = await this.getNextNonce();
     },
 
     async activeNet() {
+      this.transactionHash = null;
       this.transaction.nonce = await this.getNextNonce();
     },
   },
@@ -123,6 +125,10 @@ export default {
         networkId: this.activeNet.id,
       });
 
+      this.resetForm();
+      this.isTransactionConfirmed = false;
+      this.isWaitingConfirm = false;
+
       try {
         const hash = await this.sendTransaction({
           transaction: TransactionFactory.fromSendForm(this.transaction),
@@ -138,16 +144,9 @@ export default {
           type: 'is-info',
         });
       } catch (err) {
-        this.$notify({
-          title: 'Error',
-          text: err.message,
-          type: 'is-warning',
-        });
+        this.transactionHash = null;
       } finally {
         this.isSending = false;
-        this.isTransactionConfirmed = false;
-        this.isWaitingConfirm = false;
-        this.resetForm();
       }
     },
 
