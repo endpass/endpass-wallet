@@ -11,7 +11,6 @@
               :transaction="transaction"
               @submit="handleTransactionSend"
             />
-
             <div
               v-if="transactionHash"
               class="transaction-status message is-success"
@@ -88,14 +87,16 @@ export default {
   },
 
   watch: {
-    async activeAddress() {
-      this.transactionHash = null;
-      this.transaction.nonce = await this.getNextNonce();
+    async activeAddress(newValue, prevValue) {
+      if (newValue === prevValue) return;
+
+      await this.updateNonceWithClearHash();
     },
 
-    async activeNet() {
-      this.transactionHash = null;
-      this.transaction.nonce = await this.getNextNonce();
+    async activeNet(newValue, prevValue) {
+      if (newValue.id === prevValue.id) return;
+
+      await this.updateNonceWithClearHash();
     },
   },
 
@@ -161,6 +162,14 @@ export default {
         ...defaultTx,
         nonce,
       };
+    },
+
+    async updateNonceWithClearHash() {
+      if (this.transactionHash) {
+        this.transactionHash = null;
+      }
+
+      this.transaction.nonce = await this.getNextNonce();
     },
   },
 

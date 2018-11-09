@@ -5,7 +5,6 @@ import {
   UPDATE_TRANSACTION,
   SET_TRANSACTION_HISTORY,
 } from '@/store/transactions/mutations-types';
-
 import ethplorerService from '@/services/ethplorer';
 import {
   EventEmitter,
@@ -13,9 +12,10 @@ import {
   TransactionFactory,
   NotificationError,
 } from '@/class';
-
 import { address } from 'fixtures/accounts';
 import {
+  transactionHash,
+  shortTransactionHash,
   blockTransactions,
   ethplorerHistory,
   ethplorerTransactions,
@@ -119,22 +119,137 @@ describe('transactions actions', () => {
   });
 
   describe('handleSendingError', () => {
+    const defaultErrorParams = {
+      title: 'Error sending transaction',
+      text: `Transaction was not sent`,
+      type: 'is-danger',
+    };
+
     it('should handle errors with undefined param', () => {
       actions.handleSendingError({ dispatch });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError(defaultErrorParams),
+        { root: true },
+      );
     });
 
     it('should handle errors with undefined err param', () => {
       actions.handleSendingError({ dispatch }, { err: undefined });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError(defaultErrorParams),
+        { root: true },
+      );
     });
 
     it('should handle errors with undefined transaction param', () => {
       actions.handleSendingError({ dispatch }, { transaction: undefined });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError(defaultErrorParams),
+        { root: true },
+      );
+    });
+
+    it('should notify with semantic message if transaction out of gas', () => {
+      actions.handleSendingError(
+        { dispatch },
+        {
+          transaction: {
+            hash: transactionHash,
+          },
+          err: {
+            message: 'out of gas',
+          },
+        },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError({
+          ...defaultErrorParams,
+          text: `Transaction ${shortTransactionHash} was not sent, because out of gas`,
+        }),
+        { root: true },
+      );
+    });
+
+    it('should notify with semantic message if receip given', () => {
+      actions.handleSendingError(
+        { dispatch },
+        {
+          transaction: {
+            hash: transactionHash,
+          },
+          receipt: 'foo',
+        },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError({
+          ...defaultErrorParams,
+          text: `Transaction ${shortTransactionHash} was not sent, because out of gas`,
+        }),
+        { root: true },
+      );
+    });
+
+    it('should notify with semantic message if gas is too low', () => {
+      actions.handleSendingError(
+        { dispatch },
+        {
+          transaction: {
+            hash: transactionHash,
+          },
+          err: {
+            message: 'gas is too low',
+          },
+        },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError({
+          ...defaultErrorParams,
+          text: `Transaction ${shortTransactionHash} was not sent, because gas is too low`,
+        }),
+        { root: true },
+      );
+    });
+
+    it('should notify with semantic message if gas price is too low', () => {
+      actions.handleSendingError(
+        { dispatch },
+        {
+          transaction: {
+            hash: transactionHash,
+          },
+          err: {
+            message: 'gas price is too low',
+          },
+        },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError({
+          ...defaultErrorParams,
+          text: `Transaction ${shortTransactionHash} was not sent, because gas price is too low`,
+        }),
+        { root: true },
+      );
     });
   });
 
