@@ -10,11 +10,10 @@
             placeholder="Enter dapp url..."
             class-name="dapp-form-input"
             data-vv-as="Dapp url"
-            validator="required"
+            validator="required|url:require_protocol:true:require_tld:false"
             @input="onChangeUrlInput"
-            @blur="onBlurUrlInput"
+            @keydown.enter="onUrlInputEnterPress"
           />
-          <!-- |url:require_protocol:true:require_tld:false -->
         </div>
         <iframe
           v-if="loading || loaded"
@@ -54,8 +53,10 @@ import VInput from '@/components/ui/form/VInput';
 import PasswordModal from '@/components/modal/PasswordModal';
 import TransactionTable from '@/components/TransactionTable';
 import privatePage from '@/mixins/privatePage';
+
 export default {
   name: 'Dapp',
+
   data: () => ({
     // url: 'https://www.cryptokitties.co',
     url: 'https://explorer.bounties.network/explorer',
@@ -63,18 +64,22 @@ export default {
     loaded: false,
     error: null,
   }),
+
   computed: {
     ...mapState({
       activeCurrency: state => state.web3.activeCurrency,
     }),
     ...mapGetters('dapp', ['currentRequest']),
+
     isCurrentRequestTransaction() {
       return this.currentRequest.method === 'eth_sendTransaction';
     },
+
     dappUrl() {
       return `/${this.url}`;
     },
   },
+
   methods: {
     ...mapActions('dapp', [
       'inject',
@@ -82,12 +87,14 @@ export default {
       'processCurrentRequest',
       'cancelCurrentRequest',
     ]),
+
     async loadDapp() {
       if (isEmpty(this.url) || !isEmpty(this.$validator.errors.items)) return;
       this.loading = true;
       await this.$nextTick();
       await this.inject(this.$refs.dapp.contentWindow);
     },
+
     onDappLoad() {
       const { dapp } = this.$refs;
       try {
@@ -103,31 +110,39 @@ export default {
         this.loading = false;
       }
     },
-    onBlurUrlInput() {
+
+    onUrlInputEnterPress() {
       if (this.error) {
         this.error = null;
       }
+
       if (this.dappUrl.replace(/^\//, '') !== this.url || !this.loaded) {
         this.loadDapp();
       }
     },
+
     onChangeUrlInput() {
       if (this.loaded) {
         this.loaded = false;
         this.reset();
       }
     },
+
     async confirmSign(password) {
       await this.processCurrentRequest(password);
     },
+
     async cancelSign() {
       await this.cancelCurrentRequest();
     },
   },
+
   beforeDestroy() {
     this.reset();
   },
+
   mixins: [privatePage],
+
   components: {
     VInput,
     PasswordModal,
