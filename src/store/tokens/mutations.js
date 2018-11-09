@@ -9,7 +9,8 @@ import {
 } from './mutations-types';
 
 const addNetworkTokens = (state, tokens) => {
-  Object.assign(state.networkTokens, tokens);
+  // Freeze tokens for perfomance reasons
+  Object.assign(state.networkTokens, Object.freeze(tokens));
 };
 
 const setLoading = (state, isLoading) => {
