@@ -1,9 +1,8 @@
-import web3Dapp from 'web3-dapp';
-import web3, { createWeb3Instance } from '@/utils/web3';
-import { hexToMsg } from '@/utils/hex';
+import Web3Dapp from 'web3-dapp';
+import web3 from '@/utils/web3';
 import { dappBridge } from '@/class';
 import InpageProvider from '@/class/provider/InpageProvider';
-import { INPAGE_EVENT, DAPP_WHITELISTED_METHODS } from '@/constants';
+import { DAPP_WHITELISTED_METHODS } from '@/constants';
 import {
   ADD_REQUEST,
   REMOVE_REQUEST,
@@ -22,7 +21,7 @@ const inject = ({ state, commit, dispatch, rootGetters }, dappWindow) => {
   });
 
   Object.assign(dappWindow, {
-    web3: new web3Dapp(inpageProvider),
+    web3: new Web3Dapp(inpageProvider),
   });
 
   dappBridge.setRequestHandler(payload => dispatch('handleRequest', payload));
@@ -73,7 +72,6 @@ const processCurrentRequest = async (
   const { wallet } = rootState.accounts;
 
   if (request.method === 'eth_sendTransaction') {
-    const { wallet } = rootState.accounts;
     const nonce = await dispatch('transactions/getNextNonce', null, {
       root: true,
     });
