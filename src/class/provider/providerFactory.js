@@ -32,5 +32,7 @@ export default url => {
 
   const Provider = providerMixin(BaseProvider, AdditionalProvider);
 
-  return new Provider(url);
+  // TODO fix provider subscriptions
+  return window.Cypress ? new Provider(url) : new BaseProvider(url);
+  // return new Provider(url);
 };

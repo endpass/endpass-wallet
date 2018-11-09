@@ -1,8 +1,4 @@
-import {
-  ethplorerHistory,
-  ethplorerTransactions,
-  transactionToSend,
-} from '../fixtures/transactions';
+import { blockTransactions, transactionToSend } from '../fixtures/transactions';
 
 describe('Transactions History Page', () => {
   beforeEach(() => {
@@ -84,8 +80,7 @@ describe('Transactions History Page', () => {
         'dispatch',
         'transactions/handleBlockTransactions',
         {
-          transactions: [ethplorerTransactions[0]],
-          networkId: 1,
+          transactions: [blockTransactions[0]],
         },
       );
 
@@ -96,8 +91,7 @@ describe('Transactions History Page', () => {
         'dispatch',
         'transactions/handleBlockTransactions',
         {
-          transactions: ethplorerTransactions,
-          networkId: 3,
+          transactions: [blockTransactions[1]],
         },
       );
 
@@ -108,8 +102,7 @@ describe('Transactions History Page', () => {
         'dispatch',
         'transactions/handleBlockTransactions',
         {
-          transactions: ethplorerTransactions,
-          networkId: 1,
+          transactions: [blockTransactions[2]],
         },
       );
 
@@ -121,7 +114,7 @@ describe('Transactions History Page', () => {
         '[data-test=transactions-history-item] [data-test="account-address"]',
       ).then(transactionHeader => {
         const address = transactionHeader.text().toUpperCase();
-        const expected = ethplorerTransactions[1].from.toUpperCase();
+        const expected = blockTransactions[2].from.toUpperCase();
 
         cy.wrap(address).should('to.contain', expected);
       });
