@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import { BigNumber } from 'bignumber.js';
 import {
   EventEmitter,
@@ -7,7 +8,7 @@ import {
 } from '@/class';
 import ethplorerService from '@/services/ethplorer';
 import web3 from '@/utils/web3';
-import { getShortStringWithEllipsis } from '@/utils/strings';
+import { getShortStringWithEllipsis, matchString } from '@/utils/strings';
 import {
   ADD_TRANSACTION,
   UPDATE_TRANSACTION,
@@ -109,13 +110,21 @@ const handleSendingError = (
   { dispatch },
   { err = {}, receipt, transaction = {} } = {},
 ) => {
-  const { err: errorMessage = '' } = err;
+  const errorMessage = get(err, 'err') || get(err, 'message');
   const { hash } = transaction;
   const shortHash = hash ? getShortStringWithEllipsis(hash) : '';
-  const cause =
-    receipt || errorMessage.includes('out of gas')
-      ? ', because out of gas'
-      : '';
+  let cause = '';
+
+  if (receipt || matchString(errorMessage, 'out of gas')) {
+    cause = ', because out of gas';
+  } else if (matchString(errorMessage, 'gas is too low')) {
+    cause = ', because gas is too low';
+  } else if (matchString(errorMessage, 'gas price is too low')) {
+    cause = ', because gas price is too low';
+  } else {
+    console.error(errorMessage);
+  }
+
   const error = new NotificationError({
     title: 'Error sending transaction',
     text: `Transaction ${shortHash} was not sent${cause}`,
@@ -347,13 +356,16 @@ const processTransactionAction = async (
     });
 
     sendEvent.once('error', error => {
-      commit(UPDATE_TRANSACTION, {
-        payload: {
-          state: 'error',
-          error,
-        },
-        hash: transaction.hash,
-      });
+      if (transaction.hash) {
+        commit(UPDATE_TRANSACTION, {
+          payload: {
+            state: 'error',
+            error,
+          },
+          hash: transaction.hash,
+        });
+      }
+
       rej();
     });
   });

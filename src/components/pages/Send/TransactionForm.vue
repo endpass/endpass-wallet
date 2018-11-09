@@ -79,17 +79,17 @@
 import { debounce } from 'lodash';
 import { mapGetters, mapState, mapActions } from 'vuex';
 import { ENSResolver, Transaction } from '@/class';
-import VForm from '@/components/ui/form/VForm.vue';
-import VRadio from '@/components/ui/form/VRadio.vue';
+import VForm from '@/components/ui/form/VForm';
+import VRadio from '@/components/ui/form/VRadio';
 import VSelect from '@/components/ui/form/VSelect';
-import VInput from '@/components/ui/form/VInput.vue';
+import VInput from '@/components/ui/form/VInput';
 import VSpinner from '@/components/ui/VSpinner';
-import VInputAddress from '@/components/ui/form/VInputAddress.vue';
-import VButton from '@/components/ui/form/VButton.vue';
+import VInputAddress from '@/components/ui/form/VInputAddress';
+import VButton from '@/components/ui/form/VButton';
 import AccountChooser from '@/components/AccountChooser';
-import TransactionAdvancedOptions from './TransactionAdvancedOptions.vue';
-import TransactionAmountOptions from './TransactionAmountOptions.vue';
-import TransactionPriorityOptions from './TransactionPriorityOptions.vue';
+import TransactionAdvancedOptions from './TransactionAdvancedOptions';
+import TransactionAmountOptions from './TransactionAmountOptions';
+import TransactionPriorityOptions from './TransactionPriorityOptions';
 
 export default {
   name: 'TransactionForm',
@@ -176,24 +176,24 @@ export default {
         this.transaction.to = await this.resolveEnsAddress();
       }
 
-      this.debouncedGasCostEstimation(2);
+      this.debouncedGasCostEstimation();
     },
 
     'transaction.tokenInfo': {
       handler() {
-        this.debouncedGasCostEstimation(3);
+        this.debouncedGasCostEstimation();
       },
     },
 
     'transaction.gasPrice': {
       handler() {
-        this.debouncedGasCostEstimation(4);
+        this.debouncedGasCostEstimation();
       },
     },
 
     'transaction.gasLimit': {
       handler() {
-        this.debouncedGasCostEstimation(5);
+        this.debouncedGasCostEstimation();
       },
     },
 

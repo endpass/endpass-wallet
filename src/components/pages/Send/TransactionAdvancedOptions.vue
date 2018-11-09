@@ -61,7 +61,7 @@
             name="gasLimit"
             type="number"
             min="21000"
-            max="1000000"
+            max="4000000"
             step="1000"
             validator="required|numeric|integer|between:21000,4000000"
             aria-describedby="gasLimit"
@@ -121,7 +121,7 @@
 <script>
 import { pick } from 'lodash';
 import { mapActions } from 'vuex';
-import VInput from '@/components/ui/form/VInput.vue';
+import VInput from '@/components/ui/form/VInput';
 import VSpinner from '@/components/ui/VSpinner';
 
 export default {
