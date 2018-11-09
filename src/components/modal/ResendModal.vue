@@ -30,7 +30,7 @@
         <v-input
           id="gasLimit"
           v-model="newTransaction.gasLimit"
-          :validator="`required|numeric|integer|between:${transaction.gasLimit},4000000`"
+          :validator="`required|numeric|integer|between:${transaction.gasLimit},1000000`"
           label="Gas limit"
           name="gasLimit"
           type="number"

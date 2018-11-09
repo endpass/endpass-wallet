@@ -10,7 +10,6 @@ describe('ResendModal', () => {
     const transaction = new Transaction({
       data: '0x0',
       from: '0x0',
-      from: '0x0',
     });
     wrapper = shallow(ResendModal, {
       propsData: {
@@ -21,7 +20,7 @@ describe('ResendModal', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('resend-modal');
+      expect(wrapper.name()).toBe('ResendModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

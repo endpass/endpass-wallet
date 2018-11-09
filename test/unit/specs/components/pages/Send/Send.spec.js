@@ -258,21 +258,36 @@ describe('Send', () => {
       it('should handle error  and reset form', async () => {
         expect.assertions(5);
 
-        const error = new Error('foo');
+        wrapper.setData({
+          transactionHash: '0x0',
+        });
 
-        transactionsActions.sendTransaction.mockRejectedValueOnce(error);
+        transactionsActions.sendTransaction.mockRejectedValueOnce(new Error());
 
         await wrapper.vm.sendConfirmedTransaction(v3password);
 
-        expect(wrapper.vm.$notify).toBeCalledWith({
-          title: 'Error',
-          text: 'foo',
-          type: 'is-warning',
-        });
+        expect(wrapper.vm.transactionHash).toBe(null);
         expect(wrapper.vm.resetForm).toBeCalledTimes(1);
         expect(wrapper.vm.isSending).toBe(false);
         expect(wrapper.vm.isTransactionConfirmed).toBe(false);
         expect(wrapper.vm.isWaitingConfirm).toBe(false);
+      });
+    });
+
+    describe('updateNonceWithClearHash', () => {
+      it('should update nonce and reset transaction hash if it not empty', async () => {
+        expect.assertions(3);
+
+        wrapper.setData({
+          transactionHash: '0x0',
+        });
+
+        transactionsActions.getNextNonce.mockClear();
+        await wrapper.vm.updateNonceWithClearHash();
+
+        expect(transactionsActions.getNextNonce).toBeCalledTimes(1);
+        expect(wrapper.vm.transaction.nonce).toBe(1);
+        expect(wrapper.vm.transactionHash).toBe(null);
       });
     });
   });

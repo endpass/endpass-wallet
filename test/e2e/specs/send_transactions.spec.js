@@ -64,12 +64,12 @@ describe('Send Transactions Page', () => {
           cy.get('[data-test=transaction-gas-limit-input]')
             .clear()
             .type(0);
-          cy.contains('The gasLimit field must be between 21000 and 4000000');
+          cy.contains('The gasLimit field must be between 21000 and 1000000');
 
           cy.get('[data-test=transaction-gas-limit-input]')
             .clear()
             .type(4000001);
-          cy.contains('The gasLimit field must be between 21000 and 4000000');
+          cy.contains('The gasLimit field must be between 21000 and 1000000');
 
           // Nonce validation
           cy.get('[data-test=transaction-nonce-input]').clear();

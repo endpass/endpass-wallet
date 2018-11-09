@@ -110,9 +110,9 @@ const handleSendingError = (
   { dispatch },
   { err = {}, receipt, transaction = {} } = {},
 ) => {
-  const errorMessage = get(err, 'err') || get(err, 'message');
+  const errorMessage = get(err, 'err') || get(err, 'message') || '';
   const { hash } = transaction;
-  const shortHash = hash ? getShortStringWithEllipsis(hash) : '';
+  const shortHash = hash ? ` ${getShortStringWithEllipsis(hash)}` : '';
   let cause = '';
 
   if (receipt || matchString(errorMessage, 'out of gas')) {
@@ -121,13 +121,11 @@ const handleSendingError = (
     cause = ', because gas is too low';
   } else if (matchString(errorMessage, 'gas price is too low')) {
     cause = ', because gas price is too low';
-  } else {
-    console.error(errorMessage);
   }
 
   const error = new NotificationError({
     title: 'Error sending transaction',
-    text: `Transaction ${shortHash} was not sent${cause}`,
+    text: `Transaction${shortHash} was not sent${cause}`,
     type: 'is-danger',
   });
 
