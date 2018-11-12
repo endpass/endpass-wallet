@@ -78,7 +78,7 @@ describe('Accounts actions', () => {
         checksumAddress,
       );
 
-      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenCalledTimes(3);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'updateBalance');
     });
 
@@ -88,7 +88,7 @@ describe('Accounts actions', () => {
         checksumAddress,
       );
 
-      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenCalledTimes(3);
       expect(dispatch).toHaveBeenLastCalledWith(
         'tokens/getCurrentAccountTokens',
         null,

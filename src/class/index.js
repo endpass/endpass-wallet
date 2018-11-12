@@ -3,6 +3,9 @@ export {
   default as TransactionFactory,
 } from './transaction/TransactionFactory';
 export { default as Transaction } from './Transaction';
+export {
+  default as TransactionFactory,
+} from './transaction/TransactionFactory';
 export { default as EventEmitter } from './EventEmitter';
 export { NotificationError } from './error';
 export { default as Address } from './address';
