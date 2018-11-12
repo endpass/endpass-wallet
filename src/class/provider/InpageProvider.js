@@ -1,42 +1,58 @@
+import { get } from 'lodash';
 import { EventEmitter } from '@/class';
 import { INPAGE_EVENT, INPAGE_ID_PREFIX } from '@/constants';
 
 export default class InpageProvider {
   constructor(eventEmitter) {
     if (!(eventEmitter instanceof EventEmitter)) {
-      throw new Error("Event emitter isn't provided");
+      throw new Error('Event emitter is not provided');
     }
 
-    eventEmitter.on(INPAGE_EVENT.SETTINGS, payload => {
-      this.updateSettings(payload);
-    });
-    eventEmitter.on(INPAGE_EVENT.RESPONSE, payload => {
-      this.handleResponse(payload);
-    });
     this.eventEmitter = eventEmitter;
-    this.pendingRequestsHandlers = {};
+    this.pendingMessagesHandlers = {};
     this.settings = {};
     this.isMetaMask = true;
+    this.isConnected = () => true;
+
+    this.setupEventsHandlers();
+  }
+
+  static createInpageIdFromMessageId(id) {
+    return `${INPAGE_ID_PREFIX}${id}`;
+  }
+
+  static restoreMessageIdFromInpageId(id) {
+    return id.replace(INPAGE_ID_PREFIX, '');
+  }
+
+  setupEventsHandlers() {
+    this.eventEmitter.on(INPAGE_EVENT.SETTINGS, this.handleSettings.bind(this));
+    this.eventEmitter.on(INPAGE_EVENT.RESPONSE, this.handleResponse.bind(this));
   }
 
   handleResponse({ error, id, result, jsonrpc }) {
-    const trxId = id.replace(INPAGE_ID_PREFIX, '');
-    if (this.pendingRequestsHandlers[trxId]) {
-      this.pendingRequestsHandlers[trxId](error, {
-        id: parseInt(trxId),
+    const messageId = InpageProvider.restoreMessageIdFromInpageId(id);
+    const messageHandler = get(this.pendingMessagesHandlers, messageId);
+
+    if (messageHandler) {
+      messageHandler(error, {
+        id: parseInt(messageId, 10),
         result,
         jsonrpc,
       });
-      delete this.pendingRequestsHandlers[trxId];
+
+      delete this.pendingMessagesHandlers[messageId];
     }
   }
 
-  updateSettings({ selectedAddress, networkVersion }) {
-    if (typeof selectedAddress !== 'undefined') {
+  handleSettings(payload) {
+    const { selectedAddress, networkVersion } = payload;
+
+    if (selectedAddress) {
       this.settings.selectedAddress = selectedAddress;
     }
 
-    if (typeof networkVersion !== 'undefined') {
+    if (networkVersion) {
       this.settings.networkVersion = networkVersion;
     }
   }
@@ -64,7 +80,6 @@ export default class InpageProvider {
         break;
     }
 
-    // return the result
     return {
       id: payload.id,
       jsonrpc: payload.jsonrpc,
@@ -74,22 +89,19 @@ export default class InpageProvider {
 
   sendAsync(payload, callback) {
     const processedPayload = this.processPayload({ ...payload });
+
     if (processedPayload.result !== null) {
       callback(null, processedPayload);
     } else {
-      this.pendingRequestsHandlers[payload.id] = callback;
-      this.eventEmitter.emit(INPAGE_EVENT.REQUEST, {
+      this.pendingMessagesHandlers[payload.id] = callback;
+      this.eventEmitter.emit(INPAGE_EVENT.MESSAGE, {
         ...payload,
-        id: `${INPAGE_ID_PREFIX}${payload.id}`,
+        id: InpageProvider.createInpageIdFromMessageId(payload.id),
       });
     }
   }
 
   send(payload) {
     return this.processPayload(payload);
-  }
-
-  isConnected() {
-    return true;
   }
 }

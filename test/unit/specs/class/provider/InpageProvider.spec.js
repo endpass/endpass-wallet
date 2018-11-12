@@ -3,7 +3,8 @@ import { EventEmitter } from '@/class';
 import { INPAGE_EVENT, INPAGE_ID_PREFIX } from '@/constants';
 
 describe('InpageProvider', () => {
-  let provider, eventEmitter;
+  let provider;
+  let eventEmitter;
 
   beforeEach(() => {
     eventEmitter = new EventEmitter();
@@ -37,12 +38,17 @@ describe('InpageProvider', () => {
   describe('methods', () => {
     describe('handleResponse', () => {
       it('should call callback by payload id', () => {
-        const result = {},
-          error = {},
-          jsonrpc = '1',
-          id = '2',
-          callback = jest.fn(),
-          payload = { id, result, error, jsonrpc };
+        const result = {};
+
+        const error = {};
+
+        const jsonrpc = '1';
+
+        const id = '2';
+
+        const callback = jest.fn();
+
+        const payload = { id, result, error, jsonrpc };
         provider.pendingRequestsHandlers[id] = callback;
         provider.handleResponse(payload);
         expect(callback).toHaveBeenCalledWith(error, {
@@ -53,9 +59,11 @@ describe('InpageProvider', () => {
       });
 
       it('should delete pointers by id', () => {
-        const result = {},
-          error = {},
-          payload = { id: '1', result, error };
+        const result = {};
+
+        const error = {};
+
+        const payload = { id: '1', result, error };
         provider.pendingRequestsHandlers[payload.id] = jest.fn();
         provider.handleResponse(payload);
         expect(provider.pendingRequestsHandlers).not.toHaveProperty(payload.id);
@@ -91,16 +99,19 @@ describe('InpageProvider', () => {
 
     describe('sendAsync', () => {
       it('should save callback', () => {
-        const payload = { id: '1' },
-          callback = jest.fn();
+        const payload = { id: '1' };
+
+        const callback = jest.fn();
         provider.sendAsync(payload, callback);
         expect(provider.pendingRequestsHandlers[payload.id]).toBe(callback);
       });
 
       it('should emit request event with payload', () => {
-        const payload = { id: '1' },
-          callback = jest.fn(),
-          expectedPayload = { id: `${INPAGE_ID_PREFIX}${payload.id}` };
+        const payload = { id: '1' };
+
+        const callback = jest.fn();
+
+        const expectedPayload = { id: `${INPAGE_ID_PREFIX}${payload.id}` };
         provider.eventEmitter.emit = jest.fn();
         provider.sendAsync(payload, callback);
         expect(provider.eventEmitter.emit).toHaveBeenCalledWith(
@@ -118,8 +129,9 @@ describe('InpageProvider', () => {
 
     describe('send', () => {
       it('should return result by method', () => {
-        const payload = { id: '1' },
-          callback = jest.fn();
+        const payload = { id: '1' };
+
+        const callback = jest.fn();
         provider.sendAsync(payload, callback);
         expect(provider.pendingRequestsHandlers[payload.id]).toBe(callback);
       });
