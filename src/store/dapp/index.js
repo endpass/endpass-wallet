@@ -4,7 +4,7 @@ import getters from './getters';
 
 export const state = {
   injected: false,
-  requests: {},
+  messages: {},
   list: [],
 };
 

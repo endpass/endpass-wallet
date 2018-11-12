@@ -4,8 +4,8 @@ import { dappBridge } from '@/class';
 import InpageProvider from '@/class/provider/InpageProvider';
 import { DAPP_WHITELISTED_METHODS } from '@/constants';
 import {
-  ADD_REQUEST,
-  REMOVE_REQUEST,
+  ADD_MESSAGE,
+  REMOVE_MESSAGE,
   CHANGE_INJECT_STATUS,
 } from './mutations-types';
 
@@ -24,22 +24,22 @@ const inject = ({ state, commit, dispatch, rootGetters }, dappWindow) => {
     web3: new Web3Dapp(inpageProvider),
   });
 
-  dappBridge.setRequestHandler(payload => dispatch('handleRequest', payload));
+  dappBridge.setMessageHandler(payload => dispatch('handleMessage', payload));
 };
 
 const reset = ({ commit }) => {
   commit(CHANGE_INJECT_STATUS, false);
 };
 
-const handleRequest = async ({ dispatch, commit }, { id, ...request }) => {
-  if (DAPP_WHITELISTED_METHODS.includes(request.method)) {
-    commit(ADD_REQUEST, {
+const handleMessage = async ({ dispatch, commit }, { id, ...message }) => {
+  if (DAPP_WHITELISTED_METHODS.includes(message.method)) {
+    commit(ADD_MESSAGE, {
       id,
-      request,
+      message,
     });
   } else {
-    const res = await dispatch('sendRequestToNetwork', {
-      ...request,
+    const res = await dispatch('sendMessageToNetwork', {
+      ...message,
       id,
     });
 
@@ -63,20 +63,20 @@ const sendResponse = (ctx, payload) => {
   dappBridge.emitResponse(payload);
 };
 
-const processCurrentRequest = async (
+const processCurrentMessage = async (
   { commit, dispatch, getters, rootState, rootGetters },
   password,
 ) => {
-  const requestId = getters.currentRequestId;
-  const request = getters.currentRequest;
   const { wallet } = rootState.accounts;
+  const messageId = getters.currentMessageId;
+  const message = getters.currentMessage;
 
-  if (request.method === 'eth_sendTransaction') {
+  if (message.method === 'eth_sendTransaction') {
     const nonce = await dispatch('transactions/getNextNonce', null, {
       root: true,
     });
     const signedTx = await wallet.signTransaction(
-      Object.assign({}, request.transaction, {
+      Object.assign({}, message.transaction, {
         nonce,
       }),
       password,
@@ -84,27 +84,27 @@ const processCurrentRequest = async (
     const promise = web3.eth.sendSignedTransaction(signedTx);
     promise.then(receipt => {
       dispatch('sendResponse', {
-        id: requestId,
-        jsonrpc: getters.currentRequest.jsonrpc,
+        id: messageId,
+        jsonrpc: message.jsonrpc,
         result: receipt.transactionHash,
       });
     });
     promise.on('error', error => {
       dispatch('sendResponse', {
-        id: requestId,
+        id: messageId,
         error,
       });
     });
   } else {
     const currentAddress = rootGetters['accounts/currentAddressString'];
-    const [data, address] = request.params;
+    const [data, address] = message.params;
 
     if (currentAddress === web3.utils.toChecksumAddress(address)) {
       const res = await wallet.sign(data, password);
 
       dispatch('sendResponse', {
-        id: requestId,
-        jsonrpc: getters.currentRequest.jsonrpc,
+        id: messageId,
+        jsonrpc: message.jsonrpc,
         result: res.signature,
       });
     } else {
@@ -112,12 +112,12 @@ const processCurrentRequest = async (
     }
   }
 
-  commit(REMOVE_REQUEST, requestId);
+  commit(REMOVE_MESSAGE, messageId);
 };
 
-const sendRequestToNetwork = (ctx, request) =>
+const sendMessageToNetwork = (ctx, message) =>
   new Promise((resolve, reject) => {
-    web3.currentProvider.sendAsync(request, (err, res) => {
+    web3.currentProvider.sendAsync(message, (err, res) => {
       if (err) {
         return reject(err);
       }
@@ -126,24 +126,24 @@ const sendRequestToNetwork = (ctx, request) =>
     });
   });
 
-const cancelCurrentRequest = ({ commit, dispatch, getters }) => {
-  const requestId = getters.currentRequestId;
+const cancelCurrentMessage = ({ commit, dispatch, getters }) => {
+  const messageId = getters.currentMessageId;
 
   dispatch('sendResponse', {
-    id: requestId,
+    id: messageId,
     error: 'canceled',
     result: {},
   });
-  commit(REMOVE_REQUEST, requestId);
+  commit(REMOVE_MESSAGE, messageId);
 };
 
 export default {
   inject,
   reset,
-  handleRequest,
+  handleMessage,
   sendSettings,
   sendResponse,
-  processCurrentRequest,
-  sendRequestToNetwork,
-  cancelCurrentRequest,
+  processCurrentMessage,
+  sendMessageToNetwork,
+  cancelCurrentMessage,
 };

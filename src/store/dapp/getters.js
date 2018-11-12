@@ -1,25 +1,25 @@
 import { isNil } from 'lodash';
 import { TransactionFactory } from '@/class';
 
-const currentRequestId = state => state.list[0] || null;
+const currentMessageId = state => state.list[0] || null;
 
-const currentRequest = (state, getters) => {
-  const nextRequestId = getters.currentRequestId;
+const currentMessage = (state, getters) => {
+  const nextMessageId = getters.currentMessageId;
 
-  if (isNil(nextRequestId)) return null;
+  if (isNil(nextMessageId)) return null;
 
-  const nextRequest = state.requests[nextRequestId];
+  const nextMessage = state.messages[nextMessageId];
 
-  if (nextRequest.method === 'eth_sendTransaction') {
-    return Object.assign({}, nextRequest, {
-      transaction: TransactionFactory.fromBlock(nextRequest.params[0]),
+  if (nextMessage.method === 'eth_sendTransaction') {
+    return Object.assign({}, nextMessage, {
+      transaction: TransactionFactory.fromBlock(nextMessage.params[0]),
     });
   }
 
-  return nextRequest;
+  return nextMessage;
 };
 
 export default {
-  currentRequestId,
-  currentRequest,
+  currentMessageId,
+  currentMessage,
 };
