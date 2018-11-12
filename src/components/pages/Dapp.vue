@@ -12,8 +12,21 @@
             data-vv-as="Dapp url"
             validator="required|url:require_protocol:true:require_tld:false"
             @input="onChangeUrlInput"
-            @keydown.enter="onUrlInputEnterPress"
-          />
+            @keydown.enter="openDapp"
+          >
+            <div
+              slot="addon"
+              class="control"
+            >
+              <button
+                :disabled="loading || loaded"
+                class="button is-primary"
+                @click="openDapp"
+              >
+                Open
+              </button>
+            </div>
+          </v-input>
         </div>
         <iframe
           v-if="loading || loaded"
@@ -89,6 +102,7 @@ export default {
 
     async loadDapp() {
       if (isEmpty(this.url) || !isEmpty(this.$validator.errors.items)) return;
+
       this.loading = true;
       await this.$nextTick();
       await this.inject(this.$refs.dapp.contentWindow);
@@ -110,7 +124,7 @@ export default {
       }
     },
 
-    onUrlInputEnterPress() {
+    openDapp() {
       if (this.error) {
         this.error = null;
       }
