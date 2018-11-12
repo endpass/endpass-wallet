@@ -32,15 +32,15 @@
       </div>
     </div>
     <password-modal
-      v-if="currentRequest"
+      v-if="currentMessage"
       title="Opened dapp requests your password"
       @confirm="confirmSign"
       @close="cancelSign"
     >
       <transaction-table
-        v-if="isCurrentRequestTransaction"
+        v-if="isCurrentMessageTransaction"
         :currency="activeCurrency"
-        :transaction="currentRequest.transaction"
+        :transaction="currentMessage.transaction"
       />
     </password-modal>
   </div>
@@ -58,7 +58,6 @@ export default {
   name: 'Dapp',
 
   data: () => ({
-    // url: 'https://www.cryptokitties.co',
     url: 'https://explorer.bounties.network/explorer',
     loading: false,
     loaded: false,
@@ -69,10 +68,10 @@ export default {
     ...mapState({
       activeCurrency: state => state.web3.activeCurrency,
     }),
-    ...mapGetters('dapp', ['currentRequest']),
+    ...mapGetters('dapp', ['currentMessage']),
 
-    isCurrentRequestTransaction() {
-      return this.currentRequest.method === 'eth_sendTransaction';
+    isCurrentMessageTransaction() {
+      return this.currentMessage.method === 'eth_sendTransaction';
     },
 
     dappUrl() {
@@ -84,8 +83,8 @@ export default {
     ...mapActions('dapp', [
       'inject',
       'reset',
-      'processCurrentRequest',
-      'cancelCurrentRequest',
+      'processCurrentMessage',
+      'cancelCurrentMessage',
     ]),
 
     async loadDapp() {
@@ -129,11 +128,11 @@ export default {
     },
 
     async confirmSign(password) {
-      await this.processCurrentRequest(password);
+      await this.processCurrentMessage(password);
     },
 
     async cancelSign() {
-      await this.cancelCurrentRequest();
+      await this.cancelCurrentMessage();
     },
   },
 
@@ -156,13 +155,16 @@ export default {
   display: block;
   padding: 10px;
 }
+
 .dapp-form-input {
   width: 100%;
 }
+
 .dapp-frame {
   width: 100%;
   height: 600px;
 }
+
 .dapp-error {
   padding: 10px;
 }
