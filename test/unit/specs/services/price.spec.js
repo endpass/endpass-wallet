@@ -1,10 +1,6 @@
-import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import {
-  fiatPriceAPIUrl,
-  fiatPriceMultiAPIUrl,
-  serviceThrottleTimeout,
-} from '@/config';
+
+import { http } from '@/class/singleton';
 const priceService = require.requireActual('@/services/price').default;
 
 jest.mock('throttled-queue', function() {
@@ -18,7 +14,7 @@ jest.mock('throttled-queue', function() {
 describe('Price service', () => {
   let mock;
   beforeEach(() => {
-    mock = new MockAdapter(axios);
+    mock = new MockAdapter(http);
   });
 
   afterEach(() => {
@@ -40,9 +36,9 @@ describe('Price service', () => {
       const symbol = 'ETH',
         currencies = ['KEK', 'CHPOK'];
       expect.assertions(3);
-      mock.onGet(fiatPriceAPIUrl).reply(config => {
+      mock.onGet(ENV.fiatPriceAPIUrl).reply(config => {
         expect(config.method).toBe('get');
-        expect(config.url).toBe(fiatPriceAPIUrl);
+        expect(config.url).toBe(ENV.fiatPriceAPIUrl);
         expect(config.params).toEqual({
           fsym: symbol,
           tsyms: currencies,
@@ -69,9 +65,9 @@ describe('Price service', () => {
       const symbol = 'ETH',
         currencies = ['KEK', 'CHPOK'];
       expect.assertions(3);
-      mock.onGet(fiatPriceMultiAPIUrl).reply(config => {
+      mock.onGet(ENV.fiatPriceMultiAPIUrl).reply(config => {
         expect(config.method).toBe('get');
-        expect(config.url).toBe(fiatPriceMultiAPIUrl);
+        expect(config.url).toBe(ENV.fiatPriceMultiAPIUrl);
         expect(config.params).toEqual({
           fsyms: symbol,
           tsyms: currencies,

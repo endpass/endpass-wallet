@@ -1,8 +1,8 @@
-import { userService } from '@/services';
+import { isEmpty } from 'lodash';
+import { userService, localSettingsService, hardwareService } from '@/services';
 import web3 from '@/utils/web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
-import { hdKeyMnemonic, kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
 import { Wallet, NotificationError } from '@/class';
 import keystore from '@/utils/keystore';
@@ -15,12 +15,18 @@ import {
   ADD_ADDRESS,
 } from './mutations-types';
 
-const { toChecksumAddress } = web3.utils;
+const { toChecksumAddress, fromWei } = web3.utils;
 
-const selectWallet = async ({ commit, state, dispatch }, address) => {
+const selectWallet = async (
+  { commit, state, dispatch, rootState },
+  address,
+) => {
   commit(SET_WALLET, state.wallets[address]);
   commit(SET_ADDRESS, address);
 
+  localSettingsService.save(rootState.user.email, {
+    activeAccount: address,
+  });
   dispatch('updateBalance');
 
   await dispatch('tokens/getCurrentAccountTokens', null, {
@@ -33,13 +39,35 @@ const selectWallet = async ({ commit, state, dispatch }, address) => {
 
 const addWallet = async ({ commit, dispatch }, json) => {
   try {
-    const address = web3.utils.toChecksumAddress(json.address);
+    const address = toChecksumAddress(json.address);
     const updatedJSON = { ...json, address };
 
     await userService.setAccount(address, updatedJSON);
     commit(ADD_WALLET, updatedJSON);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
+  }
+};
+
+const addPublicWallet = async (
+  { dispatch, commit },
+  { address: rawAddress, info: extraInfo },
+) => {
+  try {
+    const address = toChecksumAddress(rawAddress);
+    const info = {
+      type: 'PublicAccount',
+      hidden: false,
+      ...extraInfo,
+      address,
+    };
+
+    await userService.setAccount(address, { info });
+    commit(ADD_ADDRESS, { address, info });
+
+    return dispatch('selectWallet', address);
+  } catch (e) {
+    return dispatch('errors/emitError', e, { root: true });
   }
 };
 
@@ -90,15 +118,12 @@ const addWalletWithPrivateKey = async (
   }
 };
 
-const addWalletWithPublicKey = async (
-  { commit, dispatch },
-  publicKeyOrAddress,
-) => {
+const addWalletWithPublicKey = async ({ dispatch }, publicKeyOrAddress) => {
   // TODO convert public key to address, accept xPub key
   try {
-    const address = web3.utils.toChecksumAddress(publicKeyOrAddress);
-    await userService.setAccount(address, null);
-    commit(ADD_ADDRESS, address);
+    const address = toChecksumAddress(publicKeyOrAddress);
+
+    await dispatch('addPublicWallet', { address });
 
     return dispatch('selectWallet', address);
   } catch (e) {
@@ -128,7 +153,7 @@ const commitWallet = async ({ state, commit }, { wallet }) => {
     commit(ADD_WALLET, wallet);
   } else {
     // Read-only public key
-    commit(ADD_ADDRESS, wallet.address);
+    commit(ADD_ADDRESS, wallet);
   }
 
   const currentWalletAddress =
@@ -144,11 +169,11 @@ const saveWallet = async ({ dispatch }, { json }) => {
   await dispatch('commitWallet', { wallet: json });
 };
 
-const addHdWallet = async ({ commit, dispatch }, { key, password }) => {
+const addHdWallet = async ({ dispatch }, { key, password }) => {
   try {
     const seed = Bip39.mnemonicToSeed(key);
     const hdKey = HDKey.fromMasterSeed(seed);
-    const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
+    const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
     // Encrypt extended private key
     const json = keystore.encryptHDWallet(password, hdWallet);
 
@@ -163,12 +188,12 @@ const addHdWallet = async ({ commit, dispatch }, { key, password }) => {
 const addMultiHdWallet = async ({ dispatch }, { key, password }) => {
   const seed = Bip39.mnemonicToSeed(key);
   const hdKey = HDKey.fromMasterSeed(seed);
-  const hdWallet = hdKey.derivePath(hdKeyMnemonic.path);
+  const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
 
   /* eslint-disable no-await-in-loop */
   for (let index = 0; index < 5; index++) {
     const wallet = hdWallet.deriveChild(index).getWallet();
-    const walletV3 = wallet.toV3(Buffer.from(password), kdfParams);
+    const walletV3 = wallet.toV3(Buffer.from(password), ENV.kdfParams);
     const { address } = walletV3;
 
     if (index === 0) {
@@ -219,10 +244,15 @@ const updateBalance = async ({ commit, dispatch, state }) => {
   }
 };
 
+const getBalanceByAddress = async (ctx, { address }) => {
+  const balanceWei = await web3.eth.getBalance(address);
+  return fromWei(balanceWei);
+};
+
 const validatePassword = async ({ state, getters }, password) => {
   let { wallet } = state;
 
-  if (getters.isPublicAccount) {
+  if (getters.isPublicAccount || getters.isHardwareAccount) {
     wallet = new Wallet(state.hdKey);
   }
 
@@ -242,27 +272,41 @@ const setUserHdKey = async ({ commit, dispatch }) => {
   }
 };
 
-const setUserWallets = async ({ commit, dispatch }) => {
+const setUserWallets = async ({ commit, dispatch, rootState }) => {
   try {
     // Fetch and save regular accounts
     const accounts = await userService.getV3Accounts();
 
-    if (accounts && accounts.length) {
-      accounts.forEach(account => {
-        if (keystore.isV3(account)) {
-          // Encrypted private key
-          commit(ADD_WALLET, account);
-        } else {
-          // Read-only public key
-          commit(ADD_ADDRESS, account.address);
-        }
-      });
+    if (isEmpty(accounts)) return;
+
+    const localSettings = localSettingsService.load(rootState.user.email);
+    const isAccountExist =
+      localSettings &&
+      localSettings.activeAccount &&
+      accounts.find(({ address }) => address === localSettings.activeAccount);
+
+    accounts.forEach(account => {
+      if (keystore.isV3(account)) {
+        // Encrypted private key
+        commit(ADD_WALLET, account);
+      } else {
+        // Read-only public key
+        commit(ADD_ADDRESS, account);
+      }
+    });
+
+    if (isAccountExist) {
+      await dispatch('selectWallet', localSettings.activeAccount);
+    } else {
       await dispatch('selectWallet', accounts[0].address);
     }
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });
   }
 };
+
+const getNextWalletsFromHd = async (ctx, payload) =>
+  hardwareService.getNextWallets(payload);
 
 const init = async ({ dispatch }) => {
   try {
@@ -279,6 +323,7 @@ export default {
   addWalletWithV3,
   addWalletWithPrivateKey,
   addWalletWithPublicKey,
+  addPublicWallet,
   commitWallet,
   saveWallet,
   generateWallet,
@@ -288,6 +333,8 @@ export default {
   addMultiHdWallet,
   updateWallets,
   updateBalance,
+  getBalanceByAddress,
   validatePassword,
+  getNextWalletsFromHd,
   init,
 };

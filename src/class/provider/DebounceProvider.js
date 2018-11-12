@@ -1,11 +1,13 @@
-import { debounce } from 'lodash';
+import { debounce, get } from 'lodash';
 
 export default class DebounceProvider {
   constructor() {
     this.cache = {};
     this.intervalTime = 10000;
     this.parent = null;
-    this.interval = this.cleanCache();
+    this.cleanCacheDebounced = debounce(this.cleanCache, 10000, {
+      maxWait: 1000,
+    });
   }
 
   send(...args) {
@@ -17,35 +19,29 @@ export default class DebounceProvider {
   }
 
   updateCacheAndSend(args, method) {
-    const { id, ...rest } = args[0];
+    this.cleanCacheDebounced();
+    const { id: requestId, ...rest } = args[0];
     const payloadStr = JSON.stringify(rest);
     const cacheKey = this.toHashString(payloadStr);
 
-    if (this.cache && this.cache[cacheKey] && this.cache[cacheKey].func) {
+    if (get(this, `cache.${cacheKey}.func`)) {
       this.cache[cacheKey].date = new Date();
       this.cache[cacheKey].buffer.push(args);
     } else {
       const send = (...args) => {
         this.parent[method](args[0], (e, result) => {
-          if (
-            !(this.cache && this.cache[cacheKey] && this.cache[cacheKey].buffer)
-          ) {
-            return;
-          }
+          if (!get(this, `cache.${cacheKey}.buffer`)) return;
 
           const dfdArr = [...this.cache[cacheKey].buffer];
           this.cache[cacheKey].buffer = [];
+          this.cache[cacheKey].func = null;
           dfdArr.forEach(([payload, callback]) => {
             const { id } = payload;
             callback(e, { ...result, id });
           });
         });
       };
-      const func = debounce(send, 1000, {
-        maxWait: 1000,
-        leading: true,
-        trailing: false,
-      });
+      const func = debounce(send, 1000, { maxWait: 1000 });
 
       this.cache[cacheKey] = {
         date: new Date(),
@@ -74,22 +70,15 @@ export default class DebounceProvider {
   cleanCache() {
     const { intervalTime } = this;
 
-    return setInterval(() => {
-      const now = new Date();
+    const now = new Date();
 
-      Object.keys(this.cache).forEach(cacheItem => {
-        const { date } = this.cache[cacheItem];
-        const expirationTime = new Date(date.getTime() + intervalTime);
+    Object.keys(this.cache).forEach(cacheItem => {
+      const { date } = this.cache[cacheItem];
+      const expirationTime = new Date(date.getTime() + intervalTime);
 
-        if (now > expirationTime) {
-          delete this.cache[cacheItem];
-        }
-      });
-    }, intervalTime);
-  }
-
-  destroy() {
-    this.cache = null;
-    clearInterval(this.interval);
+      if (now > expirationTime) {
+        delete this.cache[cacheItem];
+      }
+    });
   }
 }

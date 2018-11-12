@@ -1,4 +1,4 @@
-import { toKebab } from '@/utils/strings';
+import { kebabCase } from 'lodash';
 
 function convertDirectivesToAttrs(directives) {
   const attrs = {};
@@ -117,7 +117,7 @@ export function generateStubs(Component) {
     let elementName;
 
     if (stubComponent.name) {
-      elementName = toKebab(stubComponent.name);
+      elementName = kebabCase(stubComponent.name);
     }
 
     return Object.assign(stubs, {

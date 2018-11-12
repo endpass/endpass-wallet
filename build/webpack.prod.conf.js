@@ -12,14 +12,11 @@ const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const gitCommitHash = utils.getCommitHash();
 
-const env =
-  process.env.NODE_ENV === 'testing'
-    ? require('../config/test.env')
-    : require('../config/prod.env');
-const buildConf =
-  process.env.NODE_ENV === 'testing'
-    ? require('../config/build.test')
-    : require('../config/build.prod');
+const isProduction = process.env.NODE_ENV === 'production';
+
+const env = isProduction
+  ? require('../config/prod.env')
+  : require('../config/test.env');
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({
@@ -28,7 +25,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       usePostCSS: true,
     }),
   },
-  entry: buildConf.entry,
+  entry: isProduction ? config.build.entry : config.staging.entry,
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
     path: config.build.assetsRoot,
@@ -38,7 +35,7 @@ const webpackConfig = merge(baseWebpackConfig, {
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
-      'process.env': env,
+      ENV: JSON.stringify(env),
       GIT_COMMIT_HASH: JSON.stringify(gitCommitHash),
     }),
     new UglifyJsPlugin({
@@ -74,7 +71,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         process.env.NODE_ENV === 'testing' ? 'index.html' : config.build.index,
       template: 'index.html',
       inject: true,
-      chunks: buildConf.chunks,
+      chunks: isProduction ? config.build.chunks : config.staging.chunks,
       chunksSortMode: 'manual',
       minify: {
         removeComments: true,

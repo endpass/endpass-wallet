@@ -9,6 +9,7 @@ describe('Tokens Page', () => {
     it('should redirect to root', () => {
       cy.preventLogin();
       cy.visit('#/tokens');
+      cy.mockWeb3Requests();
       cy.url().should('include', '/#/?redirect_uri=%2Ftokens');
     });
   });
@@ -17,6 +18,7 @@ describe('Tokens Page', () => {
     beforeEach(() => {
       cy.getInitialData();
       cy.visit('#/tokens');
+      cy.mockWeb3Requests();
       cy.waitPageLoad();
     });
 
@@ -25,6 +27,7 @@ describe('Tokens Page', () => {
         cy.get('[data-test=add-custom-token-button]').click();
 
         cy.get('[data-test=add-token-modal]').within(() => {
+          cy.focused().should('have.attr', 'data-test', 'address-input');
           cy.get('[data-test=find-button]').should('be.disabled');
 
           cy.get('[data-test=address-input]').type(customToken.address);
@@ -78,7 +81,7 @@ describe('Tokens Page', () => {
     });
 
     describe('saved tokens list', () => {
-      const [token1, token2] = tokens;
+      const [token1] = tokens;
 
       beforeEach(() => {
         cy.makeStoreAlias();
@@ -103,12 +106,6 @@ describe('Tokens Page', () => {
           'not.contain',
           token1.name,
         );
-
-        cy.contains(token2.name)
-          .parents('[data-test=token-item]')
-          .within(() => {
-            cy.get('[data-test=delete-button]').click();
-          });
 
         cy.get('[data-test=tokens-list]').should('not.exist');
         cy.get('[data-test=no-tokens-text]').contains(

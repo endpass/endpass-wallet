@@ -138,6 +138,6 @@ export default class LocalProvider {
 
   getAllAccounts = () =>
     Object.keys(localStorage)
-      .filter(key => key.includes('/account/'))
+      .filter(key => key.includes('/account/') && !/\/info\/?$/.test(key))
       .map(key => key.match(/\/([^\/]+)\/?$/)[1]);
 }

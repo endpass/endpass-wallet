@@ -14,7 +14,7 @@ exports[`AccountWalletCard render should correctly render component with current
         </div>
         <!---->
         <div class="card-tokens">
-            <v-spinner></v-spinner>
+            <!---->
             <tokens-list tokens=""></tokens-list>
         </div>
     </div>
@@ -37,7 +37,7 @@ exports[`AccountWalletCard render should correctly render component with send bu
             </v-button>
         </div>
         <div class="card-tokens">
-            <v-spinner></v-spinner>
+            <!---->
             <tokens-list tokens=""></tokens-list>
         </div>
     </div>
@@ -56,7 +56,7 @@ exports[`AccountWalletCard render should render initial state of the component 1
         </div>
         <!---->
         <div class="card-tokens">
-            <v-spinner></v-spinner>
+            <!---->
             <tokens-list tokens=""></tokens-list>
         </div>
     </div>

@@ -49,10 +49,7 @@
                 <app-transaction :transaction="transaction" />
               </li>
             </ul>
-            <v-spinner
-              v-else-if="isLoading"
-              :is-loading="isLoading"
-            />
+            <v-spinner v-else-if="isLoading" />
             <p v-else>This account has no transactions.</p>
           </div>
         </div>
@@ -69,6 +66,8 @@ import AppTransaction from '@/components/Transaction';
 import Account from '@/components/Account';
 import VSpinner from '@/components/ui/VSpinner';
 import AccountWalletCard from '@/components/AccountWalletCard';
+
+const { fromWei } = web3.utils;
 
 export default {
   name: 'ReceivePage',
@@ -139,7 +138,7 @@ export default {
       Object.keys(this.wallets).forEach(async address => {
         const balance = await web3.eth.getBalance(address);
 
-        this.$set(this.balances, address, web3.utils.fromWei(balance));
+        this.$set(this.balances, address, fromWei(balance));
       });
     },
   },

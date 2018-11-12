@@ -78,6 +78,7 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
     </p>
      
     <v-input
+      autofocus=""
       data-test="input-two-auth-code"
       label="Verification Code"
       name="verificationCode"
@@ -134,6 +135,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
     </p>
      
     <v-input
+      autofocus=""
       data-test="input-two-auth-code"
       label="Verification Code"
       name="verificationCode"
@@ -210,6 +212,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
     </p>
      
     <v-input
+      autofocus=""
       data-test="input-two-auth-code"
       label="Verification Code"
       name="verificationCode"
@@ -266,6 +269,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 3`] 
     </p>
      
     <v-input
+      autofocus=""
       data-test="input-two-auth-code"
       label="Verification Code"
       name="verificationCode"

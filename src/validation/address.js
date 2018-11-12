@@ -1,12 +1,14 @@
 import web3 from 'web3';
 
+const { isAddress } = web3.utils;
+
 export default {
   getMessage(field, params, data) {
     return (data && data.message) || 'Something went wrong';
   },
   validate(value, args) {
     const zeroAddressRegex = /^0x0+$/;
-    const isKey = web3.utils.isAddress(value);
+    const isKey = isAddress(value);
     const isZeroKey = value.match(zeroAddressRegex);
     const message = isZeroKey
       ? 'This is a zero address'

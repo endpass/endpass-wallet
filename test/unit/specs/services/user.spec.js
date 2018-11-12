@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { http, proxyRequest } from '@/utils';
+import { proxyRequest } from '@/utils';
 import MockAdapter from 'axios-mock-adapter';
 
 import { NotificationError } from '@/class';
-import { identityAPIUrl } from '@/config';
+import { httpIdentity } from '@/class/singleton';
 import { IDENTITY_MODE } from '@/constants';
 import { addresses } from 'fixtures/accounts';
 
@@ -13,12 +13,14 @@ describe('User service', () => {
   let axiosMock;
 
   beforeEach(() => {
-    axiosMock = new MockAdapter(http);
+    axiosMock = new MockAdapter(httpIdentity);
   });
 
   describe('login', () => {
     const redirectUri = '/send?to=0x1234&amount=0.1';
-    const url = `${identityAPIUrl}/auth?redirect_uri=%2Fsend%3Fto%3D0x1234%26amount%3D0.1`;
+    const url = `${
+      ENV.identityAPIUrl
+    }/auth?redirect_uri=%2Fsend%3Fto%3D0x1234%26amount%3D0.1`;
     const email = '123@email.com';
 
     const successResp = {
@@ -79,7 +81,7 @@ describe('User service', () => {
   describe('loginViaOTP', () => {
     const code = 'code';
     const email = '123@email.com';
-    const url = `${identityAPIUrl}/token`;
+    const url = `${ENV.identityAPIUrl}/token`;
     const successResp = {
       success: true,
     };
@@ -131,7 +133,7 @@ describe('User service', () => {
   });
 
   describe('logout', () => {
-    const url = `${identityAPIUrl}/logout`;
+    const url = `${ENV.identityAPIUrl}/logout`;
     const expectedError = new NotificationError({
       title: 'Log out error',
       text: 'Failed to log out. Please, try again',
@@ -160,7 +162,7 @@ describe('User service', () => {
   });
 
   describe('getSettings', () => {
-    const url = `${identityAPIUrl}/user`;
+    const url = `${ENV.identityAPIUrl}/user`;
     const successResp = {
       settings: {
         fiatCurrency: 'USD',
@@ -189,7 +191,7 @@ describe('User service', () => {
         fiatCurrency: 'USD',
       },
     };
-    const url = `${identityAPIUrl}/user`;
+    const url = `${ENV.identityAPIUrl}/user`;
     const successResp = {
       success: true,
     };
@@ -212,7 +214,7 @@ describe('User service', () => {
   });
 
   describe('getAccounts', () => {
-    const url = `${identityAPIUrl}/accounts`;
+    const url = `${ENV.identityAPIUrl}/accounts`;
     const successResp = ['0x123', 'xpub1234'];
 
     it('should make correct request', async () => {
@@ -234,7 +236,7 @@ describe('User service', () => {
 
   describe('getAccount', () => {
     const address = '0x456';
-    const url = `${identityAPIUrl}/account/${address}`;
+    const url = `${ENV.identityAPIUrl}/account/${address}`;
     const shortAcc = address.replace(/^(.{5}).+/, '$1…');
     const successResp = {};
     const expectedError = new NotificationError({
@@ -253,10 +255,12 @@ describe('User service', () => {
     });
 
     it('should handle successfull GET /account request', async () => {
+      expect.assertions(1);
+
       axiosMock.onGet(url).reply(200, successResp);
       const account = await userService.getAccount(address);
       // Address should be automatically appended by getAccount
-      expect(account).toEqual({ address });
+      expect(account).toEqual({ address, info: {} });
     });
 
     it('should handle rejected GET /account request', async () => {
@@ -273,7 +277,7 @@ describe('User service', () => {
     const address = '0x123';
     // Account data can be anything
     const account = { version: 3, crypto: {} };
-    const url = `${identityAPIUrl}/account/${address}`;
+    const url = `${ENV.identityAPIUrl}/account/${address}`;
     const successResp = {
       success: true,
     };
@@ -287,16 +291,29 @@ describe('User service', () => {
       });
       await userService.setAccount(address, account);
     });
+  });
 
-    it('should handle successful POST /account request', async () => {
-      axiosMock.onPost(url).reply(200, successResp);
-      const resp = await userService.setAccount(address, account);
-      expect(resp).toEqual(successResp);
+  describe('setAccountInfo', () => {
+    const address = '0x123';
+    // Account data can be anything
+    const url = `${ENV.identityAPIUrl}/account/${address}/info`;
+    const info = { one: 'two' };
+    const successResp = {
+      success: true,
+    };
+
+    it('should make correct request', async () => {
+      axiosMock.onPost(url).reply(config => {
+        expect(config.method).toBe('post');
+        expect(config.data).toBe(JSON.stringify(info));
+        return [200, successResp];
+      });
+      await userService.setAccountInfo(address, info);
     });
   });
 
   describe('updateAccounts', () => {
-    const url = `${identityAPIUrl}/accounts`;
+    const url = `${ENV.identityAPIUrl}/accounts`;
     const accounts = {
       'address 1': {},
       'address 2': {},
@@ -350,21 +367,25 @@ describe('User service', () => {
     const addrs = ['0x123', 'xpubabcde', '0x456'];
 
     it('should return keystores for regular accounts only', async () => {
-      axiosMock.onGet(`${identityAPIUrl}/accounts`).reply(200, addrs);
+      expect.assertions(3);
+
+      axiosMock.onGet(`${ENV.identityAPIUrl}/accounts`).reply(200, addrs);
       axiosMock
-        .onGet(new RegExp(`${identityAPIUrl}/account/.+`))
+        .onGet(new RegExp(`${ENV.identityAPIUrl}/account/.+`))
         .reply(200, {});
 
       const accounts = await userService.getV3Accounts();
+      const info = {};
+
       expect(accounts.length).toBe(2);
-      expect(accounts[0]).toEqual({ address: '0x123' });
-      expect(accounts[1]).toEqual({ address: '0x456' });
+      expect(accounts[0]).toEqual({ address: '0x123', info });
+      expect(accounts[1]).toEqual({ address: '0x456', info });
     });
 
     it('should return the HD key if it exists', async () => {
-      axiosMock.onGet(`${identityAPIUrl}/accounts`).reply(200, addrs);
+      axiosMock.onGet(`${ENV.identityAPIUrl}/accounts`).reply(200, addrs);
       axiosMock
-        .onGet(new RegExp(`${identityAPIUrl}/account/.+`))
+        .onGet(new RegExp(`${ENV.identityAPIUrl}/account/.+`))
         .reply(200, {});
 
       const account = await userService.getHDKey();
@@ -374,7 +395,7 @@ describe('User service', () => {
   });
 
   describe('getOtpSettings', () => {
-    const url = `${identityAPIUrl}/otp`;
+    const url = `${ENV.identityAPIUrl}/otp`;
     const successResp = {
       secret: 'abc',
     };
@@ -410,7 +431,7 @@ describe('User service', () => {
   });
 
   describe('setOtpSettings', () => {
-    const url = `${identityAPIUrl}/otp`;
+    const url = `${ENV.identityAPIUrl}/otp`;
     const secret = 'secret';
     const code = 'code';
     const successResp = {
@@ -467,7 +488,7 @@ describe('User service', () => {
   });
 
   describe('deleteOtpSettings', () => {
-    const url = `${identityAPIUrl}/otp`;
+    const url = `${ENV.identityAPIUrl}/otp`;
     const code = 'code';
     const successResp = {
       success: true,
@@ -482,7 +503,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       axiosMock.onDelete(url).reply(config => {
         expect(config.method).toBe('delete');
-        expect(config.url).toBe(`${identityAPIUrl}/otp`);
+        expect(config.url).toBe(`${ENV.identityAPIUrl}/otp`);
         expect(config.data).toBe(JSON.stringify({ code }));
         return [200, successResp];
       });
@@ -526,7 +547,7 @@ describe('User service', () => {
     const identityModeKey = 'identityMode';
 
     describe('setIdentityMode', () => {
-      const url = identityAPIUrl;
+      const url = ENV.identityAPIUrl;
       const type = IDENTITY_MODE.CUSTOM;
       const mode = { type, serverUrl: url };
 

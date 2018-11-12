@@ -1,13 +1,21 @@
+import { get } from 'lodash';
 import { BigNumber } from 'bignumber.js';
-import { EventEmitter, NotificationError, Transaction } from '@/class';
+import {
+  EventEmitter,
+  NotificationError,
+  Transaction,
+  TransactionFactory,
+} from '@/class';
 import ethplorerService from '@/services/ethplorer';
 import web3 from '@/utils/web3';
-import { getShortStringWithEllipsis } from '@/utils/strings';
+import { getShortStringWithEllipsis, matchString } from '@/utils/strings';
 import {
   ADD_TRANSACTION,
   UPDATE_TRANSACTION,
   SET_TRANSACTION_HISTORY,
 } from './mutations-types';
+
+const { toChecksumAddress } = web3.utils;
 
 const getNonceInBlock = async ({ rootState }) => {
   const address = rootState.accounts.address.getChecksumAddressString();
@@ -47,10 +55,12 @@ const sendSignedTransaction = async (
       Object.assign(transaction, { nonce });
     }
 
-    const signedTx = await wallet.signTransaction(
-      transaction.getApiObject(web3.eth),
-      password,
-    );
+    const preTrx = {
+      ...transaction.getApiObject(web3.eth),
+      chainId: transaction.networkId,
+    };
+
+    const signedTx = await wallet.signTransaction(preTrx, password);
     const sendEvent = new EventEmitter();
     let hash;
 
@@ -91,6 +101,8 @@ const sendSignedTransaction = async (
     return sendEvent;
   } catch (err) {
     dispatch('handleSendingError', { transaction });
+
+    return null;
   }
 };
 
@@ -98,16 +110,22 @@ const handleSendingError = (
   { dispatch },
   { err = {}, receipt, transaction = {} } = {},
 ) => {
-  const { err: errorMessage = '' } = err;
+  const errorMessage = get(err, 'err') || get(err, 'message') || '';
   const { hash } = transaction;
-  const shortHash = hash ? getShortStringWithEllipsis(hash) : '';
-  const cause =
-    receipt || errorMessage.includes('out of gas')
-      ? ', because out of gas'
-      : '';
+  const shortHash = hash ? ` ${getShortStringWithEllipsis(hash)}` : '';
+  let cause = '';
+
+  if (receipt || matchString(errorMessage, 'out of gas')) {
+    cause = ', because out of gas';
+  } else if (matchString(errorMessage, 'gas is too low')) {
+    cause = ', because gas is too low';
+  } else if (matchString(errorMessage, 'gas price is too low')) {
+    cause = ', because gas price is too low';
+  }
+
   const error = new NotificationError({
     title: 'Error sending transaction',
-    text: `Transaction ${shortHash} was not sent${cause}`,
+    text: `Transaction${shortHash} was not sent${cause}`,
     type: 'is-danger',
   });
 
@@ -153,15 +171,33 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
 
 // Show notification of incoming transactions from block
 const handleBlockTransactions = (
-  { dispatch, rootState, rootGetters },
-  transactions,
+  { state, dispatch, commit, rootState, rootGetters },
+  { transactions },
 ) => {
   const userAddresses = rootGetters['accounts/accountAddresses'];
-  const toUserTrx = transactions.filter(trx =>
-    userAddresses.some(address => address === trx.to),
+  const toUserTrx = transactions.filter(
+    trx =>
+      trx.to &&
+      userAddresses.some(
+        address => toChecksumAddress(address) === toChecksumAddress(trx.to),
+      ),
   );
 
+  if (!toUserTrx.length) return;
+
+  const { pendingTransactions, transactionHistory } = state;
+  const allTrx = [...pendingTransactions, ...transactionHistory];
+
   toUserTrx.forEach(trx => {
+    const incomeTrx = TransactionFactory.fromBlock(trx);
+    const isTrxExist = allTrx.some(trxInList =>
+      Transaction.isEqual(incomeTrx, trxInList),
+    );
+
+    if (!isTrxExist) {
+      commit(ADD_TRANSACTION, incomeTrx);
+    }
+
     const { hash, to } = trx;
     const shortAddress = getShortStringWithEllipsis(to);
     const shortHash = getShortStringWithEllipsis(hash);
@@ -177,7 +213,7 @@ const handleBlockTransactions = (
     return;
   }
 
-  const address = rootState.accounts.address.getAddressString();
+  const address = rootState.accounts.address.getChecksumAddressString();
   const trxAddresses = toUserTrx.map(({ to }) => to);
 
   if (
@@ -318,13 +354,16 @@ const processTransactionAction = async (
     });
 
     sendEvent.once('error', error => {
-      commit(UPDATE_TRANSACTION, {
-        payload: {
-          state: 'error',
-          error,
-        },
-        hash: transaction.hash,
-      });
+      if (transaction.hash) {
+        commit(UPDATE_TRANSACTION, {
+          payload: {
+            state: 'error',
+            error,
+          },
+          hash: transaction.hash,
+        });
+      }
+
       rej();
     });
   });

@@ -1,6 +1,8 @@
 // Mixin for common methods for Ethereum accounts
 import web3 from 'web3';
 
+const { fromWei } = web3.utils;
+
 export default {
   computed: {
     activeAccount() {
@@ -12,7 +14,7 @@ export default {
     balance() {
       return this.$store.state.accounts.balance === null
         ? null
-        : web3.utils.fromWei(this.$store.getters['accounts/balance']);
+        : fromWei(this.$store.getters['accounts/balance']);
     },
   },
 };

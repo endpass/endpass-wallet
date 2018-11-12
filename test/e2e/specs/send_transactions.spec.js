@@ -1,18 +1,21 @@
-import { address, v3password } from '../fixtures/accounts';
+import { address } from '../fixtures/accounts';
+import { transactionToSend } from '../fixtures/transactions';
 
 describe('Send Transactions Page', () => {
   describe('the user is not authorized', () => {
     it('should redirect to root', () => {
       cy.preventLogin();
       cy.visit('#/send');
+      cy.mockWeb3Requests();
       cy.url().should('include', '/#/?redirect_uri=%2Fsend');
     });
   });
 
   describe('the user is authorized', () => {
-    before(() => {
+    beforeEach(() => {
       cy.getInitialData();
       cy.visit('#/send');
+      cy.mockWeb3Requests();
       cy.waitPageLoad();
     });
 
@@ -28,14 +31,10 @@ describe('Send Transactions Page', () => {
 
         // Amount validation
         cy.get('[data-test=transaction-amount-group-field]').within(() => {
-          cy.get('[data-test=transaction-amount-input]').clear();
-          cy.contains('The amount field is required');
-
-          cy.get('[data-test=transaction-amount-input]').type(1);
-          cy.contains('The amount field must be between');
+          cy.get('[data-test=transaction-amount-input]').should('be.disabled');
         });
 
-        cy.contains('Advanced Options').click();
+        cy.get('[data-test=transaction-advanced-options-button]').click();
 
         cy.get('[data-test=transaction-advanced-options]').within(() => {
           // Gas price validation
@@ -65,12 +64,12 @@ describe('Send Transactions Page', () => {
           cy.get('[data-test=transaction-gas-limit-input]')
             .clear()
             .type(0);
-          cy.contains('The gasLimit field must be between 21000 and 4000000');
+          cy.contains('The gasLimit field must be between 21000 and 1000000');
 
           cy.get('[data-test=transaction-gas-limit-input]')
             .clear()
             .type(4000001);
-          cy.contains('The gasLimit field must be between 21000 and 4000000');
+          cy.contains('The gasLimit field must be between 21000 and 1000000');
 
           // Nonce validation
           cy.get('[data-test=transaction-nonce-input]').clear();
@@ -94,37 +93,24 @@ describe('Send Transactions Page', () => {
     it('should send transaction', () => {
       cy.makeStoreAlias();
 
+      cy.get('@store').invoke(
+        'commit',
+        'accounts/SET_BALANCE',
+        '2000000000000000000',
+      );
+
       cy.get('[data-test=transaction-send-form]').within(() => {
         cy.get('[data-test=transaction-address-select]')
           .click()
           .within(() => {
-            cy.get('.multiselect__input').type(address);
+            cy.get('.multiselect__input')
+              .type(transactionToSend.to)
+              .blur();
           });
 
         cy.get('[data-test=transaction-amount-input]')
           .clear()
-          .type(1);
-
-        cy.get('[data-test=transaction-advanced-options]').within(() => {
-          cy.get('[data-test=transaction-gas-price-input]')
-            .clear()
-            .type(10);
-          cy.get('[data-test=transaction-gas-limit-input]')
-            .clear()
-            .type(22000);
-          cy.get('[data-test=transaction-nonce-input]')
-            .clear()
-            .type(0);
-          cy.get('[data-test=transaction-data-input]')
-            .clear()
-            .type('0x');
-        });
-
-        cy.get('@store')
-          .then(store => {
-            cy.spy(store, 'dispatch').as('dispatch');
-          })
-          .invoke('commit', 'accounts/SET_BALANCE', '2000000000000000000');
+          .type(transactionToSend.value);
 
         cy.get('[data-test=transaction-send-button]').click();
       });
@@ -135,10 +121,11 @@ describe('Send Transactions Page', () => {
 
       cy.inputPassword();
 
-      cy.get('@dispatch').should(
-        'be.calledWith',
-        'transactions/sendTransaction',
+      cy.get('[data-test=app-notification] .is-info').contains(
+        'Transaction 0x63...42a7 sent',
       );
+
+      cy.get('[data-test=transaction-status]').should('be.visible');
     });
   });
 });

@@ -5,12 +5,21 @@ import {
   UPDATE_TRANSACTION,
   SET_TRANSACTION_HISTORY,
 } from '@/store/transactions/mutations-types';
-
 import ethplorerService from '@/services/ethplorer';
-import { EventEmitter, Transaction, NotificationError } from '@/class';
-
+import {
+  EventEmitter,
+  Transaction,
+  TransactionFactory,
+  NotificationError,
+} from '@/class';
 import { address } from 'fixtures/accounts';
-import { ethplorerHistory, ethplorerTransactions } from 'fixtures/transactions';
+import {
+  transactionHash,
+  shortTransactionHash,
+  blockTransactions,
+  ethplorerHistory,
+  ethplorerTransactions,
+} from 'fixtures/transactions';
 
 const { state: transactionsState, actions } = state;
 
@@ -110,22 +119,137 @@ describe('transactions actions', () => {
   });
 
   describe('handleSendingError', () => {
+    const defaultErrorParams = {
+      title: 'Error sending transaction',
+      text: `Transaction was not sent`,
+      type: 'is-danger',
+    };
+
     it('should handle errors with undefined param', () => {
       actions.handleSendingError({ dispatch });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError(defaultErrorParams),
+        { root: true },
+      );
     });
 
     it('should handle errors with undefined err param', () => {
       actions.handleSendingError({ dispatch }, { err: undefined });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError(defaultErrorParams),
+        { root: true },
+      );
     });
 
     it('should handle errors with undefined transaction param', () => {
       actions.handleSendingError({ dispatch }, { transaction: undefined });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError(defaultErrorParams),
+        { root: true },
+      );
+    });
+
+    it('should notify with semantic message if transaction out of gas', () => {
+      actions.handleSendingError(
+        { dispatch },
+        {
+          transaction: {
+            hash: transactionHash,
+          },
+          err: {
+            message: 'out of gas',
+          },
+        },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError({
+          ...defaultErrorParams,
+          text: `Transaction ${shortTransactionHash} was not sent, because out of gas`,
+        }),
+        { root: true },
+      );
+    });
+
+    it('should notify with semantic message if receip given', () => {
+      actions.handleSendingError(
+        { dispatch },
+        {
+          transaction: {
+            hash: transactionHash,
+          },
+          receipt: 'foo',
+        },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError({
+          ...defaultErrorParams,
+          text: `Transaction ${shortTransactionHash} was not sent, because out of gas`,
+        }),
+        { root: true },
+      );
+    });
+
+    it('should notify with semantic message if gas is too low', () => {
+      actions.handleSendingError(
+        { dispatch },
+        {
+          transaction: {
+            hash: transactionHash,
+          },
+          err: {
+            message: 'gas is too low',
+          },
+        },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError({
+          ...defaultErrorParams,
+          text: `Transaction ${shortTransactionHash} was not sent, because gas is too low`,
+        }),
+        { root: true },
+      );
+    });
+
+    it('should notify with semantic message if gas price is too low', () => {
+      actions.handleSendingError(
+        { dispatch },
+        {
+          transaction: {
+            hash: transactionHash,
+          },
+          err: {
+            message: 'gas price is too low',
+          },
+        },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'errors/emitError',
+        new NotificationError({
+          ...defaultErrorParams,
+          text: `Transaction ${shortTransactionHash} was not sent, because gas price is too low`,
+        }),
+        { root: true },
+      );
     });
   });
 
@@ -177,8 +301,8 @@ describe('transactions actions', () => {
   describe('handleBlockTransactions', () => {
     it('should show notification of incoming transactions', () => {
       actions.handleBlockTransactions(
-        { dispatch, rootState, rootGetters },
-        ethplorerTransactions,
+        { state: stateInstance, commit, dispatch, rootState, rootGetters },
+        { transactions: blockTransactions },
       );
 
       expect(dispatch).toHaveBeenCalledTimes(1);
@@ -192,6 +316,8 @@ describe('transactions actions', () => {
     it('should update transaction history', () => {
       actions.handleBlockTransactions(
         {
+          state: stateInstance,
+          commit,
           dispatch,
           rootState,
           rootGetters: {
@@ -199,7 +325,7 @@ describe('transactions actions', () => {
             'web3/isMainNetwork': true,
           },
         },
-        ethplorerTransactions,
+        { transactions: blockTransactions },
       );
 
       expect(dispatch).toHaveBeenCalledTimes(2);
@@ -210,6 +336,61 @@ describe('transactions actions', () => {
         { root: true },
       );
       expect(dispatch).toHaveBeenNthCalledWith(2, 'updateTransactionHistory');
+    });
+
+    it('should add transaction to history with network id', () => {
+      const constantDate = new Date('2018-01-01T12:00:00');
+      const dateMock = jest
+        .spyOn(global, 'Date')
+        .mockImplementation(() => constantDate);
+
+      actions.handleBlockTransactions(
+        { state: stateInstance, commit, dispatch, rootState, rootGetters },
+        { transactions: blockTransactions },
+      );
+
+      const expectedTrx = TransactionFactory.fromBlock({
+        ...blockTransactions[0],
+      });
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toBeCalledWith(ADD_TRANSACTION, expectedTrx);
+
+      dateMock.mockRestore();
+    });
+
+    it('should add Transaction instance to history', () => {
+      actions.handleBlockTransactions(
+        { state: stateInstance, commit, dispatch, rootState, rootGetters },
+        { transactions: blockTransactions },
+      );
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toBeCalledWith(ADD_TRANSACTION, expect.any(Transaction));
+    });
+
+    it('should not add existing transactions in history', () => {
+      const existingTrx = TransactionFactory.fromBlock(blockTransactions[0]);
+
+      Object.assign(stateInstance, {
+        pendingTransactions: [existingTrx],
+      });
+
+      actions.handleBlockTransactions(
+        { state: stateInstance, commit, dispatch, rootState, rootGetters },
+        { transactions: [blockTransactions[0]] },
+      );
+
+      expect(commit).toHaveBeenCalledTimes(0);
+    });
+
+    it('should not handle transaction when "to" is null', () => {
+      actions.handleBlockTransactions(
+        { commit, dispatch, rootState, rootGetters },
+        { transactions: [{ ...ethplorerTransactions[1], to: null }] },
+      );
+
+      expect(commit).toHaveBeenCalledTimes(0);
     });
   });
 

@@ -1,5 +1,7 @@
 import web3 from 'web3';
 
+const { bytesToHex, toChecksumAddress } = web3.utils;
+
 export const address = Uint8Array.from([
   76,
   226,
@@ -29,7 +31,7 @@ export class AddressMock {
   }
 
   getAddressString() {
-    return web3.utils.bytesToHex(address);
+    return bytesToHex(address);
   }
 
   async getBalance() {
@@ -37,7 +39,7 @@ export class AddressMock {
   }
 
   getChecksumAddressString() {
-    return web3.utils.toChecksumAddress(this.getAddressString());
+    return toChecksumAddress(this.getAddressString());
   }
 }
 

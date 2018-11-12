@@ -22,7 +22,7 @@
       />
     </a>
     <v-spinner
-      :is-loading="isLoading"
+      v-if="isLoading"
       class="is-transparent"
     />
   </div>
@@ -67,12 +67,15 @@ export default {
   computed: {
     balance() {
       let amountBn;
+
       if (!BigNumber.isBigNumber(this.amount)) {
         amountBn = new BigNumber(this.amount);
       } else {
         amountBn = this.amount;
       }
+
       let priceBn;
+
       if (!BigNumber.isBigNumber(this.price)) {
         priceBn = new BigNumber(this.price);
       } else {

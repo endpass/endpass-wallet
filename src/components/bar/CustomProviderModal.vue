@@ -18,6 +18,7 @@
             aria-describedby="name"
             placeholder="Network name"
             data-vv-name="Network name"
+            autofocus
             required
           />
 

@@ -3,8 +3,11 @@ import Web3 from 'web3';
 import actions from '@/store/web3/actions';
 import * as mutationsTypes from '@/store/web3/mutations-types';
 import { userService } from '@/services';
-import { blockUpdateInterval } from '@/config';
 import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
+import {
+  ethplorerTransactions,
+  blockTransactions,
+} from 'fixtures/transactions';
 
 jest.mock('@/services', () => ({
   userService: {
@@ -20,13 +23,7 @@ describe('web3 actions', () => {
   const dispatch = jest.fn();
 
   afterEach(() => {
-    userService.setSetting.mockClear();
-
-    clearInterval.mockClear();
-    setInterval.mockClear();
-
-    commit.mockClear();
-    dispatch.mockClear();
+    jest.clearAllMocks();
   });
 
   describe('changeNetwork', () => {
@@ -66,6 +63,8 @@ describe('web3 actions', () => {
 
       expect(dispatch.mock.calls).toEqual([
         ['subscribeOnBlockUpdates'],
+        ['price/updatePrice', {}, { root: true }],
+        ['accounts/updateBalance', {}, { root: true }],
         ['tokens/getNetworkTokens', {}, { root: true }],
         ['tokens/getCurrentAccountTokens', {}, { root: true }],
         ['tokens/getCurrentAccountTokensData', null, { root: true }],
@@ -81,7 +80,7 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(dispatch).toHaveBeenCalledTimes(5);
+      expect(dispatch).toHaveBeenCalledTimes(7);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -91,7 +90,7 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(dispatch).toHaveBeenCalledTimes(5);
+      expect(dispatch).toHaveBeenCalledTimes(7);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -508,7 +507,7 @@ describe('web3 actions', () => {
       expect(setInterval).toHaveBeenCalledTimes(1);
       expect(setInterval).toHaveBeenCalledWith(
         expect.any(Function),
-        blockUpdateInterval,
+        ENV.blockUpdateInterval,
       );
     });
 
@@ -561,6 +560,70 @@ describe('web3 actions', () => {
 
       expect(clearInterval).toHaveBeenCalledTimes(0);
       expect(commit).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe('handleLastBlock', () => {
+    const { handleLastBlock } = actions;
+    const blockNumber = 12;
+    const state = { handledBlockNumber: 11 };
+
+    it('should set initial handled block number', async () => {
+      expect.assertions(2);
+
+      const state = { handledBlockNumber: null };
+
+      await handleLastBlock({ state, commit, dispatch }, { blockNumber });
+
+      expect(commit).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenNthCalledWith(
+        1,
+        mutationsTypes.SET_HANDLED_BLOCK_NUMBER,
+        blockNumber - 1,
+      );
+    });
+
+    it('should set last handled block number', async () => {
+      expect.assertions(2);
+
+      await handleLastBlock({ state, commit, dispatch }, { blockNumber });
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toBeCalledWith(
+        mutationsTypes.SET_HANDLED_BLOCK_NUMBER,
+        blockNumber,
+      );
+    });
+
+    it('should not get a block number if it has been handled', async () => {
+      expect.assertions(2);
+
+      await handleLastBlock({ state, commit, dispatch }, { blockNumber: 11 });
+
+      expect(Web3.eth.getBlock).toHaveBeenCalledTimes(0);
+      expect(dispatch).toHaveBeenCalledTimes(0);
+    });
+
+    it('should handle transactions', async () => {
+      expect.assertions(3);
+
+      const transactions = [...blockTransactions];
+
+      Web3.eth.getBlock.mockResolvedValueOnce(null);
+      Web3.eth.getBlock.mockRejectedValueOnce();
+      Web3.eth.getBlock.mockResolvedValueOnce({ transactions });
+
+      await handleLastBlock({ state, commit, dispatch }, { blockNumber });
+
+      await global.flushPromises();
+
+      expect(Web3.eth.getBlock).toHaveBeenCalledTimes(3);
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'transactions/handleBlockTransactions',
+        { transactions },
+        { root: true },
+      );
     });
   });
 

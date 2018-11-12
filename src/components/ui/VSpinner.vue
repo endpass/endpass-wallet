@@ -1,7 +1,8 @@
 <template>
   <div
-    v-if="isLoading"
-    class="v-spinner is-overlay">
+    :class="{ 'label-under-spinner': isLabelUnderSpinner }"
+    class="v-spinner is-overlay"
+  >
     <div class="spinner loader" />
     <p
       v-if="label"
@@ -15,14 +16,15 @@
 <script>
 export default {
   name: 'VSpinner',
+
   props: {
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
     label: {
       type: String,
       default: '',
+    },
+    isLabelUnderSpinner: {
+      type: Boolean,
+      default: false,
     },
   },
 };
@@ -41,14 +43,19 @@ export default {
     background-color: transparent;
   }
 
+  &.label-under-spinner {
+    flex-direction: column;
+  }
+
   .spinner {
     display: flex;
-    margin: 0 auto;
+    align-self: center;
   }
 
   .spinner-label {
     color: $white;
-    margin-left: 0.2em;
+    margin-left: 0.5em;
+    align-self: center;
   }
 
   // Extends Loader class from bulma

@@ -1,4 +1,5 @@
-import { pick, pickBy } from '@/utils/objects';
+import { get, pick, pickBy, uniq } from 'lodash';
+import { BigNumber } from 'bignumber.js';
 
 const activeCurrencyName = (state, getters, rootState) =>
   rootState.web3.activeCurrency.name;
@@ -28,19 +29,7 @@ const tokensByAddress = state => address => {
   return pick(state.networkTokens, tokensList);
 };
 
-const balancesByAddress = state => address =>
-  state.balancesByAddress[address] || {};
-
-const currentNetUserTokens = (state, getters, rootState, rootGetters) =>
-  state.userTokens[rootGetters['web3/activeNetwork']] || {};
-
-const allCurrentAccountTokens = (state, getters, rootState, rootGetters) => ({
-  ...getters.tokensByAddress(rootGetters['accounts/currentAddressString']),
-  ...getters.currentNetUserTokens,
-});
-
-const fullTokensByAddress = (state, getters) => address => {
-  const tokens = getters.tokensByAddress(address);
+const fullTokens = (state, getters) => (address, tokens) => {
   const balances = getters.balancesByAddress(address);
 
   return Object.keys(tokens).reduce((acc, key) => {
@@ -56,6 +45,38 @@ const fullTokensByAddress = (state, getters) => address => {
   }, {});
 };
 
+const balancesByAddress = state => address =>
+  state.balancesByAddress[address] || {};
+
+const currentNetUserTokens = (state, getters, rootState, rootGetters) =>
+  state.userTokens[rootGetters['web3/activeNetwork']] || {};
+
+const currentAccountTokens = (state, getters, rootState, rootGetters) =>
+  getters.tokensByAddress(rootGetters['accounts/currentAddressString']);
+
+const currentNetUserFullTokens = (state, getters, rootState, rootGetters) => {
+  const tokens = getters.currentNetUserTokens;
+
+  return getters.fullTokens(
+    rootGetters['accounts/currentAddressString'],
+    tokens,
+  );
+};
+
+const currentAccountFullTokens = (state, getters, rootState, rootGetters) =>
+  getters.fullTokensByAddress(rootGetters['accounts/currentAddressString']);
+
+const allCurrentAccountTokens = (state, getters) => ({
+  ...getters.currentAccountTokens,
+  ...getters.currentNetUserTokens,
+});
+
+const fullTokensByAddress = (state, getters) => address => {
+  const tokens = getters.tokensByAddress(address);
+
+  return getters.fullTokens(address, tokens);
+};
+
 const allCurrentAccountFullTokens = (
   state,
   getters,
@@ -63,21 +84,11 @@ const allCurrentAccountFullTokens = (
   rootGetters,
 ) => {
   const tokens = getters.allCurrentAccountTokens;
-  const balances = getters.balancesByAddress(
+
+  return getters.fullTokens(
     rootGetters['accounts/currentAddressString'],
+    tokens,
   );
-
-  return Object.keys(tokens).reduce((acc, key) => {
-    const token = tokens[key];
-
-    return Object.assign(acc, {
-      [key]: {
-        ...token,
-        balance: balances[key] || '0',
-        price: state.prices[token.symbol] || '0',
-      },
-    });
-  }, {});
 };
 
 const allCurrentAccountTokensWithNonZeroBalance = (state, getters) =>
@@ -123,16 +134,51 @@ const userTokensWithoutToken = state => ({ net, token }) => {
   return userTokens;
 };
 
+const currentAccountTokensCurrencies = (state, getters, rootState) => {
+  const { activeCurrency } = rootState.web3;
+  const currencies = [
+    {
+      val: null,
+      key: activeCurrency.name,
+      text: activeCurrency.name,
+    },
+  ];
+
+  return uniq(
+    currencies.concat(
+      Object.values(getters.allCurrentAccountTokensWithNonZeroBalance).map(
+        ({ symbol }) => symbol,
+      ),
+    ),
+  );
+};
+
+const currentAccountTokenBySymbol = (state, getters) => symbol => {
+  const token = Object.values(
+    getters.allCurrentAccountTokensWithNonZeroBalance,
+  ).find(accountToken => accountToken.symbol === symbol);
+
+  if (!token) return null;
+
+  return token;
+};
+
 export default {
   activeCurrencyName,
+  currentNetUserTokens,
+  currentAccountTokens,
+  currentNetUserFullTokens,
+  currentAccountFullTokens,
+  fullTokens,
   tokensByAddress,
   balancesByAddress,
   userTokenByAddress,
-  currentNetUserTokens,
   fullTokensByAddress,
   allCurrentAccountTokens,
   allCurrentAccountFullTokens,
   allCurrentAccountTokensWithNonZeroBalance,
   userTokensWithToken,
   userTokensWithoutToken,
+  currentAccountTokensCurrencies,
+  currentAccountTokenBySymbol,
 };

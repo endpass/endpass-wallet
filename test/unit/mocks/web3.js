@@ -20,11 +20,14 @@ jest.mock('web3', () => {
       getNetworkType: jest.fn().mockResolvedValue('ropsten'),
       getId: jest.fn().mockResolvedValue(3),
     },
+    estimateGas: jest.fn(),
     accounts: {},
     Contract,
     getBalance: jest.fn().mockResolvedValue('1'),
     getBlockNumber: jest.fn().mockResolvedValue(),
+    getBlock: jest.fn().mockResolvedValue({}),
     getTransactionCount: jest.fn().mockResolvedValue(),
+    getCode: jest.fn().mockResolvedValue('0x0123'),
   };
   const { utils } = originalWeb3;
   const mockWeb3 = jest.fn(() => ({

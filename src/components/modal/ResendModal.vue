@@ -17,6 +17,7 @@
           aria-describedby="gasPrice"
           placeholder="Gas price"
           data-test="gas-price-input"
+          autofocus
           required
         >
           <div
@@ -29,7 +30,7 @@
         <v-input
           id="gasLimit"
           v-model="newTransaction.gasLimit"
-          :validator="`required|numeric|integer|between:${transaction.gasLimit},4000000`"
+          :validator="`required|numeric|integer|between:${transaction.gasLimit},1000000`"
           label="Gas limit"
           name="gasLimit"
           type="number"
@@ -57,16 +58,16 @@
 </template>
 
 <script>
-import web3 from 'web3';
 import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
-import { Transaction } from '@/class';
 
 export default {
-  name: 'resend-modal',
+  name: 'ResendModal',
+
   props: ['transaction'],
+
   data() {
     return {
       newTransaction: null,

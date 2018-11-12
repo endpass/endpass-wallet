@@ -10,16 +10,24 @@
     </div>
     <div class="media-content">
       <div class="content">
-        <h5 class="address">{{ addressFmt }}</h5>
+        <h5
+          class="address"
+          data-test="account-address"
+        >
+          {{ addressFmt }}
+        </h5>
         <slot />
       </div>
     </div>
     <div class="media-right">
-      <balance
-        v-if="balance && balance.length"
-        :amount="balance"
-        :currency="currency"
-      />
+      <slot name="balance">
+        <balance
+          v-if="balance && balance.length"
+          slot="balance"
+          :amount="balance"
+          :currency="currency"
+        />
+      </slot>
     </div>
   </div>
 </template>

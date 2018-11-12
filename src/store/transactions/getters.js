@@ -1,7 +1,10 @@
 import { BigNumber } from 'bignumber.js';
-import { uniq } from 'lodash';
+import { uniq, uniqWith } from 'lodash';
 import web3 from '@/utils/web3';
 import { MAIN_NET_ID } from '@/constants';
+import { Transaction } from '@/class';
+
+const { toChecksumAddress } = web3.utils;
 
 const accountTransactions = (state, getters, rootState) => {
   if (!rootState.accounts.address) {
@@ -16,14 +19,13 @@ const accountTransactions = (state, getters, rootState) => {
     transactions.push(...getters.filteredHistoryTransactions);
   }
 
-  return transactions
+  const allAccountTrx = transactions
     .filter(trx => {
       const { to, from, state: trxStatus } = trx;
 
       return (
-        web3.utils.toChecksumAddress(from) === address ||
-        (trxStatus === 'success' &&
-          web3.utils.toChecksumAddress(to) === address)
+        toChecksumAddress(from) === address ||
+        (trxStatus === 'success' && toChecksumAddress(to) === address)
       );
     })
     .sort((trx1, trx2) => {
@@ -37,6 +39,8 @@ const accountTransactions = (state, getters, rootState) => {
 
       return trx2.date - trx1.date;
     });
+
+  return uniqWith(allAccountTrx, Transaction.isEqual);
 };
 
 const pendingBalance = (state, getters, rootState) => {
@@ -65,10 +69,12 @@ const pendingBalance = (state, getters, rootState) => {
 
 // Exclude trx that exist in pendingTransactions
 const filteredHistoryTransactions = state => {
-  const isInPending = itemHash =>
-    state.pendingTransactions.some(({ hash }) => hash === itemHash);
+  const isInPending = trx =>
+    state.pendingTransactions.some(pendingTrx =>
+      Transaction.isEqual(trx, pendingTrx),
+    );
 
-  return state.transactionHistory.filter(({ hash }) => !isInPending(hash));
+  return state.transactionHistory.filter(trx => !isInPending(trx));
 };
 
 // Trx for the current network
@@ -98,26 +104,33 @@ const getTransactionByHash = state => hash =>
 const getPendingTransactionByHash = state => hash =>
   state.pendingTransactions.find(trx => trx.hash === hash);
 
-const getAddressesFromTransactionsHistory = state =>
+const addressesFromTransactionsHistory = state =>
   uniq(state.transactionHistory.map(({ to }) => to));
 
 const getAddressesFromPendingTransactions = state =>
   uniq(state.pendingTransactions.map(({ to }) => to));
 
-const getAddressesFromTransactions = (state, getters) =>
+const addressesFromTransactions = (state, getters) =>
   uniq(
-    getters.getAddressesFromTransactionsHistory.concat(
+    getters.addressesFromTransactionsHistory.concat(
       getters.getAddressesFromPendingTransactions,
     ),
+  );
+
+const allowedToSendAddresses = (state, getters, rootState) =>
+  uniq(
+    Object.keys(rootState.accounts.wallets),
+    getters.addressesFromTransactions,
   );
 
 export default {
   getPendingTransactions,
   getPendingTransactionByHash,
   getTransactionByHash,
-  getAddressesFromTransactionsHistory,
+  addressesFromTransactionsHistory,
   getAddressesFromPendingTransactions,
-  getAddressesFromTransactions,
+  addressesFromTransactions,
+  allowedToSendAddresses,
   pendingBalance,
   filteredHistoryTransactions,
   currentNetTransactions,

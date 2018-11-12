@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { mapValues } from 'lodash';
 import {
   SET_LOADING,
   SET_TOKENS_BY_ADDRESS,
@@ -7,7 +7,7 @@ import {
   ADD_TOKENS_PRICES,
   SET_USER_TOKENS,
 } from './mutations-types';
-import { NotificationError } from '@/class';
+import { NotificationError, Token } from '@/class';
 import ERC20Token from '@/class/erc20';
 import {
   tokenInfoService,
@@ -15,9 +15,8 @@ import {
   priceService,
   userService,
 } from '@/services';
-import { merge, mapValuesWith } from '@/utils/objects';
+import { merge } from '@/utils/objects';
 import { mapArrayByProp } from '@/utils/arrays';
-import { priceUpdateInterval } from '@/config';
 import { MAIN_NET_ID } from '@/constants';
 
 const init = async ({ dispatch }) => {
@@ -31,23 +30,25 @@ const subscribeOnCurrentAccountTokensUpdates = ({ dispatch }) => {
 
   setInterval(() => {
     dispatch('getCurrentAccountTokensData');
-  }, priceUpdateInterval);
+  }, ENV.priceUpdateInterval);
 };
 
 const addUserToken = async (
   { commit, dispatch, getters, rootGetters },
   { token },
 ) => {
-  if (!getters.userTokenByAddress(token.address)) {
+  const consistentToken = Token.getConsistent(token);
+
+  if (!getters.userTokenByAddress(consistentToken.address)) {
     try {
       const updatedTokens = getters.userTokensWithToken({
         net: rootGetters['web3/activeNetwork'],
-        token,
+        token: consistentToken,
       });
 
       await userService.setSetting(
         'tokens',
-        mapValuesWith(updatedTokens, prop => Object.values(prop)),
+        mapValues(updatedTokens, Object.values),
       );
 
       commit(SET_USER_TOKENS, updatedTokens);
@@ -61,16 +62,18 @@ const removeUserToken = async (
   { commit, getters, dispatch, rootGetters },
   { token },
 ) => {
-  if (getters.userTokenByAddress(token.address)) {
+  const consistentToken = Token.getConsistent(token);
+
+  if (getters.userTokenByAddress(consistentToken.address)) {
     try {
       const updatedTokens = getters.userTokensWithoutToken({
         net: rootGetters['web3/activeNetwork'],
-        token,
+        token: consistentToken,
       });
 
       await userService.setSetting(
         'tokens',
-        mapValuesWith(updatedTokens, prop => Object.values(prop)),
+        mapValues(updatedTokens, Object.values),
       );
 
       commit(SET_USER_TOKENS, updatedTokens);

@@ -12,7 +12,7 @@ const setAddress = (state, newAddress) => {
   let address = newAddress;
 
   if (!(address instanceof Address)) {
-    address = new Address(address);
+    address = new Address({ address });
   }
 
   state.address = address;
@@ -32,10 +32,10 @@ const addWallet = (state, walletV3) => {
 };
 
 // Adds an empty Address as wallet to use public wallet functionality
-const addAddress = (state, address) => {
+const addAddress = (state, { address, info }) => {
   state.wallets = {
     ...state.wallets,
-    [address]: new Address(address),
+    [address]: new Address({ address, info }),
   };
 };
 

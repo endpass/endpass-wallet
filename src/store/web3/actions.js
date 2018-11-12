@@ -4,18 +4,26 @@ import Web3 from 'web3';
 import web3 from '@/utils/web3';
 import { userService } from '@/services';
 import { providerFactory } from '@/class';
-import { blockUpdateInterval } from '@/config';
-import * as mutationsTypes from './mutations-types';
+import {
+  CHANGE_NETWORK,
+  CHANGE_CURRENCY,
+  SET_NETWORKS,
+  SET_BLOCK_NUMBER,
+  SET_HANDLED_BLOCK_NUMBER,
+  SET_INTERVAL,
+} from './mutations-types';
 import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
 
 const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
   const network = getters.networks.find(net => net.url === networkUrl);
 
-  commit(mutationsTypes.CHANGE_NETWORK, network);
+  commit(CHANGE_NETWORK, network);
 
   return Promise.all([
     userService.setSetting('net', network.id),
     dispatch('subscribeOnBlockUpdates'),
+    dispatch('price/updatePrice', {}, { root: true }),
+    dispatch('accounts/updateBalance', {}, { root: true }),
     dispatch('tokens/getNetworkTokens', {}, { root: true }),
     dispatch('tokens/getCurrentAccountTokens', {}, { root: true }),
     dispatch('tokens/getCurrentAccountTokensData', null, {
@@ -30,7 +38,7 @@ const changeCurrency = async (
 ) => {
   const currency = CURRENCIES.find(currency => currency.id === currencyId);
 
-  commit(mutationsTypes.CHANGE_CURRENCY, currency);
+  commit(CHANGE_CURRENCY, currency);
 
   if (state.activeNet.currency !== currency.id) {
     await dispatch('changeNetwork', {
@@ -48,7 +56,7 @@ const addNetwork = async ({ state, commit, dispatch }, { network }) => {
       networksToSave,
     );
 
-    commit(mutationsTypes.SET_NETWORKS, networksToSave);
+    commit(SET_NETWORKS, networksToSave);
 
     await dispatch('changeNetwork', {
       networkUrl: network.url,
@@ -81,7 +89,7 @@ const updateNetwork = async (
       networksToSave,
     );
 
-    commit(mutationsTypes.SET_NETWORKS, networksToSave);
+    commit(SET_NETWORKS, networksToSave);
 
     if (oldNetwork.url === state.activeNet.url) {
       await dispatch('changeNetwork', { networkUrl: network.url });
@@ -107,7 +115,7 @@ const deleteNetwork = async (
       networksToSave,
     );
 
-    commit(mutationsTypes.SET_NETWORKS, networksToSave);
+    commit(SET_NETWORKS, networksToSave);
 
     if (network.url === state.activeNet.url) {
       await dispatch('changeNetwork', { networkUrl: getters.networks[0].url });
@@ -127,14 +135,17 @@ const validateNetwork = (context, { network }) => {
   return Promise.all([net.getNetworkType(), net.getId()]);
 };
 
-const subscribeOnBlockUpdates = async ({ commit, dispatch }) => {
+const subscribeOnBlockUpdates = async ({ commit, dispatch, getters }) => {
   await dispatch('unsubscribeOnBlockUpdates');
 
   const interval = setInterval(async () => {
-    commit(mutationsTypes.SET_BLOCK_NUMBER, await web3.eth.getBlockNumber());
-  }, blockUpdateInterval);
+    const blockNumber = await web3.eth.getBlockNumber();
 
-  commit(mutationsTypes.SET_INTERVAL, interval);
+    commit(SET_BLOCK_NUMBER, blockNumber);
+    dispatch('handleLastBlock', { blockNumber });
+  }, ENV.blockUpdateInterval);
+
+  commit(SET_INTERVAL, interval);
 };
 
 const unsubscribeOnBlockUpdates = async ({ state, commit }) => {
@@ -143,7 +154,45 @@ const unsubscribeOnBlockUpdates = async ({ state, commit }) => {
   }
 
   clearInterval(state.interval);
-  commit(mutationsTypes.SET_INTERVAL, null);
+  commit(SET_INTERVAL, null);
+};
+
+const handleLastBlock = async (
+  { state, commit, dispatch },
+  { blockNumber },
+) => {
+  if (state.handledBlockNumber === null) {
+    commit(SET_HANDLED_BLOCK_NUMBER, blockNumber - 1);
+  }
+
+  const { handledBlockNumber } = state;
+
+  if (handledBlockNumber === blockNumber) return;
+
+  // Trying to get the block again if wrong response
+  async function getBlockSafely(num) {
+    try {
+      const block = await web3.eth.getBlock(num, true);
+
+      if (!block) throw new Error('Bad block');
+
+      return block;
+    } catch (error) {
+      return getBlockSafely(num);
+    }
+  }
+
+  for (let i = handledBlockNumber + 1; i <= blockNumber; i += 1) {
+    getBlockSafely(i).then(({ transactions }) => {
+      dispatch(
+        'transactions/handleBlockTransactions',
+        { transactions },
+        { root: true },
+      );
+    });
+  }
+
+  commit(SET_HANDLED_BLOCK_NUMBER, blockNumber);
 };
 
 const init = async ({ commit, dispatch, state }) => {
@@ -156,9 +205,9 @@ const init = async ({ commit, dispatch, state }) => {
       CURRENCIES.find(currency => activeNet.currency === currency.id) ||
       state.activeCurrency;
 
-    commit(mutationsTypes.SET_NETWORKS, networks);
-    commit(mutationsTypes.CHANGE_NETWORK, activeNet);
-    commit(mutationsTypes.CHANGE_CURRENCY, activeCurrency);
+    commit(SET_NETWORKS, networks);
+    commit(CHANGE_NETWORK, activeNet);
+    commit(CHANGE_CURRENCY, activeCurrency);
 
     await Promise.all([
       dispatch('tokens/getCurrentAccountTokens', {}, { root: true }),
@@ -178,5 +227,6 @@ export default {
   validateNetwork,
   subscribeOnBlockUpdates,
   unsubscribeOnBlockUpdates,
+  handleLastBlock,
   init,
 };

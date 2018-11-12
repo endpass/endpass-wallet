@@ -18,28 +18,43 @@ describe('VList', () => {
     wrapper = shallow(VList, { localVue });
   });
 
-  it('should render props', () => {
-    expect(wrapper.contains('p')).toBeFalsy();
-    expect(wrapper.contains('ul')).toBeFalsy();
-    expect(wrapper.vm.$data.active).toBeFalsy();
+  describe('props', () => {
+    it('should render props', () => {
+      expect(wrapper.contains('p')).toBeFalsy();
+      expect(wrapper.contains('ul')).toBeFalsy();
+      expect(wrapper.vm.$data.active).toBeFalsy();
 
-    wrapper.setProps(props);
+      wrapper.setProps(props);
 
-    expect(wrapper.find('p').text()).toBe('Some Label');
-    expect(wrapper.findAll('li')).toHaveLength(2);
-    expect(wrapper.vm.$data.active).toBe('item1');
+      expect(wrapper.find('p').text()).toBe('Some Label');
+      expect(wrapper.findAll('li')).toHaveLength(2);
+      expect(wrapper.vm.$data.active).toBe('item1');
+    });
+
+    it('should not render active item', async () => {
+      wrapper.setProps({
+        ...props,
+        hasDefaultActive: false,
+      });
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.$data.active).toBeNull();
+    });
   });
 
-  it('should emit event', () => {
-    wrapper.setProps(props);
+  describe('behavior', () => {
+    it('should emit event', () => {
+      wrapper.setProps(props);
 
-    wrapper
-      .findAll('a')
-      .at(1)
-      .trigger('click');
+      wrapper
+        .findAll('a')
+        .at(1)
+        .trigger('click');
 
-    // FIXME unexpected behavor, nextTick don't help
-    // expect(wrapper.vm.$data.active).toBe('item2');
-    expect(wrapper.emitted().input).toHaveLength(2);
+      // FIXME unexpected behavior, nextTick don't help
+      // expect(wrapper.vm.$data.active).toBe('item2');
+      expect(wrapper.emitted().input).toHaveLength(2);
+    });
   });
 });

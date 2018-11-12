@@ -10,6 +10,7 @@ describe('Settings Page', () => {
   beforeEach(() => {
     cy.getInitialData();
     cy.visit('#/settings');
+    cy.mockWeb3Requests();
     cy.waitPageLoad();
   });
 
@@ -27,6 +28,7 @@ describe('Settings Page', () => {
   it('should save otp settings', () => {
     // Enable otp
     cy.get('[data-test=button-two-factor]').click();
+    cy.focused().should('have.attr', 'data-test', 'input-two-auth-code');
     cy.get('[data-test=input-two-auth-code]').type('1234');
     cy.get('[data-test=input-two-auth-code]')
       .parentsUntil('form')

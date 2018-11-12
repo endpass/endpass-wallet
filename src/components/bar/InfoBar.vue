@@ -44,7 +44,8 @@ import Balance from '@/components/Balance';
 import net from '@/mixins/net';
 
 export default {
-  name: 'info-bar',
+  name: 'InfoBar',
+
   computed: {
     ...mapState({
       fiatCurrency: state => state.user.settings.fiatCurrency,
@@ -52,14 +53,15 @@ export default {
       price: state => state.price.price,
       priceLoading: state => state.price.isLoading,
     }),
-    ...mapGetters('accounts', {
-      balance: 'balance',
-    }),
+    ...mapGetters('accounts', ['balance']),
   },
+
   methods: {
     ...mapActions('price', ['updatePrice']),
   },
+
   mixins: [net],
+
   components: {
     SyncStatus,
     Balance,

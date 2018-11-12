@@ -1,6 +1,6 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import VToken from '@/components/VToken';
-import { Token } from '@/class/Token';
+import Token from '@/class/Token';
 
 const localVue = createLocalVue();
 

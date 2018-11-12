@@ -39,10 +39,6 @@ jest.mock('@/services/user', () => {
       success: true,
     }),
 
-    setSetting: jest.fn().mockResolvedValue({
-      success: true,
-    }),
-
     removeSettings: jest.fn().mockResolvedValue({
       success: true,
     }),
@@ -57,11 +53,7 @@ jest.mock('@/services/user', () => {
 
     getAccounts: jest.fn().mockResolvedValue(addresses),
 
-    getV3Accounts: jest
-      .fn()
-      .mockResolvedValue(
-        addresses.map(address => getAccountByAddress(address)),
-      ),
+    getV3Accounts: jest.fn().mockResolvedValue([v3]),
 
     getFullUserInfo: jest
       .fn()
@@ -77,10 +69,6 @@ jest.mock('@/services/user', () => {
     }),
 
     getOtpSettings: jest.fn().mockResolvedValue(otpSettings),
-
-    loginViaOTP: jest.fn().mockResolvedValue({
-      success: true,
-    }),
 
     deleteOtpSettings: jest.fn().mockResolvedValue({
       success: true,

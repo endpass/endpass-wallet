@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { http, proxyRequest } from '@/utils';
-import { identityAPIUrl } from '@/config';
+import { proxyRequest } from '@/utils';
 import { NotificationError } from '@/class';
+import { httpIdentity } from '@/class/singleton';
 import keyUtil from '@/utils/keystore';
 import { IDENTITY_MODE } from '@/constants';
 
@@ -9,8 +9,10 @@ export default {
   async login({ email, redirectUri = '/' }) {
     try {
       const encodedUri = encodeURIComponent(redirectUri);
-      const requestUrl = `${identityAPIUrl}/auth?redirect_uri=${encodedUri}`;
-      const { data } = await http.post(requestUrl, { email });
+      const requestUrl = `${
+        ENV.identityAPIUrl
+      }/auth?redirect_uri=${encodedUri}`;
+      const { data } = await httpIdentity.post(requestUrl, { email });
       const { success, challenge } = data;
 
       if (!success) {
@@ -28,8 +30,8 @@ export default {
   },
 
   loginViaOTP(code, email) {
-    return http
-      .post(`${identityAPIUrl}/token`, {
+    return httpIdentity
+      .post(`${ENV.identityAPIUrl}/token`, {
         challenge_type: 'otp',
         code,
         email,
@@ -50,7 +52,7 @@ export default {
   },
 
   logout() {
-    return http.post(`${identityAPIUrl}/logout`).catch(() => {
+    return httpIdentity.post(`${ENV.identityAPIUrl}/logout`).catch(() => {
       throw new NotificationError({
         title: 'Log out error',
         text: 'Failed to log out. Please, try again',
@@ -90,8 +92,8 @@ export default {
   //     success: true,
   //   });
 
-  //   return http
-  //     .delete(`${identityAPIUrl}/user`, propsArr)
+  //   return httpIdentity
+  //     .delete(`${ENV.identityAPIUrl}/user`, propsArr)
   //     .then(res => res.data)
   //     .then(console.log)
   //     .catch(console.log);
@@ -103,17 +105,30 @@ export default {
   },
 
   // Saves the encrypted keystore for an account
-  setAccount(address, account) {
-    return proxyRequest.write(`/account/${address}`, {
+  async setAccount(address, { info = {}, ...rest }) {
+    const account = Object.keys(rest).length ? rest : null;
+
+    await proxyRequest.write(`/account/${address}`, {
       payload: account,
+    });
+
+    if (Object.keys(info).length) {
+      await this.setAccountInfo(address, info);
+    }
+  },
+
+  // Save the info for an account
+  setAccountInfo(address, info) {
+    return proxyRequest.write(`/account/${address}/info`, {
+      payload: info,
     });
   },
 
   // Update the encrypted keystore for an existing accounts
   async updateAccounts(accounts) {
     try {
-      return await http
-        .post(`${identityAPIUrl}/accounts`, accounts)
+      return await httpIdentity
+        .post(`${ENV.identityAPIUrl}/accounts`, accounts)
         .then(({ data }) => data);
     } catch (error) {
       throw new NotificationError({
@@ -128,7 +143,15 @@ export default {
   async getAccount(address) {
     try {
       const account = await proxyRequest.read(`/account/${address}`);
-      return { ...account, address };
+      let info;
+
+      try {
+        info = await proxyRequest.read(`/account/${address}/info`);
+      } catch (e) {
+        info = {};
+      }
+
+      return { ...account, address, info };
     } catch (e) {
       const shortAcc = address.replace(/^(.{5}).+/, '$1…');
 
@@ -207,7 +230,7 @@ export default {
       });
 
       if (!success) {
-        throw new Error(`POST ${identityAPIUrl}/otp: ${message}`);
+        throw new Error(`POST ${ENV.identityAPIUrl}/otp: ${message}`);
       }
 
       return { success };
@@ -231,7 +254,7 @@ export default {
       });
 
       if (!success) {
-        throw new Error(`DELETE ${identityAPIUrl}/otp: ${message}`);
+        throw new Error(`DELETE ${ENV.identityAPIUrl}/otp: ${message}`);
       }
 
       return { success };

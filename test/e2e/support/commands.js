@@ -25,6 +25,34 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import path from 'path';
 import { v3password } from '../fixtures/accounts';
+import {
+  syncing,
+  blockNumber,
+  getBlockByNumber,
+  getBalance_b14ab,
+  getBalance_6bbf1,
+  getBalance_31ea8,
+  getTransactionCount_b14ab,
+  call_b14ab,
+  call_31ea8,
+  call_custom_token_1,
+  call_custom_token_2,
+  call_custom_token_3,
+  call_custom_token_4,
+  call_custom_token_5,
+  estimateGas,
+  estimateGas_31ea8,
+  sendRawTransaction_b14ab_31ea8,
+  getTransactionReceipt_b14ab_31ea8,
+  sendRawTransaction_b14ab_31ea8_cancel,
+  getTransactionReceipt_b14ab_31ea8_cancel,
+  sendRawTransaction_b14ab_31ea8_resend,
+  getTransactionReceipt_b14ab_31ea8_resend,
+} from '../fixtures/web3';
+import {
+  ethplorerHistory,
+  ethplorerTransactions,
+} from '../fixtures/transactions';
 
 // Sets up server and routes to stub logged in user with fixtures.
 // Usage: cy.login()
@@ -87,6 +115,7 @@ Cypress.Commands.add('login', () => {
     '/identity/api/v1/otp',
     'fixture:identity/success.json',
   ).as('identityDeleteOtp');
+  cy.route('GET', /\/account\/(\w+)\/info$/, {}).as('accountInfo');
 });
 
 // Sets up server and routes for an unauthorized user.
@@ -128,10 +157,37 @@ Cypress.Commands.add('getTokensInfo', () => {
   ).as('tokenInfo');
 });
 
+Cypress.Commands.add('getGasPrice', () => {
+  cy.route(
+    'GET',
+    '/gasprice/api/v1/gas/price',
+    'fixture:cryptodata/gasprice',
+  ).as('gasPrice');
+});
+
+Cypress.Commands.add('mockEthplorerRequests', () => {
+  cy.route({
+    method: 'GET',
+    url: '/getAddressTransactions/*',
+    response: ethplorerTransactions,
+    status: 200,
+  }).as('addressTransactionsRequest');
+  cy.route({
+    method: 'GET',
+    url: '/getAddressHistory/*',
+    response: {
+      operations: ethplorerHistory,
+    },
+    status: 200,
+  }).as('addressHistoryRequest');
+});
+
 Cypress.Commands.add('getInitialData', () => {
   cy.login();
   cy.getAccountsInfo();
   cy.getTokensInfo();
+  cy.getGasPrice();
+  cy.mockEthplorerRequests();
 });
 
 Cypress.Commands.add('waitPageLoad', () => {
@@ -207,5 +263,101 @@ Cypress.Commands.add('switchAccount', () => {
     .click()
     .within(() => {
       cy.get('[data-select]:not(.multiselect__option--selected)').click();
+    });
+});
+
+// Mock web3 requests. Use after the cy.visit() command
+Cypress.Commands.add('mockWeb3Requests', () => {
+  cy.window()
+    .its('web3.currentProvider')
+    .as('mockWeb3Provider')
+    .then(provider => {
+      if (!provider.mockResolvedValue) {
+        console.warn(
+          'cy.mockWeb3Provider: Use web3 MockProvider to mock requests to Ethereum nodes',
+        );
+        return;
+      }
+
+      provider.mockResolvedValue(syncing.payload, syncing.result);
+      provider.mockResolvedValue(blockNumber.payload, blockNumber.result);
+      provider.mockResolvedValue(
+        getBlockByNumber.payload,
+        getBlockByNumber.result,
+      );
+
+      provider.mockResolvedValue(
+        getBalance_b14ab.payload,
+        getBalance_b14ab.result,
+      );
+      provider.mockResolvedValue(
+        getBalance_6bbf1.payload,
+        getBalance_6bbf1.result,
+      );
+      provider.mockResolvedValue(
+        getBalance_31ea8.payload,
+        getBalance_31ea8.result,
+      );
+
+      provider.mockResolvedValue(
+        getTransactionCount_b14ab.payload,
+        getTransactionCount_b14ab.result,
+      );
+
+      provider.mockResolvedValue(call_b14ab.payload, call_b14ab.result);
+      provider.mockResolvedValue(call_31ea8.payload, call_31ea8.result);
+      provider.mockResolvedValue(
+        call_custom_token_1.payload,
+        call_custom_token_1.result,
+      );
+      provider.mockResolvedValue(
+        call_custom_token_2.payload,
+        call_custom_token_2.result,
+      );
+      provider.mockResolvedValue(
+        call_custom_token_3.payload,
+        call_custom_token_3.result,
+      );
+      provider.mockResolvedValue(
+        call_custom_token_4.payload,
+        call_custom_token_4.result,
+      );
+      provider.mockResolvedValue(
+        call_custom_token_5.payload,
+        call_custom_token_5.result,
+      );
+
+      provider.mockResolvedValue(estimateGas.payload, estimateGas.result);
+      provider.mockResolvedValue(
+        estimateGas_31ea8.payload,
+        estimateGas_31ea8.result,
+      );
+
+      provider.mockResolvedValue(
+        sendRawTransaction_b14ab_31ea8.payload,
+        sendRawTransaction_b14ab_31ea8.result,
+      );
+      provider.mockResolvedValue(
+        getTransactionReceipt_b14ab_31ea8.payload,
+        getTransactionReceipt_b14ab_31ea8.result,
+      );
+
+      provider.mockResolvedValueOnce(
+        sendRawTransaction_b14ab_31ea8_cancel.payload,
+        sendRawTransaction_b14ab_31ea8_cancel.result,
+      );
+      provider.mockResolvedValueOnce(
+        getTransactionReceipt_b14ab_31ea8_cancel.payload,
+        getTransactionReceipt_b14ab_31ea8_cancel.result,
+      );
+
+      provider.mockResolvedValueOnce(
+        sendRawTransaction_b14ab_31ea8_resend.payload,
+        sendRawTransaction_b14ab_31ea8_resend.result,
+      );
+      provider.mockResolvedValueOnce(
+        getTransactionReceipt_b14ab_31ea8_resend.payload,
+        getTransactionReceipt_b14ab_31ea8_resend.result,
+      );
     });
 });

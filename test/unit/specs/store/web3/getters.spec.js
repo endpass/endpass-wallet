@@ -1,6 +1,5 @@
 import getters from '@/store/web3/getters';
 import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
-import { infuraConf } from '@/config';
 
 describe('web3 getters', () => {
   describe('networks', () => {
@@ -40,7 +39,7 @@ describe('web3 getters', () => {
 
       network = {
         id: 1,
-        url: `https://mainnet.infura.io/${infuraConf.key}`,
+        url: DEFAULT_NETWORKS[0].url,
       };
 
       expect(isCustomNetwork()(network)).toBeFalsy();

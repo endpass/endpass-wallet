@@ -417,7 +417,10 @@ describe('user actions', () => {
         `tokens/${SET_USER_TOKENS}`,
         {
           [settings.net]: {
-            [settings.tokens['3'][0].address]: settings.tokens['3'][0],
+            [settings.tokens['3'][0].address.toLowerCase()]: {
+              ...settings.tokens['3'][0],
+              address: settings.tokens['3'][0].address.toLowerCase(),
+            },
           },
         },
         { root: true },

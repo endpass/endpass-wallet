@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { identityAPIUrl } from '@/config';
+import { REQUEST_TIMEOUT_MSEC } from '@/constants';
 import store from '@/store';
 
 const identityConfig = {
@@ -9,6 +9,7 @@ const identityConfig = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
+  timeout: REQUEST_TIMEOUT_MSEC,
 };
 
 function handleResponseError(error) {
@@ -16,7 +17,7 @@ function handleResponseError(error) {
 
   if (
     (!response || response.status === 401) &&
-    config.url.includes(identityAPIUrl)
+    config.url.includes(ENV.identityAPIUrl)
   ) {
     store.dispatch({
       type: 'user/setAuthorizationStatus',
@@ -32,7 +33,11 @@ function handleResponseSuccess(response) {
   const ignorePaths = ['auth', 'token'];
   const ignorePath = ignorePaths.some(path => config.url.includes(path));
 
-  if (status === 200 && config.url.includes(identityAPIUrl) && !ignorePath) {
+  if (
+    status === 200 &&
+    config.url.includes(ENV.identityAPIUrl) &&
+    !ignorePath
+  ) {
     store.dispatch({
       type: 'user/setAuthorizationStatus',
       authorizationStatus: true,

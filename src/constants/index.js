@@ -1,36 +1,34 @@
-import { infuraConf } from '@/config';
 export { INPAGE_EVENT, INPAGE_ID_PREFIX } from './InpageProvider';
 
 export const MAIN_NET_ID = 1;
-
 export const DEFAULT_NETWORKS = Object.freeze([
   {
     id: 1,
     networkType: 'main',
     currency: 1,
     name: 'Main',
-    url: `https://mainnet.infura.io/${infuraConf.key}`,
+    url: 'wss://eth-mainnet.endpass.com',
   },
   {
-    name: 'Ropsten',
-    currency: 2,
-    networkType: 'ropsten',
     id: 3,
-    url: `https://ropsten.infura.io/${infuraConf.key}`,
-  },
-  {
-    name: 'Rinkeby',
+    name: 'Ropsten',
+    networkType: 'ropsten',
     currency: 2,
-    networkType: 'rinkeby',
-    id: 4,
-    url: `https://rinkeby.infura.io/${infuraConf.key}`,
+    url: 'wss://eth-ropsten.endpass.com',
   },
   {
-    name: 'Ethereum classic',
-    currency: 3,
-    networkType: 'ethClassic',
+    id: 4,
+    name: 'Rinkeby',
+    networkType: 'rinkeby',
+    currency: 2,
+    url: `https://rinkeby.infura.io/${ENV.infuraConf.key}`,
+  },
+  {
     id: 61,
-    url: 'https://etc-geth.0xinfra.com',
+    name: 'Ethereum classic',
+    networkType: 'ethClassic',
+    currency: 3,
+    url: 'wss://etc-mainnet.endpass.com/',
   },
 ]);
 
@@ -62,6 +60,24 @@ export const IDENTITY_MODE = Object.freeze({
 
 export const PROXY_REQUEST_PREFIX = 'endpass-identity';
 
+export const STORAGE_USER_META_KEY = 'endpass-user-meta';
+
+export const AVAILABLE_USER_META_PROPS = ['activeAccount'];
+
+export const REQUEST_TIMEOUT_MSEC = 30000;
+
+export const HARDWARE_DERIVIATION_PATH = `m/44'/60'/0'/0/`;
+
+export const HARDWARE_WALLET_TYPE = Object.freeze({
+  TREZOR: 'TrezorAccount',
+  LEDGER: 'LedgerAccount',
+});
+
+export const WALLET_TYPE = Object.freeze({
+  PUBLIC: 'PublicAccount',
+  ...HARDWARE_WALLET_TYPE,
+});
+
 export default {
   AVAILABLE_FIAT_CURRENCIES,
   MAIN_NET_ID,
@@ -69,4 +85,10 @@ export default {
   CURRENCIES,
   IDENTITY_MODE,
   PROXY_REQUEST_PREFIX,
+  STORAGE_USER_META_KEY,
+  AVAILABLE_USER_META_PROPS,
+  REQUEST_TIMEOUT_MSEC,
+  HARDWARE_DERIVIATION_PATH,
+  HARDWARE_WALLET_TYPE,
+  WALLET_TYPE,
 };

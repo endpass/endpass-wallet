@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { toCamel } from '@/utils/strings';
+import { camelCase } from 'lodash';
 
 Vue.directive('DynamicEvents', {
   bind(el, binding, vnode) {
@@ -7,8 +7,8 @@ Vue.directive('DynamicEvents', {
 
     allEvents.forEach(event => {
       vnode.componentInstance.$on(event, eventData => {
-        const commonEventHandler = toCamel(`handle-${event}`);
-        const currentComponentEventHandler = toCamel(
+        const commonEventHandler = camelCase(`handle-${event}`);
+        const currentComponentEventHandler = camelCase(
           `handle-${vnode.componentInstance.$options.name}-${event}`,
         );
 

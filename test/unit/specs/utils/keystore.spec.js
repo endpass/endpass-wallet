@@ -1,7 +1,7 @@
 import keystore from '@/utils/keystore';
-import { kdfParams } from '@/config';
 import EthWallet from 'ethereumjs-wallet';
 import HDKey from 'ethereumjs-wallet/hdkey';
+import env from '../../../../config/test.env';
 
 describe('keystore', () => {
   // Extended keys
@@ -22,7 +22,7 @@ describe('keystore', () => {
     let json = keystore.encrypt(password, xPrv);
     expect(json.address).toBeUndefined();
     expect(json.crypto.ciphertext).toBeTruthy();
-    expect(json.crypto.kdfparams.n).toBe(kdfParams.n);
+    expect(json.crypto.kdfparams.n).toBe(ENV.kdfParams.n);
 
     let xPrvOut = keystore.decrypt(password, json);
     expect(xPrvOut.length).toBe(78);

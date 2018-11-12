@@ -2,6 +2,7 @@ describe('Receive Page', () => {
   beforeEach(() => {
     cy.getInitialData();
     cy.visit('#/receive');
+    cy.mockWeb3Requests();
     cy.waitPageLoad();
     cy.makeStoreAlias();
   });

@@ -5,6 +5,7 @@ describe('Message Page', () => {
     it('should redirect to root', () => {
       cy.preventLogin();
       cy.visit('#/message');
+      cy.mockWeb3Requests();
       cy.url().should('include', '/#/?redirect_uri=%2Fmessage');
     });
   });
@@ -13,6 +14,7 @@ describe('Message Page', () => {
     beforeEach(() => {
       cy.getInitialData();
       cy.visit('#/message');
+      cy.mockWeb3Requests();
       cy.waitPageLoad();
     });
 

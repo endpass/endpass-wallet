@@ -2,6 +2,7 @@ describe('Home Page', () => {
   beforeEach(() => {
     cy.getInitialData();
     cy.visit('#/');
+    cy.mockWeb3Requests();
     cy.makeStoreAlias();
     cy.waitPageLoad();
   });

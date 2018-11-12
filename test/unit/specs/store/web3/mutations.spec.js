@@ -26,10 +26,6 @@ describe('web3 mutations', () => {
       expect(state.activeNet).toEqual(network);
     });
 
-    it('should destroy DebounceProvider instance', () => {
-      expect(Web3.currentProvider.destroy).toHaveBeenCalledTimes(1);
-    });
-
     it('should set web3 provider', () => {
       const provider = providerFactory(network.url);
 
@@ -87,6 +83,22 @@ describe('web3 mutations', () => {
       setBlockNumber(state, blockNumber);
 
       expect(state.blockNumber).toBe(blockNumber);
+    });
+  });
+
+  describe('setHandledBlockNumber', () => {
+    const setHandledBlockNumber =
+      mutations[mutationsTypes.SET_HANDLED_BLOCK_NUMBER];
+
+    it('should set last handled block number', () => {
+      const state = {
+        handledBlockNumber: 0,
+      };
+      const handledBlockNumber = 1;
+
+      setHandledBlockNumber(state, handledBlockNumber);
+
+      expect(state.handledBlockNumber).toBe(handledBlockNumber);
     });
   });
 

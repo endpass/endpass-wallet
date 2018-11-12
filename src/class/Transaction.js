@@ -1,9 +1,10 @@
-import web3 from 'web3';
+import { get } from 'lodash';
 import { ERC20Token, Token } from '@/class';
 import { isNumeric } from '@/utils/numbers';
+import web3 from '@/utils/web3';
 import { BigNumber } from 'bignumber.js';
 
-const { numberToHex, toWei } = web3.utils;
+const { toWei, numberToHex, isAddress, toChecksumAddress } = web3.utils;
 
 export default class Transaction {
   constructor({
@@ -39,10 +40,93 @@ export default class Transaction {
     this.nonce = nonce;
     this.state = success === false ? 'error' : state;
     this.to = to;
+
     if (timestamp) {
       this.date = new Date(timestamp * 1000);
     }
   }
+
+  /**
+   * Static methods
+   */
+
+  static async isTransactionToContract(transaction) {
+    const res = await web3.eth.getCode(transaction.to);
+
+    return res !== '0x';
+  }
+
+  static getValidTo(transaction) {
+    const { to } = transaction;
+
+    if (!to) {
+      return undefined;
+    }
+
+    if (/^0x/i.test(to)) {
+      return to;
+    }
+
+    return `0x${to}`;
+  }
+
+  static getValidData(transaction) {
+    const { data, tokenInfo } = transaction;
+
+    if (!transaction.tokenInfo) {
+      return data;
+    }
+
+    const validTo = Transaction.getValidTo(transaction);
+    const erc20 = new ERC20Token(tokenInfo.address);
+    const contract = erc20.getContract();
+    const transactionValueInWei = Transaction.getTransactonValueInWei(
+      transaction,
+    );
+
+    return contract.methods
+      .transfer(validTo, transactionValueInWei)
+      .encodeABI();
+  }
+
+  static getPriceWei(transaction) {
+    if (!isNumeric(transaction.gasPrice)) return '0';
+
+    return toWei(transaction.gasPrice.toString(), 'Gwei');
+  }
+
+  static getTransactonValueInWei(transaction) {
+    const { value, tokenInfo } = transaction;
+
+    if (!isNumeric(value)) {
+      return '0';
+    }
+
+    const multiplier = tokenInfo
+      ? BigNumber('10').pow(tokenInfo.decimals || 0)
+      : BigNumber('10').pow(18);
+
+    return BigNumber(value)
+      .times(multiplier)
+      .toFixed(0);
+  }
+
+  static async getGasFullPrice(transaction) {
+    const estimationParams = {
+      data: Transaction.getValidData(transaction),
+      to: Transaction.getValidTo(transaction),
+    };
+    const estimatedGas = await web3.eth.estimateGas(estimationParams);
+    const gasPriceWei = Transaction.getPriceWei(transaction);
+
+    return BigNumber(gasPriceWei)
+      .times(estimatedGas)
+      .toFixed();
+  }
+
+  /**
+   * Instance methods and props
+   */
 
   set value(value) {
     this._value = String(value);
@@ -89,7 +173,7 @@ export default class Transaction {
   }
 
   set to(to) {
-    this._to = web3.utils.isAddress(to) ? web3.utils.toChecksumAddress(to) : to;
+    this._to = isAddress(to) ? toChecksumAddress(to) : to;
   }
 
   get to() {
@@ -97,9 +181,7 @@ export default class Transaction {
   }
 
   set from(from) {
-    this._from = web3.utils.isAddress(from)
-      ? web3.utils.toChecksumAddress(from)
-      : from;
+    this._from = isAddress(from) ? toChecksumAddress(from) : from;
   }
 
   get from() {
@@ -139,8 +221,7 @@ export default class Transaction {
   }
 
   get token() {
-    const token = this.tokenInfo && this.tokenInfo.symbol;
-    return token || 'ETH';
+    return get(this, 'tokenInfo.symbol') || 'ETH';
   }
 
   getValidData() {
@@ -156,34 +237,34 @@ export default class Transaction {
     return data;
   }
 
-  async getFullPrice(eth) {
-    const estimation = await this.estimateGas(eth);
+  async getFullPrice() {
+    const estimation = await this.estimateGas();
 
     return BigNumber(this.gasPriceWei)
       .times(estimation)
       .toFixed();
   }
 
-  async estimateGas(eth) {
+  async estimateGas() {
     const estimationParams = {
-      data: this.getValidData(eth),
+      data: this.getValidData(),
       to: this.validTo,
     };
-    const estimatedGas = await eth.estimateGas(estimationParams);
+    const estimatedGas = await web3.eth.estimateGas(estimationParams);
 
     return estimatedGas;
   }
 
-  getApiObject(eth) {
-    this.data = this.getValidData(eth);
+  getApiObject() {
+    this.data = this.getValidData();
     let tnxData = {
       from: this.from,
       to: this.validTo,
       gasPrice: numberToHex(this.gasPriceWei),
       value: numberToHex(this.valueWei),
       gasLimit: numberToHex(this.gasLimit || 0),
-      data: this.data,
       nonce: numberToHex(this.nonce),
+      data: this.data,
     };
 
     if (this.tokenInfo) {
@@ -226,5 +307,11 @@ export default class Transaction {
     }
 
     return new Transaction(tnxData);
+  }
+
+  static isEqual(trx1, trx2) {
+    return (
+      `${trx1.networkId}-${trx1.hash}` === `${trx2.networkId}-${trx2.hash}`
+    );
   }
 }

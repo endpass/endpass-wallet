@@ -20,8 +20,6 @@ const store = new Vuex.Store({
   state: {
     isPageLoading: false,
   },
-  mutations,
-  actions,
   modules: {
     accounts,
     web3,
@@ -33,7 +31,9 @@ const store = new Vuex.Store({
     connectionStatus,
     user: userModule,
   },
-  strict: process.env.NODE_ENV !== 'production',
+  strict: !ENV.isProduction,
+  mutations,
+  actions,
 });
 
 // Dispatch on change in block number

@@ -4,6 +4,7 @@ describe('Export wallet page', () => {
   beforeEach(() => {
     cy.login();
     cy.visit('#/export');
+    cy.mockWeb3Requests();
     cy.waitPageLoad();
     cy.makeStoreAlias();
   });
@@ -12,6 +13,7 @@ describe('Export wallet page', () => {
     it('should show private key with valid password', () => {
       cy.get('[data-test=export-private-key-button]').click();
       cy.get('[data-test=export-button]').click();
+      cy.focused().should('have.attr', 'data-test', 'input-password');
       cy.inputPassword();
       cy.get('[data-test=password-modal]').should('not.exist');
       cy.get('[data-test=private-key-code]').contains(privateKey);

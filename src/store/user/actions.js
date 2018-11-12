@@ -1,5 +1,6 @@
+import { mapKeys, mapValues } from 'lodash';
 import { userService } from '@/services';
-import { NotificationError } from '@/class';
+import { NotificationError, Token } from '@/class';
 import { IDENTITY_MODE } from '@/constants';
 import {
   SET_AUTHORIZATION_STATUS,
@@ -9,7 +10,6 @@ import {
   SET_OTP_SETTINGS,
 } from './mutations-types';
 import { SET_USER_TOKENS } from '@/store/tokens/mutations-types';
-import { mapArrayByProp } from '@/utils/arrays';
 
 const setAuthorizationStatus = (
   { commit, getters },
@@ -18,6 +18,7 @@ const setAuthorizationStatus = (
   commit(SET_AUTHORIZATION_STATUS, authorizationStatus);
 
   if (getters.isLoggedOut) {
+    /* eslint-disable-next-line */
     const notificationError = new NotificationError({
       title: 'Auth error',
       text:
@@ -90,7 +91,7 @@ const getOtpSettings = async ({ commit, dispatch }) => {
   }
 };
 
-const setOtpSettings = async ({ commit, dispatch }, { secret, code }) => {
+const setOtpSettings = async ({ commit }, { secret, code }) => {
   await userService.setOtpSettings(secret, code);
   commit(SET_OTP_SETTINGS, { status: 'enabled' });
 };
@@ -123,12 +124,11 @@ const setUserSettings = async ({ commit, dispatch }) => {
     }
 
     if (tokens) {
-      const mappedTokens = Object.keys(tokens).reduce(
-        (acc, networkKey) =>
-          Object.assign(acc, {
-            [networkKey]: mapArrayByProp(tokens[networkKey], 'address'),
-          }),
-        {},
+      const normalizedTokens = mapValues(tokens, netTokens =>
+        netTokens.map(token => Token.getConsistent(token)),
+      );
+      const mappedTokens = mapValues(normalizedTokens, netTokens =>
+        mapKeys(netTokens, 'address'),
       );
 
       commit(`tokens/${SET_USER_TOKENS}`, mappedTokens, { root: true });
