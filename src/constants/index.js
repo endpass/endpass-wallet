@@ -80,6 +80,7 @@ export const WALLET_TYPE = Object.freeze({
 });
 
 export const DAPP_WHITELISTED_METHODS = [
+  'personal_sign',
   'eth_personalSign',
   'eth_signTypedData',
   'eth_sendTransaction',

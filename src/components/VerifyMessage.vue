@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
@@ -39,6 +40,9 @@ export default {
     signedMessageString: null,
   }),
   computed: {
+    ...mapState({
+      wallet: state => state.accounts.wallet,
+    }),
     signedMessage() {
       try {
         return JSON.parse(this.signedMessageString);
@@ -50,7 +54,9 @@ export default {
   methods: {
     verifyMessage() {
       try {
-        this.address = web3.eth.accounts.recover(this.signedMessage);
+        const { message, signature } = this.signedMessage;
+
+        this.address = this.wallet.recover(message, signature);
       } catch (error) {
         this.address = null;
         this.$notify({

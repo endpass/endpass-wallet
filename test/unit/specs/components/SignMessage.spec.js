@@ -7,10 +7,10 @@ describe('SignMessage', () => {
   const signedMessage = {};
   const sign = jest.fn().mockResolvedValue(signedMessage);
   let wrapper;
-
+  let $store;
   beforeEach(() => {
     const localVue = createLocalVue();
-    const $store = {
+    $store = {
       state: {
         accounts: {
           wallet: {

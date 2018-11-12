@@ -3,7 +3,9 @@ import mutations from './mutations';
 import getters from './getters';
 
 export const state = {
-  queue: [],
+  injected: false,
+  requests: {},
+  list: [],
 };
 
 export default {

@@ -1,18 +1,22 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import VerifyMessage from '@/components/VerifyMessage';
+import ethereumWalletMock from 'fixtures/wallet';
 import { generateStubs } from '@/utils/testUtils';
 import web3 from '@/utils/web3';
 
 describe('VerifyMessage', () => {
   const address = 'address';
   let wrapper;
-
+  let $store;
   beforeEach(() => {
     const localVue = createLocalVue();
-    const $store = {
+    $store = {
       state: {
         web3: {},
+        accounts: {
+          wallet: ethereumWalletMock,
+        },
       },
     };
 
@@ -61,11 +65,13 @@ describe('VerifyMessage', () => {
 
       it('should verify message', () => {
         const { vm } = wrapper;
-        web3.eth.accounts.recover = jest.fn(() => address);
+        wrapper.setData({
+          signedMessageString: '{}',
+        });
 
         vm.verifyMessage();
 
-        expect(vm.address).toEqual(address);
+        expect(vm.address).toEqual($store.state.accounts.wallet.getAddress());
         expect(vm.$notify).not.toHaveBeenCalled();
       });
 

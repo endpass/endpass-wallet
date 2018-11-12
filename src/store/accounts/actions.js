@@ -30,6 +30,7 @@ const selectWallet = async (
     activeAccount: address,
   });
   dispatch('updateBalance');
+  dispatch('dapp/sendSettings', null, { root: true });
 
   await dispatch('tokens/getCurrentAccountTokens', null, {
     root: true,

@@ -37,7 +37,7 @@ describe('TransactionModal', () => {
     });
 
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('transaction-modal');
+      expect(wrapper.name()).toBe('TransactionModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

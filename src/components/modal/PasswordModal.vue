@@ -4,11 +4,12 @@
     data-test="password-modal"
   >
     <v-modal @close="close">
-      <template slot="header">Password confirmation required</template>
+      <template slot="header">
+        {{ title }}
+      </template>
 
       <div>
-        <p class="subtitle">Please enter your wallet password to
-        continue.</p>
+        <p class="subtitle">Please enter your wallet password to continue.</p>
         <v-form
           id="password-form"
           @submit="confirm"
@@ -53,6 +54,14 @@ import VButton from '@/components/ui/form/VButton.vue';
 
 export default {
   name: 'PasswordModal',
+
+  props: {
+    title: {
+      type: String,
+      default: 'Please enter your wallet password to continue',
+    },
+  },
+
   data() {
     return {
       jsonKeystorePassword: '',
@@ -63,10 +72,10 @@ export default {
     ...mapActions('accounts', ['validatePassword']),
 
     async confirm() {
+      const { jsonKeystorePassword: password } = this;
+
       try {
         this.processingConfirmation = true;
-
-        const { jsonKeystorePassword: password } = this;
 
         await this.validatePassword(password);
 

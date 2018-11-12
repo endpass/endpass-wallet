@@ -68,6 +68,7 @@ describe('web3 actions', () => {
         ['tokens/getNetworkTokens', {}, { root: true }],
         ['tokens/getCurrentAccountTokens', {}, { root: true }],
         ['tokens/getCurrentAccountTokensData', null, { root: true }],
+        ['dapp/sendSettings', null, { root: true }],
       ]);
     });
 
