@@ -6,6 +6,8 @@ const state = {
   // The encrypted xprv key for the user's hd wallet as a V3 keystore
   // object. All accounts are direct child accounts.
   hdKey: null,
+  // The user's hardware xpub, keyed by wallet type
+  hardwareXpub: {},
   // The user's wallets, keyed by address
   wallets: {},
   // The currently selected wallet
