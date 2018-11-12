@@ -23,7 +23,10 @@ export default class LedgerWallet {
 
       return { addresses, xpub };
     } catch (error) {
-      console.log(error);
+      if (error instanceof NotificationError) {
+        throw error;
+      }
+
       throw new NotificationError({
         title: 'Access error',
         text: `An error occurred while getting access to hardware device. Please, try again.`,
@@ -42,9 +45,17 @@ export default class LedgerWallet {
 
       return publicKey;
     } catch (error) {
+      console.log(error);
+      let text =
+        'An error occurred while getting access to hardware device. Please, try again.';
+
+      if (error.message.includes('U2F')) {
+        text = error.message;
+      }
+
       throw new NotificationError({
         title: 'Access error',
-        text: `An error occurred while getting access to hardware device. Please, try again.`,
+        text,
         type: 'is-danger',
       });
     } finally {
