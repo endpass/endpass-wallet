@@ -71,7 +71,7 @@ export default {
   name: 'Dapp',
 
   data: () => ({
-    url: 'https://explorer.bounties.network/explorer',
+    url: '',
     loading: false,
     loaded: false,
     error: null,
@@ -110,10 +110,9 @@ export default {
 
     onDappLoad() {
       const { dapp } = this.$refs;
+
       try {
-        /**
-         * If contentWindow property is not accessable it should throw error
-         */
+        // If contentWindow property is not accessable it should throw error
         get(dapp.contentWindow, 'location');
         this.loaded = true;
       } catch (err) {
@@ -125,11 +124,13 @@ export default {
     },
 
     openDapp() {
+      const isSameOpened = this.dappUrl.replace(/^\//, '') === this.url;
+
       if (this.error) {
         this.error = null;
       }
 
-      if (this.dappUrl.replace(/^\//, '') !== this.url || !this.loaded) {
+      if (!isSameOpened || !this.loaded) {
         this.loadDapp();
       }
     },
