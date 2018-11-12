@@ -1,6 +1,6 @@
 import web3 from 'web3';
 import { WALLET_TYPE, HARDWARE_WALLET_TYPE } from '@/constants';
-import { TrezorWallet } from '@/class';
+import { TrezorWallet, LedgerWallet } from '@/class';
 
 const { isAddress, hexToBytes, bytesToHex, toChecksumAddress } = web3.utils;
 
@@ -21,26 +21,29 @@ export default class Address {
     this.privKey = null;
     this.pubKey = null;
 
-    if (info) {
-      this.info = info;
+    if (!info) return;
 
-      const isHardware = Object.values(HARDWARE_WALLET_TYPE).includes(
-        info.type,
-      );
+    this.info = info;
 
-      if (isHardware) {
-        this.isPublic = false;
-      }
+    const isHardware = Object.values(HARDWARE_WALLET_TYPE).includes(info.type);
 
-      switch (info.type) {
-        case WALLET_TYPE.TREZOR:
-          this.signStrategy = TrezorWallet;
-          break;
+    if (!isHardware) return;
 
-        default:
-          this.signStrategy = TrezorWallet;
-          break;
-      }
+    this.isPublic = false;
+
+    switch (info.type) {
+      case WALLET_TYPE.TREZOR:
+        this.signStrategy = TrezorWallet;
+        break;
+
+      case WALLET_TYPE.LEDGER:
+        this.signStrategy = LedgerWallet;
+        break;
+
+      default:
+        console.warn(`Can't match hardware type ${info.type}`);
+        this.signStrategy = null;
+        break;
     }
   }
 
