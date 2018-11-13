@@ -1,12 +1,24 @@
 <template>
   <div class="column">
+    <div
+      v-if="!isLoading && !addresses.length"
+      class="buttons"
+    >
+      <v-button
+        :loading="isImporting"
+        class-name="is-primary is-medium"
+        @click="getNextAddressess"
+      >
+        Load wallets
+      </v-button>
+    </div>
     <v-spinner
       v-if="isLoading"
       :is-loading="true"
       label="Please, allow access for import"
       is-label-under-spinner
     />
-    <div v-show="!isLoading">
+    <div v-show="!isLoading && addresses.length">
       <hardware-account
         v-for="address in addresses"
         :key="address"
@@ -47,7 +59,7 @@ export default {
   },
   data: () => ({
     activeAddress: null,
-    isLoading: true,
+    isLoading: false,
     isImporting: false,
     addresses: [],
     offset: 0,
@@ -64,10 +76,11 @@ export default {
           limit,
           walletType: this.walletType,
         });
-        this.isLoading = false;
       } catch (error) {
         console.log('err', error);
         this.$notify(error);
+      } finally {
+        this.isLoading = false;
       }
     },
     changePage(page) {
@@ -93,9 +106,6 @@ export default {
         this.isImporting = false;
       }
     },
-  },
-  mounted() {
-    this.getNextAddressess();
   },
   components: {
     VButton,
