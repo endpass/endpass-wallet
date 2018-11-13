@@ -19,7 +19,7 @@ class DappBridge extends EventEmitter {
   }
 
   handleMessage(payload) {
-    if (this.messageHandler) {
+    if (this.messageHandler && payload.id) {
       this.messageHandler(payload);
     }
   }
