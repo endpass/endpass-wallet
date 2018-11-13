@@ -79,6 +79,7 @@ export default {
 
   computed: {
     ...mapState({
+      injected: state => state.dapp.injected,
       activeCurrency: state => state.web3.activeCurrency,
     }),
     ...mapGetters('dapp', ['currentMessage']),
@@ -89,6 +90,15 @@ export default {
 
     dappUrl() {
       return `/${this.url}`;
+    },
+  },
+
+  watch: {
+    injected() {
+      if (!this.injected) {
+        this.loaded = false;
+        this.loading = false;
+      }
     },
   },
 
