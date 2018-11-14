@@ -9,11 +9,20 @@ jest.mock('web3', () => {
   }
 
   const originalWeb3 = require.requireActual('web3');
+  const { transactionHash } = require('fixtures/transactions');
   const setProvider = jest.fn(() => true);
   const currentProvider = {
     destroy: jest.fn(),
     send: jest.fn(),
     sendAsync: jest.fn(),
+  };
+  const sendEvent = {
+    on: jest.fn(),
+    then: jest.fn(cb =>
+      cb({
+        transactionHash,
+      }),
+    ),
   };
   const eth = {
     net: {
@@ -23,6 +32,7 @@ jest.mock('web3', () => {
     estimateGas: jest.fn(),
     accounts: {},
     Contract,
+    sendSignedTransaction: jest.fn(() => sendEvent),
     getBalance: jest.fn().mockResolvedValue('1'),
     getBlockNumber: jest.fn().mockResolvedValue(),
     getBlock: jest.fn().mockResolvedValue({}),
@@ -35,6 +45,7 @@ jest.mock('web3', () => {
     currentProvider,
     eth,
     utils,
+    sendEvent,
   }));
 
   mockWeb3.providers = {
@@ -60,6 +71,7 @@ jest.mock('web3', () => {
 
   // Allows you to replace stubs of web3 instance methods in unit tests
   mockWeb3.setProvider = setProvider;
+  mockWeb3.sendEvent = sendEvent;
   mockWeb3.currentProvider = currentProvider;
   mockWeb3.eth = eth;
   mockWeb3.utils = utils;

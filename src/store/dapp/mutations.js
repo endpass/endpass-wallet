@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import {
   ADD_REQUEST,
   REMOVE_REQUEST,
@@ -20,6 +21,7 @@ const removeRequest = (state, id) => {
 
   if (requestIdx !== -1) {
     state.list.splice(requestIdx, 1);
+    Vue.delete(state.requests, id);
   }
 };
 
