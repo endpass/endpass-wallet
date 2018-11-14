@@ -3,32 +3,32 @@ import { TransactionFactory } from '@/class';
 
 describe('dapp getters', () => {
   const state = {
-    messages: {
+    requests: {
       1: { foo: 'bar', method: 'boop' },
       2: { bar: 'baz', method: 'beep' },
     },
     list: [1, 2],
   };
 
-  describe('currentMessageId', () => {
+  describe('currentRequestId', () => {
     it('should returns first id from list', () => {
-      expect(getters.currentMessageId(state)).toBe(1);
+      expect(getters.currentRequestId(state)).toBe(1);
     });
 
     it('should returns null if list is empty', () => {
       expect(
-        getters.currentMessageId({
+        getters.currentRequestId({
           list: [],
         }),
       ).toBe(null);
     });
   });
 
-  describe('currentMessage', () => {
-    it('should return current message object', () => {
+  describe('currentRequest', () => {
+    it('should return current Request object', () => {
       expect(
-        getters.currentMessage(state, {
-          currentMessageId: 1,
+        getters.currentRequest(state, {
+          currentRequestId: 1,
         }),
       ).toEqual({
         foo: 'bar',
@@ -38,42 +38,16 @@ describe('dapp getters', () => {
 
     it('should return current null if list is empty', () => {
       expect(
-        getters.currentMessage(
+        getters.currentRequest(
           {
-            messages: {},
+            requests: {},
             list: [],
           },
           {
-            currentMessageId: null,
+            currentRequestId: null,
           },
         ),
       ).toEqual(null);
-    });
-
-    it('should return transaction object if message method is eth_sendTransaction', () => {
-      TransactionFactory.fromBlock = jest.fn(() => 'foo');
-
-      const res = getters.currentMessage(
-        {
-          messages: {
-            1: {
-              method: 'eth_sendTransaction',
-              params: ['foo', 'bar'],
-            },
-          },
-          list: [1],
-        },
-        {
-          currentMessageId: 1,
-        },
-      );
-
-      expect(res).toEqual({
-        method: 'eth_sendTransaction',
-        params: ['foo', 'bar'],
-        transaction: 'foo',
-      });
-      expect(TransactionFactory.fromBlock).toBeCalledWith('foo');
     });
   });
 });

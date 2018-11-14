@@ -1,12 +1,12 @@
 import mutations from '@/store/dapp/mutations';
 import {
-  ADD_MESSAGE,
-  REMOVE_MESSAGE,
+  ADD_REQUEST,
+  REMOVE_REQUEST,
   CHANGE_INJECT_STATUS,
 } from '@/store/dapp/mutations-types';
 
 describe('dapp mutations', () => {
-  const message = {
+  const request = {
     foo: 'bar',
   };
   let state;
@@ -14,44 +14,44 @@ describe('dapp mutations', () => {
   beforeEach(() => {
     state = {
       injected: false,
-      messages: {},
+      requests: {},
       list: [],
     };
   });
 
-  describe('ADD_MESSAGE', () => {
-    it('should add message', () => {
-      mutations[ADD_MESSAGE](state, { id: 1, message });
+  describe('ADD_REQUEST', () => {
+    it('should add request', () => {
+      mutations[ADD_REQUEST](state, { id: 1, request });
 
-      expect(state.messages).toEqual({
-        1: message,
+      expect(state.requests).toEqual({
+        1: request,
       });
       expect(state.list).toEqual([1]);
     });
   });
 
-  describe('REMOVE_MESSAGE', () => {
+  describe('REMOVE_REQUEST', () => {
     beforeEach(() => {
       state = {
-        messages: {
-          1: message,
+        requests: {
+          1: request,
         },
         list: [1],
       };
     });
 
-    it('should remove message from store if it exist', () => {
-      mutations[REMOVE_MESSAGE](state, 1);
+    it('should remove request from store if it exist', () => {
+      mutations[REMOVE_REQUEST](state, 1);
 
-      expect(state.messages).toEqual({});
+      expect(state.requests).toEqual({});
       expect(state.list).toEqual([]);
     });
 
-    it('should not do anything if message is not exist', () => {
-      mutations[REMOVE_MESSAGE](state, 2);
+    it('should not do anything if request is not exist', () => {
+      mutations[REMOVE_REQUEST](state, 2);
 
-      expect(state.messages).toEqual({
-        1: message,
+      expect(state.requests).toEqual({
+        1: request,
       });
       expect(state.list).toEqual([1]);
     });

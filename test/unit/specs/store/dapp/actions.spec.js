@@ -1,28 +1,27 @@
 import actions from '@/store/dapp/actions';
 import {
-  ADD_MESSAGE,
-  REMOVE_MESSAGE,
+  ADD_REQUEST,
+  REMOVE_REQUEST,
   CHANGE_INJECT_STATUS,
 } from '@/store/dapp/mutations-types';
 import { MAIN_NET_ID } from '@/constants';
 import { NotificationError } from '@/class';
 import web3 from '@/utils/web3';
-import dappBridge from '@/class/dappBridge';
+import dappBridge from '@/class/singleton/dappBridge';
 import { checksumAddress, v3password } from 'fixtures/accounts';
 import {
-  commonMessage,
-  transactionMessage,
-  signedCommonMessage,
-  signedTransactionMessage,
+  commonRequest,
+  transactionRequest,
+  commonRequestSignResult,
 } from 'fixtures/dapp';
 import { transactionHash, signedTransactionHash } from 'fixtures/transactions';
 
 describe('dapp actions', () => {
   const defaultState = {
     injected: true,
-    messages: {
-      1: commonMessage,
-      2: transactionMessage,
+    requests: {
+      1: commonRequest,
+      2: transactionRequest,
     },
     list: [1, 2],
   };
@@ -43,14 +42,16 @@ describe('dapp actions', () => {
     rootState = {
       accounts: {
         wallet: {
-          sign: jest.fn().mockResolvedValue(signedCommonMessage),
+          sign: jest.fn().mockResolvedValue({
+            signature: commonRequestSignResult,
+          }),
           signTransaction: jest.fn(() => signedTransactionHash),
         },
       },
     };
     getters = {
-      currentMessageId: 1,
-      currentMessage: commonMessage,
+      currentRequestId: 1,
+      currentRequest: commonRequest,
     };
     state = {
       ...defaultState,
@@ -75,7 +76,7 @@ describe('dapp actions', () => {
       expect(commit).toHaveBeenCalledWith(CHANGE_INJECT_STATUS, true);
       expect(dispatch).toHaveBeenLastCalledWith('sendSettings');
       expect(fakeWindow.web3).not.toBeUndefined();
-      expect(dappBridge.setMessageHandler).toBeCalled();
+      expect(dappBridge.setRequestHandler).toBeCalled();
     });
 
     it('should not do anything if web3 was injected', () => {
@@ -94,36 +95,36 @@ describe('dapp actions', () => {
     });
   });
 
-  describe('handleMessage', () => {
-    it('should add message to store if it method is whitelisted', async () => {
+  describe('handleRequest', () => {
+    it('should add request to store if it method is whitelisted', async () => {
       expect.assertions(2);
 
-      actions.handleMessage(
+      actions.handleRequest(
         { dispatch, commit },
-        { id: 1, ...transactionMessage },
+        { id: 1, ...transactionRequest },
       );
 
       expect(dispatch).not.toBeCalled();
-      expect(commit).toBeCalledWith(ADD_MESSAGE, {
+      expect(commit).toBeCalledWith(ADD_REQUEST, {
         id: 1,
-        message: transactionMessage,
+        request: transactionRequest,
       });
     });
 
-    it('should send message to the network if it method is not whitelisted', async () => {
+    it('should send request to the network if it method is not whitelisted', async () => {
       expect.assertions(4);
 
       dispatch.mockImplementationOnce(() => Promise.resolve({ foo: 'bar' }));
 
-      await actions.handleMessage(
+      await actions.handleRequest(
         { dispatch, commit },
-        { id: 1, ...commonMessage },
+        { id: 1, ...commonRequest },
       );
 
       expect(commit).not.toBeCalled();
       expect(dispatch).toBeCalledTimes(2);
-      expect(dispatch).toHaveBeenNthCalledWith(1, 'sendMessageToNetwork', {
-        ...commonMessage,
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'sendRequestToNetwork', {
+        ...commonRequest,
         id: 1,
       });
       expect(dispatch).toHaveBeenNthCalledWith(2, 'sendResponse', {
@@ -146,101 +147,39 @@ describe('dapp actions', () => {
 
   describe('sendResponse', () => {
     it('should emit response by dappBridge', () => {
-      actions.sendResponse(null, commonMessage);
+      actions.sendResponse(null, commonRequest);
 
-      expect(dappBridge.emitResponse).toBeCalledWith(commonMessage);
+      expect(dappBridge.emitResponse).toBeCalledWith(commonRequest);
     });
   });
 
-  describe('processCurrentMessage', () => {
-    it('should process current message and send response', async () => {
-      expect.assertions(4);
+  describe('processCurrentRequest', () => {
+    it('should call getSignedCurrentRequest for signing current request', async () => {
+      expect.assertions(2);
 
-      dispatch.mockResolvedValueOnce(signedCommonMessage);
+      dispatch.mockResolvedValueOnce(commonRequestSignResult);
 
-      await actions.processCurrentMessage(
+      await actions.processCurrentRequest(
         { commit, dispatch, getters },
         v3password,
       );
 
-      expect(dispatch).toBeCalledTimes(2);
       expect(dispatch).toHaveBeenNthCalledWith(
         1,
-        'signCurrentMessage',
+        'getSignedCurrentRequest',
         v3password,
       );
       expect(dispatch).toHaveBeenNthCalledWith(2, 'sendResponse', {
-        ...signedCommonMessage,
+        jsonrpc: commonRequest.jsonrpc,
+        result: commonRequestSignResult,
         id: 1,
       });
-      expect(commit).toBeCalledWith(REMOVE_MESSAGE, 1);
     });
 
-    it('should process current transaction and send response', async () => {
-      expect.assertions(4);
+    it('should not do anything if there is no current request', async () => {
+      getters.currentRequestId = null;
 
-      dispatch.mockResolvedValueOnce(signedTransactionMessage);
-
-      getters = {
-        currentMessageId: 2,
-        currentMessage: transactionMessage,
-      };
-
-      await actions.processCurrentMessage(
-        { commit, dispatch, getters },
-        v3password,
-      );
-
-      expect(dispatch).toBeCalledTimes(2);
-      expect(dispatch).toHaveBeenNthCalledWith(
-        1,
-        'signCurrentTransaction',
-        v3password,
-      );
-      expect(dispatch).toHaveBeenNthCalledWith(2, 'sendResponse', {
-        ...signedTransactionMessage,
-        id: 2,
-      });
-      expect(commit).toBeCalledWith(REMOVE_MESSAGE, 2);
-    });
-
-    it('should handler error and show notification', async () => {
-      expect.assertions(5);
-
-      const error = new Error('foo');
-
-      dispatch.mockRejectedValueOnce(error);
-
-      await actions.processCurrentMessage(
-        { commit, dispatch, getters },
-        v3password,
-      );
-
-      expect(dispatch).toBeCalledTimes(3);
-      expect(dispatch).toHaveBeenNthCalledWith(
-        1,
-        'signCurrentMessage',
-        v3password,
-      );
-      expect(dispatch).toHaveBeenNthCalledWith(
-        2,
-        'errors/emitError',
-        expect.any(NotificationError),
-        { root: true },
-      );
-      expect(dispatch).toHaveBeenNthCalledWith(3, 'sendResponse', {
-        id: 1,
-        jsonrpc: '2.0',
-        result: [],
-        error,
-      });
-      expect(commit).toBeCalledWith(REMOVE_MESSAGE, 1);
-    });
-
-    it('should not do anything if there is no current message', async () => {
-      getters.currentMessageId = null;
-
-      await actions.processCurrentMessage(
+      await actions.processCurrentRequest(
         { commit, dispatch, getters },
         v3password,
       );
@@ -250,17 +189,65 @@ describe('dapp actions', () => {
     });
   });
 
-  describe('signCurrentTransaction', () => {
+  describe('getSignedCurrentRequest', () => {
+    it('should sign transaction with getSignedCurrentTransaction', async () => {
+      expect.assertions(2);
+
+      getters.currentRequest = {
+        ...getters.currentRequest,
+        method: 'eth_sendTransaction',
+      };
+
+      await actions.getSignedCurrentRequest({ dispatch, getters }, v3password);
+
+      expect(dispatch).toBeCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'getSignedCurrentTransaction',
+        v3password,
+      );
+    });
+
+    it('should sign typed data with getSignedCurrentTypedDataRequest', async () => {
+      expect.assertions(2);
+
+      getters.currentRequest = {
+        ...getters.currentRequest,
+        method: 'eth_signTypedData',
+      };
+
+      await actions.getSignedCurrentRequest({ dispatch, getters }, v3password);
+
+      expect(dispatch).toBeCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'getSignedCurrentTypedDataRequest',
+        v3password,
+      );
+    });
+
+    it('should sign other requests with getSignedCurrentPlainRequest', async () => {
+      expect.assertions(2);
+
+      await actions.getSignedCurrentRequest({ dispatch, getters }, v3password);
+
+      expect(dispatch).toBeCalledTimes(1);
+      expect(dispatch).toBeCalledWith(
+        'getSignedCurrentPlainRequest',
+        v3password,
+      );
+    });
+  });
+
+  describe('getSignedCurrentTransaction', () => {
     it('should sign current transaction with wallet', async () => {
       expect.assertions(5);
 
       getters = {
-        currentMessageId: 2,
-        currentMessage: transactionMessage,
+        currentRequestId: 2,
+        currentRequest: transactionRequest,
       };
       dispatch.mockResolvedValueOnce(1);
 
-      const res = await actions.signCurrentTransaction(
+      const res = await actions.getSignedCurrentTransaction(
         {
           dispatch,
           getters,
@@ -274,7 +261,7 @@ describe('dapp actions', () => {
       });
       expect(rootState.accounts.wallet.signTransaction).toBeCalledWith(
         {
-          ...transactionMessage.transaction,
+          ...transactionRequest.transaction,
           nonce: 1,
         },
         v3password,
@@ -283,60 +270,57 @@ describe('dapp actions', () => {
         signedTransactionHash,
       );
       expect(web3.sendEvent.on).toBeCalledWith('error', expect.any(Function));
-      expect(res).toEqual({
-        jsonrpc: commonMessage.jsonrpc,
-        result: transactionHash,
-      });
+      expect(res).toEqual(transactionHash);
     });
   });
 
-  describe('signCurrentMessage', () => {
-    it('should sign current message and return result', async () => {
+  // TODO: now not contains any logic make test when it appears
+  // describe('getSignedCurrentTypedDataRequest', () => {})
+
+  describe('getSignedCurrentPlainRequest', () => {
+    it('should sign current request and return result', async () => {
       expect.assertions(2);
 
-      const res = await actions.signCurrentMessage(
+      const res = await actions.getSignedCurrentPlainRequest(
         { getters, rootState },
         v3password,
       );
 
       expect(rootState.accounts.wallet.sign).toBeCalledWith(
-        commonMessage.params[0],
+        commonRequest.params[0],
         v3password,
       );
-      expect(res).toEqual({
-        jsonrpc: commonMessage.jsonrpc,
-        result: signedCommonMessage.signature,
-      });
+      expect(res).toEqual(commonRequestSignResult);
     });
   });
 
-  describe('sendMessageToNetwork', () => {
-    it('should send message with web3 sendAsync method', () => {
-      actions.sendMessageToNetwork(null, commonMessage);
+  describe('sendRequestToNetwork', () => {
+    it('should send request with web3 sendAsync method', () => {
+      actions.sendRequestToNetwork(null, commonRequest);
 
       expect(web3.currentProvider.sendAsync).toBeCalledWith(
-        commonMessage,
+        commonRequest,
         expect.any(Function),
       );
     });
   });
 
-  describe('cancelCurrentMessage', () => {
-    it('should send cancel response by dapp bridge and remove message from store', () => {
-      actions.cancelCurrentMessage({ commit, dispatch, getters });
+  describe('cancelCurrentRequest', () => {
+    it('should send cancel response by dapp bridge and remove request from store', () => {
+      actions.cancelCurrentRequest({ commit, dispatch, getters });
 
       expect(dispatch).toBeCalledWith('sendResponse', {
         id: 1,
         error: 'canceled',
         result: [],
       });
-      expect(commit).toBeCalledWith(REMOVE_MESSAGE, 1);
+      expect(commit).toBeCalledWith(REMOVE_REQUEST, 1);
     });
 
-    it('should not do anything if there is no current message', () => {
-      getters.currentMessageId = null;
+    it('should not do anything if there is no current request', () => {
+      getters.currentRequestId = null;
 
-      actions.cancelCurrentMessage({ commit, dispatch, getters });
+      actions.cancelCurrentRequest({ commit, dispatch, getters });
 
       expect(dispatch).not.toBeCalled();
       expect(commit).not.toBeCalled();
