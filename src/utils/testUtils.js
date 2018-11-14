@@ -1,4 +1,5 @@
 import { kebabCase } from 'lodash';
+import { getFrom } from '@/utils/objects';
 
 function convertDirectivesToAttrs(directives) {
   const attrs = {};
@@ -17,15 +18,12 @@ function convertListenersToAttrs(listeners) {
 
   if (listeners) {
     Object.keys(listeners).forEach(key => {
-      let handlers = listeners[key];
+      const handlers = [].concat(listeners[key]);
+      const handler = handlers.find(h => {
+        const name = getFrom(h, 'fns.name', 'name') || '';
 
-      if (!(handlers instanceof Array)) {
-        handlers = [handlers];
-      }
-
-      const handler = handlers.find(
-        h => h && (h.fns || h).name.includes('bound '),
-      );
+        return name.includes('bound ');
+      });
 
       if (handler) {
         attrs[`v-on:${key}`] = (handler.fns || handler).name;
@@ -45,11 +43,9 @@ function convertSlotToAttrs(slot) {
 }
 
 function generateElement(createElement, vnode) {
-  const generateFunc = vnode.componentOptions
-    ? generateElementFromComponent
-    : generateElementFromHTML;
-
-  return generateFunc(createElement, vnode);
+  return vnode.componentOptions
+    ? generateElementFromComponent(createElement, vnode)
+    : generateElementFromHTML(createElement, vnode);
 }
 
 function getChildrenElements(createElement, children) {
@@ -129,3 +125,7 @@ export function generateStubs(Component) {
     });
   }, {});
 }
+
+export default {
+  generateStubs,
+};

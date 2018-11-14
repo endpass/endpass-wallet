@@ -11,16 +11,18 @@
             class-name="dapp-form-input"
             data-vv-as="Dapp url"
             validator="required|url:require_protocol:true:require_tld:false"
-            @input="onChangeUrlInput"
+            data-test="dapp-url-input"
             @keydown.enter="openDapp"
+            @input="onChangeUrlInput"
           >
             <div
               slot="addon"
               class="control"
             >
               <button
-                :disabled="loading || loaded"
+                :disabled="loading || loaded || !isUrlCorrect"
                 class="button is-primary"
+                data-test="dapp-open-button"
                 @click="openDapp"
               >
                 Open
@@ -81,20 +83,27 @@ export default {
     ...mapState({
       injected: state => state.dapp.injected,
       activeCurrency: state => state.web3.activeCurrency,
-      injected: state => state.dapp.injected,
     }),
     ...mapGetters('dapp', ['currentRequest']),
-
-    isCurrentRequestTransaction() {
-      return this.currentRequest.method === 'eth_sendTransaction';
-    },
 
     dappUrl() {
       return `/${this.url}`;
     },
+
+    isCurrentRequestTransaction() {
+      return get(this.currentRequest, 'method') === 'eth_sendTransaction';
+    },
+
+    isUrlCorrect() {
+      return !isEmpty(this.url) && !this.$validator.errors.has('url');
+    },
   },
 
   watch: {
+    url() {
+      this.onChangeUrlInput();
+    },
+
     injected() {
       if (!this.injected) {
         this.loaded = false;
@@ -112,9 +121,8 @@ export default {
     ]),
 
     async loadDapp() {
-      if (isEmpty(this.url) || !isEmpty(this.$validator.errors.items)) return;
-
       this.loading = true;
+
       await this.$nextTick();
       await this.inject(this.$refs.dapp.contentWindow);
     },
@@ -135,15 +143,15 @@ export default {
     },
 
     openDapp() {
-      const isSameOpened = this.dappUrl.replace(/^\//, '') === this.url;
+      const { loaded, error, loadDapp, isUrlCorrect } = this;
 
-      if (this.error) {
+      if (loaded || !isUrlCorrect) return;
+
+      if (error) {
         this.error = null;
       }
 
-      if (!isSameOpened || !this.loaded) {
-        this.loadDapp();
-      }
+      loadDapp();
     },
 
     onChangeUrlInput() {

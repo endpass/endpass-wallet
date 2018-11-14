@@ -19,8 +19,8 @@ import 'mocks/services/localSettings';
 import 'mocks/class/erc20';
 import 'mocks/class/ens';
 import 'mocks/class/storage/LocalStorage';
-import 'mocks/class/dappBridge';
 import 'mocks/class/provider/InpageProvider';
+import 'mocks/class/singleton/dappBridge';
 
 Vue.config.productionTip = false;
 
