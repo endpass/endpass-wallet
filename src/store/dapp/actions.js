@@ -64,6 +64,9 @@ const processCurrentRequest = async (
   password,
 ) => {
   const requestId = getters.currentRequestId;
+
+  if (!requestId) return;
+
   const { jsonrpc } = getters.currentRequest;
 
   try {
@@ -166,6 +169,8 @@ const sendRequestToNetwork = (ctx, request) =>
 
 const cancelCurrentRequest = ({ commit, dispatch, getters }) => {
   const requestId = getters.currentRequestId;
+
+  if (!requestId) return;
 
   dispatch('sendResponse', {
     id: requestId,
