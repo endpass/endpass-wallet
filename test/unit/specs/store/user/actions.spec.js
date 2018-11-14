@@ -427,6 +427,29 @@ describe('user actions', () => {
       );
     });
 
+    it('should set user settings with valid fields', async () => {
+      expect.assertions(2);
+
+      const validSettings = {
+        valid: 'valid',
+      };
+
+      userService.getSettings.mockResolvedValueOnce({
+        settings: {
+          invalid1: '',
+          invalid2: false,
+          invalid3: null,
+          invalid4: NaN,
+          ...validSettings,
+        },
+      });
+
+      await actions.setUserSettings({ commit });
+
+      expect(commit).toBeCalledTimes(1);
+      expect(commit).toBeCalledWith(SET_SETTINGS, validSettings);
+    });
+
     it('should handle errors', async () => {
       expect.assertions(2);
 

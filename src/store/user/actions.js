@@ -1,4 +1,4 @@
-import { mapKeys, mapValues } from 'lodash';
+import { mapKeys, mapValues, pickBy } from 'lodash';
 import { userService } from '@/services';
 import { NotificationError, Token } from '@/class';
 import { IDENTITY_MODE } from '@/constants';
@@ -120,7 +120,8 @@ const setUserSettings = async ({ commit, dispatch }) => {
     }
 
     if (settings) {
-      commit(SET_SETTINGS, settings);
+      const newSettings = pickBy(settings);
+      commit(SET_SETTINGS, newSettings);
     }
 
     if (tokens) {
