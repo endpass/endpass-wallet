@@ -63,22 +63,6 @@ export const getBalance_6bbf1 = {
   result: toWei('2', 'ether'),
 };
 
-export const getBalance_31ea8 = {
-  payload: {
-    method: 'eth_getBalance',
-    params: [address, 'latest'],
-  },
-  result: Web3.utils.toWei('1', 'ether'),
-};
-
-export const getBalance_6bbf1 = {
-  payload: {
-    method: 'eth_getBalance',
-    params: ['0x6bbf1dea0d21eafd232e281a196e6f11906054df', 'latest'],
-  },
-  result: Web3.utils.toWei('2', 'ether'),
-};
-
 export const getTransactionCount_b14ab = {
   payload: {
     method: 'eth_getTransactionCount',

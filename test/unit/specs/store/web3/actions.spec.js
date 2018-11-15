@@ -68,7 +68,7 @@ describe('web3 actions', () => {
         ['tokens/getNetworkTokens', {}, { root: true }],
         ['tokens/getCurrentAccountTokens', {}, { root: true }],
         ['tokens/getCurrentAccountTokensData', null, { root: true }],
-        ['dapp/sendSettings', null, { root: true }],
+        ['dapp/reset', null, { root: true }],
       ]);
     });
 
@@ -81,7 +81,7 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(dispatch).toHaveBeenCalledTimes(7);
+      expect(dispatch).toHaveBeenCalledTimes(8);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -91,7 +91,7 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(dispatch).toHaveBeenCalledTimes(7);
+      expect(dispatch).toHaveBeenCalledTimes(8);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });

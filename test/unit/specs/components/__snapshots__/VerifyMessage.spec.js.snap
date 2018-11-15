@@ -106,7 +106,7 @@ exports[`VerifyMessage render should show the received address 1`] = `
     </label>
      
     <p>
-      address
+      0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c
     </p>
   </div>
 </v-form>

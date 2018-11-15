@@ -86,9 +86,6 @@ export const DAPP_WHITELISTED_METHODS = [
   'eth_sendTransaction',
 ];
 
-// export const DAPP_PROXY_URL = 'https://wildproxy-dev.endpass.com';
-export const DAPP_PROXY_URL = 'http://localhost:8080';
-
 export default {
   AVAILABLE_FIAT_CURRENCIES,
   MAIN_NET_ID,
@@ -103,5 +100,4 @@ export default {
   HARDWARE_WALLET_TYPE,
   WALLET_TYPE,
   DAPP_WHITELISTED_METHODS,
-  DAPP_PROXY_URL,
 };

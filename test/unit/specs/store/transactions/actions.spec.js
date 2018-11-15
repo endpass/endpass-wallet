@@ -344,13 +344,6 @@ describe('transactions actions', () => {
         .spyOn(global, 'Date')
         .mockImplementation(() => constantDate);
 
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toBeCalledWith(ADD_TRANSACTION, expectedTrx);
-
-      dateMock.mockRestore();
-    });
-
-    it('should add Transaction instance to history', () => {
       actions.handleBlockTransactions(
         { state: stateInstance, commit, dispatch, rootState, rootGetters },
         { transactions: blockTransactions },

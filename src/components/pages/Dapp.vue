@@ -45,15 +45,15 @@
       </div>
     </div>
     <password-modal
-      v-if="currentMessage"
+      v-if="currentRequest"
       title="Opened dapp requests your password"
       @confirm="confirmSign"
       @close="cancelSign"
     >
       <transaction-table
-        v-if="isCurrentMessageTransaction"
+        v-if="isCurrentRequestTransaction"
         :currency="activeCurrency"
-        :transaction="currentMessage.transaction"
+        :transaction="currentRequest.transaction"
       />
     </password-modal>
   </div>
@@ -81,11 +81,12 @@ export default {
     ...mapState({
       injected: state => state.dapp.injected,
       activeCurrency: state => state.web3.activeCurrency,
+      injected: state => state.dapp.injected,
     }),
-    ...mapGetters('dapp', ['currentMessage']),
+    ...mapGetters('dapp', ['currentRequest']),
 
-    isCurrentMessageTransaction() {
-      return this.currentMessage.method === 'eth_sendTransaction';
+    isCurrentRequestTransaction() {
+      return this.currentRequest.method === 'eth_sendTransaction';
     },
 
     dappUrl() {
@@ -106,8 +107,8 @@ export default {
     ...mapActions('dapp', [
       'inject',
       'reset',
-      'processCurrentMessage',
-      'cancelCurrentMessage',
+      'processCurrentRequest',
+      'cancelCurrentRequest',
     ]),
 
     async loadDapp() {
@@ -153,11 +154,11 @@ export default {
     },
 
     async confirmSign(password) {
-      await this.processCurrentMessage(password);
+      await this.processCurrentRequest(password);
     },
 
     async cancelSign() {
-      await this.cancelCurrentMessage();
+      await this.cancelCurrentRequest();
     },
   },
 

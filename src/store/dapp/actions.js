@@ -4,8 +4,8 @@ import { dappBridge, NotificationError } from '@/class';
 import InpageProvider from '@/class/provider/InpageProvider';
 import { DAPP_WHITELISTED_METHODS } from '@/constants';
 import {
-  ADD_MESSAGE,
-  REMOVE_MESSAGE,
+  ADD_REQUEST,
+  REMOVE_REQUEST,
   CHANGE_INJECT_STATUS,
 } from './mutations-types';
 
@@ -16,7 +16,7 @@ const inject = ({ state, commit, dispatch }, dappWindow) => {
 
   commit(CHANGE_INJECT_STATUS, true);
   dispatch('sendSettings');
-  dappBridge.setMessageHandler(payload => dispatch('handleMessage', payload));
+  dappBridge.setRequestHandler(payload => dispatch('handleRequest', payload));
 
   Object.assign(dappWindow, {
     web3: new Web3Dapp(inpageProvider),
@@ -27,15 +27,15 @@ const reset = ({ commit }) => {
   commit(CHANGE_INJECT_STATUS, false);
 };
 
-const handleMessage = async ({ dispatch, commit }, { id, ...message }) => {
-  if (DAPP_WHITELISTED_METHODS.includes(message.method)) {
-    commit(ADD_MESSAGE, {
+const handleRequest = async ({ dispatch, commit }, { id, ...request }) => {
+  if (DAPP_WHITELISTED_METHODS.includes(request.method)) {
+    commit(ADD_REQUEST, {
       id,
-      message,
+      request,
     });
   } else {
-    const res = await dispatch('sendMessageToNetwork', {
-      ...message,
+    const res = await dispatch('sendRequestToNetwork', {
+      ...request,
       id,
     });
 
@@ -59,86 +59,103 @@ const sendResponse = (ctx, payload) => {
   dappBridge.emitResponse(payload);
 };
 
-const processCurrentMessage = async (
+const processCurrentRequest = async (
   { commit, dispatch, getters },
   password,
 ) => {
-  const messageId = getters.currentMessageId;
-  const { method, jsonrpc } = getters.currentMessage;
+  const requestId = getters.currentRequestId;
+  const { jsonrpc } = getters.currentRequest;
 
   try {
-    const res =
-      method === 'eth_sendTransaction'
-        ? await dispatch('signCurrentTransaction', password)
-        : await dispatch('signCurrentMessage', password);
+    const signResult = await dispatch('getSignedCurrentRequest', password);
 
     dispatch('sendResponse', {
-      ...res,
-      id: messageId,
+      id: requestId,
+      result: signResult,
+      jsonrpc,
     });
   } catch (err) {
     const notificationError = new NotificationError({
       title: 'Sign error',
-      text: err.message,
+      text: err.request,
       type: 'is-danger',
     });
 
     dispatch('errors/emitError', notificationError, { root: true });
     dispatch('sendResponse', {
-      id: messageId,
+      id: requestId,
       error: err,
       result: [],
       jsonrpc,
     });
   } finally {
-    commit(REMOVE_MESSAGE, messageId);
+    commit(REMOVE_REQUEST, requestId);
   }
 };
 
-const signCurrentTransaction = async (
+const getSignedCurrentRequest = ({ dispatch, getters }, password) => {
+  const { method } = getters.currentRequest;
+
+  switch (method) {
+    case 'eth_sendTransaction':
+      return dispatch('getSignedCurrentTransaction', password);
+    case 'eth_signTypedData':
+      return dispatch('getSignedCurrentTypedDataRequest', password);
+    default:
+      return dispatch('getSignedCurrentPlainRequest', password);
+  }
+};
+
+const getSignedCurrentTransaction = async (
   { dispatch, getters, rootState },
   password,
 ) => {
   const { wallet } = rootState.accounts;
-  const message = getters.currentMessage;
+  const request = getters.currentRequest;
   const nonce = await dispatch('transactions/getNextNonce', null, {
     root: true,
   });
   const signedTx = await wallet.signTransaction(
-    Object.assign({}, message.transaction, {
+    {
+      ...request.transaction,
       nonce,
-    }),
+    },
     password,
   );
 
   return new Promise((resolve, reject) => {
     const sendEvent = web3.eth.sendSignedTransaction(signedTx);
 
-    sendEvent.then(receipt =>
-      resolve({
-        jsonrpc: message.jsonrpc,
-        result: receipt.transactionHash,
-      }),
-    );
+    sendEvent.then(receipt => resolve(receipt.transactionHash));
 
     sendEvent.on('error', error => reject(error));
   });
 };
 
-const signCurrentMessage = async ({ getters, rootState }, password) => {
-  const { wallet } = rootState.accounts;
-  const message = getters.currentMessage;
-  const res = await wallet.sign(message.params[0], password);
+const getSignedCurrentTypedDataRequest = async (
+  { getters, rootState },
+  password,
+) => {
+  // const { wallet } = rootState.accounts;
+  // const request = getters.currentRequest;
 
-  return {
-    jsonrpc: message.jsonrpc,
-    result: res.signature,
-  };
+  throw new Error('Sign typed data not supported yet!');
 };
 
-const sendMessageToNetwork = (ctx, message) =>
+const getSignedCurrentPlainRequest = async (
+  { getters, rootState },
+  password,
+) => {
+  const { wallet } = rootState.accounts;
+  const request = getters.currentRequest;
+  const res = await wallet.sign(request.params[0], password);
+
+  return res.signature;
+};
+
+const sendRequestToNetwork = (ctx, request) =>
   new Promise((resolve, reject) => {
-    web3.currentProvider.sendAsync(message, (err, res) => {
+    web3.currentProvider.sendAsync(request, (err, res) => {
       if (err) {
         return reject(err);
       }
@@ -147,26 +164,28 @@ const sendMessageToNetwork = (ctx, message) =>
     });
   });
 
-const cancelCurrentMessage = ({ commit, dispatch, getters }) => {
-  const messageId = getters.currentMessageId;
+const cancelCurrentRequest = ({ commit, dispatch, getters }) => {
+  const requestId = getters.currentRequestId;
 
   dispatch('sendResponse', {
-    id: messageId,
+    id: requestId,
     error: 'canceled',
     result: [],
   });
-  commit(REMOVE_MESSAGE, messageId);
+  commit(REMOVE_REQUEST, requestId);
 };
 
 export default {
   inject,
   reset,
-  handleMessage,
+  handleRequest,
   sendSettings,
   sendResponse,
-  processCurrentMessage,
-  signCurrentTransaction,
-  signCurrentMessage,
-  sendMessageToNetwork,
-  cancelCurrentMessage,
+  processCurrentRequest,
+  getSignedCurrentRequest,
+  getSignedCurrentTransaction,
+  getSignedCurrentTypedDataRequest,
+  getSignedCurrentPlainRequest,
+  sendRequestToNetwork,
+  cancelCurrentRequest,
 };

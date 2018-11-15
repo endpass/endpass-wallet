@@ -31,14 +31,15 @@ import { mapState } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
-import web3 from '@/utils/web3';
 
 export default {
   name: 'VerifyMessage',
+
   data: () => ({
     address: null,
     signedMessageString: null,
   }),
+
   computed: {
     ...mapState({
       wallet: state => state.accounts.wallet,
@@ -51,14 +52,17 @@ export default {
       }
     },
   },
+
   methods: {
-    verifyMessage() {
+    async verifyMessage() {
       try {
         const { message, signature } = this.signedMessage;
+        const res = await this.wallet.recover(message, signature);
 
-        this.address = this.wallet.recover(message, signature);
+        this.address = res;
       } catch (error) {
         this.address = null;
+
         this.$notify({
           title: 'Error while verifying the message',
           text:
