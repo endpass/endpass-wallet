@@ -9,7 +9,7 @@ export default class InpageProvider {
     }
 
     this.eventEmitter = eventEmitter;
-    this.pendingMessagesHandlers = {};
+    this.pendingRequestsHandlers = {};
     this.settings = {};
     this.isMetaMask = true;
     this.isConnected = () => true;
@@ -17,12 +17,12 @@ export default class InpageProvider {
     this.setupEventsHandlers();
   }
 
-  static createInpageIdFromMessageId(id) {
+  static createInpageIdFromRequestId(id) {
     return `${INPAGE_ID_PREFIX}${id}`;
   }
 
-  static restoreMessageIdFromInpageId(id) {
-    return id.replace(INPAGE_ID_PREFIX, '');
+  static restoreRequestIdFromInpageId(id) {
+    return parseInt(id.replace(INPAGE_ID_PREFIX, ''), 10);
   }
 
   setupEventsHandlers() {
@@ -31,17 +31,17 @@ export default class InpageProvider {
   }
 
   handleResponse({ error, id, result, jsonrpc }) {
-    const messageId = InpageProvider.restoreMessageIdFromInpageId(id);
-    const messageHandler = get(this.pendingMessagesHandlers, messageId);
+    const requestId = InpageProvider.restoreRequestIdFromInpageId(id);
+    const requestHandler = get(this.pendingRequestsHandlers, requestId);
 
-    if (messageHandler) {
-      messageHandler(error, {
-        id: parseInt(messageId, 10),
+    if (requestHandler) {
+      requestHandler(error, {
+        id: parseInt(requestId, 10),
         result,
         jsonrpc,
       });
 
-      delete this.pendingMessagesHandlers[messageId];
+      delete this.pendingRequestsHandlers[requestId];
     }
   }
 
@@ -93,10 +93,10 @@ export default class InpageProvider {
     if (processedPayload.result !== null) {
       callback(null, processedPayload);
     } else {
-      this.pendingMessagesHandlers[payload.id] = callback;
-      this.eventEmitter.emit(INPAGE_EVENT.MESSAGE, {
+      this.pendingRequestsHandlers[payload.id] = callback;
+      this.eventEmitter.emit(INPAGE_EVENT.REQUEST, {
         ...payload,
-        id: InpageProvider.createInpageIdFromMessageId(payload.id),
+        id: InpageProvider.createInpageIdFromRequestId(payload.id),
       });
     }
   }

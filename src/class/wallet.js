@@ -45,10 +45,12 @@ export default class Wallet {
     return web3.eth.accounts.sign(data, privateKey);
   }
 
-  recover(message, signature) {
+  /* eslint-disable-next-line */
+  async recover(message, signature) {
     return web3.eth.accounts.recover(message, signature);
   }
 
+  /* eslint-disable-next-line */
   async ecRecover(message, signature) {
     const res = await web3.eth.personal.ecRecover(message, signature);
 
