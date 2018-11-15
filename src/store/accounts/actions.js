@@ -327,7 +327,7 @@ const getNextWalletsFromHd = async (
 };
 
 const saveHardwareXpub = async ({ commit }, { xpub, walletType }) => {
-  const info = { type: WALLET_TYPE.HD_PUBLIC };
+  const info = { type: walletType };
 
   commit(SET_HARDWARE_XPUB, { xpub, walletType });
   await userService.setAccount(xpub, { info });
