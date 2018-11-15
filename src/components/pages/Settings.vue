@@ -56,8 +56,18 @@ export default {
   computed: {
     ...mapState('user', ['settings', 'availableCurrencies', 'email']),
     ...mapGetters('user', ['isDefaultIdentity']),
-    isSettingsChange() {
-      return JSON.stringify(this.settings) !== JSON.stringify(this.newSettings);
+  },
+  watch: {
+    settings: {
+      handler(settings) {
+        try {
+          this.newSettings = JSON.parse(JSON.stringify(settings));
+        } catch (e) {
+          this.emitError(e);
+        }
+      },
+      immediate: true,
+      deep: true,
     },
   },
   methods: {
@@ -72,13 +82,6 @@ export default {
         type: 'is-info',
       });
     },
-  },
-  mounted() {
-    try {
-      this.newSettings = JSON.parse(JSON.stringify(this.settings));
-    } catch (e) {
-      this.emitError(e);
-    }
   },
   mixins: [error],
   components: {

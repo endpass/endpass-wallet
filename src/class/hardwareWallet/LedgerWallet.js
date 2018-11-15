@@ -4,29 +4,58 @@ import Tx from 'ethereumjs-tx';
 import { NotificationError } from '@/class';
 import { HARDWARE_DERIVIATION_PATH } from '@/constants';
 import web3 from '@/utils/web3';
+import HDKey from 'ethereumjs-wallet/hdkey';
 
 const { sha3, toHex } = web3.utils;
 
 export default class LedgerWallet {
-  static async getNextWallets({ offset = 0, limit = 10 }) {
+  static async getNextWallets({ offset = 0, limit = 10, xpub: savedXpub }) {
+    try {
+      const xpub = savedXpub || (await LedgerWallet.getPublicExtendedKey());
+      const hdWallet = HDKey.fromExtendedKey(xpub);
+
+      const addresses = [...Array(limit)].map((_, i) =>
+        hdWallet
+          .deriveChild(offset + i)
+          .getWallet()
+          .getChecksumAddressString(),
+      );
+
+      return { addresses, xpub };
+    } catch (error) {
+      if (error instanceof NotificationError) {
+        throw error;
+      }
+
+      throw new NotificationError({
+        title: 'Access error',
+        text: `An error occurred while getting access to hardware device. Please, try again.`,
+        type: 'is-danger',
+      });
+    }
+  }
+
+  static async getPublicExtendedKey() {
     let transport;
 
     try {
       transport = await LedgerTransport.create();
       const eth = new Eth(transport);
+      const { publicKey } = await eth.getAddress(ENV.hdKeyMnemonic.path);
 
-      const addressesPromises = [...Array(limit)]
-        .map((_, i) => `${HARDWARE_DERIVIATION_PATH}${offset + i}`)
-        .map(path => eth.getAddress(path, false, false));
-
-      const payload = await Promise.all(addressesPromises);
-
-      return payload.map(({ address }) => address);
+      return publicKey;
     } catch (error) {
       console.log(error);
+      let text =
+        'An error occurred while getting access to hardware device. Please, try again.';
+
+      if (error.message.includes('U2F')) {
+        text = error.message;
+      }
+
       throw new NotificationError({
         title: 'Access error',
-        text: `An error occurred while getting access to hardware device. Please, try again.`,
+        text,
         type: 'is-danger',
       });
     } finally {

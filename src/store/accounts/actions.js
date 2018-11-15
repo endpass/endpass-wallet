@@ -5,6 +5,7 @@ import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';
 import { Wallet, NotificationError } from '@/class';
+import { WALLET_TYPE } from '@/constants';
 import keystore from '@/utils/keystore';
 import {
   SET_ADDRESS,
@@ -13,6 +14,7 @@ import {
   SET_HD_KEY,
   SET_BALANCE,
   ADD_ADDRESS,
+  SET_HARDWARE_XPUB,
 } from './mutations-types';
 
 const { toChecksumAddress, fromWei } = web3.utils;
@@ -305,8 +307,31 @@ const setUserWallets = async ({ commit, dispatch, rootState }) => {
   }
 };
 
-const getNextWalletsFromHd = async (ctx, payload) =>
-  hardwareService.getNextWallets(payload);
+const getNextWalletsFromHd = async (
+  { state, dispatch },
+  { walletType, ...selectParams },
+) => {
+  const savedXpub = state.hardwareXpub[walletType];
+
+  const { xpub, addresses } = await hardwareService.getNextWallets({
+    walletType,
+    ...selectParams,
+    xpub: savedXpub,
+  });
+
+  if (savedXpub !== xpub) {
+    await dispatch('saveHardwareXpub', { xpub, walletType });
+  }
+
+  return addresses;
+};
+
+const saveHardwareXpub = async ({ commit }, { xpub, walletType }) => {
+  const info = { type: walletType };
+
+  commit(SET_HARDWARE_XPUB, { xpub, walletType });
+  await userService.setAccount(xpub, { info });
+};
 
 const init = async ({ dispatch }) => {
   try {
@@ -336,5 +361,6 @@ export default {
   getBalanceByAddress,
   validatePassword,
   getNextWalletsFromHd,
+  saveHardwareXpub,
   init,
 };

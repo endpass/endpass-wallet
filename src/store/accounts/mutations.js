@@ -6,6 +6,7 @@ import {
   SET_WALLET,
   SET_HD_KEY,
   SET_BALANCE,
+  SET_HARDWARE_XPUB,
 } from './mutations-types';
 
 const setAddress = (state, newAddress) => {
@@ -49,6 +50,10 @@ const setBalance = (state, balance) => {
   state.balance = balance;
 };
 
+const setHardwareXpub = (state, { xpub, walletType }) => {
+  Object.assign(state.hardwareXpub, { [walletType]: xpub });
+};
+
 export default {
   [ADD_ADDRESS]: addAddress,
   [SET_ADDRESS]: setAddress,
@@ -56,4 +61,5 @@ export default {
   [SET_WALLET]: setWallet,
   [SET_HD_KEY]: setHdKey,
   [SET_BALANCE]: setBalance,
+  [SET_HARDWARE_XPUB]: setHardwareXpub,
 };

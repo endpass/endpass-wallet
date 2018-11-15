@@ -17,7 +17,7 @@ const setEmail = (state, email) => {
 };
 
 const setSettings = (state, settings) => {
-  state.settings = settings;
+  Object.assign(state.settings, settings);
 };
 
 const setOtpSettings = (state, otpSettings) => {

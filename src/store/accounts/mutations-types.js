@@ -4,6 +4,7 @@ export const ADD_WALLET = 'ADD_WALLET';
 export const SET_WALLET = 'SET_WALLET';
 export const SET_HD_KEY = 'SET_HD_KEY';
 export const SET_BALANCE = 'SET_BALANCE';
+export const SET_HARDWARE_XPUB = 'SET_HARDWARE_XPUB';
 
 export default {
   ADD_ADDRESS,
@@ -12,4 +13,5 @@ export default {
   SET_WALLET,
   SET_HD_KEY,
   SET_BALANCE,
+  SET_HARDWARE_XPUB,
 };
