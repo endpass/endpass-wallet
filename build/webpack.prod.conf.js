@@ -37,6 +37,8 @@ const webpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       ENV: JSON.stringify(env),
       GIT_COMMIT_HASH: JSON.stringify(gitCommitHash),
+      //Required for vue to work in production mode
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     }),
     new UglifyJsPlugin({
       uglifyOptions: {
