@@ -1,34 +1,57 @@
 export { INPAGE_EVENT, INPAGE_ID_PREFIX } from './InpageProvider';
 
 export const MAIN_NET_ID = 1;
+
+export const NETWORK_URL = Object.freeze({
+  ETH: {
+    HTTP: `https://mainnet.infura.io/${ENV.infuraConf.key}`,
+    // TODO When resolve CORS
+    // HTTP: 'https://eth-mainnet.endpass.com:2083',
+    WS: 'wss://eth-mainnet.endpass.com',
+  },
+  ROP: {
+    HTTP: `https://ropsten.infura.io/${ENV.infuraConf.key}`,
+    // HTTP: 'https://eth-ropsten.endpass.com:2083',
+    WS: 'wss://eth-ropsten.endpass.com',
+  },
+  RIN: {
+    HTTP: `https://rinkeby.infura.io/${ENV.infuraConf.key}`,
+  },
+  ETC: {
+    HTTP: 'https://etc-geth.0xinfra.com',
+    // HTTP: 'https://etc-mainnet.endpass.com:8080',
+    WS: 'wss://etc-mainnet.endpass.com',
+  },
+});
+
 export const DEFAULT_NETWORKS = Object.freeze([
   {
     id: 1,
     networkType: 'main',
     currency: 1,
     name: 'Main',
-    url: 'wss://eth-mainnet.endpass.com',
+    url: NETWORK_URL.ETH,
   },
   {
     id: 3,
     name: 'Ropsten',
     networkType: 'ropsten',
     currency: 2,
-    url: 'wss://eth-ropsten.endpass.com',
+    url: NETWORK_URL.ROP,
   },
   {
     id: 4,
     name: 'Rinkeby',
     networkType: 'rinkeby',
     currency: 2,
-    url: `https://rinkeby.infura.io/${ENV.infuraConf.key}`,
+    url: NETWORK_URL.RIN,
   },
   {
     id: 61,
     name: 'Ethereum classic',
     networkType: 'ethClassic',
     currency: 3,
-    url: 'wss://etc-mainnet.endpass.com/',
+    url: NETWORK_URL.ETC,
   },
 ]);
 
