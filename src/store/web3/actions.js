@@ -1,9 +1,8 @@
-import { isEmpty } from 'lodash';
 import Web3 from 'web3';
 
 import web3 from '@/utils/web3';
 import { userService } from '@/services';
-import { providerFactory } from '@/class';
+import { ProviderFactory } from '@/class';
 import {
   CHANGE_NETWORK,
   CHANGE_CURRENCY,
@@ -129,7 +128,7 @@ const deleteNetwork = async (
 };
 
 const validateNetwork = (context, { network }) => {
-  const providerTemp = providerFactory(network.url);
+  const providerTemp = ProviderFactory.create(network.url);
   const web3Temp = new Web3(providerTemp);
   const { net } = web3Temp.eth;
 
