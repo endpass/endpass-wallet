@@ -104,4 +104,8 @@ export default class InpageProvider {
   send(payload) {
     return this.processPayload(payload);
   }
+
+  async enable() {
+    return this.processPayload({ method: 'eth_accounts' }).result;
+  }
 }
