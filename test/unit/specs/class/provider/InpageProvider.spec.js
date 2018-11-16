@@ -155,6 +155,23 @@ describe('InpageProvider', () => {
       });
     });
 
+    describe('enable', () => {
+      it('should call correct method', async () => {
+        expect.assertions(1);
+        provider.processPayload = jest.fn().mockResolvedValue({});
+        await provider.enable();
+        expect(provider.processPayload).toHaveBeenCalledWith({
+          method: 'eth_accounts',
+        });
+      });
+
+      it('should return accounts', () => {
+        const result = ['0x0'];
+        provider.processPayload = jest.fn().mockResolvedValue({ result });
+        expect(provider.enable()).resolves.toBe(result);
+      });
+    });
+
     describe('send', () => {
       it('should return result by method', () => {
         const payload = { id: '1' };
