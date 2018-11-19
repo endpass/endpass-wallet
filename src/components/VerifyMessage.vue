@@ -57,9 +57,7 @@ export default {
     async verifyMessage() {
       try {
         const { message, signature } = this.signedMessage;
-        const res = await this.wallet.recover(message, signature);
-
-        this.address = res;
+        this.address = await this.wallet.recover(message, signature);
       } catch (error) {
         this.address = null;
 

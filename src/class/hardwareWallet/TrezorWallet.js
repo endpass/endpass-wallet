@@ -97,4 +97,8 @@ export default class TrezorWallet {
 
     return `0x${tx.serialize().toString('hex')}`;
   }
+
+  static async recover(message, signature) {
+    return web3.eth.accounts.recover(message, signature);
+  }
 }

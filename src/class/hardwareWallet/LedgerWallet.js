@@ -152,4 +152,8 @@ export default class LedgerWallet {
       }
     }
   }
+
+  static async recover(message, signature) {
+    return web3.eth.accounts.recover(message, signature);
+  }
 }

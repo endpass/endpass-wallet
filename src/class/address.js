@@ -68,4 +68,9 @@ export default class Address {
   signTransaction(transaction) {
     return this.signStrategy.signTransaction(transaction, this.info.index);
   }
+
+  // (String, String<Signature>) => Promise<Address>
+  recover(message, signature) {
+    return this.signStrategy.recover(message, signature);
+  }
 }
