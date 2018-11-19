@@ -2,6 +2,7 @@ import keystore from '@/utils/keystore';
 import { hdv3, v3, v3password } from 'fixtures/accounts';
 import getters from '@/store/accounts/getters';
 import { Wallet, Address } from '@/class';
+import { HARDWARE_WALLET_TYPE } from '@/constants';
 
 describe('Accounts getters', () => {
   describe('accountAddresses', () => {
@@ -30,6 +31,26 @@ describe('Accounts getters', () => {
       const state = { wallet: new Wallet(v3) };
 
       expect(getters.isPublicAccount(state)).toBeFalsy();
+    });
+  });
+
+  describe('isHardwareAccount', () => {
+    it('should return true when the account is hardware', () => {
+      const { address } = v3;
+      const state = {
+        wallet: new Address({
+          address,
+          info: { type: HARDWARE_WALLET_TYPE.TREZOR },
+        }),
+      };
+
+      expect(getters.isHardwareAccount(state)).toBeTruthy();
+    });
+
+    it('should return false when the account is not hardware', () => {
+      const state = { wallet: new Wallet(v3) };
+
+      expect(getters.isHardwareAccount(state)).toBeFalsy();
     });
   });
 
