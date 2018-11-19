@@ -1,1 +1,1 @@
-export { default as providerFactory } from './providerFactory';
+export { default as ProviderFactory } from './ProviderFactory';

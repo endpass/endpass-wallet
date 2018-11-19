@@ -18,8 +18,8 @@ const inject = ({ state, commit, dispatch }, dappWindow) => {
   commit(CHANGE_INJECT_STATUS, true);
   dispatch('sendSettings');
   dappBridge.setRequestHandler(payload => dispatch('handleRequest', payload));
-
   Object.assign(dappWindow, {
+    ethereum: inpageProvider,
     web3: new Web3Dapp(inpageProvider),
   });
 };

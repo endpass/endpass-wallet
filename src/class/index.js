@@ -1,4 +1,5 @@
-export { providerFactory } from './provider';
+export { default as Web3Factory } from './web3/Web3Factory';
+export { ProviderFactory } from './provider';
 export {
   default as TransactionFactory,
 } from './transaction/TransactionFactory';

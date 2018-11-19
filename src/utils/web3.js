@@ -1,14 +1,11 @@
 // Wrapper around global web3 instance
-import Web3 from 'web3';
-import { providerFactory } from '@/class/provider';
+import { ProviderFactory } from '@/class/provider';
+import Web3Factory from '@/class/web3/Web3Factory';
 import { DEFAULT_NETWORKS } from '@/constants';
 
-export const defaultProvider = providerFactory(DEFAULT_NETWORKS[0].url);
+const defaultProvider = ProviderFactory.create(DEFAULT_NETWORKS[0].url);
 
-export const createWeb3Instance = (provider = defaultProvider) =>
-  new Web3(provider);
-
-const web3 = createWeb3Instance();
+const web3 = Web3Factory.create(defaultProvider);
 
 // Make web3 global for integration tests
 if (window.Cypress) {
