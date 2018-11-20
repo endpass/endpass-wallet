@@ -338,19 +338,22 @@ describe('transactions actions', () => {
       expect(dispatch).toHaveBeenNthCalledWith(2, 'updateTransactionHistory');
     });
 
-    it('should add transaction to history with network id', () => {
+    it.only('should add transaction to history with network id', () => {
+      const networkId = 2;
       const constantDate = new Date('2018-01-01T12:00:00');
       const dateMock = jest
         .spyOn(global, 'Date')
         .mockImplementation(() => constantDate);
+      const { chainId, ...trxWithoutChainId } = blockTransactions[0];
 
       actions.handleBlockTransactions(
         { state: stateInstance, commit, dispatch, rootState, rootGetters },
-        { transactions: blockTransactions },
+        { transactions: [trxWithoutChainId, blockTransactions[1]], networkId },
       );
 
       const expectedTrx = TransactionFactory.fromBlock({
-        ...blockTransactions[0],
+        ...trxWithoutChainId,
+        networkId,
       });
 
       expect(commit).toHaveBeenCalledTimes(1);
