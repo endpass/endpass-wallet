@@ -22,7 +22,7 @@
                   />
                 </div>
                 <div
-                  v-if="!isPublicAccount"
+                  v-if="isExportable"
                   class="column is-one-third"
                 >
                   <router-link
@@ -125,6 +125,7 @@ export default {
     ...mapGetters('accounts', [
       'currentAddressString',
       'isPublicAccount',
+      'isHardwareAccount',
       'balance',
     ]),
     ...mapGetters('tokens', [
@@ -145,6 +146,10 @@ export default {
 
     currentAccountTokensList() {
       return Object.values(this.currentAccountFullTokens);
+    },
+
+    isExportable() {
+      return !this.isPublicAccount && !this.isHardwareAccount;
     },
   },
 

@@ -50,19 +50,6 @@ export default class Wallet {
     return web3.eth.accounts.recover(message, signature);
   }
 
-  /* eslint-disable-next-line */
-  async ecRecover(message, signature) {
-    const res = await web3.eth.personal.ecRecover(message, signature);
-
-    return res;
-  }
-
-  async personalSign(data, password) {
-    const res = await web3.eth.personal.sign(data, this.v3.address, password);
-
-    return res;
-  }
-
   async signTransaction(transaction, password) {
     const privateKey = await this.getPrivateKey(password);
     const tx = transaction instanceof Tx ? transaction : new Tx(transaction);

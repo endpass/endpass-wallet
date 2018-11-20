@@ -59,13 +59,31 @@ export default class Address {
     return toChecksumAddress(this.getAddressString());
   }
 
-  // (Message) => Promise<SignedMessage>
+  /**
+   * Return signed message object
+   * @param {String} message Message for signing
+   * @return {Promise<Object<SignedMessage>>} Return signed message object
+   */
   sign(message) {
     return this.signStrategy.sign(message, this.info.index);
   }
 
-  // (Transaction) => Promise<SignedTrx>
+  /**
+   * Return signed transaction hash
+   * @param {Transaction} transaction Transaction instance
+   * @return {String<SignedTrxHash>} Resolve signed transaction hash
+   */
   signTransaction(transaction) {
     return this.signStrategy.signTransaction(transaction, this.info.index);
+  }
+
+  /**
+   * Recover account address from signed message/hash
+   * @param {String} message Message/hash for signing
+   * @param {String<Signature>} signature Signature from signing
+   * @return {Promise<Address>} Resolve account address
+   */
+  recover(message, signature) {
+    return this.signStrategy.recover(message, signature);
   }
 }
