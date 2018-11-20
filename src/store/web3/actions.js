@@ -139,10 +139,11 @@ const subscribeOnBlockUpdates = async ({ commit, dispatch, getters }) => {
   await dispatch('unsubscribeOnBlockUpdates');
 
   const interval = setInterval(async () => {
+    const networkId = getters.activeNetwork;
     const blockNumber = await web3.eth.getBlockNumber();
 
     commit(SET_BLOCK_NUMBER, blockNumber);
-    dispatch('handleLastBlock', { blockNumber });
+    dispatch('handleLastBlock', { blockNumber, networkId });
   }, ENV.blockUpdateInterval);
 
   commit(SET_INTERVAL, interval);
@@ -159,7 +160,7 @@ const unsubscribeOnBlockUpdates = async ({ state, commit }) => {
 
 const handleLastBlock = async (
   { state, commit, dispatch },
-  { blockNumber },
+  { blockNumber, networkId },
 ) => {
   if (state.handledBlockNumber === null) {
     commit(SET_HANDLED_BLOCK_NUMBER, blockNumber - 1);
@@ -186,7 +187,7 @@ const handleLastBlock = async (
     getBlockSafely(i).then(({ transactions }) => {
       dispatch(
         'transactions/handleBlockTransactions',
-        { transactions },
+        { transactions, networkId },
         { root: true },
       );
     });

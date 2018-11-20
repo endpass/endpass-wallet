@@ -9,10 +9,10 @@ export default class TransactionFactory {
   }
 
   static fromBlock(trx) {
-    const { value: valueWei, gasPrice, nonce, chainId } = trx;
+    const { value: valueWei, gasPrice, nonce, chainId, networkId } = trx;
 
     const adaptData = {
-      networkId: hexToNumber(chainId),
+      networkId: chainId ? hexToNumber(chainId) : networkId,
       valueWei,
       date: new Date(),
       nonce: String(nonce),

@@ -172,7 +172,7 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
 // Show notification of incoming transactions from block
 const handleBlockTransactions = (
   { state, dispatch, commit, rootState, rootGetters },
-  { transactions },
+  { transactions, networkId },
 ) => {
   const userAddresses = rootGetters['accounts/accountAddresses'];
   const toUserTrx = transactions.filter(
@@ -189,7 +189,7 @@ const handleBlockTransactions = (
   const allTrx = [...pendingTransactions, ...transactionHistory];
 
   toUserTrx.forEach(trx => {
-    const incomeTrx = TransactionFactory.fromBlock(trx);
+    const incomeTrx = TransactionFactory.fromBlock({ ...trx, networkId });
     const isTrxExist = allTrx.some(trxInList =>
       Transaction.isEqual(incomeTrx, trxInList),
     );
