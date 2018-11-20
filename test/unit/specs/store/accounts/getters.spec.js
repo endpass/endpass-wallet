@@ -44,13 +44,13 @@ describe('Accounts getters', () => {
         }),
       };
 
-      expect(getters.isHardwareAccount(state)).toBeTruthy();
+      expect(getters.isHardwareAccount(state)).toBe(true);
     });
 
     it('should return false when the account is not hardware', () => {
       const state = { wallet: new Wallet(v3) };
 
-      expect(getters.isHardwareAccount(state)).toBeFalsy();
+      expect(getters.isHardwareAccount(state)).toBe(false);
     });
   });
 

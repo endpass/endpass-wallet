@@ -12,7 +12,6 @@
         <p class="subtitle">Please enter your wallet password to continue.</p>
         <v-form
           id="password-form"
-          @submit="confirm"
         >
           <slot />
           <v-password
@@ -37,6 +36,7 @@
           form="password-form"
           data-test="submit-password"
           class-name="is-primary is-medium"
+          @click="confirm"
         >
           Confirm
         </v-button>
