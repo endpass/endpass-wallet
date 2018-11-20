@@ -13,7 +13,7 @@ export default class InpageProvider {
     this.settings = {};
     this.isMetaMask = true;
     this.isConnected = () => true;
-
+    this.enable = this.enable.bind(this);
     this.setupEventsHandlers();
   }
 
