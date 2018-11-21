@@ -47,15 +47,18 @@
     />
 
     <transaction-priority-options
+      v-if="prices"
       v-model="transaction.gasPrice"
       :is-loading="isLoadingGasPrice"
       :prices="prices"
     />
 
     <transaction-advanced-options
+      v-if="!isLoadingGasPrice"
       :transaction="transaction"
       :current-token="transaction.tokenInfo"
       :is-loading="isLoading"
+      :is-opened="!prices"
       @change="handleAdvancedChange"
     />
 
@@ -255,7 +258,7 @@ export default {
           this.transaction,
         );
       } catch (err) {
-        // TODO: проверить на реальном эфире, отправляется ли. Если да, при ошибке запрещать отправку
+        // TODO: check send on main net. If it is ok, disallow sending
         console.log(err);
 
         const isContract = await Transaction.isTransactionToContract(
@@ -279,10 +282,15 @@ export default {
     async loadGasPrice() {
       this.isLoadingGasPrice = true;
 
-      this.prices = await this.getGasPrice();
-      this.transaction.gasPrice = this.prices.medium.toString();
-
-      this.isLoadingGasPrice = false;
+      try {
+        this.prices = await this.getGasPrice();
+        this.transaction.gasPrice = this.prices.medium.toString();
+      } catch (err) {
+        this.prices = null;
+        this.transaction.gasPrice = '0';
+      } finally {
+        this.isLoadingGasPrice = false;
+      }
     },
 
     emitTransactionSubmit() {

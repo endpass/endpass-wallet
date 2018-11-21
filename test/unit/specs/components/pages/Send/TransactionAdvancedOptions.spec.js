@@ -102,6 +102,14 @@ describe('Send – TransactionAdvancedOptions', () => {
 
         expect(wrapper.vm.form.nonce).toBe(15);
       });
+
+      it('should unfold options if isOpened truthy', () => {
+        wrapper.setProps({
+          isOpened: true,
+        });
+
+        expect(wrapper.vm.isCollapsed).toBe(false);
+      });
     });
   });
 });

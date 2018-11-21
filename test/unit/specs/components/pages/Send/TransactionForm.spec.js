@@ -150,6 +150,19 @@ describe('Send – TransactionForm', () => {
       expect(wrapper.find('.help.ellipsis').exists()).toBe(false);
       expect(wrapper.find('.help.is-danger').text()).toBe('foo');
     });
+
+    it('should render priority options if gas price is not null', () => {
+      wrapper.setData({
+        prices: {
+          low: 1,
+          medium: 2,
+          high: 3,
+        },
+      });
+
+      expect(wrapper.html()).toMatchSnapshot();
+      expect(wrapper.find('transaction-priority-options').exists()).toBe(true);
+    });
   });
 
   describe('behavior', () => {
