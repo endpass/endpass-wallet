@@ -135,14 +135,19 @@ export default {
       required: true,
     },
 
+    currentToken: {
+      type: Object,
+      default: null,
+    },
+
     isLoading: {
       type: Boolean,
       default: false,
     },
 
-    currentToken: {
-      type: Object,
-      default: null,
+    isOpened: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -170,6 +175,15 @@ export default {
   },
 
   watch: {
+    isOpened: {
+      handler() {
+        if (this.isOpened && this.isCollapsed) {
+          this.isCollapsed = false;
+        }
+      },
+      immediate: true,
+    },
+
     'transaction.gasPrice': {
       handler() {
         const { gasPrice } = this.transaction;
