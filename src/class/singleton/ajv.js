@@ -2,4 +2,5 @@ import Ajv from 'ajv';
 
 export default new Ajv({
   allErrors: true,
+  useDefaults: true,
 });
