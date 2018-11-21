@@ -32,6 +32,7 @@
   "dependencies": {
     "@ledgerhq/hw-app-eth": "^4.24.0",
     "@ledgerhq/hw-transport-u2f": "^4.24.0",
+    "ajv": "^6.5.5",
     "axios": "^0.18.0",
     "bignumber.js": "^7.2.1",
     "bip39": "^2.5.0",
