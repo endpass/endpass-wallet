@@ -17,15 +17,13 @@ describe('gas price service', () => {
   it('should get gas prices', () => {
     const response = {
       low: 1,
+      medium: 0,
+      high: 0,
     };
 
     mock.onGet(`${ENV.cryptoDataAPIUrl}/gas/price`).reply(200, response);
 
-    expect(gasPrice.getGasPrice()).resolves.toEqual({
-      ...response,
-      medium: 0,
-      high: 0,
-    });
+    expect(gasPrice.getGasPrice()).resolves.toEqual(response);
   });
 
   it('should validate gas price and throw error if data is not valid', () => {
