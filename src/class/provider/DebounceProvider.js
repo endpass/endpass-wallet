@@ -5,9 +5,24 @@ export default class DebounceProvider {
     this.cache = {};
     this.intervalTime = 10000;
     this.parent = null;
+    this.on = undefined;
     this.cleanCacheDebounced = debounce(this.cleanCache, 10000, {
       maxWait: 1000,
     });
+  }
+
+  setParent(parent) {
+    if (parent.on) {
+      this.on = this._on;
+    }
+
+    this.parent = parent;
+  }
+
+  _on(method, callback) {
+    if (this.parent.on) {
+      this.parent.on(method, callback);
+    }
   }
 
   send(...args) {
