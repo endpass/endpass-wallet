@@ -6,10 +6,29 @@ export default class Web3Factory {
     const { setProvider } = web3;
 
     web3.setProvider = newProvider => {
-      if (newProvider.errorHandler && newProvider.setErrorHandler) {
-        const errorHandler = () => {
-          const fallbackProvider = newProvider.getFallbackProvider();
-          web3.setProvider(fallbackProvider);
+      if (
+        newProvider.getFallbackProviders &&
+        newProvider.errorHandler &&
+        newProvider.setErrorHandler
+      ) {
+        const errorHandler = async () => {
+          const fallbackProviders = newProvider.getFallbackProviders();
+          let fallbackProvider = null;
+
+          for (let i = 0; i < fallbackProviders.length; i += 1) {
+            try {
+              const web3Temp = new Web3(fallbackProviders[i]);
+              /* eslint-disable-next-line no-await-in-loop */
+              await web3Temp.eth.net.getId();
+              fallbackProvider = fallbackProviders[i];
+              break;
+              /* eslint-disable-next-line no-empty */
+            } catch (error) {}
+          }
+
+          if (fallbackProvider) {
+            web3.setProvider(fallbackProvider);
+          }
         };
 
         newProvider.setErrorHandler(errorHandler);
