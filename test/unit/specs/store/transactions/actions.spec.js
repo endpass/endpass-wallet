@@ -338,7 +338,7 @@ describe('transactions actions', () => {
       expect(dispatch).toHaveBeenNthCalledWith(2, 'updateTransactionHistory');
     });
 
-    it.only('should add transaction to history with network id', () => {
+    it('should add transaction to history with network id', () => {
       const networkId = 2;
       const constantDate = new Date('2018-01-01T12:00:00');
       const dateMock = jest

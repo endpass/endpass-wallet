@@ -1,4 +1,4 @@
-import { get, identity } from 'lodash';
+import { identity, isEmpty } from 'lodash';
 import Web3 from 'web3';
 import DebounceProvider from './DebounceProvider';
 import MockProvider from './MockProvider';
@@ -36,14 +36,22 @@ export default class ProviderFactory {
     return window.Cypress ? new Provider(url) : new BaseProvider(url);
   }
 
-  // (urlOrObject: { HTTP: String, WS?: String } | String) => Provider
-  static create(urlOrObject) {
-    const fallbackNetUrl = get(urlOrObject, 'HTTP') || urlOrObject;
-    const netUrl = get(urlOrObject, 'WS') || fallbackNetUrl;
-    const provider = ProviderFactory.getInstance(netUrl);
+  /**
+   * Create an instance of a provider with fallback for a given URL(s)
+   * @param {String<Url> | Array<String<Url>>} url Provider url
+   * @returns {Provider} Provider instance
+   */
+  static create(url) {
+    // For string url
+    const netUrls = [].concat(url);
 
-    provider.getFallbackProvider = () =>
-      ProviderFactory.getInstance(fallbackNetUrl);
+    const [provider, ...fallbackProviders] = netUrls.map(urlItem =>
+      ProviderFactory.getInstance(urlItem),
+    );
+
+    if (!isEmpty(fallbackProviders) && !window.Cypress) {
+      provider.getFallbackProviders = () => fallbackProviders;
+    }
 
     provider.errorHandler = identity;
     provider.setErrorHandler = handler => {

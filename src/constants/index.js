@@ -3,25 +3,22 @@ export { INPAGE_EVENT, INPAGE_ID_PREFIX } from './InpageProvider';
 export const MAIN_NET_ID = 1;
 
 export const NETWORK_URL = Object.freeze({
-  ETH: {
-    HTTP: `https://mainnet.infura.io/${ENV.infuraConf.key}`,
-    // TODO When resolve CORS
-    // HTTP: 'https://eth-mainnet.endpass.com:2083',
-    WS: 'wss://eth-mainnet.endpass.com',
-  },
-  ROP: {
-    HTTP: `https://ropsten.infura.io/${ENV.infuraConf.key}`,
-    // HTTP: 'https://eth-ropsten.endpass.com:2083',
-    WS: 'wss://eth-ropsten.endpass.com',
-  },
-  RIN: {
-    HTTP: `https://rinkeby.infura.io/${ENV.infuraConf.key}`,
-  },
-  ETC: {
-    HTTP: 'https://etc-geth.0xinfra.com',
-    // HTTP: 'https://etc-mainnet.endpass.com:8080',
-    WS: 'wss://etc-mainnet.endpass.com',
-  },
+  ETH: [
+    'wss://eth-mainnet.endpass.com:2084',
+    'https://eth-mainnet.endpass.com:2083',
+    `https://mainnet.infura.io/${ENV.infuraConf.key}`,
+  ],
+  ROP: [
+    'wss://eth-ropsten.endpass.com:2084',
+    'https://eth-ropsten.endpass.com:2083',
+    `https://ropsten.infura.io/${ENV.infuraConf.key}`,
+  ],
+  RIN: `https://rinkeby.infura.io/${ENV.infuraConf.key}`,
+  ETC: [
+    'wss://etc-mainnet.endpass.com:2084',
+    'https://etc-mainnet.endpass.com:2083',
+    'https://etc-geth.0xinfra.com',
+  ],
 });
 
 export const DEFAULT_NETWORKS = Object.freeze([
