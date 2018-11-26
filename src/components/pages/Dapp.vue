@@ -102,7 +102,7 @@ export default {
     currentRequestTransactionData() {
       return (
         this.isCurrentRequestTransaction &&
-        TransactionFactory.fromRequsetParams(this.currentRequest.params[0])
+        TransactionFactory.fromRequestParams(this.currentRequest.params[0])
       );
     },
   },
