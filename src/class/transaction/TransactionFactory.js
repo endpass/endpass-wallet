@@ -21,7 +21,7 @@ export default class TransactionFactory {
     return Object.assign(new Transaction(trx), adaptData);
   }
 
-  static fromRequsetParams(trx) {
+  static fromRequestParams(trx) {
     const { value, gasPrice } = trx;
     const adaptData = {
       value: fromWei(hexToNumberString(value)),
