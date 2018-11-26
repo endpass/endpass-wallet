@@ -16,6 +16,11 @@ export const transaction = {
   data: '0x',
 };
 
+export const paramsTransaction = {
+  value: '0x2',
+  gasPrice: '0x2',
+};
+
 export const ethplorerHistory = [
   {
     timestamp: 1535036970,
