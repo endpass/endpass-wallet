@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import { userService } from '@/services';
 import { ProviderFactory } from '@/class';
 import {
@@ -179,6 +179,8 @@ const handleLastBlock = async (
 
       return block;
     } catch (error) {
+      // TODO fix with debounce provider
+      await new Promise(res => setTimeout(res, 1000));
       return getBlockSafely(num);
     }
   }

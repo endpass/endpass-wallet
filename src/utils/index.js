@@ -1,7 +1,6 @@
 import store from '../store';
 
 export { default as keystore } from './keystore';
-export { default as proxyRequest } from './proxyRequest';
 
 export const getInitializedValueFromStore = (module, field) =>
   new Promise(resolve => {

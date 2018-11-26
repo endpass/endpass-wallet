@@ -60,7 +60,7 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import VButton from '@/components/ui/form/VButton';
 import AppTransaction from '@/components/Transaction';
 import Account from '@/components/Account';

@@ -1,4 +1,4 @@
-import { NotificationError } from '@/class';
+import NotificationError from '@/class/error/NotificationError';
 import { PROXY_REQUEST_PREFIX } from '@/constants';
 import { Decorator, PrefixUrlDecorator } from '../decorator';
 

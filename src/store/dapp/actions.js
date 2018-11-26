@@ -1,5 +1,5 @@
 import Web3Dapp from 'web3-dapp';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import { NotificationError } from '@/class';
 import { dappBridge } from '@/class/singleton';
 import InpageProvider from '@/class/provider/InpageProvider';

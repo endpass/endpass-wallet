@@ -54,7 +54,7 @@
 import { kebabCase } from 'lodash';
 import { ENSResolver } from '@/class';
 import { mapState } from 'vuex';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 
 export default {
   name: 'VInputAddress',

@@ -127,7 +127,6 @@ import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
-import web3 from '@/utils/web3';
 
 export default {
   name: 'AddTokenModal',

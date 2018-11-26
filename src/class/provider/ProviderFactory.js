@@ -32,7 +32,9 @@ export default class ProviderFactory {
     const BaseProvider = ProviderFactory.getProviderClass(url);
     const Provider = providerMixin(BaseProvider, AdditionalProvider);
 
-    return new Provider(url);
+    // TODO not work status (syncing) in ui tabbar with fallback
+    return window.Cypress ? new Provider(url) : new BaseProvider(url);
+    // return new Provider(url);
   }
 
   /**

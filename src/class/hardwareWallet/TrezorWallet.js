@@ -3,7 +3,7 @@ import Tx from 'ethereumjs-tx';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { NotificationError } from '@/class';
 import { HARDWARE_DERIVIATION_PATH } from '@/constants';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 
 const { sha3, toHex, toDecimal } = web3.utils;
 

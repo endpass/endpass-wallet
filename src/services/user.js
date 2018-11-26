@@ -1,6 +1,5 @@
-import { proxyRequest } from '@/utils';
 import { NotificationError } from '@/class';
-import { httpIdentity } from '@/class/singleton';
+import { httpIdentity, proxyRequest } from '@/class/singleton';
 import keyUtil from '@/utils/keystore';
 
 export default {

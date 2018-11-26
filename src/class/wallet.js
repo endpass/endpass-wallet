@@ -1,5 +1,5 @@
 import Tx from 'ethereumjs-tx';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import keyUtil from '@/utils/keystore';
 
 const { bytesToHex } = web3.utils;

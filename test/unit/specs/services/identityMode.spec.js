@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { proxyRequest } from '@/utils';
 import MockAdapter from 'axios-mock-adapter';
 import { NotificationError } from '@/class';
-import { httpIdentity } from '@/class/singleton';
+import { httpIdentity, proxyRequest } from '@/class/singleton';
 import { IDENTITY_MODE } from '@/constants';
 import { addresses } from 'fixtures/accounts';
 

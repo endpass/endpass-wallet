@@ -4,7 +4,7 @@ import VerifyMessage from '@/components/VerifyMessage';
 import ethereumWalletMock from 'fixtures/wallet';
 import { address } from 'fixtures/accounts';
 import { generateStubs } from '@/utils/testUtils';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 
 describe('VerifyMessage', () => {
   let wrapper;

@@ -7,7 +7,7 @@ import {
   TransactionFactory,
 } from '@/class';
 import ethplorerService from '@/services/ethplorer';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import { getShortStringWithEllipsis, matchString } from '@/utils/strings';
 import {
   ADD_TRANSACTION,

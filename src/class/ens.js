@@ -1,6 +1,6 @@
 import namehash from 'eth-ens-namehash';
 import ABI from '@/abi/ens.json';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 
 const registryAddresses = {
   // Mainnet

@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import { userService, localSettingsService, hardwareService } from '@/services';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';

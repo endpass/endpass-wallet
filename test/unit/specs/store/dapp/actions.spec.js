@@ -6,7 +6,7 @@ import {
 } from '@/store/dapp/mutations-types';
 import { MAIN_NET_ID } from '@/constants';
 import { NotificationError } from '@/class';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import dappBridge from '@/class/singleton/dappBridge';
 import { checksumAddress, v3password } from 'fixtures/accounts';
 import {

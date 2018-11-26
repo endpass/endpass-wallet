@@ -144,7 +144,7 @@ import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { fromNow, formateDate } from '@/utils/date';
 import { getShortStringWithEllipsis } from '@/utils/strings';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 
 const { hexToString } = web3.utils;
 
