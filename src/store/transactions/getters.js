@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { uniq, uniqWith } from 'lodash';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import { MAIN_NET_ID } from '@/constants';
 import { Transaction } from '@/class';
 

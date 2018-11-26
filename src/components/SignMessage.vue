@@ -46,7 +46,7 @@ import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 
 export default {
   name: 'SignMessage',

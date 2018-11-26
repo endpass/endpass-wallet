@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import { ERC20Token, Token } from '@/class';
 import { isNumeric } from '@/utils/numbers';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import { BigNumber } from 'bignumber.js';
 
 const { toWei, numberToHex, isAddress, toChecksumAddress } = web3.utils;

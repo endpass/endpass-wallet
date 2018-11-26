@@ -3,7 +3,7 @@ import Eth from '@ledgerhq/hw-app-eth';
 import Tx from 'ethereumjs-tx';
 import { NotificationError } from '@/class';
 import { HARDWARE_DERIVIATION_PATH } from '@/constants';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import HDKey from 'ethereumjs-wallet/hdkey';
 
 const { sha3, toHex } = web3.utils;

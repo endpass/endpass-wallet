@@ -616,7 +616,13 @@ describe('web3 actions', () => {
 
       await handleLastBlock({ state, commit, dispatch }, { blockNumber });
 
+      // TODO for fix getBlockSafety
       await global.flushPromises();
+      jest.advanceTimersByTime(1000);
+      await global.flushPromises();
+      jest.advanceTimersByTime(1000);
+      await global.flushPromises();
+      jest.advanceTimersByTime(1000);
 
       expect(Web3.eth.getBlock).toHaveBeenCalledTimes(3);
       expect(dispatch).toHaveBeenCalledTimes(1);

@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import { identity, get } from 'lodash';
 
 export default class Web3Factory {
   static create(provider) {
@@ -6,6 +7,11 @@ export default class Web3Factory {
     const { setProvider } = web3;
 
     web3.setProvider = newProvider => {
+      if (get(web3, 'currentProvider.setErrorHandler')) {
+        web3.currentProvider.setErrorHandler(identity);
+        web3.currentProvider.removeAllListeners();
+      }
+
       if (
         newProvider.getFallbackProviders &&
         newProvider.errorHandler &&

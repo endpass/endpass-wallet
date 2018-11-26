@@ -1,4 +1,4 @@
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import erc20ABI from '@/abi/erc20.json';
 import { Token } from '@/class';
 

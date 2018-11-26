@@ -1,5 +1,5 @@
 import { Transaction } from '@/class';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 
 const { hexToNumber, hexToNumberString, fromWei } = web3.utils;
 
