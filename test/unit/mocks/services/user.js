@@ -19,16 +19,6 @@ jest.mock('@/services/user', () => {
   };
 
   return {
-    login: jest.fn().mockResolvedValue('email_auth'),
-
-    logout: jest.fn().mockResolvedValue({
-      success: true,
-    }),
-
-    loginViaOTP: jest.fn().mockResolvedValue({
-      success: true,
-    }),
-
     setSetting: jest.fn().mockResolvedValue({
       success: true,
     }),
@@ -73,12 +63,6 @@ jest.mock('@/services/user', () => {
     deleteOtpSettings: jest.fn().mockResolvedValue({
       success: true,
     }),
-
-    setIdentityMode: jest.fn().mockReturnValue(),
-
-    getIdentityMode: jest.fn().mockReturnValue({ type: 'default' }),
-
-    deleteIdentityData: jest.fn().mockResolvedValue(),
   };
 });
 
