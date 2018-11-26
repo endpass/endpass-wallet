@@ -1,7 +1,7 @@
 import { Transaction } from '@/class';
 import web3 from '@/utils/web3';
 
-const { hexToNumber, fromWei } = web3.utils;
+const { hexToNumber, hexToNumberString, fromWei } = web3.utils;
 
 export default class TransactionFactory {
   static fromSendForm(trx) {
@@ -18,7 +18,15 @@ export default class TransactionFactory {
       nonce: String(nonce),
       gasPrice: fromWei(gasPrice, 'Gwei'),
     };
+    return Object.assign(new Transaction(trx), adaptData);
+  }
 
+  static fromRequsetParams(trx) {
+    const { value, gasPrice } = trx;
+    const adaptData = {
+      value: fromWei(hexToNumberString(value)),
+      gasPrice: fromWei(hexToNumberString(gasPrice), 'Gwei'),
+    };
     return Object.assign(new Transaction(trx), adaptData);
   }
 }

@@ -55,7 +55,7 @@
       <transaction-table
         v-if="isCurrentRequestTransaction"
         :currency="activeCurrency"
-        :transaction="currentRequest.transaction"
+        :transaction="currentRequestTransactionData"
       />
     </password-modal>
   </div>
@@ -64,6 +64,7 @@
 <script>
 import { isEmpty, get } from 'lodash';
 import { mapActions, mapState, mapGetters } from 'vuex';
+import { TransactionFactory } from '@/class';
 import VInput from '@/components/ui/form/VInput';
 import PasswordModal from '@/components/modal/PasswordModal';
 import TransactionTable from '@/components/TransactionTable';
@@ -96,6 +97,13 @@ export default {
 
     isUrlCorrect() {
       return !isEmpty(this.url) && !this.$validator.errors.has('url');
+    },
+
+    currentRequestTransactionData() {
+      return (
+        this.isCurrentRequestTransaction &&
+        TransactionFactory.fromRequsetParams(this.currentRequest.params[0])
+      );
     },
   },
 

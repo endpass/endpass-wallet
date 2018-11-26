@@ -1,4 +1,4 @@
-import { transaction } from 'fixtures/transactions';
+import { paramsTransaction } from 'fixtures/transactions';
 
 export const commonRequest = {
   method: 'foo',
@@ -8,9 +8,8 @@ export const commonRequest = {
 
 export const transactionRequest = {
   method: 'eth_sendTransaction',
-  params: ['bar', 'baz'],
   jsonrpc: '2.0',
-  transaction,
+  params: [paramsTransaction],
 };
 
 export const commonRequestSignResult =
