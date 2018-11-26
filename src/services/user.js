@@ -1,66 +1,9 @@
-import axios from 'axios';
 import { proxyRequest } from '@/utils';
 import { NotificationError } from '@/class';
 import { httpIdentity } from '@/class/singleton';
 import keyUtil from '@/utils/keystore';
-import { IDENTITY_MODE } from '@/constants';
 
 export default {
-  async login({ email, redirectUri = '/' }) {
-    try {
-      const encodedUri = encodeURIComponent(redirectUri);
-      const requestUrl = `${
-        ENV.identityAPIUrl
-      }/auth?redirect_uri=${encodedUri}`;
-      const { data } = await httpIdentity.post(requestUrl, { email });
-      const { success, challenge } = data;
-
-      if (!success) {
-        throw new Error();
-      }
-
-      return challenge.challenge_type;
-    } catch (e) {
-      throw new NotificationError({
-        title: 'Auth error',
-        text: 'Invalid or missing email address. Please, try again',
-        type: 'is-danger',
-      });
-    }
-  },
-
-  loginViaOTP(code, email) {
-    return httpIdentity
-      .post(`${ENV.identityAPIUrl}/token`, {
-        challenge_type: 'otp',
-        code,
-        email,
-      })
-      .then(({ data: { success } }) => {
-        if (!success) {
-          return Promise.reject();
-        }
-        return { success };
-      })
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Auth error',
-          text: 'Invalid or missing one time password. Please, try again',
-          type: 'is-danger',
-        });
-      });
-  },
-
-  logout() {
-    return httpIdentity.post(`${ENV.identityAPIUrl}/logout`).catch(() => {
-      throw new NotificationError({
-        title: 'Log out error',
-        text: 'Failed to log out. Please, try again',
-        type: 'is-danger',
-      });
-    });
-  },
-
   async getSettings() {
     try {
       return await proxyRequest.read('/user');
@@ -266,89 +209,6 @@ export default {
         text: `Failed to remove OTP settings.`,
         type: 'is-danger',
       });
-    }
-  },
-
-  setIdentityMode(type, serverUrl) {
-    try {
-      const mode = JSON.stringify({ type, serverUrl });
-      localStorage.setItem('identityMode', mode);
-      proxyRequest.setMode(type, serverUrl);
-    } catch (e) {
-      throw new NotificationError({
-        title: 'Error in local storage',
-        text:
-          'Can`t work in the current mode. Please change the mode or try again.',
-        type: 'is-danger',
-      });
-    }
-  },
-
-  getIdentityMode() {
-    const defaultMode = { type: IDENTITY_MODE.DEFAULT };
-
-    try {
-      const mode = localStorage.getItem('identityMode');
-      return JSON.parse(mode) || defaultMode;
-    } catch (e) {
-      return defaultMode;
-    }
-  },
-
-  async deleteIdentityData() {
-    try {
-      await proxyRequest.clear();
-    } catch (e) {
-      throw new NotificationError({
-        log: true,
-        message: e.message,
-        title: 'Error deleting identity data',
-        text: `Failed to remove identity data.`,
-        type: 'is-danger',
-      });
-    }
-  },
-
-  async validateIdentityServer(serverUrl) {
-    try {
-      const { data: accounts } = await axios.get(`${serverUrl}/accounts`, {
-        withCredentials: true,
-      });
-
-      if (!Array.isArray(accounts) || !accounts.length) {
-        throw new NotificationError({
-          title: 'No Accounts',
-          text:
-            'Your identity server does not have any accounts. Please add some accounts with your identity provider and reload this page.',
-          type: 'is-danger',
-        });
-      }
-
-      return true;
-    } catch (e) {
-      if (e instanceof NotificationError) {
-        throw e;
-      }
-
-      const respCode = e.response && e.response.status;
-
-      switch (respCode) {
-        case 401:
-          throw new NotificationError({
-            title: 'Not Logged In',
-            text:
-              'You are not logged in at your identity server. Please log in with your identity provider, come back to this page, and try again.',
-            type: 'is-danger',
-          });
-
-        default:
-          throw new NotificationError({
-            title: 'Invalid Identity Server',
-            text:
-              'The URL you have entered does not point to a valid identity server. Please double check the address and try again.',
-            type: 'is-danger',
-          });
-      }
     }
   },
 };

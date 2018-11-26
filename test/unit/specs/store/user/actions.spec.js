@@ -1,4 +1,6 @@
 import userService from '@/services/user';
+import authService from '@/services/auth';
+import identityModeService from '@/services/identityMode';
 import actions from '@/store/user/actions';
 import { IDENTITY_MODE } from '@/constants';
 import {
@@ -68,8 +70,8 @@ describe('user actions', () => {
 
       await actions.login({ commit, dispatch }, params);
 
-      expect(userService.login).toHaveBeenCalledTimes(1);
-      expect(userService.login).toBeCalledWith(params);
+      expect(authService.login).toHaveBeenCalledTimes(1);
+      expect(authService.login).toBeCalledWith(params);
     });
 
     describe('non default mode', () => {
@@ -111,8 +113,8 @@ describe('user actions', () => {
 
         await actions.login({ commit, dispatch }, { email, mode });
 
-        expect(userService.setIdentityMode).toHaveBeenCalledTimes(1);
-        expect(userService.setIdentityMode).toHaveBeenCalledWith(
+        expect(identityModeService.setIdentityMode).toHaveBeenCalledTimes(1);
+        expect(identityModeService.setIdentityMode).toHaveBeenCalledWith(
           type,
           serverUrl,
         );
@@ -176,7 +178,7 @@ describe('user actions', () => {
 
       await actions.logout({ commit, dispatch, getters });
 
-      expect(userService.deleteIdentityData).toHaveBeenCalledTimes(1);
+      expect(identityModeService.deleteIdentityData).toHaveBeenCalledTimes(1);
     });
 
     it('should not delete identity data when the identity mode isn`t local', async () => {
@@ -186,7 +188,7 @@ describe('user actions', () => {
 
       await actions.logout({ commit, dispatch, getters });
 
-      expect(userService.deleteIdentityData).not.toBeCalled();
+      expect(identityModeService.deleteIdentityData).not.toBeCalled();
     });
 
     it('should set the default identity mode', async () => {
@@ -194,8 +196,10 @@ describe('user actions', () => {
 
       await actions.logout({ commit, dispatch, getters });
 
-      expect(userService.setIdentityMode).toHaveBeenCalledTimes(1);
-      expect(userService.setIdentityMode).toBeCalledWith(IDENTITY_MODE.DEFAULT);
+      expect(identityModeService.setIdentityMode).toHaveBeenCalledTimes(1);
+      expect(identityModeService.setIdentityMode).toBeCalledWith(
+        IDENTITY_MODE.DEFAULT,
+      );
     });
 
     it('should logout through the user service', async () => {
@@ -203,8 +207,8 @@ describe('user actions', () => {
 
       await actions.logout({ commit, dispatch, getters });
 
-      expect(userService.logout).toHaveBeenCalledTimes(1);
-      expect(userService.logout).toBeCalledWith();
+      expect(authService.logout).toHaveBeenCalledTimes(1);
+      expect(authService.logout).toBeCalledWith();
     });
 
     it('should not call the user service if the identity mode isn`t default', async () => {
@@ -216,7 +220,7 @@ describe('user actions', () => {
 
       await actions.logout({ commit, dispatch, getters });
 
-      expect(userService.logout).toHaveBeenCalledTimes(0);
+      expect(authService.logout).toHaveBeenCalledTimes(0);
     });
 
     it('should reload the page', async () => {
@@ -236,7 +240,7 @@ describe('user actions', () => {
       expect.assertions(2);
 
       const error = new Error('error');
-      userService.logout.mockRejectedValueOnce(error);
+      authService.logout.mockRejectedValueOnce(error);
 
       await actions.logout({ commit, dispatch, getters });
 
@@ -255,8 +259,8 @@ describe('user actions', () => {
 
       await actions.loginViaOTP({ commit, dispatch }, { email, code });
 
-      expect(userService.loginViaOTP).toHaveBeenCalledTimes(1);
-      expect(userService.loginViaOTP).toBeCalledWith(code, email);
+      expect(authService.loginViaOTP).toHaveBeenCalledTimes(1);
+      expect(authService.loginViaOTP).toBeCalledWith(code, email);
     });
   });
 
@@ -265,12 +269,16 @@ describe('user actions', () => {
       expect.assertions(2);
 
       const serverUrl = 'serverUrl';
-      userService.validateIdentityServer = jest.fn();
+      identityModeService.validateIdentityServer = jest.fn();
 
       await actions.validateCustomServer(null, { serverUrl });
 
-      expect(userService.validateIdentityServer).toHaveBeenCalledTimes(1);
-      expect(userService.validateIdentityServer).toBeCalledWith(serverUrl);
+      expect(identityModeService.validateIdentityServer).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(identityModeService.validateIdentityServer).toBeCalledWith(
+        serverUrl,
+      );
     });
   });
 
@@ -472,12 +480,15 @@ describe('user actions', () => {
       const type = IDENTITY_MODE.CUSTOM;
       const serverUrl = 'url';
       const mode = { type, serverUrl };
-      userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
+      identityModeService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
 
       await actions.initIdentityMode({ commit, dispatch });
 
-      expect(userService.setIdentityMode).toHaveBeenCalledTimes(1);
-      expect(userService.setIdentityMode).toHaveBeenCalledWith(type, serverUrl);
+      expect(identityModeService.setIdentityMode).toHaveBeenCalledTimes(1);
+      expect(identityModeService.setIdentityMode).toHaveBeenCalledWith(
+        type,
+        serverUrl,
+      );
     });
 
     it('should set the auth status when not default mode', async () => {
@@ -485,7 +496,7 @@ describe('user actions', () => {
 
       const type = IDENTITY_MODE.CUSTOM;
       const mode = { type };
-      userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
+      identityModeService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
 
       await actions.initIdentityMode({ commit, dispatch });
 
@@ -498,7 +509,7 @@ describe('user actions', () => {
 
       const type = IDENTITY_MODE.DEFAULT;
       const mode = { type };
-      userService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
+      identityModeService.getIdentityMode = jest.fn().mockReturnValueOnce(mode);
 
       await actions.initIdentityMode({ commit, dispatch });
 
@@ -509,7 +520,9 @@ describe('user actions', () => {
       expect.assertions(2);
 
       const type = IDENTITY_MODE.CUSTOM;
-      userService.getIdentityMode = jest.fn().mockReturnValueOnce({ type });
+      identityModeService.getIdentityMode = jest
+        .fn()
+        .mockReturnValueOnce({ type });
 
       await actions.initIdentityMode({ commit, dispatch });
 
@@ -521,7 +534,7 @@ describe('user actions', () => {
       expect.assertions(2);
 
       const error = 'error';
-      userService.getIdentityMode = jest.fn(() => {
+      identityModeService.getIdentityMode = jest.fn(() => {
         throw error;
       });
 
