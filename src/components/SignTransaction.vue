@@ -1,28 +1,15 @@
 <template>
   <div>
-    <v-form
-      id="signing-transaction-form"
-      @submit="togglePasswordModal"
-    >
+    <v-form id="signing-transaction-form" @submit="togglePasswordModal">
       <v-textarea
         v-model="transaction"
         label="Transaction object (JSON)"
         placeholder="This is a transaction that you are signing to prove that you own it."
       />
-      <v-button
-        :disabled="!transaction"
-        class-name="is-primary is-medium"
-      >
-        Sign transaction
-      </v-button>
-      <div
-        v-if="signedTransaction"
-        class="field"
-      >
+      <v-button :disabled="!transaction" class-name="is-primary is-medium">Sign transaction</v-button>
+      <div v-if="signedTransaction" class="field">
         <label class="label">RLP encoded transaction</label>
-        <p class="code">
-          {{ signedTransaction }}
-        </p>
+        <p class="code">{{ signedTransaction }}</p>
       </div>
     </v-form>
     <code-password-modal
@@ -36,7 +23,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
@@ -52,9 +39,7 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      wallet: state => state.accounts.wallet,
-    }),
+    ...mapGetters('accounts', ['wallet']),
   },
 
   methods: {

@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import VModal from '@/components/ui/VModal';
 import VInput from '@/components/ui/form/VInput.vue';
 import VForm from '@/components/ui/form/VForm.vue';
@@ -80,12 +80,10 @@ export default {
   },
   computed: {
     ...mapState({
-      wallet: state => state.accounts.wallet,
-      address: state =>
-        state.accounts.address &&
-        state.accounts.address.getChecksumAddressString(),
       wallets: state => state.accounts.wallets,
+      address: state => state.accounts.address,
     }),
+    ...mapGetters('accounts', ['wallet']),
   },
   methods: {
     ...mapActions('accounts', ['generateWallet', 'validatePassword']),

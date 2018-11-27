@@ -7,10 +7,7 @@
             <h1 class="card-header-title">Send ETH</h1>
           </div>
           <div class="card-content">
-            <transaction-form
-              :transaction="transaction"
-              @submit="handleTransactionSend"
-            />
+            <transaction-form :transaction="transaction" @submit="handleTransactionSend"/>
             <div
               v-if="transactionHash"
               class="transaction-status message is-success"
@@ -44,7 +41,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import { TransactionFactory } from '@/class';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';
@@ -81,13 +78,13 @@ export default {
 
   computed: {
     ...mapState({
-      activeAddress: state => state.accounts.address.getChecksumAddressString(),
+      address: state => state.accounts.address,
       activeNet: state => state.web3.activeNet,
     }),
   },
 
   watch: {
-    async activeAddress(newValue, prevValue) {
+    async address(newValue, prevValue) {
       if (newValue === prevValue) return;
 
       await this.updateNonceWithClearHash();
@@ -122,7 +119,7 @@ export default {
       this.isSending = true;
 
       Object.assign(this.transaction, {
-        from: this.activeAddress,
+        from: this.address,
         networkId: this.activeNet.id,
       });
 

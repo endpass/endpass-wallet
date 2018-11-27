@@ -5,30 +5,25 @@ import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';
 import { Wallet, NotificationError } from '@/class';
-import { WALLET_TYPE } from '@/constants';
 import keystore from '@/utils/keystore';
 import {
+  CHANGE_INIT_STATUS,
   SET_ADDRESS,
-  SET_WALLET,
   ADD_WALLET,
   SET_HD_KEY,
   SET_BALANCE,
-  ADD_ADDRESS,
   SET_HARDWARE_XPUB,
 } from './mutations-types';
 
 const { toChecksumAddress, fromWei } = web3.utils;
 
-const selectWallet = async (
-  { commit, state, dispatch, rootState },
-  address,
-) => {
-  commit(SET_WALLET, state.wallets[address]);
-  commit(SET_ADDRESS, address);
+const selectWallet = async ({ commit, dispatch, rootState }, address) => {
+  commit(SET_ADDRESS, toChecksumAddress(address));
 
   localSettingsService.save(rootState.user.email, {
     activeAccount: address,
   });
+
   dispatch('updateBalance');
   dispatch('dapp/reset', null, { root: true });
   await dispatch('tokens/getCurrentAccountTokens', null, {
@@ -45,14 +40,15 @@ const addWallet = async ({ commit, dispatch }, json) => {
     const updatedJSON = { ...json, address };
 
     await userService.setAccount(address, updatedJSON);
-    commit(ADD_WALLET, updatedJSON);
+
+    commit(ADD_WALLET, new Wallet(updatedJSON));
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
   }
 };
 
 const addPublicWallet = async (
-  { dispatch, commit },
+  { dispatch },
   { address: rawAddress, info: extraInfo },
 ) => {
   try {
@@ -65,7 +61,10 @@ const addPublicWallet = async (
     };
 
     await userService.setAccount(address, { info });
-    commit(ADD_ADDRESS, { address, info });
+    await dispatch('addWallet', {
+      ...info,
+      address,
+    });
 
     return dispatch('selectWallet', address);
   } catch (e) {
@@ -146,23 +145,11 @@ const generateWallet = async ({ dispatch, state, getters }, password) => {
   await dispatch('addWalletAndSelect', json);
 };
 
-const commitWallet = async ({ state, commit }, { wallet }) => {
+const commitWallet = async ({ commit }, { wallet }) => {
   if (keystore.isExtendedPublicKey(wallet.address)) {
-    // HD wallet
     commit(SET_HD_KEY, wallet);
-  } else if (keystore.isV3(wallet)) {
-    // Encrypted private key
-    commit(ADD_WALLET, wallet);
   } else {
-    // Read-only public key
-    commit(ADD_ADDRESS, wallet);
-  }
-
-  const currentWalletAddress =
-    state.wallet && (await state.wallet.getAddressString());
-
-  if (currentWalletAddress === wallet.address) {
-    commit(SET_WALLET, state.wallets[wallet.address]);
+    commit(ADD_WALLET, new Wallet(wallet));
   }
 };
 
@@ -198,6 +185,7 @@ const addMultiHdWallet = async ({ dispatch }, { key, password }) => {
   const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
 
   /* eslint-disable no-await-in-loop */
+  /* eslint-disable-next-line */
   for (let index = 0; index < 5; index++) {
     const wallet = hdWallet.deriveChild(index).getWallet();
     const walletV3 = wallet.toV3(Buffer.from(password), ENV.kdfParams);
@@ -238,13 +226,11 @@ const updateWallets = async ({ dispatch }, { wallets }) => {
 };
 
 const updateBalance = async ({ commit, dispatch, state }) => {
-  if (!state.address) {
-    return;
-  }
-  const address = state.address.getChecksumAddressString();
+  if (!state.address) return;
 
   try {
-    const balance = await web3.eth.getBalance(address);
+    const balance = await web3.eth.getBalance(state.address);
+
     commit(SET_BALANCE, balance);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
@@ -253,17 +239,18 @@ const updateBalance = async ({ commit, dispatch, state }) => {
 
 const getBalanceByAddress = async (ctx, { address }) => {
   const balanceWei = await web3.eth.getBalance(address);
+
   return fromWei(balanceWei);
 };
 
 const validatePassword = async ({ state, getters }, password) => {
-  let { wallet } = state;
-
   if (getters.isPublicAccount || getters.isHardwareAccount) {
-    wallet = new Wallet(state.hdKey);
+    const wallet = new Wallet(state.hdKey);
+
+    return wallet.validatePassword(password);
   }
 
-  return wallet.validatePassword(password);
+  return getters.wallet.validatePassword(password);
 };
 
 const setUserHdKey = async ({ commit, dispatch }) => {
@@ -293,13 +280,7 @@ const setUserWallets = async ({ commit, dispatch, rootState }) => {
       accounts.find(({ address }) => address === localSettings.activeAccount);
 
     accounts.forEach(account => {
-      if (keystore.isV3(account)) {
-        // Encrypted private key
-        commit(ADD_WALLET, account);
-      } else {
-        // Read-only public key
-        commit(ADD_ADDRESS, account);
-      }
+      commit(ADD_WALLET, new Wallet(account));
     });
 
     if (isAccountExist) {
@@ -317,7 +298,6 @@ const getNextWalletsFromHd = async (
   { walletType, ...selectParams },
 ) => {
   const savedXpub = state.hardwareXpub[walletType];
-
   const { xpub, addresses } = await hardwareService.getNextWallets({
     walletType,
     ...selectParams,
@@ -331,6 +311,11 @@ const getNextWalletsFromHd = async (
   return addresses;
 };
 
+const reencryptWalletsWithNewPassword = (state, { password, newPassword }) => {
+  // TODO: functional for change password page
+  console.log('reencrypt', password, newPassword);
+};
+
 const saveHardwareXpub = async ({ commit }, { xpub, walletType }) => {
   const info = { type: walletType };
 
@@ -338,12 +323,14 @@ const saveHardwareXpub = async ({ commit }, { xpub, walletType }) => {
   await userService.setAccount(xpub, { info });
 };
 
-const init = async ({ dispatch }) => {
+const init = async ({ commit, dispatch }) => {
   try {
     await Promise.all([dispatch('setUserHdKey'), dispatch('setUserWallets')]);
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });
   }
+
+  commit(CHANGE_INIT_STATUS, true);
 };
 
 export default {
@@ -367,5 +354,6 @@ export default {
   validatePassword,
   getNextWalletsFromHd,
   saveHardwareXpub,
+  reencryptWalletsWithNewPassword,
   init,
 };

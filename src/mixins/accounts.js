@@ -5,12 +5,10 @@ const { fromWei } = web3.utils;
 
 export default {
   computed: {
-    activeAccount() {
-      return this.$store.state.accounts.activeAccount;
-    },
     address() {
-      return this.activeAccount.getChecksumAddressString();
+      return this.$store.state.accounts.address;
     },
+
     balance() {
       return this.$store.state.accounts.balance === null
         ? null

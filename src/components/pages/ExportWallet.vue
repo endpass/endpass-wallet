@@ -66,7 +66,7 @@ import ExportToPrivateKey from '@/components/ExportToPrivateKey.vue';
 import privatePage from '@/mixins/privatePage';
 
 export default {
-  name: 'export-wallet',
+  name: 'ExportWallet',
   data() {
     return {
       exportType: 'privateKey',
@@ -74,9 +74,7 @@ export default {
   },
   computed: {
     ...mapState({
-      address: state =>
-        state.accounts.address &&
-        state.accounts.address.getChecksumAddressString(),
+      address: state => state.accounts.address,
     }),
   },
 

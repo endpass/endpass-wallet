@@ -1,8 +1,5 @@
 <template>
-  <v-form
-    data-test="verifying-message-form"
-    @submit="verifyMessage"
-  >
+  <v-form data-test="verifying-message-form" @submit="verifyMessage">
     <v-textarea
       v-model="signedMessageString"
       label="Signature"
@@ -12,14 +9,8 @@
       :disabled="!signedMessage"
       class-name="is-primary is-medium"
       data-test="verify-button"
-    >
-      Verify message
-    </v-button>
-    <div
-      v-if="address"
-      class="field"
-      data-test="address-field"
-    >
+    >Verify message</v-button>
+    <div v-if="address" class="field" data-test="address-field">
       <label class="label">Address</label>
       <p>{{ address }}</p>
     </div>
@@ -27,7 +18,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
@@ -41,9 +32,8 @@ export default {
   }),
 
   computed: {
-    ...mapState({
-      wallet: state => state.accounts.wallet,
-    }),
+    ...mapGetters('accounts', ['wallet']),
+
     signedMessage() {
       try {
         return JSON.parse(this.signedMessageString);

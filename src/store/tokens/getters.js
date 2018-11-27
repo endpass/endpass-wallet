@@ -51,20 +51,18 @@ const balancesByAddress = state => address =>
 const currentNetUserTokens = (state, getters, rootState, rootGetters) =>
   state.userTokens[rootGetters['web3/activeNetwork']] || {};
 
-const currentAccountTokens = (state, getters, rootState, rootGetters) =>
-  getters.tokensByAddress(rootGetters['accounts/currentAddressString']);
+const currentAccountTokens = (state, getters, rootState) =>
+  getters.tokensByAddress(rootState.accounts.address);
 
-const currentNetUserFullTokens = (state, getters, rootState, rootGetters) => {
+const currentNetUserFullTokens = (state, getters, rootState) => {
+  const { address } = rootState.accounts;
   const tokens = getters.currentNetUserTokens;
 
-  return getters.fullTokens(
-    rootGetters['accounts/currentAddressString'],
-    tokens,
-  );
+  return getters.fullTokens(address, tokens);
 };
 
-const currentAccountFullTokens = (state, getters, rootState, rootGetters) =>
-  getters.fullTokensByAddress(rootGetters['accounts/currentAddressString']);
+const currentAccountFullTokens = (state, getters, rootState) =>
+  getters.fullTokensByAddress(rootState.accounts.address);
 
 const allCurrentAccountTokens = (state, getters) => ({
   ...getters.currentAccountTokens,
@@ -77,18 +75,11 @@ const fullTokensByAddress = (state, getters) => address => {
   return getters.fullTokens(address, tokens);
 };
 
-const allCurrentAccountFullTokens = (
-  state,
-  getters,
-  rootState,
-  rootGetters,
-) => {
+const allCurrentAccountFullTokens = (state, getters, rootState) => {
+  const { address } = rootState.accounts;
   const tokens = getters.allCurrentAccountTokens;
 
-  return getters.fullTokens(
-    rootGetters['accounts/currentAddressString'],
-    tokens,
-  );
+  return getters.fullTokens(address, tokens);
 };
 
 const allCurrentAccountTokensWithNonZeroBalance = (state, getters) =>

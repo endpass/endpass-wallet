@@ -12,7 +12,7 @@ const accountTransactions = (state, getters, rootState) => {
   }
 
   const { id: currentNetID } = rootState.web3.activeNet;
-  const address = rootState.accounts.address.getChecksumAddressString();
+  const { address } = rootState.accounts;
   const transactions = [...state.pendingTransactions];
 
   if (currentNetID === MAIN_NET_ID) {
@@ -44,11 +44,12 @@ const accountTransactions = (state, getters, rootState) => {
 };
 
 const pendingBalance = (state, getters, rootState) => {
-  if (!rootState.accounts.address) {
+  const { address } = rootState.accounts;
+
+  if (!address) {
     return '0';
   }
 
-  const address = rootState.accounts.address.getChecksumAddressString();
   const networkId = rootState.web3.activeNet.id;
 
   return state.pendingTransactions
@@ -87,11 +88,11 @@ const currentNetTransactions = (state, getters, rootState) => {
 };
 
 const incomingTransactions = (state, getters, rootState) => {
-  if (!rootState.accounts.address) {
+  const { address } = rootState.accounts;
+
+  if (!address) {
     return [];
   }
-
-  const address = rootState.accounts.address.getChecksumAddressString();
 
   return getters.currentNetTransactions.filter(({ to }) => to === address);
 };

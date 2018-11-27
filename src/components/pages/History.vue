@@ -41,21 +41,38 @@ export default {
       isLoading: true,
     };
   },
+
   computed: {
     ...mapState({
-      address: state =>
-        state.accounts.address &&
-        state.accounts.address.getChecksumAddressString(),
+      address: state => state.accounts.address,
       activeNet: state => state.web3.activeNet,
     }),
     ...mapGetters('transactions', ['currentNetTransactions']),
-    // Whether history is supported on this network
+
     isHistoryAvailable() {
       return this.activeNet.id === MAIN_NET_ID;
     },
   },
+
+  watch: {
+    activeNet: {
+      async handler() {
+        await this.getHistory();
+      },
+      immediate: true,
+    },
+
+    address: {
+      async handler() {
+        await this.getHistory();
+      },
+      immediate: true,
+    },
+  },
+
   methods: {
     ...mapActions('transactions', ['updateTransactionHistory']),
+
     async getHistory() {
       if (!(this.address && this.isHistoryAvailable)) {
         this.isLoading = false;
@@ -67,11 +84,7 @@ export default {
       this.isLoading = false;
     },
   },
-  created() {
-    this.$watch(vm => [vm.activeNet.id, vm.address].join(), this.getHistory, {
-      immediate: true,
-    });
-  },
+
   components: {
     appTransaction,
     VSpinner,
