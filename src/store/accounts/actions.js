@@ -1,4 +1,4 @@
-import { mapValues, mapKeys, isEmpty } from 'lodash';
+import { mapKeys, isEmpty } from 'lodash';
 import { userService, localSettingsService, hardwareService } from '@/services';
 import web3 from '@/class/singleton/web3';
 import Bip39 from 'bip39';

@@ -43,9 +43,7 @@ exports[`SignTransaction render should render the initial state of the component
       class-name="is-primary is-medium"
       disabled="true"
     >
-      
       Sign transaction
-    
     </v-button>
      
     <!---->

@@ -31,7 +31,7 @@ describe('ExportWallet page', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('export-wallet');
+      expect(wrapper.name()).toBe('ExportWallet');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

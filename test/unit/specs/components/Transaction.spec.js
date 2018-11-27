@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import Notifications from 'vue-notification';
 import Transaction from '@/components/Transaction';
 import { generateStubs } from '@/utils/testUtils';
+import { checksumAddress } from 'fixtures/accounts';
 
 describe('Transaction', () => {
   const accountsActions = {
@@ -23,9 +24,7 @@ describe('Transaction', () => {
         accounts: {
           namespaced: true,
           state: {
-            address: {
-              getChecksumAddressString: jest.fn(),
-            },
+            address: checksumAddress,
           },
           getters: {
             isPublicAccount: jest.fn(() => false),
