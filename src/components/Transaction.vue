@@ -169,10 +169,8 @@ export default {
   },
   computed: {
     ...mapState({
+      address: state => state.accounts.address,
       isSyncing: state => !!state.connectionStatus.isSyncing,
-      address: state =>
-        state.accounts.address &&
-        state.accounts.address.getChecksumAddressString(),
     }),
     ...mapGetters('accounts', ['isPublicAccount']),
     recieve() {

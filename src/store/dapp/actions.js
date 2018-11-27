@@ -49,9 +49,9 @@ const handleRequest = async ({ dispatch, commit }, { id, ...request }) => {
   }
 };
 
-const sendSettings = ({ rootGetters }) => {
+const sendSettings = ({ rootState, rootGetters }) => {
   dappBridge.emitSettings({
-    selectedAddress: rootGetters['accounts/currentAddressString'].toLowerCase(),
+    selectedAddress: rootState.accounts.address.toLowerCase(),
     networkVersion: rootGetters['web3/activeNetwork'],
   });
 };
@@ -135,10 +135,7 @@ const getSignedCurrentTransaction = async (
   });
 };
 
-const getSignedCurrentTypedDataRequest = async (
-  { getters, rootState },
-  password,
-) => {
+const getSignedCurrentTypedDataRequest = async () => {
   // const { wallet } = rootState.accounts;
   // const request = getters.currentRequest;
 

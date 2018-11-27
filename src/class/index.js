@@ -6,7 +6,6 @@ export {
 export { default as Transaction } from './Transaction';
 export { default as EventEmitter } from './EventEmitter';
 export { NotificationError } from './error';
-export { default as Address } from './address';
 export { default as Wallet } from './wallet';
 export { default as ENSResolver } from './ens';
 export { default as Token } from './Token';

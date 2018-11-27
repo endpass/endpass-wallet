@@ -80,8 +80,8 @@ const removeUserToken = async (
   }
 };
 
-const getCurrentAccountTokens = async ({ commit, dispatch, rootGetters }) => {
-  const address = rootGetters['accounts/currentAddressString'];
+const getCurrentAccountTokens = async ({ commit, dispatch, rootState }) => {
+  const { address } = rootState.accounts;
 
   if (!address) return;
 
@@ -107,9 +107,9 @@ const getCurrentAccountTokensBalances = async ({
   dispatch,
   commit,
   getters,
-  rootGetters,
+  rootState,
 }) => {
-  const address = rootGetters['accounts/currentAddressString'];
+  const { address } = rootState.accounts;
 
   if (!address) return;
 

@@ -18,7 +18,7 @@ import {
 const { toChecksumAddress } = web3.utils;
 
 const getNonceInBlock = async ({ rootState }) => {
-  const address = rootState.accounts.address.getChecksumAddressString();
+  const { address } = rootState.accounts;
   const nonce = await web3.eth.getTransactionCount(address);
 
   return nonce.toString();
@@ -138,11 +138,9 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
 
   try {
     const { address } = rootState.accounts;
-    const addressCheckSum = address.getChecksumAddressString();
-    let transactions = await ethplorerService.getTransactionHistory(
-      addressCheckSum,
-    );
-    transactions = transactions.map(trx => new Transaction(trx));
+    const res = await ethplorerService.getTransactionHistory(address);
+    const transactions = res.map(trx => new Transaction(trx));
+
     commit(SET_TRANSACTION_HISTORY, transactions);
     dispatch(
       'connectionStatus/updateApiErrorStatus',
@@ -213,7 +211,7 @@ const handleBlockTransactions = (
     return;
   }
 
-  const address = rootState.accounts.address.getChecksumAddressString();
+  const { address } = rootState.accounts;
   const trxAddresses = toUserTrx.map(({ to }) => to);
 
   if (

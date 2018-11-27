@@ -1,11 +1,7 @@
 <template>
-  <div
-    id="app"
-    class="app-container"
-  >
-
+  <div id="app" class="app-container">
     <header class="app-header">
-      <info-bar class="app-section" />
+      <info-bar class="app-section"/>
     </header>
 
     <nav class="app-nav">
@@ -13,7 +9,7 @@
     </nav>
 
     <main class="app-content">
-      <div class="">
+      <div class>
         <notifications
           :speed="500"
           :duration="5000"
@@ -24,7 +20,6 @@
         />
 
         <div class="main app-content app-section">
-
           <router-view/>
         </div>
       </div>
@@ -32,7 +27,7 @@
 
     <quick-actions class="is-hidden-desktop"/>
     <app-footer class="is-hidden-touch"/>
-    <page-loader />
+    <page-loader/>
   </div>
 </template>
 
@@ -46,21 +41,25 @@ import AppFooter from '@/components/AppFooter.vue';
 
 export default {
   name: 'App',
+
+  created() {
+    this.$store.dispatch('init');
+  },
+
+  mounted() {
+    this.$intercom.boot();
+    // TODO configure and enable
+    //this.$intercom.show();
+  },
+
   mixins: [errorHandler],
+
   components: {
     NavSidebar,
     InfoBar,
     QuickActions,
     PageLoader,
     AppFooter,
-  },
-  created() {
-    this.$store.dispatch('init');
-  },
-  mounted() {
-    this.$intercom.boot();
-    // TODO configure and enable
-    //this.$intercom.show();
   },
 };
 </script>
