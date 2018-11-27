@@ -28,13 +28,11 @@
 </template>
 
 <script>
-// TODO: fix all things, move logic to store
-
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
+import { matchString } from '@/utils/strings';
 import VForm from '@/components/ui/form/VForm';
 import VButton from '@/components/ui/form/VButton';
 import VPassword from '@/components/ui/form/VPassword';
-import { keystore } from '@/utils';
 
 export default {
   name: 'ChangePasswordSettings',
@@ -45,90 +43,50 @@ export default {
     newPassword: null,
   }),
 
-  computed: {
-    ...mapGetters('accounts', [
-      'hdWallet',
-      'decryptedWallets',
-      'encryptedHdWallet',
-      'encryptedWallets',
-    ]),
-  },
-
   methods: {
-    ...mapActions('accounts', ['updateWallets']),
-
-    decryptWallets() {
-      // let decryptedWallets = [];
-      // let decryptedHdWallet;
-      // try {
-      //   decryptedWallets = this.decryptedWallets(this.oldPassword);
-      //   decryptedHdWallet = this.hdWallet(this.oldPassword);
-      // } catch (error) {
-      //   this.$notify({
-      //     title: 'Error while decrypting wallets',
-      //     text:
-      //       'An error occurred while decrypting wallets. Try using a different password.',
-      //     type: 'is-danger',
-      //   });
-      // }
-      // return { decryptedWallets, decryptedHdWallet };
-    },
-
-    encryptWallets(decryptedWallets, decryptedHdWallet) {
-      // let encryptedWallets = [];
-      // let encryptedHdWallet;
-      // try {
-      //   encryptedWallets = this.encryptedWallets(
-      //     this.newPassword,
-      //     decryptedWallets,
-      //   );
-      //   encryptedHdWallet = this.encryptedHdWallet(
-      //     this.newPassword,
-      //     decryptedHdWallet,
-      //   );
-      // } catch (error) {
-      //   this.$notify({
-      //     title: 'Error while encrypting wallets',
-      //     text:
-      //       'An error occurred while encripting wallets. Try using a different password.',
-      //     type: 'is-danger',
-      //   });
-      // }
-      // return { encryptedWallets, encryptedHdWallet };
-    },
+    ...mapActions('accounts', [
+      'updateWallets',
+      'updateAllAccountWalletsWithNewPassword',
+    ]),
 
     async handleFormSubmit() {
-      // const { decryptedWallets, decryptedHdWallet } = this.decryptWallets();
-      // if (!decryptedWallets.length) {
-      //   return;
-      // }
-      // const { encryptedWallets, encryptedHdWallet } = this.encryptWallets(
-      //   decryptedWallets,
-      //   decryptedHdWallet,
-      // );
-      // const walletsToUpdate = {};
-      // encryptedWallets.forEach(encryptedWallet =>
-      //   Object.assign(walletsToUpdate, {
-      //     [encryptedWallet.address]: encryptedWallet,
-      //   }),
-      // );
-      // if (encryptedHdWallet) {
-      //   walletsToUpdate[encryptedHdWallet.address] = encryptedHdWallet;
-      // }
-      // if (!Object.keys(walletsToUpdate).length) {
-      //   return;
-      // }
-      // this.isLoading = true;
-      // const isSuccess = await this.updateWallets({ wallets: walletsToUpdate });
-      // if (isSuccess) {
-      //   this.$notify({
-      //     title: 'Password changed successfully',
-      //     type: 'is-success',
-      //   });
-      // }
-      // this.isLoading = false;
-      // this.oldPassword = null;
-      // this.newPassword = null;
+      try {
+        this.isLoading = true;
+
+        const res = await this.updateAllAccountWalletsWithNewPassword({
+          password: this.oldPassword,
+          newPassword: this.newPassword,
+        });
+
+        if (!res) {
+          this.handleSubmitError();
+        } else {
+          this.$notify({
+            title: 'Password changed successfully',
+            type: 'is-success',
+          });
+          this.oldPassword = null;
+          this.newPassword = null;
+        }
+      } catch (err) {
+        this.handleSubmitError(err.message);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    handleSubmitError(err) {
+      const isIncorrentPasswordError = matchString(
+        err,
+        'authentication code mismatch',
+      );
+
+      this.$notify({
+        title: isIncorrentPasswordError
+          ? 'You entered incorrect password, try using a different one.'
+          : 'Password was not changed',
+        type: 'is-danger',
+      });
     },
   },
 
