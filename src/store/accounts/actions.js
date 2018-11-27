@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { mapValues, mapKeys, isEmpty } from 'lodash';
 import { userService, localSettingsService, hardwareService } from '@/services';
 import web3 from '@/class/singleton/web3';
 import Bip39 from 'bip39';
@@ -132,14 +132,14 @@ const addWalletWithPublicKey = async ({ dispatch }, publicKeyOrAddress) => {
   }
 };
 
-const generateWallet = async ({ dispatch, state, getters }, password) => {
+const generateWallet = async ({ dispatch, state }, password) => {
   if (!state.hdKey) {
     throw new Error('hdKey doesn`t exist');
   }
 
-  const hdWallet = getters.hdWallet(password);
+  const decryptedHdWallet = await dispatch('decryptAccountHdWallet', password);
   const i = Object.keys(state.wallets).length;
-  const wallet = hdWallet.deriveChild(i).getWallet();
+  const wallet = decryptedHdWallet.deriveChild(i).getWallet();
   const json = keystore.encryptWallet(password, wallet);
 
   await dispatch('addWalletAndSelect', json);
@@ -311,15 +311,80 @@ const getNextWalletsFromHd = async (
   return addresses;
 };
 
-const reencryptWalletsWithNewPassword = (state, { password, newPassword }) => {
-  // TODO: functional for change password page
-  console.log('reencrypt', password, newPassword);
+const decryptAccountHdWallet = ({ state }, password) => {
+  if (!state.hdKey) {
+    return null;
+  }
+
+  return keystore.decryptHDWallet(password, state.hdKey);
+};
+
+const decryptAccountWallets = ({ state }, password) =>
+  Object.values(state.wallets)
+    .filter(item => !item.isPublic)
+    .map(item => keystore.decryptWallet(password, item.v3));
+
+const encryptHdWallet = (ctx, { password, hdWallet }) =>
+  hdWallet && keystore.encryptHDWallet(password, hdWallet);
+
+const encryptWallets = (ctx, { password, wallets = [] }) =>
+  wallets.map(decryptedWallet =>
+    keystore.encryptWallet(password, decryptedWallet),
+  );
+
+const reencryptAllAccountWallets = async (
+  { dispatch },
+  { password, newPassword },
+) => {
+  const decryptedHdWallet = await dispatch('decryptAccountHdWallet', password);
+  const decryptedWallets = await dispatch('decryptAccountWallets', password);
+  const encryptedHdWallet = await dispatch('encryptHdWallet', {
+    hdWallet: decryptedHdWallet,
+    password: newPassword,
+  });
+  const encryptedWallets = await dispatch('encryptWallets', {
+    wallets: decryptedWallets,
+    password: newPassword,
+  });
+
+  return {
+    hdWallet: encryptedHdWallet,
+    wallets: encryptedWallets,
+  };
+};
+
+const updateAllAccountWalletsWithNewPassword = async (
+  { dispatch },
+  { password, newPassword },
+) => {
+  const { hdWallet, wallets } = await dispatch('reencryptAllAccountWallets', {
+    password,
+    newPassword,
+  });
+  const walletsToUpdate = mapKeys(wallets, 'address');
+
+  if (hdWallet) {
+    Object.assign(walletsToUpdate, {
+      [hdWallet.address]: hdWallet,
+    });
+  }
+
+  if (isEmpty(walletsToUpdate)) {
+    return null;
+  }
+
+  const res = await dispatch('updateWallets', {
+    wallets: walletsToUpdate,
+  });
+
+  return res;
 };
 
 const saveHardwareXpub = async ({ commit }, { xpub, walletType }) => {
   const info = { type: walletType };
 
   commit(SET_HARDWARE_XPUB, { xpub, walletType });
+
   await userService.setAccount(xpub, { info });
 };
 
@@ -354,6 +419,11 @@ export default {
   validatePassword,
   getNextWalletsFromHd,
   saveHardwareXpub,
-  reencryptWalletsWithNewPassword,
+  decryptAccountHdWallet,
+  decryptAccountWallets,
+  encryptHdWallet,
+  encryptWallets,
+  reencryptAllAccountWallets,
+  updateAllAccountWalletsWithNewPassword,
   init,
 };

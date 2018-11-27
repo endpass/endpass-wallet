@@ -43,10 +43,10 @@ const getNextNonce = async ({ state, dispatch }) => {
 };
 
 const sendSignedTransaction = async (
-  { rootState, dispatch },
+  { dispatch, rootGetters },
   { transaction, password },
 ) => {
-  const { wallet } = rootState.accounts;
+  const wallet = rootGetters['accounts/wallet'];
 
   try {
     if (!transaction.nonce) {
@@ -100,7 +100,7 @@ const sendSignedTransaction = async (
 
     return sendEvent;
   } catch (err) {
-    dispatch('handleSendingError', { transaction });
+    dispatch('handleSendingError', { err, transaction });
 
     return null;
   }

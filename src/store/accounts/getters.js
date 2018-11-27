@@ -1,7 +1,6 @@
 import { get } from 'lodash';
 import web3 from 'web3';
 import { BigNumber } from 'bignumber.js';
-import keystore from '@/utils/keystore';
 import { HARDWARE_WALLET_TYPE } from '@/constants';
 
 const { fromWei, hexToBytes } = web3.utils;
@@ -34,28 +33,6 @@ const balance = (state, getters, rootState, rootGetters) => {
   return fromWei(balanceWei);
 };
 
-// Returns a decrypted HD Wallet
-const hdWallet = state => password => {
-  if (!state.hdKey) {
-    return null;
-  }
-
-  return keystore.decryptHDWallet(password, state.hdKey);
-};
-
-const decryptedWallets = state => password =>
-  Object.values(state.wallets)
-    .filter(item => !item.isPublic && item.v3)
-    .map(item => keystore.decryptWallet(password, item.v3));
-
-const encryptedHdWallet = () => (password, decryptedHdWallet) =>
-  decryptedHdWallet && keystore.encryptHDWallet(password, decryptedHdWallet);
-
-const encryptedWallets = () => (password, wallets = []) =>
-  wallets.map(decryptedWallet =>
-    keystore.encryptWallet(password, decryptedWallet),
-  );
-
 export default {
   wallet,
   addressBuffer,
@@ -63,8 +40,4 @@ export default {
   isPublicAccount,
   isHardwareAccount,
   balance,
-  hdWallet,
-  decryptedWallets,
-  encryptedHdWallet,
-  encryptedWallets,
 };
