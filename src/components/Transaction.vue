@@ -117,10 +117,6 @@
       </div>
     </div>
 
-
-
-
-
     <resend-modal
       v-if="resendModalOpen"
       :transaction="transactionToSend"

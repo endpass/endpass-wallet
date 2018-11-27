@@ -1,7 +1,6 @@
 import web3 from '@/class/singleton/web3';
 import {
   email,
-  addresses,
   v3password,
   mnemonic,
   v3,
@@ -9,15 +8,14 @@ import {
   privateKeyString,
   checksumAddress,
 } from 'fixtures/accounts';
-import { Wallet, Address, NotificationError } from '@/class';
+import { Wallet, NotificationError } from '@/class';
 import actions from '@/store/accounts/actions';
 import {
   SET_ADDRESS,
-  SET_WALLET,
   ADD_WALLET,
-  ADD_ADDRESS,
   SET_HD_KEY,
   SET_BALANCE,
+  CHANGE_INIT_STATUS,
 } from '@/store/accounts/mutations-types';
 import keystore from '@/utils/keystore';
 import userService from '@/services/user';
@@ -48,8 +46,10 @@ describe('Accounts actions', () => {
       },
     };
 
-    it('should set wallet and call saveMeta with selected address', () => {
-      actions.selectWallet(
+    it('should set address, save meta, reset dapp, request balance tokens with selected address', async () => {
+      expect.assertions(9);
+
+      await actions.selectWallet(
         { state, commit, dispatch, rootState },
         checksumAddress,
       );
@@ -58,39 +58,22 @@ describe('Accounts actions', () => {
       expect(localSettingsService.save).toHaveBeenCalledWith(email, {
         activeAccount: checksumAddress,
       });
-      expect(commit).toHaveBeenCalledTimes(2);
-      expect(commit).toHaveBeenNthCalledWith(1, SET_WALLET, wallet);
-    });
-
-    it('should set address', () => {
-      actions.selectWallet(
-        { commit, dispatch, state, rootState },
-        checksumAddress,
-      );
-
-      expect(commit).toHaveBeenCalledTimes(2);
-      expect(commit).toHaveBeenNthCalledWith(2, SET_ADDRESS, checksumAddress);
-    });
-
-    it('should update balance', () => {
-      actions.selectWallet(
-        { commit, dispatch, state, rootState },
-        checksumAddress,
-      );
-
-      expect(dispatch).toHaveBeenCalledTimes(3);
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenNthCalledWith(1, SET_ADDRESS, checksumAddress);
+      expect(dispatch).toHaveBeenCalledTimes(4);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'updateBalance');
-    });
-
-    it('should get current account tokens balance', () => {
-      actions.selectWallet(
-        { commit, dispatch, state, rootState },
-        checksumAddress,
-      );
-
-      expect(dispatch).toHaveBeenCalledTimes(3);
-      expect(dispatch).toHaveBeenLastCalledWith(
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'dapp/reset', null, {
+        root: true,
+      });
+      expect(dispatch).toHaveBeenNthCalledWith(
+        3,
         'tokens/getCurrentAccountTokens',
+        null,
+        { root: true },
+      );
+      expect(dispatch).toHaveBeenNthCalledWith(
+        4,
+        'tokens/getCurrentAccountTokensData',
         null,
         { root: true },
       );
@@ -99,14 +82,15 @@ describe('Accounts actions', () => {
 
   describe('addWallet', () => {
     it('should add wallet to the store', async () => {
-      expect.assertions(2);
+      expect.assertions(3);
 
       const address = checksumAddress.toLowerCase();
 
       await actions.addWallet({ commit, dispatch }, { ...v3, address });
 
       expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenNthCalledWith(1, ADD_WALLET, v3);
+      expect(dispatch).not.toBeCalled();
+      expect(commit).toHaveBeenNthCalledWith(1, ADD_WALLET, expect.any(Wallet));
     });
 
     it('should save the wallet through the user service', async () => {
@@ -157,31 +141,24 @@ describe('Accounts actions', () => {
       });
     });
 
-    it('should save public key', async () => {
-      expect.assertions(2);
+    it('should save public key and select added wallet', async () => {
+      expect.assertions(3);
 
       await actions.addPublicWallet(
         { commit, dispatch },
         { address: checksumAddress },
       );
 
-      expect(commit).toBeCalledTimes(1);
-      expect(commit).toBeCalledWith(ADD_ADDRESS, {
+      expect(dispatch).toBeCalledTimes(2);
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'addWallet', {
+        ...info,
         address: checksumAddress,
-        info,
       });
-    });
-
-    it('should select wallet', async () => {
-      expect.assertions(2);
-
-      await actions.addPublicWallet(
-        { dispatch, commit },
-        { address: checksumAddress },
+      expect(dispatch).toHaveBeenNthCalledWith(
+        2,
+        'selectWallet',
+        checksumAddress,
       );
-
-      expect(dispatch).toBeCalledTimes(1);
-      expect(dispatch).toBeCalledWith('selectWallet', checksumAddress);
     });
 
     it('should handle errors', async () => {
@@ -277,7 +254,7 @@ describe('Accounts actions', () => {
           throw error;
         });
 
-      await actions.addWalletWithV3({ commit, dispatch }, v3);
+      await actions.addWalletWithV3({ commit, dispatch }, { json: v3 });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toBeCalledWith('errors/emitError', error, {
@@ -298,7 +275,7 @@ describe('Accounts actions', () => {
         });
 
       try {
-        await actions.addWalletWithV3({ commit, dispatch }, v3);
+        await actions.addWalletWithV3({ commit, dispatch }, { json: v3 });
       } catch (e) {
         expect(e).toEqual(error);
         expect(dispatch).toHaveBeenCalledTimes(0);
@@ -405,18 +382,23 @@ describe('Accounts actions', () => {
 
   describe('generateWallet', () => {
     it('should generate wallet from hd key', async () => {
-      expect.assertions(2);
+      expect.assertions(3);
 
       const hdWallet = keystore.decryptHDWallet(v3password, hdv3);
       const state = { hdKey: {}, wallets: {} };
-      const getters = {
-        hdWallet: () => hdWallet,
-      };
 
-      await actions.generateWallet({ state, dispatch, getters }, v3password);
+      dispatch.mockResolvedValueOnce(hdWallet);
 
-      expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toBeCalledWith(
+      await actions.generateWallet({ state, dispatch }, v3password);
+
+      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenNthCalledWith(
+        1,
+        'decryptAccountHdWallet',
+        v3password,
+      );
+      expect(dispatch).toHaveBeenNthCalledWith(
+        2,
         'addWalletAndSelect',
         expect.objectContaining({
           address: expect.any(String),
@@ -469,7 +451,7 @@ describe('Accounts actions', () => {
       await commitWallet({ state, commit }, { wallet: v3 });
 
       expect(commit).toBeCalledTimes(1);
-      expect(commit).toBeCalledWith(ADD_WALLET, v3);
+      expect(commit).toBeCalledWith(ADD_WALLET, expect.any(Wallet));
     });
 
     it('should save public key', async () => {
@@ -478,22 +460,23 @@ describe('Accounts actions', () => {
       await commitWallet({ state, commit }, { wallet });
 
       expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(ADD_ADDRESS, wallet);
+      expect(commit).toHaveBeenCalledWith(ADD_WALLET, expect.any(Wallet));
     });
 
-    it('should update active wallet', async () => {
-      expect.assertions(2);
+    // TODO: check this moment
+    // it('should update active wallet', async () => {
+    //   expect.assertions(2);
 
-      state.wallet.getAddressString.mockResolvedValueOnce(checksumAddress);
+    //   state.wallet.getAddressString.mockResolvedValueOnce(checksumAddress);
 
-      await commitWallet({ state, commit }, { wallet });
+    //   await commitWallet({ state, commit }, { wallet });
 
-      expect(commit).toHaveBeenCalledTimes(2);
-      expect(commit).toHaveBeenLastCalledWith(
-        SET_WALLET,
-        state.wallets[checksumAddress],
-      );
-    });
+    //   expect(commit).toHaveBeenCalledTimes(2);
+    //   expect(commit).toHaveBeenLastCalledWith(
+    //     SET_WALLET,
+    //     state.wallets[checksumAddress],
+    //   );
+    // });
   });
 
   describe('saveWallet', () => {
@@ -720,7 +703,7 @@ describe('Accounts actions', () => {
 
     beforeEach(() => {
       state = {
-        address: new Address({ address: checksumAddress }),
+        address: checksumAddress,
       };
       web3.eth.getBalance = jest.fn().mockResolvedValue(balance);
     });
@@ -767,48 +750,51 @@ describe('Accounts actions', () => {
     beforeEach(() => {
       state = {
         hdKey: hdv3,
+      };
+      getters = {
         wallet: {
           validatePassword: jest.fn().mockResolvedValue(true),
         },
+        isPublicAccount: false,
       };
-      getters = { isPublicAccount: false };
     });
 
-    it('should validate the password', async () => {
+    it('should validate the password with current wallet', async () => {
       expect.assertions(2);
 
-      const { validatePassword } = state.wallet;
       const isValid = await actions.validatePassword(
         { state, getters },
         v3password,
       );
 
-      expect(validatePassword).toHaveBeenCalledTimes(1);
+      expect(getters.wallet.validatePassword).toHaveBeenCalledWith(v3password);
       expect(isValid).toBe(true);
     });
 
     it('should validate the password through the hdKey when the public account', async () => {
-      expect.assertions(1);
+      expect.assertions(3);
 
-      keystore.decrypt = jest.fn().mockResolvedValue();
+      keystore.decrypt = jest.fn().mockResolvedValueOnce();
+      Wallet.prototype.validatePassword = jest.fn().mockResolvedValueOnce(true);
 
-      const newState = { ...state, wallet: null };
-      const newGetters = { isPublicAccount: true };
+      getters = { ...getters, isPublicAccount: true };
 
       const isValid = await actions.validatePassword(
-        { state: newState, getters: newGetters },
+        { state, getters },
         v3password,
       );
 
+      expect(getters.wallet.validatePassword).not.toBeCalled();
+      expect(Wallet.prototype.validatePassword).toBeCalledWith(v3password);
       expect(isValid).toBe(true);
     });
 
     it('should throw an error if the password is incorrect', async () => {
       expect.assertions(1);
 
-      const { validatePassword } = state.wallet;
       const error = new Error('error');
-      validatePassword.mockRejectedValueOnce(error);
+
+      getters.wallet.validatePassword.mockRejectedValueOnce(error);
 
       try {
         await actions.validatePassword({ state, getters }, v3password);
@@ -844,31 +830,25 @@ describe('Accounts actions', () => {
   });
 
   describe('init', () => {
-    it('should set the hd key to the store', async () => {
-      expect.assertions(2);
+    it('should set the hd key and user accounts to the store', async () => {
+      expect.assertions(4);
 
-      await actions.init({ dispatch });
+      await actions.init({ commit, dispatch });
 
       expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'setUserHdKey');
-    });
-
-    it('should set the user accounts to the store', async () => {
-      expect.assertions(2);
-
-      await actions.init({ dispatch });
-
-      expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenNthCalledWith(2, 'setUserWallets');
+      expect(commit).toHaveBeenCalledWith(CHANGE_INIT_STATUS, true);
     });
 
     it('should handle errors', async () => {
       expect.assertions(2);
 
       const error = new Error('error');
+
       dispatch.mockRejectedValueOnce(error);
 
-      await actions.init({ dispatch });
+      await actions.init({ dispatch, commit });
 
       expect(dispatch).toHaveBeenCalledTimes(3);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
@@ -893,7 +873,7 @@ describe('Accounts actions', () => {
 
       expect(userService.getV3Accounts).toBeCalledTimes(1);
       expect(commit).toBeCalledTimes(1);
-      expect(commit).toBeCalledWith(ADD_WALLET, v3);
+      expect(commit).toBeCalledWith(ADD_WALLET, expect.any(Wallet));
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('selectWallet', checksumAddress);
     });

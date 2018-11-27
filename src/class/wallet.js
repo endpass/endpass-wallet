@@ -1,6 +1,7 @@
 import { get } from 'lodash';
 import Tx from 'ethereumjs-tx';
-import web3 from '@/utils/web3';
+import HDKey from 'ethereumjs-wallet/hdkey';
+import web3 from '@/class/singleton/web3';
 import keystore from '@/utils/keystore';
 import { TrezorWallet, LedgerWallet } from '@/class';
 import { WALLET_TYPE, HARDWARE_WALLET_TYPE } from '@/constants';
@@ -26,7 +27,17 @@ export default class Wallet {
   }
 
   static normalizeAddress(address) {
+    if (/^xpub/.test(address)) {
+      return Wallet.getAddressFromXpub(address);
+    }
+
     return `0x${address.replace(/^0x/, '')}`;
+  }
+
+  static getAddressFromXpub(xpub) {
+    const hdWallet = HDKey.fromExtendedKey(xpub);
+
+    return hdWallet.getWallet().getChecksumAddressString();
   }
 
   init(account) {

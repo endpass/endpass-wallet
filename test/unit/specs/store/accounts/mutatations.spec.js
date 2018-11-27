@@ -1,67 +1,44 @@
 import { v3, checksumAddress } from 'fixtures/accounts';
-import { Address, Wallet } from '@/class';
 import mutations from '@/store/accounts/mutations';
 import {
-  ADD_ADDRESS,
+  CHANGE_INIT_STATUS,
   SET_ADDRESS,
   ADD_WALLET,
-  SET_WALLET,
   SET_HD_KEY,
   SET_BALANCE,
+  SET_HARDWARE_XPUB,
 } from '@/store/accounts/mutations-types';
 
 describe('Accounts mutations', () => {
-  describe(ADD_ADDRESS, () => {
-    it('should add wallet', () => {
-      const state = { wallets: {} };
-      const payload = { address: checksumAddress };
+  describe(CHANGE_INIT_STATUS, () => {
+    it('should change init status', () => {
+      const state = { isInited: false };
 
-      mutations[ADD_ADDRESS](state, payload);
+      mutations[CHANGE_INIT_STATUS](state, true);
 
-      expect(state.wallets).toEqual({
-        [checksumAddress]: new Address(payload),
-      });
+      expect(state.isInited).toBe(true);
     });
   });
 
   describe(SET_ADDRESS, () => {
     it('should set address', () => {
       const state = { address: null };
-      const addressLC = checksumAddress.toLowerCase();
 
-      mutations[SET_ADDRESS](state, addressLC);
+      mutations[SET_ADDRESS](state, checksumAddress);
 
-      expect(state.address).toBeInstanceOf(Address);
-      expect(state.address.getAddressString()).toBe(addressLC);
-      expect(state.address.getChecksumAddressString()).toBe(checksumAddress);
-    });
-  });
-
-  describe(SET_WALLET, () => {
-    it('should set wallet', () => {
-      const state = { wallet: null };
-      const wallet = { id: 1 };
-
-      mutations[SET_WALLET](state, wallet);
-
-      expect(state.wallet).toEqual(wallet);
+      expect(state.address).toBe(checksumAddress);
     });
   });
 
   describe(ADD_WALLET, () => {
-    it('should add wallet', async () => {
-      expect.assertions(2);
-
-      const { address } = v3;
+    it('should add wallet', () => {
       const state = { wallets: {} };
 
       mutations[ADD_WALLET](state, v3);
 
-      const wallet = state.wallets[address];
-      const walletAddress = await wallet.getAddressString();
-
-      expect(wallet).toBeInstanceOf(Wallet);
-      expect(walletAddress).toBe(address);
+      expect(state.wallets).toEqual({
+        [v3.address]: v3,
+      });
     });
   });
 
@@ -83,6 +60,21 @@ describe('Accounts mutations', () => {
       mutations[SET_BALANCE](state, balance);
 
       expect(state.balance).toBe(balance);
+    });
+  });
+
+  describe(SET_HARDWARE_XPUB, () => {
+    it('should set hardware wallet xpub', () => {
+      const state = { hardwareXpub: {} };
+
+      mutations[SET_HARDWARE_XPUB](state, {
+        walletType: 'foo',
+        xpub: 'bar',
+      });
+
+      expect(state.hardwareXpub).toEqual({
+        foo: 'bar',
+      });
     });
   });
 });
