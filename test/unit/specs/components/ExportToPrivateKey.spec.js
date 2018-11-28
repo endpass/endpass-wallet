@@ -17,8 +17,8 @@ describe('ExportToPrivateKey', () => {
       modules: {
         accounts: {
           namespaced: true,
-          state: {
-            wallet: new Wallet(v3),
+          getters: {
+            wallet: () => new Wallet(v3),
           },
         },
       },
@@ -36,6 +36,7 @@ describe('ExportToPrivateKey', () => {
   describe('behavior', () => {
     it('should correctly set the private key', async () => {
       await wrapper.vm.getPrivateKey(v3password);
+
       expect(wrapper.vm.privateKey).toBe(privateKeyString);
     });
   });

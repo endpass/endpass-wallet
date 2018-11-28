@@ -1,5 +1,4 @@
-import { get, pick, pickBy, uniq } from 'lodash';
-import { BigNumber } from 'bignumber.js';
+import { pick, pickBy, uniq } from 'lodash';
 
 const activeCurrencyName = (state, getters, rootState) =>
   rootState.web3.activeCurrency.name;

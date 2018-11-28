@@ -43,16 +43,20 @@ import modalMixin from '@/mixins/modal';
 
 export default {
   name: 'SignMessage',
+
   data: () => ({
     message: '',
     signedMessage: null,
   }),
+
   computed: {
     ...mapGetters('accounts', ['wallet']),
+
     getSignedMessage() {
       return JSON.stringify(this.signedMessage);
     },
   },
+
   methods: {
     async signMessage(password) {
       try {
@@ -70,7 +74,9 @@ export default {
       }
     },
   },
+
   mixins: [modalMixin],
+
   components: {
     VForm,
     VButton,

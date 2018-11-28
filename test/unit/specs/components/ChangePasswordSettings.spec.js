@@ -6,25 +6,31 @@ import ChangePasswordSettings from '@/components/ChangePasswordSettings';
 import { generateStubs } from '@/utils/testUtils';
 
 describe('ChangePasswordSettings', () => {
-  const storeOptions = {
-    modules: {
-      accounts: {
-        namespaced: true,
-        actions: {
-          updateWallets: jest.fn(),
-        },
-        getters: {
-          decryptedWallets: jest.fn(() => [{}]),
-          hdWallet: jest.fn(() => ({})),
-          encryptedHdWallet: jest.fn(() => ({})),
-          encryptedWallets: jest.fn(() => [{}]),
-        },
-      },
-    },
-  };
+  let accountsActions;
+  let storeOptions;
   let wrapper;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
+    accountsActions = {
+      updateAllAccountWalletsWithNewPassword: jest.fn().mockResolvedValue(true),
+      updateWallets: jest.fn(),
+    };
+    storeOptions = {
+      modules: {
+        accounts: {
+          namespaced: true,
+          actions: accountsActions,
+          getters: {
+            decryptedWallets: jest.fn(() => [{}]),
+            hdWallet: jest.fn(() => ({})),
+            encryptedHdWallet: jest.fn(() => ({})),
+            encryptedWallets: jest.fn(() => [{}]),
+          },
+        },
+      },
+    };
     const localVue = createLocalVue();
 
     localVue.use(Vuex);
@@ -41,7 +47,7 @@ describe('ChangePasswordSettings', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('change-password-settings');
+      expect(wrapper.name()).toBe('ChangePasswordSettings');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
@@ -115,188 +121,99 @@ describe('ChangePasswordSettings', () => {
   describe('methods', () => {
     describe('handleFormSubmit', () => {
       beforeEach(() => {
-        spyOn(wrapper.vm, '$notify');
+        jest.spyOn(wrapper.vm, '$notify');
+        wrapper.setData({
+          oldPassword: '1234',
+          newPassword: '1234',
+        });
       });
 
-      it('should handle the error of wallets decryption', () => {
-        const { vm } = wrapper;
+      it('should update all account wallets with new password if it is valid', async () => {
+        expect.assertions(5);
 
-        wrapper.setComputed({
-          decryptedWallets: jest.fn(() => {
-            throw new Error();
-          }),
-        });
-        wrapper.setMethods({
-          updateWallets: jest.fn(),
-        });
+        wrapper.vm.handleFormSubmit();
+        await global.flushPromises();
 
-        vm.handleFormSubmit();
-
-        expect(vm.$notify).toHaveBeenCalledTimes(1);
-        expect(vm.$notify).toHaveBeenCalledWith({
-          title: 'Error while decrypting wallets',
-          text:
-            'An error occurred while decrypting wallets. Try using a different password.',
-          type: 'is-danger',
-        });
-        expect(vm.updateWallets).toHaveBeenCalledTimes(0);
-      });
-
-      it('should handle the error of HD wallet decryption', () => {
-        const { vm } = wrapper;
-
-        wrapper.setComputed({
-          hdWallet: jest.fn(() => {
-            throw new Error();
-          }),
-        });
-        wrapper.setMethods({
-          updateWallets: jest.fn(),
-        });
-
-        vm.handleFormSubmit();
-
-        expect(vm.$notify).toHaveBeenCalledTimes(1);
-        expect(vm.$notify).toHaveBeenCalledWith({
-          title: 'Error while decrypting wallets',
-          text:
-            'An error occurred while decrypting wallets. Try using a different password.',
-          type: 'is-danger',
-        });
-        expect(vm.updateWallets).toHaveBeenCalledTimes(0);
-      });
-
-      it('should handle the error of wallets encryption', () => {
-        const { vm } = wrapper;
-
-        wrapper.setComputed({
-          encryptedHdWallet: jest.fn(() => {
-            throw new Error();
-          }),
-        });
-        wrapper.setMethods({
-          updateWallets: jest.fn(),
-        });
-
-        vm.handleFormSubmit();
-
-        expect(vm.$notify).toHaveBeenCalledTimes(1);
-        expect(vm.$notify).toHaveBeenCalledWith({
-          title: 'Error while decrypting wallets',
-          text:
-            'An error occurred while decrypting wallets. Try using a different password.',
-          type: 'is-danger',
-        });
-        expect(vm.updateWallets).toHaveBeenCalledTimes(0);
-      });
-
-      it('should handle the error of HD wallet encryption', () => {
-        const { vm } = wrapper;
-
-        wrapper.setComputed({
-          hdWallet: jest.fn(() => {
-            throw new Error();
-          }),
-        });
-        wrapper.setMethods({
-          updateWallets: jest.fn(),
-        });
-
-        vm.handleFormSubmit();
-
-        expect(vm.$notify).toHaveBeenCalledTimes(1);
-        expect(vm.$notify).toHaveBeenCalledWith({
-          title: 'Error while decrypting wallets',
-          text:
-            'An error occurred while decrypting wallets. Try using a different password.',
-          type: 'is-danger',
-        });
-        expect(vm.updateWallets).toHaveBeenCalledTimes(0);
-      });
-
-      it('should handle the error while saving the wallets', async () => {
-        const { vm } = wrapper;
-
-        wrapper.setComputed({
-          decryptedWallets: jest.fn(() => [{}]),
-          hdWallet: jest.fn(() => ({})),
-          encryptedHdWallet: jest.fn(() => ({})),
-          encryptedWallets: jest.fn(() => [{}]),
-        });
-        wrapper.setMethods({
-          updateWallets: jest.fn().mockResolvedValue(),
-        });
-
-        expect.assertions(4);
-
-        await vm.handleFormSubmit();
-
-        expect(vm.$notify).toHaveBeenCalledTimes(0);
-        expect(vm.isLoading).toBeFalsy();
-        expect(vm.oldPassword).toBeNull();
-        expect(vm.newPassword).toBeNull();
-      });
-
-      it('should correctly decrypt wallets', () => {
-        const { vm } = wrapper;
-        const oldPassword = 'oldPassword';
-        const wallet = {};
-        const hdWallet = {};
-
-        wrapper.setComputed({
-          decryptedWallets: jest.fn(() => [wallet]),
-          hdWallet: jest.fn(() => hdWallet),
-        });
-        wrapper.setData({ oldPassword });
-
-        vm.handleFormSubmit();
-
-        expect(vm.decryptedWallets).toHaveBeenCalledTimes(1);
-        expect(vm.decryptedWallets).toHaveBeenCalledWith(vm.oldPassword);
-
-        expect(vm.decryptedWallets).toHaveBeenCalledTimes(1);
-        expect(vm.hdWallet).toHaveBeenCalledWith(vm.oldPassword);
-      });
-
-      it('should save wallets', async () => {
-        const { vm } = wrapper;
-        const walletAddress = 'wallet address';
-        const hdWalletAddress = 'hd wallet address';
-        const wallet = { address: walletAddress };
-        const hdWallet = { address: hdWalletAddress };
-        const expectedWalletsToUpdate = {
-          [walletAddress]: wallet,
-          [hdWalletAddress]: hdWallet,
-        };
-
-        wrapper.setComputed({
-          decryptedWallets: jest.fn(() => [wallet]),
-          hdWallet: jest.fn(() => hdWallet),
-          encryptedHdWallet: jest.fn((password, wallet) => wallet),
-          encryptedWallets: jest.fn((password, wallets) =>
-            wallets.map(wallet => wallet),
-          ),
-        });
-        wrapper.setMethods({
-          updateWallets: jest.fn().mockResolvedValue(true),
-        });
-
-        expect.assertions(7);
-
-        await vm.handleFormSubmit();
-
-        expect(vm.updateWallets).toHaveBeenCalledTimes(1);
-        expect(vm.updateWallets).toHaveBeenCalledWith({
-          wallets: expectedWalletsToUpdate,
-        });
-        expect(vm.$notify).toHaveBeenCalledTimes(1);
-        expect(vm.$notify).toHaveBeenCalledWith({
+        expect(
+          accountsActions.updateAllAccountWalletsWithNewPassword,
+        ).toBeCalled();
+        expect(wrapper.vm.$notify).toBeCalledWith({
           title: 'Password changed successfully',
           type: 'is-success',
         });
-        expect(vm.isLoading).toBeFalsy();
-        expect(vm.oldPassword).toBeNull();
-        expect(vm.newPassword).toBeNull();
+        expect(wrapper.vm.oldPassword).toBe(null);
+        expect(wrapper.vm.newPassword).toBe(null);
+        expect(wrapper.vm.isLoading).toBe(false);
+      });
+
+      it('should handle error if old password is incorrect and notify user about it', async () => {
+        expect.assertions(5);
+
+        const error = new Error('authentication code mismatch');
+
+        accountsActions.updateAllAccountWalletsWithNewPassword.mockRejectedValueOnce(
+          error,
+        );
+
+        wrapper.vm.handleFormSubmit();
+        await global.flushPromises();
+
+        expect(
+          accountsActions.updateAllAccountWalletsWithNewPassword,
+        ).toBeCalled();
+        expect(wrapper.vm.$notify).toBeCalledWith({
+          title: 'You entered incorrect password, try using a different one.',
+          type: 'is-danger',
+        });
+        expect(wrapper.vm.oldPassword).toBe('1234');
+        expect(wrapper.vm.newPassword).toBe('1234');
+        expect(wrapper.vm.isLoading).toBe(false);
+      });
+
+      it('should handle error in other cases and notify user about it', async () => {
+        expect.assertions(5);
+
+        const error = new Error('foo');
+
+        accountsActions.updateAllAccountWalletsWithNewPassword.mockRejectedValueOnce(
+          error,
+        );
+
+        wrapper.vm.handleFormSubmit();
+        await global.flushPromises();
+
+        expect(
+          accountsActions.updateAllAccountWalletsWithNewPassword,
+        ).toBeCalled();
+        expect(wrapper.vm.$notify).toBeCalledWith({
+          title: 'Password was not changed.',
+          type: 'is-danger',
+        });
+        expect(wrapper.vm.oldPassword).toBe('1234');
+        expect(wrapper.vm.newPassword).toBe('1234');
+        expect(wrapper.vm.isLoading).toBe(false);
+      });
+
+      it('should show error if changing was failed without errors', async () => {
+        expect.assertions(5);
+
+        accountsActions.updateAllAccountWalletsWithNewPassword.mockResolvedValueOnce(
+          false,
+        );
+
+        wrapper.vm.handleFormSubmit();
+        await global.flushPromises();
+
+        expect(
+          accountsActions.updateAllAccountWalletsWithNewPassword,
+        ).toBeCalled();
+        expect(wrapper.vm.$notify).toBeCalledWith({
+          title: 'Password was not changed.',
+          type: 'is-danger',
+        });
+        expect(wrapper.vm.oldPassword).toBe('1234');
+        expect(wrapper.vm.newPassword).toBe('1234');
+        expect(wrapper.vm.isLoading).toBe(false);
       });
     });
   });

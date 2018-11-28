@@ -1,30 +1,31 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
-
 import Vuex from 'vuex';
+import { shallow, createLocalVue } from '@vue/test-utils';
+import QuickActions from '@/components/QuickActions';
+
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
 
-import QuickActions from '@/components/QuickActions';
-
 describe('QuickActions', () => {
   let wrapper;
   beforeEach(() => {
-    let storeOptions = {
+    const storeOptions = {
       modules: {
         accounts: {
           namespaced: true,
           state: {
-            wallet: null,
             address: null,
           },
           getters: {
+            wallet: () => null,
             isPublicAccount: jest.fn(),
           },
         },
       },
     };
+
     const store = new Vuex.Store(storeOptions);
+
     wrapper = shallow(QuickActions, {
       localVue,
       store,

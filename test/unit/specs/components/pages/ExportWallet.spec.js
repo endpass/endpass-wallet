@@ -17,6 +17,7 @@ describe('ExportWallet page', () => {
         accounts: {
           namespaced: true,
           getters: {
+            wallet: () => null,
             isPublicAccount: () => false,
           },
         },

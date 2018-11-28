@@ -57,15 +57,9 @@ describe('transactions actions', () => {
     };
     rootState = {
       accounts: {
-        address: {
-          getChecksumAddressString: jest.fn(() => address),
-          getAddressString: () => address.toLowerCase(),
-        },
+        address,
         wallets: {
           [address]: {},
-        },
-        wallet: {
-          signTransaction: jest.fn().mockResolvedValue(),
         },
       },
       web3: {
@@ -73,6 +67,9 @@ describe('transactions actions', () => {
       },
     };
     rootGetters = {
+      'accounts/wallet': {
+        signTransaction: jest.fn().mockResolvedValue(),
+      },
       'transactions/pendingBalance': 0,
       'accounts/accountAddresses': [address.toLowerCase()],
       'web3/isMainNetwork': false,
@@ -81,11 +78,10 @@ describe('transactions actions', () => {
 
   describe('getNonceInBlock', () => {
     it('should return nonce in current block', async () => {
-      expect.assertions(3);
+      expect.assertions(2);
 
       const res = await actions.getNonceInBlock({ rootState });
 
-      expect(rootState.accounts.address.getChecksumAddressString).toBeCalled();
       expect(web3.eth.getTransactionCount).toBeCalledWith(address);
       expect(res).toEqual('1');
     });
@@ -402,7 +398,7 @@ describe('transactions actions', () => {
       expect.assertions(2);
 
       const res = await actions.sendSignedTransaction(
-        { rootState, dispatch },
+        { rootState, dispatch, rootGetters },
         { transaction, password: 'secret' },
       );
 
@@ -418,7 +414,7 @@ describe('transactions actions', () => {
       });
 
       const res = await actions.sendSignedTransaction(
-        { rootState, dispatch },
+        { rootState, dispatch, rootGetters },
         { transaction, password: 'secret' },
       );
 
@@ -430,10 +426,10 @@ describe('transactions actions', () => {
     it('should handle error with action', async () => {
       expect.assertions(2);
 
-      rootState.accounts.wallet.signTransaction.mockRejectedValue();
+      rootGetters['accounts/wallet'].signTransaction.mockRejectedValue();
 
       await actions.sendSignedTransaction(
-        { rootState, dispatch },
+        { rootState, dispatch, rootGetters },
         { transaction, password: 'secret' },
       );
 
