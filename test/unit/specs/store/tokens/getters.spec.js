@@ -132,9 +132,19 @@ describe('tokens getters', () => {
       const rootGetters = {
         'accounts/currentAddressString': address,
       };
+      const rootState = {
+        accounts: {
+          address,
+        },
+      };
 
       expect(
-        tokensGetters.currentAccountTokens(null, getters, null, rootGetters),
+        tokensGetters.currentAccountTokens(
+          null,
+          getters,
+          rootState,
+          rootGetters,
+        ),
       ).toEqual(tokensMappedByAddresses);
       expect(getters.tokensByAddress).toBeCalledTimes(1);
       expect(getters.tokensByAddress).toBeCalledWith(address);
@@ -150,12 +160,17 @@ describe('tokens getters', () => {
       const rootGetters = {
         'accounts/currentAddressString': address,
       };
+      const rootState = {
+        accounts: {
+          address,
+        },
+      };
 
       expect(
         tokensGetters.currentNetUserFullTokens(
           null,
           getters,
-          null,
+          rootState,
           rootGetters,
         ),
       ).toEqual(tokensMappedByAddresses);
@@ -175,12 +190,17 @@ describe('tokens getters', () => {
       const rootGetters = {
         'accounts/currentAddressString': address,
       };
+      const rootState = {
+        accounts: {
+          address,
+        },
+      };
 
       expect(
         tokensGetters.currentAccountFullTokens(
           null,
           getters,
-          null,
+          rootState,
           rootGetters,
         ),
       ).toEqual(tokensMappedByAddresses);
@@ -261,12 +281,17 @@ describe('tokens getters', () => {
       const rootGetters = {
         'accounts/currentAddressString': address,
       };
+      const rootState = {
+        accounts: {
+          address,
+        },
+      };
 
       expect(
         tokensGetters.allCurrentAccountFullTokens(
           null,
           getters,
-          null,
+          rootState,
           rootGetters,
         ),
       ).toEqual(fullTokensMappedByAddresses);

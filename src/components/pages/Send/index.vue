@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { TransactionFactory } from '@/class';
 import VForm from '@/components/ui/form/VForm.vue';
 import VRadio from '@/components/ui/form/VRadio.vue';

@@ -84,7 +84,7 @@ export default {
       this.$notify({
         title: isIncorrentPasswordError
           ? 'You entered incorrect password, try using a different one.'
-          : 'Password was not changed',
+          : 'Password was not changed.',
         type: 'is-danger',
       });
     },

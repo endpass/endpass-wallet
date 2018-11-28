@@ -1,3 +1,4 @@
+import Vuex from 'vuex';
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import VerifyMessage from '@/components/VerifyMessage';
@@ -6,27 +7,33 @@ import { address } from 'fixtures/accounts';
 import { generateStubs } from '@/utils/testUtils';
 import web3 from '@/class/singleton/web3';
 
+const localVue = createLocalVue();
+
+localVue.use(Notifications);
+localVue.use(Vuex);
+
 describe('VerifyMessage', () => {
   let wrapper;
-  let $store;
+  let store;
 
   beforeEach(() => {
-    const localVue = createLocalVue();
-
-    $store = {
-      state: {
-        web3: {},
+    store = new Vuex.Store({
+      modules: {
         accounts: {
-          wallet: ethereumWalletMock,
+          namespaced: true,
+          getters: {
+            wallet: () => ethereumWalletMock,
+          },
         },
       },
-    };
-
-    localVue.use(Notifications);
+      state: {
+        web3: {},
+      },
+    });
 
     wrapper = shallow(VerifyMessage, {
       localVue,
-      mocks: { $store },
+      store,
       stubs: generateStubs(VerifyMessage),
     });
   });

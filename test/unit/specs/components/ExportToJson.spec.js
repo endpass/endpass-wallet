@@ -17,8 +17,8 @@ describe('ExportToJson', () => {
       modules: {
         accounts: {
           namespaced: true,
-          state: {
-            wallet: new Wallet(v3),
+          getters: {
+            wallet: () => new Wallet(v3),
           },
         },
       },

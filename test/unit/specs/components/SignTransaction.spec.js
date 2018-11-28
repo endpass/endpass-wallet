@@ -15,12 +15,17 @@ describe('SignTransaction', () => {
     localVue.use(Vuex);
 
     const store = new Vuex.Store({
-      state: {
+      modules: {
         accounts: {
-          wallet: {
-            getPrivateKey: jest.fn(() => 'private key'),
+          namespaced: true,
+          getters: {
+            wallet: () => ({
+              getPrivateKey: jest.fn(() => 'private key'),
+            }),
           },
         },
+      },
+      state: {
         web3: {},
       },
     });

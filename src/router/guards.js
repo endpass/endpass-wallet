@@ -24,7 +24,7 @@ export async function hasLoginGuard(to, from, next) {
     },
   };
 
-  await asyncCheckProperty(store, 'state.user.authorizationStatus');
+  const res = await asyncCheckProperty(store, 'state.user.authorizationStatus');
 
-  next(!store.state.user.authorizationStatus ? redirectUri : undefined);
+  next(!res ? redirectUri : undefined);
 }

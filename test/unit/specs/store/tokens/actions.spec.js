@@ -37,6 +37,7 @@ describe('tokens actions', () => {
   let commit;
   let dispatch;
   let getters;
+  let rootState;
   let rootGetters;
 
   beforeEach(() => {
@@ -48,6 +49,11 @@ describe('tokens actions', () => {
     commit = jest.fn();
     rootGetters = {
       'web3/activeNetwork': MAIN_NET_ID,
+    };
+    rootState = {
+      accounts: {
+        address,
+      },
     };
   });
 
@@ -251,7 +257,12 @@ describe('tokens actions', () => {
     it('should request tokens for current address', async () => {
       expect.assertions(5);
 
-      await actions.getCurrentAccountTokens({ commit, dispatch, rootGetters });
+      await actions.getCurrentAccountTokens({
+        commit,
+        dispatch,
+        rootGetters,
+        rootState,
+      });
 
       expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenNthCalledWith(1, SET_LOADING, true);
@@ -263,11 +274,17 @@ describe('tokens actions', () => {
     });
 
     it('should not do anything if current address is not exist', async () => {
-      rootGetters = {
-        'accounts/currentAddressString': null,
+      rootState = {
+        accounts: {
+          address: null,
+        },
       };
 
-      await actions.getCurrentAccountTokens({ commit, dispatch, rootGetters });
+      await actions.getCurrentAccountTokens({
+        commit,
+        dispatch,
+        rootState,
+      });
 
       expect(commit).not.toHaveBeenCalled();
       expect(dispatch).not.toHaveBeenCalled();
@@ -278,7 +295,12 @@ describe('tokens actions', () => {
 
       dispatch.mockRejectedValueOnce();
 
-      await actions.getCurrentAccountTokens({ commit, dispatch, rootGetters });
+      await actions.getCurrentAccountTokens({
+        commit,
+        dispatch,
+        rootState,
+        rootGetters,
+      });
 
       expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenNthCalledWith(1, SET_LOADING, true);
@@ -303,9 +325,6 @@ describe('tokens actions', () => {
       getters = {
         allCurrentAccountTokens: tokens,
       };
-      rootGetters = {
-        'accounts/currentAddressString': address,
-      };
 
       dispatch.mockResolvedValueOnce(balances);
 
@@ -313,7 +332,7 @@ describe('tokens actions', () => {
         dispatch,
         commit,
         getters,
-        rootGetters,
+        rootState,
       });
 
       expect(dispatch).toHaveBeenCalledWith('getTokensBalances', {
@@ -329,15 +348,17 @@ describe('tokens actions', () => {
     it('should not do anything if current address is not exist', async () => {
       expect.assertions(2);
 
-      rootGetters = {
-        'accounts/currentAddressString': null,
+      rootState = {
+        accounts: {
+          address: null,
+        },
       };
 
       await actions.getCurrentAccountTokensBalances({
         dispatch,
         commit,
         getters,
-        rootGetters,
+        rootState,
       });
 
       expect(dispatch).not.toBeCalled();

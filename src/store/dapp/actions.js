@@ -109,10 +109,10 @@ const getSignedCurrentRequest = ({ dispatch, getters }, password) => {
 };
 
 const getSignedCurrentTransaction = async (
-  { dispatch, getters, rootState },
+  { dispatch, getters, rootGetters },
   password,
 ) => {
-  const { wallet } = rootState.accounts;
+  const wallet = rootGetters['accounts/wallet'];
   const request = getters.currentRequest;
   const nonce = await dispatch('transactions/getNextNonce', null, {
     root: true,
@@ -136,17 +136,17 @@ const getSignedCurrentTransaction = async (
 };
 
 const getSignedCurrentTypedDataRequest = async () => {
-  // const { wallet } = rootState.accounts;
+  // const wallet = rootGetters['accounts/wallet'];
   // const request = getters.currentRequest;
 
   throw new Error('Sign typed data not supported yet!');
 };
 
 const getSignedCurrentPlainRequest = async (
-  { getters, rootState },
+  { getters, rootGetters },
   password,
 ) => {
-  const { wallet } = rootState.accounts;
+  const wallet = rootGetters['accounts/wallet'];
   const request = getters.currentRequest;
   const res = await wallet.sign(request.params[0], password);
 

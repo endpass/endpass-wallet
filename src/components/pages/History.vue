@@ -7,20 +7,19 @@
             <h1 class="card-header-title">Transaction history</h1>
           </div>
           <div class="card-content">
-            <ul
-              v-if="currentNetTransactions.length"
-              class="transactions"
-            >
+            <ul v-if="currentNetTransactions.length > 0" class="transactions">
               <li
                 v-for="transaction in currentNetTransactions"
                 :key="transaction.hash"
                 data-test="transactions-history-item"
               >
-                <app-transaction :transaction="transaction" />
+                <app-transaction :transaction="transaction"/>
               </li>
             </ul>
-            <p v-else-if="!isHistoryAvailable">Transaction history is only supported on the main network.</p>
-            <v-spinner v-else-if="isLoading" />
+            <p
+              v-else-if="!isHistoryAvailable"
+            >Transaction history is only supported on the main network.</p>
+            <v-spinner v-else-if="isLoading"/>
             <p v-else>This account has no transactions.</p>
           </div>
         </div>
@@ -36,11 +35,9 @@ import appTransaction from '@/components/Transaction';
 import { MAIN_NET_ID } from '@/constants';
 
 export default {
-  data() {
-    return {
-      isLoading: true,
-    };
-  },
+  data: () => ({
+    isLoading: true,
+  }),
 
   computed: {
     ...mapState({
@@ -59,14 +56,12 @@ export default {
       async handler() {
         await this.getHistory();
       },
-      immediate: true,
     },
 
     address: {
       async handler() {
         await this.getHistory();
       },
-      immediate: true,
     },
   },
 
@@ -83,6 +78,10 @@ export default {
       await this.updateTransactionHistory();
       this.isLoading = false;
     },
+  },
+
+  async created() {
+    await this.getHistory();
   },
 
   components: {

@@ -26,6 +26,7 @@ describe('NavSidebar', () => {
             logout: jest.fn(),
           },
           getters: {
+            wallet: jest.fn().mockReturnValue(null),
             isPublicAccount: jest.fn().mockReturnValue(true),
           },
         },

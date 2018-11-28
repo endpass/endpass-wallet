@@ -50,11 +50,7 @@ describe('Send', () => {
         accounts: {
           namespaced: true,
           state: {
-            address: {
-              getChecksumAddressString() {
-                return checksumAddress;
-              },
-            },
+            address: checksumAddress,
             balance: '1000000000000000000',
             pendingTransactions: [
               {
@@ -141,7 +137,7 @@ describe('Send', () => {
       expect(transactionsActions.getNextNonce).toBeCalledTimes(2);
 
       wrapper.setComputed({
-        activeAddress: 'foo',
+        address: 'foo',
       });
 
       expect(transactionsActions.getNextNonce).toBeCalledTimes(3);

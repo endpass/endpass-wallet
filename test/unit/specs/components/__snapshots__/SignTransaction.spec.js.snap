@@ -15,9 +15,7 @@ exports[`SignTransaction render should enable "Sign transaction" button 1`] = `
     <v-button
       class-name="is-primary is-medium"
     >
-      
       Sign transaction
-    
     </v-button>
      
     <!---->
@@ -68,9 +66,7 @@ exports[`SignTransaction render should show modal window for password confirmati
     <v-button
       class-name="is-primary is-medium"
     >
-      
       Sign transaction
-    
     </v-button>
      
     <!---->
@@ -101,9 +97,7 @@ exports[`SignTransaction render should show signed message 1`] = `
       class-name="is-primary is-medium"
       disabled="true"
     >
-      
       Sign transaction
-    
     </v-button>
      
     <div
@@ -118,9 +112,7 @@ exports[`SignTransaction render should show signed message 1`] = `
       <p
         class="code"
       >
-        
         0x0
-      
       </p>
     </div>
   </v-form>

@@ -36,17 +36,18 @@ describe('dapp actions', () => {
     dispatch = jest.fn();
     commit = jest.fn();
     rootGetters = {
+      'accounts/wallet': {
+        sign: jest.fn().mockResolvedValue({
+          signature: commonRequestSignResult,
+        }),
+        signTransaction: jest.fn(() => signedTransactionHash),
+      },
       'accounts/currentAddressString': checksumAddress,
       'web3/activeNetwork': MAIN_NET_ID,
     };
     rootState = {
       accounts: {
-        wallet: {
-          sign: jest.fn().mockResolvedValue({
-            signature: commonRequestSignResult,
-          }),
-          signTransaction: jest.fn(() => signedTransactionHash),
-        },
+        address: checksumAddress,
       },
     };
     getters = {
@@ -136,7 +137,7 @@ describe('dapp actions', () => {
 
   describe('sendSettings', () => {
     it('should emit current settings by dappBridge and transform address to lower case', () => {
-      actions.sendSettings({ rootGetters });
+      actions.sendSettings({ rootState, rootGetters });
 
       expect(dappBridge.emitSettings).toBeCalledWith({
         selectedAddress: checksumAddress.toLowerCase(),
@@ -251,7 +252,7 @@ describe('dapp actions', () => {
         {
           dispatch,
           getters,
-          rootState,
+          rootGetters,
         },
         v3password,
       );
@@ -259,7 +260,7 @@ describe('dapp actions', () => {
       expect(dispatch).toBeCalledWith('transactions/getNextNonce', null, {
         root: true,
       });
-      expect(rootState.accounts.wallet.signTransaction).toBeCalledWith(
+      expect(rootGetters['accounts/wallet'].signTransaction).toBeCalledWith(
         {
           ...transactionRequest.transaction,
           nonce: 1,
@@ -282,11 +283,11 @@ describe('dapp actions', () => {
       expect.assertions(2);
 
       const res = await actions.getSignedCurrentPlainRequest(
-        { getters, rootState },
+        { getters, rootGetters },
         v3password,
       );
 
-      expect(rootState.accounts.wallet.sign).toBeCalledWith(
+      expect(rootGetters['accounts/wallet'].sign).toBeCalledWith(
         commonRequest.params[0],
         v3password,
       );
