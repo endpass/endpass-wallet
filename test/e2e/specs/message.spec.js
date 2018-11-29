@@ -6,7 +6,10 @@ describe('Message Page', () => {
       cy.preventLogin();
       cy.visit('#/message');
       cy.mockWeb3Requests();
-      cy.url().should('include', '/#/?redirect_uri=%2Fmessage');
+      cy.url().should(
+        'eq',
+        `${Cypress.config().baseUrl}/#/?redirect_uri=%2Fmessage`,
+      );
     });
   });
 
@@ -38,7 +41,7 @@ describe('Message Page', () => {
 
       it('should redirect to root if a public account is selected', () => {
         cy.switchAccount();
-        cy.url().should('equal', Cypress.config().baseUrl + '/#/');
+        cy.url().should('equal', `${Cypress.config().baseUrl}/#/`);
       });
     });
 

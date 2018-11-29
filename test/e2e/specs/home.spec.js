@@ -10,13 +10,11 @@ describe('Home Page', () => {
   it('should contain account address and export button for private account', () => {
     cy.get('@store').then(store => {
       cy.get('[data-test=address-card] h5').contains(
-        store.state.accounts.wallet.v3.address,
+        store.state.accounts.address,
       );
     });
     cy.get('[data-test=export-wallet-button]').click();
-    cy.location()
-      .its('href')
-      .should('eq', `${Cypress.config().baseUrl}/#/export`);
+    cy.url().should('eq', `${Cypress.config().baseUrl}/#/export`);
     cy.switchAccount();
     cy.get('[data-test=export-wallet-button]').should('not.exist');
   });
@@ -34,8 +32,6 @@ describe('Home Page', () => {
 
   it('should correctly navigate to add token page', () => {
     cy.get('[data-test=edit-tokens-button]').click();
-    cy.location()
-      .its('href')
-      .should('eq', `${Cypress.config().baseUrl}/#/tokens`);
+    cy.url().should('eq', `${Cypress.config().baseUrl}/#/tokens`);
   });
 });

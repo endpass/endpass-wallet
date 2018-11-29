@@ -65,6 +65,8 @@ describe('Settings Page', () => {
     cy.get('[data-test=submit-change-password]').should('be.disabled');
     cy.get('[data-test=input-new-password]').type('2222');
     cy.get('[data-test=submit-change-password]').click();
-    cy.contains('Error while decrypting wallets').should('be.visible');
+    cy.contains(
+      'You entered incorrect password, try using a different one.',
+    ).should('be.visible');
   });
 });

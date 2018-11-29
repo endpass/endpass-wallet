@@ -9,7 +9,8 @@ describe('Receive Page', () => {
 
   it('Should contain section with current user wallet public address and balance', () => {
     cy.get('@store').then(store => {
-      const { wallet, wallets } = store.state.accounts;
+      const { wallets } = store.state.accounts;
+      const wallet = store.getters['accounts/wallet'];
       const addresses = Object.keys(wallets);
 
       cy.get('[data-test=current-account]').contains(wallet.v3.address);
@@ -41,10 +42,10 @@ describe('Receive Page', () => {
     // Should go to send page and change account after click send button
     cy.get('[data-test=account] [data-test=send-button]').click();
     cy.get('@store')
-      .its('state.accounts.wallet.v3.address')
+      .its('getters')
+      .its('accounts/wallet')
+      .its('v3.address')
       .should('not.eq', address);
-    cy.location()
-      .its('href')
-      .should('contain', 'send');
+    cy.url().should('contain', 'send');
   });
 });
