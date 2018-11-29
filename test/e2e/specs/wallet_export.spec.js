@@ -33,9 +33,11 @@ describe('Export wallet page', () => {
   describe('Export to JSON', () => {
     beforeEach(() => {
       cy.get('@store').then(store => {
-        cy.stub(store.state.accounts.wallet, 'exportToJSON', () => null).as(
+        cy.stub(
+          store.getters['accounts/wallet'],
           'exportToJSON',
-        );
+          () => null,
+        ).as('exportToJSON');
       });
     });
 
