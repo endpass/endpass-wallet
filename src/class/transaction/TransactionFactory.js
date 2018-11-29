@@ -22,13 +22,19 @@ export default class TransactionFactory {
   }
 
   static fromRequestParams(trx) {
-    const { value, gasPrice } = trx;
+    const { value, gasPrice, gas } = trx;
     const adaptData = {};
+    if (value) {
+      adaptData.value = fromWei(hexToNumberString(value));
+    }
     if (value) {
       adaptData.value = fromWei(hexToNumberString(value));
     }
     if (gasPrice) {
       adaptData.gasPrice = fromWei(hexToNumberString(gasPrice), 'Gwei');
+    }
+    if (gas) {
+      adaptData.gasLimit = hexToNumberString(gas);
     }
     return Object.assign(new Transaction(trx), adaptData);
   }
