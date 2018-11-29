@@ -1,5 +1,6 @@
 import web3 from '@/class/singleton/web3';
 import {
+  addresses,
   email,
   v3password,
   mnemonic,
@@ -16,9 +17,11 @@ import {
   SET_HD_KEY,
   SET_BALANCE,
   CHANGE_INIT_STATUS,
+  SET_HARDWARE_XPUB,
 } from '@/store/accounts/mutations-types';
 import keystore from '@/utils/keystore';
 import userService from '@/services/user';
+import hardwareService from '@/services/hardware';
 import localSettingsService from '@/services/localSettings';
 import { WALLET_TYPE } from '@/constants';
 
@@ -542,6 +545,10 @@ describe('Accounts actions', () => {
         hidden: false,
       };
 
+      keystore.encryptHDWallet = jest.fn().mockReturnValueOnce({
+        address,
+      });
+
       await actions.addHdWallet(
         { dispatch, state },
         { password: v3password, key: mnemonic },
@@ -903,6 +910,304 @@ describe('Accounts actions', () => {
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
       });
+    });
+  });
+
+  describe('getNextWalletsFromHd', () => {
+    it('should save xpub if saved xpub is not eqials to received with given params', async () => {
+      expect.assertions(3);
+
+      const state = {
+        hardwareXpub: {
+          foo: 'bar',
+        },
+      };
+      const payload = {
+        walletType: 'foo',
+        bar: 'baz',
+      };
+
+      const res = await actions.getNextWalletsFromHd(
+        { state, dispatch },
+        payload,
+      );
+
+      expect(hardwareService.getNextWallets).toBeCalledWith({
+        ...payload,
+        xpub: 'bar',
+      });
+      expect(dispatch).toBeCalledWith('saveHardwareXpub', {
+        xpub: addresses[0],
+        walletType: 'foo',
+      });
+      expect(res).toBe(addresses);
+    });
+
+    it('should not save xpub if current xpub is equals to received xpub from service', async () => {
+      expect.assertions(1);
+
+      const state = {
+        hardwareXpub: {
+          foo: 'bar',
+        },
+      };
+      const payload = {
+        walletType: 'foo',
+        bar: 'baz',
+      };
+
+      hardwareService.getNextWallets.mockResolvedValueOnce({
+        xpub: 'bar',
+        addresses,
+      });
+
+      await actions.getNextWalletsFromHd({ state, dispatch }, payload);
+
+      expect(dispatch).not.toBeCalled();
+    });
+  });
+
+  describe('saveHardwareXpub', () => {
+    it('should set hardware xpub and set account with user service', async () => {
+      expect.assertions(2);
+
+      const payload = {
+        walletType: 'foo',
+        xpub: 'baz',
+      };
+
+      await actions.saveHardwareXpub({ commit }, payload);
+
+      expect(commit).toBeCalledWith(SET_HARDWARE_XPUB, payload);
+      expect(userService.setAccount).toBeCalledWith('baz', {
+        info: {
+          type: 'foo',
+        },
+      });
+    });
+  });
+
+  describe('decryptAccountHdWallet', () => {
+    it('should decrypt current account hd wallet with keystore and return it', () => {
+      keystore.decryptHDWallet = jest.fn().mockReturnValueOnce('foo');
+
+      const state = {
+        hdKey: '0x0',
+      };
+      const res = actions.decryptAccountHdWallet({ state }, 'password');
+
+      expect(keystore.decryptHDWallet).toBeCalledWith('password', '0x0');
+      expect(res).toBe('foo');
+    });
+
+    it('should not do anything if current account hdKey is empty and return null', () => {
+      const state = {
+        hdKey: null,
+      };
+      const res = actions.decryptAccountHdWallet({ state }, 'password');
+
+      expect(keystore.decryptHDWallet).not.toBeCalled();
+      expect(res).toBe(null);
+    });
+  });
+
+  describe('decryptAccountWallets', () => {
+    it('should decrypt current account non-public wallets', () => {
+      const state = {
+        wallets: [
+          {
+            foo: 'bar',
+            v3: '0x0',
+            isPublic: true,
+          },
+          {
+            bar: 'baz',
+            v3: '0x1',
+            isPublic: false,
+          },
+        ],
+      };
+
+      keystore.decryptWallet = jest.fn();
+
+      actions.decryptAccountWallets({ state }, 'password');
+
+      expect(keystore.decryptWallet).toBeCalledTimes(1);
+      expect(keystore.decryptWallet).toBeCalledWith('password', '0x1');
+    });
+  });
+
+  describe('encryptHdWallet', () => {
+    it('should encrypt given hd wallet', () => {
+      const payload = {
+        password: 'password',
+        hdWallet: {
+          foo: 'bar',
+        },
+      };
+
+      actions.encryptHdWallet(null, payload);
+
+      expect(keystore.encryptHDWallet).toBeCalledWith(
+        payload.password,
+        payload.hdWallet,
+      );
+    });
+
+    it('should not do anything received hd wallet empty', () => {
+      const res = actions.encryptHdWallet(null, {});
+
+      expect(keystore.encryptHDWallet).not.toBeCalled();
+      expect(res).toBe(null);
+    });
+  });
+
+  describe('encryptWallets', () => {
+    it('should encrypt and returns given wallets', () => {
+      keystore.encryptWallet = jest
+        .fn()
+        .mockImplementationOnce((pass, obj) => obj);
+
+      const payload = {
+        password: 'password',
+        wallets: [
+          {
+            foo: 'bar',
+          },
+        ],
+      };
+
+      const res = actions.encryptWallets(null, payload);
+
+      expect(keystore.encryptWallet).toBeCalledWith(
+        payload.password,
+        payload.wallets[0],
+      );
+      expect(res).toEqual(payload.wallets);
+    });
+  });
+
+  describe('reencryptAllAccountWallets', () => {
+    it('should reencrypt all account wallets with new password', async () => {
+      expect.assertions(6);
+
+      const decryptedHdWallet = {
+        foo: 'bar',
+      };
+      const decryptedWallets = [
+        {
+          bar: 'baz',
+        },
+      ];
+      const enryptedHdWallet = {
+        foo: '0x0',
+      };
+      const enryptedWallets = [
+        {
+          foo: '0x1',
+        },
+      ];
+
+      dispatch.mockResolvedValueOnce(decryptedHdWallet);
+      dispatch.mockResolvedValueOnce(decryptedWallets);
+      dispatch.mockResolvedValueOnce(enryptedHdWallet);
+      dispatch.mockResolvedValueOnce(enryptedWallets);
+
+      const payload = {
+        password: 'password',
+        newPassword: 'newPassword',
+      };
+
+      const res = await actions.reencryptAllAccountWallets(
+        { dispatch },
+        payload,
+      );
+
+      expect(dispatch).toBeCalledTimes(4);
+      expect(dispatch).toHaveBeenNthCalledWith(
+        1,
+        'decryptAccountHdWallet',
+        payload.password,
+      );
+      expect(dispatch).toHaveBeenNthCalledWith(
+        2,
+        'decryptAccountWallets',
+        payload.password,
+      );
+      expect(dispatch).toHaveBeenNthCalledWith(3, 'encryptHdWallet', {
+        hdWallet: decryptedHdWallet,
+        password: payload.newPassword,
+      });
+      expect(dispatch).toHaveBeenNthCalledWith(4, 'encryptWallets', {
+        wallets: decryptedWallets,
+        password: payload.newPassword,
+      });
+      expect(res).toEqual({
+        hdWallet: enryptedHdWallet,
+        wallets: enryptedWallets,
+      });
+    });
+  });
+
+  describe('updateAllAccountWalletsWithNewPassword', () => {
+    const payload = {
+      password: 'password',
+      newPassword: 'newPassword',
+    };
+
+    it('should reencrypt all account wallets and update them with new password', async () => {
+      expect.assertions(3);
+
+      const encryptedAccountWallets = {
+        hdWallet: {
+          address: '0x0',
+        },
+        wallets: [
+          {
+            address: '0x1',
+          },
+        ],
+      };
+
+      dispatch.mockResolvedValueOnce(encryptedAccountWallets);
+
+      await actions.updateAllAccountWalletsWithNewPassword(
+        { dispatch },
+        payload,
+      );
+
+      expect(dispatch).toBeCalledTimes(2);
+      expect(dispatch).toHaveBeenNthCalledWith(
+        1,
+        'reencryptAllAccountWallets',
+        payload,
+      );
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'updateWallets', {
+        wallets: {
+          '0x0': {
+            address: '0x0',
+          },
+          '0x1': {
+            address: '0x1',
+          },
+        },
+      });
+    });
+
+    it('should not do anything if account does not includes any wallets', async () => {
+      expect.assertions(1);
+
+      dispatch.mockResolvedValueOnce({
+        hdWallet: null,
+        wallets: [],
+      });
+
+      await actions.updateAllAccountWalletsWithNewPassword(
+        { dispatch },
+        payload,
+      );
+
+      expect(dispatch).toBeCalledTimes(1);
     });
   });
 });

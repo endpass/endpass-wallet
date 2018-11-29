@@ -81,7 +81,9 @@ export default class Wallet {
     return bytesToHex(privateKey);
   }
 
-  // () => Promise<String>
+  /**
+   * @returns (Propmise<String>)
+   */
   async exportToJSON() {
     return JSON.stringify(this.v3);
   }
