@@ -72,23 +72,22 @@ const processCurrentRequest = async (
 
   try {
     const signResult = await dispatch('getSignedCurrentRequest', password);
-
     dispatch('sendResponse', {
       id: requestId,
       result: signResult,
       jsonrpc,
     });
-  } catch (err) {
+  } catch (error) {
     const notificationError = new NotificationError({
       title: 'Sign error',
-      text: err.request,
+      text: error.message,
       type: 'is-danger',
     });
 
     dispatch('errors/emitError', notificationError, { root: true });
     dispatch('sendResponse', {
       id: requestId,
-      error: err,
+      error,
       result: [],
       jsonrpc,
     });
@@ -99,7 +98,6 @@ const processCurrentRequest = async (
 
 const getSignedCurrentRequest = ({ dispatch, getters }, password) => {
   const { method } = getters.currentRequest;
-
   switch (method) {
     case 'eth_sendTransaction':
       return dispatch('getSignedCurrentTransaction', password);
@@ -133,6 +131,7 @@ const getSignedCurrentTransaction = async (
     sendEvent.then(receipt => resolve(receipt.transactionHash));
 
     sendEvent.on('error', error => reject(error));
+    sendEvent.catch(error => reject(error));
   });
 };
 
