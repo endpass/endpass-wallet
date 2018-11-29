@@ -325,12 +325,10 @@ const decryptAccountWallets = ({ state }, password) =>
     .map(item => keystore.decryptWallet(password, item.v3));
 
 const encryptHdWallet = (ctx, { password, hdWallet }) =>
-  hdWallet && keystore.encryptHDWallet(password, hdWallet);
+  hdWallet ? keystore.encryptHDWallet(password, hdWallet) : null;
 
 const encryptWallets = (ctx, { password, wallets = [] }) =>
-  wallets.map(decryptedWallet =>
-    keystore.encryptWallet(password, decryptedWallet),
-  );
+  wallets.map(item => keystore.encryptWallet(password, item));
 
 const reencryptAllAccountWallets = async (
   { dispatch },

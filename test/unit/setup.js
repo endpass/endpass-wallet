@@ -14,6 +14,7 @@ import 'mocks/services/gas-price';
 import 'mocks/services/price';
 import 'mocks/services/tokeninfo';
 import 'mocks/services/localSettings';
+import 'mocks/services/hardware';
 
 /**
  * Classes mocks
