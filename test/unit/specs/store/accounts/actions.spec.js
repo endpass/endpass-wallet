@@ -501,6 +501,9 @@ describe('Accounts actions', () => {
     const json = {
       address: 'address',
     };
+    const info = {
+      address: json.address,
+    };
 
     beforeEach(() => {
       dispatch.mockClear();
@@ -509,16 +512,29 @@ describe('Accounts actions', () => {
     it('should call userService.setAccount', () => {
       userService.setAccount = jest.fn();
 
+      saveWallet({ dispatch }, { json, info });
+
+      expect(userService.setAccount).toHaveBeenCalledTimes(1);
+      expect(userService.setAccount).toHaveBeenCalledWith(json.address, {
+        info,
+        ...json,
+      });
+
+      userService.setAccount.mockClear();
+
       saveWallet({ dispatch }, { json });
 
       expect(userService.setAccount).toHaveBeenCalledTimes(1);
-      expect(userService.setAccount).toHaveBeenCalledWith(json.address, json);
+      expect(userService.setAccount).toHaveBeenCalledWith(json.address, {
+        info: {},
+        ...json,
+      });
     });
 
     it('should call commitWallet action', async () => {
       expect.assertions(2);
 
-      await saveWallet({ dispatch }, { json });
+      await saveWallet({ dispatch }, { json, info });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('commitWallet', { wallet: json });
@@ -526,21 +542,61 @@ describe('Accounts actions', () => {
   });
 
   describe('addHdWallet', () => {
-    it('should call saveWallet action', async () => {
+    const state = {
+      hdKey: null,
+    };
+
+    it('should call saveWallet action with HD_MAIN wallet type', async () => {
       expect.assertions(2);
 
       const { address } = hdv3;
+      const expectedJson = expect.objectContaining({
+        address,
+      });
+      const expectedInfo = {
+        address,
+        type: WALLET_TYPE.HD_MAIN,
+        hidden: false,
+      };
 
       await actions.addHdWallet(
-        { commit, dispatch },
+        { dispatch, state },
         { password: v3password, key: mnemonic },
       );
 
       expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'saveWallet', {
-        json: expect.objectContaining({
-          address,
-        }),
+        json: expectedJson,
+        info: expectedInfo,
+      });
+    });
+
+    it('should call saveWallet action with HD wallet type', async () => {
+      expect.assertions(2);
+
+      const currentState = {
+        ...state,
+        hdKey: 'hd key',
+      };
+      const { address } = hdv3;
+      const expectedJson = expect.objectContaining({
+        address,
+      });
+      const expectedInfo = {
+        address,
+        type: WALLET_TYPE.HD,
+        hidden: false,
+      };
+
+      await actions.addHdWallet(
+        { dispatch, state: currentState },
+        { password: v3password, key: mnemonic },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'saveWallet', {
+        json: expectedJson,
+        info: expectedInfo,
       });
     });
 
@@ -548,7 +604,7 @@ describe('Accounts actions', () => {
       expect.assertions(2);
 
       await actions.addHdWallet(
-        { commit, dispatch },
+        { dispatch, state },
         { password: v3password, key: mnemonic },
       );
 
@@ -563,7 +619,7 @@ describe('Accounts actions', () => {
       dispatch.mockRejectedValueOnce(error);
 
       await actions.addHdWallet(
-        { commit, dispatch },
+        { dispatch, state },
         { password: v3password, key: mnemonic },
       );
 
