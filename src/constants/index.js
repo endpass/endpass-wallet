@@ -5,17 +5,20 @@ export const MAIN_NET_ID = 1;
 export const NETWORK_URL = Object.freeze({
   ETH: [
     'wss://eth-mainnet.endpass.com:2084',
+    'wss://eth-mainnet.endpass.com',
     'https://eth-mainnet.endpass.com:2083',
     `https://mainnet.infura.io/${ENV.infuraConf.key}`,
   ],
   ROP: [
     'wss://eth-ropsten.endpass.com:2084',
+    'wss://eth-ropsten.endpass.com',
     'https://eth-ropsten.endpass.com:2083',
     `https://ropsten.infura.io/${ENV.infuraConf.key}`,
   ],
   RIN: `https://rinkeby.infura.io/${ENV.infuraConf.key}`,
   ETC: [
     'wss://etc-mainnet.endpass.com:2084',
+    'wss://etc-mainnet.endpass.com',
     'https://etc-mainnet.endpass.com:2083',
     'https://etc-geth.0xinfra.com',
   ],
