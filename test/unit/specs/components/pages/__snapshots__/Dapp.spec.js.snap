@@ -36,7 +36,7 @@ exports[`DappPage render should render iframe if it loading but it must be hidde
                     </div>
                 </v-input>
             </div>
-            <iframe src="/" class="dapp-frame" style="display: none;"></iframe>
+            <iframe src="https://wildproxy-dev.endpass.com/" class="dapp-frame" style="display: none;"></iframe>
             <!---->
         </div>
     </div>
@@ -57,7 +57,7 @@ exports[`DappPage render should render iframe it loaded 1`] = `
                     </div>
                 </v-input>
             </div>
-            <iframe src="/" class="dapp-frame"></iframe>
+            <iframe src="https://wildproxy-dev.endpass.com/" class="dapp-frame"></iframe>
             <!---->
         </div>
     </div>
