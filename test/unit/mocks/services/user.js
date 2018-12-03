@@ -33,6 +33,26 @@ jest.mock('@/services/user', () => {
       success: true,
     }),
 
+    addToken: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
+    removeToken: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
+    addNetwork: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
+    updateNetwork: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
+    removeNetwork: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
     setAccount: jest.fn().mockResolvedValue({
       success: true,
     }),
@@ -44,13 +64,6 @@ jest.mock('@/services/user', () => {
     getAccounts: jest.fn().mockResolvedValue(addresses),
 
     getV3Accounts: jest.fn().mockResolvedValue([v3]),
-
-    getFullUserInfo: jest
-      .fn()
-      .mockResolvedValue([
-        ...addresses.map(address => getAccountByAddress(address)),
-        ...settings,
-      ]),
 
     getHDKey: jest.fn().mockResolvedValue(hdv3),
 

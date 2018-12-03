@@ -54,67 +54,97 @@ import {
   ethplorerTransactions,
 } from '../fixtures/transactions';
 
+const identityAPIUrl = '/identity/api/v1.1';
+
 // Sets up server and routes to stub logged in user with fixtures.
 // Usage: cy.login()
 Cypress.Commands.add('login', () => {
   cy.server();
 
   // Keystore server
-  cy.route('GET', '/identity/api/v1/info', 'fixture:keystore/info.json').as(
+  cy.route('GET', `${identityAPIUrl}/info`, 'fixture:keystore/info.json').as(
     'keystoreInfo',
   );
   cy.route(
     'GET',
-    '/identity/api/v1/accounts',
+    `${identityAPIUrl}/accounts`,
     'fixture:keystore/accounts.json',
   ).as('keystoreAccounts');
   // Regular account
   cy.route(
     'GET',
-    '/identity/api/v1/account/0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c',
+    `${identityAPIUrl}/account/0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c`,
     'fixture:keystore/account_1.json',
   ).as('keystoreAccount');
   // HD account
   cy.route(
     'GET',
-    '/identity/api/v1/account/xpub*',
+    `${identityAPIUrl}/account/xpub*`,
     'fixture:keystore/account_0.json',
   ).as('keystoreHdAccount');
   // Read only account
   cy.route(
     'GET',
-    '/identity/api/v1/account/0x6bBf1DEa0d21eaFd232e281A196E6f11906054df',
+    `${identityAPIUrl}/account/0x6bBf1DEa0d21eaFd232e281A196E6f11906054df`,
     {},
   ).as('publicAccount');
   cy.route(
     'POST',
-    '/identity/api/v1/account/*',
+    `${identityAPIUrl}/account/*`,
     'fixture:identity/success.json',
   ).as('keystoreAddAccount');
   cy.route(
     'POST',
-    '/identity/api/v1/accounts',
+    `${identityAPIUrl}/accounts`,
     'fixture:identity/success.json',
   ).as('keystoreUpdateAccounts');
 
   // Identity server
-  cy.route('GET', '/identity/api/v1/user', 'fixture:identity/user.json').as(
-    'identityUser',
-  );
-  cy.route('POST', '/identity/api/v1/user', 'fixture:identity/success.json').as(
-    'identityPostSettings',
-  );
-  cy.route('GET', '/identity/api/v1/otp', 'fixture:identity/otp.json').as(
-    'identityOtp',
-  );
-  cy.route('POST', '/identity/api/v1/otp', 'fixture:identity/success.json').as(
-    'identitySetOtp',
-  );
+  cy.route(
+    'GET',
+    `${identityAPIUrl}/settings`,
+    'fixture:identity/user.json',
+  ).as('identityUser');
+  cy.route(
+    'POST',
+    `${identityAPIUrl}/settings`,
+    'fixture:identity/success.json',
+  ).as('identityPostSettings');
+  cy.route(
+    'GET',
+    `${identityAPIUrl}/settings/otp`,
+    'fixture:identity/otp.json',
+  ).as('identityOtp');
+  cy.route(
+    'POST',
+    `${identityAPIUrl}/settings/otp`,
+    'fixture:identity/success.json',
+  ).as('identitySetOtp');
   cy.route(
     'DELETE',
-    '/identity/api/v1/otp',
+    `${identityAPIUrl}/settings/otp`,
     'fixture:identity/success.json',
   ).as('identityDeleteOtp');
+  cy.route(
+    'POST',
+    `${identityAPIUrl}/tokens/**`,
+    'fixture:identity/success.json',
+  ).as('identityAddToken');
+  cy.route(
+    'DELETE',
+    `${identityAPIUrl}/tokens/**`,
+    'fixture:identity/success.json',
+  ).as('identityDeleteToken');
+  cy.route(
+    'POST',
+    `${identityAPIUrl}/networks/*`,
+    'fixture:identity/success.json',
+  ).as('identityAddNetwork');
+  cy.route(
+    'DELETE',
+    `${identityAPIUrl}/networks/*`,
+    'fixture:identity/success.json',
+  ).as('identityDeleteNetwork');
   cy.route('GET', /\/account\/(\w+)\/info$/, {}).as('accountInfo');
 });
 
@@ -123,13 +153,13 @@ Cypress.Commands.add('login', () => {
 Cypress.Commands.add('preventLogin', () => {
   cy.server();
   cy.route({
-    url: '/identity/api/v1/accounts',
+    url: `${identityAPIUrl}/accounts`,
     response: {},
     status: 401,
   }).as('keystoreAccountsNotLogin');
 
   cy.route({
-    url: '/identity/api/v1/user',
+    url: `${identityAPIUrl}/settings`,
     response: {},
     status: 401,
   }).as('identityUserNotLogin');

@@ -3,7 +3,7 @@ describe('New Wallet Page', () => {
     cy.login();
     cy.route({
       method: 'GET',
-      url: '/identity/api/v1/accounts',
+      url: '/identity/api/v1.1/accounts',
       response: [],
       status: 200,
     }).as('keystoreGetEmptyAccounts');

@@ -1,9 +1,7 @@
 {
   "id": "c23809bd-bb68-44a0-946c-40823dc4b80e",
   "email": "user@example.com",
-  "settings": {
-    "currency": "USD"
-  },
+  "fiatCurrency": "USD",
   "tokens": {
     "1": [
       {

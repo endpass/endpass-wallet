@@ -388,15 +388,15 @@ describe('user actions', () => {
 
       await actions.updateSettings({ commit, dispatch }, settings);
 
-      expect(userService.setSetting).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toBeCalledWith('settings', settings);
+      expect(userService.setSettings).toHaveBeenCalledTimes(1);
+      expect(userService.setSettings).toBeCalledWith(settings);
     });
 
     it('should handle errors', async () => {
       expect.assertions(2);
 
       const error = new Error('error');
-      userService.setSetting.mockRejectedValueOnce(error);
+      userService.setSettings.mockRejectedValueOnce(error);
 
       await actions.updateSettings({ commit, dispatch });
 
@@ -408,18 +408,16 @@ describe('user actions', () => {
   });
 
   describe('setUserSettings', () => {
-    it('should set user email, settings and tokens to the store', async () => {
+    it('should set user email, fiat and tokens to the store', async () => {
       expect.assertions(4);
+
+      const { fiatCurrency } = settings;
 
       await actions.setUserSettings({ commit, dispatch });
 
       expect(commit).toHaveBeenCalledTimes(3);
       expect(commit).toHaveBeenNthCalledWith(1, SET_EMAIL, settings.email);
-      expect(commit).toHaveBeenNthCalledWith(
-        2,
-        SET_SETTINGS,
-        settings.settings,
-      );
+      expect(commit).toHaveBeenNthCalledWith(2, SET_SETTINGS, { fiatCurrency });
       expect(commit).toHaveBeenNthCalledWith(
         3,
         `tokens/${SET_USER_TOKENS}`,
@@ -435,27 +433,16 @@ describe('user actions', () => {
       );
     });
 
-    it('should set user settings with valid fields', async () => {
-      expect.assertions(2);
-
-      const validSettings = {
-        valid: 'valid',
-      };
+    it('should not set user fiat with invalid data', async () => {
+      expect.assertions(1);
 
       userService.getSettings.mockResolvedValueOnce({
-        settings: {
-          invalid1: '',
-          invalid2: false,
-          invalid3: null,
-          invalid4: NaN,
-          ...validSettings,
-        },
+        fiatCurrency: '',
       });
 
       await actions.setUserSettings({ commit });
 
-      expect(commit).toBeCalledTimes(1);
-      expect(commit).toBeCalledWith(SET_SETTINGS, validSettings);
+      expect(commit).not.toBeCalled();
     });
 
     it('should handle errors', async () => {

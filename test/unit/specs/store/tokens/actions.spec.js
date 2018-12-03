@@ -7,7 +7,7 @@ import {
   SET_BALANCES_BY_ADDRESS,
   ADD_TOKENS_PRICES,
 } from '@/store/tokens/mutations-types';
-import { NotificationError } from '@/class';
+import { NotificationError, Token } from '@/class';
 import {
   userService,
   tokenInfoService,
@@ -96,9 +96,9 @@ describe('tokens actions', () => {
         },
       );
 
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'tokens',
-        expandedTokensListedByNetworks,
+      expect(userService.addToken).toBeCalledWith(
+        MAIN_NET_ID,
+        Token.getConsistent(token),
       );
       expect(commit).toHaveBeenCalledWith(
         SET_USER_TOKENS,
@@ -107,7 +107,7 @@ describe('tokens actions', () => {
     });
 
     it('should not add user token if it is exist in state ', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       getters = {
         userTokenByAddress: () => true,
@@ -121,6 +121,7 @@ describe('tokens actions', () => {
         },
       );
 
+      expect(userService.addToken).not.toBeCalled();
       expect(commit).not.toBeCalled();
     });
 
@@ -133,7 +134,7 @@ describe('tokens actions', () => {
         userTokenByAddress: () => false,
         userTokensWithToken: () => expandedTokensMappedByNetworks,
       };
-      userService.setSetting.mockRejectedValueOnce(error);
+      userService.addToken.mockRejectedValueOnce(error);
 
       await actions.addUserToken(
         { state, commit, dispatch, getters, rootGetters },
@@ -143,7 +144,7 @@ describe('tokens actions', () => {
       );
 
       expect(commit).not.toBeCalled();
-      expect(userService.setSetting).toBeCalled();
+      expect(userService.addToken).toBeCalled();
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -165,9 +166,9 @@ describe('tokens actions', () => {
       );
 
       expect(commit).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'tokens',
-        cuttedTokensListedByNetworks,
+      expect(userService.removeToken).toBeCalledWith(
+        MAIN_NET_ID,
+        Token.getConsistent(tokens[0]).address,
       );
       expect(commit).toHaveBeenCalledWith(
         SET_USER_TOKENS,
@@ -176,7 +177,7 @@ describe('tokens actions', () => {
     });
 
     it('should not do anything if target token is not exist in state', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       getters = {
         userTokenByAddress: () => false,
@@ -188,6 +189,7 @@ describe('tokens actions', () => {
         { token: tokens[0] },
       );
 
+      expect(userService.removeToken).not.toBeCalled();
       expect(commit).not.toBeCalled();
     });
 
@@ -200,7 +202,7 @@ describe('tokens actions', () => {
         userTokenByAddress: () => true,
         userTokensWithoutToken: () => cuttedTokensMappedByNetworks,
       };
-      userService.setSetting.mockRejectedValueOnce(error);
+      userService.removeToken.mockRejectedValueOnce(error);
 
       await actions.removeUserToken(
         { state, commit, dispatch, getters, rootGetters },

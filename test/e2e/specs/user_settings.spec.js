@@ -16,7 +16,7 @@ describe('Settings Page', () => {
 
   it('should save user settings', () => {
     cy.get('[data-test=input-email]').should('have.value', user.email);
-    cy.get('[data-test=select-fiat]').should('contain', user.settings.currency);
+    cy.get('[data-test=select-fiat]').should('contain', user.fiatCurrency);
 
     // Change fiat currency
     cy.get('[data-test=select-fiat] select')

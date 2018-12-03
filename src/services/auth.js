@@ -25,35 +25,39 @@ export default {
     }
   },
 
-  loginViaOTP(code, email) {
-    return httpIdentity
-      .post(`${ENV.identityAPIUrl}/token`, {
+  async loginViaOTP(code, email) {
+    try {
+      const {
+        data: { success },
+      } = await httpIdentity.post(`${ENV.identityAPIUrl}/auth/token`, {
         challenge_type: 'otp',
         code,
         email,
-      })
-      .then(({ data: { success } }) => {
-        if (!success) {
-          return Promise.reject();
-        }
-        return { success };
-      })
-      .catch(() => {
-        throw new NotificationError({
-          title: 'Auth error',
-          text: 'Invalid or missing one time password. Please, try again',
-          type: 'is-danger',
-        });
       });
+
+      if (!success) {
+        throw new Error('Login error');
+      }
+
+      return { success };
+    } catch (error) {
+      throw new NotificationError({
+        title: 'Auth error',
+        text: 'Invalid or missing one time password. Please, try again',
+        type: 'is-danger',
+      });
+    }
   },
 
-  logout() {
-    return httpIdentity.post(`${ENV.identityAPIUrl}/logout`).catch(() => {
+  async logout() {
+    try {
+      return await httpIdentity.post(`${ENV.identityAPIUrl}/logout`);
+    } catch (e) {
       throw new NotificationError({
         title: 'Log out error',
         text: 'Failed to log out. Please, try again',
         type: 'is-danger',
       });
-    });
+    }
   },
 };

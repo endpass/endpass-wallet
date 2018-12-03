@@ -105,7 +105,7 @@ const deleteOtpSettings = async ({ commit, dispatch }, { code }) => {
 const updateSettings = async ({ commit, dispatch }, settings) => {
   try {
     commit(SET_SETTINGS, settings);
-    await userService.setSetting('settings', settings);
+    await userService.setSettings(settings);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
   }
@@ -113,15 +113,14 @@ const updateSettings = async ({ commit, dispatch }, settings) => {
 
 const setUserSettings = async ({ commit, dispatch }) => {
   try {
-    const { settings, email, tokens } = await userService.getSettings();
+    const { fiatCurrency, email, tokens } = await userService.getSettings();
 
     if (email) {
       commit(SET_EMAIL, email);
     }
 
-    if (settings) {
-      const newSettings = pickBy(settings);
-      commit(SET_SETTINGS, newSettings);
+    if (fiatCurrency) {
+      commit(SET_SETTINGS, { fiatCurrency });
     }
 
     if (tokens) {

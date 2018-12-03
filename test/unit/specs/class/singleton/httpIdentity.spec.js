@@ -65,7 +65,7 @@ describe('httpIdentity', () => {
 
           expect(store.dispatch).toHaveBeenCalledTimes(0);
 
-          config.url = `${ENV.identityAPIUrl}/token`;
+          config.url = `${ENV.identityAPIUrl}/auth/token`;
           fulfilled({ status, config });
 
           expect(store.dispatch).toHaveBeenCalledTimes(0);
