@@ -546,7 +546,7 @@ describe('Accounts actions', () => {
       hdKey: null,
     };
 
-    it('should call saveWallet action with HD_MAIN wallet type', async () => {
+    it('should call saveWallet action', async () => {
       expect.assertions(2);
 
       const { address } = hdv3;
@@ -561,35 +561,6 @@ describe('Accounts actions', () => {
 
       await actions.addHdWallet(
         { dispatch, state },
-        { password: v3password, key: mnemonic },
-      );
-
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenNthCalledWith(1, 'saveWallet', {
-        json: expectedJson,
-        info: expectedInfo,
-      });
-    });
-
-    it('should call saveWallet action with HD wallet type', async () => {
-      expect.assertions(2);
-
-      const currentState = {
-        ...state,
-        hdKey: 'hd key',
-      };
-      const { address } = hdv3;
-      const expectedJson = expect.objectContaining({
-        address,
-      });
-      const expectedInfo = {
-        address,
-        type: WALLET_TYPE.HD,
-        hidden: false,
-      };
-
-      await actions.addHdWallet(
-        { dispatch, state: currentState },
         { password: v3password, key: mnemonic },
       );
 

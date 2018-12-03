@@ -171,7 +171,7 @@ const saveWallet = async ({ dispatch }, { json, info = {} }) => {
   await dispatch('commitWallet', { wallet: json });
 };
 
-const addHdWallet = async ({ dispatch, state }, { key, password }) => {
+const addHdWallet = async ({ dispatch }, { key, password }) => {
   try {
     const seed = Bip39.mnemonicToSeed(key);
     const hdKey = HDKey.fromMasterSeed(seed);
@@ -180,7 +180,7 @@ const addHdWallet = async ({ dispatch, state }, { key, password }) => {
     const json = keystore.encryptHDWallet(password, hdWallet);
     const info = {
       address: json.address,
-      type: state.hdKey ? WALLET_TYPE.HD : WALLET_TYPE.HD_MAIN,
+      type: WALLET_TYPE.HD_MAIN,
       hidden: false,
     };
 
