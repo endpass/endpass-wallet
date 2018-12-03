@@ -88,7 +88,7 @@ export default {
     ...mapGetters('dapp', ['currentRequest']),
 
     dappUrl() {
-      return `/${this.url}`;
+      return `${ENV.wildproxyUrl}${this.url}`;
     },
 
     isCurrentRequestTransaction() {
