@@ -33,7 +33,7 @@ const kdfParams = {
 const googleAnalyticsId = 'UA-115004766-3';
 const intercomAppId = 'ap1xxb8t';
 
-const wildproxyUrl = 'https://wildproxy-dev.endpass.com/';
+const wildproxyUrl = 'https://wildproxy.endpass.com/';
 
 const isProduction = true;
 
