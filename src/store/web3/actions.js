@@ -19,7 +19,7 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
   commit(CHANGE_NETWORK, network);
 
   return Promise.all([
-    userService.setSetting('net', network.id),
+    userService.setSettings({ net: network.id }),
     dispatch('subscribeOnBlockUpdates'),
     dispatch('price/updatePrice', {}, { root: true }),
     dispatch('accounts/updateBalance', {}, { root: true }),
@@ -51,10 +51,7 @@ const addNetwork = async ({ state, commit, dispatch }, { network }) => {
   const networksToSave = [...state.storedNetworks, network];
 
   try {
-    const { success } = await userService.setSetting(
-      'networks',
-      networksToSave,
-    );
+    const { success } = await userService.addNetwork(network);
 
     commit(SET_NETWORKS, networksToSave);
 
@@ -84,9 +81,9 @@ const updateNetwork = async (
   networksToSave.splice(oldNetworkIndex, 1, network);
 
   try {
-    const { success } = await userService.setSetting(
-      'networks',
-      networksToSave,
+    const { success } = await userService.updateNetwork(
+      oldNetwork.url,
+      network,
     );
 
     commit(SET_NETWORKS, networksToSave);
@@ -110,10 +107,7 @@ const deleteNetwork = async (
   );
 
   try {
-    const { success } = await userService.setSetting(
-      'networks',
-      networksToSave,
-    );
+    const { success } = await userService.removeNetwork(network.url);
 
     commit(SET_NETWORKS, networksToSave);
 
@@ -123,7 +117,7 @@ const deleteNetwork = async (
 
     return success;
   } catch (error) {
-    await dispatch('errors/emitError', error, { root: true });
+    return dispatch('errors/emitError', error, { root: true });
   }
 };
 

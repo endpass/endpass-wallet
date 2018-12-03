@@ -77,7 +77,7 @@ describe('Auth service', () => {
   describe('loginViaOTP', () => {
     const code = 'code';
     const email = '123@email.com';
-    const url = `${ENV.identityAPIUrl}/token`;
+    const url = `${ENV.identityAPIUrl}/auth/token`;
     const successResp = {
       success: true,
     };
@@ -103,13 +103,13 @@ describe('Auth service', () => {
       await authService.loginViaOTP(code, email);
     });
 
-    it('should handle successfull POST /token request', async () => {
+    it('should handle successfull POST /auth/token request', async () => {
       axiosMock.onPost(url).reply(200, successResp);
       const resp = await authService.loginViaOTP(code, email);
       expect(resp).toEqual(successResp);
     });
 
-    it('should handle failed POST /token request', async () => {
+    it('should handle failed POST /auth/token request', async () => {
       axiosMock.onPost(url).reply(200, { success: false });
       try {
         await authService.loginViaOTP(code, email);
@@ -118,7 +118,7 @@ describe('Auth service', () => {
       }
     });
 
-    it('should handle rejected POST /token request', async () => {
+    it('should handle rejected POST /auth/token request', async () => {
       axiosMock.onPost(url).reply(500, { success: false });
       try {
         await authService.loginViaOTP(code, email);

@@ -4,12 +4,12 @@ describe('Log In To an Existing Account', () => {
     // Not logged in
     cy.route({
       method: 'GET',
-      url: '/identity/api/v1/*',
+      url: '/identity/api/v1.1/*',
       response: {},
       status: 401,
     });
 
-    cy.route('POST', '/identity/api/v1/auth', 'fixture:identity/auth');
+    cy.route('POST', '/identity/api/v1.1/auth', 'fixture:identity/auth');
 
     cy.visit('#/');
     cy.mockWeb3Requests();

@@ -1,26 +1,88 @@
 import { NotificationError } from '@/class';
-import { httpIdentity, proxyRequest } from '@/class/singleton';
+import { proxyRequest } from '@/class/singleton';
 import keyUtil from '@/utils/keystore';
+import { WALLET_TYPE } from '@/constants';
 
 export default {
   async getSettings() {
     try {
-      return await proxyRequest.read('/user');
+      return await proxyRequest.read('/settings');
     } catch (e) {
       return {};
     }
   },
 
-  async getSetting(setting) {
-    const allSettings = await this.getSettings();
-    return allSettings[setting];
-  },
-
   setSettings(settings) {
-    return proxyRequest.add('/user', {
+    return proxyRequest.add('/settings', {
       payload: settings,
       prop: 'settings',
     });
+  },
+
+  async addToken(netId, token) {
+    try {
+      return await proxyRequest.write(`/tokens/${netId}/${token.address}`, {
+        payload: token,
+      });
+    } catch (error) {
+      throw new NotificationError({
+        title: 'Token request error',
+        text: 'Failed to add user token. Please, try again',
+        type: 'is-danger',
+      });
+    }
+  },
+
+  async removeToken(netId, address) {
+    try {
+      return await proxyRequest.remove(`/tokens/${netId}/${address}`);
+    } catch (error) {
+      throw new NotificationError({
+        title: 'Token request error',
+        text: 'Failed to remove user token. Please, try again',
+        type: 'is-danger',
+      });
+    }
+  },
+
+  async addNetwork(network) {
+    try {
+      return await proxyRequest.write(`/networks/${network.url}`, {
+        payload: network,
+      });
+    } catch (error) {
+      throw new NotificationError({
+        title: 'Network request error',
+        text: 'Failed to add user network. Please, try again',
+        type: 'is-danger',
+      });
+    }
+  },
+
+  async updateNetwork(oldUrl, newNetwork) {
+    try {
+      return await proxyRequest.write(`/networks/${oldUrl}`, {
+        payload: newNetwork,
+      });
+    } catch (error) {
+      throw new NotificationError({
+        title: 'Network request error',
+        text: 'Failed to update user network. Please, try again',
+        type: 'is-danger',
+      });
+    }
+  },
+
+  async removeNetwork(netUrl) {
+    try {
+      return await proxyRequest.remove(`/networks/${netUrl}`);
+    } catch (error) {
+      throw new NotificationError({
+        title: 'Network request error',
+        text: 'Failed to remove user network. Please, try again',
+        type: 'is-danger',
+      });
+    }
   },
 
   setSetting(prop, data) {
@@ -28,18 +90,6 @@ export default {
       [prop]: data,
     });
   },
-
-  // removeSettings(propsArr) {
-  //   return Promise.resolve({
-  //     success: true,
-  //   });
-
-  //   return httpIdentity
-  //     .delete(`${ENV.identityAPIUrl}/user`, propsArr)
-  //     .then(res => res.data)
-  //     .then(console.log)
-  //     .catch(console.log);
-  // },
 
   // Returns addresses of all of the user's accounts
   getAccounts() {
@@ -69,13 +119,13 @@ export default {
   // Update the encrypted keystore for an existing accounts
   async updateAccounts(accounts) {
     try {
-      return await httpIdentity
-        .post(`${ENV.identityAPIUrl}/accounts`, accounts)
-        .then(({ data }) => data);
+      return await proxyRequest.write('/accounts', {
+        payload: accounts,
+      });
     } catch (error) {
       throw new NotificationError({
         title: 'Error updating accounts',
-        text: `An error occurred updating accounts. Please try again later`,
+        text: 'An error occurred updating accounts. Please try again later',
         type: 'is-danger',
       });
     }
@@ -84,14 +134,10 @@ export default {
   // Returns the encrypted keystore for a single account
   async getAccount(address) {
     try {
-      const account = await proxyRequest.read(`/account/${address}`);
-      let info;
-
-      try {
-        info = await proxyRequest.read(`/account/${address}/info`);
-      } catch (e) {
-        info = {};
-      }
+      const [account, info] = await Promise.all([
+        proxyRequest.read(`/account/${address}`),
+        proxyRequest.read(`/account/${address}/info`).catch(() => ({})),
+      ]);
 
       return { ...account, address, info };
     } catch (e) {
@@ -107,55 +153,49 @@ export default {
 
   // Returns encrypted keystores for all non HD accounts
   // TODO refactor to remove this method and only get accounts as needed
-  getV3Accounts() {
-    return this.getAccounts()
-      .then(accounts => {
-        const allAcc = accounts
-          .filter(acc => !keyUtil.isExtendedPublicKey(acc))
-          .map(this.getAccount);
-        return Promise.all(allAcc);
-      })
-      .catch(e => {
-        if (e.response && e.response.status === 401) {
-          throw e;
-        }
+  async getV3Accounts() {
+    try {
+      const accounts = await this.getAccounts();
+      const allAcc = accounts
+        .filter(acc => !keyUtil.isExtendedPublicKey(acc))
+        .map(this.getAccount);
 
-        throw new NotificationError({
-          title: 'Accounts request error',
-          text: 'Failed to get user accounts. Please, reload page',
-          type: 'is-danger',
-        });
+      return await Promise.all(allAcc);
+    } catch (e) {
+      if (e.response && e.response.status === 401) {
+        throw e;
+      }
+
+      throw new NotificationError({
+        title: 'Accounts request error',
+        text: 'Failed to get user accounts. Please, reload page',
+        type: 'is-danger',
       });
+    }
   },
 
   // Returns the encrypted keystore for the user's HD wallet, if any
   // Right now, uses the first HD address found as a key
-  getHDKey() {
-    return this.getAccounts().then(accounts => {
-      const hdAccounts = accounts.filter(acc =>
-        keyUtil.isExtendedPublicKey(acc),
-      );
+  async getHDKey() {
+    const accounts = await this.getAccounts();
 
-      if (hdAccounts.length === 0) {
-        return Promise.resolve();
-      }
+    const hdAddresses = accounts.filter(acc =>
+      keyUtil.isExtendedPublicKey(acc),
+    );
 
-      return this.getAccount(hdAccounts[0]);
-    });
-  },
+    const hdAccounts = await Promise.all(
+      hdAddresses.map(acc => this.getAccount(acc)),
+    );
 
-  getFullUserInfo() {
-    return Promise.all([this.getSettings(), this.getV3Accounts()])
-      .then(([settings, accounts]) => ({
-        accounts,
-        ...settings,
-      }))
-      .catch(() => {});
+    return (
+      hdAccounts.find(({ info = {} }) => info.type === WALLET_TYPE.HD_MAIN) ||
+      hdAccounts[0]
+    );
   },
 
   async getOtpSettings() {
     try {
-      return await proxyRequest.read('/otp');
+      return await proxyRequest.read('/settings/otp');
     } catch (e) {
       throw new NotificationError({
         title: 'Error requesting two-factor authentication settings',
@@ -167,12 +207,12 @@ export default {
 
   async setOtpSettings(secret, code) {
     try {
-      const { success, message } = await proxyRequest.write('/otp', {
+      const { success, message } = await proxyRequest.write('/settings/otp', {
         payload: { secret, code },
       });
 
       if (!success) {
-        throw new Error(`POST ${ENV.identityAPIUrl}/otp: ${message}`);
+        throw new Error(`POST ${ENV.identityAPIUrl}/settings/otp: ${message}`);
       }
 
       return { success };
@@ -189,14 +229,16 @@ export default {
 
   async deleteOtpSettings(code) {
     try {
-      const { success, message } = await proxyRequest.remove('/otp', {
+      const { success, message } = await proxyRequest.remove('/settings/otp', {
         payload: {
           data: { code },
         },
       });
 
       if (!success) {
-        throw new Error(`DELETE ${ENV.identityAPIUrl}/otp: ${message}`);
+        throw new Error(
+          `DELETE ${ENV.identityAPIUrl}/settings/otp: ${message}`,
+        );
       }
 
       return { success };

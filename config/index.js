@@ -10,11 +10,11 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: [
       {
-        context: '/identity/api/v1',
+        context: '/identity/api/v1.1',
         target: 'https://identity-dev.endpass.com',
         changeOrigin: true,
         pathRewrite: {
-          '^/identity/api/v1': '/api/v1',
+          '^/identity/api/v1.1': '/api/v1.1',
         },
         cookieDomainRewrite: 'localhost',
       },
