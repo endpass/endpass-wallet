@@ -7,17 +7,20 @@
       <v-form
         id="sendEther"
         @submit="confirmResend"
-      >
+        :isFormValid="isFormValid"
+        >
         <v-input
           id="gasPrice"
           v-model="newTransaction.gasPrice"
-          :validator="`required|numeric|integer|between:${transaction.gasPrice},100`"
           label="Gas price"
           name="gasPrice"
+          data-vv-name="gasPrice"
           type="number"
           aria-describedby="gasPrice"
           placeholder="Gas price"
           data-test="gas-price-input"
+          v-validate="`required|numeric|integer|between:${transaction.gasPrice},100`"
+          :error="errors.first('gasPrice')"
           autofocus
           required
         >
@@ -31,9 +34,11 @@
         <v-input
           id="gasLimit"
           v-model="newTransaction.gasLimit"
-          :validator="`required|numeric|integer|between:${transaction.gasLimit},1000000`"
+          v-validate="`required|numeric|integer|between:${transaction.gasLimit},1000000`"
+          :error="errors.first('gasLimit')"
           label="Gas limit"
           name="gasLimit"
+          data-vv-name="gasLimit"
           type="number"
           aria-describedby="gasLimit"
           placeholder="Gas limit"
@@ -50,6 +55,7 @@
           form="sendEther"
           class-name="is-primary is-medium"
           data-test="submit-button"
+          :disabled="!isFormValid"
         >
           Send
         </v-button>
@@ -63,6 +69,7 @@ import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import formMixin from '@/mixins/form';
 
 export default {
   name: 'ResendModal',
@@ -90,6 +97,7 @@ export default {
   created() {
     this.newTransaction = this.transaction.clone();
   },
+  mixins: [formMixin],
   components: {
     VModal,
     VForm,

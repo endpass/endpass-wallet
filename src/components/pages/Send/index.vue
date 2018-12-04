@@ -51,7 +51,6 @@ import VRadio from '@/components/ui/form/VRadio.vue';
 import VSelect from '@/components/ui/form/VSelect';
 import VInput from '@/components/ui/form/VInput.vue';
 import VSpinner from '@/components/ui/VSpinner';
-import VInputAddress from '@/components/ui/form/VInputAddress.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import AccountChooser from '@/components/AccountChooser';
 import TransactionModal from '@/components/modal/TransactionModal';
@@ -185,7 +184,6 @@ export default {
     VRadio,
     VSpinner,
     VInput,
-    VInputAddress,
     VSelect,
     AccountChooser,
     TransactionModal,

@@ -1,5 +1,6 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
+import VeeValidate from 'vee-validate';
 import Notifications from 'vue-notification';
 
 import ChangePasswordSettings from '@/components/ChangePasswordSettings';
@@ -33,6 +34,7 @@ describe('ChangePasswordSettings', () => {
 
     localVue.use(Vuex);
     localVue.use(Notifications);
+    localVue.use(VeeValidate);
 
     const store = new Vuex.Store(storeOptions);
 

@@ -3,6 +3,7 @@
     :type="inputType"
     v-bind="$attrs"
     :value="value"
+    :error="error"
     autocomplete="current-password"
     @input="$emit('input', $event)"
     @blur="$emit('blur', $event)"
@@ -26,9 +27,6 @@ import VInput from '@/components/ui/form/VInput.vue';
 export default {
   name: 'VPassword',
   inheritAttrs: false,
-  inject: {
-    $validator: '$validator',
-  },
   props: {
     value: {
       type: String,
@@ -38,6 +36,10 @@ export default {
     visible: {
       type: Boolean,
       default: false,
+    },
+    error: {
+      type: String,
+      default: null,
     },
   },
   data() {

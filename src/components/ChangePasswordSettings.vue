@@ -1,29 +1,39 @@
 <template>
-  <v-form @submit="handleFormSubmit">
+  <v-form
+    is-form-valid="isFormValid"
+    @submit="handleFormSubmit"
+  >
     <label class="label">Change Password</label>
     <v-password
+      v-validate="'required|min:8'"
       v-model="oldPassword"
       :disabled="isLoading"
+      :error="errors.first('oldPassword')"
       name="oldPassword"
-      validator="required|min:8"
+      data-vv-name="oldPassword"
       data-vv-as="Old Password"
       placeholder="Old Password"
       data-test="input-old-password"
     />
     <v-password
+      v-validate="'required|min:8'"
       v-model="newPassword"
       :disabled="isLoading"
+      :error="errors.first('newPassword')"
       name="newPassword"
-      validator="required|min:8"
+      data-vv-name="newPassword"
       data-vv-as="New Password"
       placeholder="New Password"
       data-test="input-new-password"
     />
     <v-button
       :loading="isLoading"
+      :disabled="!isFormValid"
       class-name="is-primary is-medium"
       data-test="submit-change-password"
-    >Change Password</v-button>
+    >
+      Change Password
+    </v-button>
   </v-form>
 </template>
 
@@ -33,6 +43,7 @@ import { matchString } from '@/utils/strings';
 import VForm from '@/components/ui/form/VForm';
 import VButton from '@/components/ui/form/VButton';
 import VPassword from '@/components/ui/form/VPassword';
+import formMixin from '@/mixins/form';
 
 export default {
   name: 'ChangePasswordSettings',
@@ -89,7 +100,7 @@ export default {
       });
     },
   },
-
+  mixins: [formMixin],
   components: {
     VForm,
     VButton,

@@ -6,6 +6,7 @@ exports[`ImportFromJson render should render initial state of the component 1`] 
 <div>
   <v-form
     data-test="import-json-form"
+    isformvalid="true"
     v-on:submit="bound togglePasswordModal"
   >
     <div
@@ -61,22 +62,27 @@ exports[`ImportFromJson render should render initial state of the component 1`] 
      
     <v-password
       aria-describedby="jsonKeystorePassword"
+      aria-invalid="false"
+      aria-required="true"
       data-test="input-json-file-password"
       data-vv-as="password"
+      data-vv-name="jsonKeystorePassword"
       id="jsonKeystorePassword"
       label="V3 JSON keystore password"
       name="jsonKeystorePassword"
       placeholder="V3 JSON keystore password"
       required=""
       v-model="jsonKeystorePassword"
-      validator="required|min:8"
+      v-validate="'required|min:8'"
     />
      
     <v-button
       class-name="is-primary is-cta"
       data-test="submit-import"
     >
+      
       Import
+    
     </v-button>
   </v-form>
    

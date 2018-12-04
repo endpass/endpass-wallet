@@ -33,10 +33,10 @@
       >
     </div>
     <p
-      v-if="error || errors && errors.has(name) "
+      v-if="error"
       class="help is-danger"
     >
-      {{ error || errors && errors.first(name) }}
+      {{ error }}
     </p>
   </div>
 </template>
@@ -46,19 +46,12 @@ import getOptionParameter from '@/utils/getOptionParameter';
 
 export default {
   name: 'VRadio',
-  inject: {
-    $validator: '$validator',
-  },
   props: {
     value: {
       type: [Number, String],
       default: null,
     },
     id: {
-      type: String,
-      default: '',
-    },
-    validator: {
       type: String,
       default: '',
     },

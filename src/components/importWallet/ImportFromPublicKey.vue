@@ -2,15 +2,17 @@
   <v-form
     data-test="import-public-form"
     @submit="submitAddWallet"
-  >
+    :isFormValid="isFormValid">
     <v-input
       id="address"
       key="publicKeyUnique"
       v-model="address"
       label="Address"
       name="address"
-      validator="required|address"
-      data-vv-as="private key"
+      data-vv-name="address"
+      v-validate="'required|address'"
+      :error="errors.first('address')"
+      data-vv-as="public key"
       aria-describedby="address"
       placeholder="0x...."
       required
@@ -21,6 +23,7 @@
       :loading="isCreating"
       class-name="is-primary is-cta"
       data-test="submit-import"
+      :disabled="!isFormValid"
     >
       Import
     </v-button>
@@ -32,6 +35,7 @@ import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import formMixin from '@/mixins/form';
 
 export default {
   name: 'ImportFromPublicKey',
@@ -61,6 +65,7 @@ export default {
       this.errors.removeById('wrongAddress');
     },
   },
+  mixins: [formMixin],
   components: {
     VForm,
     VInput,
