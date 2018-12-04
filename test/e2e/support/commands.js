@@ -82,6 +82,11 @@ Cypress.Commands.add('login', () => {
     `${identityAPIUrl}/account/xpub*`,
     'fixture:keystore/account_0.json',
   ).as('keystoreHdAccount');
+  cy.route(
+    'POST',
+    `${identityAPIUrl}/account/xpub*/info`,
+    'fixture:identity/success.json',
+  ).as('saveKeystoreHdAccountInfo');
   // Read only account
   cy.route(
     'GET',

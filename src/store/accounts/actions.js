@@ -166,8 +166,8 @@ const commitWallet = async ({ state, commit }, { wallet }) => {
   }
 };
 
-const saveWallet = async ({ dispatch }, { json }) => {
-  await userService.setAccount(json.address, json);
+const saveWallet = async ({ dispatch }, { json, info = {} }) => {
+  await userService.setAccount(json.address, { info, ...json });
   await dispatch('commitWallet', { wallet: json });
 };
 
@@ -178,9 +178,14 @@ const addHdWallet = async ({ dispatch }, { key, password }) => {
     const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
     // Encrypt extended private key
     const json = keystore.encryptHDWallet(password, hdWallet);
+    const info = {
+      address: json.address,
+      type: WALLET_TYPE.HD_MAIN,
+      hidden: false,
+    };
 
     // Save HD keys and generate the first child wallet
-    await dispatch('saveWallet', { json });
+    await dispatch('saveWallet', { json, info });
     await dispatch('generateWallet', password);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
