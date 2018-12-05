@@ -27,6 +27,8 @@ describe('price actions', () => {
     it('should perform price load with flad setting', async () => {
       expect.assertions(5);
 
+      priceService.getPrices.mockResolvedValue(price);
+
       await actions.updatePrice({ commit, dispatch, getters });
 
       expect(commit).toHaveBeenNthCalledWith(1, START_LOADING);
@@ -52,7 +54,7 @@ describe('price actions', () => {
 
       const err = new Error();
 
-      priceService.getPrice.mockRejectedValueOnce(err);
+      priceService.getPrices.mockRejectedValueOnce(err);
 
       await actions.updatePrice({ commit, dispatch, getters });
 

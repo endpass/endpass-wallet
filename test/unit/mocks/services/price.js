@@ -3,8 +3,6 @@ jest.mock('@/services/price', () => {
   const { price } = require('fixtures/price');
 
   return {
-    getPrice: jest.fn().mockResolvedValue(price),
-
     getEthPrice: jest.fn().mockResolvedValue(price),
 
     getPrices: jest.fn().mockResolvedValue({
