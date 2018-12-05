@@ -1,14 +1,13 @@
-import { http } from '@/class/singleton';
-
 import throttledQueue from 'throttled-queue';
+
+import { http } from '@/class/singleton';
+import { NotificationError } from '@/class';
+import { validate, gasPrice } from '@/schema';
 
 const throttle = throttledQueue(3, ENV.serviceThrottleTimeout);
 
 export default {
-  getEthPrice(toSymbol) {
-    return this.getPrices('ETH', toSymbol);
-  },
-  getPrices(fromSymbols, toSymbol) {
+  getSymbolsPrice(fromSymbols, toSymbol) {
     const fromSymbolsArray =
       fromSymbols instanceof Array ? fromSymbols : [fromSymbols];
 
@@ -41,5 +40,20 @@ export default {
           .catch(e => rej(e));
       });
     });
+  },
+
+  async getGasPrice() {
+    try {
+      const { data } = await http.get(`${ENV.cryptoDataAPIUrl}/gas/price`);
+
+      return validate(gasPrice.validateGasPrice, data);
+    } catch (err) {
+      throw new NotificationError({
+        title: 'Failed to get suggested gas price',
+        text:
+          'An error occurred while retrieving suggested gas price. Please, set manually or, try again.',
+        type: 'is-warning',
+      });
+    }
   },
 };

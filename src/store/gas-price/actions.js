@@ -1,8 +1,8 @@
-import gasPrice from '@/services/gas-price';
+import { cryptoDataService } from '@/services';
 
 const getGasPrice = async ({ dispatch }) => {
   try {
-    return await gasPrice.getGasPrice();
+    return await cryptoDataService.getGasPrice();
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });
 

@@ -12,7 +12,7 @@ import {
   userService,
   tokenInfoService,
   ethplorerService,
-  priceService,
+  cryptoDataService,
 } from '@/services';
 import ERC20Token from '@/class/erc20';
 import { MAIN_NET_ID } from '@/constants';
@@ -535,14 +535,17 @@ describe('tokens actions', () => {
       getters = {
         activeCurrencyName: 'ETH',
       };
-      priceService.getPrices.mockResolvedValueOnce(tokensPrices);
+      cryptoDataService.getSymbolsPrice.mockResolvedValueOnce(tokensPrices);
 
       await actions.getTokensPrices(
         { commit, getters },
         { tokensSymbols: tokens },
       );
 
-      expect(priceService.getPrices).toHaveBeenCalledWith(tokens, 'ETH');
+      expect(cryptoDataService.getSymbolsPrice).toHaveBeenCalledWith(
+        tokens,
+        'ETH',
+      );
       expect(commit).toHaveBeenCalledWith(ADD_TOKENS_PRICES, tokensPrices);
     });
 
@@ -551,7 +554,7 @@ describe('tokens actions', () => {
 
       await actions.getTokensPrices({ commit, getters }, { tokensSymbols: [] });
 
-      expect(priceService.getPrices).not.toBeCalled();
+      expect(cryptoDataService.getSymbolsPrice).not.toBeCalled();
       expect(commit).not.toBeCalled();
     });
   });
