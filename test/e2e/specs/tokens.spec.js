@@ -3,6 +3,7 @@ import {
   tokens,
   tokensMappedByAddress,
 } from '../fixtures/tokeninfo';
+import { call_custom_token_1, call_custom_token_3 } from '../fixtures/web3';
 
 describe('Tokens Page', () => {
   describe('the user is not authorized', () => {
@@ -32,6 +33,40 @@ describe('Tokens Page', () => {
 
           cy.get('[data-test=address-input]').type(customToken.address);
           cy.get('[data-test=find-button]').click();
+          cy.get('[data-test=close-button]').click();
+        });
+
+        cy.get('[data-test=tokens-list]').within(() => {
+          cy.get('[data-test=token-item]').should('have.length', 2);
+          cy.get('[data-test=token-name]').contains(customToken.name);
+        });
+      });
+
+      it('should add a custom token with token info from user', () => {
+        cy.get('@mockWeb3Provider').then(provider => {
+          provider.mockResolvedValueOnce(
+            call_custom_token_1.payload,
+            undefined,
+          );
+          provider.mockResolvedValueOnce(
+            call_custom_token_3.payload,
+            undefined,
+          );
+        });
+
+        cy.get('[data-test=add-custom-token-button]').click();
+
+        cy.get('[data-test=add-token-modal]').within(() => {
+          cy.focused().should('have.attr', 'data-test', 'address-input');
+          cy.get('[data-test=find-button]').should('be.disabled');
+
+          cy.get('[data-test=address-input]').type(customToken.address);
+          cy.get('[data-test=find-button]').click();
+          cy.get('[data-test=add-button]').should('be.disabled');
+
+          cy.get('[data-test=token-name-input]').type(customToken.name);
+          cy.get('[data-test=token-symbol-input]').type(customToken.symbol);
+          cy.get('[data-test=add-button]').click();
           cy.get('[data-test=close-button]').click();
         });
 

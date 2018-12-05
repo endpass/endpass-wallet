@@ -1,3 +1,75 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AddTokenModal render should render component 1`] = `<!---->`;
+exports[`AddTokenModal render should render component 1`] = `
+<v-modal
+  data-test="add-token-modal"
+  v-on:close="bound close"
+>
+  <template
+    slot="header"
+  >
+    Add custom token
+  </template>
+   
+  <v-form
+    id="addToken"
+    v-model="isFormValid"
+    v-on:submit="bound addToken"
+  >
+    <v-input
+      aria-describedby="address"
+      aria-invalid="true"
+      aria-required="true"
+      autofocus=""
+      data-test="address-input"
+      data-vv-name="address"
+      id="address"
+      label="Address"
+      name="address"
+      placeholder="Contract address"
+      required=""
+      v-model="token.address"
+      v-validate="'required|address'"
+    />
+     
+    <!---->
+     
+    <!---->
+     
+    <!---->
+  </v-form>
+   
+  <div
+    slot="footer"
+  >
+    <div
+      class="buttons"
+    >
+      <v-button
+        class-name="is-primary"
+        data-test="find-button"
+        disabled="true"
+        type="button"
+      >
+        
+        Find
+      
+      </v-button>
+    </div>
+     
+    <div
+      class="is-pulled-right"
+    >
+      <a
+        class="button"
+        data-test="close-button"
+        v-on:click="bound close"
+      >
+        
+        Close
+      
+      </a>
+    </div>
+  </div>
+</v-modal>
+`;
