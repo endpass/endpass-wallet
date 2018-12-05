@@ -5,61 +5,41 @@ import throttledQueue from 'throttled-queue';
 const throttle = throttledQueue(3, ENV.serviceThrottleTimeout);
 
 export default {
-  getPrice(symbol, currencies) {
-    const throttlePromice = new Promise((res, rej) => {
-      if (symbol === 'ETH-TEST') {
-        return res({ [currencies]: 0 });
+  getEthPrice(toSymbol) {
+    return this.getPrices('ETH', toSymbol);
+  },
+  getPrices(fromSymbols, toSymbol) {
+    const fromSymbolsArray =
+      fromSymbols instanceof Array ? fromSymbols : [fromSymbols];
+
+    return new Promise((res, rej) => {
+      if (toSymbol === 'ETH-TEST') {
+        const response = fromSymbolsArray.reduce((accumulator, symbol) => {
+          accumulator[symbol] = {
+            [toSymbol]: 0,
+          };
+
+          return accumulator;
+        }, {});
+
+        return res(response);
       }
+
+      if (fromSymbols === 'ETH-TEST') {
+        return res({ [toSymbol]: 0 });
+      }
+
       throttle(() => {
         http
-          .get(ENV.fiatPriceAPIUrl, {
+          .get(`${ENV.cryptoDataAPIUrl}/price`, {
             params: {
-              fsym: symbol,
-              tsyms: currencies,
+              from: fromSymbolsArray.join(','),
+              to: toSymbol,
             },
           })
           .then(resp => res(resp.data))
           .catch(e => rej(e));
       });
     });
-    return throttlePromice;
-  },
-  getEthPrice(currencies) {
-    return this.getPrice('ETH', currencies);
-  },
-  getPrices(symbols, currency) {
-    const throttlePromice = new Promise((res, rej) => {
-      if (currency === 'ETH-TEST') {
-        const resp = {};
-
-        symbols.forEach(symbol => {
-          resp[currency] = {
-            [symbol]: 0,
-          };
-        });
-
-        return res(resp);
-      }
-
-      throttle(() => {
-        http
-          .get(ENV.fiatPriceMultiAPIUrl, {
-            params: {
-              fsyms: symbols.toString(),
-              tsyms: currency,
-            },
-          })
-          .then(resp => {
-            if (resp.data.Response === 'Error') {
-              return rej(resp.data);
-            }
-
-            return res(resp.data);
-          })
-          .catch(e => rej(e));
-      });
-    });
-
-    return throttlePromice;
   },
 };

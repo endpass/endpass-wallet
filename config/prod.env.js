@@ -20,9 +20,6 @@ const tokenImageUrl = 'https://tokeninfo.endpass.com';
 
 // Fiat Price
 const priceUpdateInterval = 30 * 1000;
-const fiatPriceAPIUrl = 'https://min-api.cryptocompare.com/data/price';
-const fiatPriceMultiAPIUrl =
-  'https://min-api.cryptocompare.com/data/pricemulti';
 
 // Parameters for cipher encrypting wallet
 const kdfParams = {
@@ -44,8 +41,6 @@ module.exports = {
   serviceThrottleTimeout,
   blockUpdateInterval,
   priceUpdateInterval,
-  fiatPriceAPIUrl,
-  fiatPriceMultiAPIUrl,
   cryptoDataAPIUrl,
   identityAPIUrl,
   tokenImageUrl,

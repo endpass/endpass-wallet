@@ -10,7 +10,7 @@ import {
 const updatePrice = async ({ commit, getters, dispatch }) => {
   try {
     commit(START_LOADING);
-    const price = await priceService.getPrice(
+    const price = await priceService.getPrices(
       getters.activeCurrencyName,
       getters.fiatCurrency,
     );
