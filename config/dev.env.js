@@ -4,7 +4,7 @@ const prodEnv = require('./prod.env');
 const identityAPIUrl = '/identity/api/v1.1';
 const tokenImageUrl = 'https://tokeninfo-dev.endpass.com';
 const tokenInfoAPIUrl = '/tokeninfo/api/v1';
-const cryptoDataAPIUrl = '/gasprice/api/v1';
+const cryptoDataAPIUrl = '/cryptodata/api/v1';
 const wildproxyUrl = '/';
 
 const intercomAppId = 'o0u2wypb';

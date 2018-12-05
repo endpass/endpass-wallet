@@ -27,11 +27,11 @@ module.exports = {
         },
       },
       {
-        context: '/gasprice/api/v1',
+        context: '/cryptodata/api/v1',
         target: 'https://cryptodata-dev.endpass.com',
         changeOrigin: true,
         pathRewrite: {
-          '^/gasprice/api/v1': '/api/v1',
+          '^/cryptodata/api/v1': '/api/v1',
         },
       },
       {
