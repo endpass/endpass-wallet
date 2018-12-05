@@ -12,7 +12,7 @@ import ERC20Token from '@/class/erc20';
 import {
   tokenInfoService,
   ethplorerService,
-  priceService,
+  cryptoDataService,
   userService,
 } from '@/services';
 import { merge } from '@/utils/objects';
@@ -233,7 +233,7 @@ const getTokensPrices = async ({ commit, getters }, { tokensSymbols }) => {
   if (tokensSymbols.length === 0) return;
 
   try {
-    const prices = await priceService.getPrices(
+    const prices = await cryptoDataService.getSymbolsPrice(
       tokensSymbols,
       getters.activeCurrencyName,
     );

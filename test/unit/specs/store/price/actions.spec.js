@@ -1,5 +1,5 @@
 import actions from '@/store/price/actions';
-import priceService from '@/services/price';
+import cryptoDataService from '@/services/cryptoData';
 import {
   SET_PRICE,
   SET_UPDATE_TIME,
@@ -27,7 +27,7 @@ describe('price actions', () => {
     it('should perform price load with flad setting', async () => {
       expect.assertions(5);
 
-      priceService.getPrices.mockResolvedValue(price);
+      cryptoDataService.getSymbolsPrice.mockResolvedValue(price);
 
       await actions.updatePrice({ commit, dispatch, getters });
 
@@ -54,7 +54,7 @@ describe('price actions', () => {
 
       const err = new Error();
 
-      priceService.getPrices.mockRejectedValueOnce(err);
+      cryptoDataService.getSymbolsPrice.mockRejectedValueOnce(err);
 
       await actions.updatePrice({ commit, dispatch, getters });
 
