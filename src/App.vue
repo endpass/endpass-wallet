@@ -1,5 +1,8 @@
 <template>
-  <div id="app" class="app-container">
+  <div 
+    id="app" 
+    class="app-container"
+  >
     <header class="app-header">
       <info-bar class="app-section"/>
     </header>
@@ -49,7 +52,7 @@ export default {
   mounted() {
     this.$intercom.boot();
     // TODO configure and enable
-    //this.$intercom.show();
+    // this.$intercom.show();
   },
 
   mixins: [errorHandler],

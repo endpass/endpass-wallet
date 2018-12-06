@@ -16,9 +16,7 @@ exports[`TwoFactorAuthSettings render should render the initial state of the com
       data-test="button-two-factor"
       disabled="true"
     >
-      
       Disable Two Factor Auth
-    
     </v-button>
   </v-form>
    
@@ -42,9 +40,7 @@ exports[`TwoFactorAuthSettings render should show modal window for two factor au
       data-test="button-two-factor"
       disabled="true"
     >
-      
       Disable Two Factor Auth
-    
     </v-button>
   </v-form>
    

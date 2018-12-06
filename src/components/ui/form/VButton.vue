@@ -17,6 +17,7 @@
 <script>
 export default {
   name: 'VButton',
+  inheritAttrs: false,
   inject: {
     $validator: '$validator',
     form: {
@@ -44,7 +45,6 @@ export default {
       return this.className.split(' ');
     },
   },
-  inheritAttrs: false,
 };
 </script>
 

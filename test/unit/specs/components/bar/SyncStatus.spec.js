@@ -33,7 +33,7 @@ describe('SyncStatus', () => {
   });
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('sync-status');
+      expect(wrapper.name()).toBe('SyncStatus');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 

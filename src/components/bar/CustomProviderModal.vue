@@ -45,11 +45,12 @@
             aria-describedby="currency"
             placeholder="Provider currency"
             data-vv-name="Provider currency"
-            required />
+            required
+          />
         </v-form>
       </div>
       <div v-else>
-        <p class="subtitle">{{headerTextAfterAction}}</p>
+        <p class="subtitle">{{ headerTextAfterAction }}</p>
 
         <div class="message">
           <div class="message-header">
@@ -69,7 +70,8 @@
             :disabled="!isFormValid"
             class="button is-primary is-medium"
             type="button"
-            @click="handleButtonClick">
+            @click="handleButtonClick"
+          >
             {{ buttonText }}
           </a>
         </div>

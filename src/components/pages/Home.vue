@@ -1,7 +1,13 @@
 <template>
   <div class="home-page app-page">
-    <div v-if="address" class="auth-content">
-      <div class="section section-address" data-test="address-card">
+    <div 
+      v-if="address" 
+      class="auth-content"
+    >
+      <div 
+        class="section section-address" 
+        data-test="address-card"
+      >
         <div class="container">
           <div class="card">
             <div class="card-header">
@@ -12,7 +18,10 @@
                 <div class="column">
                   <account :address="address"/>
                 </div>
-                <div v-if="isExportable" class="column is-one-third">
+                <div 
+                  v-if="isExportable" 
+                  class="column is-one-third"
+                >
                   <router-link
                     :to="{name: 'ExportWallet'}"
                     class="button is-warning"
@@ -25,7 +34,10 @@
         </div>
       </div>
 
-      <div v-if="currentNetUserTokensList.length > 0" class="section section-tokens">
+      <div 
+        v-if="currentNetUserTokensList.length > 0" 
+        class="section section-tokens"
+      >
         <div class="container">
           <div class="card">
             <div class="card-header">

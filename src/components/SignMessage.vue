@@ -24,7 +24,11 @@
         data-test="signed-message-textarea"
       />
     </v-form>
-    <password-modal v-if="isPasswordModal" @confirm="signMessage" @close="togglePasswordModal">
+    <password-modal 
+      v-if="isPasswordModal" 
+      @confirm="signMessage" 
+      @close="togglePasswordModal"
+    >
       <div class="field">
         <label class="label">Message</label>
         <p>{{ message }}</p>

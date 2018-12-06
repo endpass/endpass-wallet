@@ -90,9 +90,8 @@ describe('privateWalletGuard', () => {
   it('should redirect to home page if account is public', async () => {
     expect.assertions(2);
 
-    store.getters['accounts/wallet'] = {
-      isPublic: true,
-    };
+    store.getters['accounts/wallet'] = {};
+    store.getters['accounts/isPublicAccount'] = true;
     to = {
       path: '/send',
     };

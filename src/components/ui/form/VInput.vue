@@ -5,15 +5,13 @@
       :class="{'has-text-danger': error || errors.has($attrs.name) }"
       :for="$attrs.id"
       class="label"
-    >
-      {{ label }}
-    </label>
-    <div
-      :class="{'has-addons': $slots.addon }"
+    >{{ label }}</label>
+    <div 
+      :class="{'has-addons': $slots.addon }" 
       class="field"
     >
-      <div
-        :class="{'is-expanded': $slots.addon, 'has-icons-right': $slots.icon }"
+      <div 
+        :class="{'is-expanded': $slots.addon, 'has-icons-right': $slots.icon }" 
         class="control"
       >
         <input
@@ -27,33 +25,30 @@
           @blur="$emit('blur', $event.target.value)"
           v-on="listeners"
         >
-        <slot name="icon" />
+        <slot name="icon"/>
       </div>
-      <div
-        v-if="$slots.addon"
+      <div 
+        v-if="$slots.addon" 
         class="control"
       >
-        <slot name="addon" />
+        <slot name="addon"/>
       </div>
     </div>
     <p
       v-if="error || errors.has($attrs.name)"
       class="help is-danger"
-    >
-      {{ error || errors.first($attrs.name) }}
-    </p>
-    <p
-      v-else-if="help"
+    >{{ error || errors.first($attrs.name) }}</p>
+    <p 
+      v-else-if="help" 
       class="help"
-    >
-      {{ help }}
-    </p>
+    >{{ help }}</p>
   </div>
 </template>
 
 <script>
 export default {
   name: 'VInput',
+  inheritAttrs: false,
   inject: {
     $validator: '$validator',
   },
@@ -82,10 +77,6 @@ export default {
       type: String,
       default: null,
     },
-    className: {
-      type: String,
-      default: '',
-    },
   },
   computed: {
     innerValue: {
@@ -113,7 +104,6 @@ export default {
       ];
     },
   },
-  inheritAttrs: false,
 };
 </script>
 

@@ -56,7 +56,7 @@ describe('Accounts getters', () => {
     it('should return true when the account is hardware', () => {
       const getters = {
         wallet: {
-          info: { type: HARDWARE_WALLET_TYPE.TREZOR },
+          isHardware: true,
         },
       };
 
@@ -66,7 +66,7 @@ describe('Accounts getters', () => {
     it('should return false when the account is not hardware', () => {
       const getters = {
         wallet: {
-          info: { type: 'Foo' },
+          isHardware: false,
         },
       };
 

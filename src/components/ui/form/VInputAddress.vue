@@ -1,16 +1,7 @@
 <template>
   <div class="field">
-    <label
-      v-if="label"
-      :for="id"
-      class="label"
-    >
-      {{ label }}
-    </label>
-    <div
-      :class="{'has-addons': $slots.addon }"
-      class="field"
-    >
+    <label v-if="label" :for="id" class="label">{{ label }}</label>
+    <div :class="{'has-addons': $slots.addon }" class="field">
       <div
         :class="{'is-expanded': $slots.addon,
                  'is-loading': pendingEns }"
@@ -28,33 +19,18 @@
           class="input"
         >
       </div>
-      <div
-        v-if="$slots.addon"
-        class="control"
-      >
-        <slot name="addon" />
+      <div v-if="$slots.addon" class="control">
+        <slot name="addon"/>
       </div>
     </div>
-    <p
-      v-if="error || errors.has(name) "
-      class="help is-danger"
-    >
-      {{ error || errors.first(name) }}
-    </p>
-    <p
-      v-if="pendingEns"
-      class="help is-info"
-    >
-      Resolving name
-    </p>
+    <p v-if="error || errors.has(name) " class="help is-danger">{{ error || errors.first(name) }}</p>
+    <p v-if="pendingEns" class="help is-info">Resolving name</p>
   </div>
 </template>
 
 <script>
 import { kebabCase } from 'lodash';
 import { ENSResolver } from '@/class';
-import { mapState } from 'vuex';
-import web3 from '@/class/singleton/web3';
 
 export default {
   name: 'VInputAddress',

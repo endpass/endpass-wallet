@@ -1,6 +1,6 @@
 <template>
-  <v-modal
-    class="is-dark"
+  <v-modal 
+    class="is-dark" 
     @close="handleClose"
   >
     <template slot="header">Get Started</template>
@@ -8,30 +8,25 @@
     <p
       v-if="isSelectDefaultIdentity"
       class="subtitle"
-    >
-      Please enter your email address below to access your wallet or create a new one.
-    </p>
+    >Please enter your email address below to access your wallet or create a new one.</p>
     <p
       v-else-if="isSelectCustomIdentity"
       class="subtitle"
-    >
-      Please enter your server address below to access your accounts.
-    </p>
+    >Please enter your server address below to access your accounts.</p>
 
-    <v-form
-      id="loginByEmail"
-      v-model="isFormValid"
+    <v-form 
+      id="loginByEmail" 
+      v-model="isFormValid" 
       @submit="handleSubmit"
     >
       <v-input
-        autofocus
         v-if="isSelectDefaultIdentity"
         key="email-input"
         v-model="email"
         :disabled="!isInputAllowed"
+        autofocus
         label="Email"
-        help="Your email address may be used to help recover your
-               wallet in case you lose access."
+        help="Your email address may be used to help recover your wallet in case you lose access."
         name="email"
         validator="required|email"
         placeholder="Your email"
@@ -58,27 +53,24 @@
         help="Example: https://yourserver.com/api"
       />
 
-      <v-checkbox
-        v-if="isSelectDefaultIdentity"
+      <v-checkbox 
+        v-if="isSelectDefaultIdentity" 
         v-model="termsAccepted"
       >
-        I accept the <a
-          href="https://endpass.com/terms/"
+        I accept the
+        <a 
+          href="https://endpass.com/terms/" 
           target="_blank"
-        >
-          Terms of Service
-        </a>
+        >Terms of Service</a>
         and
-        <a
-          href="https://endpass.com/privacy/"
+        <a 
+          href="https://endpass.com/privacy/" 
           target="_blank"
-        >
-          Privacy Policy
-        </a>.
+        >Privacy Policy</a>.
       </v-checkbox>
     </v-form>
-    <div
-      slot="footer"
+    <div 
+      slot="footer" 
       class="buttons"
     >
       <v-button
@@ -87,9 +79,7 @@
         class-name="is-primary is-medium"
         form="loginByEmail"
         data-test="submit-login"
-      >
-        Continue
-      </v-button>
+      >Continue</v-button>
     </div>
   </v-modal>
 </template>

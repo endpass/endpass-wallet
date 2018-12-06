@@ -14,12 +14,23 @@
         Your private key is below. Do not share it with
         anyone!
       </p>
-      <p class="code" data-test="private-key-code">{{ privateKey }}</p>
+      <p 
+        class="code" 
+        data-test="private-key-code"
+      >{{ privateKey }}</p>
       <p>
-        <a class="button is-light" data-test="hide-button" @click="privateKey=null">Close</a>
+        <a 
+          class="button is-light" 
+          data-test="hide-button" 
+          @click="privateKey=null"
+        >Close</a>
       </p>
     </div>
-    <password-modal v-if="passwordModalOpen" @close="closePasswordModal" @confirm="getPrivateKey"/>
+    <password-modal 
+      v-if="passwordModalOpen" 
+      @close="closePasswordModal" 
+      @confirm="getPrivateKey"
+    />
   </div>
 </template>
 

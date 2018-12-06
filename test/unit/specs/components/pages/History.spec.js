@@ -95,7 +95,7 @@ describe('HistoryPage', () => {
       );
     });
 
-    it('should display a message about the absence of transactions', async () => {
+    it('should display a message about the absence of transactions', () => {
       wrapper.setComputed({ currentNetTransactions: [] });
       wrapper.setData({ isLoading: false });
 

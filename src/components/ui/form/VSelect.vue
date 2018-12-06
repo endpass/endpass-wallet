@@ -1,11 +1,6 @@
 <template>
   <div class="field">
-    <label
-      v-if="label"
-      class="label"
-    >
-      {{ label }}
-    </label>
+    <label v-if="label" class="label">{{ label }}</label>
     <div class="control select">
       <select
         v-validate="validator"
@@ -18,17 +13,13 @@
           v-for="item in options"
           :key="item.key || item.val || item"
           :value="getOptionParameter(item, 'val')"
-        >
-          {{ getOptionParameter(item, 'text') }}
-        </option>
+        >{{ getOptionParameter(item, 'text') }}</option>
       </select>
     </div>
     <p
       v-if="error || errors && errors.has(name) "
       class="help is-danger"
-    >
-      {{ error || errors && errors.first(name) }}
-    </p>
+    >{{ error || errors && errors.first(name) }}</p>
   </div>
 </template>
 
@@ -42,6 +33,7 @@ export default {
   },
   props: {
     value: {
+      type: [String, Number],
       default: null,
     },
     validator: {
@@ -61,10 +53,6 @@ export default {
       default: () => [],
     },
     label: {
-      type: String,
-      default: null,
-    },
-    error: {
       type: String,
       default: null,
     },

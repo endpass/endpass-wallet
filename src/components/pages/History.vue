@@ -7,7 +7,10 @@
             <h1 class="card-header-title">Transaction history</h1>
           </div>
           <div class="card-content">
-            <ul v-if="currentNetTransactions.length > 0" class="transactions">
+            <ul 
+              v-if="currentNetTransactions.length > 0" 
+              class="transactions"
+            >
               <li
                 v-for="transaction in currentNetTransactions"
                 :key="transaction.hash"
@@ -52,16 +55,12 @@ export default {
   },
 
   watch: {
-    activeNet: {
-      async handler() {
-        await this.getHistory();
-      },
+    async activeNet() {
+      await this.getHistory();
     },
 
-    address: {
-      async handler() {
-        await this.getHistory();
-      },
+    async address() {
+      await this.getHistory();
     },
   },
 
@@ -80,7 +79,7 @@ export default {
     },
   },
 
-  async created() {
+  async mounted() {
     await this.getHistory();
   },
 

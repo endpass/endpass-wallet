@@ -17,7 +17,8 @@
     <div class="control">
       <a
         class="button is-small is-white"
-        @click="$emit('input', '')">
+        @click="$emit('input', '')"
+      >
         <span
           class="icon is-small"
           v-html="require('@/img/x.svg')"

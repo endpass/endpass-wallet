@@ -6,6 +6,7 @@ import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';
 import { Wallet, NotificationError } from '@/class';
 import keystore from '@/utils/keystore';
+import { WALLET_TYPE } from '@/constants';
 import {
   CHANGE_INIT_STATUS,
   SET_ADDRESS,
@@ -311,7 +312,7 @@ const getNextWalletsFromHd = async (
   return addresses;
 };
 
-const decryptAccountHdWallet = ({ state }, password) => {
+const decryptAccountHdWallet = async ({ state }, password) => {
   if (!state.hdKey) {
     return null;
   }
@@ -319,23 +320,25 @@ const decryptAccountHdWallet = ({ state }, password) => {
   return keystore.decryptHDWallet(password, state.hdKey);
 };
 
-const decryptAccountWallets = ({ state }, password) =>
+const decryptAccountWallets = async ({ state }, password) =>
   Object.values(state.wallets)
     .filter(item => !item.isPublic)
     .map(item => keystore.decryptWallet(password, item.v3));
 
-const encryptHdWallet = (ctx, { password, hdWallet }) =>
+const encryptHdWallet = async (ctx, { password, hdWallet }) =>
   hdWallet ? keystore.encryptHDWallet(password, hdWallet) : null;
 
-const encryptWallets = (ctx, { password, wallets = [] }) =>
+const encryptWallets = async (ctx, { password, wallets = [] }) =>
   wallets.map(item => keystore.encryptWallet(password, item));
 
 const reencryptAllAccountWallets = async (
   { dispatch },
   { password, newPassword },
 ) => {
-  const decryptedHdWallet = await dispatch('decryptAccountHdWallet', password);
-  const decryptedWallets = await dispatch('decryptAccountWallets', password);
+  const [decryptedHdWallet, decryptedWallets] = await Promise.all([
+    dispatch('decryptAccountHdWallet', password),
+    dispatch('decryptAccountWallets', password),
+  ]);
   const encryptedHdWallet = await dispatch('encryptHdWallet', {
     hdWallet: decryptedHdWallet,
     password: newPassword,
@@ -351,7 +354,7 @@ const reencryptAllAccountWallets = async (
   };
 };
 
-const updateAllAccountWalletsWithNewPassword = async (
+const updateWalletsWithNewPassword = async (
   { dispatch },
   { password, newPassword },
 ) => {
@@ -422,6 +425,6 @@ export default {
   encryptHdWallet,
   encryptWallets,
   reencryptAllAccountWallets,
-  updateAllAccountWalletsWithNewPassword,
+  updateWalletsWithNewPassword,
   init,
 };

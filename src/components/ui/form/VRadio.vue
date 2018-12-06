@@ -51,10 +51,12 @@ export default {
   },
   props: {
     value: {
+      type: [Number, String],
       default: null,
     },
     id: {
       type: String,
+      default: '',
     },
     validator: {
       type: String,
@@ -73,10 +75,6 @@ export default {
       default: () => [],
     },
     label: {
-      type: String,
-      default: null,
-    },
-    error: {
       type: String,
       default: null,
     },

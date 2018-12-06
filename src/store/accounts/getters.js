@@ -13,14 +13,10 @@ const accountAddresses = state =>
 const addressBuffer = state =>
   state.address && hexToBytes(state.address.toLowerCase());
 
-const isPublicAccount = (state, getters) =>
-  Boolean(get(getters.wallet, 'isPublic'));
+const isPublicAccount = (state, getters) => !!get(getters.wallet, 'isPublic');
 
-const isHardwareAccount = (state, getters) => {
-  const type = get(getters.wallet, 'info.type');
-
-  return Object.values(HARDWARE_WALLET_TYPE).includes(type);
-};
+const isHardwareAccount = (state, getters) =>
+  !!get(getters.wallet, 'isHardware');
 
 const balance = (state, getters, rootState, rootGetters) => {
   if (!state.balance) return null;

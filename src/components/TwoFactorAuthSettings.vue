@@ -7,9 +7,7 @@
         :loading="isLoading"
         class-name="is-primary is-medium"
         data-test="button-two-factor"
-      >
-        {{ otpSettings.secret ? 'Enable' : 'Disable' }} Two Factor Auth
-      </v-button>
+      >{{ otpSettings.secret ? 'Enable' : 'Disable' }} Two Factor Auth</v-button>
     </v-form>
     <two-factor-auth-modal
       v-if="isTwoFactorAuthModal"
@@ -70,7 +68,9 @@ export default {
       this.isLoading = false;
     },
     handleFormSubmit() {
-      !this.isButtonDisabled && this.toggleTwoFactorAuthModal();
+      if (!this.isButtonDisabled) {
+        this.toggleTwoFactorAuthModal();
+      }
     },
   },
   mounted() {
