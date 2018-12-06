@@ -1,6 +1,6 @@
 import { ajv } from '@/class/singleton';
 
-export { default as gasPrice } from './gasPrice';
+export { default as cryptoData } from './cryptoData';
 
 export const validate = (validator, data) => {
   if (!validator(data)) {

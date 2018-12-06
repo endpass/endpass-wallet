@@ -3,6 +3,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { http } from '@/class/singleton';
 import { NotificationError } from '@/class';
 import { gasPrice } from 'fixtures/gasPrice';
+import { price, priceMulti } from 'fixtures/price';
 
 const cryptoDataService = require.requireActual('@/services/cryptoData')
   .default;
@@ -18,7 +19,8 @@ describe('Crypto data service', () => {
     const requestUrl = `${ENV.cryptoDataAPIUrl}/price`;
     const fromSymbols = ['ETH', 'BTC'];
     const toSymbol = 'USD';
-    const response = {};
+    const priceMultiResponse = priceMulti;
+    const priceResponse = price;
 
     it('should correctly convert symbols to EHT-TEST', async () => {
       const toSymbol = 'ETH-TEST';
@@ -58,7 +60,7 @@ describe('Crypto data service', () => {
           from: fromSymbols[0],
           to: toSymbol,
         });
-        return [200, response];
+        return [200, priceResponse];
       });
 
       await cryptoDataService.getSymbolsPrice(fromSymbols[0], toSymbol);
@@ -73,7 +75,7 @@ describe('Crypto data service', () => {
           from: fromSymbols.join(','),
           to: toSymbol,
         });
-        return [200, response];
+        return [200, priceMultiResponse];
       });
 
       await cryptoDataService.getSymbolsPrice(fromSymbols, toSymbol);
@@ -82,14 +84,14 @@ describe('Crypto data service', () => {
     it('should handle successful GET /price request', async () => {
       expect.assertions(1);
 
-      axiosMock.onGet(requestUrl).reply(200, response);
+      axiosMock.onGet(requestUrl).reply(200, priceMultiResponse);
 
       const response = await cryptoDataService.getSymbolsPrice(
         fromSymbols,
         toSymbol,
       );
 
-      expect(response).toEqual(response);
+      expect(response).toEqual(priceMultiResponse);
     });
 
     it('should handle rejected GET /price request', async () => {
