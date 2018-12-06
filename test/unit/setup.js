@@ -24,6 +24,11 @@ import 'mocks/class/storage/LocalStorage';
 import 'mocks/class/provider/InpageProvider';
 import 'mocks/class/singleton/dappBridge';
 
+/**
+ * Schemas mocks
+ */
+import 'mocks/schema';
+
 Vue.config.productionTip = false;
 
 // console.error and console.warn throws errors and fails tests

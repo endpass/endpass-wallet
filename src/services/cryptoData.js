@@ -2,7 +2,7 @@ import throttledQueue from 'throttled-queue';
 
 import { http } from '@/class/singleton';
 import { NotificationError } from '@/class';
-import { validate, cryptoData } from '@/schema';
+import { cryptoDataValidator } from '@/schema';
 
 const throttle = throttledQueue(3, ENV.serviceThrottleTimeout);
 
@@ -28,23 +28,23 @@ export default {
         return res({ [toSymbol]: 0 });
       }
 
-      throttle(() => {
-        http
-          .get(`${ENV.cryptoDataAPIUrl}/price`, {
+      throttle(async () => {
+        try {
+          const { data } = await http.get(`${ENV.cryptoDataAPIUrl}/price`, {
             params: {
               from: fromSymbolsArray.join(','),
               to: toSymbol,
             },
-          })
-          .then(({ data }) => {
-            const validator =
-              fromSymbolsArray.length === 1
-                ? cryptoData.validateSymbolPrice
-                : cryptoData.validateSymbolsPrice;
+          });
+          const validate =
+            fromSymbolsArray.length === 1
+              ? cryptoDataValidator.validateSymbolPrice
+              : cryptoDataValidator.validateSymbolsPrice;
 
-            res(validate(validator, data));
-          })
-          .catch(e => rej(e));
+          res(validate(data));
+        } catch (e) {
+          rej(e);
+        }
       });
     });
   },
@@ -53,7 +53,7 @@ export default {
     try {
       const { data } = await http.get(`${ENV.cryptoDataAPIUrl}/gas/price`);
 
-      return validate(cryptoData.validateGasPrice, data);
+      return cryptoDataValidator.validateGasPrice(data);
     } catch (err) {
       throw new NotificationError({
         title: 'Failed to get suggested gas price',

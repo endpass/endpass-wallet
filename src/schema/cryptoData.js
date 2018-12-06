@@ -1,8 +1,6 @@
-import { ajv } from '@/class/singleton';
+const symbolRegex = '^.+$';
 
-const symbolRegex = '^[A-Z]*$';
-
-const gasPriceSchema = {
+export const gasPrice = {
   additionalProperties: false,
   required: ['low', 'medium', 'high'],
   properties: {
@@ -18,7 +16,7 @@ const gasPriceSchema = {
   },
 };
 
-const symbolPriceSchema = {
+export const symbolPrice = {
   maxProperties: 1,
   minProperties: 1,
   type: 'object',
@@ -30,19 +28,14 @@ const symbolPriceSchema = {
   },
 };
 
-const symbolsPriceSchema = {
+export const symbolsPrice = {
+  minProperties: 1,
   patternProperties: {
     [symbolRegex]: {
-      ...symbolPriceSchema,
+      ...symbolPrice,
     },
   },
   propertyNames: {
     pattern: symbolRegex,
   },
-};
-
-export default {
-  validateGasPrice: ajv.compile(gasPriceSchema),
-  validateSymbolPrice: ajv.compile(symbolPriceSchema),
-  validateSymbolsPrice: ajv.compile(symbolsPriceSchema),
 };
