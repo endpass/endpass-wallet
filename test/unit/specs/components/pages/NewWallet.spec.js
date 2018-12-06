@@ -2,8 +2,12 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
 import VueTimers from 'vue-timers/mixin';
-
 import NewWallet from '@/components/pages/NewWallet.vue';
+
+const localVue = createLocalVue();
+
+localVue.use(Notifications);
+localVue.use(Vuex);
 
 jest.useFakeTimers();
 
@@ -24,7 +28,6 @@ describe('NewWallet page', () => {
           },
           actions,
         });
-        const localVue = createLocalVue();
 
         wrapper = shallow(NewWallet, {
           localVue,
@@ -77,9 +80,6 @@ describe('NewWallet page', () => {
     //         }
     //       }
     //     });
-    //     const localVue = createLocalVue();
-    //
-    //     localVue.use(Notifications);
     //     wrapper = shallow(NewWallet, {
     //       localVue,
     //       store,
@@ -112,7 +112,6 @@ describe('NewWallet page', () => {
           },
           actions,
         });
-        const localVue = createLocalVue();
         const $ga = { event: jest.fn() };
 
         wrapper = shallow(NewWallet, {
@@ -124,7 +123,7 @@ describe('NewWallet page', () => {
           mixins: [VueTimers],
         });
 
-        spyOn(wrapper.vm.$timer, 'stop');
+        jest.spyOn(wrapper.vm.$timer, 'stop');
       });
 
       it('should reduce the remainingSeedPhraseTimeout for one second', () => {
@@ -169,7 +168,6 @@ describe('NewWallet page', () => {
         },
         actions,
       });
-      const localVue = createLocalVue();
 
       wrapper = shallow(NewWallet, {
         localVue,

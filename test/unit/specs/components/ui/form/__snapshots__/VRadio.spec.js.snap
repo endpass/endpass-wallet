@@ -4,18 +4,18 @@ exports[`VRadio props options options are objects should correctly render text o
 <div class="field is-horizontal has-addons v-radio">
     <!---->
     <div class="control">
-        <label for="undefined[object Object]" class="button is-multiline">
+        <label for="[object Object]" class="button is-multiline">
 
             <!---->
         </label>
-        <input id="undefined[object Object]" name="" type="radio" value="">
+        <input id="[object Object]" name="" type="radio" value="">
     </div>
     <div class="control">
-        <label for="undefined[object Object]" class="button is-multiline">
+        <label for="[object Object]" class="button is-multiline">
 
             <!---->
         </label>
-        <input id="undefined[object Object]" name="" type="radio" value="">
+        <input id="[object Object]" name="" type="radio" value="">
     </div>
     <!---->
 </div>
@@ -25,18 +25,18 @@ exports[`VRadio props options options are objects should correctly render values
 <div class="field is-horizontal has-addons v-radio">
     <!---->
     <div class="control">
-        <label for="undefinedval" class="button is-multiline">
+        <label for="val" class="button is-multiline">
 
             <!---->
         </label>
-        <input id="undefinedval" name="" type="radio" value="val">
+        <input id="val" name="" type="radio" value="val">
     </div>
     <div class="control">
-        <label for="undefined[object Object]" class="button is-multiline">
+        <label for="[object Object]" class="button is-multiline">
 
             <!---->
         </label>
-        <input id="undefined[object Object]" name="" type="radio" value="">
+        <input id="[object Object]" name="" type="radio" value="">
     </div>
     <!---->
 </div>
@@ -46,18 +46,18 @@ exports[`VRadio props options options are strings should correctly render option
 <div class="field is-horizontal has-addons v-radio">
     <!---->
     <div class="control">
-        <label for="undefinedoption1" class="button is-multiline">
+        <label for="option1" class="button is-multiline">
             option1
             <!---->
         </label>
-        <input id="undefinedoption1" name="" type="radio" value="option1">
+        <input id="option1" name="" type="radio" value="option1">
     </div>
     <div class="control">
-        <label for="undefinedoption2" class="button is-multiline">
+        <label for="option2" class="button is-multiline">
             option2
             <!---->
         </label>
-        <input id="undefinedoption2" name="" type="radio" value="option2">
+        <input id="option2" name="" type="radio" value="option2">
     </div>
     <!---->
 </div>
@@ -67,18 +67,18 @@ exports[`VRadio props options options have different types should correctly rend
 <div class="field is-horizontal has-addons v-radio">
     <!---->
     <div class="control">
-        <label for="undefinedoption" class="button is-multiline">
+        <label for="option" class="button is-multiline">
             option
             <!---->
         </label>
-        <input id="undefinedoption" name="" type="radio" value="option">
+        <input id="option" name="" type="radio" value="option">
     </div>
     <div class="control">
-        <label for="undefinedoption value" class="button is-multiline">
+        <label for="option value" class="button is-multiline">
 
             <!---->
         </label>
-        <input id="undefinedoption value" name="" type="radio" value="option value">
+        <input id="option value" name="" type="radio" value="option value">
     </div>
     <!---->
 </div>

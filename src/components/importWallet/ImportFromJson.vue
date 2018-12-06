@@ -1,40 +1,38 @@
 <template>
   <div>
-    <v-form
-      data-test="import-json-form"
+    <v-form 
+      data-test="import-json-form" 
       @submit="togglePasswordModal"
     >
       <div class="field">
         <div class="file">
           <label class="file-label">
             <input
+              v-validate="'required'"
               class="file-input"
               type="file"
               name="jsonWallet"
               data-test="input-file"
-              v-validate="'required'"
               @change="setFile"
             >
             <span class="file-cta">
               <span class="file-icon">
-                <span
-                  class="icon is-small"
+                <span 
+                  class="icon is-small" 
                   v-html="require('@/img/arrow-thick-top.svg')"
                 />
               </span>
-              <span
-                class="file-label"
+              <span 
+                class="file-label" 
                 v-text="fileName"
               />
             </span>
           </label>
         </div>
-        <p
-          v-show="errors.has('fileName')"
+        <p 
+          v-show="errors.has('fileName')" 
           class="help is-danger"
-        >
-          {{ errors.first('fileName') }}
-        </p>
+        >{{ errors.first('fileName') }}</p>
       </div>
 
       <v-password
@@ -55,23 +53,18 @@
         :loading="isCreating"
         class-name="is-primary is-cta"
         data-test="submit-import"
-      >
-        Import
-      </v-button>
+      >Import</v-button>
     </v-form>
 
     <password-modal
       v-if="isPasswordModal"
       @close="togglePasswordModal"
       @confirm="handlePasswordConfirm"
-    >
-      The wallet password will be used for operations on the imported wallet
-    </password-modal>
+    >The wallet password will be used for operations on the imported wallet</password-modal>
   </div>
 </template>
 
 <script>
-import EthWallet from 'ethereumjs-wallet';
 import { mapActions } from 'vuex';
 import VForm from '@/components/ui/form/VForm';
 import VPassword from '@/components/ui/form/VPassword';
@@ -93,6 +86,11 @@ export default {
       const { file } = this;
 
       return file ? file.name : 'V3 JSON keystore file';
+    },
+  },
+  watch: {
+    jsonKeystorePassword() {
+      this.errors.removeById('wrongPass');
     },
   },
   methods: {
@@ -120,9 +118,11 @@ export default {
       this.isCreating = false;
     },
     setFile({ target: { files } }) {
+      const [file] = files;
+
       this.errors.removeById('wrongFile');
       this.fileData = null;
-      this.file = files[0];
+      this.file = file;
 
       if (!this.file) {
         return;
@@ -152,11 +152,6 @@ export default {
       reader.onerror = () => this.errors.add(fileReaderError);
 
       reader.readAsText(this.file);
-    },
-  },
-  watch: {
-    jsonKeystorePassword() {
-      this.errors.removeById('wrongPass');
     },
   },
   mixins: [modalMixin],

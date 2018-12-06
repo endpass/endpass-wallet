@@ -7,7 +7,10 @@
             <h1 class="card-header-title">Send ETH</h1>
           </div>
           <div class="card-content">
-            <transaction-form :transaction="transaction" @submit="handleTransactionSend"/>
+            <transaction-form
+              :transaction="transaction"
+              @submit="handleTransactionSend"
+            />
             <div
               v-if="transactionHash"
               class="transaction-status message is-success"

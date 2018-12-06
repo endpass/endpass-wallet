@@ -12,7 +12,8 @@
         </h3>
         <button
           class="delete is-large"
-          @click="close" />
+          @click="close"
+        />
       </div>
       <div class="modal-card-body">
         <slot />

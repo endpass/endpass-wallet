@@ -16,9 +16,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
   <p
     class="subtitle"
   >
-    
     Please enter your email address below to access your wallet or create a new one.
-  
   </p>
    
   <v-form
@@ -28,8 +26,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
   >
     <v-input
       autofocus=""
-      help="Your email address may be used to help recover your
-             wallet in case you lose access."
+      help="Your email address may be used to help recover your wallet in case you lose access."
       label="Email"
       name="email"
       placeholder="Your email"
@@ -50,14 +47,13 @@ exports[`LoginByEmailModal render should render component 1`] = `
       v-model="termsAccepted"
     >
       
-      I accept the 
+      I accept the
+      
       <a
         href="https://endpass.com/terms/"
         target="_blank"
       >
-        
         Terms of Service
-      
       </a>
       
       and
@@ -66,9 +62,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
         href="https://endpass.com/privacy/"
         target="_blank"
       >
-        
         Privacy Policy
-      
       </a>
       .
     
@@ -85,9 +79,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
       disabled="true"
       form="loginByEmail"
     >
-      
       Continue
-    
     </v-button>
   </div>
 </v-modal>

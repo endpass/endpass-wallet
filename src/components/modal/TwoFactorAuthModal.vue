@@ -71,8 +71,14 @@ import VButton from '@/components/ui/form/VButton';
 export default {
   name: 'TwoFactorAuthModal',
   props: {
-    secret: String,
-    email: String,
+    secret: {
+      type: String,
+      default: '',
+    },
+    email: {
+      type: String,
+      default: '',
+    },
     isLoading: {
       type: Boolean,
       default: false,

@@ -11,10 +11,8 @@ describe('ChangePasswordSettings', () => {
   let wrapper;
 
   beforeEach(() => {
-    jest.clearAllMocks();
-
     accountsActions = {
-      updateAllAccountWalletsWithNewPassword: jest.fn().mockResolvedValue(true),
+      updateWalletsWithNewPassword: jest.fn().mockResolvedValue(true),
       updateWallets: jest.fn(),
     };
     storeOptions = {
@@ -134,9 +132,7 @@ describe('ChangePasswordSettings', () => {
         wrapper.vm.handleFormSubmit();
         await global.flushPromises();
 
-        expect(
-          accountsActions.updateAllAccountWalletsWithNewPassword,
-        ).toBeCalled();
+        expect(accountsActions.updateWalletsWithNewPassword).toBeCalled();
         expect(wrapper.vm.$notify).toBeCalledWith({
           title: 'Password changed successfully',
           type: 'is-success',
@@ -151,16 +147,14 @@ describe('ChangePasswordSettings', () => {
 
         const error = new Error('authentication code mismatch');
 
-        accountsActions.updateAllAccountWalletsWithNewPassword.mockRejectedValueOnce(
+        accountsActions.updateWalletsWithNewPassword.mockRejectedValueOnce(
           error,
         );
 
         wrapper.vm.handleFormSubmit();
         await global.flushPromises();
 
-        expect(
-          accountsActions.updateAllAccountWalletsWithNewPassword,
-        ).toBeCalled();
+        expect(accountsActions.updateWalletsWithNewPassword).toBeCalled();
         expect(wrapper.vm.$notify).toBeCalledWith({
           title: 'You entered incorrect password, try using a different one.',
           type: 'is-danger',
@@ -175,16 +169,14 @@ describe('ChangePasswordSettings', () => {
 
         const error = new Error('foo');
 
-        accountsActions.updateAllAccountWalletsWithNewPassword.mockRejectedValueOnce(
+        accountsActions.updateWalletsWithNewPassword.mockRejectedValueOnce(
           error,
         );
 
         wrapper.vm.handleFormSubmit();
         await global.flushPromises();
 
-        expect(
-          accountsActions.updateAllAccountWalletsWithNewPassword,
-        ).toBeCalled();
+        expect(accountsActions.updateWalletsWithNewPassword).toBeCalled();
         expect(wrapper.vm.$notify).toBeCalledWith({
           title: 'Password was not changed.',
           type: 'is-danger',
@@ -197,16 +189,14 @@ describe('ChangePasswordSettings', () => {
       it('should show error if changing was failed without errors', async () => {
         expect.assertions(5);
 
-        accountsActions.updateAllAccountWalletsWithNewPassword.mockResolvedValueOnce(
+        accountsActions.updateWalletsWithNewPassword.mockResolvedValueOnce(
           false,
         );
 
         wrapper.vm.handleFormSubmit();
         await global.flushPromises();
 
-        expect(
-          accountsActions.updateAllAccountWalletsWithNewPassword,
-        ).toBeCalled();
+        expect(accountsActions.updateWalletsWithNewPassword).toBeCalled();
         expect(wrapper.vm.$notify).toBeCalledWith({
           title: 'Password was not changed.',
           type: 'is-danger',

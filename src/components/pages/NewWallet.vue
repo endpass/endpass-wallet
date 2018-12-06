@@ -1,37 +1,39 @@
 <template>
   <base-page class="new-wallet">
     <template slot="title">{{ hdKey ? "Wallet Created" : "Create Wallet" }}</template>
-    <div
-      v-if="hdKey"
+    <div 
+      v-if="hdKey" 
       class="container has-text-centered is-narrow"
     >
-      <p class="subtitle">Your wallet has been created successfully.
-      Please <strong>write down the 12 word recovery phrase below</strong>
+      <p class="subtitle">
+        Your wallet has been created successfully.
+        Please
+        <strong>write down the 12 word recovery phrase below</strong>
         and store it in a safe place. You will not be able to recover your
-        wallet without it.</p>
+        wallet without it.
+      </p>
       <div class="box">
         <p>Your wallet recovery phrase</p>
-        <p
-          class="code"
+        <p 
+          class="code" 
           data-test="seed-phrase"
-        >
-          {{ key }}
-        </p>
+        >{{ key }}</p>
       </div>
       <router-link
         :disabled="!!remainingSeedPhraseTimeout"
         to="/"
         class="button is-success is-cta"
-      >
-        Continue {{ getRemainingSeedPhraseTimeout }}
-      </router-link>
+      >Continue {{ getRemainingSeedPhraseTimeout }}</router-link>
     </div>
-    <div
-      v-else
-      class="container has-text-centered is-narrow">
-      <p class="subtitle">Just click the button below to create a new,
-      secure Ethereum Wallet. Your wallet can contain multiple addresses
-      for storing Ethereum and ERC20 compatible tokens.</p>
+    <div 
+      v-else 
+      class="container has-text-centered is-narrow"
+    >
+      <p class="subtitle">
+        Just click the button below to create a new,
+        secure Ethereum Wallet. Your wallet can contain multiple addresses
+        for storing Ethereum and ERC20 compatible tokens.
+      </p>
       <v-form @submit="createWallet">
         <v-password
           id="jsonKeystorePassword"
@@ -45,19 +47,16 @@
           required
           data-test="input-new-wallet-password"
         />
-        <v-button
-          :loading="isCreating"
+        <v-button 
+          :loading="isCreating" 
           class-name="is-success is-cta"
-        >
-          Create New Wallet
-        </v-button>
+        >Create New Wallet</v-button>
       </v-form>
     </div>
   </base-page>
 </template>
 
 <script>
-import router from '@/router';
 import BasePage from '@/components/pages/Base';
 import Bip39 from 'bip39';
 import VueTimers from 'vue-timers/mixin';

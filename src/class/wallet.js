@@ -8,24 +8,42 @@ import { WALLET_TYPE, HARDWARE_WALLET_TYPE } from '@/constants';
 
 const { isAddress, bytesToHex, toChecksumAddress } = web3.utils;
 
-// A Wallet represents a single Ethereum account that can send transactions
-// All methods are async and return promises
+/**
+ * A Wallet represents a single Ethereum account that can send transactions
+ * ! All methods are async and return promises
+ * @constructor
+ * @param {Object} account Account object
+ */
 export default class Wallet {
-  constructor(account) {
-    const address = Wallet.normalizeAddress(account.address);
+  constructor(v3Keystore) {
+    const address = Wallet.normalizeAddress(v3Keystore.address);
 
     if (!isAddress(address)) {
       throw new Error(`${address} is not valid Etherium address!`);
     }
 
-    this.address = address;
-    this.isPublic = true;
-    this.v3 = null;
-    this.signStrategy = null;
+    const accountType = get(v3Keystore, 'info.type');
+    const isPublic = !keystore.isV3(v3Keystore);
+    const isHardware = Object.values(HARDWARE_WALLET_TYPE).includes(
+      accountType,
+    );
 
-    this.init(account);
+    this.address = address;
+    this.index = get(v3Keystore, 'info.index');
+    this.v3 = isPublic ? null : v3Keystore;
+    this.signStrategy = null;
+    this.isPublic = isPublic;
+    this.isHardware = isHardware;
+
+    if (isHardware) {
+      this.applyHardwareStrategy(accountType);
+    }
   }
 
+  /**
+   *
+   * @param {*} address
+   */
   static normalizeAddress(address) {
     if (/^xpub/.test(address)) {
       return Wallet.getAddressFromXpub(address);
@@ -34,28 +52,23 @@ export default class Wallet {
     return `0x${address.replace(/^0x/, '')}`;
   }
 
+  /**
+   * Returns checksummed address from xpub
+   * @param {String} xpub
+   * @returns {String} Checksummed address
+   */
   static getAddressFromXpub(xpub) {
     const hdWallet = HDKey.fromExtendedKey(xpub);
 
     return hdWallet.getWallet().getChecksumAddressString();
   }
 
-  init(account) {
-    if (!keystore.isV3(account)) return;
-
-    const accountType = get(account, 'info.type');
-    const isHardware = Object.values(HARDWARE_WALLET_TYPE).includes(
-      accountType,
-    );
-
-    this.isPublic = false;
-    this.v3 = account;
-
-    if (isHardware) {
-      this.applyHardwareStrategy(accountType);
-    }
-  }
-
+  /**
+   * Applies sign strategy to wallet by given account type
+   * If wallet is not supported – throws error
+   * @param {String} accountType
+   * @throws {Error}
+   */
   applyHardwareStrategy(accountType) {
     switch (accountType) {
       case WALLET_TYPE.TREZOR:
@@ -65,16 +78,24 @@ export default class Wallet {
         this.signStrategy = LedgerWallet;
         break;
       default:
-        /* eslint-disable-next-line */
-        console.warn(`Can't match hardware type ${accountType}`);
-        this.signStrategy = null;
+        throw new Error(`${accountType} hardware wallet is not supported yet!`);
     }
   }
 
+  /**
+   * Returns decrypted private key buffer
+   * @param {String} password Account password
+   * @returns {Promise<Buffer>} Private key buffer
+   */
   async getPrivateKey(password) {
     return keystore.decrypt(password, this.v3);
   }
 
+  /**
+   * Returns decrypted private key in string
+   * @param {String} password Account password
+   * @returns {Promise<String>} Private key string
+   */
   async getPrivateKeyString(password) {
     const privateKey = await this.getPrivateKey(password);
 
@@ -82,20 +103,28 @@ export default class Wallet {
   }
 
   /**
-   * @returns (Propmise<String>)
+   * Returns accoutn in JSON string
+   * @returns (Promise<String>)
    */
   async exportToJSON() {
     return JSON.stringify(this.v3);
   }
 
-  async getAddressString() {
-    return this.address;
-  }
-
+  /**
+   * Returns checksummed wallet address
+   * @returns {String}
+   */
   getChecksumAddressString() {
     return toChecksumAddress(this.address);
   }
 
+  /**
+   * Validates account password
+   * Throws error on validation failure
+   * @param {String} password Account password
+   * @throws {Error}
+   * @returns {Boolean}
+   */
   async validatePassword(password) {
     try {
       await this.getPrivateKey(password);
@@ -112,6 +141,10 @@ export default class Wallet {
    * @return {Promise<Object<SignedMessage>>} Return signed message object
    */
   async sign(data, password) {
+    if (this.isHardware) {
+      return this.signStrategy.sign(data, this.index);
+    }
+
     const privateKey = await this.getPrivateKeyString(password);
 
     return web3.eth.accounts.sign(data, privateKey);
@@ -125,6 +158,10 @@ export default class Wallet {
    */
   /* eslint-disable-next-line */
   async recover(message, signature) {
+    if (this.isHardware) {
+      return this.signStrategy.recover(message, signature);
+    }
+
     return web3.eth.accounts.recover(message, signature);
   }
 
@@ -134,6 +171,10 @@ export default class Wallet {
    * @return {String<SignedTrxHash>} Resolve signed transaction hash
    */
   async signTransaction(transaction, password) {
+    if (this.isHardware) {
+      return this.signStrategy.signTransaction(transaction, this.index);
+    }
+
     const privateKey = await this.getPrivateKey(password);
     const tx = transaction instanceof Tx ? transaction : new Tx(transaction);
 

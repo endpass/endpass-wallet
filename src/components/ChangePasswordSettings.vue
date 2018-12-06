@@ -46,14 +46,14 @@ export default {
   methods: {
     ...mapActions('accounts', [
       'updateWallets',
-      'updateAllAccountWalletsWithNewPassword',
+      'updateWalletsWithNewPassword',
     ]),
 
     async handleFormSubmit() {
       try {
         this.isLoading = true;
 
-        const res = await this.updateAllAccountWalletsWithNewPassword({
+        const res = await this.updateWalletsWithNewPassword({
           password: this.oldPassword,
           newPassword: this.newPassword,
         });

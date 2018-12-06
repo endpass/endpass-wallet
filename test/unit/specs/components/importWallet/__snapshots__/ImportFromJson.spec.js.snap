@@ -1,10 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ImportFromJson behavior should toggle password modal window 1`] = `
-<password-modal v-on:close="bound togglePasswordModal" v-on:confirm="bound handlePasswordConfirm">
-    The wallet password will be used for operations on the imported wallet
-</password-modal>
-`;
+exports[`ImportFromJson behavior should toggle password modal window 1`] = `<password-modal v-on:close="bound togglePasswordModal" v-on:confirm="bound handlePasswordConfirm">The wallet password will be used for operations on the imported wallet</password-modal>`;
 
 exports[`ImportFromJson render should render initial state of the component 1`] = `
 <div>
@@ -60,8 +56,6 @@ exports[`ImportFromJson render should render initial state of the component 1`] 
         v-show="errors.has('fileName')"
       >
         
-        
-      
       </p>
     </div>
      
@@ -82,9 +76,7 @@ exports[`ImportFromJson render should render initial state of the component 1`] 
       class-name="is-primary is-cta"
       data-test="submit-import"
     >
-      
       Import
-    
     </v-button>
   </v-form>
    

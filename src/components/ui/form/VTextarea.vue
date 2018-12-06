@@ -20,6 +20,7 @@
 <script>
 export default {
   name: 'VTextarea',
+  inheritAttrs: false,
   props: {
     value: {
       type: [String, Number],
@@ -46,6 +47,5 @@ export default {
       };
     },
   },
-  inheritAttrs: false,
 };
 </script>

@@ -6,7 +6,8 @@
     <v-modal @close="close">
       <v-form
         id="sendEther"
-        @submit="confirmResend">
+        @submit="confirmResend"
+      >
         <v-input
           id="gasPrice"
           v-model="newTransaction.gasPrice"
@@ -66,7 +67,12 @@ import VButton from '@/components/ui/form/VButton.vue';
 export default {
   name: 'ResendModal',
 
-  props: ['transaction'],
+  props: {
+    transaction: {
+      type: Object,
+      required: true,
+    },
+  },
 
   data() {
     return {

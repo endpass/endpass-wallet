@@ -8,7 +8,7 @@ export async function privateWalletGuard(to, from, next) {
 
   if (!store.getters['accounts/wallet']) {
     next({ name: 'NewWallet' });
-  } else if (store.getters['accounts/wallet'].isPublic) {
+  } else if (store.getters['accounts/isPublicAccount']) {
     next({ name: 'HomePage' });
   } else {
     next();
