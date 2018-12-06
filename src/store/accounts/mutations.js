@@ -16,9 +16,10 @@ const setAddress = (state, address) => {
 };
 
 const addWallet = (state, wallet) => {
-  Object.assign(state.wallets, {
+  state.wallets = {
+    ...state.wallets,
     [wallet.address]: wallet,
-  });
+  };
 };
 
 // Saves the encrypted HD wallet key in V3 keystore format

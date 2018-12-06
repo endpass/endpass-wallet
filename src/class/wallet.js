@@ -36,6 +36,7 @@ export default class Wallet {
     this.isHardware = isHardware;
 
     if (isHardware) {
+      this.isPublic = false;
       this.applyHardwareStrategy(accountType);
     }
   }
