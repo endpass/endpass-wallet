@@ -2,6 +2,7 @@ import MockAdapter from 'axios-mock-adapter';
 
 import { http } from '@/class/singleton';
 import { NotificationError } from '@/class';
+import { cryptoDataValidator } from '@/schema';
 import { gasPrice } from 'fixtures/gasPrice';
 import { price, priceMulti } from 'fixtures/price';
 
@@ -23,11 +24,15 @@ describe('Crypto data service', () => {
     const priceResponse = price;
 
     it('should correctly convert symbols to EHT-TEST', async () => {
+      expect.assertions(2);
+
       const toSymbol = 'ETH-TEST';
       const expectedResponse = {
         ETH: { [toSymbol]: 0 },
         BTC: { [toSymbol]: 0 },
       };
+
+      axiosMock.onGet(requestUrl).reply(200, priceMultiResponse);
 
       const receivedResponse = await cryptoDataService.getSymbolsPrice(
         fromSymbols,
@@ -39,8 +44,12 @@ describe('Crypto data service', () => {
     });
 
     it('should correctly convert EHT-TEST to symbol', async () => {
+      expect.assertions(2);
+
       const fromSymbols = 'ETH-TEST';
       const expectedResponse = { [toSymbol]: 0 };
+
+      axiosMock.onGet(requestUrl).reply(200, priceMultiResponse);
 
       const receivedResponse = await cryptoDataService.getSymbolsPrice(
         fromSymbols,
@@ -103,6 +112,31 @@ describe('Crypto data service', () => {
         cryptoDataService.getSymbolsPrice(fromSymbols, toSymbol),
       ).rejects.toThrow(expect.any(Error));
     });
+
+    it('should handle data validation errors', () => {
+      const symbolPriceValidationError = new Error(
+        'symbolPriceValidationError',
+      );
+      const symbolsPriceValidationError = new Error(
+        'symbolsPriceValidationError',
+      );
+
+      axiosMock.onGet(requestUrl).reply(200);
+      cryptoDataValidator.validateSymbolPrice.mockImplementationOnce(() => {
+        throw symbolPriceValidationError;
+      });
+      cryptoDataValidator.validateSymbolsPrice.mockImplementationOnce(() => {
+        throw symbolsPriceValidationError;
+      });
+
+      expect(
+        cryptoDataService.getSymbolsPrice(fromSymbols[0], toSymbol),
+      ).rejects.toThrow(symbolPriceValidationError);
+
+      expect(
+        cryptoDataService.getSymbolsPrice(fromSymbols, toSymbol),
+      ).rejects.toThrow(symbolsPriceValidationError);
+    });
   });
 
   describe('getGasPrice', () => {
@@ -126,24 +160,25 @@ describe('Crypto data service', () => {
     });
 
     it('should handle successful GET /gas/price request', () => {
-      expect.assertions(1);
-
       axiosMock.onGet(`${ENV.cryptoDataAPIUrl}/gas/price`).reply(200, gasPrice);
 
       expect(cryptoDataService.getGasPrice()).resolves.toEqual(gasPrice);
     });
 
-    it('should validate gas price and throw error if data is not valid', () => {
-      axiosMock.onGet(requestUrl).reply(200, {
-        low: 'foo',
+    it('should handle data validation errors', () => {
+      const gasPriceValidationError = new Error('gasPriceValidationError');
+
+      axiosMock.onGet(requestUrl).reply(200);
+      cryptoDataValidator.validateGasPrice.mockImplementationOnce(() => {
+        throw gasPriceValidationError;
       });
 
-      expect(cryptoDataService.getGasPrice()).rejects.toThrow(expectedError);
+      expect(cryptoDataService.getGasPrice()).rejects.toThrow(
+        gasPriceValidationError,
+      );
     });
 
     it('should handle rejected GET /price request', () => {
-      expect.assertions(1);
-
       axiosMock.onGet(requestUrl).reply(500);
 
       expect(cryptoDataService.getGasPrice()).rejects.toThrow(expectedError);
