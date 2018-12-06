@@ -55,6 +55,7 @@ import {
 } from '../fixtures/transactions';
 
 const identityAPIUrl = '/identity/api/v1.1';
+const cryptodataAPIUrl = '/cryptodata/api/v1';
 
 // Sets up server and routes to stub logged in user with fixtures.
 // Usage: cy.login()
@@ -195,7 +196,7 @@ Cypress.Commands.add('getTokensInfo', () => {
 Cypress.Commands.add('getGasPrice', () => {
   cy.route(
     'GET',
-    '/gasprice/api/v1/gas/price',
+    `${cryptodataAPIUrl}/gas/price`,
     'fixture:cryptodata/gasprice',
   ).as('gasPrice');
 });
