@@ -61,11 +61,7 @@ const addPublicWallet = async (
       address,
     };
 
-    await userService.setAccount(address, { info });
-    await dispatch('addWallet', {
-      ...info,
-      address,
-    });
+    await dispatch('addWallet', { info, address });
 
     return dispatch('selectWallet', address);
   } catch (e) {
@@ -322,7 +318,7 @@ const decryptAccountHdWallet = async ({ state }, password) => {
 
 const decryptAccountWallets = async ({ state }, password) =>
   Object.values(state.wallets)
-    .filter(item => !item.isPublic)
+    .filter(item => !item.isPublic && !item.isHardware)
     .map(item => keystore.decryptWallet(password, item.v3));
 
 const encryptHdWallet = async (ctx, { password, hdWallet }) =>

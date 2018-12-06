@@ -72,6 +72,7 @@ describe('ReceivePage', () => {
           getters: {
             balance: jest.fn(),
             wallet: () => ethereumWalletMock,
+            isPublicAccount: () => false,
           },
         },
       },

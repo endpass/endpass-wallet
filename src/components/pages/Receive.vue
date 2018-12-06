@@ -86,7 +86,7 @@ export default {
       wallets: state => state.accounts.wallets,
       activeNetId: state => state.web3.activeNet.id,
     }),
-    ...mapGetters('accounts', ['wallet', 'balance']),
+    ...mapGetters('accounts', ['wallet', 'balance', 'isPublicAccount']),
     ...mapGetters('transactions', ['incomingTransactions']),
   },
 

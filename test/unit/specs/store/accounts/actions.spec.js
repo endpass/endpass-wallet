@@ -130,20 +130,6 @@ describe('Accounts actions', () => {
       type: WALLET_TYPE.PUBLIC,
     };
 
-    it('should save wallet via user service', async () => {
-      expect.assertions(2);
-
-      await actions.addPublicWallet(
-        { commit, dispatch },
-        { address: checksumAddress },
-      );
-
-      expect(userService.setAccount).toHaveBeenCalledTimes(1);
-      expect(userService.setAccount).toBeCalledWith(checksumAddress, {
-        info,
-      });
-    });
-
     it('should save public key and select added wallet', async () => {
       expect.assertions(3);
 
@@ -154,7 +140,7 @@ describe('Accounts actions', () => {
 
       expect(dispatch).toBeCalledTimes(2);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'addWallet', {
-        ...info,
+        info,
         address: checksumAddress,
       });
       expect(dispatch).toHaveBeenNthCalledWith(
@@ -168,12 +154,12 @@ describe('Accounts actions', () => {
       expect.assertions(2);
 
       const error = new Error('error');
-      userService.setAccount.mockRejectedValueOnce(error);
+      dispatch.mockRejectedValueOnce(error);
 
       await actions.addPublicWallet({ commit, dispatch }, v3);
 
-      expect(dispatch).toBeCalledTimes(1);
-      expect(dispatch).toBeCalledWith('errors/emitError', error, {
+      expect(dispatch).toBeCalledTimes(2);
+      expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });
     });
