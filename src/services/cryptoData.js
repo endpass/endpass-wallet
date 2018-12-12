@@ -36,12 +36,8 @@ export default {
               to: toSymbol,
             },
           });
-          const validate =
-            fromSymbolsArray.length === 1
-              ? cryptoDataValidator.validateSymbolPrice
-              : cryptoDataValidator.validateSymbolsPrice;
 
-          res(validate(data));
+          res(cryptoDataValidator.validateSymbolsPrice(data));
         } catch (e) {
           rej(e);
         }

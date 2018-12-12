@@ -2,11 +2,13 @@ import { NotificationError } from '@/class';
 import { proxyRequest } from '@/class/singleton';
 import keyUtil from '@/utils/keystore';
 import { WALLET_TYPE } from '@/constants';
+import { identityValidator, v3KeystoreValidator } from '@/schema';
 
 export default {
   async getSettings() {
     try {
-      return await proxyRequest.read('/settings');
+      const settings = await proxyRequest.read('/settings');
+      return identityValidator.validateUserSettings(settings);
     } catch (e) {
       return {};
     }
@@ -85,15 +87,10 @@ export default {
     }
   },
 
-  setSetting(prop, data) {
-    return this.setSettings({
-      [prop]: data,
-    });
-  },
-
   // Returns addresses of all of the user's accounts
-  getAccounts() {
-    return proxyRequest.read('/accounts');
+  async getAccounts() {
+    const addresses = await proxyRequest.read('/accounts');
+    return v3KeystoreValidator.validateAddresses(addresses);
   },
 
   // Saves the encrypted keystore for an account
@@ -139,7 +136,11 @@ export default {
         proxyRequest.read(`/account/${address}/info`).catch(() => ({})),
       ]);
 
-      return { ...account, address, info };
+      return {
+        ...v3KeystoreValidator.validateAccount(account),
+        address,
+        info,
+      };
     } catch (e) {
       const shortAcc = address.replace(/^(.{5}).+/, '$1…');
 
@@ -195,7 +196,8 @@ export default {
 
   async getOtpSettings() {
     try {
-      return await proxyRequest.read('/settings/otp');
+      const otpSetting = await proxyRequest.read('/settings/otp');
+      return identityValidator.validateUserOtpSetting(otpSetting);
     } catch (e) {
       throw new NotificationError({
         title: 'Error requesting two-factor authentication settings',
