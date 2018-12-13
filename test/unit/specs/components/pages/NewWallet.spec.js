@@ -1,13 +1,16 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { mount, shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
 import VueTimers from 'vue-timers/mixin';
+import VeeValidate from 'vee-validate';
+
 import NewWallet from '@/components/pages/NewWallet.vue';
 
 const localVue = createLocalVue();
 
 localVue.use(Notifications);
 localVue.use(Vuex);
+localVue.use(VeeValidate);
 
 jest.useFakeTimers();
 
@@ -29,7 +32,7 @@ describe('NewWallet page', () => {
           actions,
         });
 
-        wrapper = shallow(NewWallet, {
+        wrapper = mount(NewWallet, {
           localVue,
           store,
           mixins: [VueTimers],
@@ -114,7 +117,7 @@ describe('NewWallet page', () => {
         });
         const $ga = { event: jest.fn() };
 
-        wrapper = shallow(NewWallet, {
+        wrapper = mount(NewWallet, {
           localVue,
           store,
           mocks: {
@@ -169,6 +172,7 @@ describe('NewWallet page', () => {
         actions,
       });
 
+      localVue.use(VeeValidate);
       wrapper = shallow(NewWallet, {
         localVue,
         store,

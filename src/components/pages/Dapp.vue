@@ -7,10 +7,12 @@
             v-model="url"
             :disabled="loading"
             name="url"
+            data-vv-name="url"
             placeholder="Enter dapp url..."
             class-name="dapp-form-input"
             data-vv-as="Dapp url"
-            validator="required|url:require_protocol:true:require_tld:false"
+            v-validate="'required|url:require_protocol:true:require_tld:false'"
+            :error="errors.first('url')"
             data-test="dapp-url-input"
             @keydown.enter="openDapp"
             @input="onChangeUrlInput"
@@ -180,6 +182,10 @@ export default {
 
   beforeDestroy() {
     this.reset();
+  },
+
+  $_veeValidate: {
+    validator: 'new',
   },
 
   mixins: [privatePage],

@@ -13,6 +13,7 @@ exports[`AddTokenModal render should render component 1`] = `
    
   <v-form
     id="addToken"
+    isformvalid="true"
     v-model="isFormValid"
     v-on:submit="bound addToken"
   >
@@ -48,7 +49,6 @@ exports[`AddTokenModal render should render component 1`] = `
       <v-button
         class-name="is-primary"
         data-test="find-button"
-        disabled="true"
         type="button"
       >
         

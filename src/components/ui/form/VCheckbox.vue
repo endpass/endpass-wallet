@@ -2,10 +2,8 @@
   <div class="field">
     <label class="checkbox">
       <input
-        v-validate="validator"
         :name="name"
-        :data-vv-as="name"
-        :class="{'is-danger': error || errors.has(name) }"
+        :class="{'is-danger': error }"
         v-model="innerValue"
         type="checkbox"
       >
@@ -17,9 +15,6 @@
 <script>
 export default {
   name: 'VCheckbox',
-  inject: {
-    $validator: '$validator',
-  },
   props: {
     value: {
       type: Boolean,
@@ -36,10 +31,6 @@ export default {
     error: {
       type: String,
       default: null,
-    },
-    validator: {
-      type: String,
-      default: '',
     },
   },
   data() {

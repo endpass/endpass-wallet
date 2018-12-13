@@ -3,14 +3,16 @@
     <v-form
       data-test="import-private-form"
       @submit="togglePasswordModal"
-    >
+      :isFormValid="isFormValid">
       <v-password
         id="privateKey"
         key="privateKeyUnique"
         v-model="privateKey"
         label="Private key"
         name="privateKey"
-        validator="required|private_key"
+        data-vv-name="privateKey"
+        v-validate="'required|private_key'"
+        :error="errors.first('privateKey')"
         data-vv-as="private key"
         aria-describedby="privateKey"
         placeholder="Private key"
@@ -23,6 +25,7 @@
         :loading="isCreating"
         class-name="is-primary is-cta"
         data-test="submit-import"
+        :disabled="!isFormValid"
       >
         Import
       </v-button>
@@ -43,6 +46,7 @@ import VPassword from '@/components/ui/form/VPassword';
 import VButton from '@/components/ui/form/VButton';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
+import formMixin from '@/mixins/form';
 
 export default {
   name: 'ImportFromPrivateKey',
@@ -77,7 +81,7 @@ export default {
       this.errors.removeById('wrongPrivateKey');
     },
   },
-  mixins: [modalMixin],
+  mixins: [modalMixin, formMixin],
   components: {
     VForm,
     VPassword,

@@ -1,4 +1,4 @@
-import { shallow } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 
 import ConfirmEmailModal from '@/components/modal/ConfirmEmailModal';
 
@@ -6,7 +6,7 @@ describe('ConfirmEmailModal', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(ConfirmEmailModal);
+    wrapper = mount(ConfirmEmailModal);
   });
 
   describe('render', () => {

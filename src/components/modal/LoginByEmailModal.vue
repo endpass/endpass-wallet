@@ -1,6 +1,6 @@
 <template>
-  <v-modal 
-    class="is-dark" 
+  <v-modal
+    class="is-dark"
     @close="handleClose"
   >
     <template slot="header">Get Started</template>
@@ -14,10 +14,10 @@
       class="subtitle"
     >Please enter your server address below to access your accounts.</p>
 
-    <v-form 
-      id="loginByEmail" 
-      v-model="isFormValid" 
+    <v-form
+      id="loginByEmail"
       @submit="handleSubmit"
+      :isFormValid="isFormValid"
     >
       <v-input
         v-if="isSelectDefaultIdentity"
@@ -28,7 +28,9 @@
         label="Email"
         help="Your email address may be used to help recover your wallet in case you lose access."
         name="email"
-        validator="required|email"
+        data-vv-name="email"
+        v-validate="'required|email'"
+        :error="errors.first('email')"
         placeholder="Your email"
       />
 
@@ -47,30 +49,32 @@
         v-model="customIdentityServer"
         :disabled="!isInputAllowed"
         label="Custom Identity Server"
+        data-vv-name="customIdentityServer"
         name="customIdentityServer"
-        validator="required|url:require_protocol:true"
+        v-validate="'required|url:require_protocol:true'"
+        :error="errors.first('customIdentityServer')"
         placeholder="Custom Identity Server"
         help="Example: https://yourserver.com/api"
       />
 
-      <v-checkbox 
-        v-if="isSelectDefaultIdentity" 
+      <v-checkbox
+        v-if="isSelectDefaultIdentity"
         v-model="termsAccepted"
       >
         I accept the
-        <a 
-          href="https://endpass.com/terms/" 
+        <a
+          href="https://endpass.com/terms/"
           target="_blank"
         >Terms of Service</a>
         and
-        <a 
-          href="https://endpass.com/privacy/" 
+        <a
+          href="https://endpass.com/privacy/"
           target="_blank"
         >Privacy Policy</a>.
       </v-checkbox>
     </v-form>
-    <div 
-      slot="footer" 
+    <div
+      slot="footer"
       class="buttons"
     >
       <v-button
@@ -94,6 +98,7 @@ import VSelect from '@/components/ui/form/VSelect';
 import { IDENTITY_MODE } from '@/constants';
 import { mapActions } from 'vuex';
 import error from '@/mixins/error';
+import formMixin from '@/mixins/form';
 
 const availableIdentityServerTypes = [
   { text: 'Endpass', val: IDENTITY_MODE.DEFAULT },
@@ -115,7 +120,6 @@ export default {
     availableIdentityServerTypes,
     currentIdentityServerType: availableIdentityServerTypes[0].val,
     customIdentityServer: null,
-    isFormValid: false,
     isValidating: false,
   }),
   computed: {
@@ -169,7 +173,7 @@ export default {
       this.$emit('close');
     },
   },
-  mixins: [error],
+  mixins: [error, formMixin],
   components: {
     VModal,
     VForm,

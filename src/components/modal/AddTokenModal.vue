@@ -10,15 +10,17 @@
       id="addToken"
       v-model="isFormValid"
       @submit="addToken"
+      :isFormValid="isFormValid"
     >
       <v-input
         v-validate="'required|address'"
         id="address"
+        name="address"
+        data-vv-name="address"
         v-model="token.address"
         :disabled="loadingToken"
         label="Address"
-        name="address"
-        data-vv-name="address"
+        :error="errors.first('address')"
         aria-describedby="address"
         placeholder="Contract address"
         data-test="address-input"
@@ -34,6 +36,7 @@
         label="Decimals"
         name="decimals"
         data-vv-name="decimals"
+        :error="errors.first('decimals')"
         aria-describedby="decimal"
         placeholder="Token decimals"
         required
@@ -48,6 +51,7 @@
         label="Name"
         name="name"
         data-vv-name="name"
+        :error="errors.first('name')"
         aria-describedby="name"
         placeholder="Token name"
         required
@@ -62,6 +66,7 @@
         label="Symbol"
         name="symbol"
         data-vv-name="symbol"
+        :error="errors.first('symbol')"
         aria-describedby="symbol"
         placeholder="Token symbol"
         required
@@ -135,6 +140,7 @@ import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
+import formMixin from '@/mixins/form';
 
 export default {
   name: 'AddTokenModal',
@@ -155,7 +161,6 @@ export default {
         name: false,
         symbol: false,
       },
-      isFormValid: false,
     };
   },
   computed: {
@@ -223,7 +228,7 @@ export default {
       this.$emit('close');
     },
   },
-
+  mixins: [formMixin],
   components: {
     VModal,
     VForm,

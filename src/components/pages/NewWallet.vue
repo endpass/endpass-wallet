@@ -1,8 +1,8 @@
 <template>
   <base-page class="new-wallet">
     <template slot="title">{{ hdKey ? "Wallet Created" : "Create Wallet" }}</template>
-    <div 
-      v-if="hdKey" 
+    <div
+      v-if="hdKey"
       class="container has-text-centered is-narrow"
     >
       <p class="subtitle">
@@ -14,8 +14,8 @@
       </p>
       <div class="box">
         <p>Your wallet recovery phrase</p>
-        <p 
-          class="code" 
+        <p
+          class="code"
           data-test="seed-phrase"
         >{{ key }}</p>
       </div>
@@ -25,32 +25,35 @@
         class="button is-success is-cta"
       >Continue {{ getRemainingSeedPhraseTimeout }}</router-link>
     </div>
-    <div 
-      v-else 
-      class="container has-text-centered is-narrow"
-    >
-      <p class="subtitle">
-        Just click the button below to create a new,
-        secure Ethereum Wallet. Your wallet can contain multiple addresses
-        for storing Ethereum and ERC20 compatible tokens.
-      </p>
-      <v-form @submit="createWallet">
+    <div
+      v-else
+      class="container has-text-centered is-narrow">
+      <p class="subtitle">Just click the button below to create a new,
+      secure Ethereum Wallet. Your wallet can contain multiple addresses
+      for storing Ethereum and ERC20 compatible tokens.</p>
+      <v-form @submit="createWallet"
+      :isFormValid="isFormValid"
+      >
         <v-password
           id="jsonKeystorePassword"
           v-model="password"
           label="Wallet password"
           name="password"
-          validator="required|min:8"
+          v-validate="'required|min:8'"
           data-vv-as="password"
+          :error="errors.first('password')"
           aria-describedby="jsonKeystorePassword"
           placeholder="wallet password"
           required
           data-test="input-new-wallet-password"
         />
-        <v-button 
-          :loading="isCreating" 
+        <v-button
+          :loading="isCreating"
           class-name="is-success is-cta"
-        >Create New Wallet</v-button>
+          :disabled="!isFormValid"
+        >
+          Create New Wallet
+        </v-button>
       </v-form>
     </div>
   </base-page>
@@ -64,6 +67,7 @@ import { mapActions, mapState } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import formMixin from '@/mixins/form';
 
 const SEED_PHRASE_TIMEOUT_SEC = 10;
 const UPDATE_SEED_PHRASE_INTERVAL_MSEC = 1000;
@@ -124,7 +128,7 @@ export default {
       }
     },
   },
-  mixins: [VueTimers],
+  mixins: [VueTimers, formMixin],
   timers: {
     seedPhrase: {
       repeat: true,

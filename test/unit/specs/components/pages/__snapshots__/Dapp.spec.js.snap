@@ -5,7 +5,8 @@ exports[`DappPage render should render error 1`] = `
     <div class="container">
         <div class="card app-card">
             <div class="card-header dapp-form">
-                <v-input name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" validator="required|url:require_protocol:true:require_tld:false" data-test="dapp-url-input" v-model="url">
+                <v-input name="url" data-vv-name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" data-test="dapp-url-input" v-validate="'required|url:require_protocol:true:require_tld:false'" v-model="url" aria-required="true"
+                    aria-invalid="false">
                     <div slot="addon" class="control">
                         <button disabled="disabled" data-test="dapp-open-button" v-on:click="bound openDapp" class="button is-primary">
                             Open
@@ -28,7 +29,8 @@ exports[`DappPage render should render iframe if it loading but it must be hidde
     <div class="container">
         <div class="card app-card">
             <div class="card-header dapp-form">
-                <v-input name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" validator="required|url:require_protocol:true:require_tld:false" data-test="dapp-url-input" v-model="url" disabled="true">
+                <v-input name="url" data-vv-name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" data-test="dapp-url-input" v-validate="'required|url:require_protocol:true:require_tld:false'" v-model="url" aria-required="true"
+                    aria-invalid="false" disabled="true">
                     <div slot="addon" class="control">
                         <button disabled="disabled" data-test="dapp-open-button" v-on:click="bound openDapp" class="button is-primary">
                             Open
@@ -49,7 +51,8 @@ exports[`DappPage render should render iframe it loaded 1`] = `
     <div class="container">
         <div class="card app-card">
             <div class="card-header dapp-form">
-                <v-input name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" validator="required|url:require_protocol:true:require_tld:false" data-test="dapp-url-input" v-model="url">
+                <v-input name="url" data-vv-name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" data-test="dapp-url-input" v-validate="'required|url:require_protocol:true:require_tld:false'" v-model="url" aria-required="true"
+                    aria-invalid="false">
                     <div slot="addon" class="control">
                         <button disabled="disabled" data-test="dapp-open-button" v-on:click="bound openDapp" class="button is-primary">
                             Open
@@ -70,7 +73,8 @@ exports[`DappPage render should render password modal if currentRequest exists 1
     <div class="container">
         <div class="card app-card">
             <div class="card-header dapp-form">
-                <v-input name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" validator="required|url:require_protocol:true:require_tld:false" data-test="dapp-url-input" v-model="url">
+                <v-input name="url" data-vv-name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" data-test="dapp-url-input" v-validate="'required|url:require_protocol:true:require_tld:false'" v-model="url" aria-required="true"
+                    aria-invalid="false">
                     <div slot="addon" class="control">
                         <button disabled="disabled" data-test="dapp-open-button" v-on:click="bound openDapp" class="button is-primary">
                             Open
@@ -93,7 +97,8 @@ exports[`DappPage render should render password modal with table if currentReque
     <div class="container">
         <div class="card app-card">
             <div class="card-header dapp-form">
-                <v-input name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" validator="required|url:require_protocol:true:require_tld:false" data-test="dapp-url-input" v-model="url">
+                <v-input name="url" data-vv-name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" data-test="dapp-url-input" v-validate="'required|url:require_protocol:true:require_tld:false'" v-model="url" aria-required="true"
+                    aria-invalid="false">
                     <div slot="addon" class="control">
                         <button disabled="disabled" data-test="dapp-open-button" v-on:click="bound openDapp" class="button is-primary">
                             Open
@@ -116,7 +121,8 @@ exports[`DappPage render should render without iframe, modals and errors by defa
     <div class="container">
         <div class="card app-card">
             <div class="card-header dapp-form">
-                <v-input name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" validator="required|url:require_protocol:true:require_tld:false" data-test="dapp-url-input" v-model="url">
+                <v-input name="url" data-vv-name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" data-test="dapp-url-input" v-validate="'required|url:require_protocol:true:require_tld:false'" v-model="url" aria-required="true"
+                    aria-invalid="false">
                     <div slot="addon" class="control">
                         <button disabled="disabled" data-test="dapp-open-button" v-on:click="bound openDapp" class="button is-primary">
                             Open

@@ -1,5 +1,5 @@
 import Vuex from 'vuex';
-import { shallow, createLocalVue, mount } from '@vue/test-utils';
+import { mount, createLocalVue } from '@vue/test-utils';
 
 import NewAccountModal from '@/components/modal/NewAccountModal';
 
@@ -42,7 +42,7 @@ describe('NewAccountModal', () => {
       },
     };
 
-    wrapper = shallow(NewAccountModal, {
+    wrapper = mount(NewAccountModal, {
       ...options,
     });
   });

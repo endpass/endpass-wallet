@@ -12,6 +12,7 @@
         <p class="subtitle">Please enter your wallet password to continue.</p>
         <v-form
           id="password-form"
+          :isFormValid="isFormValid"
         >
           <slot />
           <v-password
@@ -19,6 +20,8 @@
             name="jsonKeystorePassword"
             validator="required"
             data-vv-as="password"
+            v-validate="'required|min:8'"
+            :error="errors.first('jsonKeystorePassword')"
             placeholder="Your Wallet Password"
             required
             data-test="input-password"
@@ -36,6 +39,7 @@
           form="password-form"
           data-test="submit-password"
           class-name="is-primary is-medium"
+          :disabled="!isFormValid"
           @click="confirm"
         >
           Confirm
@@ -51,6 +55,7 @@ import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm.vue';
 import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import formMixin from '@/mixins/form';
 
 export default {
   name: 'PasswordModal',
@@ -99,6 +104,7 @@ export default {
       this.errors.removeById('wrongPassword');
     },
   },
+  mixins: [formMixin],
   components: {
     VModal,
     VForm,

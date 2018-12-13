@@ -3,7 +3,7 @@
     <div class="control">
       <button
         v-bind="$attrs"
-        :disabled="!form.isFormValid || disabled"
+        :disabled="disabled"
         :class="[...classes, {'is-loading' : loading }]"
         class="button"
         v-on="$listeners"
@@ -18,14 +18,6 @@
 export default {
   name: 'VButton',
   inheritAttrs: false,
-  inject: {
-    $validator: '$validator',
-    form: {
-      default: () => ({
-        isFormValid: true,
-      }),
-    },
-  },
   props: {
     className: {
       type: String,

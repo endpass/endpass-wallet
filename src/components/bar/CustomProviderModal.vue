@@ -4,8 +4,8 @@
       <header slot="header">{{ headerText }}</header>
       <div v-if="!providerAdded">
         <v-form
-          v-model="isFormValid"
           @submit="handleButtonClick"
+          :isFormValid="isFormValid"
         >
 
           <v-input
@@ -14,10 +14,12 @@
             v-model="innerProvider.name"
             :disabled="isLoading"
             name="name"
+            data-vv-name="name"
             label="Network name"
             aria-describedby="name"
             placeholder="Network name"
-            data-vv-name="Network name"
+            data-vv-as="Network name"
+            :error="errors.first('name')"
             autofocus
             required
           />
@@ -27,26 +29,29 @@
             id="url"
             v-model="innerProvider.url"
             :disabled="isLoading"
+            data-vv-name="url"
             name="url"
             label="Provider url"
             aria-describedby="url"
             placeholder="Provider url"
-            data-vv-name="Provider url"
+            data-vv-as="Provider url"
+            :error="errors.first('url')"
             @input="handleInput"
           />
 
           <v-select
             v-validate="'required'"
+            :error="errors.first('currency')"
             id="currency"
             v-model="innerProvider.currency"
             :options="currencies"
+            data-vv-name="currency"
             name="currency"
             label="Provider currency"
             aria-describedby="currency"
             placeholder="Provider currency"
-            data-vv-name="Provider currency"
-            required
-          />
+            data-vv-as="Provider currency"
+            required />
         </v-form>
       </div>
       <div v-else>
@@ -87,6 +92,7 @@ import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VSelect from '@/components/ui/form/VSelect';
 import { CURRENCIES } from '@/constants';
+import formMixin from '@/mixins/form';
 
 const defaultProvider = {
   name: '',
@@ -105,7 +111,6 @@ export default {
   data() {
     return {
       providerAdded: false,
-      isFormValid: false,
       isLoading: false,
       innerProvider: Object.assign({}, this.provider),
       currencies: CURRENCIES.map(currency => ({
@@ -187,6 +192,7 @@ export default {
       this.errors.removeById('wrongUrl');
     },
   },
+  mixins: [formMixin],
   components: {
     VModal,
     VInput,

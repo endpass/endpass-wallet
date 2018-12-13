@@ -45,7 +45,7 @@
             class-name="is-primary is-medium"
           >Create address</v-button>
         </v-form>
-        <v-form @submit="importNewAccount">
+        <v-form :isFormValid="true" @submit="importNewAccount">
           <v-button
             class-name="is-primary is-medium"
           >Import address</v-button>

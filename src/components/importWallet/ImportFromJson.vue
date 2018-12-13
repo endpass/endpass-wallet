@@ -1,8 +1,9 @@
 <template>
   <div>
-    <v-form 
-      data-test="import-json-form" 
+    <v-form
+      data-test="import-json-form"
       @submit="togglePasswordModal"
+      :isFormValid="isFormValid"
     >
       <div class="field">
         <div class="file">
@@ -17,20 +18,20 @@
             >
             <span class="file-cta">
               <span class="file-icon">
-                <span 
-                  class="icon is-small" 
+                <span
+                  class="icon is-small"
                   v-html="require('@/img/arrow-thick-top.svg')"
                 />
               </span>
-              <span 
-                class="file-label" 
+              <span
+                class="file-label"
                 v-text="fileName"
               />
             </span>
           </label>
         </div>
-        <p 
-          v-show="errors.has('fileName')" 
+        <p
+          v-show="errors.has('fileName')"
           class="help is-danger"
         >{{ errors.first('fileName') }}</p>
       </div>
@@ -41,7 +42,9 @@
         v-model="jsonKeystorePassword"
         label="V3 JSON keystore password"
         name="jsonKeystorePassword"
-        validator="required|min:8"
+        data-vv-name="jsonKeystorePassword"
+        v-validate="'required|min:8'"
+        :error="errors.first('jsonKeystorePassword')"
         data-vv-as="password"
         aria-describedby="jsonKeystorePassword"
         placeholder="V3 JSON keystore password"
@@ -53,7 +56,10 @@
         :loading="isCreating"
         class-name="is-primary is-cta"
         data-test="submit-import"
-      >Import</v-button>
+        :disabled="!isFormValid"
+      >
+        Import
+      </v-button>
     </v-form>
 
     <password-modal
@@ -71,6 +77,7 @@ import VPassword from '@/components/ui/form/VPassword';
 import VButton from '@/components/ui/form/VButton';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
+import formMixin from '@/mixins/form';
 import keystore from '@/utils/keystore';
 
 export default {
@@ -154,7 +161,7 @@ export default {
       reader.readAsText(this.file);
     },
   },
-  mixins: [modalMixin],
+  mixins: [modalMixin, formMixin],
   components: {
     VForm,
     VPassword,

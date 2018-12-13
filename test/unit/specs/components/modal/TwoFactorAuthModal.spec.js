@@ -1,13 +1,18 @@
-import { shallow } from '@vue/test-utils';
+import { mount, createLocalVue } from '@vue/test-utils';
+import VeeValidate from 'vee-validate';
+
 import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
-import { generateStubs } from '@/utils/testUtils';
+
+const localVue = createLocalVue();
+
+localVue.use(VeeValidate);
 
 describe('TwoFactorAuthModal', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(TwoFactorAuthModal, {
-      stubs: generateStubs(TwoFactorAuthModal),
+    wrapper = mount(TwoFactorAuthModal, {
+      localVue,
     });
   });
 

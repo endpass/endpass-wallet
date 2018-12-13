@@ -2,22 +2,20 @@
   <div class="field">
     <label
       v-if="label"
-      :class="{'has-text-danger': error || errors.has($attrs.name) }"
+      :class="{'has-text-danger': error }"
       :for="$attrs.id"
       class="label"
     >{{ label }}</label>
-    <div 
-      :class="{'has-addons': $slots.addon }" 
+    <div
+      :class="{'has-addons': $slots.addon }"
       class="field"
     >
-      <div 
-        :class="{'is-expanded': $slots.addon, 'has-icons-right': $slots.icon }" 
+      <div
+        :class="{'is-expanded': $slots.addon, 'has-icons-right': $slots.icon }"
         class="control"
       >
         <input
-          v-validate="validator"
           :value="innerValue"
-          :data-vv-as="$attrs['data-vv-as'] || label"
           :class="classes"
           :name="name"
           v-bind="$attrs"
@@ -27,19 +25,21 @@
         >
         <slot name="icon"/>
       </div>
-      <div 
-        v-if="$slots.addon" 
+      <div
+        v-if="$slots.addon"
         class="control"
       >
         <slot name="addon"/>
       </div>
     </div>
     <p
-      v-if="error || errors.has($attrs.name)"
+      v-if="error"
       class="help is-danger"
-    >{{ error || errors.first($attrs.name) }}</p>
-    <p 
-      v-else-if="help" 
+    >
+      {{ error }}
+    </p>
+    <p
+      v-else-if="help"
       class="help"
     >{{ help }}</p>
   </div>
@@ -49,9 +49,6 @@
 export default {
   name: 'VInput',
   inheritAttrs: false,
-  inject: {
-    $validator: '$validator',
-  },
   props: {
     value: {
       type: [String, Number],
@@ -68,10 +65,6 @@ export default {
     help: {
       type: String,
       default: null,
-    },
-    validator: {
-      type: String,
-      default: '',
     },
     error: {
       type: String,
@@ -98,10 +91,7 @@ export default {
     },
     classes() {
       const classes = this.className.split(' ');
-      return [
-        ...classes,
-        { 'is-danger': this.error || this.errors.has(this.name) },
-      ];
+      return [...classes, { 'is-danger': this.error }];
     },
   },
 };

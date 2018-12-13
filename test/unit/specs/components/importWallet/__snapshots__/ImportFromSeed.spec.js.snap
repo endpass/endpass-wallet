@@ -4,12 +4,16 @@ exports[`ImportFromSeed render should render initial state of the component 1`] 
 <div>
   <v-form
     data-test="import-seed-form"
+    isformvalid="true"
     v-on:submit="bound togglePasswordModal"
   >
     <v-input
       aria-describedby="hdkeyPhrase"
+      aria-invalid="false"
+      aria-required="true"
       data-test="input-seed-phrase"
       data-vv-as="seed phrase"
+      data-vv-name="hdkeyPhrase"
       id="hdkeySeed"
       label="Seed phrase"
       name="hdkeyPhrase"
@@ -17,7 +21,7 @@ exports[`ImportFromSeed render should render initial state of the component 1`] 
       required=""
       v-model="key"
       v-on:input="bound handleInput"
-      validator="required|seed_phrase"
+      v-validate="'required|seed_phrase'"
     />
      
     <v-button

@@ -16,4 +16,4 @@ Validator.extend('public_key', publicKey);
 Validator.extend('seed_phrase', seedPhrase);
 Validator.extend('hex', hex);
 
-Vue.use(VeeValidate);
+Vue.use(VeeValidate, { inject: false });
