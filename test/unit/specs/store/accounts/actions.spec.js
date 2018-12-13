@@ -559,9 +559,15 @@ describe('Accounts actions', () => {
   });
 
   describe('addMultiHdWallet', () => {
+    const { address } = hdv3;
+
     beforeEach(() => {
       web3.eth.getBalance = jest.fn().mockResolvedValueOnce('5');
       web3.eth.getBalance.mockResolvedValueOnce('0');
+
+      keystore.encryptHDWallet = jest.fn().mockReturnValueOnce({
+        address,
+      });
     });
 
     it('should add wallets with balance and one more', async () => {

@@ -55,7 +55,7 @@ const addPublicWallet = async (
   try {
     const address = toChecksumAddress(rawAddress);
     const info = {
-      type: 'PublicAccount',
+      type: WALLET_TYPE.PUBLIC,
       hidden: false,
       ...extraInfo,
       address,
@@ -108,9 +108,9 @@ const addWalletWithPrivateKey = async (
     const wallet = EthWallet.fromPrivateKey(
       Buffer.from(privateKey.replace(/^0x/, ''), 'hex'),
     );
-    const json = keystore.encryptWallet(password, wallet);
+    const v3KeyStore = keystore.encryptWallet(password, wallet);
 
-    return dispatch('addWalletAndSelect', json);
+    return dispatch('addWalletAndSelect', v3KeyStore);
   } catch (e) {
     return dispatch('errors/emitError', e, { root: true });
   }
@@ -137,9 +137,9 @@ const generateWallet = async ({ dispatch, state }, password) => {
   const decryptedHdWallet = await dispatch('decryptAccountHdWallet', password);
   const i = Object.keys(state.wallets).length;
   const wallet = decryptedHdWallet.deriveChild(i).getWallet();
-  const json = keystore.encryptWallet(password, wallet);
+  const v3KeyStore = keystore.encryptWallet(password, wallet);
 
-  await dispatch('addWalletAndSelect', json);
+  await dispatch('addWalletAndSelect', v3KeyStore);
 };
 
 const commitWallet = async ({ commit }, { wallet }) => {
@@ -161,37 +161,33 @@ const addHdWallet = async ({ dispatch }, { key, password }) => {
     const hdKey = HDKey.fromMasterSeed(seed);
     const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
     // Encrypt extended private key
-    const json = keystore.encryptHDWallet(password, hdWallet);
+    const v3KeyStore = keystore.encryptHDWallet(password, hdWallet);
     const info = {
-      address: json.address,
+      address: v3KeyStore.address,
       type: WALLET_TYPE.HD_MAIN,
       hidden: false,
     };
 
     // Save HD keys and generate the first child wallet
-    await dispatch('saveWallet', { json, info });
+    await dispatch('saveWallet', { json: v3KeyStore, info });
     await dispatch('generateWallet', password);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
   }
 };
 
-const addMultiHdWallet = async ({ dispatch }, { key, password }) => {
-  const seed = Bip39.mnemonicToSeed(key);
-  const hdKey = HDKey.fromMasterSeed(seed);
-  const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
-
+const addChildWallets = async (dispatch, hdWallet, password) => {
   /* eslint-disable no-await-in-loop */
   /* eslint-disable-next-line */
   for (let index = 0; index < 5; index++) {
     const wallet = hdWallet.deriveChild(index).getWallet();
-    const walletV3 = wallet.toV3(Buffer.from(password), ENV.kdfParams);
-    const { address } = walletV3;
+    const v3KeyStore = wallet.toV3(Buffer.from(password), ENV.kdfParams);
+    const { address } = v3KeyStore;
 
     if (index === 0) {
-      dispatch('addWalletAndSelect', walletV3);
+      dispatch('addWalletAndSelect', v3KeyStore);
     } else {
-      dispatch('addWallet', walletV3);
+      dispatch('addWallet', v3KeyStore);
     }
 
     try {
@@ -205,6 +201,26 @@ const addMultiHdWallet = async ({ dispatch }, { key, password }) => {
     }
   }
   /* eslint-enable no-await-in-loop */
+};
+
+const addMultiHdWallet = async ({ dispatch }, { key, password }) => {
+  const seed = Bip39.mnemonicToSeed(key);
+  const hdKey = HDKey.fromMasterSeed(seed);
+  const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
+
+  const v3KeyStoreMain = keystore.encryptHDWallet(password, hdWallet);
+
+  const info = {
+    address: v3KeyStoreMain.address,
+    type: WALLET_TYPE.HD_MAIN,
+    hidden: false,
+  };
+  await userService.setAccount(v3KeyStoreMain.address, {
+    info,
+    ...v3KeyStoreMain,
+  });
+
+  await addChildWallets(dispatch, hdWallet, password);
 };
 
 const updateWallets = async ({ dispatch }, { wallets }) => {
