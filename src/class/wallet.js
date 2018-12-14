@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import Tx from 'ethereumjs-tx';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import web3 from '@/class/singleton/web3';
@@ -8,6 +7,11 @@ import { WALLET_TYPE, HARDWARE_WALLET_TYPE } from '@/constants';
 
 const { isAddress, bytesToHex, toChecksumAddress } = web3.utils;
 
+const strategies = {
+  [WALLET_TYPE.TREZOR]: TrezorWallet,
+  [WALLET_TYPE.LEDGER]: LedgerWallet,
+};
+
 /**
  * A Wallet represents a single Ethereum account that can send transactions
  * ! All methods are async and return promises
@@ -15,21 +19,22 @@ const { isAddress, bytesToHex, toChecksumAddress } = web3.utils;
  * @param {Object} account Account object
  */
 export default class Wallet {
-  constructor(v3Keystore) {
+  constructor({ info = {}, ...v3Keystore }) {
     const address = Wallet.normalizeAddress(v3Keystore.address);
 
     if (!isAddress(address)) {
       throw new Error(`${address} is not valid Etherium address!`);
     }
 
-    const accountType = get(v3Keystore, 'info.type');
+    const { type: accountType, index } = info;
+
     const isPublic = !keystore.isV3(v3Keystore);
     const isHardware = Object.values(HARDWARE_WALLET_TYPE).includes(
       accountType,
     );
 
     this.address = address;
-    this.index = get(v3Keystore, 'info.index');
+    this.index = index;
     this.v3 = isPublic ? null : v3Keystore;
     this.signStrategy = null;
     this.isPublic = isPublic;
@@ -71,16 +76,11 @@ export default class Wallet {
    * @throws {Error}
    */
   applyHardwareStrategy(accountType) {
-    switch (accountType) {
-      case WALLET_TYPE.TREZOR:
-        this.signStrategy = TrezorWallet;
-        break;
-      case WALLET_TYPE.LEDGER:
-        this.signStrategy = LedgerWallet;
-        break;
-      default:
-        throw new Error(`${accountType} hardware wallet is not supported yet!`);
+    const strategy = strategies[accountType];
+    if (!strategy) {
+      throw new Error(`${accountType} hardware wallet is not supported yet!`);
     }
+    this.signStrategy = strategy;
   }
 
   /**
@@ -157,6 +157,7 @@ export default class Wallet {
    * @param {String<Signature>} signature Signature from signing
    * @return {Promise<Address>} Resolve account address
    */
+
   /* eslint-disable-next-line */
   async recover(message, signature) {
     if (this.isHardware) {

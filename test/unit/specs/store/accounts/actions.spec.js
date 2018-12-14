@@ -558,18 +558,25 @@ describe('Accounts actions', () => {
     });
   });
 
-  describe('addMultiHdWallet', () => {
+  describe('addChildWallets', () => {
+    const { address } = hdv3;
+
     beforeEach(() => {
       web3.eth.getBalance = jest.fn().mockResolvedValueOnce('5');
       web3.eth.getBalance.mockResolvedValueOnce('0');
+
+      keystore.encryptHDWallet = jest.fn().mockReturnValueOnce({
+        address,
+      });
     });
 
     it('should add wallets with balance and one more', async () => {
       expect.assertions(3);
 
-      await actions.addMultiHdWallet(
+      const hdWallet = keystore.decryptHDWallet(v3password, hdv3);
+      await actions.addChildWallets(
         { dispatch },
-        { password: v3password, key: mnemonic },
+        { password: v3password, hdWallet },
       );
 
       expect(dispatch).toHaveBeenCalledTimes(2);
@@ -586,17 +593,52 @@ describe('Accounts actions', () => {
     });
 
     it('should handle errors', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       const error = new Error('error');
       web3.eth.getBalance = jest.fn().mockRejectedValueOnce(error);
+      const hdWallet = keystore.decryptHDWallet(v3password, hdv3);
 
-      await actions.addMultiHdWallet(
-        { commit, dispatch },
-        { password: v3password, key: mnemonic },
+      await actions.addChildWallets(
+        { dispatch },
+        { password: v3password, hdWallet },
       );
 
       expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenNthCalledWith(
+        1,
+        'addWalletAndSelect',
+        expect.any(Object),
+      );
+    });
+  });
+
+  describe('addMultiHdWallet', () => {
+    const { address } = hdv3;
+
+    beforeEach(() => {
+      web3.eth.getBalance = jest.fn().mockResolvedValueOnce('5');
+      web3.eth.getBalance.mockResolvedValueOnce('0');
+
+      keystore.encryptHDWallet = jest.fn().mockReturnValueOnce({
+        address,
+      });
+    });
+
+    it('should add wallets with balance and one more', async () => {
+      expect.assertions(2);
+
+      await actions.addMultiHdWallet(
+        { dispatch },
+        { password: v3password, key: mnemonic },
+      );
+
+      const hdWallet = keystore.decryptHDWallet(v3password, hdv3);
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('addChildWallets', {
+        password: v3password,
+        hdWallet,
+      });
     });
   });
 
