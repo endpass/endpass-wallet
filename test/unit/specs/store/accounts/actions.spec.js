@@ -576,7 +576,7 @@ describe('Accounts actions', () => {
       const hdWallet = keystore.decryptHDWallet(v3password, hdv3);
       await actions.addChildWallets(
         { dispatch },
-        { password: v3password, hdWallet},
+        { password: v3password, hdWallet },
       );
 
       expect(dispatch).toHaveBeenCalledTimes(2);
@@ -593,17 +593,23 @@ describe('Accounts actions', () => {
     });
 
     it('should handle errors', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       const error = new Error('error');
       web3.eth.getBalance = jest.fn().mockRejectedValueOnce(error);
+      const hdWallet = keystore.decryptHDWallet(v3password, hdv3);
 
-      await actions.addMultiHdWallet(
-        { commit, dispatch },
-        { password: v3password, key: mnemonic },
+      await actions.addChildWallets(
+        { dispatch },
+        { password: v3password, hdWallet },
       );
 
       expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenNthCalledWith(
+        1,
+        'addWalletAndSelect',
+        expect.any(Object),
+      );
     });
   });
 
@@ -620,28 +626,19 @@ describe('Accounts actions', () => {
     });
 
     it('should add wallets with balance and one more', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       await actions.addMultiHdWallet(
         { dispatch },
         { password: v3password, key: mnemonic },
       );
 
+      const hdWallet = keystore.decryptHDWallet(v3password, hdv3);
       expect(dispatch).toHaveBeenCalledTimes(1);
-    });
-
-    it('should handle errors', async () => {
-      expect.assertions(1);
-
-      const error = new Error('error');
-      web3.eth.getBalance = jest.fn().mockRejectedValueOnce(error);
-
-      await actions.addMultiHdWallet(
-        { commit, dispatch },
-        { password: v3password, key: mnemonic },
-      );
-
-      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('addChildWallets', {
+        password: v3password,
+        hdWallet,
+      });
     });
   });
 
