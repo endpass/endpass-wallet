@@ -176,7 +176,7 @@ const addHdWallet = async ({ dispatch }, { key, password }) => {
   }
 };
 
-const addChildWallets = async (dispatch, hdWallet, password) => {
+const addChildWallets = async ({ dispatch }, { hdWallet, password }) => {
   /* eslint-disable no-await-in-loop */
   /* eslint-disable-next-line */
   for (let index = 0; index < 5; index++) {
@@ -208,19 +208,19 @@ const addMultiHdWallet = async ({ dispatch }, { key, password }) => {
   const hdKey = HDKey.fromMasterSeed(seed);
   const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
 
-  const v3KeyStoreMain = keystore.encryptHDWallet(password, hdWallet);
+  const v3KeyStore = keystore.encryptHDWallet(password, hdWallet);
 
   const info = {
-    address: v3KeyStoreMain.address,
-    type: WALLET_TYPE.HD_MAIN,
+    address: v3KeyStore.address,
+    type: WALLET_TYPE.HD_PUBLIC,
     hidden: false,
   };
-  await userService.setAccount(v3KeyStoreMain.address, {
+  await userService.setAccount(v3KeyStore.address, {
     info,
-    ...v3KeyStoreMain,
+    ...v3KeyStore,
   });
 
-  await addChildWallets(dispatch, hdWallet, password);
+  await dispatch('addChildWallets', { hdWallet, password });
 };
 
 const updateWallets = async ({ dispatch }, { wallets }) => {
@@ -418,6 +418,7 @@ export default {
   addWalletWithV3,
   addWalletWithPrivateKey,
   addWalletWithPublicKey,
+  addChildWallets,
   addPublicWallet,
   commitWallet,
   saveWallet,
