@@ -10,6 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const gitCommitHash = utils.getCommitHash();
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -128,6 +129,10 @@ const webpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*'],
       },
     ]),
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      openAnalyzer: false,
+    }),
   ],
 });
 
