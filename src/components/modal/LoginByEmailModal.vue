@@ -158,13 +158,12 @@ export default {
           await this.validateServer(serverUrl);
         }
 
-        const { email } = this;
         const mode = {
           type: this.currentIdentityServerType,
           serverUrl,
         };
 
-        this.$emit('confirm', { email, mode });
+        this.$emit('confirm', { email: this.email, mode });
       } catch (e) {
         this.emitError(e);
       }
