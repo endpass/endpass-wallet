@@ -43,6 +43,13 @@ export default class Web3Factory {
         newProvider.setErrorHandler(errorHandler);
       }
 
+      if (newProvider.startPollingNewBlockHeaders) {
+        newProvider.startPollingNewBlockHeaders(
+          web3.eth.getBlockNumber,
+          web3.eth.getBlock,
+        );
+      }
+
       return setProvider.call(web3, newProvider);
     };
 
