@@ -1,35 +1,27 @@
-import { CustomProvider, LocalProvider, ServerProvider } from './provider';
 import { Decorator, ProviderUrlDecorator } from './decorator';
 import { NotificationError } from '@/class';
 import { IDENTITY_MODE } from '@/constants';
+import { createProvider } from './provider';
 
 export default class ProxyRequest {
-  constructor(type, serverUrl) {
+  constructor() {
     this.decorator = new Decorator();
-    this.setMode(type, serverUrl);
+    this.setMode();
   }
 
-  setMode(type = IDENTITY_MODE.DEFAULT, serverUrl) {
-    const url = serverUrl || ENV.identityAPIUrl;
-
-    switch (type) {
-      case IDENTITY_MODE.CUSTOM:
-        this.provider = new CustomProvider(url);
-        break;
-
-      case IDENTITY_MODE.LOCAL:
-        this.provider = new LocalProvider(url);
-        break;
-
-      default:
-        this.provider = new ServerProvider(url);
-    }
+  setMode(type = IDENTITY_MODE.DEFAULT, url = ENV.identityAPIUrl) {
+    this.provider = createProvider(type, url);
 
     const decorators = [new ProviderUrlDecorator(url)];
     this.decorator.setDecorators(decorators);
   }
 
   async request(params = {}) {
+    if (!this.provider) {
+      throw new Error(
+        'Provider is not defined, please .setMode() before call request',
+      );
+    }
     try {
       const newParams = this.decorator.decorate(params);
       return await this.provider.request(newParams);

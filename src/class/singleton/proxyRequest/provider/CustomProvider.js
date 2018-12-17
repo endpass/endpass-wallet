@@ -11,7 +11,7 @@ const error = new NotificationError({
 export default class CustomProvider {
   constructor(serverUrl) {
     this.url = serverUrl;
-    this.localProvider = new LocalProvider();
+    this.localProvider = new LocalProvider(serverUrl);
     this.serverProvider = new ServerProvider(serverUrl);
   }
 

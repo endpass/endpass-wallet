@@ -3,11 +3,13 @@ import { proxyRequest } from '@/class/singleton';
 import { NotificationError } from '@/class';
 import { IDENTITY_MODE } from '@/constants';
 
+const STORAGE_KEY = 'identityMode';
+
 export default {
   setIdentityMode(type, serverUrl) {
     try {
       const mode = JSON.stringify({ type, serverUrl });
-      localStorage.setItem('identityMode', mode);
+      localStorage.setItem(STORAGE_KEY, mode);
       proxyRequest.setMode(type, serverUrl);
     } catch (e) {
       throw new NotificationError({
@@ -23,7 +25,7 @@ export default {
     const defaultMode = { type: IDENTITY_MODE.DEFAULT };
 
     try {
-      const mode = localStorage.getItem('identityMode');
+      const mode = localStorage.getItem(STORAGE_KEY);
       return JSON.parse(mode) || defaultMode;
     } catch (e) {
       return defaultMode;

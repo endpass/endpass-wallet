@@ -45,7 +45,9 @@ const login = async (
     commit(SET_IDENTITY_TYPE, type);
     commit(SET_AUTHORIZATION_STATUS, true);
     commit(SET_EMAIL, email);
-    await userService.setSettings({ email });
+    const settings = { email };
+
+    await userService.setSettings(settings);
 
     return dispatch('init', null, { root: true });
   } catch (e) {
