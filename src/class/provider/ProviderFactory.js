@@ -1,6 +1,7 @@
 import { identity, isEmpty } from 'lodash';
 import Web3 from 'web3';
 import DebounceProvider from './DebounceProvider';
+import SubscriptionProvider from './SubscriptionProvider';
 import MockProvider from './MockProvider';
 import providerMixin from './providerMixin';
 
@@ -14,7 +15,7 @@ export default class ProviderFactory {
 
     switch (true) {
       case url.indexOf('http') === 0:
-        return HttpProvider;
+        return providerMixin(HttpProvider, SubscriptionProvider);
 
       case url.indexOf('ws') === 0:
         return WebsocketProvider;
