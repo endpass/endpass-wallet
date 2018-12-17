@@ -9,6 +9,9 @@ export default class Web3Factory {
     web3.setProvider = newProvider => {
       if (get(web3, 'currentProvider.setErrorHandler')) {
         web3.currentProvider.setErrorHandler(identity);
+      }
+
+      if (get(web3, 'currentProvider.removeAllListeners')) {
         web3.currentProvider.removeAllListeners();
       }
 
