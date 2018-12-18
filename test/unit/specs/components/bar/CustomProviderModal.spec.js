@@ -81,7 +81,9 @@ describe('CustomProviderModal', () => {
       it('should render button text for create new provider', () => {
         wrapper.setProps({});
 
-        expect(wrapper.find('a.button').text()).toBe('Create New Provider');
+        expect(wrapper.find('[data-test=add-provider-button]').text()).toBe(
+          'Create New Provider',
+        );
       });
 
       it('should render button text for update provider', () => {
@@ -89,7 +91,9 @@ describe('CustomProviderModal', () => {
           provider: {},
         });
 
-        expect(wrapper.find('a.button').text()).toBe('Update Provider');
+        expect(wrapper.find('[data-test=add-provider-button]').text()).toBe(
+          'Update Provider',
+        );
       });
     });
   });

@@ -113,7 +113,9 @@ describe('Crypto data service', () => {
       ).rejects.toThrow(expect.any(Error));
     });
 
-    it('should handle data validation errors', () => {
+    it('should handle data validation errors', async () => {
+      expect.assertions(2);
+
       const symbolPriceValidationError = new Error(
         'symbolPriceValidationError',
       );
@@ -122,18 +124,18 @@ describe('Crypto data service', () => {
       );
 
       axiosMock.onGet(requestUrl).reply(200);
-      cryptoDataValidator.validateSymbolPrice.mockImplementationOnce(() => {
+      cryptoDataValidator.validateSymbolsPrice.mockImplementationOnce(() => {
         throw symbolPriceValidationError;
       });
       cryptoDataValidator.validateSymbolsPrice.mockImplementationOnce(() => {
         throw symbolsPriceValidationError;
       });
 
-      expect(
+      await expect(
         cryptoDataService.getSymbolsPrice(fromSymbols[0], toSymbol),
       ).rejects.toThrow(symbolPriceValidationError);
 
-      expect(
+      await expect(
         cryptoDataService.getSymbolsPrice(fromSymbols, toSymbol),
       ).rejects.toThrow(symbolsPriceValidationError);
     });
@@ -165,7 +167,9 @@ describe('Crypto data service', () => {
       expect(cryptoDataService.getGasPrice()).resolves.toEqual(gasPrice);
     });
 
-    it('should handle data validation errors', () => {
+    it('should handle data validation errors', async () => {
+      expect.assertions(1);
+
       const gasPriceValidationError = new Error('gasPriceValidationError');
 
       axiosMock.onGet(requestUrl).reply(200);
@@ -173,15 +177,19 @@ describe('Crypto data service', () => {
         throw gasPriceValidationError;
       });
 
-      expect(cryptoDataService.getGasPrice()).rejects.toThrow(
-        gasPriceValidationError,
+      await expect(cryptoDataService.getGasPrice()).rejects.toThrow(
+        expectedError,
       );
     });
 
-    it('should handle rejected GET /price request', () => {
+    it('should handle rejected GET /price request', async () => {
+      expect.assertions(1);
+
       axiosMock.onGet(requestUrl).reply(500);
 
-      expect(cryptoDataService.getGasPrice()).rejects.toThrow(expectedError);
+      await expect(cryptoDataService.getGasPrice()).rejects.toThrow(
+        expectedError,
+      );
     });
   });
 });
