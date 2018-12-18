@@ -1,4 +1,4 @@
-import { mapKeys, mapValues, pickBy } from 'lodash';
+import { mapKeys, mapValues } from 'lodash';
 import { userService, authService, identityModeService } from '@/services';
 import { NotificationError, Token } from '@/class';
 import { IDENTITY_MODE } from '@/constants';
@@ -115,14 +115,19 @@ const updateSettings = async ({ commit, dispatch }, settings) => {
 
 const setUserSettings = async ({ commit, dispatch }) => {
   try {
-    const { fiatCurrency, email, tokens } = await userService.getSettings();
+    const {
+      fiatCurrency,
+      email,
+      tokens,
+      lastActiveAccount,
+    } = await userService.getSettings();
 
     if (email) {
       commit(SET_EMAIL, email);
     }
 
     if (fiatCurrency) {
-      commit(SET_SETTINGS, { fiatCurrency });
+      commit(SET_SETTINGS, { fiatCurrency, lastActiveAccount });
     }
 
     if (tokens) {

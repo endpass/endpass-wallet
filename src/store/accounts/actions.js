@@ -1,4 +1,4 @@
-import { mapKeys, isEmpty } from 'lodash';
+import { get, mapKeys, isEmpty } from 'lodash';
 import { userService, localSettingsService, hardwareService } from '@/services';
 import web3 from '@/class/singleton/web3';
 import Bip39 from 'bip39';
@@ -18,15 +18,13 @@ import {
 
 const { toChecksumAddress, fromWei } = web3.utils;
 
-const selectWallet = async ({ commit, dispatch, rootState }, address) => {
+const selectWallet = async ({ commit, dispatch }, address) => {
   commit(SET_ADDRESS, toChecksumAddress(address));
 
-  localSettingsService.save(rootState.user.email, {
-    activeAccount: address,
-  });
-
   dispatch('updateBalance');
+  dispatch('updateAccountSettings');
   dispatch('dapp/reset', null, { root: true });
+
   await dispatch('tokens/getCurrentAccountTokens', null, {
     root: true,
   });
@@ -401,6 +399,32 @@ const saveHardwareXpub = async ({ commit }, { xpub, walletType }) => {
   await userService.setAccount(xpub, { info });
 };
 
+const updateAccountSettings = async ({
+  state,
+  rootGetters,
+  rootState,
+  dispatch,
+}) => {
+  const lastActiveAccount = rootGetters['user/lastActiveAccount'];
+  const { address } = state;
+  const wallet = get(state, `wallets[${address}]`);
+  const isNotPublicAccount = wallet.isPublic === false;
+
+  if (address !== lastActiveAccount && isNotPublicAccount) {
+    await dispatch(
+      'user/updateSettings',
+      {
+        lastActiveAccount: address,
+      },
+      { root: true },
+    );
+  }
+
+  localSettingsService.save(rootState.user.email, {
+    activeAccount: address,
+  });
+};
+
 const init = async ({ commit, dispatch }) => {
   try {
     await Promise.all([dispatch('setUserHdKey'), dispatch('setUserWallets')]);
@@ -439,5 +463,6 @@ export default {
   encryptWallets,
   reencryptAllAccountWallets,
   updateWalletsWithNewPassword,
+  updateAccountSettings,
   init,
 };
