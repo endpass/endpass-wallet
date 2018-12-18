@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import { IDENTITY_MODE } from '@/constants';
 
 const isLoggedIn = state => !!state.authorizationStatus;
@@ -12,10 +13,13 @@ const isDefaultIdentity = state => state.identityType === IDENTITY_MODE.DEFAULT;
 
 const isLocalIdentity = state => state.identityType === IDENTITY_MODE.LOCAL;
 
+const lastActiveAccount = state => get(state, 'settings.lastActiveAccount');
+
 export default {
   isLoggedIn,
   isLoggedOut,
   isCustomIdentity,
   isDefaultIdentity,
   isLocalIdentity,
+  lastActiveAccount,
 };
