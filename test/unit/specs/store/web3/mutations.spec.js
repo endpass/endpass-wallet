@@ -103,19 +103,4 @@ describe('web3 mutations', () => {
       expect(state.handledBlockNumber).toBe(handledBlockNumber);
     });
   });
-
-  describe('setInterval', () => {
-    const setInterval = mutations[mutationsTypes.SET_INTERVAL];
-
-    it('should set interval', () => {
-      const state = {
-        interval: 0,
-      };
-      const interval = 1;
-
-      setInterval(state, interval);
-
-      expect(state.interval).toBe(interval);
-    });
-  });
 });

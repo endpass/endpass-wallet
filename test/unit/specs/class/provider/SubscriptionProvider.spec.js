@@ -242,6 +242,25 @@ describe('SubscriptionProvider class', () => {
 
       expect(callback).toHaveBeenCalledTimes(0);
     });
+
+    it('should not call callback if getBlock return null', async () => {
+      expect.assertions(1);
+
+      provider.notificationCallbacks = [callback];
+      provider.subsrciptionIds = {
+        [subsrciptionId]: { type: 'newHeads' },
+      };
+
+      getBlock.mockResolvedValueOnce(null);
+
+      provider.startPollingNewBlockHeaders(getBlockNumber, getBlock);
+
+      jest.runOnlyPendingTimers();
+
+      await flushPromises();
+
+      expect(callback).toHaveBeenCalledTimes(0);
+    });
   });
 
   describe('stopPollingNewBlockHeaders', () => {
