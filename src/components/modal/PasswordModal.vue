@@ -4,14 +4,15 @@
     data-test="password-modal"
   >
     <v-modal @close="close">
-      <template slot="header">Password confirmation required</template>
+      <template slot="header">
+        {{ title }}
+      </template>
 
       <div>
-        <p class="subtitle">Please enter your wallet password to
-        continue.</p>
+        <p class="subtitle">Please enter your wallet password to continue.</p>
         <v-form
           id="password-form"
-          @submit="confirm"
+          :isFormValid="isFormValid"
         >
           <slot />
           <v-password
@@ -19,6 +20,8 @@
             name="jsonKeystorePassword"
             validator="required"
             data-vv-as="password"
+            v-validate="'required|min:8'"
+            :error="errors.first('jsonKeystorePassword')"
             placeholder="Your Wallet Password"
             required
             data-test="input-password"
@@ -36,6 +39,8 @@
           form="password-form"
           data-test="submit-password"
           class-name="is-primary is-medium"
+          :disabled="!isFormValid"
+          @click="confirm"
         >
           Confirm
         </v-button>
@@ -50,9 +55,18 @@ import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm.vue';
 import VPassword from '@/components/ui/form/VPassword.vue';
 import VButton from '@/components/ui/form/VButton.vue';
+import formMixin from '@/mixins/form';
 
 export default {
   name: 'PasswordModal',
+
+  props: {
+    title: {
+      type: String,
+      default: 'Please enter your wallet password to continue',
+    },
+  },
+
   data() {
     return {
       jsonKeystorePassword: '',
@@ -63,10 +77,10 @@ export default {
     ...mapActions('accounts', ['validatePassword']),
 
     async confirm() {
+      const { jsonKeystorePassword: password } = this;
+
       try {
         this.processingConfirmation = true;
-
-        const { jsonKeystorePassword: password } = this;
 
         await this.validatePassword(password);
 
@@ -90,6 +104,7 @@ export default {
       this.errors.removeById('wrongPassword');
     },
   },
+  mixins: [formMixin],
   components: {
     VModal,
     VForm,

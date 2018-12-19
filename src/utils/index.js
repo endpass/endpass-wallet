@@ -1,20 +1,22 @@
-import store from '../store';
+import { get, identity } from 'lodash';
 
 export { default as keystore } from './keystore';
-export { default as proxyRequest } from './proxyRequest';
 
-export const getInitializedValueFromStore = (module, field) =>
+export const asyncCheckProperty = (
+  object,
+  path,
+  predicate = identity,
+  timer = 250,
+) =>
   new Promise(resolve => {
-    const value = module[field];
-    if (value === null) {
-      const unwatch = store.watch(
-        () => module[field],
-        newValue => {
-          unwatch();
-          resolve(newValue);
-        },
-      );
-    } else {
-      resolve(value);
-    }
+    /* eslint-disable-next-line */
+    const interval = setInterval(() => {
+      const value = get(object, path);
+
+      if (predicate(value)) {
+        clearInterval(interval);
+
+        return resolve(value);
+      }
+    }, timer);
   });

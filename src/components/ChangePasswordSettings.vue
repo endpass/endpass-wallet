@@ -1,26 +1,34 @@
 <template>
-  <v-form @submit="handleFormSubmit">
+  <v-form
+    is-form-valid="isFormValid"
+    @submit="handleFormSubmit"
+  >
     <label class="label">Change Password</label>
     <v-password
+      v-validate="'required|min:8'"
       v-model="oldPassword"
       :disabled="isLoading"
+      :error="errors.first('oldPassword')"
       name="oldPassword"
-      validator="required|min:8"
+      data-vv-name="oldPassword"
       data-vv-as="Old Password"
       placeholder="Old Password"
       data-test="input-old-password"
     />
     <v-password
+      v-validate="'required|min:8'"
       v-model="newPassword"
       :disabled="isLoading"
+      :error="errors.first('newPassword')"
       name="newPassword"
-      validator="required|min:8"
+      data-vv-name="newPassword"
       data-vv-as="New Password"
       placeholder="New Password"
       data-test="input-new-password"
     />
     <v-button
       :loading="isLoading"
+      :disabled="!isFormValid"
       class-name="is-primary is-medium"
       data-test="submit-change-password"
     >
@@ -30,113 +38,69 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
+import { matchString } from '@/utils/strings';
 import VForm from '@/components/ui/form/VForm';
 import VButton from '@/components/ui/form/VButton';
 import VPassword from '@/components/ui/form/VPassword';
-import { keystore } from '@/utils';
+import formMixin from '@/mixins/form';
 
 export default {
-  name: 'change-password-settings',
+  name: 'ChangePasswordSettings',
+
   data: () => ({
     isLoading: false,
     oldPassword: null,
     newPassword: null,
   }),
-  computed: {
-    ...mapGetters('accounts', [
-      'hdWallet',
-      'decryptedWallets',
-      'encryptedHdWallet',
-      'encryptedWallets',
-    ]),
-  },
+
   methods: {
-    ...mapActions('accounts', ['updateWallets']),
-    decryptWallets() {
-      let decryptedWallets = [];
-      let decryptedHdWallet;
+    ...mapActions('accounts', [
+      'updateWallets',
+      'updateWalletsWithNewPassword',
+    ]),
 
-      try {
-        decryptedWallets = this.decryptedWallets(this.oldPassword);
-        decryptedHdWallet = this.hdWallet(this.oldPassword);
-      } catch (error) {
-        this.$notify({
-          title: 'Error while decrypting wallets',
-          text:
-            'An error occurred while decrypting wallets. Try using a different password.',
-          type: 'is-danger',
-        });
-      }
-
-      return { decryptedWallets, decryptedHdWallet };
-    },
-    encryptWallets(decryptedWallets, decryptedHdWallet) {
-      let encryptedWallets = [];
-      let encryptedHdWallet;
-
-      try {
-        encryptedWallets = this.encryptedWallets(
-          this.newPassword,
-          decryptedWallets,
-        );
-        encryptedHdWallet = this.encryptedHdWallet(
-          this.newPassword,
-          decryptedHdWallet,
-        );
-      } catch (error) {
-        this.$notify({
-          title: 'Error while encrypting wallets',
-          text:
-            'An error occurred while encripting wallets. Try using a different password.',
-          type: 'is-danger',
-        });
-      }
-
-      return { encryptedWallets, encryptedHdWallet };
-    },
     async handleFormSubmit() {
-      const { decryptedWallets, decryptedHdWallet } = this.decryptWallets();
+      try {
+        this.isLoading = true;
 
-      if (!decryptedWallets.length) {
-        return;
-      }
-
-      const { encryptedWallets, encryptedHdWallet } = this.encryptWallets(
-        decryptedWallets,
-        decryptedHdWallet,
-      );
-      const walletsToUpdate = {};
-
-      encryptedWallets.forEach(
-        encryptedWallet =>
-          (walletsToUpdate[encryptedWallet.address] = encryptedWallet),
-      );
-
-      if (encryptedHdWallet) {
-        walletsToUpdate[encryptedHdWallet.address] = encryptedHdWallet;
-      }
-
-      if (!Object.keys(walletsToUpdate).length) {
-        return;
-      }
-
-      this.isLoading = true;
-
-      const isSuccess = await this.updateWallets({ wallets: walletsToUpdate });
-
-      if (isSuccess) {
-        this.$notify({
-          title: 'Password changed successfully',
-          type: 'is-success',
+        const res = await this.updateWalletsWithNewPassword({
+          password: this.oldPassword,
+          newPassword: this.newPassword,
         });
-      }
 
-      this.isLoading = false;
-      this.oldPassword = null;
-      this.newPassword = null;
+        if (!res) {
+          this.handleSubmitError();
+        } else {
+          this.$notify({
+            title: 'Password changed successfully',
+            type: 'is-success',
+          });
+          this.oldPassword = null;
+          this.newPassword = null;
+        }
+      } catch (err) {
+        this.handleSubmitError(err.message);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    handleSubmitError(err) {
+      const isIncorrentPasswordError = matchString(
+        err,
+        'authentication code mismatch',
+      );
+
+      this.$notify({
+        title: isIncorrentPasswordError
+          ? 'You entered incorrect password, try using a different one.'
+          : 'Password was not changed.',
+        type: 'is-danger',
+      });
     },
   },
+  mixins: [formMixin],
   components: {
     VForm,
     VButton,

@@ -1,28 +1,43 @@
 import TrezorConnect from 'trezor-connect';
 import Tx from 'ethereumjs-tx';
+import HDKey from 'ethereumjs-wallet/hdkey';
 import { NotificationError } from '@/class';
 import { HARDWARE_DERIVIATION_PATH } from '@/constants';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 
 const { sha3, toHex, toDecimal } = web3.utils;
 
 export default class TrezorWallet {
-  static async getNextWallets({ offset = 0, limit = 10 }) {
+  static async getNextWallets({ offset = 0, limit = 10, xpub: savedXpub }) {
     try {
-      const bundleParams = [...Array(limit)].map((_, i) => ({
-        path: `${HARDWARE_DERIVIATION_PATH}${offset + i}`,
-        showOnTrezor: false,
-      }));
+      const xpub = savedXpub || (await TrezorWallet.getPublicExtendedKey());
+      const hdWallet = HDKey.fromExtendedKey(xpub);
 
-      const { success, payload } = await TrezorConnect.ethereumGetAddress({
-        bundle: bundleParams,
+      const addresses = [...Array(limit)].map((_, i) =>
+        hdWallet
+          .deriveChild(offset + i)
+          .getWallet()
+          .getChecksumAddressString(),
+      );
+
+      return { addresses, xpub };
+    } catch (error) {
+      throw new NotificationError({
+        title: 'Access error',
+        text: `An error occurred while getting access to hardware device. Please, try again.`,
+        type: 'is-danger',
       });
+    }
+  }
 
-      if (!success) {
-        throw new Error('Bad response');
-      }
+  static async getPublicExtendedKey() {
+    try {
+      const { path } = ENV.hdKeyMnemonic;
+      const {
+        payload: { xpub },
+      } = await TrezorConnect.getPublicKey({ path });
 
-      return payload.map(({ address }) => address);
+      return xpub;
     } catch (error) {
       throw new NotificationError({
         title: 'Access error',
@@ -81,5 +96,9 @@ export default class TrezorWallet {
     const tx = new Tx({ ...transaction, ...sign });
 
     return `0x${tx.serialize().toString('hex')}`;
+  }
+
+  static async recover(message, signature) {
+    return web3.eth.accounts.recover(message, signature);
   }
 }

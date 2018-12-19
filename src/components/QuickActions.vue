@@ -1,14 +1,14 @@
 <template>
   <div class="quick-actions">
     <div class="navbar is-fixed-bottom">
-      <router-link
-        active-class="is-active"
-        class="navbar-item button"
-        to="/"
+      <router-link 
+        active-class="is-active" 
+        class="navbar-item button" 
+        to="/" 
         exact
       >
-        <span
-          class="icon is-small"
+        <span 
+          class="icon is-small" 
           v-html="require('@/img/home.svg')"
         />
         <span class="caption">Home</span>
@@ -19,8 +19,8 @@
         active-class="is-active"
         class="navbar-item button"
       >
-        <span
-          class="icon is-small"
+        <span 
+          class="icon is-small" 
           v-html="require('@/img/arrow-thick-left.svg')"
         />
         <span class="caption">Send</span>
@@ -32,8 +32,8 @@
         class="navbar-item button"
         active-class="is-active"
       >
-        <span
-          class="icon is-small"
+        <span 
+          class="icon is-small" 
           v-html="require('@/img/arrow-thick-right.svg')"
         />
         <span class="caption">Recieve</span>
@@ -44,8 +44,8 @@
         class="navbar-item button"
         active-class="is-active"
       >
-        <span
-          class="icon is-small"
+        <span 
+          class="icon is-small" 
           v-html="require('@/img/clock.svg')"
         />
         <span class="caption">History</span>
@@ -64,12 +64,9 @@ export default {
   },
   computed: {
     ...mapState({
-      wallet: state => state.accounts.wallet,
-      address: state =>
-        state.accounts.address &&
-        state.accounts.address.getChecksumAddressString(),
+      address: state => state.accounts.address,
     }),
-    ...mapGetters('accounts', ['isPublicAccount']),
+    ...mapGetters('accounts', ['wallet', 'isPublicAccount']),
   },
 };
 </script>

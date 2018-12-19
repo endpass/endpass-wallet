@@ -1,32 +1,41 @@
+import Vuex from 'vuex';
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import SignMessage from '@/components/SignMessage';
 import { generateStubs } from '@/utils/testUtils';
 
+const localVue = createLocalVue();
+
+localVue.use(Vuex);
+localVue.use(Notifications);
+
 describe('SignMessage', () => {
   const signedMessage = {};
   const sign = jest.fn().mockResolvedValue(signedMessage);
   let wrapper;
+  let store;
 
   beforeEach(() => {
-    const localVue = createLocalVue();
-    const $store = {
-      state: {
+    store = new Vuex.Store({
+      modules: {
         accounts: {
-          wallet: {
-            getPrivateKeyString: jest.fn(() => 'private key string'),
-            sign,
+          namespaced: true,
+          getters: {
+            wallet: () => ({
+              getPrivateKeyString: jest.fn(() => 'private key string'),
+              sign,
+            }),
           },
         },
+      },
+      state: {
         web3: {},
       },
-    };
-
-    localVue.use(Notifications);
+    });
 
     wrapper = shallow(SignMessage, {
       localVue,
-      mocks: { $store },
+      store,
       stubs: generateStubs(SignMessage),
     });
   });

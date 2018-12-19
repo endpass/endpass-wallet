@@ -1,4 +1,4 @@
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import state from '@/store/transactions';
 import {
   ADD_TRANSACTION,
@@ -57,15 +57,9 @@ describe('transactions actions', () => {
     };
     rootState = {
       accounts: {
-        address: {
-          getChecksumAddressString: jest.fn(() => address),
-          getAddressString: () => address.toLowerCase(),
-        },
+        address,
         wallets: {
           [address]: {},
-        },
-        wallet: {
-          signTransaction: jest.fn().mockResolvedValue(),
         },
       },
       web3: {
@@ -73,6 +67,9 @@ describe('transactions actions', () => {
       },
     };
     rootGetters = {
+      'accounts/wallet': {
+        signTransaction: jest.fn().mockResolvedValue(),
+      },
       'transactions/pendingBalance': 0,
       'accounts/accountAddresses': [address.toLowerCase()],
       'web3/isMainNetwork': false,
@@ -81,11 +78,10 @@ describe('transactions actions', () => {
 
   describe('getNonceInBlock', () => {
     it('should return nonce in current block', async () => {
-      expect.assertions(3);
+      expect.assertions(2);
 
       const res = await actions.getNonceInBlock({ rootState });
 
-      expect(rootState.accounts.address.getChecksumAddressString).toBeCalled();
       expect(web3.eth.getTransactionCount).toBeCalledWith(address);
       expect(res).toEqual('1');
     });
@@ -339,18 +335,21 @@ describe('transactions actions', () => {
     });
 
     it('should add transaction to history with network id', () => {
+      const networkId = 2;
       const constantDate = new Date('2018-01-01T12:00:00');
       const dateMock = jest
         .spyOn(global, 'Date')
         .mockImplementation(() => constantDate);
+      const { chainId, ...trxWithoutChainId } = blockTransactions[0];
 
       actions.handleBlockTransactions(
         { state: stateInstance, commit, dispatch, rootState, rootGetters },
-        { transactions: blockTransactions },
+        { transactions: [trxWithoutChainId, blockTransactions[1]], networkId },
       );
 
       const expectedTrx = TransactionFactory.fromBlock({
-        ...blockTransactions[0],
+        ...trxWithoutChainId,
+        networkId,
       });
 
       expect(commit).toHaveBeenCalledTimes(1);
@@ -399,7 +398,7 @@ describe('transactions actions', () => {
       expect.assertions(2);
 
       const res = await actions.sendSignedTransaction(
-        { rootState, dispatch },
+        { rootState, dispatch, rootGetters },
         { transaction, password: 'secret' },
       );
 
@@ -415,7 +414,7 @@ describe('transactions actions', () => {
       });
 
       const res = await actions.sendSignedTransaction(
-        { rootState, dispatch },
+        { rootState, dispatch, rootGetters },
         { transaction, password: 'secret' },
       );
 
@@ -427,10 +426,10 @@ describe('transactions actions', () => {
     it('should handle error with action', async () => {
       expect.assertions(2);
 
-      rootState.accounts.wallet.signTransaction.mockRejectedValue();
+      rootGetters['accounts/wallet'].signTransaction.mockRejectedValue();
 
       await actions.sendSignedTransaction(
-        { rootState, dispatch },
+        { rootState, dispatch, rootGetters },
         { transaction, password: 'secret' },
       );
 

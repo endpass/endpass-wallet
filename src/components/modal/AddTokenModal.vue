@@ -9,15 +9,18 @@
       v-if="!addedToken"
       id="addToken"
       v-model="isFormValid"
-      @submit="createToken"
+      @submit="addToken"
+      :isFormValid="isFormValid"
     >
       <v-input
         v-validate="'required|address'"
         id="address"
+        name="address"
+        data-vv-name="address"
         v-model="token.address"
         :disabled="loadingToken"
         label="Address"
-        name="address"
+        :error="errors.first('address')"
         aria-describedby="address"
         placeholder="Contract address"
         data-test="address-input"
@@ -32,9 +35,12 @@
         :disabled="!notFound.decimals"
         label="Decimals"
         name="decimals"
+        data-vv-name="decimals"
+        :error="errors.first('decimals')"
         aria-describedby="decimal"
         placeholder="Token decimals"
         required
+        data-test="token-decimals-input"
       />
       <v-input
         v-validate="'required'"
@@ -44,9 +50,12 @@
         :disabled="!notFound.name"
         label="Name"
         name="name"
+        data-vv-name="name"
+        :error="errors.first('name')"
         aria-describedby="name"
         placeholder="Token name"
         required
+        data-test="token-name-input"
       />
       <v-input
         v-validate="'required'"
@@ -56,9 +65,12 @@
         :disabled="!notFound.symbol"
         label="Symbol"
         name="symbol"
+        data-vv-name="symbol"
+        :error="errors.first('symbol')"
         aria-describedby="symbol"
         placeholder="Token symbol"
         required
+        data-test="token-symbol-input"
       />
     </v-form>
     <div v-else>
@@ -82,7 +94,7 @@
           class-name="is-primary"
           type="button"
           data-test="find-button"
-          @click.prevent="createToken"
+          @click.prevent="addToken"
         >
           Find
         </v-button>
@@ -91,7 +103,8 @@
           :disabled="!isFormValid"
           class-name="is-primary"
           type="button"
-          @click.prevent="addToken(token)"
+          data-test="add-button"
+          @click.prevent="addToken"
         >
           Add
         </v-button>
@@ -127,7 +140,7 @@ import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
-import web3 from '@/utils/web3';
+import formMixin from '@/mixins/form';
 
 export default {
   name: 'AddTokenModal',
@@ -148,8 +161,13 @@ export default {
         name: false,
         symbol: false,
       },
-      isFormValid: false,
     };
+  },
+  computed: {
+    isValidToken() {
+      const { decimals, name, symbol } = this.token;
+      return !!(decimals && symbol && name);
+    },
   },
   methods: {
     ...mapActions('tokens', ['addUserToken']),
@@ -159,25 +177,23 @@ export default {
     },
 
     async addToken() {
-      return this.addUserToken({ token: { ...this.token } });
-    },
-
-    async createToken() {
       this.loadingToken = true;
 
       try {
-        const erc20 = new ERC20Token(this.token.address);
-        const tokenInfo = await erc20.getToken();
-        await this.setTokenData(tokenInfo);
-        const { decimals, name, symbol } = this.token;
+        const { address } = this.token;
 
-        if (decimals && symbol && name) {
-          this.token.decimals = parseInt(decimals, 10);
-          await this.addToken();
-        } else {
-          this.loadingToken = false;
-          this.loadedToken = true;
+        if (!this.isValidToken) {
+          await this.setTokenData(address);
+
+          if (!this.isValidToken) {
+            this.loadedToken = true;
+            return;
+          }
         }
+
+        this.token.decimals = parseInt(this.token.decimals, 10);
+        await this.addUserToken({ token: { ...this.token } });
+
         this.loadingToken = false;
         this.addedToken = true;
       } catch (e) {
@@ -189,21 +205,30 @@ export default {
         });
       }
     },
-    // Accepts Token class
-    async setTokenData(tokenInfo) {
+
+    async setTokenData(tokenAddress) {
+      const erc20 = new ERC20Token(tokenAddress);
+      const tokenInfo = await erc20.getToken();
+
       this.token = {
         ...this.token,
         name: tokenInfo.name,
         decimals: tokenInfo.decimals,
         symbol: tokenInfo.symbol,
       };
+
+      Object.keys(this.notFound).forEach(item => {
+        if (!this.token[item]) {
+          this.notFound[item] = true;
+        }
+      });
     },
 
     close() {
       this.$emit('close');
     },
   },
-
+  mixins: [formMixin],
   components: {
     VModal,
     VForm,

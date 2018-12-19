@@ -1,45 +1,29 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`VSelect props options options are objects should correctly render text of options 1`] = `
-<select name="" data-vv-as="">
-    <option value="">
-        text
-    </option>
-    <option value="">
-
-    </option>
+<select name="">
+    <option value="">text</option>
+    <option value=""></option>
 </select>
 `;
 
 exports[`VSelect props options options are objects should correctly render values of options 1`] = `
-<select name="" data-vv-as="">
-    <option value="val">
-
-    </option>
-    <option value="">
-
-    </option>
+<select name="">
+    <option value="val"></option>
+    <option value=""></option>
 </select>
 `;
 
 exports[`VSelect props options options are strings should correctly render options 1`] = `
-<select name="" data-vv-as="">
-    <option value="option1">
-        option1
-    </option>
-    <option value="option2">
-        option2
-    </option>
+<select name="">
+    <option value="option1">option1</option>
+    <option value="option2">option2</option>
 </select>
 `;
 
 exports[`VSelect props options options have different types should correctly render options 1`] = `
-<select name="" data-vv-as="">
-    <option value="option">
-        option
-    </option>
-    <option value="option value">
-        option text
-    </option>
+<select name="">
+    <option value="option">option</option>
+    <option value="option value">option text</option>
 </select>
 `;

@@ -1,15 +1,18 @@
 import { hasLoginGuard, privateWalletGuard } from '@/router/guards';
-import { getInitializedValueFromStore } from '@/utils';
+import { asyncCheckProperty } from '@/utils';
 import store from '@/store';
 
 jest.mock('@/utils', () => ({
-  getInitializedValueFromStore: jest.fn(),
+  asyncCheckProperty: jest.fn(),
 }));
 
 jest.mock('@/store', () => ({
+  getters: {
+    'accounts/wallet': null,
+  },
   state: {
-    accounts: {
-      wallet: null,
+    user: {
+      authorizationStatus: false,
     },
   },
 }));
@@ -32,7 +35,7 @@ describe('hasLoginGuard', () => {
   it('should allow routing', async () => {
     expect.assertions(1);
 
-    getInitializedValueFromStore.mockResolvedValueOnce(true);
+    asyncCheckProperty.mockResolvedValueOnce(true);
 
     await hasLoginGuard(to, from, next);
 
@@ -42,7 +45,7 @@ describe('hasLoginGuard', () => {
   it('should redirect to base url', async () => {
     expect.assertions(2);
 
-    getInitializedValueFromStore.mockResolvedValueOnce(false);
+    asyncCheckProperty.mockResolvedValueOnce(false);
 
     await hasLoginGuard(to, from, next);
 
@@ -60,13 +63,13 @@ describe('privateWalletGuard', () => {
     to = {};
     next = jest.fn();
 
-    getInitializedValueFromStore.mockResolvedValueOnce();
+    asyncCheckProperty.mockResolvedValueOnce();
   });
 
   it('should allow routing', async () => {
     expect.assertions(1);
 
-    store.state.accounts.wallet = {};
+    store.getters['accounts/wallet'] = {};
 
     await privateWalletGuard(to, from, next);
 
@@ -76,7 +79,7 @@ describe('privateWalletGuard', () => {
   it('should redirect to new wallet page if wallet empty', async () => {
     expect.assertions(2);
 
-    store.state.accounts.wallet = null;
+    store.getters['accounts/wallet'] = null;
 
     await privateWalletGuard(to, from, next);
 
@@ -87,11 +90,8 @@ describe('privateWalletGuard', () => {
   it('should redirect to home page if account is public', async () => {
     expect.assertions(2);
 
-    Object.assign(store.state.accounts, {
-      wallet: {
-        isPublic: true,
-      },
-    });
+    store.getters['accounts/wallet'] = {};
+    store.getters['accounts/isPublicAccount'] = true;
     to = {
       path: '/send',
     };

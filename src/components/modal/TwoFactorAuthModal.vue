@@ -16,8 +16,8 @@
     </div>
     <v-form
       id="twoFactorAuth"
-      v-model="isFormValid"
       @submit="confirm"
+      :isFormValid="isFormValid"
     >
       <div
         v-if="secret && email"
@@ -40,7 +40,8 @@
         size="6"
         label="Verification Code"
         name="verificationCode"
-        validator="required|digits:6"
+        v-validate="'required|digits:6'"
+        :error="errors.first('verificationCode')"
         data-test="input-two-auth-code"
         autofocus
       />
@@ -67,12 +68,19 @@ import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
+import formMixin from '@/mixins/form';
 
 export default {
   name: 'TwoFactorAuthModal',
   props: {
-    secret: String,
-    email: String,
+    secret: {
+      type: String,
+      default: '',
+    },
+    email: {
+      type: String,
+      default: '',
+    },
     isLoading: {
       type: Boolean,
       default: false,
@@ -81,7 +89,6 @@ export default {
   data() {
     return {
       code: null,
-      isFormValid: false,
     };
   },
   computed: {
@@ -101,6 +108,7 @@ export default {
       this.$emit('close');
     },
   },
+  mixins: [formMixin],
   components: {
     VModal,
     VForm,

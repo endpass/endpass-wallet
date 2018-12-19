@@ -72,6 +72,7 @@ export const settings = {
   id: 'abcd-1234',
   email: 'user@example.com',
   net: 3,
+  fiatCurrency: 'USD',
   networks: [
     {
       id: 5,
@@ -79,9 +80,6 @@ export const settings = {
       url: 'https://web3.example.com/rpc',
     },
   ],
-  settings: {
-    currency: 'USD',
-  },
   tokens: {
     '3': [
       {

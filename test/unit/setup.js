@@ -7,11 +7,13 @@ import 'mocks/web3';
  * Services mocks
  */
 import 'mocks/services/user';
+import 'mocks/services/auth';
+import 'mocks/services/identityMode';
 import 'mocks/services/ethplorer';
-import 'mocks/services/gas-price';
-import 'mocks/services/price';
+import 'mocks/services/cryptoData';
 import 'mocks/services/tokeninfo';
 import 'mocks/services/localSettings';
+import 'mocks/services/hardware';
 
 /**
  * Classes mocks
@@ -19,6 +21,13 @@ import 'mocks/services/localSettings';
 import 'mocks/class/erc20';
 import 'mocks/class/ens';
 import 'mocks/class/storage/LocalStorage';
+import 'mocks/class/provider/InpageProvider';
+import 'mocks/class/singleton/dappBridge';
+
+/**
+ * Schemas mocks
+ */
+import 'mocks/schema';
 
 Vue.config.productionTip = false;
 

@@ -1,4 +1,4 @@
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 
 import {
   CHANGE_NETWORK,
@@ -9,11 +9,11 @@ import {
   SET_INTERVAL,
 } from './mutations-types';
 
-import { providerFactory } from '@/class';
+import { ProviderFactory } from '@/class';
 
 const changeNetwork = (state, network) => {
   state.activeNet = network;
-  web3.setProvider(providerFactory(network.url));
+  web3.setProvider(ProviderFactory.create(network.url));
 };
 
 const changeCurrency = (state, currency) => {

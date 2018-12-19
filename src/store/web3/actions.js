@@ -1,9 +1,8 @@
-import { isEmpty } from 'lodash';
 import Web3 from 'web3';
 
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import { userService } from '@/services';
-import { providerFactory } from '@/class';
+import { ProviderFactory } from '@/class';
 import {
   CHANGE_NETWORK,
   CHANGE_CURRENCY,
@@ -20,7 +19,7 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
   commit(CHANGE_NETWORK, network);
 
   return Promise.all([
-    userService.setSetting('net', network.id),
+    userService.setSettings({ net: network.id }),
     dispatch('subscribeOnBlockUpdates'),
     dispatch('price/updatePrice', {}, { root: true }),
     dispatch('accounts/updateBalance', {}, { root: true }),
@@ -29,6 +28,7 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
     dispatch('tokens/getCurrentAccountTokensData', null, {
       root: true,
     }),
+    dispatch('dapp/reset', null, { root: true }),
   ]).catch(e => dispatch('errors/emitError', e, { root: true }));
 };
 
@@ -51,10 +51,7 @@ const addNetwork = async ({ state, commit, dispatch }, { network }) => {
   const networksToSave = [...state.storedNetworks, network];
 
   try {
-    const { success } = await userService.setSetting(
-      'networks',
-      networksToSave,
-    );
+    const { success } = await userService.addNetwork(network);
 
     commit(SET_NETWORKS, networksToSave);
 
@@ -84,9 +81,9 @@ const updateNetwork = async (
   networksToSave.splice(oldNetworkIndex, 1, network);
 
   try {
-    const { success } = await userService.setSetting(
-      'networks',
-      networksToSave,
+    const { success } = await userService.updateNetwork(
+      oldNetwork.url,
+      network,
     );
 
     commit(SET_NETWORKS, networksToSave);
@@ -110,10 +107,7 @@ const deleteNetwork = async (
   );
 
   try {
-    const { success } = await userService.setSetting(
-      'networks',
-      networksToSave,
-    );
+    const { success } = await userService.removeNetwork(network.url);
 
     commit(SET_NETWORKS, networksToSave);
 
@@ -123,12 +117,12 @@ const deleteNetwork = async (
 
     return success;
   } catch (error) {
-    await dispatch('errors/emitError', error, { root: true });
+    return dispatch('errors/emitError', error, { root: true });
   }
 };
 
 const validateNetwork = (context, { network }) => {
-  const providerTemp = providerFactory(network.url);
+  const providerTemp = ProviderFactory.create(network.url);
   const web3Temp = new Web3(providerTemp);
   const { net } = web3Temp.eth;
 
@@ -139,10 +133,11 @@ const subscribeOnBlockUpdates = async ({ commit, dispatch, getters }) => {
   await dispatch('unsubscribeOnBlockUpdates');
 
   const interval = setInterval(async () => {
+    const networkId = getters.activeNetwork;
     const blockNumber = await web3.eth.getBlockNumber();
 
     commit(SET_BLOCK_NUMBER, blockNumber);
-    dispatch('handleLastBlock', { blockNumber });
+    dispatch('handleLastBlock', { blockNumber, networkId });
   }, ENV.blockUpdateInterval);
 
   commit(SET_INTERVAL, interval);
@@ -159,7 +154,7 @@ const unsubscribeOnBlockUpdates = async ({ state, commit }) => {
 
 const handleLastBlock = async (
   { state, commit, dispatch },
-  { blockNumber },
+  { blockNumber, networkId },
 ) => {
   if (state.handledBlockNumber === null) {
     commit(SET_HANDLED_BLOCK_NUMBER, blockNumber - 1);
@@ -178,6 +173,8 @@ const handleLastBlock = async (
 
       return block;
     } catch (error) {
+      // TODO fix with debounce provider
+      await new Promise(res => setTimeout(res, 1000));
       return getBlockSafely(num);
     }
   }
@@ -186,7 +183,7 @@ const handleLastBlock = async (
     getBlockSafely(i).then(({ transactions }) => {
       dispatch(
         'transactions/handleBlockTransactions',
-        { transactions },
+        { transactions, networkId },
         { root: true },
       );
     });

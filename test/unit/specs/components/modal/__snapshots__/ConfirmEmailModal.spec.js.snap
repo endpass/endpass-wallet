@@ -1,3 +1,49 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ConfirmEmailModal render should render initial state of the component 1`] = `<!---->`;
+exports[`ConfirmEmailModal render should render initial state of the component 1`] = `
+<div
+  class="modal is-active is-dark"
+>
+  <div
+    class="modal-background"
+  />
+   
+  <div
+    class="modal-logo"
+  />
+   
+  <div
+    class="modal-card"
+  >
+    <div
+      class="modal-card-head"
+    >
+      <h3
+        class="modal-card-title"
+      >
+        Check Your Email
+      </h3>
+       
+      <button
+        class="delete is-large"
+      />
+    </div>
+     
+    <div
+      class="modal-card-body"
+    >
+       
+      <p
+        class="subtitle"
+      >
+        We just sent you an email with a confirmation link.
+  Click it to instantly log in to your wallet!
+      </p>
+    </div>
+     
+    <div
+      class="modal-card-foot"
+    />
+  </div>
+</div>
+`;

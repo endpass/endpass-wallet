@@ -1,11 +1,11 @@
-import VeeValidate from 'vee-validate';
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { default as VeeValidate, Validator } from 'vee-validate';
+import { mount, createLocalVue } from '@vue/test-utils';
 import { generateStubs } from '@/utils/testUtils';
 import TransactionAdvancedOptions from '@/components/pages/Send/TransactionAdvancedOptions.vue';
 import { transaction } from 'fixtures/transactions';
 
+Validator.extend('hex', () => true);
 const localVue = createLocalVue();
-
 localVue.use(VeeValidate);
 
 describe('Send – TransactionAdvancedOptions', () => {
@@ -17,7 +17,7 @@ describe('Send – TransactionAdvancedOptions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    wrapper = shallow(TransactionAdvancedOptions, {
+    wrapper = mount(TransactionAdvancedOptions, {
       stubs: generateStubs(TransactionAdvancedOptions),
       propsData: mountProps,
       provide: () => ({
@@ -101,6 +101,14 @@ describe('Send – TransactionAdvancedOptions', () => {
         });
 
         expect(wrapper.vm.form.nonce).toBe(15);
+      });
+
+      it('should unfold options if isOpened truthy', () => {
+        wrapper.setProps({
+          isOpened: true,
+        });
+
+        expect(wrapper.vm.isCollapsed).toBe(false);
       });
     });
   });

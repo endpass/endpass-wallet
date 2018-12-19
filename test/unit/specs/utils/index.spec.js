@@ -1,43 +1,20 @@
-import * as utils from '@/utils';
-import store from '@/store';
-
-jest.mock('@/store', () => ({
-  state: {
-    module: {
-      field: null,
-    },
-  },
-  watch: jest.fn((getValue, callback) => {
-    setTimeout(() => callback('new value'));
-    return () => {};
-  }),
-}));
+import { asyncCheckProperty } from '@/utils';
 
 describe('utils', () => {
-  describe('getInitializedValueFromStore', () => {
-    const value = 'value';
-    const { module } = store.state;
-
-    it('should return already initialized value', async () => {
-      module.field = value;
-
-      const receivedValue = await utils.getInitializedValueFromStore(
-        module,
-        'field',
-      );
-
-      expect(receivedValue).toBe(value);
+  describe('asyncCheckProperty', () => {
+    beforeAll(() => {
+      jest.useRealTimers();
     });
 
-    it('should return just initialized value', async () => {
-      module.field = null;
+    it('should resolves only values matches to predicate due changing', async () => {
+      expect.assertions(1);
 
-      const receivedValue = await utils.getInitializedValueFromStore(
-        module,
-        'field',
-      );
+      const foo = {
+        bar: 'beep',
+      };
+      const res = await asyncCheckProperty(foo, 'bar', v => v === 'beep', 100);
 
-      expect(receivedValue).toBe('new value');
+      expect(res).toBe('beep');
     });
   });
 });

@@ -4,17 +4,7 @@ import actions from '@/store/web3/actions';
 import * as mutationsTypes from '@/store/web3/mutations-types';
 import { userService } from '@/services';
 import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
-import {
-  ethplorerTransactions,
-  blockTransactions,
-} from 'fixtures/transactions';
-
-jest.mock('@/services', () => ({
-  userService: {
-    setSetting: jest.fn().mockResolvedValue({ success: true }),
-    getSettings: jest.fn().mockResolvedValue({}),
-  },
-}));
+import { blockTransactions } from 'fixtures/transactions';
 
 jest.useFakeTimers();
 
@@ -52,8 +42,8 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(userService.setSetting).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toHaveBeenCalledWith('net', networkId);
+      expect(userService.setSettings).toHaveBeenCalledTimes(1);
+      expect(userService.setSettings).toHaveBeenCalledWith({ net: networkId });
     });
 
     it('should dispatch subscribeOnBlockUpdates, tokens/getCurrentAccountTokens and tokens/getCurrentAccountTokensData actions', async () => {
@@ -68,19 +58,20 @@ describe('web3 actions', () => {
         ['tokens/getNetworkTokens', {}, { root: true }],
         ['tokens/getCurrentAccountTokens', {}, { root: true }],
         ['tokens/getCurrentAccountTokensData', null, { root: true }],
+        ['dapp/reset', null, { root: true }],
       ]);
     });
 
     it('should handle errors', async () => {
-      const error = new Error();
-
       expect.assertions(4);
 
-      userService.setSetting.mockRejectedValueOnce(error);
+      const error = new Error();
+
+      userService.setSettings.mockRejectedValueOnce(error);
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(dispatch).toHaveBeenCalledTimes(7);
+      expect(dispatch).toHaveBeenCalledTimes(8);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -90,7 +81,7 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(dispatch).toHaveBeenCalledTimes(7);
+      expect(dispatch).toHaveBeenCalledTimes(8);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -105,12 +96,12 @@ describe('web3 actions', () => {
     const currencyId = 1;
 
     it('should call CHANGE_CURRENCY mutation', async () => {
+      expect.assertions(2);
+
       const state = {
         activeNet: {},
       };
       const currency = CURRENCIES.find(currency => currency.id === currencyId);
-
-      expect.assertions(2);
 
       await changeCurrency(
         { commit, dispatch, getters, state },
@@ -125,13 +116,13 @@ describe('web3 actions', () => {
     });
 
     it('should dispatch changeNetwork action', async () => {
+      expect.assertions(2);
+
       const state = {
         activeNet: {
           currency: currencyId + 1,
         },
       };
-
-      expect.assertions(2);
 
       await changeCurrency(
         { commit, dispatch, getters, state },
@@ -145,13 +136,13 @@ describe('web3 actions', () => {
     });
 
     it('should not dispatch changeNetwork action', async () => {
+      expect.assertions(1);
+
       const state = {
         activeNet: {
           currency: currencyId,
         },
       };
-
-      expect.assertions(1);
 
       await changeCurrency(
         { commit, dispatch, getters, state },
@@ -175,11 +166,8 @@ describe('web3 actions', () => {
 
       addNetwork({ commit, dispatch, state }, { network });
 
-      expect(userService.setSetting).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'networks',
-        networksToSave,
-      );
+      expect(userService.addNetwork).toHaveBeenCalledTimes(1);
+      expect(userService.addNetwork).toHaveBeenCalledWith(network);
     });
 
     it('should call SET_NETWORKS mutation', async () => {
@@ -206,11 +194,11 @@ describe('web3 actions', () => {
     });
 
     it('should handle the error of adding a new provider', async () => {
-      const error = new Error();
-
       expect.assertions(3);
 
-      userService.setSetting.mockRejectedValueOnce(error);
+      const error = new Error();
+
+      userService.addNetwork.mockRejectedValueOnce(error);
 
       await addNetwork({ commit, dispatch, state }, { network });
 
@@ -222,18 +210,18 @@ describe('web3 actions', () => {
     });
 
     it('should return success status', async () => {
+      expect.assertions(2);
+
       let setSettingResponse = { success: true };
       let response;
 
-      expect.assertions(2);
-
-      userService.setSetting.mockResolvedValue(setSettingResponse);
+      userService.addNetwork.mockResolvedValue(setSettingResponse);
       response = await addNetwork({ commit, dispatch, state }, { network });
 
       expect(response).toBe(setSettingResponse.success);
 
       setSettingResponse = { success: false };
-      userService.setSetting.mockResolvedValue(setSettingResponse);
+      userService.addNetwork.mockResolvedValue(setSettingResponse);
       response = await addNetwork({ commit, dispatch, state }, { network });
 
       expect(response).toBe(setSettingResponse.success);
@@ -257,27 +245,25 @@ describe('web3 actions', () => {
         { network, oldNetwork: network },
       );
 
-      expect(userService.setSetting).toHaveBeenCalledTimes(0);
+      expect(userService.updateNetwork).toHaveBeenCalledTimes(0);
       expect(commit).toHaveBeenCalledTimes(0);
       expect(dispatch).toHaveBeenCalledTimes(0);
     });
 
-    it('should call userService.setSetting', () => {
-      const networksToSave = [network];
-
+    it('should call userService.updateNetwork', () => {
       updateNetwork({ commit, dispatch, state }, { network, oldNetwork });
 
-      expect(userService.setSetting).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'networks',
-        networksToSave,
+      expect(userService.updateNetwork).toHaveBeenCalledTimes(1);
+      expect(userService.updateNetwork).toHaveBeenCalledWith(
+        oldNetwork.url,
+        network,
       );
     });
 
     it('should call SET_NETWORKS mutation', async () => {
-      const networksToSave = [network];
-
       expect.assertions(2);
+
+      const networksToSave = [network];
 
       await updateNetwork({ commit, dispatch, state }, { network, oldNetwork });
 
@@ -300,9 +286,9 @@ describe('web3 actions', () => {
     });
 
     it('should not dispatch changeNetwork action', async () => {
-      const oldNetwork = {};
-
       expect.assertions(1);
+
+      const oldNetwork = {};
 
       await updateNetwork({ commit, dispatch, state }, { network, oldNetwork });
 
@@ -310,11 +296,11 @@ describe('web3 actions', () => {
     });
 
     it('should handle the network update error', async () => {
-      const error = new Error();
-
       expect.assertions(3);
 
-      userService.setSetting.mockRejectedValueOnce(error);
+      const error = new Error();
+
+      userService.updateNetwork.mockRejectedValueOnce(error);
 
       await updateNetwork({ commit, dispatch, state }, { network, oldNetwork });
 
@@ -326,12 +312,13 @@ describe('web3 actions', () => {
     });
 
     it('should return success status', async () => {
+      expect.assertions(2);
+
       let setSettingResponse = { success: true };
       let response;
 
-      expect.assertions(2);
+      userService.updateNetwork.mockResolvedValue(setSettingResponse);
 
-      userService.setSetting.mockResolvedValue(setSettingResponse);
       response = await updateNetwork(
         { commit, dispatch, state },
         { network, oldNetwork },
@@ -340,7 +327,7 @@ describe('web3 actions', () => {
       expect(response).toBe(setSettingResponse.success);
 
       setSettingResponse = { success: false };
-      userService.setSetting.mockResolvedValue(setSettingResponse);
+      userService.updateNetwork.mockResolvedValue(setSettingResponse);
       response = await updateNetwork(
         { commit, dispatch, state },
         { network, oldNetwork },
@@ -361,24 +348,19 @@ describe('web3 actions', () => {
       networks: [{ url: 'new url' }],
     };
 
-    it('should call userService.setSetting', () => {
-      const networksToSave = [];
-
+    it('should call userService.removeNetwork', async () => {
       expect.assertions(2);
 
-      deleteNetwork({ commit, dispatch, getters, state }, { network });
+      await deleteNetwork({ commit, dispatch, getters, state }, { network });
 
-      expect(userService.setSetting).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'networks',
-        networksToSave,
-      );
+      expect(userService.removeNetwork).toHaveBeenCalledTimes(1);
+      expect(userService.removeNetwork).toBeCalledWith(network.url);
     });
 
     it('should call SET_NETWORKS mutation', async () => {
-      const networksToSave = [];
-
       expect.assertions(2);
+
+      const networksToSave = [];
 
       await deleteNetwork({ commit, dispatch, state, getters }, { network });
 
@@ -401,9 +383,9 @@ describe('web3 actions', () => {
     });
 
     it('should not dispatch changeNetwork action', async () => {
-      const network = {};
-
       expect.assertions(1);
+
+      const network = {};
 
       await deleteNetwork({ commit, dispatch, getters, state }, { network });
 
@@ -411,11 +393,11 @@ describe('web3 actions', () => {
     });
 
     it('should handle the removal error of the network', async () => {
-      const error = new Error();
-
       expect.assertions(3);
 
-      userService.setSetting.mockRejectedValueOnce(error);
+      const error = new Error();
+
+      userService.removeNetwork.mockRejectedValueOnce(error);
 
       await deleteNetwork({ commit, dispatch, getters, state }, { network });
 
@@ -427,12 +409,13 @@ describe('web3 actions', () => {
     });
 
     it('should return success status', async () => {
+      expect.assertions(2);
+
       let setSettingResponse = { success: true };
       let response;
 
-      expect.assertions(2);
+      userService.removeNetwork.mockResolvedValue(setSettingResponse);
 
-      userService.setSetting.mockResolvedValue(setSettingResponse);
       response = await deleteNetwork(
         { commit, dispatch, getters, state },
         { network },
@@ -441,7 +424,7 @@ describe('web3 actions', () => {
       expect(response).toBe(setSettingResponse.success);
 
       setSettingResponse = { success: false };
-      userService.setSetting.mockResolvedValue(setSettingResponse);
+      userService.removeNetwork.mockResolvedValue(setSettingResponse);
       response = await deleteNetwork(
         { commit, dispatch, getters, state },
         { network },
@@ -455,6 +438,8 @@ describe('web3 actions', () => {
     const { validateNetwork } = actions;
 
     it('should return network type and network id', async () => {
+      expect.assertions(2);
+
       const context = {};
       const network = {
         url: 'https://url',
@@ -462,8 +447,6 @@ describe('web3 actions', () => {
       let networkType;
       let networkId;
       let result;
-
-      expect.assertions(2);
 
       networkType = 'ropsten';
       networkId = 3;
@@ -512,9 +495,10 @@ describe('web3 actions', () => {
     });
 
     it('should call SET_INTERVAL mutation', async () => {
+      expect.assertions(2);
+
       const interval = 1;
 
-      expect.assertions(2);
       setInterval.mockReturnValue(interval);
 
       await subscribeOnBlockUpdates({ commit, dispatch });
@@ -552,9 +536,9 @@ describe('web3 actions', () => {
     });
 
     it('should not do anything', async () => {
-      const state = {};
-
       expect.assertions(2);
+
+      const state = {};
 
       await unsubscribeOnBlockUpdates({ state, commit });
 
@@ -615,7 +599,13 @@ describe('web3 actions', () => {
 
       await handleLastBlock({ state, commit, dispatch }, { blockNumber });
 
+      // TODO for fix getBlockSafety
       await global.flushPromises();
+      jest.advanceTimersByTime(1000);
+      await global.flushPromises();
+      jest.advanceTimersByTime(1000);
+      await global.flushPromises();
+      jest.advanceTimersByTime(1000);
 
       expect(Web3.eth.getBlock).toHaveBeenCalledTimes(3);
       expect(dispatch).toHaveBeenCalledTimes(1);
@@ -634,6 +624,8 @@ describe('web3 actions', () => {
     };
 
     it('should call SET_NETWORKS, CHANGE_NETWORK, CHANGE_CURRENCY mutations', async () => {
+      expect.assertions(1);
+
       const net = 10;
       const activeNet = {
         id: net,
@@ -645,8 +637,6 @@ describe('web3 actions', () => {
       const activeCurrency = CURRENCIES.find(
         currency => currency.id === activeNet.currency,
       );
-
-      expect.assertions(1);
 
       userService.getSettings.mockResolvedValueOnce({ net, networks });
 
@@ -660,6 +650,8 @@ describe('web3 actions', () => {
     });
 
     it('should call SET_NETWORKS, CHANGE_NETWORK, CHANGE_CURRENCY mutations with default settings', async () => {
+      expect.assertions(1);
+
       const net = 1;
       const networks = [];
       const activeNet = DEFAULT_NETWORKS.find(network => network.id === net);
@@ -667,7 +659,7 @@ describe('web3 actions', () => {
         currency => currency.id === activeNet.currency,
       );
 
-      expect.assertions(1);
+      userService.getSettings.mockResolvedValueOnce({});
 
       await init({ commit, dispatch, state });
 
@@ -690,9 +682,9 @@ describe('web3 actions', () => {
     });
 
     it('should handle errors', async () => {
-      const error = new Error();
-
       expect.assertions(4);
+
+      const error = new Error();
 
       userService.getSettings.mockRejectedValueOnce(error);
 

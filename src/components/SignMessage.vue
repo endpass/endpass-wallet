@@ -15,9 +15,7 @@
         :disabled="!message"
         class-name="is-primary is-medium"
         data-test="sign-button"
-      >
-        Sign message
-      </v-button>
+      >Sign message</v-button>
       <v-textarea
         v-if="signedMessage"
         v-model="getSignedMessage"
@@ -26,9 +24,9 @@
         data-test="signed-message-textarea"
       />
     </v-form>
-    <password-modal
-      v-if="isPasswordModal"
-      @confirm="signMessage"
+    <password-modal 
+      v-if="isPasswordModal" 
+      @confirm="signMessage" 
       @close="togglePasswordModal"
     >
       <div class="field">
@@ -40,28 +38,29 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
-import web3 from '@/utils/web3';
 
 export default {
   name: 'SignMessage',
+
   data: () => ({
     message: '',
     signedMessage: null,
   }),
+
   computed: {
-    ...mapState({
-      wallet: state => state.accounts.wallet,
-    }),
+    ...mapGetters('accounts', ['wallet']),
+
     getSignedMessage() {
       return JSON.stringify(this.signedMessage);
     },
   },
+
   methods: {
     async signMessage(password) {
       try {
@@ -79,7 +78,9 @@ export default {
       }
     },
   },
+
   mixins: [modalMixin],
+
   components: {
     VForm,
     VButton,

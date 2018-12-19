@@ -7,7 +7,7 @@ import {
   TransactionFactory,
 } from '@/class';
 import ethplorerService from '@/services/ethplorer';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import { getShortStringWithEllipsis, matchString } from '@/utils/strings';
 import {
   ADD_TRANSACTION,
@@ -18,7 +18,7 @@ import {
 const { toChecksumAddress } = web3.utils;
 
 const getNonceInBlock = async ({ rootState }) => {
-  const address = rootState.accounts.address.getChecksumAddressString();
+  const { address } = rootState.accounts;
   const nonce = await web3.eth.getTransactionCount(address);
 
   return nonce.toString();
@@ -43,10 +43,10 @@ const getNextNonce = async ({ state, dispatch }) => {
 };
 
 const sendSignedTransaction = async (
-  { rootState, dispatch },
+  { dispatch, rootGetters },
   { transaction, password },
 ) => {
-  const { wallet } = rootState.accounts;
+  const wallet = rootGetters['accounts/wallet'];
 
   try {
     if (!transaction.nonce) {
@@ -100,7 +100,7 @@ const sendSignedTransaction = async (
 
     return sendEvent;
   } catch (err) {
-    dispatch('handleSendingError', { transaction });
+    dispatch('handleSendingError', { err, transaction });
 
     return null;
   }
@@ -138,11 +138,9 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
 
   try {
     const { address } = rootState.accounts;
-    const addressCheckSum = address.getChecksumAddressString();
-    let transactions = await ethplorerService.getTransactionHistory(
-      addressCheckSum,
-    );
-    transactions = transactions.map(trx => new Transaction(trx));
+    const res = await ethplorerService.getTransactionHistory(address);
+    const transactions = res.map(trx => new Transaction(trx));
+
     commit(SET_TRANSACTION_HISTORY, transactions);
     dispatch(
       'connectionStatus/updateApiErrorStatus',
@@ -172,7 +170,7 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
 // Show notification of incoming transactions from block
 const handleBlockTransactions = (
   { state, dispatch, commit, rootState, rootGetters },
-  { transactions },
+  { transactions, networkId },
 ) => {
   const userAddresses = rootGetters['accounts/accountAddresses'];
   const toUserTrx = transactions.filter(
@@ -189,7 +187,7 @@ const handleBlockTransactions = (
   const allTrx = [...pendingTransactions, ...transactionHistory];
 
   toUserTrx.forEach(trx => {
-    const incomeTrx = TransactionFactory.fromBlock(trx);
+    const incomeTrx = TransactionFactory.fromBlock({ ...trx, networkId });
     const isTrxExist = allTrx.some(trxInList =>
       Transaction.isEqual(incomeTrx, trxInList),
     );
@@ -213,7 +211,7 @@ const handleBlockTransactions = (
     return;
   }
 
-  const address = rootState.accounts.address.getChecksumAddressString();
+  const { address } = rootState.accounts;
   const trxAddresses = toUserTrx.map(({ to }) => to);
 
   if (

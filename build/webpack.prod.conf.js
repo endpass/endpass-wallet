@@ -10,6 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const gitCommitHash = utils.getCommitHash();
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -37,6 +38,8 @@ const webpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       ENV: JSON.stringify(env),
       GIT_COMMIT_HASH: JSON.stringify(gitCommitHash),
+      //Required for vue to work in production mode
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     }),
     new UglifyJsPlugin({
       uglifyOptions: {
@@ -126,6 +129,10 @@ const webpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*'],
       },
     ]),
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      openAnalyzer: false,
+    }),
   ],
 });
 

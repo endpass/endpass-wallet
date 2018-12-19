@@ -80,6 +80,7 @@ export default {
 
   padding: 0.25rem 1rem;
   color: $white;
+  background-color: $primary;
 
   &.mainnet {
     background-color: $dark-blue;

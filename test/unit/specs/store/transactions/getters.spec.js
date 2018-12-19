@@ -25,11 +25,7 @@ describe('transactions getters', () => {
         {},
         {
           accounts: {
-            address: {
-              getChecksumAddressString() {
-                return checksumAddress;
-              },
-            },
+            address: checksumAddress,
           },
           web3: {
             activeNet: { id: 2 },
@@ -74,11 +70,7 @@ describe('transactions getters', () => {
         },
         {
           accounts: {
-            address: {
-              getChecksumAddressString() {
-                return checksumAddress;
-              },
-            },
+            address: checksumAddress,
           },
           web3: {
             activeNet: { id: 1 },
@@ -117,11 +109,7 @@ describe('transactions getters', () => {
         {},
         {
           accounts: {
-            address: {
-              getChecksumAddressString() {
-                return checksumAddress;
-              },
-            },
+            address: checksumAddress,
           },
           web3: {
             activeNet: { id: 2 },
@@ -153,11 +141,7 @@ describe('transactions getters', () => {
         {},
         {
           accounts: {
-            address: {
-              getChecksumAddressString() {
-                return checksumAddress;
-              },
-            },
+            address: checksumAddress,
           },
           web3: {
             activeNet: { id: 2 },
@@ -178,11 +162,7 @@ describe('transactions getters', () => {
         {},
         {
           accounts: {
-            address: {
-              getChecksumAddressString() {
-                return checksumAddress;
-              },
-            },
+            address: checksumAddress,
           },
           web3: {
             activeNet: {
@@ -297,9 +277,7 @@ describe('transactions getters', () => {
       };
       const rootState = {
         accounts: {
-          address: {
-            getChecksumAddressString: jest.fn().mockReturnValue(1),
-          },
+          address: 1,
         },
       };
 

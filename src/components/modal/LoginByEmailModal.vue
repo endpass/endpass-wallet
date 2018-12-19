@@ -8,32 +8,29 @@
     <p
       v-if="isSelectDefaultIdentity"
       class="subtitle"
-    >
-      Please enter your email address below to access your wallet or create a new one.
-    </p>
+    >Please enter your email address below to access your wallet or create a new one.</p>
     <p
       v-else-if="isSelectCustomIdentity"
       class="subtitle"
-    >
-      Please enter your server address below to access your accounts.
-    </p>
+    >Please enter your server address below to access your accounts.</p>
 
     <v-form
       id="loginByEmail"
-      v-model="isFormValid"
       @submit="handleSubmit"
+      :isFormValid="isFormValid"
     >
       <v-input
-        autofocus
         v-if="isSelectDefaultIdentity"
         key="email-input"
         v-model="email"
         :disabled="!isInputAllowed"
+        autofocus
         label="Email"
-        help="Your email address may be used to help recover your
-               wallet in case you lose access."
+        help="Your email address may be used to help recover your wallet in case you lose access."
         name="email"
-        validator="required|email"
+        data-vv-name="email"
+        v-validate="'required|email'"
+        :error="errors.first('email')"
         placeholder="Your email"
       />
 
@@ -52,8 +49,10 @@
         v-model="customIdentityServer"
         :disabled="!isInputAllowed"
         label="Custom Identity Server"
+        data-vv-name="customIdentityServer"
         name="customIdentityServer"
-        validator="required|url:require_protocol:true"
+        v-validate="'required|url:require_protocol:true'"
+        :error="errors.first('customIdentityServer')"
         placeholder="Custom Identity Server"
         help="Example: https://yourserver.com/api"
       />
@@ -62,19 +61,16 @@
         v-if="isSelectDefaultIdentity"
         v-model="termsAccepted"
       >
-        I accept the <a
+        I accept the
+        <a
           href="https://endpass.com/terms/"
           target="_blank"
-        >
-          Terms of Service
-        </a>
+        >Terms of Service</a>
         and
         <a
           href="https://endpass.com/privacy/"
           target="_blank"
-        >
-          Privacy Policy
-        </a>.
+        >Privacy Policy</a>.
       </v-checkbox>
     </v-form>
     <div
@@ -87,9 +83,7 @@
         class-name="is-primary is-medium"
         form="loginByEmail"
         data-test="submit-login"
-      >
-        Continue
-      </v-button>
+      >Continue</v-button>
     </div>
   </v-modal>
 </template>
@@ -104,6 +98,7 @@ import VSelect from '@/components/ui/form/VSelect';
 import { IDENTITY_MODE } from '@/constants';
 import { mapActions } from 'vuex';
 import error from '@/mixins/error';
+import formMixin from '@/mixins/form';
 
 const availableIdentityServerTypes = [
   { text: 'Endpass', val: IDENTITY_MODE.DEFAULT },
@@ -125,7 +120,6 @@ export default {
     availableIdentityServerTypes,
     currentIdentityServerType: availableIdentityServerTypes[0].val,
     customIdentityServer: null,
-    isFormValid: false,
     isValidating: false,
   }),
   computed: {
@@ -164,13 +158,12 @@ export default {
           await this.validateServer(serverUrl);
         }
 
-        const { email } = this;
         const mode = {
           type: this.currentIdentityServerType,
           serverUrl,
         };
 
-        this.$emit('confirm', { email, mode });
+        this.$emit('confirm', { email: this.email, mode });
       } catch (e) {
         this.emitError(e);
       }
@@ -179,7 +172,7 @@ export default {
       this.$emit('close');
     },
   },
-  mixins: [error],
+  mixins: [error, formMixin],
   components: {
     VModal,
     VForm,

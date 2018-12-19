@@ -1,5 +1,6 @@
 import Vuex from 'vuex';
-import { shallow, mount, createLocalVue } from '@vue/test-utils';
+import VeeValidate from 'vee-validate';
+import { mount, shallow, createLocalVue } from '@vue/test-utils';
 
 import { IDENTITY_MODE } from '@/constants';
 import LoginByEmailModal from '@/components/modal/LoginByEmailModal';
@@ -8,6 +9,7 @@ import { generateStubs } from '@/utils/testUtils';
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
+localVue.use(VeeValidate);
 
 describe('LoginByEmailModal', () => {
   let wrapper;
@@ -228,13 +230,12 @@ describe('LoginByEmailModal', () => {
     describe('validation', () => {
       beforeEach(() => {
         wrapper = mount(LoginByEmailModal, {
-          stubs: generateStubs(LoginByEmailModal),
+          localVue,
         });
       });
 
       it('should disable submit button by default', () => {
-        const button = wrapper.find('v-button[data-test=submit-login]');
-
+        const button = wrapper.find('[data-test=submit-login]');
         expect(button.attributes().disabled).toBeTruthy();
       });
     });

@@ -7,30 +7,28 @@
         class="button is-primary"
         data-test="export-button"
         @click="openPasswordModal"
-      >
-        Show Private Key
-      </a>
+      >Show Private Key</a>
     </div>
     <div v-else>
-      <p class="subtitle">Your private key is below. Do not share it with
-      anyone!</p>
-      <p
-        class="code"
+      <p class="subtitle">
+        Your private key is below. Do not share it with
+        anyone!
+      </p>
+      <p 
+        class="code" 
         data-test="private-key-code"
       >{{ privateKey }}</p>
       <p>
-        <a
-          class="button is-light"
-          data-test="hide-button"
+        <a 
+          class="button is-light" 
+          data-test="hide-button" 
           @click="privateKey=null"
-        >
-          Close
-        </a>
+        >Close</a>
       </p>
     </div>
-    <password-modal
-      v-if="passwordModalOpen"
-      @close="closePasswordModal"
+    <password-modal 
+      v-if="passwordModalOpen" 
+      @close="closePasswordModal" 
       @confirm="getPrivateKey"
     />
   </div>
@@ -39,10 +37,11 @@
 
 <script>
 import PasswordModal from '@/components/modal/PasswordModal';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'ExportToPrivateKey',
+
   data() {
     return {
       privateKey: null,
@@ -50,18 +49,20 @@ export default {
       exportingKey: false,
     };
   },
+
   computed: {
-    ...mapState({
-      wallet: state => state.accounts.wallet,
-    }),
+    ...mapGetters('accounts', ['wallet']),
   },
+
   methods: {
     openPasswordModal() {
       this.passwordModalOpen = true;
     },
+
     closePasswordModal() {
       this.passwordModalOpen = false;
     },
+
     async getPrivateKey(password) {
       this.closePasswordModal();
       if (this.wallet) {
@@ -75,6 +76,7 @@ export default {
         this.exportingKey = false;
       }
     },
+
     exportError(e) {
       this.exportingKey = false;
       this.$notify({
@@ -86,6 +88,7 @@ export default {
       console.error(e);
     },
   },
+
   components: {
     PasswordModal,
   },

@@ -3,7 +3,9 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import Notifications from 'vue-notification';
 import AddTokenModal from '@/components/modal/AddTokenModal';
-import { Token } from '@/class';
+import { ERC20Token } from '@/class';
+import { tokens } from 'fixtures/tokens';
+import { generateStubs } from '@/utils/testUtils';
 
 const localVue = createLocalVue();
 
@@ -14,7 +16,6 @@ localVue.use(Notifications);
 describe('AddTokenModal', () => {
   let store;
   let wrapper;
-  let fakeToken;
   let fakeEmptyTokenData;
 
   beforeEach(() => {
@@ -32,13 +33,10 @@ describe('AddTokenModal', () => {
         },
       },
     });
-    wrapper = shallow(AddTokenModal, { store, localVue });
-    fakeToken = new Token({
-      address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
-      name: 'name',
-      symbol: 'symbol',
-      balanceOf: 'balanceOf',
-      decimals: 8,
+    wrapper = shallow(AddTokenModal, {
+      store,
+      localVue,
+      stubs: generateStubs(AddTokenModal),
     });
     fakeEmptyTokenData = {
       symbol: undefined,
@@ -62,52 +60,89 @@ describe('AddTokenModal', () => {
     it('should set the token data from the contract', async () => {
       expect.assertions(3);
 
-      await wrapper.vm.setTokenData(fakeToken);
+      await wrapper.vm.setTokenData(tokens[0].address);
 
-      expect(wrapper.vm.token.symbol).toBe('SYMBOL');
-      expect(wrapper.vm.token.name).toBe('name');
-      expect(wrapper.vm.token.decimals).toBe(8);
+      expect(wrapper.vm.token.symbol).toBe(tokens[0].symbol);
+      expect(wrapper.vm.token.name).toBe(tokens[0].name);
+      expect(wrapper.vm.token.decimals).toBe(tokens[0].decimals);
     });
 
-    // it('should set empty flags', async () => {
-    //   await wrapper.vm.setTokenData(fakeEmptyToken);
-    //
-    //   expect(wrapper.vm.notFound.symbol).toBe(true);
-    //   expect(wrapper.vm.notFound.name).toBe(true);
-    //   expect(wrapper.vm.notFound.decimals).toBe(true);
-    // });
+    it('should set empty flags', async () => {
+      expect.assertions(1);
+
+      ERC20Token.prototype.getToken.mockResolvedValueOnce(fakeEmptyTokenData);
+
+      await wrapper.vm.setTokenData(tokens[0].address);
+
+      expect(wrapper.vm.notFound).toEqual({
+        decimals: true,
+        name: true,
+        symbol: true,
+      });
+    });
 
     it('should correctly reset the contract data', async () => {
-      expect.assertions(3);
+      expect.assertions(1);
 
-      await wrapper.vm.setTokenData(fakeToken);
+      await wrapper.vm.setTokenData(tokens[0].address);
       wrapper.vm.resetForm();
 
-      expect(wrapper.vm.token.symbol).toBe('');
-      expect(wrapper.vm.token.name).toBe('');
-      expect(wrapper.vm.token.decimals).toBe('');
+      expect(wrapper.vm.token).toEqual(wrapper.vm.$options.data().token);
     });
 
     it('correctly resets empty flags', async () => {
-      expect.assertions(3);
+      expect.assertions(1);
 
-      await wrapper.vm.setTokenData(fakeEmptyTokenData);
+      ERC20Token.prototype.getToken.mockResolvedValueOnce(fakeEmptyTokenData);
+
+      await wrapper.vm.setTokenData(tokens[0].address);
       wrapper.vm.resetForm();
 
-      expect(wrapper.vm.notFound.symbol).toBe(false);
-      expect(wrapper.vm.notFound.name).toBe(false);
-      expect(wrapper.vm.notFound.decimals).toBe(false);
+      expect(wrapper.vm.notFound).toEqual({
+        decimals: false,
+        name: false,
+        symbol: false,
+      });
     });
 
     it('should add token to the store', async () => {
       expect.assertions(1);
 
       const addUserToken = jest.fn();
-      wrapper.setData({ token: fakeToken });
+      wrapper.setData({ token: tokens[0] });
       wrapper.setMethods({ addUserToken });
 
       await wrapper.vm.addToken();
-      expect(addUserToken).toHaveBeenCalledWith({ token: fakeToken });
+
+      expect(addUserToken).toBeCalledWith({ token: tokens[0] });
+    });
+
+    it('should not add invalid token to the store', async () => {
+      expect.assertions(1);
+
+      const addUserToken = jest.fn();
+      ERC20Token.prototype.getToken.mockResolvedValueOnce(fakeEmptyTokenData);
+      wrapper.setMethods({ addUserToken });
+
+      await wrapper.vm.addToken();
+
+      expect(addUserToken).not.toBeCalled();
+    });
+
+    it('should show extra fields form for missing token data', async () => {
+      expect.assertions(4);
+
+      ERC20Token.prototype.getToken.mockResolvedValueOnce(fakeEmptyTokenData);
+
+      await wrapper.vm.addToken();
+
+      ['decimals', 'name', 'symbol'].forEach(item => {
+        expect(
+          wrapper.find(`v-input[data-test=token-${item}-input]`).exists(),
+        ).toBe(true);
+      });
+
+      expect(wrapper.findAll('v-input')).toHaveLength(4);
     });
   });
 });

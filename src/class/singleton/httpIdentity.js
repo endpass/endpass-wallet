@@ -30,7 +30,7 @@ function handleResponseError(error) {
 
 function handleResponseSuccess(response) {
   const { config, status } = response;
-  const ignorePaths = ['auth', 'token'];
+  const ignorePaths = ['auth'];
   const ignorePath = ignorePaths.some(path => config.url.includes(path));
 
   if (

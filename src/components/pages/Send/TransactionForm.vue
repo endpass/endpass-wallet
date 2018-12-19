@@ -3,6 +3,7 @@
     id="sendEther"
     data-test="transaction-send-form"
     @submit="handleFormSubmit"
+    :isFormValid="isSendAllowed && isFormValid"
   >
     <div class="field">
       <label class="label">
@@ -47,15 +48,18 @@
     />
 
     <transaction-priority-options
+      v-if="prices"
       v-model="transaction.gasPrice"
       :is-loading="isLoadingGasPrice"
       :prices="prices"
     />
 
     <transaction-advanced-options
+      v-if="!isLoadingGasPrice"
       :transaction="transaction"
       :current-token="transaction.tokenInfo"
       :is-loading="isLoading"
+      :is-opened="!prices"
       @change="handleAdvancedChange"
     />
 
@@ -63,7 +67,7 @@
       <div class="field-label" />
       <div class="field-body">
         <v-button
-          :disabled="!isSendAllowed"
+          :disabled="!isFormValid || !isSendAllowed"
           :loading="isLoading"
           class-name="is-success is-medium is-cta"
           data-test="transaction-send-button"
@@ -84,18 +88,15 @@ import VRadio from '@/components/ui/form/VRadio';
 import VSelect from '@/components/ui/form/VSelect';
 import VInput from '@/components/ui/form/VInput';
 import VSpinner from '@/components/ui/VSpinner';
-import VInputAddress from '@/components/ui/form/VInputAddress';
 import VButton from '@/components/ui/form/VButton';
 import AccountChooser from '@/components/AccountChooser';
 import TransactionAdvancedOptions from './TransactionAdvancedOptions';
 import TransactionAmountOptions from './TransactionAmountOptions';
 import TransactionPriorityOptions from './TransactionPriorityOptions';
+import formMixin from '@/mixins/form';
 
 export default {
   name: 'TransactionForm',
-
-  inject: ['$validator'],
-
   props: {
     isLoading: {
       type: Boolean,
@@ -255,7 +256,7 @@ export default {
           this.transaction,
         );
       } catch (err) {
-        // TODO: проверить на реальном эфире, отправляется ли. Если да, при ошибке запрещать отправку
+        // TODO: check send on main net. If it is ok, disallow sending
         console.log(err);
 
         const isContract = await Transaction.isTransactionToContract(
@@ -279,10 +280,15 @@ export default {
     async loadGasPrice() {
       this.isLoadingGasPrice = true;
 
-      this.prices = await this.getGasPrice();
-      this.transaction.gasPrice = this.prices.medium.toString();
-
-      this.isLoadingGasPrice = false;
+      try {
+        this.prices = await this.getGasPrice();
+        this.transaction.gasPrice = this.prices.medium.toString();
+      } catch (err) {
+        this.prices = null;
+        this.transaction.gasPrice = '0';
+      } finally {
+        this.isLoadingGasPrice = false;
+      }
     },
 
     emitTransactionSubmit() {
@@ -293,14 +299,13 @@ export default {
   async created() {
     await this.loadGasPrice();
   },
-
+  mixins: [formMixin],
   components: {
     VForm,
     VRadio,
     VSelect,
     VInput,
     VSpinner,
-    VInputAddress,
     VButton,
     AccountChooser,
     TransactionAdvancedOptions,

@@ -27,8 +27,7 @@ exports[`Home page render should render initial state of the component 1`] = `
               <p
                 class="subtitle"
               >
-                Get started by generating an
-              Ethereum wallet.
+                Get started by generating an Ethereum wallet.
               </p>
                
               <div
@@ -38,9 +37,7 @@ exports[`Home page render should render initial state of the component 1`] = `
                   class="button is-success is-cta"
                   to="[object Object]"
                 >
-                  
                   Create New Wallet
-                
                 </router-link>
               </div>
             </div>

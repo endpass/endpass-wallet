@@ -1,6 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LoginByEmailModal render should display a field for custom identity server 1`] = `<v-input id="customIdentityServer" label="Custom Identity Server" name="customIdentityServer" validator="required|url:require_protocol:true" placeholder="Custom Identity Server" help="Example: https://yourserver.com/api" v-model="customIdentityServer"></v-input>`;
+exports[`LoginByEmailModal render should display a field for custom identity server 1`] = `
+<v-input id="customIdentityServer" label="Custom Identity Server" data-vv-name="customIdentityServer" name="customIdentityServer" placeholder="Custom Identity Server" help="Example: https://yourserver.com/api" v-validate="'required|url:require_protocol:true'"
+    v-model="customIdentityServer" aria-required="true" aria-invalid="false"></v-input>
+`;
 
 exports[`LoginByEmailModal render should render component 1`] = `
 <v-modal
@@ -16,25 +19,25 @@ exports[`LoginByEmailModal render should render component 1`] = `
   <p
     class="subtitle"
   >
-    
     Please enter your email address below to access your wallet or create a new one.
-  
   </p>
    
   <v-form
     id="loginByEmail"
-    v-model="isFormValid"
+    isformvalid="true"
     v-on:submit="bound handleSubmit"
   >
     <v-input
+      aria-invalid="true"
+      aria-required="true"
       autofocus=""
-      help="Your email address may be used to help recover your
-             wallet in case you lose access."
+      data-vv-name="email"
+      help="Your email address may be used to help recover your wallet in case you lose access."
       label="Email"
       name="email"
       placeholder="Your email"
       v-model="email"
-      validator="required|email"
+      v-validate="'required|email'"
     />
      
     <v-select
@@ -50,14 +53,13 @@ exports[`LoginByEmailModal render should render component 1`] = `
       v-model="termsAccepted"
     >
       
-      I accept the 
+      I accept the
+      
       <a
         href="https://endpass.com/terms/"
         target="_blank"
       >
-        
         Terms of Service
-      
       </a>
       
       and
@@ -66,9 +68,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
         href="https://endpass.com/privacy/"
         target="_blank"
       >
-        
         Privacy Policy
-      
       </a>
       .
     
@@ -82,12 +82,9 @@ exports[`LoginByEmailModal render should render component 1`] = `
     <v-button
       class-name="is-primary is-medium"
       data-test="submit-login"
-      disabled="true"
       form="loginByEmail"
     >
-      
       Continue
-    
     </v-button>
   </div>
 </v-modal>

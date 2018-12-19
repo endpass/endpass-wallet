@@ -5,7 +5,7 @@ export const tokens = [
     symbol: 'FST',
     address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
     decimals: 18,
-    logo: '/img/FST.png',
+    logo: 'http://images.com/img/FST.png',
   },
   {
     name: 'second token',
@@ -41,7 +41,7 @@ export const tokensMappedByAddresses = {
     symbol: 'FST',
     address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
     decimals: 18,
-    logo: '/img/FST.png',
+    logo: 'http://images.com/img/FST.png',
   },
   '0xE41d2489571d322189246DaFA5ebDe1F4699F498': {
     name: 'second token',

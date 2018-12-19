@@ -19,16 +19,6 @@ jest.mock('@/services/user', () => {
   };
 
   return {
-    login: jest.fn().mockResolvedValue('email_auth'),
-
-    logout: jest.fn().mockResolvedValue({
-      success: true,
-    }),
-
-    loginViaOTP: jest.fn().mockResolvedValue({
-      success: true,
-    }),
-
     setSetting: jest.fn().mockResolvedValue({
       success: true,
     }),
@@ -40,6 +30,26 @@ jest.mock('@/services/user', () => {
     }),
 
     removeSettings: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
+    addToken: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
+    removeToken: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
+    addNetwork: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
+    updateNetwork: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
+    removeNetwork: jest.fn().mockResolvedValue({
       success: true,
     }),
 
@@ -55,13 +65,6 @@ jest.mock('@/services/user', () => {
 
     getV3Accounts: jest.fn().mockResolvedValue([v3]),
 
-    getFullUserInfo: jest
-      .fn()
-      .mockResolvedValue([
-        ...addresses.map(address => getAccountByAddress(address)),
-        ...settings,
-      ]),
-
     getHDKey: jest.fn().mockResolvedValue(hdv3),
 
     setOtpSettings: jest.fn().mockResolvedValue({
@@ -73,12 +76,6 @@ jest.mock('@/services/user', () => {
     deleteOtpSettings: jest.fn().mockResolvedValue({
       success: true,
     }),
-
-    setIdentityMode: jest.fn().mockReturnValue(),
-
-    getIdentityMode: jest.fn().mockReturnValue({ type: 'default' }),
-
-    deleteIdentityData: jest.fn().mockResolvedValue(),
   };
 });
 

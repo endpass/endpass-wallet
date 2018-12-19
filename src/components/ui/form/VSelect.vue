@@ -1,33 +1,24 @@
 <template>
   <div class="field">
-    <label
-      v-if="label"
-      class="label"
-    >
-      {{ label }}
-    </label>
+    <label v-if="label" class="label">{{ label }}</label>
     <div class="control select">
       <select
-        v-validate="validator"
         v-model="selected"
         :disabled="disabled"
         :name="name"
-        :data-vv-as="label || name"
       >
         <option
           v-for="item in options"
           :key="item.key || item.val || item"
           :value="getOptionParameter(item, 'val')"
-        >
-          {{ getOptionParameter(item, 'text') }}
-        </option>
+        >{{ getOptionParameter(item, 'text') }}</option>
       </select>
     </div>
     <p
-      v-if="error || errors && errors.has(name) "
+      v-if="error"
       class="help is-danger"
     >
-      {{ error || errors && errors.first(name) }}
+      {{ error }}
     </p>
   </div>
 </template>
@@ -37,16 +28,10 @@ import getOptionParameter from '@/utils/getOptionParameter';
 
 export default {
   name: 'VSelect',
-  inject: {
-    $validator: '$validator',
-  },
   props: {
     value: {
+      type: [String, Number],
       default: null,
-    },
-    validator: {
-      type: String,
-      default: '',
     },
     error: {
       type: String,
@@ -61,10 +46,6 @@ export default {
       default: () => [],
     },
     label: {
-      type: String,
-      default: null,
-    },
-    error: {
       type: String,
       default: null,
     },

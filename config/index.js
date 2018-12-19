@@ -1,4 +1,3 @@
-'use strict';
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
 
@@ -9,30 +8,39 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {
-      '/identity/api/v1': {
+    proxyTable: [
+      {
+        context: '/identity/api/v1.1',
         target: 'https://identity-dev.endpass.com',
         changeOrigin: true,
         pathRewrite: {
-          '^/identity/api/v1': '/api/v1',
+          '^/identity/api/v1.1': '/api/v1.1',
         },
         cookieDomainRewrite: 'localhost',
       },
-      '/tokeninfo/api/v1': {
+      {
+        context: '/tokeninfo/api/v1',
         target: 'https://tokeninfo-dev.endpass.com',
         changeOrigin: true,
         pathRewrite: {
           '^/tokeninfo/api/v1': '/api/v1',
         },
       },
-      '/gasprice/api/v1': {
+      {
+        context: '/cryptodata/api/v1',
         target: 'https://cryptodata-dev.endpass.com',
         changeOrigin: true,
         pathRewrite: {
-          '^/gasprice/api/v1': '/api/v1',
+          '^/cryptodata/api/v1': '/api/v1',
         },
       },
-    },
+      {
+        context: '^/https?**',
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        cookieDomainRewrite: 'localhost',
+      },
+    ],
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
@@ -87,23 +95,23 @@ module.exports = {
     // Set to `true` or `false` to always turn it on or off
     bundleAnalyzerReport: process.env.npm_config_report,
 
-    //Entrys with rollbar file
+    // Entrys with rollbar file
     entry: {
       app: './src/main.js',
       rollbar: './static/rollbar.js',
     },
 
-    //Order of chunks is important
+    // Order of chunks is important
     chunks: ['manifest', 'vendor', 'rollbar', 'app'],
   },
 
   staging: {
-    //Webpack entrys
+    // Webpack entrys
     entry: {
       app: './src/main.js',
     },
 
-    //Order of chunks is important
+    // Order of chunks is important
     chunks: ['manifest', 'vendor', 'app'],
   },
 };

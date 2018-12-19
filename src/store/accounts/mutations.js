@@ -1,41 +1,24 @@
-import { Wallet, Address } from '@/class';
 import {
-  ADD_ADDRESS,
+  CHANGE_INIT_STATUS,
   SET_ADDRESS,
   ADD_WALLET,
-  SET_WALLET,
   SET_HD_KEY,
   SET_BALANCE,
+  SET_HARDWARE_XPUB,
 } from './mutations-types';
 
-const setAddress = (state, newAddress) => {
-  let address = newAddress;
+const changeInitStatus = (state, status) => {
+  state.isInited = status;
+};
 
-  if (!(address instanceof Address)) {
-    address = new Address({ address });
-  }
-
+const setAddress = (state, address) => {
   state.address = address;
 };
 
-const setWallet = (state, wallet) => {
-  state.wallet = wallet;
-};
-
-const addWallet = (state, walletV3) => {
-  const wallet = new Wallet(walletV3);
-  const { address } = walletV3;
+const addWallet = (state, wallet) => {
   state.wallets = {
     ...state.wallets,
-    [address]: wallet,
-  };
-};
-
-// Adds an empty Address as wallet to use public wallet functionality
-const addAddress = (state, { address, info }) => {
-  state.wallets = {
-    ...state.wallets,
-    [address]: new Address({ address, info }),
+    [wallet.address]: wallet,
   };
 };
 
@@ -49,11 +32,15 @@ const setBalance = (state, balance) => {
   state.balance = balance;
 };
 
+const setHardwareXpub = (state, { xpub, walletType }) => {
+  Object.assign(state.hardwareXpub, { [walletType]: xpub });
+};
+
 export default {
-  [ADD_ADDRESS]: addAddress,
+  [CHANGE_INIT_STATUS]: changeInitStatus,
   [SET_ADDRESS]: setAddress,
   [ADD_WALLET]: addWallet,
-  [SET_WALLET]: setWallet,
   [SET_HD_KEY]: setHdKey,
   [SET_BALANCE]: setBalance,
+  [SET_HARDWARE_XPUB]: setHardwareXpub,
 };

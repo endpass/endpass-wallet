@@ -1,34 +1,57 @@
 export { INPAGE_EVENT, INPAGE_ID_PREFIX } from './InpageProvider';
 
 export const MAIN_NET_ID = 1;
+
+export const NETWORK_URL = Object.freeze({
+  ETH: [
+    'wss://eth-mainnet.endpass.com:2084',
+    'wss://eth-mainnet.endpass.com',
+    'https://eth-mainnet.endpass.com:2083',
+    `https://mainnet.infura.io/${ENV.infuraConf.key}`,
+  ],
+  ROP: [
+    'wss://eth-ropsten.endpass.com:2084',
+    'wss://eth-ropsten.endpass.com',
+    'https://eth-ropsten.endpass.com:2083',
+    `https://ropsten.infura.io/${ENV.infuraConf.key}`,
+  ],
+  RIN: `https://rinkeby.infura.io/${ENV.infuraConf.key}`,
+  ETC: [
+    'wss://etc-mainnet.endpass.com:2084',
+    'wss://etc-mainnet.endpass.com',
+    'https://etc-mainnet.endpass.com:2083',
+    'https://etc-geth.0xinfra.com',
+  ],
+});
+
 export const DEFAULT_NETWORKS = Object.freeze([
   {
     id: 1,
     networkType: 'main',
     currency: 1,
     name: 'Main',
-    url: 'wss://eth-mainnet.endpass.com',
+    url: NETWORK_URL.ETH,
   },
   {
     id: 3,
     name: 'Ropsten',
     networkType: 'ropsten',
     currency: 2,
-    url: 'wss://eth-ropsten.endpass.com',
+    url: NETWORK_URL.ROP,
   },
   {
     id: 4,
     name: 'Rinkeby',
     networkType: 'rinkeby',
     currency: 2,
-    url: `https://rinkeby.infura.io/${ENV.infuraConf.key}`,
+    url: NETWORK_URL.RIN,
   },
   {
     id: 61,
     name: 'Ethereum classic',
     networkType: 'ethClassic',
     currency: 3,
-    url: 'wss://etc-mainnet.endpass.com/',
+    url: NETWORK_URL.ETC,
   },
 ]);
 
@@ -75,8 +98,17 @@ export const HARDWARE_WALLET_TYPE = Object.freeze({
 
 export const WALLET_TYPE = Object.freeze({
   PUBLIC: 'PublicAccount',
+  HD_PUBLIC: 'HDPublicAccount',
+  HD_MAIN: 'HDMainAccount',
   ...HARDWARE_WALLET_TYPE,
 });
+
+export const DAPP_WHITELISTED_METHODS = [
+  'personal_sign',
+  'eth_personalSign',
+  'eth_signTypedData',
+  'eth_sendTransaction',
+];
 
 export default {
   AVAILABLE_FIAT_CURRENCIES,
@@ -91,4 +123,5 @@ export default {
   HARDWARE_DERIVIATION_PATH,
   HARDWARE_WALLET_TYPE,
   WALLET_TYPE,
+  DAPP_WHITELISTED_METHODS,
 };

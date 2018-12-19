@@ -1,6 +1,6 @@
 <template>
-  <div
-    v-if="address"
+  <div 
+    v-if="address" 
     class="app-page receive-page"
   >
     <div class="section">
@@ -38,18 +38,18 @@
             <h2 class="card-header-title">Incoming Payment History</h2>
           </div>
           <div class="card-content">
-            <ul
-              v-if="incomingTransactions.length"
+            <ul 
+              v-if="incomingTransactions.length" 
               class="transactions"
             >
-              <li
-                v-for="transaction in incomingTransactions"
+              <li 
+                v-for="transaction in incomingTransactions" 
                 :key="transaction.hash"
               >
-                <app-transaction :transaction="transaction" />
+                <app-transaction :transaction="transaction"/>
               </li>
             </ul>
-            <v-spinner v-else-if="isLoading" />
+            <v-spinner v-else-if="isLoading"/>
             <p v-else>This account has no transactions.</p>
           </div>
         </div>
@@ -60,7 +60,7 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import VButton from '@/components/ui/form/VButton';
 import AppTransaction from '@/components/Transaction';
 import Account from '@/components/Account';
@@ -81,17 +81,12 @@ export default {
 
   computed: {
     ...mapState({
+      address: state => state.accounts.address,
       activeCurrency: state => state.web3.activeCurrency,
-      address: state =>
-        state.accounts.address &&
-        state.accounts.address.getChecksumAddressString(),
       wallets: state => state.accounts.wallets,
-      wallet: state => state.accounts.wallet,
       activeNetId: state => state.web3.activeNet.id,
     }),
-    ...mapGetters('accounts', {
-      balance: 'balance',
-    }),
+    ...mapGetters('accounts', ['wallet', 'balance', 'isPublicAccount']),
     ...mapGetters('transactions', ['incomingTransactions']),
   },
 

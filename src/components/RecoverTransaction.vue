@@ -24,7 +24,7 @@
 
 <script>
 import { decodeTx } from 'ethereum-tx-decoder';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import VForm from '@/components/ui/form/VForm.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import VTextarea from '@/components/ui/form/VTextarea.vue';

@@ -1,7 +1,4 @@
-'use strict';
-const utils = require('./utils');
 const webpack = require('webpack');
-const config = require('../config');
 const env = require('../config/dev.env');
 const merge = require('webpack-merge');
 const path = require('path');
@@ -9,7 +6,10 @@ const baseWebpackConfig = require('./webpack.base.conf');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const portfinder = require('portfinder');
+const config = require('../config');
+const utils = require('./utils');
 
 const HOST = process.env.HOST;
 const PORT = process.env.PORT && Number(process.env.PORT);
@@ -75,6 +75,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*'],
       },
     ]),
+    new BundleAnalyzerPlugin({
+      openAnalyzer: false,
+    }),
   ],
 });
 

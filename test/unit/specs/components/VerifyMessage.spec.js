@@ -1,26 +1,39 @@
+import Vuex from 'vuex';
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import VerifyMessage from '@/components/VerifyMessage';
+import ethereumWalletMock from 'fixtures/wallet';
+import { address } from 'fixtures/accounts';
 import { generateStubs } from '@/utils/testUtils';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
+
+const localVue = createLocalVue();
+
+localVue.use(Notifications);
+localVue.use(Vuex);
 
 describe('VerifyMessage', () => {
-  const address = 'address';
   let wrapper;
+  let store;
 
   beforeEach(() => {
-    const localVue = createLocalVue();
-    const $store = {
+    store = new Vuex.Store({
+      modules: {
+        accounts: {
+          namespaced: true,
+          getters: {
+            wallet: () => ethereumWalletMock,
+          },
+        },
+      },
       state: {
         web3: {},
       },
-    };
-
-    localVue.use(Notifications);
+    });
 
     wrapper = shallow(VerifyMessage, {
       localVue,
-      mocks: { $store },
+      store,
       stubs: generateStubs(VerifyMessage),
     });
   });
@@ -56,20 +69,28 @@ describe('VerifyMessage', () => {
   describe('methods', () => {
     describe('verifyMessage', () => {
       beforeEach(() => {
-        spyOn(wrapper.vm, '$notify');
+        jest.spyOn(wrapper.vm, '$notify');
       });
 
-      it('should verify message', () => {
+      it('should verify message', async () => {
+        expect.assertions(2);
+
         const { vm } = wrapper;
-        web3.eth.accounts.recover = jest.fn(() => address);
 
-        vm.verifyMessage();
+        web3.eth.accounts.recover = jest.fn().mockResolvedValueOnce(address);
+        wrapper.setData({
+          signedMessageString: '{}',
+        });
 
-        expect(vm.address).toEqual(address);
+        await vm.verifyMessage();
+
+        expect(vm.address).toEqual(ethereumWalletMock.getAddress());
         expect(vm.$notify).not.toHaveBeenCalled();
       });
 
-      it('should not verify message', () => {
+      it('should not verify message', async () => {
+        expect.assertions(3);
+
         const { vm } = wrapper;
 
         web3.eth.accounts.recover = jest.fn(() => {
@@ -78,7 +99,7 @@ describe('VerifyMessage', () => {
 
         global.console.error = jest.fn();
 
-        vm.verifyMessage();
+        await vm.verifyMessage();
 
         expect(vm.address).toBeNull();
         expect(vm.$notify).toHaveBeenCalledTimes(1);

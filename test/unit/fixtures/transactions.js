@@ -3,6 +3,9 @@ export const transactionHash =
 
 export const shortTransactionHash = '0x63...42a7';
 
+export const signedTransactionHash =
+  '0xd8d5809a2223a1ced2cb76064a5e1d3b08053dbad88dbbb09096d090364c5bbb64d3536e80c5f4bab16528fcb8020705ea5d53ff893621bce81635684dc3a6511c';
+
 export const transaction = {
   tokenInfo: null,
   gasPrice: '40',
@@ -11,6 +14,11 @@ export const transaction = {
   value: '0',
   to: '',
   data: '0x',
+};
+
+export const paramsTransaction = {
+  value: '0x2',
+  gasPrice: '0x2',
 };
 
 export const ethplorerHistory = [
@@ -169,6 +177,7 @@ export const blockTransactions = [
 export default {
   transaction,
   transactionHash,
+  signedTransactionHash,
   shortTransactionHash,
   blockTransactions,
   ethplorerHistory,

@@ -1,14 +1,4 @@
 export default (BaseClass, ...mixins) => {
-  class Base extends BaseClass {
-    constructor(...args) {
-      super(...args);
-      mixins.forEach(mixin => {
-        copyProps(this, new mixin());
-      });
-      this.parent = new BaseClass(...args);
-    }
-  }
-
   const copyProps = (target, source) => {
     Object.getOwnPropertyNames(source)
       .concat(Object.getOwnPropertySymbols(source))
@@ -25,6 +15,19 @@ export default (BaseClass, ...mixins) => {
           );
       });
   };
+
+  class Base extends BaseClass {
+    constructor(...args) {
+      super(...args);
+      mixins.forEach(Mixin => {
+        copyProps(this, new Mixin());
+      });
+
+      if (this.setParent) {
+        this.setParent(new BaseClass(...args));
+      }
+    }
+  }
 
   mixins.forEach(mixin => {
     copyProps(Base.prototype, mixin.prototype);

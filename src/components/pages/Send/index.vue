@@ -51,7 +51,6 @@ import VRadio from '@/components/ui/form/VRadio.vue';
 import VSelect from '@/components/ui/form/VSelect';
 import VInput from '@/components/ui/form/VInput.vue';
 import VSpinner from '@/components/ui/VSpinner';
-import VInputAddress from '@/components/ui/form/VInputAddress.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import AccountChooser from '@/components/AccountChooser';
 import TransactionModal from '@/components/modal/TransactionModal';
@@ -81,13 +80,13 @@ export default {
 
   computed: {
     ...mapState({
-      activeAddress: state => state.accounts.address.getChecksumAddressString(),
+      address: state => state.accounts.address,
       activeNet: state => state.web3.activeNet,
     }),
   },
 
   watch: {
-    async activeAddress(newValue, prevValue) {
+    async address(newValue, prevValue) {
       if (newValue === prevValue) return;
 
       await this.updateNonceWithClearHash();
@@ -122,7 +121,7 @@ export default {
       this.isSending = true;
 
       Object.assign(this.transaction, {
-        from: this.activeAddress,
+        from: this.address,
         networkId: this.activeNet.id,
       });
 
@@ -185,7 +184,6 @@ export default {
     VRadio,
     VSpinner,
     VInput,
-    VInputAddress,
     VSelect,
     AccountChooser,
     TransactionModal,

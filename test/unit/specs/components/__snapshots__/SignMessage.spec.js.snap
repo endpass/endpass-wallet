@@ -18,9 +18,7 @@ exports[`SignMessage render should enable "Sign message" button 1`] = `
       class-name="is-primary is-medium"
       data-test="sign-button"
     >
-      
       Sign message
-    
     </v-button>
      
     <!---->
@@ -49,9 +47,7 @@ exports[`SignMessage render should render the initial state of the component 1`]
       data-test="sign-button"
       disabled="true"
     >
-      
       Sign message
-    
     </v-button>
      
     <!---->
@@ -79,9 +75,7 @@ exports[`SignMessage render should show modal window for password confirmation 1
       class-name="is-primary is-medium"
       data-test="sign-button"
     >
-      
       Sign message
-    
     </v-button>
      
     <!---->
@@ -127,9 +121,7 @@ exports[`SignMessage render should show signed message 1`] = `
       data-test="sign-button"
       disabled="true"
     >
-      
       Sign message
-    
     </v-button>
      
     <v-textarea

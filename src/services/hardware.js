@@ -1,4 +1,4 @@
-import { TrezorWallet, LedgerWallet } from '@/class';
+import { TrezorWallet, LedgerWallet, NotificationError } from '@/class';
 import { WALLET_TYPE } from '@/constants';
 
 export default {
@@ -13,10 +13,12 @@ export default {
         return LedgerWallet.getNextWallets(selectParams);
 
       default:
-        console.log(
-          `default switch, can't match hardware type, given - ${walletType}`,
-        );
-        return TrezorWallet.getNextWallets(selectParams);
+        console.warn(`Can't match hardware type ${walletType}`);
+        throw new NotificationError({
+          title: 'Access error',
+          text: `An error occurred while getting access to hardware device. Please, try again.`,
+          type: 'is-danger',
+        });
     }
   },
 };

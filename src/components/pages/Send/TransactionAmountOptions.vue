@@ -16,13 +16,15 @@
         <v-input
           id="value"
           :value="value"
-          :validator="`required|decimal:${decimal}|between:0,${maxAmount}`"
+          v-validate="`required|decimal:${decimal}|between:0,${maxAmount}`"
           :disabled="isLoading || disabled"
           type="number"
           data-vv-as="amount"
           min="0"
           step="any"
           name="value"
+          data-vv-name="value"
+          :error="errors.first('value')"
           aria-describedby="value"
           placeholder="Amount"
           required
@@ -53,12 +55,14 @@
         <v-input
           id="price"
           :value="price"
-          :validator="`required|decimal:2|between:0,${maxPrice}`"
+          v-validate="`required|decimal:2|between:0,${maxPrice}`"
           :disabled="!ethPrice || disabled"
           type="number"
           min="0"
           step="0.01"
           name="price"
+          data-vv-name="price"
+          :error="errors.first('price')"
           aria-describedby="price"
           placeholder="Price"
           required
@@ -85,6 +89,7 @@
           v-model="gasFee"
           :disabled="true"
           name="gasFee"
+          data-vv-name="gasFee"
           type="number"
         />
       </div>
@@ -95,7 +100,7 @@
 <script>
 import { get } from 'lodash';
 import { BigNumber } from 'bignumber.js';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 import VInput from '@/components/ui/form/VInput';
 import VSelect from '@/components/ui/form/VSelect';
 

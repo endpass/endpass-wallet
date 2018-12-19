@@ -6,16 +6,16 @@
       <ul>
         <li :class="[ isSignTabActive ? 'is-active' : '']">
           <a
-            @click="setSignTabActive"
             data-test="sign-message-tab"
+            @click="setSignTabActive"
           >
             Sign
           </a>
         </li>
         <li :class="[ isVerifyTabActive ? 'is-active' : '']">
           <a
-            @click="setVerifyTabActive"
             data-test="verify-message-tab"
+            @click="setVerifyTabActive"
           >
             Verify
           </a>

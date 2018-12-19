@@ -4,12 +4,16 @@ exports[`ImportFromPrivateKey render should render initial state of the componen
 <div>
   <v-form
     data-test="import-private-form"
+    isformvalid="true"
     v-on:submit="bound togglePasswordModal"
   >
     <v-password
       aria-describedby="privateKey"
+      aria-invalid="false"
+      aria-required="true"
       data-test="input-private-key"
       data-vv-as="private key"
+      data-vv-name="privateKey"
       id="privateKey"
       label="Private key"
       name="privateKey"
@@ -17,7 +21,7 @@ exports[`ImportFromPrivateKey render should render initial state of the componen
       required=""
       v-model="privateKey"
       v-on:input="bound handleInput"
-      validator="required|private_key"
+      v-validate="'required|private_key'"
     />
      
     <v-button

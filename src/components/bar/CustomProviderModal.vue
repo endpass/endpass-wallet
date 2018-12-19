@@ -4,7 +4,7 @@
       <header slot="header">{{ headerText }}</header>
       <div v-if="!providerAdded">
         <v-form
-          v-model="isFormValid"
+          :is-form-valid="isFormValid"
           @submit="handleButtonClick"
         >
 
@@ -13,11 +13,13 @@
             id="name"
             v-model="innerProvider.name"
             :disabled="isLoading"
+            :error="errors.first('name')"
             name="name"
+            data-vv-name="name"
             label="Network name"
             aria-describedby="name"
             placeholder="Network name"
-            data-vv-name="Network name"
+            data-vv-as="Network name"
             autofocus
             required
           />
@@ -27,29 +29,34 @@
             id="url"
             v-model="innerProvider.url"
             :disabled="isLoading"
+            :error="errors.first('url')"
+            data-vv-name="url"
             name="url"
             label="Provider url"
             aria-describedby="url"
             placeholder="Provider url"
-            data-vv-name="Provider url"
+            data-vv-as="Provider url"
             @input="handleInput"
           />
 
           <v-select
             v-validate="'required'"
             id="currency"
+            :error="errors.first('currency')"
             v-model="innerProvider.currency"
             :options="currencies"
+            data-vv-name="currency"
             name="currency"
             label="Provider currency"
             aria-describedby="currency"
             placeholder="Provider currency"
-            data-vv-name="Provider currency"
-            required />
+            data-vv-as="Provider currency"
+            required
+          />
         </v-form>
       </div>
       <div v-else>
-        <p class="subtitle">{{headerTextAfterAction}}</p>
+        <p class="subtitle">{{ headerTextAfterAction }}</p>
 
         <div class="message">
           <div class="message-header">
@@ -63,15 +70,17 @@
       </div>
       <template slot="footer">
         <div class="buttons">
-          <a
+          <v-button
             v-if="!providerAdded"
-            :class="{'is-loading' : isLoading }"
+            :loading="isLoading"
             :disabled="!isFormValid"
-            class="button is-primary is-medium"
+            class-name="is-primary is-medium"
             type="button"
-            @click="handleButtonClick">
+            data-test="add-provider-button"
+            @click="handleButtonClick"
+          >
             {{ buttonText }}
-          </a>
+          </v-button>
         </div>
       </template>
 
@@ -79,12 +88,14 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState, mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import VModal from '@/components/ui/VModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
 import VSelect from '@/components/ui/form/VSelect';
+import VButton from '@/components/ui/form/VButton';
 import { CURRENCIES } from '@/constants';
+import formMixin from '@/mixins/form';
 
 const defaultProvider = {
   name: '',
@@ -103,7 +114,6 @@ export default {
   data() {
     return {
       providerAdded: false,
-      isFormValid: false,
       isLoading: false,
       innerProvider: Object.assign({}, this.provider),
       currencies: CURRENCIES.map(currency => ({
@@ -141,6 +151,8 @@ export default {
   methods: {
     ...mapActions('web3', ['addNetwork', 'validateNetwork', 'updateNetwork']),
     async handleButtonClick() {
+      // When add - providersLinks includes network => validation error
+      this.$validator.pause();
       this.isLoading = true;
 
       try {
@@ -173,6 +185,7 @@ export default {
           id: 'wrongUrl',
         });
       } finally {
+        this.$validator.resume();
         this.isLoading = false;
       }
     },
@@ -185,11 +198,13 @@ export default {
       this.errors.removeById('wrongUrl');
     },
   },
+  mixins: [formMixin],
   components: {
     VModal,
     VInput,
     VSelect,
     VForm,
+    VButton,
   },
 };
 </script>

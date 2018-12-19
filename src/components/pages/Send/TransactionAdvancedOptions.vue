@@ -29,11 +29,13 @@
             v-model="form.gasPrice"
             :disabled="isLoading"
             name="gasPrice"
+            data-vv-name="gasPrice"
             type="number"
             min="1"
             max="100"
             step="1"
-            validator="required|numeric|integer|between:1,100"
+            v-validate="'required|numeric|integer|between:1,100'"
+            :error="errors.first('gasPrice')"
             aria-describedby="gasPrice"
             placeholder="Gas price"
             data-test="transaction-gas-price-input"
@@ -58,12 +60,14 @@
             id="gasLimit"
             v-model="form.gasLimit"
             :disabled="isLoading"
+            data-vv-name="gasLimit"
             name="gasLimit"
             type="number"
             min="21000"
             max="1000000"
             step="1000"
-            validator="required|numeric|integer|between:21000,1000000"
+            v-validate="'required|numeric|integer|between:21000,1000000'"
+            :error="errors.first('gasLimit')"
             aria-describedby="gasLimit"
             placeholder="Gas limit"
             data-test="transaction-gas-limit-input"
@@ -80,9 +84,11 @@
           <v-input
             id="nonce"
             v-model="form.nonce"
-            :validator="`required|numeric|integer|min_value:${nextNonceInBlock}`"
+            v-validate="`required|numeric|integer|min_value:${nextNonceInBlock}`"
+            :error="errors.first('nonce')"
             :disabled="isLoading"
             name="nonce"
+            data-vv-name="nonce"
             type="number"
             step="1"
             aria-describedby="nonce"
@@ -106,7 +112,9 @@
             v-model="form.data"
             :disabled="isLoading"
             name="data"
-            validator="required|hex"
+            data-vv-name="data"
+            v-validate="'required|hex'"
+            :error="errors.first('data')"
             aria-describedby="data"
             placeholder="Data"
             required
@@ -135,14 +143,19 @@ export default {
       required: true,
     },
 
+    currentToken: {
+      type: Object,
+      default: null,
+    },
+
     isLoading: {
       type: Boolean,
       default: false,
     },
 
-    currentToken: {
-      type: Object,
-      default: null,
+    isOpened: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -170,6 +183,15 @@ export default {
   },
 
   watch: {
+    isOpened: {
+      handler() {
+        if (this.isOpened && this.isCollapsed) {
+          this.isCollapsed = false;
+        }
+      },
+      immediate: true,
+    },
+
     'transaction.gasPrice': {
       handler() {
         const { gasPrice } = this.transaction;

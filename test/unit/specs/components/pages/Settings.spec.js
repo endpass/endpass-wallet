@@ -97,10 +97,12 @@ describe('SettingsPage', () => {
         fiatCurrency: 'AUD',
       };
 
-      wrapper.setData({ newSettings });
-      wrapper.vm.updateSettings(newSettings);
+      // https://github.com/vuejs/vue-test-utils/issues/149
+      // wrapper.setData({ newSettings });
+      wrapper.vm.$data.newSettings = newSettings;
+      wrapper.vm.updateSettings();
 
-      expect(actions.updateSettings).toHaveBeenCalledTimes(1);
+      expect(actions.updateSettings).toBeCalledTimes(1);
       expect(actions.updateSettings).toBeCalledWith(
         expect.any(Object),
         newSettings,

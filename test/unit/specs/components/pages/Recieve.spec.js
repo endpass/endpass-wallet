@@ -1,4 +1,5 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
+import { set } from 'lodash';
 import Vuex from 'vuex';
 import VueRouter from 'vue-router';
 import ReceivePage from '@/components/pages/Receive.vue';
@@ -18,6 +19,7 @@ describe('ReceivePage', () => {
   let tokensActions;
   let wrapper;
   let router;
+  let storeState;
 
   const walletAddress = ethereumWalletMock.getChecksumAddressString();
   const publicWalletAddress = ethereumAddressWalletMock.getChecksumAddressString();
@@ -26,18 +28,14 @@ describe('ReceivePage', () => {
     trxActions = {
       updateTransactionHistory: jest.fn(),
     };
-
     accountsActions = {
       selectWallet: jest.fn(),
     };
-
     tokensActions = {
       getTokensWithBalanceByAddress: jest.fn().mockResolvedValue([]),
       getTokensBalancesByAddress: jest.fn().mockResolvedValue([]),
     };
-
-    router = new VueRouter();
-    store = new Vuex.Store({
+    storeState = {
       modules: {
         web3: {
           namespaced: true,
@@ -64,7 +62,7 @@ describe('ReceivePage', () => {
         accounts: {
           namespaced: true,
           state: {
-            address: ethereumWalletMock,
+            address: walletAddress,
             wallets: {
               [walletAddress]: ethereumWalletMock,
               [publicWalletAddress]: ethereumAddressWalletMock,
@@ -73,10 +71,15 @@ describe('ReceivePage', () => {
           actions: accountsActions,
           getters: {
             balance: jest.fn(),
+            wallet: () => ethereumWalletMock,
+            isPublicAccount: () => false,
           },
         },
       },
-    });
+    };
+
+    router = new VueRouter();
+    store = new Vuex.Store(storeState);
     wrapper = shallow(ReceivePage, {
       localVue,
       store,
@@ -99,11 +102,19 @@ describe('ReceivePage', () => {
     describe('getHistory', () => {
       it('should not call updateTransactionHistory if address is not present', async () => {
         expect.assertions(1);
-        trxActions.updateTransactionHistory.mockClear();
-        wrapper.setComputed({
-          address: null,
+
+        wrapper = shallow(ReceivePage, {
+          localVue,
+          store: new Vuex.Store(
+            set(storeState, 'modules.accounts.state.address', null),
+          ),
+          router,
         });
+
+        jest.clearAllMocks();
+
         await wrapper.vm.getHistory();
+
         expect(trxActions.updateTransactionHistory).not.toHaveBeenCalled();
       });
 

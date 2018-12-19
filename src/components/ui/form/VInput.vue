@@ -2,12 +2,10 @@
   <div class="field">
     <label
       v-if="label"
-      :class="{'has-text-danger': error || errors.has($attrs.name) }"
+      :class="{'has-text-danger': error }"
       :for="$attrs.id"
       class="label"
-    >
-      {{ label }}
-    </label>
+    >{{ label }}</label>
     <div
       :class="{'has-addons': $slots.addon }"
       class="field"
@@ -17,9 +15,7 @@
         class="control"
       >
         <input
-          v-validate="validator"
           :value="innerValue"
-          :data-vv-as="$attrs['data-vv-as'] || label"
           :class="classes"
           :name="name"
           v-bind="$attrs"
@@ -27,36 +23,32 @@
           @blur="$emit('blur', $event.target.value)"
           v-on="listeners"
         >
-        <slot name="icon" />
+        <slot name="icon"/>
       </div>
       <div
         v-if="$slots.addon"
         class="control"
       >
-        <slot name="addon" />
+        <slot name="addon"/>
       </div>
     </div>
     <p
-      v-if="error || errors.has($attrs.name)"
+      v-if="error"
       class="help is-danger"
     >
-      {{ error || errors.first($attrs.name) }}
+      {{ error }}
     </p>
     <p
       v-else-if="help"
       class="help"
-    >
-      {{ help }}
-    </p>
+    >{{ help }}</p>
   </div>
 </template>
 
 <script>
 export default {
   name: 'VInput',
-  inject: {
-    $validator: '$validator',
-  },
+  inheritAttrs: false,
   props: {
     value: {
       type: [String, Number],
@@ -74,17 +66,9 @@ export default {
       type: String,
       default: null,
     },
-    validator: {
-      type: String,
-      default: '',
-    },
     error: {
       type: String,
       default: null,
-    },
-    className: {
-      type: String,
-      default: '',
     },
   },
   computed: {
@@ -107,13 +91,9 @@ export default {
     },
     classes() {
       const classes = this.className.split(' ');
-      return [
-        ...classes,
-        { 'is-danger': this.error || this.errors.has(this.name) },
-      ];
+      return [...classes, { 'is-danger': this.error }];
     },
   },
-  inheritAttrs: false,
 };
 </script>
 

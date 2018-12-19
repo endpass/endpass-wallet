@@ -7,12 +7,12 @@ import {
   SET_BALANCES_BY_ADDRESS,
   ADD_TOKENS_PRICES,
 } from '@/store/tokens/mutations-types';
-import { NotificationError } from '@/class';
+import { NotificationError, Token } from '@/class';
 import {
   userService,
   tokenInfoService,
   ethplorerService,
-  priceService,
+  cryptoDataService,
 } from '@/services';
 import ERC20Token from '@/class/erc20';
 import { MAIN_NET_ID } from '@/constants';
@@ -37,6 +37,7 @@ describe('tokens actions', () => {
   let commit;
   let dispatch;
   let getters;
+  let rootState;
   let rootGetters;
 
   beforeEach(() => {
@@ -48,6 +49,11 @@ describe('tokens actions', () => {
     commit = jest.fn();
     rootGetters = {
       'web3/activeNetwork': MAIN_NET_ID,
+    };
+    rootState = {
+      accounts: {
+        address,
+      },
     };
   });
 
@@ -96,9 +102,9 @@ describe('tokens actions', () => {
         },
       );
 
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'tokens',
-        expandedTokensListedByNetworks,
+      expect(userService.addToken).toBeCalledWith(
+        MAIN_NET_ID,
+        Token.getConsistent(token),
       );
       expect(commit).toHaveBeenCalledWith(
         SET_USER_TOKENS,
@@ -107,7 +113,7 @@ describe('tokens actions', () => {
     });
 
     it('should not add user token if it is exist in state ', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       getters = {
         userTokenByAddress: () => true,
@@ -121,6 +127,7 @@ describe('tokens actions', () => {
         },
       );
 
+      expect(userService.addToken).not.toBeCalled();
       expect(commit).not.toBeCalled();
     });
 
@@ -133,7 +140,7 @@ describe('tokens actions', () => {
         userTokenByAddress: () => false,
         userTokensWithToken: () => expandedTokensMappedByNetworks,
       };
-      userService.setSetting.mockRejectedValueOnce(error);
+      userService.addToken.mockRejectedValueOnce(error);
 
       await actions.addUserToken(
         { state, commit, dispatch, getters, rootGetters },
@@ -143,7 +150,7 @@ describe('tokens actions', () => {
       );
 
       expect(commit).not.toBeCalled();
-      expect(userService.setSetting).toBeCalled();
+      expect(userService.addToken).toBeCalled();
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -165,9 +172,9 @@ describe('tokens actions', () => {
       );
 
       expect(commit).toHaveBeenCalledTimes(1);
-      expect(userService.setSetting).toHaveBeenCalledWith(
-        'tokens',
-        cuttedTokensListedByNetworks,
+      expect(userService.removeToken).toBeCalledWith(
+        MAIN_NET_ID,
+        Token.getConsistent(tokens[0]).address,
       );
       expect(commit).toHaveBeenCalledWith(
         SET_USER_TOKENS,
@@ -176,7 +183,7 @@ describe('tokens actions', () => {
     });
 
     it('should not do anything if target token is not exist in state', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       getters = {
         userTokenByAddress: () => false,
@@ -188,6 +195,7 @@ describe('tokens actions', () => {
         { token: tokens[0] },
       );
 
+      expect(userService.removeToken).not.toBeCalled();
       expect(commit).not.toBeCalled();
     });
 
@@ -200,7 +208,7 @@ describe('tokens actions', () => {
         userTokenByAddress: () => true,
         userTokensWithoutToken: () => cuttedTokensMappedByNetworks,
       };
-      userService.setSetting.mockRejectedValueOnce(error);
+      userService.removeToken.mockRejectedValueOnce(error);
 
       await actions.removeUserToken(
         { state, commit, dispatch, getters, rootGetters },
@@ -249,7 +257,12 @@ describe('tokens actions', () => {
     it('should request tokens for current address', async () => {
       expect.assertions(5);
 
-      await actions.getCurrentAccountTokens({ commit, dispatch, rootGetters });
+      await actions.getCurrentAccountTokens({
+        commit,
+        dispatch,
+        rootGetters,
+        rootState,
+      });
 
       expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenNthCalledWith(1, SET_LOADING, true);
@@ -261,11 +274,17 @@ describe('tokens actions', () => {
     });
 
     it('should not do anything if current address is not exist', async () => {
-      rootGetters = {
-        'accounts/currentAddressString': null,
+      rootState = {
+        accounts: {
+          address: null,
+        },
       };
 
-      await actions.getCurrentAccountTokens({ commit, dispatch, rootGetters });
+      await actions.getCurrentAccountTokens({
+        commit,
+        dispatch,
+        rootState,
+      });
 
       expect(commit).not.toHaveBeenCalled();
       expect(dispatch).not.toHaveBeenCalled();
@@ -276,7 +295,12 @@ describe('tokens actions', () => {
 
       dispatch.mockRejectedValueOnce();
 
-      await actions.getCurrentAccountTokens({ commit, dispatch, rootGetters });
+      await actions.getCurrentAccountTokens({
+        commit,
+        dispatch,
+        rootState,
+        rootGetters,
+      });
 
       expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenNthCalledWith(1, SET_LOADING, true);
@@ -301,9 +325,6 @@ describe('tokens actions', () => {
       getters = {
         allCurrentAccountTokens: tokens,
       };
-      rootGetters = {
-        'accounts/currentAddressString': address,
-      };
 
       dispatch.mockResolvedValueOnce(balances);
 
@@ -311,7 +332,7 @@ describe('tokens actions', () => {
         dispatch,
         commit,
         getters,
-        rootGetters,
+        rootState,
       });
 
       expect(dispatch).toHaveBeenCalledWith('getTokensBalances', {
@@ -327,15 +348,17 @@ describe('tokens actions', () => {
     it('should not do anything if current address is not exist', async () => {
       expect.assertions(2);
 
-      rootGetters = {
-        'accounts/currentAddressString': null,
+      rootState = {
+        accounts: {
+          address: null,
+        },
       };
 
       await actions.getCurrentAccountTokensBalances({
         dispatch,
         commit,
         getters,
-        rootGetters,
+        rootState,
       });
 
       expect(dispatch).not.toBeCalled();
@@ -512,14 +535,17 @@ describe('tokens actions', () => {
       getters = {
         activeCurrencyName: 'ETH',
       };
-      priceService.getPrices.mockResolvedValueOnce(tokensPrices);
+      cryptoDataService.getSymbolsPrice.mockResolvedValueOnce(tokensPrices);
 
       await actions.getTokensPrices(
         { commit, getters },
         { tokensSymbols: tokens },
       );
 
-      expect(priceService.getPrices).toHaveBeenCalledWith(tokens, 'ETH');
+      expect(cryptoDataService.getSymbolsPrice).toHaveBeenCalledWith(
+        tokens,
+        'ETH',
+      );
       expect(commit).toHaveBeenCalledWith(ADD_TOKENS_PRICES, tokensPrices);
     });
 
@@ -528,7 +554,7 @@ describe('tokens actions', () => {
 
       await actions.getTokensPrices({ commit, getters }, { tokensSymbols: [] });
 
-      expect(priceService.getPrices).not.toBeCalled();
+      expect(cryptoDataService.getSymbolsPrice).not.toBeCalled();
       expect(commit).not.toBeCalled();
     });
   });

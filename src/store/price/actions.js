@@ -1,4 +1,4 @@
-import priceService from '@/services/price';
+import { cryptoDataService } from '@/services';
 import {
   SET_PRICE,
   SET_UPDATE_TIME,
@@ -10,7 +10,7 @@ import {
 const updatePrice = async ({ commit, getters, dispatch }) => {
   try {
     commit(START_LOADING);
-    const price = await priceService.getPrice(
+    const price = await cryptoDataService.getSymbolsPrice(
       getters.activeCurrencyName,
       getters.fiatCurrency,
     );

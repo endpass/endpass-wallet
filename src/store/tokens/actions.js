@@ -12,7 +12,7 @@ import ERC20Token from '@/class/erc20';
 import {
   tokenInfoService,
   ethplorerService,
-  priceService,
+  cryptoDataService,
   userService,
 } from '@/services';
 import { merge } from '@/utils/objects';
@@ -37,24 +37,22 @@ const addUserToken = async (
   { commit, dispatch, getters, rootGetters },
   { token },
 ) => {
-  const consistentToken = Token.getConsistent(token);
+  try {
+    const consistentToken = Token.getConsistent(token);
 
-  if (!getters.userTokenByAddress(consistentToken.address)) {
-    try {
-      const updatedTokens = getters.userTokensWithToken({
-        net: rootGetters['web3/activeNetwork'],
-        token: consistentToken,
-      });
+    if (getters.userTokenByAddress(consistentToken.address)) return;
 
-      await userService.setSetting(
-        'tokens',
-        mapValues(updatedTokens, Object.values),
-      );
+    const net = rootGetters['web3/activeNetwork'];
+    const updatedTokens = getters.userTokensWithToken({
+      net,
+      token: consistentToken,
+    });
 
-      commit(SET_USER_TOKENS, updatedTokens);
-    } catch (err) {
-      dispatch('errors/emitError', err, { root: true });
-    }
+    await userService.addToken(net, consistentToken);
+
+    commit(SET_USER_TOKENS, updatedTokens);
+  } catch (err) {
+    dispatch('errors/emitError', err, { root: true });
   }
 };
 
@@ -62,29 +60,28 @@ const removeUserToken = async (
   { commit, getters, dispatch, rootGetters },
   { token },
 ) => {
-  const consistentToken = Token.getConsistent(token);
+  try {
+    const consistentToken = Token.getConsistent(token);
 
-  if (getters.userTokenByAddress(consistentToken.address)) {
-    try {
-      const updatedTokens = getters.userTokensWithoutToken({
-        net: rootGetters['web3/activeNetwork'],
-        token: consistentToken,
-      });
+    if (!getters.userTokenByAddress(consistentToken.address)) return;
 
-      await userService.setSetting(
-        'tokens',
-        mapValues(updatedTokens, Object.values),
-      );
+    const netId = rootGetters['web3/activeNetwork'];
+    const updatedTokens = getters.userTokensWithoutToken({
+      net: netId,
+      token: consistentToken,
+    });
+    const { address } = consistentToken;
 
-      commit(SET_USER_TOKENS, updatedTokens);
-    } catch (err) {
-      dispatch('errors/emitError', err, { root: true });
-    }
+    await userService.removeToken(netId, address);
+
+    commit(SET_USER_TOKENS, updatedTokens);
+  } catch (err) {
+    dispatch('errors/emitError', err, { root: true });
   }
 };
 
-const getCurrentAccountTokens = async ({ commit, dispatch, rootGetters }) => {
-  const address = rootGetters['accounts/currentAddressString'];
+const getCurrentAccountTokens = async ({ commit, dispatch, rootState }) => {
+  const { address } = rootState.accounts;
 
   if (!address) return;
 
@@ -110,9 +107,9 @@ const getCurrentAccountTokensBalances = async ({
   dispatch,
   commit,
   getters,
-  rootGetters,
+  rootState,
 }) => {
-  const address = rootGetters['accounts/currentAddressString'];
+  const { address } = rootState.accounts;
 
   if (!address) return;
 
@@ -236,7 +233,7 @@ const getTokensPrices = async ({ commit, getters }, { tokensSymbols }) => {
   if (tokensSymbols.length === 0) return;
 
   try {
-    const prices = await priceService.getPrices(
+    const prices = await cryptoDataService.getSymbolsPrice(
       tokensSymbols,
       getters.activeCurrencyName,
     );

@@ -1,5 +1,5 @@
-import { mapKeys, mapValues } from 'lodash';
-import { userService } from '@/services';
+import { mapKeys, mapValues, pickBy } from 'lodash';
+import { userService, authService, identityModeService } from '@/services';
 import { NotificationError, Token } from '@/class';
 import { IDENTITY_MODE } from '@/constants';
 import {
@@ -37,15 +37,17 @@ const login = async (
   const { type = IDENTITY_MODE.DEFAULT, serverUrl } = mode;
 
   if (type === IDENTITY_MODE.DEFAULT) {
-    return userService.login({ email, redirectUri });
+    return authService.login({ email, redirectUri });
   }
 
   try {
-    userService.setIdentityMode(type, serverUrl);
+    identityModeService.setIdentityMode(type, serverUrl);
     commit(SET_IDENTITY_TYPE, type);
     commit(SET_AUTHORIZATION_STATUS, true);
     commit(SET_EMAIL, email);
-    await userService.setSettings({ email });
+    const settings = { email };
+
+    await userService.setSettings(settings);
 
     return dispatch('init', null, { root: true });
   } catch (e) {
@@ -58,15 +60,15 @@ const logout = async ({ commit, dispatch, getters }) => {
 
   try {
     if (getters.isLocalIdentity) {
-      await userService.deleteIdentityData();
+      await identityModeService.deleteIdentityData();
     }
 
     try {
-      userService.setIdentityMode(IDENTITY_MODE.DEFAULT);
+      identityModeService.setIdentityMode(IDENTITY_MODE.DEFAULT);
     } catch (e) {} // eslint-disable-line no-empty
 
     if (getters.isDefaultIdentity) {
-      await userService.logout();
+      await authService.logout();
     }
 
     window.location.reload();
@@ -76,10 +78,10 @@ const logout = async ({ commit, dispatch, getters }) => {
 };
 
 const validateCustomServer = (ctx, { serverUrl }) =>
-  userService.validateIdentityServer(serverUrl);
+  identityModeService.validateIdentityServer(serverUrl);
 
 const loginViaOTP = (ctx, { code, email }) =>
-  userService.loginViaOTP(code, email);
+  authService.loginViaOTP(code, email);
 
 const getOtpSettings = async ({ commit, dispatch }) => {
   try {
@@ -105,7 +107,7 @@ const deleteOtpSettings = async ({ commit, dispatch }, { code }) => {
 const updateSettings = async ({ commit, dispatch }, settings) => {
   try {
     commit(SET_SETTINGS, settings);
-    await userService.setSetting('settings', settings);
+    await userService.setSettings(settings);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
   }
@@ -113,14 +115,14 @@ const updateSettings = async ({ commit, dispatch }, settings) => {
 
 const setUserSettings = async ({ commit, dispatch }) => {
   try {
-    const { settings, email, tokens } = await userService.getSettings();
+    const { fiatCurrency, email, tokens } = await userService.getSettings();
 
     if (email) {
       commit(SET_EMAIL, email);
     }
 
-    if (settings) {
-      commit(SET_SETTINGS, settings);
+    if (fiatCurrency) {
+      commit(SET_SETTINGS, { fiatCurrency });
     }
 
     if (tokens) {
@@ -140,8 +142,8 @@ const setUserSettings = async ({ commit, dispatch }) => {
 
 const initIdentityMode = async ({ commit, dispatch }) => {
   try {
-    const { type, serverUrl } = userService.getIdentityMode();
-    userService.setIdentityMode(type, serverUrl);
+    const { type, serverUrl } = identityModeService.getIdentityMode();
+    identityModeService.setIdentityMode(type, serverUrl);
 
     if (type !== IDENTITY_MODE.DEFAULT) {
       commit(SET_IDENTITY_TYPE, type);

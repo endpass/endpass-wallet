@@ -1,7 +1,6 @@
 <template lang="html">
   <div class="export-json">
     <v-form @submit="openPasswordModal">
-
       <v-button
         :loading="exportingJson"
         class-name="is-primary is-cta"
@@ -9,7 +8,6 @@
       >
         Export
       </v-button>
-
     </v-form>
     <password-modal
       v-if="passwordModalOpen"
@@ -20,7 +18,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import PasswordModal from '@/components/modal/PasswordModal';
 import VForm from '@/components/ui/form/VForm';
 import VInput from '@/components/ui/form/VInput';
@@ -28,27 +26,27 @@ import VButton from '@/components/ui/form/VButton';
 
 export default {
   name: 'ExportToJson',
+
   data: () => ({
     exportingJson: false,
     passwordModalOpen: false,
   }),
+
   computed: {
     ...mapState({
-      address: state =>
-        state.accounts.address &&
-        state.accounts.address.getChecksumAddressString(),
-      wallet: state => state.accounts.wallet,
+      address: state => state.accounts.address,
     }),
+    ...mapGetters('accounts', ['wallet']),
   },
+
   methods: {
     async exportJSON(password) {
       this.closePasswordModal();
+
       if (this.wallet) {
         this.exportingJson = true;
 
         try {
-          await new Promise(res => setTimeout(res, 20));
-
           const v3 = await this.wallet.exportToJSON(password);
 
           this.saveJSON(v3);
@@ -59,6 +57,7 @@ export default {
         }
       }
     },
+
     saveJSON(data) {
       if (!data) return;
 
@@ -90,6 +89,7 @@ export default {
       a.dispatchEvent(e);
       a.remove();
     },
+
     exportError() {
       this.$notify({
         title: 'Error exporting to JSON',
@@ -97,13 +97,16 @@ export default {
         type: 'is-danger',
       });
     },
+
     openPasswordModal() {
       this.passwordModalOpen = true;
     },
+
     closePasswordModal() {
       this.passwordModalOpen = false;
     },
   },
+
   components: {
     VForm,
     VInput,

@@ -1,4 +1,4 @@
-import gasPriceService from '@/services/gas-price';
+import cryptoDataService from '@/services/cryptoData';
 import actions from '@/store/gas-price/actions';
 
 import { gasPrice } from 'fixtures/gasPrice';
@@ -24,7 +24,7 @@ describe('gas-price actions', () => {
 
       const err = new Error();
 
-      gasPriceService.getGasPrice.mockRejectedValueOnce(err);
+      cryptoDataService.getGasPrice.mockRejectedValueOnce(err);
 
       await actions.getGasPrice({ dispatch });
 

@@ -1,16 +1,14 @@
 import store from '../store';
-import { getInitializedValueFromStore } from '@/utils';
+import { asyncCheckProperty } from '@/utils';
 
 // Has a wallet with a private key capable of sending funds
 // Redirects to new wallet page if one does not exist
 export async function privateWalletGuard(to, from, next) {
-  const { accounts } = store.state;
+  await asyncCheckProperty(store, 'state.accounts.isInited');
 
-  await getInitializedValueFromStore(accounts, 'address');
-
-  if (!accounts.wallet) {
+  if (!store.getters['accounts/wallet']) {
     next({ name: 'NewWallet' });
-  } else if (accounts.wallet.isPublic) {
+  } else if (store.getters['accounts/isPublicAccount']) {
     next({ name: 'HomePage' });
   } else {
     next();
@@ -25,10 +23,12 @@ export async function hasLoginGuard(to, from, next) {
       redirect_uri: to.fullPath,
     },
   };
-  const authorizationStatus = await getInitializedValueFromStore(
-    store.state.user,
-    'authorizationStatus',
+
+  const res = await asyncCheckProperty(
+    store,
+    'state.user.authorizationStatus',
+    v => typeof v === 'boolean',
   );
 
-  next(!authorizationStatus ? redirectUri : undefined);
+  next(!res ? redirectUri : undefined);
 }

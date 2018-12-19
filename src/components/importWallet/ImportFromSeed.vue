@@ -3,14 +3,16 @@
     <v-form
       data-test="import-seed-form"
       @submit="togglePasswordModal"
-    >
+      :isFormValid="isFormValid">
       <v-input
         id="hdkeySeed"
         key="hdkeyPhraseUnique"
         v-model="key"
         label="Seed phrase"
         name="hdkeyPhrase"
-        validator="required|seed_phrase"
+        data-vv-name="hdkeyPhrase"
+        v-validate="'required|seed_phrase'"
+        :error="errors.first('hdkeyPhrase')"
         data-vv-as="seed phrase"
         aria-describedby="hdkeyPhrase"
         placeholder="Seed phrase"
@@ -23,6 +25,7 @@
         :loading="isCreating"
         class-name="is-primary is-cta"
         data-test="submit-import"
+        :disabled="!isFormValid"
       >
         Import
       </v-button>
@@ -43,6 +46,7 @@ import VInput from '@/components/ui/form/VInput';
 import VButton from '@/components/ui/form/VButton';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
+import formMixin from '@/mixins/form';
 
 export default {
   name: 'ImportFromSeed',
@@ -78,7 +82,7 @@ export default {
       this.errors.removeById('wrongPhrase');
     },
   },
-  mixins: [modalMixin],
+  mixins: [modalMixin, formMixin],
   components: {
     VForm,
     VInput,

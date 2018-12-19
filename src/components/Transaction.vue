@@ -117,10 +117,6 @@
       </div>
     </div>
 
-
-
-
-
     <resend-modal
       v-if="resendModalOpen"
       :transaction="transactionToSend"
@@ -144,7 +140,7 @@ import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { fromNow, formateDate } from '@/utils/date';
 import { getShortStringWithEllipsis } from '@/utils/strings';
-import web3 from '@/utils/web3';
+import web3 from '@/class/singleton/web3';
 
 const { hexToString } = web3.utils;
 
@@ -169,10 +165,8 @@ export default {
   },
   computed: {
     ...mapState({
+      address: state => state.accounts.address,
       isSyncing: state => !!state.connectionStatus.isSyncing,
-      address: state =>
-        state.accounts.address &&
-        state.accounts.address.getChecksumAddressString(),
     }),
     ...mapGetters('accounts', ['isPublicAccount']),
     recieve() {

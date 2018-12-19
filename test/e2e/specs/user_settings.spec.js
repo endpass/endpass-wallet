@@ -16,7 +16,7 @@ describe('Settings Page', () => {
 
   it('should save user settings', () => {
     cy.get('[data-test=input-email]').should('have.value', user.email);
-    cy.get('[data-test=select-fiat]').should('contain', user.settings.currency);
+    cy.get('[data-test=select-fiat]').should('contain', user.fiatCurrency);
 
     // Change fiat currency
     cy.get('[data-test=select-fiat] select')
@@ -65,6 +65,8 @@ describe('Settings Page', () => {
     cy.get('[data-test=submit-change-password]').should('be.disabled');
     cy.get('[data-test=input-new-password]').type('2222');
     cy.get('[data-test=submit-change-password]').click();
-    cy.contains('Error while decrypting wallets').should('be.visible');
+    cy.contains(
+      'You entered incorrect password, try using a different one.',
+    ).should('be.visible');
   });
 });
