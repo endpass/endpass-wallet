@@ -406,7 +406,7 @@ const updateAccountSettings = async ({
 }) => {
   const lastActiveAccount = rootGetters['user/lastActiveAccount'];
   const { address } = state;
-  const wallet = get(state, `wallets[${address}]`);
+  const wallet = get(state, `wallets[${address}]`, {});
   const isNotPublicAccount = wallet.isPublic === false;
 
   if (address !== lastActiveAccount && isNotPublicAccount) {
