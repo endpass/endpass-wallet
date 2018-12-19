@@ -13,6 +13,7 @@ describe('web3 actions', () => {
   const dispatch = jest.fn();
 
   afterEach(() => {
+    Web3.eth.clearSubscriptions();
     jest.clearAllMocks();
   });
 
@@ -30,10 +31,24 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(
+      expect(commit).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenNthCalledWith(
+        1,
         mutationsTypes.CHANGE_NETWORK,
         network,
+      );
+    });
+
+    it('should call SET_HANDLED_BLOCK_NUMBER mutation', async () => {
+      expect.assertions(2);
+
+      await changeNetwork({ commit, dispatch, getters }, { networkUrl });
+
+      expect(commit).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenNthCalledWith(
+        2,
+        mutationsTypes.SET_HANDLED_BLOCK_NUMBER,
+        null,
       );
     });
 
@@ -473,145 +488,166 @@ describe('web3 actions', () => {
   describe('subscribeOnBlockUpdates', () => {
     const { subscribeOnBlockUpdates } = actions;
 
-    it('should dispatch unsubscribeOnBlockUpdates action', async () => {
-      expect.assertions(2);
+    it('should subscribe to correctly event', () => {
+      subscribeOnBlockUpdates({ commit, dispatch });
 
-      await subscribeOnBlockUpdates({ commit, dispatch });
+      expect(Web3.eth.subscribe).toHaveBeenCalledTimes(1);
+      expect(Web3.eth.subscribe).toHaveBeenCalledWith('newBlockHeaders');
 
-      expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toHaveBeenCalledWith('unsubscribeOnBlockUpdates');
-    });
-
-    it('should call setInterval with correct interval', async () => {
-      expect.assertions(2);
-
-      await subscribeOnBlockUpdates({ commit, dispatch });
-
-      expect(setInterval).toHaveBeenCalledTimes(1);
-      expect(setInterval).toHaveBeenCalledWith(
+      expect(Web3.eth.subscriptionEventEmiter.on).toHaveBeenCalledTimes(2);
+      expect(Web3.eth.subscriptionEventEmiter.on).toHaveBeenNthCalledWith(
+        1,
+        'data',
         expect.any(Function),
-        ENV.blockUpdateInterval,
+      );
+      expect(Web3.eth.subscriptionEventEmiter.on).toHaveBeenNthCalledWith(
+        2,
+        'error',
+        expect.any(Function),
       );
     });
 
-    it('should call SET_INTERVAL mutation', async () => {
-      expect.assertions(2);
+    it('should handle receipt of new block', () => {
+      const blockNumber = 1;
 
-      const interval = 1;
+      subscribeOnBlockUpdates({ commit, dispatch });
 
-      setInterval.mockReturnValue(interval);
-
-      await subscribeOnBlockUpdates({ commit, dispatch });
+      Web3.eth.subscriptionEventEmiter.emit('data', { number: blockNumber });
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toHaveBeenCalledWith(
-        mutationsTypes.SET_INTERVAL,
-        interval,
+        mutationsTypes.SET_BLOCK_NUMBER,
+        blockNumber,
       );
-    });
-  });
 
-  describe('unsubscribeOnBlockUpdates', () => {
-    const { unsubscribeOnBlockUpdates } = actions;
-    const state = {
-      interval: 1,
-    };
-
-    it('should clear interval', async () => {
-      expect.assertions(2);
-
-      await unsubscribeOnBlockUpdates({ state, commit });
-
-      expect(clearInterval).toHaveBeenCalledTimes(1);
-      expect(clearInterval).toHaveBeenCalledWith(state.interval);
-    });
-
-    it('should call SET_INTERVAL mutation', async () => {
-      expect.assertions(2);
-
-      await unsubscribeOnBlockUpdates({ state, commit });
-
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenCalledWith(mutationsTypes.SET_INTERVAL, null);
-    });
-
-    it('should not do anything', async () => {
-      expect.assertions(2);
-
-      const state = {};
-
-      await unsubscribeOnBlockUpdates({ state, commit });
-
-      expect(clearInterval).toHaveBeenCalledTimes(0);
-      expect(commit).toHaveBeenCalledTimes(0);
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('handleLastBlock', { blockNumber });
     });
   });
 
   describe('handleLastBlock', () => {
     const { handleLastBlock } = actions;
     const blockNumber = 12;
-    const state = { handledBlockNumber: 11 };
+    const state = { handledBlockNumber: 10 };
+    const getters = {
+      activeNetwork: 1,
+    };
 
-    it('should set initial handled block number', async () => {
-      expect.assertions(2);
+    it('should request blocks with correctly parameters', async () => {
+      expect.assertions(5);
 
-      const state = { handledBlockNumber: null };
+      let state = { handledBlockNumber: null };
 
-      await handleLastBlock({ state, commit, dispatch }, { blockNumber });
+      await handleLastBlock(
+        { state, commit, dispatch, getters },
+        { blockNumber },
+      );
 
-      expect(commit).toHaveBeenCalledTimes(2);
-      expect(commit).toHaveBeenNthCalledWith(
+      expect(Web3.eth.getBlock).toHaveBeenCalledTimes(1);
+      expect(Web3.eth.getBlock).toHaveBeenCalledWith(blockNumber, true);
+
+      state = { handledBlockNumber: 10 };
+      Web3.eth.getBlock.mockClear();
+
+      await handleLastBlock(
+        { state, commit, dispatch, getters },
+        { blockNumber },
+      );
+
+      expect(Web3.eth.getBlock).toHaveBeenCalledTimes(2);
+      expect(Web3.eth.getBlock).toHaveBeenNthCalledWith(
         1,
-        mutationsTypes.SET_HANDLED_BLOCK_NUMBER,
-        blockNumber - 1,
+        state.handledBlockNumber + 1,
+        true,
+      );
+      expect(Web3.eth.getBlock).toHaveBeenNthCalledWith(
+        2,
+        state.handledBlockNumber + 2,
+        true,
       );
     });
 
     it('should set last handled block number', async () => {
-      expect.assertions(2);
+      expect.assertions(4);
 
-      await handleLastBlock({ state, commit, dispatch }, { blockNumber });
+      Web3.eth.getBlock.mockResolvedValueOnce({
+        number: state.handledBlockNumber + 1,
+      });
+      Web3.eth.getBlock.mockResolvedValueOnce(null);
+
+      await handleLastBlock(
+        { state, commit, dispatch, getters },
+        { blockNumber },
+      );
 
       expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toBeCalledWith(
+      expect(commit).toHaveBeenNthCalledWith(
+        1,
         mutationsTypes.SET_HANDLED_BLOCK_NUMBER,
-        blockNumber,
+        state.handledBlockNumber + 1,
+      );
+
+      commit.mockClear();
+      Web3.eth.getBlock.mockResolvedValueOnce({
+        number: state.handledBlockNumber + 1,
+      });
+      Web3.eth.getBlock.mockResolvedValueOnce({
+        number: state.handledBlockNumber + 2,
+      });
+
+      await handleLastBlock(
+        { state, commit, dispatch, getters },
+        { blockNumber },
+      );
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenNthCalledWith(
+        1,
+        mutationsTypes.SET_HANDLED_BLOCK_NUMBER,
+        state.handledBlockNumber + 2,
       );
     });
 
-    it('should not get a block number if it has been handled', async () => {
-      expect.assertions(2);
-
-      await handleLastBlock({ state, commit, dispatch }, { blockNumber: 11 });
-
-      expect(Web3.eth.getBlock).toHaveBeenCalledTimes(0);
-      expect(dispatch).toHaveBeenCalledTimes(0);
-    });
-
-    it('should handle transactions', async () => {
-      expect.assertions(3);
+    it('should dispatch transactions/handleBlockTransactions actions', async () => {
+      expect.assertions(5);
 
       const transactions = [...blockTransactions];
 
+      Web3.eth.getBlock.mockResolvedValueOnce({ transactions });
       Web3.eth.getBlock.mockResolvedValueOnce(null);
-      Web3.eth.getBlock.mockRejectedValueOnce();
+
+      await handleLastBlock(
+        { state, commit, dispatch, getters },
+        { blockNumber },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith(
+        'transactions/handleBlockTransactions',
+        { transactions, networkId: getters.activeNetwork },
+        { root: true },
+      );
+
+      dispatch.mockClear();
+      Web3.eth.getBlock.mockResolvedValueOnce({ transactions });
       Web3.eth.getBlock.mockResolvedValueOnce({ transactions });
 
-      await handleLastBlock({ state, commit, dispatch }, { blockNumber });
+      await handleLastBlock(
+        { state, commit, dispatch, getters },
+        { blockNumber },
+      );
 
-      // TODO for fix getBlockSafety
-      await global.flushPromises();
-      jest.advanceTimersByTime(1000);
-      await global.flushPromises();
-      jest.advanceTimersByTime(1000);
-      await global.flushPromises();
-      jest.advanceTimersByTime(1000);
-
-      expect(Web3.eth.getBlock).toHaveBeenCalledTimes(3);
-      expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toBeCalledWith(
+      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenNthCalledWith(
+        1,
         'transactions/handleBlockTransactions',
-        { transactions },
+        { transactions, networkId: getters.activeNetwork },
+        { root: true },
+      );
+      expect(dispatch).toHaveBeenNthCalledWith(
+        2,
+        'transactions/handleBlockTransactions',
+        { transactions, networkId: getters.activeNetwork },
         { root: true },
       );
     });

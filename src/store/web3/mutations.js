@@ -32,15 +32,10 @@ const setNetworks = (state, networks) => {
   state.storedNetworks = networks;
 };
 
-const setInterval = (state, interval) => {
-  state.interval = interval;
-};
-
 export default {
   [CHANGE_NETWORK]: changeNetwork,
   [CHANGE_CURRENCY]: changeCurrency,
   [SET_NETWORKS]: setNetworks,
   [SET_BLOCK_NUMBER]: setBlockNumber,
   [SET_HANDLED_BLOCK_NUMBER]: setHandledBlockNumber,
-  [SET_INTERVAL]: setInterval,
 };

@@ -9,7 +9,6 @@ import {
   SET_NETWORKS,
   SET_BLOCK_NUMBER,
   SET_HANDLED_BLOCK_NUMBER,
-  SET_INTERVAL,
 } from './mutations-types';
 import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
 
@@ -17,6 +16,7 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
   const network = getters.networks.find(net => net.url === networkUrl);
 
   commit(CHANGE_NETWORK, network);
+  commit(SET_HANDLED_BLOCK_NUMBER, null);
 
   return Promise.all([
     userService.setSettings({ net: network.id }),
@@ -129,67 +129,52 @@ const validateNetwork = (context, { network }) => {
   return Promise.all([net.getNetworkType(), net.getId()]);
 };
 
-const subscribeOnBlockUpdates = async ({ commit, dispatch, getters }) => {
-  await dispatch('unsubscribeOnBlockUpdates');
-
-  const interval = setInterval(async () => {
-    const networkId = getters.activeNetwork;
-    const blockNumber = await web3.eth.getBlockNumber();
-
-    commit(SET_BLOCK_NUMBER, blockNumber);
-    dispatch('handleLastBlock', { blockNumber, networkId });
-  }, ENV.blockUpdateInterval);
-
-  commit(SET_INTERVAL, interval);
-};
-
-const unsubscribeOnBlockUpdates = async ({ state, commit }) => {
-  if (!state.interval) {
-    return;
-  }
-
-  clearInterval(state.interval);
-  commit(SET_INTERVAL, null);
+const subscribeOnBlockUpdates = async ({ commit, dispatch }) => {
+  web3.eth
+    .subscribe('newBlockHeaders')
+    .on('data', ({ number }) => {
+      commit(SET_BLOCK_NUMBER, number);
+      dispatch('handleLastBlock', { blockNumber: number });
+    })
+    .on('error', error => {
+      console.error('Web3 subscription error', error);
+    });
 };
 
 const handleLastBlock = async (
-  { state, commit, dispatch },
-  { blockNumber, networkId },
+  { state, commit, dispatch, getters },
+  { blockNumber },
 ) => {
-  if (state.handledBlockNumber === null) {
-    commit(SET_HANDLED_BLOCK_NUMBER, blockNumber - 1);
+  const { activeNetwork: networkId } = getters;
+  const getBlockPromises = [];
+  let handledBlockNumber = state.handledBlockNumber || blockNumber - 1;
+
+  for (let i = handledBlockNumber; i < blockNumber; i++) {
+    getBlockPromises.push(web3.eth.getBlock(i + 1, true));
   }
 
-  const { handledBlockNumber } = state;
+  const blocks = await Promise.all(getBlockPromises);
 
-  if (handledBlockNumber === blockNumber) return;
-
-  // Trying to get the block again if wrong response
-  async function getBlockSafely(num) {
-    try {
-      const block = await web3.eth.getBlock(num, true);
-
-      if (!block) throw new Error('Bad block');
-
-      return block;
-    } catch (error) {
-      // TODO fix with debounce provider
-      await new Promise(res => setTimeout(res, 1000));
-      return getBlockSafely(num);
+  blocks.every(block => {
+    if (!block) {
+      return false;
     }
-  }
 
-  for (let i = handledBlockNumber + 1; i <= blockNumber; i += 1) {
-    getBlockSafely(i).then(({ transactions }) => {
-      dispatch(
-        'transactions/handleBlockTransactions',
-        { transactions, networkId },
-        { root: true },
-      );
-    });
-  }
+    handledBlockNumber = block.number;
 
-  commit(SET_HANDLED_BLOCK_NUMBER, blockNumber);
+    dispatch(
+      'transactions/handleBlockTransactions',
+      {
+        transactions: block.transactions,
+        networkId,
+      },
+      { root: true },
+    );
+
+    return true;
+  });
+
+  commit(SET_HANDLED_BLOCK_NUMBER, handledBlockNumber);
 };
 
 const init = async ({ commit, dispatch, state }) => {
@@ -223,7 +208,6 @@ export default {
   deleteNetwork,
   validateNetwork,
   subscribeOnBlockUpdates,
-  unsubscribeOnBlockUpdates,
   handleLastBlock,
   init,
 };

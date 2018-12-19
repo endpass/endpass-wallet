@@ -81,6 +81,11 @@ export default class SubscriptionProvider {
         if (lastBlockNumber !== blockNumber) {
           const block = await getBlock(blockNumber);
 
+          if (!block) {
+            // Probably if node is not synced
+            return;
+          }
+
           lastBlockNumber = blockNumber;
 
           this.notificationCallbacks.forEach(callback => {

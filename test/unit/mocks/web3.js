@@ -24,6 +24,29 @@ jest.mock('web3', () => {
       }),
     ),
   };
+  let subscriptions = {};
+  const subscriptionEventEmiter = {
+    on: jest.fn((type, callback) => {
+      if (!subscriptions[type]) {
+        subscriptions[type] = [];
+      }
+
+      subscriptions[type].push(callback);
+
+      return subscriptionEventEmiter;
+    }),
+    emit: jest.fn((type, data) => {
+      if (!subscriptions[type]) {
+        return;
+      }
+
+      subscriptions[type].forEach(callback => callback(data));
+
+      return subscriptionEventEmiter;
+    }),
+  };
+  const subscribe = jest.fn(() => subscriptionEventEmiter);
+  const clearSubscriptions = jest.fn(() => (subscriptions = {}));
   const eth = {
     net: {
       getNetworkType: jest.fn().mockResolvedValue('ropsten'),
@@ -38,6 +61,9 @@ jest.mock('web3', () => {
     getBlock: jest.fn().mockResolvedValue({}),
     getTransactionCount: jest.fn().mockResolvedValue(),
     getCode: jest.fn().mockResolvedValue('0x0123'),
+    subscribe,
+    clearSubscriptions,
+    subscriptionEventEmiter,
   };
   const { utils } = originalWeb3;
   const mockWeb3 = jest.fn(() => ({
