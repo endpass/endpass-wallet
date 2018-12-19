@@ -1,5 +1,6 @@
 import web3 from '@/class/singleton/web3';
 import {
+  address,
   addresses,
   email,
   v3password,
@@ -50,32 +51,29 @@ describe('Accounts actions', () => {
     };
 
     it('should set address, save meta, reset dapp, request balance tokens with selected address', async () => {
-      expect.assertions(9);
+      expect.assertions(8);
 
       await actions.selectWallet(
         { state, commit, dispatch, rootState },
         checksumAddress,
       );
 
-      expect(localSettingsService.save).toHaveBeenCalledTimes(1);
-      expect(localSettingsService.save).toHaveBeenCalledWith(email, {
-        activeAccount: checksumAddress,
-      });
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toHaveBeenNthCalledWith(1, SET_ADDRESS, checksumAddress);
-      expect(dispatch).toHaveBeenCalledTimes(4);
+      expect(dispatch).toHaveBeenCalledTimes(5);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'updateBalance');
-      expect(dispatch).toHaveBeenNthCalledWith(2, 'dapp/reset', null, {
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'updateAccountSettings');
+      expect(dispatch).toHaveBeenNthCalledWith(3, 'dapp/reset', null, {
         root: true,
       });
       expect(dispatch).toHaveBeenNthCalledWith(
-        3,
+        4,
         'tokens/getCurrentAccountTokens',
         null,
         { root: true },
       );
       expect(dispatch).toHaveBeenNthCalledWith(
-        4,
+        5,
         'tokens/getCurrentAccountTokensData',
         null,
         { root: true },
@@ -1224,6 +1222,82 @@ describe('Accounts actions', () => {
       await actions.updateWalletsWithNewPassword({ dispatch }, payload);
 
       expect(dispatch).toBeCalledTimes(1);
+    });
+  });
+
+  describe('updateAccountSettings', () => {
+    it('should update user settings and save active address locally if last active account not equals to current', async () => {
+      expect.assertions(2);
+
+      const state = {
+        address: '0x0',
+        wallets: {
+          '0x0': {
+            isPublic: false,
+          },
+        },
+      };
+      const rootState = {
+        user: {
+          email,
+        },
+      };
+      const rootGetters = {
+        'user/lastActiveAccount': '0x1',
+      };
+
+      await actions.updateAccountSettings({
+        state,
+        dispatch,
+        rootGetters,
+        rootState,
+      });
+
+      expect(dispatch).toBeCalledWith(
+        'user/updateSettings',
+        {
+          lastActiveAccount: state.address,
+        },
+        {
+          root: true,
+        },
+      );
+      expect(localSettingsService.save).toBeCalledWith(email, {
+        activeAccount: state.address,
+      });
+    });
+
+    it('should not send last account to server if last active account not equals to current', async () => {
+      expect.assertions(2);
+
+      const state = {
+        address: '0x0',
+        wallets: {
+          '0x0': {
+            isPublic: false,
+          },
+        },
+      };
+      const rootState = {
+        user: {
+          email,
+        },
+      };
+      const rootGetters = {
+        'user/lastActiveAccount': '0x0',
+      };
+
+      await actions.updateAccountSettings({
+        state,
+        dispatch,
+        rootGetters,
+        rootState,
+      });
+
+      expect(dispatch).not.toBeCalled();
+      expect(localSettingsService.save).toBeCalledWith(email, {
+        activeAccount: state.address,
+      });
     });
   });
 });
