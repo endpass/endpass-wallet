@@ -9,6 +9,7 @@ describe('SubscriptionProvider class', () => {
   beforeEach(() => {
     provider = new SubscriptionProvider();
 
+    jest.clearAllTimers();
     jest.clearAllMocks();
   });
 
@@ -22,53 +23,98 @@ describe('SubscriptionProvider class', () => {
 
     it('should add callback', () => {
       provider.on('error', callback);
-      expect(provider.notificationCallbacks).not.toContainEqual(callback);
+      expect(provider.notificationCallbacks.error).toEqual(callback);
 
       provider.on('data', callback);
-      expect(provider.notificationCallbacks).toContainEqual(callback);
+      expect(provider.notificationCallbacks.data).toContainEqual(callback);
     });
   });
 
   describe('removeListener', () => {
+    const errorHandler = jest.fn();
+
     beforeEach(() => {
-      provider.notificationCallbacks = [callback];
+      provider.notificationCallbacks.data = [callback];
+      provider.notificationCallbacks.error = errorHandler;
     });
 
-    it('should not remove listener', () => {
+    it('should not remove listeners', () => {
       provider.removeListener();
-      expect(provider.notificationCallbacks).toContainEqual(callback);
 
-      provider.removeListener('error');
-      expect(provider.notificationCallbacks).toContainEqual(callback);
-
-      provider.removeListener('data', () => {});
-      expect(provider.notificationCallbacks).toContainEqual(callback);
+      expect(provider.notificationCallbacks.data).toContainEqual(callback);
+      expect(provider.notificationCallbacks.error).toEqual(errorHandler);
     });
 
-    it('should remove listener', () => {
-      provider.removeListener('data', callback);
-      expect(provider.notificationCallbacks).not.toContainEqual(callback);
+    describe('data', () => {
+      it('should not remove listener', () => {
+        provider.removeListener('error');
+        expect(provider.notificationCallbacks.data).toContainEqual(callback);
+
+        provider.removeListener('data', () => {});
+        expect(provider.notificationCallbacks.data).toContainEqual(callback);
+      });
+
+      it('should remove listener', () => {
+        provider.removeListener('data', callback);
+
+        expect(provider.notificationCallbacks.data).not.toContainEqual(
+          callback,
+        );
+      });
     });
   });
 
   describe('removeAllListeners', () => {
     const notificationCallbacks = [callback];
+    const errorHandler = jest.fn();
 
     beforeEach(() => {
-      provider.notificationCallbacks = [...notificationCallbacks];
+      provider.notificationCallbacks.data = [...notificationCallbacks];
+      provider.notificationCallbacks.error = errorHandler;
     });
 
     it('should not remove all listeners', () => {
       provider.removeAllListeners();
-      expect(provider.notificationCallbacks).toEqual(notificationCallbacks);
 
-      provider.removeAllListeners('error');
-      expect(provider.notificationCallbacks).toEqual(notificationCallbacks);
+      expect(provider.notificationCallbacks.data).toEqual(
+        notificationCallbacks,
+      );
+      expect(provider.notificationCallbacks.error).toEqual(errorHandler);
     });
 
-    it('should remove all listeners', () => {
-      provider.removeAllListeners('data');
-      expect(provider.notificationCallbacks).toEqual([]);
+    describe('data', () => {
+      it('should not remove data listeners', () => {
+        provider.removeAllListeners('error');
+
+        expect(provider.notificationCallbacks.data).toEqual(
+          notificationCallbacks,
+        );
+      });
+
+      it('should remove data listeners', () => {
+        provider.removeAllListeners('data');
+
+        expect(provider.notificationCallbacks.data).toEqual([]);
+      });
+    });
+
+    describe('error', () => {
+      it('should not remove error listener', () => {
+        provider.removeAllListeners('data');
+
+        expect(provider.notificationCallbacks.error).toEqual(errorHandler);
+      });
+
+      it('should remove error listener', () => {
+        provider.removeAllListeners('error');
+
+        expect(provider.notificationCallbacks.error).toEqual(
+          expect.any(Function),
+        );
+        expect(provider.notificationCallbacks.error.toString()).toBe(
+          'function () {}',
+        );
+      });
     });
   });
 
@@ -80,7 +126,7 @@ describe('SubscriptionProvider class', () => {
 
       provider.reset();
 
-      expect(provider.notificationCallbacks).toEqual([]);
+      expect(provider.notificationCallbacks).toEqual({});
       expect(provider.stopPollingNewBlockHeaders).toHaveBeenCalledTimes(1);
     });
   });
@@ -205,7 +251,7 @@ describe('SubscriptionProvider class', () => {
     it('should start polling and call callbacks', async () => {
       expect.assertions(2);
 
-      provider.notificationCallbacks = [callback];
+      provider.notificationCallbacks.data = [callback];
       provider.subsrciptionIds = {
         [subsrciptionId]: { type: 'newHeads' },
       };
@@ -229,7 +275,7 @@ describe('SubscriptionProvider class', () => {
     it('should start polling and not call callbacks', async () => {
       expect.assertions(1);
 
-      provider.notificationCallbacks = [callback];
+      provider.notificationCallbacks.data = [callback];
       provider.subsrciptionIds = {
         [subsrciptionId]: { type: 'logs' },
       };
@@ -246,7 +292,7 @@ describe('SubscriptionProvider class', () => {
     it('should not call callback if getBlock return null', async () => {
       expect.assertions(1);
 
-      provider.notificationCallbacks = [callback];
+      provider.notificationCallbacks.data = [callback];
       provider.subsrciptionIds = {
         [subsrciptionId]: { type: 'newHeads' },
       };
@@ -260,6 +306,25 @@ describe('SubscriptionProvider class', () => {
       await flushPromises();
 
       expect(callback).toHaveBeenCalledTimes(0);
+    });
+
+    it('should handle errors', async () => {
+      expect.assertions(2);
+
+      const error = new Error();
+
+      jest.spyOn(provider.notificationCallbacks, 'error');
+      global.console.error = jest.fn();
+      getBlock.mockRejectedValueOnce(error);
+
+      provider.startPollingNewBlockHeaders(getBlockNumber, getBlock);
+
+      jest.runOnlyPendingTimers();
+
+      await flushPromises();
+
+      expect(provider.notificationCallbacks.error).toHaveBeenCalledTimes(1);
+      expect(provider.notificationCallbacks.error).toHaveBeenCalledWith(error);
     });
   });
 
