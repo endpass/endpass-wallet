@@ -1,3 +1,8 @@
+const EVENT_TYPES = {
+  DATA: 'data',
+  ERROR: 'error',
+};
+
 const toPayload = (id, result) => ({
   id,
   result,
@@ -5,7 +10,10 @@ const toPayload = (id, result) => ({
 });
 
 export default class SubscriptionProvider {
-  notificationCallbacks = [];
+  notificationCallbacks = {
+    [EVENT_TYPES.DATA]: [],
+    [EVENT_TYPES.ERROR]: () => {},
+  };
   subsrciptionIds = {};
   newBlocksIntervalId = null;
 
@@ -14,27 +22,36 @@ export default class SubscriptionProvider {
       throw new Error('The second parameter callback must be a function.');
     }
 
-    if (type === 'data') {
-      this.notificationCallbacks.push(callback);
+    if (type === EVENT_TYPES.DATA) {
+      this.notificationCallbacks[type].push(callback);
+    } else {
+      this.notificationCallbacks[type] = callback;
     }
   }
 
   removeListener(type, callback) {
-    if (type === 'data') {
-      this.notificationCallbacks.forEach((cb, index) => {
-        if (cb === callback) this.notificationCallbacks.splice(index, 1);
-      });
+    if (type === EVENT_TYPES.DATA) {
+      this.notificationCallbacks[EVENT_TYPES.DATA].forEach(
+        (cb, index, callbacks) => {
+          if (cb === callback) {
+            callbacks.splice(index, 1);
+          }
+        },
+      );
     }
   }
 
   removeAllListeners(type) {
-    if (type === 'data') {
-      this.notificationCallbacks = [];
+    if (!type) {
+      return;
     }
+
+    this.notificationCallbacks[type] =
+      type === EVENT_TYPES.DATA ? [] : () => {};
   }
 
   reset() {
-    this.notificationCallbacks = [];
+    this.notificationCallbacks = {};
 
     this.stopPollingNewBlockHeaders();
   }
@@ -88,11 +105,7 @@ export default class SubscriptionProvider {
 
           lastBlockNumber = blockNumber;
 
-          this.notificationCallbacks.forEach(callback => {
-            if (typeof callback !== 'function') {
-              return;
-            }
-
+          this.notificationCallbacks[EVENT_TYPES.DATA].forEach(callback => {
             Object.entries(this.subsrciptionIds).forEach(
               ([subsrciptionId, { type }]) => {
                 if (type === 'newHeads') {
@@ -110,6 +123,7 @@ export default class SubscriptionProvider {
         }
       } catch (error) {
         console.error(error);
+        this.notificationCallbacks[EVENT_TYPES.ERROR](error);
       }
     }, ENV.blockUpdateInterval);
   }
