@@ -78,7 +78,7 @@ import VButton from '@/components/ui/form/VButton';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
-import keystore from '@/utils/keystore';
+import { keystore } from '@endpass/utils';
 
 export default {
   name: 'ImportFromJson',

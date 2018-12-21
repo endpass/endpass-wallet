@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import getOptionParameter from '@/utils/getOptionParameter';
+import { getOptionParameter } from '@endpass/utils';
 
 export default {
   name: 'VSelect',

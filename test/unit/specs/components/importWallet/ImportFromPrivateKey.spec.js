@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
 
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 import { privateKeyString, v3password } from '../../../fixtures/accounts';
 
 import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
@@ -38,7 +38,7 @@ describe('ImportFromPrivateKey', () => {
     wrapper = shallow(ImportFromPrivateKey, {
       localVue,
       store,
-      stubs: generateStubs(ImportFromPrivateKey),
+      stubs: testUtils.generateStubs(ImportFromPrivateKey),
       router,
     });
   });

@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { ERC20Token, Token } from '@/class';
-import { isNumeric } from '@/utils/numbers';
+import { numbers } from '@endpass/utils';
 import web3 from '@/class/singleton/web3';
 import { BigNumber } from 'bignumber.js';
 
@@ -90,7 +90,7 @@ export default class Transaction {
   }
 
   static getPriceWei(transaction) {
-    if (!isNumeric(transaction.gasPrice)) return '0';
+    if (!numbers.isNumeric(transaction.gasPrice)) return '0';
 
     return toWei(transaction.gasPrice.toString(), 'Gwei');
   }
@@ -98,7 +98,7 @@ export default class Transaction {
   static getTransactonValueInWei(transaction) {
     const { value, tokenInfo } = transaction;
 
-    if (!isNumeric(value)) {
+    if (!numbers.isNumeric(value)) {
       return '0';
     }
 
@@ -137,7 +137,7 @@ export default class Transaction {
   }
 
   get valueWei() {
-    if (!isNumeric(this._value)) return '0';
+    if (!numbers.isNumeric(this._value)) return '0';
 
     let multiplier = BigNumber('10').pow(18);
 
@@ -151,7 +151,7 @@ export default class Transaction {
   }
 
   set valueWei(valueWei) {
-    if (!isNumeric(valueWei)) return '0';
+    if (!numbers.isNumeric(valueWei)) return '0';
 
     let multiplier = BigNumber('10').pow(18);
 
@@ -189,7 +189,7 @@ export default class Transaction {
   }
 
   get gasPriceWei() {
-    if (!isNumeric(this.gasPrice)) return '0';
+    if (!numbers.isNumeric(this.gasPrice)) return '0';
 
     return toWei(this.gasPrice, 'Gwei');
   }

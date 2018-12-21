@@ -6,7 +6,7 @@ import LoginModal from '@/components/modal/LoginModal';
 import LoginByEmailModal from '@/components/modal/LoginByEmailModal';
 import ConfirmEmailModal from '@/components/modal/ConfirmEmailModal';
 import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 
 jest.mock('@/components/modal/LoginByEmailModal', () => ({
   name: 'login-by-email-modal',
@@ -25,7 +25,7 @@ describe('LoginModal', () => {
 
   beforeEach(() => {
     wrapper = shallow(LoginModal, {
-      stubs: generateStubs(LoginModal),
+      stubs: testUtils.generateStubs(LoginModal),
     });
   });
 

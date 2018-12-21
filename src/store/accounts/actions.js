@@ -5,7 +5,7 @@ import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';
 import { Wallet, NotificationError } from '@/class';
-import keystore from '@/utils/keystore';
+import { keystore } from '@endpass/utils';
 import { WALLET_TYPE } from '@/constants';
 import {
   CHANGE_INIT_STATUS,

@@ -2,7 +2,7 @@ import { set } from 'lodash';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import { shallow, createLocalVue } from '@vue/test-utils';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 import TransactionForm from '@/components/pages/Send/TransactionForm.vue';
 import Transaction from '@/class/Transaction';
 import ENSResolver from '@/class/ens';
@@ -86,7 +86,7 @@ describe('Send – TransactionForm', () => {
       provide: () => ({
         $validator: new VeeValidate.Validator(),
       }),
-      stubs: generateStubs(TransactionForm),
+      stubs: testUtils.generateStubs(TransactionForm),
       propsData: {
         transaction: transactionProp,
       },
@@ -111,7 +111,7 @@ describe('Send – TransactionForm', () => {
         provide: () => ({
           $validator: new VeeValidate.Validator(),
         }),
-        stubs: generateStubs(TransactionForm),
+        stubs: testUtils.generateStubs(TransactionForm),
         propsData: {
           transaction: {
             ...transactionProp,
@@ -198,7 +198,7 @@ describe('Send – TransactionForm', () => {
             provide: () => ({
               $validator: new VeeValidate.Validator(),
             }),
-            stubs: generateStubs(TransactionForm),
+            stubs: testUtils.generateStubs(TransactionForm),
             propsData: {
               transaction: transactionProp,
             },

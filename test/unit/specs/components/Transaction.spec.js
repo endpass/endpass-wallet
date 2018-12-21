@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import dayjs from 'dayjs';
 import Notifications from 'vue-notification';
 import Transaction from '@/components/Transaction';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 import { checksumAddress } from 'fixtures/accounts';
 
 describe('Transaction', () => {
@@ -48,7 +48,7 @@ describe('Transaction', () => {
     wrapper = shallow(Transaction, {
       localVue,
       store,
-      stubs: generateStubs(Transaction),
+      stubs: testUtils.generateStubs(Transaction),
       propsData: {
         transaction,
       },

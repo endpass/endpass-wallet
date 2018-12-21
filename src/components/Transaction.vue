@@ -138,8 +138,7 @@ import ResendModal from '@/components/modal/ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';
-import { fromNow, formateDate } from '@/utils/date';
-import { getShortStringWithEllipsis } from '@/utils/strings';
+import { date, strings } from '@endpass/utils';
 import web3 from '@/class/singleton/web3';
 
 const { hexToString } = web3.utils;
@@ -221,11 +220,11 @@ export default {
     },
 
     transactionFormatedDate() {
-      return formateDate(this.transaction.date);
+      return date.formateDate(this.transaction.date);
     },
 
     transactionDateFromNow() {
-      return fromNow(this.displayDate);
+      return date.fromNow(this.displayDate);
     },
 
     txAddress() {
@@ -325,7 +324,7 @@ export default {
     truncateHash(value) {
       if (!value) return '';
 
-      return getShortStringWithEllipsis(value.toString());
+      return strings.getShortStringWithEllipsis(value.toString());
     },
   },
 };

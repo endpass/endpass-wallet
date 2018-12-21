@@ -1,8 +1,8 @@
 import { hasLoginGuard, privateWalletGuard } from '@/router/guards';
-import { asyncCheckProperty } from '@/utils';
+import { asyncCheckProperty } from '@endpass/utils';
 import store from '@/store';
 
-jest.mock('@/utils', () => ({
+jest.mock('@endpass/utils', () => ({
   asyncCheckProperty: jest.fn(),
 }));
 

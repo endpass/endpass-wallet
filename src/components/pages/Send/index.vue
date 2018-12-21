@@ -56,7 +56,7 @@ import AccountChooser from '@/components/AccountChooser';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import privatePage from '@/mixins/privatePage';
-import { getShortStringWithEllipsis } from '@/utils/strings';
+import { strings } from '@endpass/utils';
 import TransactionForm from './TransactionForm';
 
 const defaultTx = {
@@ -134,7 +134,7 @@ export default {
           transaction: TransactionFactory.fromSendForm(this.transaction),
           password,
         });
-        const shortHash = getShortStringWithEllipsis(hash);
+        const shortHash = strings.getShortStringWithEllipsis(hash);
 
         this.transactionHash = hash;
 

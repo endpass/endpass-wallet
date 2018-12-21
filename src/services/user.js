@@ -1,6 +1,6 @@
 import { NotificationError } from '@/class';
 import { proxyRequest } from '@/class/singleton';
-import keyUtil from '@/utils/keystore';
+import { keystore } from '@endpass/utils';
 import { WALLET_TYPE } from '@/constants';
 import { identityValidator, v3KeystoreValidator } from '@/schema';
 
@@ -158,7 +158,7 @@ export default {
     try {
       const accounts = await this.getAccounts();
       const allAcc = accounts
-        .filter(acc => !keyUtil.isExtendedPublicKey(acc))
+        .filter(acc => !keystore.isExtendedPublicKey(acc))
         .map(this.getAccount);
 
       return await Promise.all(allAcc);
@@ -181,7 +181,7 @@ export default {
     const accounts = await this.getAccounts();
 
     const hdAddresses = accounts.filter(acc =>
-      keyUtil.isExtendedPublicKey(acc),
+      keystore.isExtendedPublicKey(acc),
     );
 
     const hdAccounts = await Promise.all(

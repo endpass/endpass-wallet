@@ -1,7 +1,7 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import TokensList from '@/components/TokensList';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 import { tokens, fullTokensMappedByAddresses } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
@@ -61,7 +61,7 @@ describe('TokensList', () => {
     wrapper = shallow(TokensList, {
       store,
       localVue,
-      stubs: generateStubs(TokensList),
+      stubs: testUtils.generateStubs(TokensList),
       propsData: {
         tokens,
       },

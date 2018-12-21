@@ -2,16 +2,16 @@
   <div class="media account">
     <div class="media-left">
       <p class="image is-32x32">
-        <img 
-          :src="icon" 
+        <img
+          :src="icon"
           class="identicon"
         >
       </p>
     </div>
     <div class="media-content">
       <div class="content">
-        <h5 
-          class="address" 
+        <h5
+          class="address"
           data-test="account-address"
         >{{ addressFmt }}</h5>
         <slot/>
@@ -33,7 +33,7 @@
 <script>
 import makeBlockie from 'ethereum-blockies-base64';
 import Balance from '@/components/Balance';
-import { getShortStringWithEllipsis } from '@/utils/strings';
+import { strings } from '@endpass/utils';
 
 export default {
   name: 'Account',
@@ -75,7 +75,7 @@ export default {
         return `...${this.address.substr(this.address.length - this.size)}`;
       }
 
-      return getShortStringWithEllipsis(
+      return strings.getShortStringWithEllipsis(
         this.address,
         Math.round(this.size / 2),
       );

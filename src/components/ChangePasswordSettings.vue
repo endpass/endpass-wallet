@@ -39,7 +39,7 @@
 
 <script>
 import { mapActions } from 'vuex';
-import { matchString } from '@/utils/strings';
+import { strings } from '@endpass/utils';
 import VForm from '@/components/ui/form/VForm';
 import VButton from '@/components/ui/form/VButton';
 import VPassword from '@/components/ui/form/VPassword';
@@ -87,7 +87,7 @@ export default {
     },
 
     handleSubmitError(err) {
-      const isIncorrentPasswordError = matchString(
+      const isIncorrentPasswordError = strings.matchString(
         err,
         'authentication code mismatch',
       );

@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
 
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 
 import ImportFromSeed from '@/components/importWallet/ImportFromSeed';
 
@@ -38,7 +38,7 @@ describe('ImportFromSeed', () => {
       localVue,
       store,
       router,
-      stubs: generateStubs(ImportFromSeed),
+      stubs: testUtils.generateStubs(ImportFromSeed),
     });
   });
   describe('render', () => {

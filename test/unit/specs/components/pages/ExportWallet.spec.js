@@ -1,6 +1,6 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 import ExportWallet from '@/components/pages/ExportWallet';
 
 const localVue = createLocalVue();
@@ -24,7 +24,7 @@ describe('ExportWallet page', () => {
       },
     });
     wrapper = shallow(ExportWallet, {
-      stubs: generateStubs(ExportWallet),
+      stubs: testUtils.generateStubs(ExportWallet),
       localVue,
       store,
     });

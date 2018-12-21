@@ -1,7 +1,7 @@
 import Vuex from 'vuex';
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Message from '@/components/pages/Message';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 
 const localVue = createLocalVue();
 
@@ -28,7 +28,7 @@ describe('Message page', () => {
       },
     });
     wrapper = shallow(Message, {
-      stubs: generateStubs(Message),
+      stubs: testUtils.generateStubs(Message),
       localVue,
       store,
     });

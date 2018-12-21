@@ -1,7 +1,7 @@
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import { shallow, mount, createLocalVue } from '@vue/test-utils';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 import DappPage from '@/components/pages/Dapp';
 import { commonRequest, transactionRequest } from 'fixtures/dapp';
 
@@ -47,7 +47,7 @@ describe('DappPage', () => {
     });
 
     wrapper = shallow(DappPage, {
-      stubs: generateStubs(DappPage),
+      stubs: testUtils.generateStubs(DappPage),
       store,
       localVue,
     });
