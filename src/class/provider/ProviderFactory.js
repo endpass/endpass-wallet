@@ -1,4 +1,4 @@
-import { identity, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import Web3 from 'web3';
 import DebounceProvider from './DebounceProvider';
 import SubscriptionProvider from './SubscriptionProvider';
@@ -55,14 +55,11 @@ export default class ProviderFactory {
       provider.getFallbackProviders = () => fallbackProviders;
     }
 
-    provider.errorHandler = identity;
     provider.setErrorHandler = handler => {
-      provider.errorHandler = handler;
+      if (provider.on) {
+        provider.on('error', e => handler(e));
+      }
     };
-
-    if (provider.on) {
-      provider.on('error', e => provider.errorHandler(e));
-    }
 
     return provider;
   }
