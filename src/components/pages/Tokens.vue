@@ -105,7 +105,7 @@ import TokensList from '@/components/TokensList';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/modal/AddTokenModal';
 import VSpinner from '@/components/ui/VSpinner';
-import { strings } from '@endpass/utils';
+import { matchString } from '@endpass/utils/strings';
 import { MAIN_NET_ID } from '@/constants';
 
 export default {
@@ -174,10 +174,7 @@ export default {
     ...mapActions('tokens', ['addUserToken']),
 
     matchTokenToQuery(token, query) {
-      return (
-        strings.matchString(token.name, query) ||
-        strings.matchString(token.symbol, query)
-      );
+      return matchString(token.name, query) || matchString(token.symbol, query);
     },
 
     setNetworkTokenQuery(query) {

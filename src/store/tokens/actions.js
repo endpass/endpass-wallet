@@ -15,7 +15,8 @@ import {
   cryptoDataService,
   userService,
 } from '@/services';
-import { objects, arrays } from '@endpass/utils';
+import { merge } from '@endpass/utils/objects';
+import { mapArrayByProp } from '@endpass/utils/arrays';
 import { MAIN_NET_ID } from '@/constants';
 
 const init = async ({ dispatch }) => {
@@ -150,7 +151,7 @@ const getTokensByAddress = async ({ dispatch, commit }, { address }) => {
       { root: true },
     );
 
-    const mappedTokens = arrays.mapArrayByProp(resolvedTokens, 'address');
+    const mappedTokens = mapArrayByProp(resolvedTokens, 'address');
 
     commit(ADD_NETWORK_TOKENS, mappedTokens);
     commit(SET_TOKENS_BY_ADDRESS, {
@@ -193,7 +194,7 @@ const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
 
     const networkTokens = await tokenInfoService.getTokensList();
 
-    commit(ADD_NETWORK_TOKENS, arrays.mapArrayByProp(networkTokens, 'address'));
+    commit(ADD_NETWORK_TOKENS, mapArrayByProp(networkTokens, 'address'));
   } catch (e) {
     const error = new NotificationError({
       title: 'Failed to get list of tokens',
@@ -223,7 +224,7 @@ const getTokensBalances = async (ctx, { address, tokens }) => {
       }
     }),
   );
-  const tokensBalances = objects.merge(...balances);
+  const tokensBalances = merge(...balances);
 
   return tokensBalances;
 };

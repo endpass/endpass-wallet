@@ -33,7 +33,7 @@
 <script>
 import makeBlockie from 'ethereum-blockies-base64';
 import Balance from '@/components/Balance';
-import { strings } from '@endpass/utils';
+import { getShortStringWithEllipsis } from '@endpass/utils/strings';
 
 export default {
   name: 'Account',
@@ -75,7 +75,7 @@ export default {
         return `...${this.address.substr(this.address.length - this.size)}`;
       }
 
-      return strings.getShortStringWithEllipsis(
+      return getShortStringWithEllipsis(
         this.address,
         Math.round(this.size / 2),
       );

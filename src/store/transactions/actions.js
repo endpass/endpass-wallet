@@ -8,7 +8,10 @@ import {
 } from '@/class';
 import ethplorerService from '@/services/ethplorer';
 import web3 from '@/class/singleton/web3';
-import { strings } from '@endpass/utils';
+import {
+  getShortStringWithEllipsis,
+  matchString,
+} from '@endpass/utils/strings';
 import {
   ADD_TRANSACTION,
   UPDATE_TRANSACTION,
@@ -112,14 +115,14 @@ const handleSendingError = (
 ) => {
   const errorMessage = get(err, 'err') || get(err, 'message') || '';
   const { hash } = transaction;
-  const shortHash = hash ? ` ${strings.getShortStringWithEllipsis(hash)}` : '';
+  const shortHash = hash ? ` ${getShortStringWithEllipsis(hash)}` : '';
   let cause = '';
 
-  if (receipt || strings.matchString(errorMessage, 'out of gas')) {
+  if (receipt || matchString(errorMessage, 'out of gas')) {
     cause = ', because out of gas';
-  } else if (strings.matchString(errorMessage, 'gas is too low')) {
+  } else if (matchString(errorMessage, 'gas is too low')) {
     cause = ', because gas is too low';
-  } else if (strings.matchString(errorMessage, 'gas price is too low')) {
+  } else if (matchString(errorMessage, 'gas price is too low')) {
     cause = ', because gas price is too low';
   }
 
@@ -197,8 +200,8 @@ const handleBlockTransactions = (
     }
 
     const { hash, to } = trx;
-    const shortAddress = strings.getShortStringWithEllipsis(to);
-    const shortHash = strings.getShortStringWithEllipsis(hash);
+    const shortAddress = getShortStringWithEllipsis(to);
+    const shortHash = getShortStringWithEllipsis(hash);
     const error = new NotificationError({
       title: 'Incoming transaction',
       text: `Address ${shortAddress} received transaction ${shortHash}`,
