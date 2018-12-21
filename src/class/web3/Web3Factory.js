@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import { identity, get } from 'lodash';
+import { get } from 'lodash';
 
 export default class Web3Factory {
   static create(provider) {
@@ -7,19 +7,7 @@ export default class Web3Factory {
     const { setProvider } = web3;
 
     web3.setProvider = newProvider => {
-      if (get(web3, 'currentProvider.setErrorHandler')) {
-        web3.currentProvider.setErrorHandler(identity);
-      }
-
-      if (get(web3, 'currentProvider.removeAllListeners')) {
-        web3.currentProvider.removeAllListeners();
-      }
-
-      if (
-        newProvider.getFallbackProviders &&
-        newProvider.errorHandler &&
-        newProvider.setErrorHandler
-      ) {
+      if (newProvider.getFallbackProviders && newProvider.setErrorHandler) {
         const errorHandler = async () => {
           const fallbackProviders = newProvider.getFallbackProviders();
           let fallbackProvider = null;
@@ -27,6 +15,8 @@ export default class Web3Factory {
           for (let i = 0; i < fallbackProviders.length; i += 1) {
             try {
               const web3Temp = new Web3(fallbackProviders[i]);
+
+              // This can be very long if the server is not responding for a long time(about 2 min)
               /* eslint-disable-next-line no-await-in-loop */
               await web3Temp.eth.net.getId();
               fallbackProvider = fallbackProviders[i];
