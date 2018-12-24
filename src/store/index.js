@@ -14,6 +14,7 @@ import errors from './errors';
 import connectionStatus from './connection-status';
 import user from './user';
 import dapp from './dapp';
+import { web3Plugin } from './plugins';
 
 Vue.use(Vuex);
 
@@ -36,6 +37,7 @@ const store = new Vuex.Store({
   strict: !ENV.isProduction,
   mutations,
   actions,
+  plugins: [web3Plugin],
 });
 
 // Dispatch on change in block number

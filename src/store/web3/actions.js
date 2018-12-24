@@ -20,7 +20,6 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
 
   return Promise.all([
     userService.setSettings({ net: network.id }),
-    dispatch('subscribeOnBlockUpdates'),
     dispatch('price/updatePrice', {}, { root: true }),
     dispatch('accounts/updateBalance', {}, { root: true }),
     dispatch('tokens/getNetworkTokens', {}, { root: true }),
@@ -145,36 +144,38 @@ const handleLastBlock = async (
   { state, commit, dispatch, getters },
   { blockNumber },
 ) => {
-  const { activeNetwork: networkId } = getters;
-  const getBlockPromises = [];
-  let handledBlockNumber = state.handledBlockNumber || blockNumber - 1;
+  try {
+    const { activeNetwork: networkId } = getters;
+    const getBlockPromises = [];
+    let handledBlockNumber = state.handledBlockNumber || blockNumber - 1;
 
-  for (let i = handledBlockNumber; i < blockNumber; i++) {
-    getBlockPromises.push(web3.eth.getBlock(i + 1, true));
-  }
-
-  const blocks = await Promise.all(getBlockPromises);
-
-  blocks.every(block => {
-    if (!block) {
-      return false;
+    for (let i = handledBlockNumber; i < blockNumber; i++) {
+      getBlockPromises.push(web3.eth.getBlock(i + 1, true));
     }
 
-    handledBlockNumber = block.number;
+    const blocks = await Promise.all(getBlockPromises);
 
-    dispatch(
-      'transactions/handleBlockTransactions',
-      {
-        transactions: block.transactions,
-        networkId,
-      },
-      { root: true },
-    );
+    for (let block of blocks) {
+      if (!block) {
+        continue;
+      }
 
-    return true;
-  });
+      handledBlockNumber = block.number;
 
-  commit(SET_HANDLED_BLOCK_NUMBER, handledBlockNumber);
+      await dispatch(
+        'transactions/handleBlockTransactions',
+        {
+          transactions: block.transactions,
+          networkId,
+        },
+        { root: true },
+      );
+    }
+
+    commit(SET_HANDLED_BLOCK_NUMBER, handledBlockNumber);
+  } catch (error) {
+    await dispatch('errors/emitError', error, { root: true });
+  }
 };
 
 const init = async ({ commit, dispatch, state }) => {
@@ -191,10 +192,7 @@ const init = async ({ commit, dispatch, state }) => {
     commit(CHANGE_NETWORK, activeNet);
     commit(CHANGE_CURRENCY, activeCurrency);
 
-    await Promise.all([
-      dispatch('tokens/getCurrentAccountTokens', {}, { root: true }),
-      dispatch('subscribeOnBlockUpdates'),
-    ]);
+    await dispatch('tokens/getCurrentAccountTokens', {}, { root: true });
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });
   }
