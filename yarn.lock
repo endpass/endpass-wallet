@@ -122,9 +122,9 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@endpass/utils@^1.0.8":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.0.8.tgz#cb67706f87bbfaea9f0b79972caf8c2838ae5af7"
+"@endpass/utils@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.0.9.tgz#c85321ceaf575acdd926c7d039bd2d4986171908"
   dependencies:
     bs58check "^2.1.2"
     dayjs "^1.7.8"
