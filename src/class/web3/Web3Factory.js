@@ -4,44 +4,6 @@ import { get } from 'lodash';
 export default class Web3Factory {
   static create(provider) {
     const web3 = new Web3();
-    const { setProvider } = web3;
-
-    web3.setProvider = newProvider => {
-      if (newProvider.getFallbackProviders && newProvider.setErrorHandler) {
-        const errorHandler = async () => {
-          const fallbackProviders = newProvider.getFallbackProviders();
-          let fallbackProvider = null;
-
-          for (let i = 0; i < fallbackProviders.length; i += 1) {
-            try {
-              const web3Temp = new Web3(fallbackProviders[i]);
-
-              // This can be very long if the server is not responding for a long time(about 2 min)
-              /* eslint-disable-next-line no-await-in-loop */
-              await web3Temp.eth.net.getId();
-              fallbackProvider = fallbackProviders[i];
-              break;
-              /* eslint-disable-next-line no-empty */
-            } catch (error) {}
-          }
-
-          if (fallbackProvider) {
-            web3.setProvider(fallbackProvider);
-          }
-        };
-
-        newProvider.setErrorHandler(errorHandler);
-      }
-
-      if (newProvider.startPollingNewBlockHeaders) {
-        newProvider.startPollingNewBlockHeaders(
-          web3.eth.getBlockNumber,
-          web3.eth.getBlock,
-        );
-      }
-
-      return setProvider.call(web3, newProvider);
-    };
 
     web3.setProvider(provider);
 

@@ -2,15 +2,6 @@ import Web3 from 'web3';
 
 import mutations from '@/store/web3/mutations';
 import * as mutationsTypes from '@/store/web3/mutations-types';
-import { ProviderFactory } from '@/class';
-
-jest.mock('@/class', () => ({
-  ProviderFactory: {
-    create: jest.fn(url => ({
-      url,
-    })),
-  },
-}));
 
 describe('web3 mutations', () => {
   describe('changeNetwork', () => {
@@ -26,13 +17,6 @@ describe('web3 mutations', () => {
 
     it('should change network', () => {
       expect(state.activeNet).toEqual(network);
-    });
-
-    it('should set web3 provider', () => {
-      const provider = ProviderFactory.create(network.url);
-
-      expect(Web3.setProvider).toHaveBeenCalledTimes(2);
-      expect(Web3.setProvider).toHaveBeenCalledWith(provider);
     });
   });
 
