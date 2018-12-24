@@ -2,7 +2,7 @@ import { shallow, createLocalVue } from '@vue/test-utils';
 import VeeValidate from 'vee-validate';
 
 import ImportFromJson from '@/components/importWallet/ImportFromJson';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 
 const localVue = createLocalVue();
 
@@ -18,7 +18,7 @@ describe('ImportFromJson', () => {
 
     wrapper = shallow(ImportFromJson, {
       localVue,
-      stubs: generateStubs(ImportFromJson),
+      stubs: testUtils.generateStubs(ImportFromJson),
       mocks: { $router },
     });
   });

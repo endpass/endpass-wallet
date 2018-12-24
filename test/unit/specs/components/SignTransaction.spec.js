@@ -3,7 +3,7 @@ import { ethplorerTransactions } from 'fixtures/transactions';
 import { mount, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import SignTransaction from '@/components/SignTransaction';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 
 describe('SignTransaction', () => {
   let wrapper;
@@ -33,7 +33,7 @@ describe('SignTransaction', () => {
     wrapper = mount(SignTransaction, {
       store,
       localVue,
-      stubs: generateStubs(SignTransaction),
+      stubs: testUtils.generateStubs(SignTransaction),
     });
   });
 

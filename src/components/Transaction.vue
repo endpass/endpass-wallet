@@ -138,8 +138,8 @@ import ResendModal from '@/components/modal/ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';
-import { fromNow, formateDate } from '@/utils/date';
-import { getShortStringWithEllipsis } from '@/utils/strings';
+import { formateDate, fromNow } from '@endpass/utils/date';
+import { getShortStringWithEllipsis } from '@endpass/utils/strings';
 import web3 from '@/class/singleton/web3';
 
 const { hexToString } = web3.utils;

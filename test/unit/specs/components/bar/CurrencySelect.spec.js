@@ -1,9 +1,8 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 import { CURRENCIES } from '@/constants';
 import CurrencySelect from '@/components/bar/CurrencySelect';
 import Vuex from 'vuex';
-
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
@@ -29,7 +28,7 @@ describe('CurrencySelect', () => {
     wrapper = shallow(CurrencySelect, {
       localVue,
       store,
-      stubs: generateStubs(CurrencySelect),
+      stubs: testUtils.generateStubs(CurrencySelect),
     });
   });
 

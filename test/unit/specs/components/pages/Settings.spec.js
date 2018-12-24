@@ -6,7 +6,7 @@ import VeeValidate from 'vee-validate';
 
 import { IDENTITY_MODE } from '@/constants';
 import SettingsPage from '@/components/pages/Settings.vue';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 
 const localVue = createLocalVue();
 
@@ -61,7 +61,7 @@ describe('SettingsPage', () => {
     options = {
       store,
       localVue,
-      stubs: generateStubs(SettingsPage),
+      stubs: testUtils.generateStubs(SettingsPage),
     };
 
     wrapper = shallow(SettingsPage, options);

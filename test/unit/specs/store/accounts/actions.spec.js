@@ -20,7 +20,7 @@ import {
   CHANGE_INIT_STATUS,
   SET_HARDWARE_XPUB,
 } from '@/store/accounts/mutations-types';
-import keystore from '@/utils/keystore';
+import { keystore } from '@endpass/utils';
 import userService from '@/services/user';
 import hardwareService from '@/services/hardware';
 import localSettingsService from '@/services/localSettings';

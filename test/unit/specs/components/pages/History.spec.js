@@ -1,7 +1,7 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import HistoryPage from '@/components/pages/History.vue';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 
 const localVue = createLocalVue();
 
@@ -78,7 +78,7 @@ describe('HistoryPage', () => {
     wrapper = shallow(HistoryPage, {
       store,
       localVue,
-      stubs: generateStubs(HistoryPage),
+      stubs: testUtils.generateStubs(HistoryPage),
     });
   });
 

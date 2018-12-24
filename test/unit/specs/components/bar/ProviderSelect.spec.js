@@ -2,7 +2,7 @@ import Vuex from 'vuex';
 import { shallow, createLocalVue } from '@vue/test-utils';
 
 import ProviderSelect from '@/components/bar/ProviderSelect';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 
 describe('ProviderSelect', () => {
   const activeNet = {

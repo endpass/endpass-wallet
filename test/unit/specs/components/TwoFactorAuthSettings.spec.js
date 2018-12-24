@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import Notifications from 'vue-notification';
 
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 
 describe('TwoFactorAuthSettings', () => {
   const userActions = {
@@ -46,7 +46,7 @@ describe('TwoFactorAuthSettings', () => {
     wrapper = shallow(TwoFactorAuthSettings, {
       store,
       localVue,
-      stubs: generateStubs(TwoFactorAuthSettings),
+      stubs: testUtils.generateStubs(TwoFactorAuthSettings),
     });
   });
 

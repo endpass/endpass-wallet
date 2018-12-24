@@ -1,6 +1,6 @@
 import { default as VeeValidate, Validator } from 'vee-validate';
 import { mount, createLocalVue } from '@vue/test-utils';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 import TransactionAdvancedOptions from '@/components/pages/Send/TransactionAdvancedOptions.vue';
 import { transaction } from 'fixtures/transactions';
 
@@ -18,7 +18,7 @@ describe('Send – TransactionAdvancedOptions', () => {
     jest.clearAllMocks();
 
     wrapper = mount(TransactionAdvancedOptions, {
-      stubs: generateStubs(TransactionAdvancedOptions),
+      stubs: testUtils.generateStubs(TransactionAdvancedOptions),
       propsData: mountProps,
       provide: () => ({
         $validator: new VeeValidate.Validator(),

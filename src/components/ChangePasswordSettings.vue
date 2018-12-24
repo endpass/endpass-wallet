@@ -39,7 +39,7 @@
 
 <script>
 import { mapActions } from 'vuex';
-import { matchString } from '@/utils/strings';
+import { matchString } from '@endpass/utils/strings';
 import VForm from '@/components/ui/form/VForm';
 import VButton from '@/components/ui/form/VButton';
 import VPassword from '@/components/ui/form/VPassword';

@@ -2,7 +2,7 @@ import Vuex from 'vuex';
 import Web3 from 'web3';
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 import Send from '@/components/pages/Send/index.vue';
 import { TransactionFactory } from '@/class';
 import { checksumAddress, v3password } from 'fixtures/accounts';
@@ -86,7 +86,7 @@ describe('Send', () => {
     wrapper = shallow(Send, {
       store,
       localVue,
-      stubs: generateStubs(Send),
+      stubs: testUtils.generateStubs(Send),
     });
   });
 

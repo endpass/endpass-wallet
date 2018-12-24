@@ -3,7 +3,7 @@ import VeeValidate from 'vee-validate';
 import { shallow, createLocalVue } from '@vue/test-utils';
 
 import CustomProviderModal from '@/components/bar/CustomProviderModal';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 
 describe('CustomProviderModal', () => {
   const web3Actions = {
@@ -46,7 +46,7 @@ describe('CustomProviderModal', () => {
     beforeEach(() => {
       wrapper = shallow(CustomProviderModal, {
         ...componentOptions,
-        stubs: generateStubs(CustomProviderModal),
+        stubs: testUtils.generateStubs(CustomProviderModal),
       });
     });
 

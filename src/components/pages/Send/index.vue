@@ -56,7 +56,7 @@ import AccountChooser from '@/components/AccountChooser';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import privatePage from '@/mixins/privatePage';
-import { getShortStringWithEllipsis } from '@/utils/strings';
+import { getShortStringWithEllipsis } from '@endpass/utils/strings';
 import TransactionForm from './TransactionForm';
 
 const defaultTx = {

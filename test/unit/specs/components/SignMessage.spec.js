@@ -2,7 +2,7 @@ import Vuex from 'vuex';
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import SignMessage from '@/components/SignMessage';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 
 const localVue = createLocalVue();
 
@@ -36,7 +36,7 @@ describe('SignMessage', () => {
     wrapper = shallow(SignMessage, {
       localVue,
       store,
-      stubs: generateStubs(SignMessage),
+      stubs: testUtils.generateStubs(SignMessage),
     });
   });
 

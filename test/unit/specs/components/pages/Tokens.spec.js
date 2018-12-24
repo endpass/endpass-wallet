@@ -5,7 +5,7 @@ import '@/validation';
 import { allTokens, tokens, tokensMappedByAddresses } from 'fixtures/tokens';
 
 import TokensPage from '@/components/pages/Tokens.vue';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 
 const localVue = createLocalVue();
 
@@ -86,7 +86,7 @@ describe('TokensPage', () => {
     beforeEach(() => {
       wrapper = shallow(TokensPage, {
         ...options,
-        stubs: generateStubs(TokensPage),
+        stubs: testUtils.generateStubs(TokensPage),
       });
     });
 

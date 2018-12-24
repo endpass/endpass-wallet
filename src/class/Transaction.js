@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { ERC20Token, Token } from '@/class';
-import { isNumeric } from '@/utils/numbers';
+import { isNumeric } from '@endpass/utils/numbers';
 import web3 from '@/class/singleton/web3';
 import { BigNumber } from 'bignumber.js';
 

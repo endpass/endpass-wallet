@@ -8,7 +8,10 @@ import {
 } from '@/class';
 import ethplorerService from '@/services/ethplorer';
 import web3 from '@/class/singleton/web3';
-import { getShortStringWithEllipsis, matchString } from '@/utils/strings';
+import {
+  getShortStringWithEllipsis,
+  matchString,
+} from '@endpass/utils/strings';
 import {
   ADD_TRANSACTION,
   UPDATE_TRANSACTION,

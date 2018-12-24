@@ -1,6 +1,6 @@
 import VeeValidate from 'vee-validate';
 import { shallow, createLocalVue } from '@vue/test-utils';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 import TransactionPriorityOptions from '@/components/pages/Send/TransactionPriorityOptions.vue';
 import { gasPrice } from 'fixtures/gasPrice';
 
@@ -20,7 +20,7 @@ describe('Send – TransactionPriorityOptions', () => {
       provide: () => ({
         $validator: new VeeValidate.Validator(),
       }),
-      stubs: generateStubs(TransactionPriorityOptions),
+      stubs: testUtils.generateStubs(TransactionPriorityOptions),
       propsData: mountProps,
       localVue,
     });
@@ -36,7 +36,7 @@ describe('Send – TransactionPriorityOptions', () => {
         provide: () => ({
           $validator: new VeeValidate.Validator(),
         }),
-        stubs: generateStubs(TransactionPriorityOptions),
+        stubs: testUtils.generateStubs(TransactionPriorityOptions),
         propsData: {
           prices: null,
           value: '0',

@@ -1,12 +1,10 @@
 import Vuex from 'vuex';
 import { shallow, createLocalVue } from '@vue/test-utils';
-import { generateStubs } from '@/utils/testUtils';
+import { testUtils } from '@endpass/utils';
 import AccountWalletCard from '@/components/AccountWalletCard';
 import { address } from 'fixtures/accounts';
 import { tokensMappedByAddresses } from 'fixtures/tokens';
-
 const localVue = createLocalVue();
-
 localVue.use(Vuex);
 
 describe('AccountWalletCard', () => {
@@ -48,7 +46,7 @@ describe('AccountWalletCard', () => {
     beforeEach(() => {
       wrapper = shallow(AccountWalletCard, {
         ...options,
-        stubs: generateStubs(AccountWalletCard),
+        stubs: testUtils.generateStubs(AccountWalletCard),
       });
     });
 

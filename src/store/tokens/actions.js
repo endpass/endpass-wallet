@@ -15,8 +15,8 @@ import {
   cryptoDataService,
   userService,
 } from '@/services';
-import { merge } from '@/utils/objects';
-import { mapArrayByProp } from '@/utils/arrays';
+import { merge } from '@endpass/utils/objects';
+import { mapArrayByProp } from '@endpass/utils/arrays';
 import { MAIN_NET_ID } from '@/constants';
 
 const init = async ({ dispatch }) => {

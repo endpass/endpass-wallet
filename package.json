@@ -30,6 +30,7 @@
     ]
   },
   "dependencies": {
+    "@endpass/utils": "^1.0.9",
     "@ledgerhq/hw-app-eth": "^4.24.0",
     "@ledgerhq/hw-transport-u2f": "^4.24.0",
     "ajv": "^6.5.5",
