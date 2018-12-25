@@ -14,7 +14,7 @@ import mutations from './mutations';
  */
 const state = {
   isInited: false,
-  hardwareXpub: {},
+  hdCacheByType: {},
   wallets: {},
   hdKey: null,
   address: null,

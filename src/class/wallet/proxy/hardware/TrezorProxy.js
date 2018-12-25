@@ -4,21 +4,17 @@ import HDKey from 'ethereumjs-wallet/hdkey';
 import { NotificationError } from '@/class';
 import { HARDWARE_DERIVIATION_PATH } from '@/constants';
 import web3 from '@/class/singleton/web3';
+import getChildrenAddress from '../utils/getChildrenAddress';
 
 const { sha3, toHex, toDecimal } = web3.utils;
 
-export default class TrezorWallet {
+export default class TrezorProxy {
   static async getNextWallets({ offset = 0, limit = 10, xpub: savedXpub }) {
     try {
-      const xpub = savedXpub || (await TrezorWallet.getPublicExtendedKey());
+      const xpub = savedXpub || (await TrezorProxy.getPublicExtendedKey());
       const hdWallet = HDKey.fromExtendedKey(xpub);
 
-      const addresses = [...Array(limit)].map((_, i) =>
-        hdWallet
-          .deriveChild(offset + i)
-          .getWallet()
-          .getChecksumAddressString(),
-      );
+      const addresses = getChildrenAddress(hdWallet, offset, limit);
 
       return { addresses, xpub };
     } catch (error) {

@@ -1,5 +1,6 @@
 import {
   checksumAddress,
+  addressHdChild,
   v3password,
   privateKey,
   mnemonic,
@@ -50,10 +51,23 @@ describe('Import Wallet Page', () => {
     cy.get('[data-test=input-seed-phrase]').type(mnemonic);
     cy.get('[data-test=submit-import]').click();
     cy.inputPassword();
+
+    cy.wait(2000);
+
+    cy.get('[data-test=account-address]', {
+      timeout: 15000,
+    })
+      .contains(addressHdChild.substr(-5))
+      .click();
+
+    cy.get('[data-test=import-wallet-button]').click();
+    cy.inputPassword();
+
+    // check import correct in home screen
     cy.get('[data-test=address-card]', {
       timeout: 15000,
     })
-      .contains(checksumAddress)
+      .contains(addressHdChild)
       .should('exist');
     cy.get('[data-test=nav-sidebar-menu]')
       .contains('Send')

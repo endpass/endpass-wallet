@@ -42,7 +42,7 @@ import Balance from '@/components/Balance';
 import VSpinner from '@/components/ui/VSpinner';
 
 export default {
-  name: 'HardwareAccount',
+  name: 'WalletItem',
   props: {
     address: {
       type: String,

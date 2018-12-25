@@ -3,7 +3,7 @@ export const SET_ADDRESS = 'SET_ADDRESS';
 export const ADD_WALLET = 'ADD_WALLET';
 export const SET_HD_KEY = 'SET_HD_KEY';
 export const SET_BALANCE = 'SET_BALANCE';
-export const SET_HARDWARE_XPUB = 'SET_HARDWARE_XPUB';
+export const SET_HD_CACHE_BY_TYPE = 'SET_HD_CACHE_BY_TYPE';
 
 export default {
   CHANGE_INIT_STATUS,
@@ -11,5 +11,5 @@ export default {
   ADD_WALLET,
   SET_HD_KEY,
   SET_BALANCE,
-  SET_HARDWARE_XPUB,
+  SET_HD_CACHE_BY_TYPE,
 };

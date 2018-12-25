@@ -13,7 +13,6 @@ import 'mocks/services/ethplorer';
 import 'mocks/services/cryptoData';
 import 'mocks/services/tokeninfo';
 import 'mocks/services/localSettings';
-import 'mocks/services/hardware';
 
 /**
  * Classes mocks
@@ -23,6 +22,9 @@ import 'mocks/class/ens';
 import 'mocks/class/storage/LocalStorage';
 import 'mocks/class/provider/InpageProvider';
 import 'mocks/class/singleton/dappBridge';
+import 'mocks/class/wallet/proxy/HDProxy';
+import 'mocks/class/wallet/proxy/hardware/LedgerProxy';
+import 'mocks/class/wallet/proxy/hardware/TrezorProxy';
 
 /**
  * Schemas mocks

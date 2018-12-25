@@ -4,7 +4,7 @@ exports[`ImportFromSeed render should render initial state of the component 1`] 
 <div>
   <v-form
     data-test="import-seed-form"
-    isformvalid="true"
+    is-form-valid="true"
     v-on:submit="bound togglePasswordModal"
   >
     <v-input

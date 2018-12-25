@@ -2,14 +2,14 @@ import Tx from 'ethereumjs-tx';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import web3 from '@/class/singleton/web3';
 import { keystore } from '@endpass/utils';
-import { TrezorWallet, LedgerWallet } from '@/class/hardwareWallet';
 import { WALLET_TYPE, HARDWARE_WALLET_TYPE } from '@/constants';
+import { TrezorProxy, LedgerProxy } from './proxy';
 
 const { isAddress, bytesToHex, toChecksumAddress } = web3.utils;
 
 const strategies = {
-  [WALLET_TYPE.TREZOR]: TrezorWallet,
-  [WALLET_TYPE.LEDGER]: LedgerWallet,
+  [WALLET_TYPE.TREZOR]: TrezorProxy,
+  [WALLET_TYPE.LEDGER]: LedgerProxy,
 };
 
 /**

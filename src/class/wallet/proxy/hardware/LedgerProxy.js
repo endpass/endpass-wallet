@@ -1,25 +1,21 @@
+import Tx from 'ethereumjs-tx';
+import HDKey from 'ethereumjs-wallet/hdkey';
 import LedgerTransport from '@ledgerhq/hw-transport-u2f'; // for browser
 import Eth from '@ledgerhq/hw-app-eth';
-import Tx from 'ethereumjs-tx';
 import { NotificationError } from '@/class';
 import { HARDWARE_DERIVIATION_PATH } from '@/constants';
 import web3 from '@/class/singleton/web3';
-import HDKey from 'ethereumjs-wallet/hdkey';
+import getChildrenAddress from '../utils/getChildrenAddress';
 
 const { sha3, toHex } = web3.utils;
 
-export default class LedgerWallet {
+export default class LedgerProxy {
   static async getNextWallets({ offset = 0, limit = 10, xpub: savedXpub }) {
     try {
-      const xpub = savedXpub || (await LedgerWallet.getPublicExtendedKey());
+      const xpub = savedXpub || (await LedgerProxy.getPublicExtendedKey());
       const hdWallet = HDKey.fromExtendedKey(xpub);
 
-      const addresses = [...Array(limit)].map((_, i) =>
-        hdWallet
-          .deriveChild(offset + i)
-          .getWallet()
-          .getChecksumAddressString(),
-      );
+      const addresses = getChildrenAddress(hdWallet, offset, limit);
 
       return { addresses, xpub };
     } catch (error) {
