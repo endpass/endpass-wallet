@@ -10,5 +10,6 @@ export { default as Wallet } from './wallet';
 export { default as ENSResolver } from './ens';
 export { default as Token } from './Token';
 export { default as ERC20Token } from './erc20';
-export { TrezorWallet } from './hardwareWallet';
-export { LedgerWallet } from './hardwareWallet';
+export { TrezorProxy } from './wallet/proxy';
+export { LedgerProxy } from './wallet/proxy';
+export { HDProxy } from './wallet/proxy';

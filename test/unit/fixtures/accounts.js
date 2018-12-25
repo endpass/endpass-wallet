@@ -1,5 +1,6 @@
 // Account address
 export const address = '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c';
+export const addressHdChild = '0xC2013cAf34b224572B66F4d44313E73D437EB6E3';
 export const checksumAddress = '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c';
 
 // List of account addresses

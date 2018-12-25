@@ -1,10 +1,16 @@
 import { get, mapKeys, isEmpty } from 'lodash';
-import { userService, localSettingsService, hardwareService } from '@/services';
+import { userService, localSettingsService } from '@/services';
 import web3 from '@/class/singleton/web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';
-import { Wallet, NotificationError } from '@/class';
+import {
+  Wallet,
+  NotificationError,
+  TrezorProxy,
+  LedgerProxy,
+  HDProxy,
+} from '@/class';
 import { keystore } from '@endpass/utils';
 import { WALLET_TYPE } from '@/constants';
 import {
@@ -13,7 +19,7 @@ import {
   ADD_WALLET,
   SET_HD_KEY,
   SET_BALANCE,
-  SET_HARDWARE_XPUB,
+  SET_HD_CACHE_BY_TYPE,
 } from './mutations-types';
 
 const { toChecksumAddress, fromWei } = web3.utils;
@@ -58,9 +64,7 @@ const addPublicWallet = async (
       address,
     };
 
-    await dispatch('addWallet', { info, address });
-
-    return dispatch('selectWallet', address);
+    await dispatch('addWalletAndSelect', { info, address });
   } catch (e) {
     return dispatch('errors/emitError', e, { root: true });
   }
@@ -117,8 +121,8 @@ const addWalletWithPublicKey = async ({ dispatch }, publicKeyOrAddress) => {
   // TODO convert public key to address, accept xPub key
   try {
     const address = toChecksumAddress(publicKeyOrAddress);
-
-    await dispatch('addPublicWallet', { address });
+    const info = { type: WALLET_TYPE.PUBLIC };
+    await dispatch('addWallet', { address, info });
 
     return dispatch('selectWallet', address);
   } catch (e) {
@@ -173,51 +177,59 @@ const addHdWallet = async ({ dispatch }, { key, password }) => {
   }
 };
 
-const addChildWallets = async ({ dispatch }, { hdWallet, password }) => {
-  /* eslint-disable no-await-in-loop */
-  /* eslint-disable-next-line */
-  for (let index = 0; index < 5; index++) {
+const addHdChildWallets = async (
+  { dispatch, getters },
+  { type, password, address, index },
+) => {
+  try {
+    const v3KeyStore = getters.cachedHdV3KeyStoreByType(type);
+
+    const hdWallet = keystore.decryptHDWallet(password, v3KeyStore);
     const wallet = hdWallet.deriveChild(index).getWallet();
-    const v3KeyStore = wallet.toV3(Buffer.from(password), ENV.kdfParams);
-    const { address } = v3KeyStore;
 
-    if (index === 0) {
-      dispatch('addWalletAndSelect', v3KeyStore);
-    } else {
-      dispatch('addWallet', v3KeyStore);
+    if (address !== wallet.getChecksumAddressString()) {
+      throw new NotificationError({
+        title: 'Add wallet',
+        text:
+          'Something goes wrong with during new wallet adding. Please try again.',
+        type: 'is-danger',
+      });
     }
 
-    try {
-      const balance = await web3.eth.getBalance(address);
-
-      if (balance === '0') {
-        break;
-      }
-    } catch (e) {
-      break;
-    }
+    const v3KeyStoreChild = wallet.toV3(Buffer.from(password), ENV.kdfParams);
+    dispatch('addWalletAndSelect', v3KeyStoreChild);
+  } catch (e) {
+    return dispatch('errors/emitError', e, { root: true });
   }
-  /* eslint-enable no-await-in-loop */
 };
 
-const addMultiHdWallet = async ({ dispatch }, { key, password }) => {
-  const seed = Bip39.mnemonicToSeed(key);
-  const hdKey = HDKey.fromMasterSeed(seed);
-  const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
+const addHdPublicWallet = async ({ commit, dispatch }, { key, password }) => {
+  try {
+    const seed = Bip39.mnemonicToSeed(key);
+    const hdKey = HDKey.fromMasterSeed(seed);
+    const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
 
-  const v3KeyStore = keystore.encryptHDWallet(password, hdWallet);
+    const v3KeyStore = keystore.encryptHDWallet(password, hdWallet);
 
-  const info = {
-    address: v3KeyStore.address,
-    type: WALLET_TYPE.HD_PUBLIC,
-    hidden: false,
-  };
-  await userService.setAccount(v3KeyStore.address, {
-    info,
-    ...v3KeyStore,
-  });
+    const info = {
+      address: v3KeyStore.address,
+      type: WALLET_TYPE.HD_PUBLIC,
+      hidden: false,
+    };
 
-  await dispatch('addChildWallets', { hdWallet, password });
+    await userService.setAccount(v3KeyStore.address, {
+      info,
+      ...v3KeyStore,
+    });
+
+    commit(SET_HD_CACHE_BY_TYPE, {
+      xpub: v3KeyStore.address,
+      v3KeyStore,
+      walletType: WALLET_TYPE.HD_PUBLIC,
+    });
+  } catch (e) {
+    return dispatch('errors/emitError', e, { root: true });
+  }
 };
 
 const updateWallets = async ({ dispatch }, { wallets }) => {
@@ -304,18 +316,39 @@ const setUserWallets = async ({ commit, dispatch, rootState }) => {
 };
 
 const getNextWalletsFromHd = async (
-  { state, dispatch },
+  { dispatch, getters },
   { walletType, ...selectParams },
 ) => {
-  const savedXpub = state.hardwareXpub[walletType];
-  const { xpub, addresses } = await hardwareService.getNextWallets({
+  const savedXpub = getters.cachedXpubByType(walletType);
+
+  const params = {
     walletType,
     ...selectParams,
     xpub: savedXpub,
-  });
+  };
+
+  let result = {};
+  switch (walletType) {
+    case WALLET_TYPE.TREZOR:
+      result = await TrezorProxy.getNextWallets(params);
+      break;
+    case WALLET_TYPE.LEDGER:
+      result = await LedgerProxy.getNextWallets(params);
+      break;
+    case WALLET_TYPE.HD_PUBLIC:
+      result = await HDProxy.getNextWallets(params);
+      break;
+    default:
+      throw new NotificationError({
+        title: 'Access error',
+        text: `An error occurred while getting access to hardware device. Please, try again.`,
+        type: 'is-danger',
+      });
+  }
+  const { xpub, addresses } = result;
 
   if (savedXpub !== xpub) {
-    await dispatch('saveHardwareXpub', { xpub, walletType });
+    await dispatch('saveToCache', { xpub, walletType });
   }
 
   return addresses;
@@ -390,10 +423,10 @@ const updateWalletsWithNewPassword = async (
   return res;
 };
 
-const saveHardwareXpub = async ({ commit }, { xpub, walletType }) => {
+const saveToCache = async ({ commit }, { xpub, walletType }) => {
   const info = { type: walletType };
 
-  commit(SET_HARDWARE_XPUB, { xpub, walletType });
+  commit(SET_HD_CACHE_BY_TYPE, { xpub, walletType });
 
   await userService.setAccount(xpub, { info });
 };
@@ -441,7 +474,6 @@ export default {
   addWalletWithV3,
   addWalletWithPrivateKey,
   addWalletWithPublicKey,
-  addChildWallets,
   addPublicWallet,
   commitWallet,
   saveWallet,
@@ -449,13 +481,14 @@ export default {
   setUserHdKey,
   setUserWallets,
   addHdWallet,
-  addMultiHdWallet,
+  addHdPublicWallet,
+  addHdChildWallets,
   updateWallets,
   updateBalance,
   getBalanceByAddress,
   validatePassword,
   getNextWalletsFromHd,
-  saveHardwareXpub,
+  saveToCache,
   decryptAccountHdWallet,
   decryptAccountWallets,
   encryptHdWallet,

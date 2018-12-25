@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletItem render should render initial state of the component 1`] = `
+<div
+  class="menu"
+>
+  <ul
+    class="menu-list"
+  >
+    <li>
+      <a
+        class=""
+      >
+        <account
+          address="addr"
+          size="10"
+        >
+          <template
+            slot="balance"
+          >
+            <balance
+              currency="usd"
+              v-on:update="bound getBalance"
+            />
+          </template>
+        </account>
+      </a>
+    </li>
+  </ul>
+</div>
+`;

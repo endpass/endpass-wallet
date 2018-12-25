@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletsList render should render initial state of the component 1`] = `
+<div
+  class="column"
+>
+  <div
+    class="buttons"
+  >
+    <v-button
+      class-name="is-primary is-medium"
+      v-on:click="bound getNextAddressess"
+    >
+      
+      Load wallets
+    
+    </v-button>
+  </div>
+   
+  <!---->
+   
+  <div
+    style="display: none;"
+  >
+     
+    <v-pagination
+      v-on:input="bound changePage"
+    />
+     
+    <div
+      class="buttons"
+    >
+      <v-button
+        class-name="is-primary is-medium"
+        data-test="import-wallet-button"
+        disabled="true"
+        v-on:click="bound handleImport"
+      >
+        
+        Import
+      
+      </v-button>
+    </div>
+  </div>
+   
+  <!---->
+</div>
+`;

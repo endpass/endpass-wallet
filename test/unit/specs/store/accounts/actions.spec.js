@@ -1,6 +1,7 @@
 import web3 from '@/class/singleton/web3';
 import {
   address,
+  addressHdChild,
   addresses,
   email,
   v3password,
@@ -10,7 +11,7 @@ import {
   privateKeyString,
   checksumAddress,
 } from 'fixtures/accounts';
-import { Wallet, NotificationError } from '@/class';
+import { Wallet, NotificationError, HDProxy } from '@/class';
 import actions from '@/store/accounts/actions';
 import {
   SET_ADDRESS,
@@ -18,11 +19,10 @@ import {
   SET_HD_KEY,
   SET_BALANCE,
   CHANGE_INIT_STATUS,
-  SET_HARDWARE_XPUB,
+  SET_HD_CACHE_BY_TYPE,
 } from '@/store/accounts/mutations-types';
 import { keystore } from '@endpass/utils';
 import userService from '@/services/user';
-import hardwareService from '@/services/hardware';
 import localSettingsService from '@/services/localSettings';
 import { WALLET_TYPE } from '@/constants';
 
@@ -129,23 +129,18 @@ describe('Accounts actions', () => {
     };
 
     it('should save public key and select added wallet', async () => {
-      expect.assertions(3);
+      expect.assertions(2);
 
       await actions.addPublicWallet(
         { commit, dispatch },
         { address: checksumAddress },
       );
 
-      expect(dispatch).toBeCalledTimes(2);
-      expect(dispatch).toHaveBeenNthCalledWith(1, 'addWallet', {
+      expect(dispatch).toBeCalledTimes(1);
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'addWalletAndSelect', {
         info,
         address: checksumAddress,
       });
-      expect(dispatch).toHaveBeenNthCalledWith(
-        2,
-        'selectWallet',
-        checksumAddress,
-      );
     });
 
     it('should handle errors', async () => {
@@ -330,8 +325,9 @@ describe('Accounts actions', () => {
       );
 
       expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenNthCalledWith(1, 'addPublicWallet', {
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'addWallet', {
         address: checksumAddress,
+        info: { type: WALLET_TYPE.PUBLIC },
       });
     });
 
@@ -556,62 +552,84 @@ describe('Accounts actions', () => {
     });
   });
 
-  describe('addChildWallets', () => {
-    const { address } = hdv3;
-
-    beforeEach(() => {
-      web3.eth.getBalance = jest.fn().mockResolvedValueOnce('5');
-      web3.eth.getBalance.mockResolvedValueOnce('0');
-
-      keystore.encryptHDWallet = jest.fn().mockReturnValueOnce({
-        address,
-      });
-    });
+  describe('addHdChildWallets', () => {
+    const getters = {
+      cachedHdV3KeyStoreByType: () => hdv3,
+    };
 
     it('should add wallets with balance and one more', async () => {
-      expect.assertions(3);
+      expect.assertions(2);
 
-      const hdWallet = keystore.decryptHDWallet(v3password, hdv3);
-      await actions.addChildWallets(
-        { dispatch },
-        { password: v3password, hdWallet },
+      await actions.addHdChildWallets(
+        { dispatch, getters },
+        {
+          password: v3password,
+          address: addressHdChild,
+          index: 1,
+          type: WALLET_TYPE.HD_PUBLIC,
+        },
       );
 
-      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenNthCalledWith(
         1,
         'addWalletAndSelect',
         expect.any(Object),
       );
-      expect(dispatch).toHaveBeenNthCalledWith(
-        2,
-        'addWallet',
-        expect.any(Object),
+    });
+
+    it('should handle errors when wrong child address', async () => {
+      expect.assertions(2);
+
+      const error = new NotificationError({
+        title: 'Add wallet',
+        text:
+          'Something goes wrong with during new wallet adding. Please try again.',
+      });
+
+      await actions.addHdChildWallets(
+        { dispatch, getters },
+        {
+          password: v3password,
+          address: 'wrongAddr',
+          index: 0,
+          type: WALLET_TYPE.HD_PUBLIC,
+        },
       );
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+        root: true,
+      });
     });
 
     it('should handle errors', async () => {
       expect.assertions(2);
 
-      const error = new Error('error');
-      web3.eth.getBalance = jest.fn().mockRejectedValueOnce(error);
-      const hdWallet = keystore.decryptHDWallet(v3password, hdv3);
+      const wrongGetters = {
+        cachedHdV3KeyStoreByType: () => null,
+      };
 
-      await actions.addChildWallets(
-        { dispatch },
-        { password: v3password, hdWallet },
+      const error = new Error('Wallet is not in keystore V3 format!');
+
+      await actions.addHdChildWallets(
+        { dispatch, getters: wrongGetters },
+        {
+          password: v3password,
+          address: addressHdChild,
+          index: 0,
+          type: WALLET_TYPE.HD_PUBLIC,
+        },
       );
 
       expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toHaveBeenNthCalledWith(
-        1,
-        'addWalletAndSelect',
-        expect.any(Object),
-      );
+      expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+        root: true,
+      });
     });
   });
 
-  describe('addMultiHdWallet', () => {
+  describe('addHdPublicWallet', () => {
     const { address } = hdv3;
 
     beforeEach(() => {
@@ -624,19 +642,14 @@ describe('Accounts actions', () => {
     });
 
     it('should add wallets with balance and one more', async () => {
-      expect.assertions(2);
+      expect.assertions(1);
 
-      await actions.addMultiHdWallet(
+      await actions.addHdPublicWallet(
         { dispatch },
         { password: v3password, key: mnemonic },
       );
 
-      const hdWallet = keystore.decryptHDWallet(v3password, hdv3);
       expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toHaveBeenCalledWith('addChildWallets', {
-        password: v3password,
-        hdWallet,
-      });
     });
   });
 
@@ -922,31 +935,38 @@ describe('Accounts actions', () => {
   });
 
   describe('getNextWalletsFromHd', () => {
-    it('should save xpub if saved xpub is not eqials to received with given params', async () => {
-      expect.assertions(3);
+    const payload = {
+      walletType: WALLET_TYPE.HD_PUBLIC,
+    };
 
-      const state = {
-        hardwareXpub: {
-          foo: 'bar',
+    const getters = {
+      cachedXpubByType: () => hdv3.address,
+    };
+
+    const state = {
+      hdCacheByType: {
+        [WALLET_TYPE.HD_PUBLIC]: {
+          xpub: hdv3.address,
         },
-      };
-      const payload = {
-        walletType: 'foo',
-        bar: 'baz',
-      };
+      },
+    };
+
+    it('should save xpub if saved xpub is not eqials to received with given params', async () => {
+      expect.assertions(2);
+
+      HDProxy.getNextWallets.mockImplementation(() => ({
+        xpub: 'other',
+        addresses,
+      }));
 
       const res = await actions.getNextWalletsFromHd(
-        { state, dispatch },
+        { state, dispatch, getters },
         payload,
       );
 
-      expect(hardwareService.getNextWallets).toBeCalledWith({
-        ...payload,
-        xpub: 'bar',
-      });
-      expect(dispatch).toBeCalledWith('saveHardwareXpub', {
-        xpub: addresses[0],
-        walletType: 'foo',
+      expect(dispatch).toBeCalledWith('saveToCache', {
+        xpub: 'other',
+        walletType: WALLET_TYPE.HD_PUBLIC,
       });
       expect(res).toBe(addresses);
     });
@@ -954,28 +974,38 @@ describe('Accounts actions', () => {
     it('should not save xpub if current xpub is equals to received xpub from service', async () => {
       expect.assertions(1);
 
-      const state = {
-        hardwareXpub: {
-          foo: 'bar',
-        },
-      };
-      const payload = {
-        walletType: 'foo',
-        bar: 'baz',
-      };
-
-      hardwareService.getNextWallets.mockResolvedValueOnce({
-        xpub: 'bar',
+      HDProxy.getNextWallets.mockImplementation(() => ({
+        xpub: hdv3.address,
         addresses,
+      }));
+      await actions.getNextWalletsFromHd({ state, dispatch, getters }, payload);
+
+      expect(dispatch).not.toBeCalled();
+    });
+
+    it('should handle error for wrong wallet type', async () => {
+      expect.assertions(2);
+
+      const error = new NotificationError({
+        title: 'Access error',
+        text: `An error occurred while getting access to hardware device. Please, try again.`,
+        type: 'is-danger',
       });
 
-      await actions.getNextWalletsFromHd({ state, dispatch }, payload);
+      try {
+        await actions.getNextWalletsFromHd(
+          { state, dispatch, getters },
+          { walletType: 'wrongType' },
+        );
+      } catch (e) {
+        expect(e).toEqual(error);
+      }
 
       expect(dispatch).not.toBeCalled();
     });
   });
 
-  describe('saveHardwareXpub', () => {
+  describe('saveToCache', () => {
     it('should set hardware xpub and set account with user service', async () => {
       expect.assertions(2);
 
@@ -984,9 +1014,9 @@ describe('Accounts actions', () => {
         xpub: 'baz',
       };
 
-      await actions.saveHardwareXpub({ commit }, payload);
+      await actions.saveToCache({ commit }, payload);
 
-      expect(commit).toBeCalledWith(SET_HARDWARE_XPUB, payload);
+      expect(commit).toBeCalledWith(SET_HD_CACHE_BY_TYPE, payload);
       expect(userService.setAccount).toBeCalledWith('baz', {
         info: {
           type: 'foo',

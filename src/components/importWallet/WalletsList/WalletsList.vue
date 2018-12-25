@@ -19,7 +19,7 @@
       is-label-under-spinner
     />
     <div v-show="!isLoading && addresses.length">
-      <hardware-account
+      <wallet-item
         v-for="address in addresses"
         :key="address"
         :address="address"
@@ -32,41 +32,62 @@
           :disabled="!activeAddress"
           :loading="isImporting"
           class-name="is-primary is-medium"
+          data-test="import-wallet-button"
           @click="handleImport"
         >
           Import
         </v-button>
       </div>
     </div>
+    <password-modal
+      v-if="isPasswordModal"
+      @close="togglePasswordModal"
+      @confirm="handleImportByPassword"
+    />
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import VList from '@/components/ui/VList';
 import VButton from '@/components/ui/form/VButton';
 import VSpinner from '@/components/ui/VSpinner';
 import VPagination from '@/components/ui/VPagination';
-import HardwareAccount from './HardwareAccount';
+import modalMixin from '@/mixins/modal';
+import PasswordModal from '@/components/modal/PasswordModal';
+import WalletItem from './WalletItem';
 
 export default {
-  name: 'HardwareList',
+  name: 'WalletsList',
   props: {
-    walletType: {
+    type: {
       type: String,
       required: true,
+    },
+    autoLoad: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
     activeAddress: null,
     isLoading: false,
     isImporting: false,
+    isPasswordModal: false,
     addresses: [],
     offset: 0,
     limit: 10,
   }),
+  computed: {
+    ...mapGetters('accounts', ['isHDv3WalletByType']),
+  },
   methods: {
-    ...mapActions('accounts', ['addPublicWallet', 'getNextWalletsFromHd']),
+    ...mapActions('accounts', [
+      'addPublicWallet',
+      'getNextWalletsFromHd',
+      'addHdChildWallets',
+    ]),
+
     async getNextAddressess({ offset = this.offset, limit = this.limit } = {}) {
       this.isLoading = true;
 
@@ -74,28 +95,43 @@ export default {
         this.addresses = await this.getNextWalletsFromHd({
           offset,
           limit,
-          walletType: this.walletType,
+          walletType: this.type,
         });
       } catch (error) {
-        console.log('err', error);
         this.$notify(error);
       } finally {
         this.isLoading = false;
       }
     },
-    changePage(page) {
+    async changePage(page) {
       this.offset = this.limit * (page - 1);
-      this.getNextAddressess();
+      await this.getNextAddressess();
+    },
+    async handleImportByPassword(password) {
+      await this.addWallet(password);
     },
     async handleImport() {
+      if (this.isHDv3WalletByType(this.type)) {
+        this.isPasswordModal = true;
+      } else {
+        await this.addWallet();
+      }
+    },
+    async addWallet(password) {
       this.isImporting = true;
-
       try {
-        const { activeAddress: address, walletType: type } = this;
+        const { activeAddress: address, type } = this;
         const index = this.addresses.indexOf(address);
-        const info = { type, index };
+        if (index === -1) {
+          throw new Error('Address not selected');
+        }
 
-        await this.addPublicWallet({ address, info });
+        if (this.isHDv3WalletByType(type)) {
+          await this.addHdChildWallets({ address, index, password, type });
+        } else {
+          const info = { type, index };
+          await this.addPublicWallet({ address, info });
+        }
         this.$router.push('/');
       } catch (e) {
         this.$notify({
@@ -103,16 +139,24 @@ export default {
           text: 'An error occurred while importing wallet. Please try again.',
           type: 'is-danger',
         });
+      } finally {
         this.isImporting = false;
       }
     },
   },
+  mounted() {
+    if (this.autoLoad) {
+      this.getNextAddressess();
+    }
+  },
+  mixins: [modalMixin],
   components: {
     VButton,
     VList,
     VPagination,
     VSpinner,
-    HardwareAccount,
+    WalletItem,
+    PasswordModal,
   },
 };
 </script>

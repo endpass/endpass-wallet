@@ -44,7 +44,6 @@ describe('ResendModal', () => {
           new Transaction({
             data: '0x0',
             from: '0x0',
-            from: '0x0',
           }),
         );
       });
