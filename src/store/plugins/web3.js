@@ -32,18 +32,19 @@ const getProvider = (store, url) => {
     newProvider.setErrorHandler(errorHandler);
   }
 
-  if (newProvider.startPollingNewBlockHeaders) {
-    newProvider.startPollingNewBlockHeaders(
-      web3.eth.getBlockNumber,
-      web3.eth.getBlock,
-    );
-  }
-
   return newProvider;
 };
 
 const setProvider = ({ dispatch }, provider) => {
   web3.setProvider(provider);
+
+  if (provider.startPollingNewBlockHeaders) {
+    provider.startPollingNewBlockHeaders(
+      web3.eth.getBlockNumber,
+      web3.eth.getBlock,
+    );
+  }
+
   dispatch('web3/subscribeOnBlockUpdates');
 };
 
