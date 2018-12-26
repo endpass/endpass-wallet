@@ -13,6 +13,7 @@ exports[`SettingsPage render should not render email and otp settings when not d
   <v-form
     class="save-settings"
     id="save-settings"
+    is-form-valid="true"
     v-on:submit="bound updateSettings"
   >
     <!---->
@@ -46,6 +47,7 @@ exports[`SettingsPage render should render the initial state of the component 1`
   <v-form
     class="save-settings"
     id="save-settings"
+    is-form-valid="true"
     v-on:submit="bound updateSettings"
   >
     <v-input
