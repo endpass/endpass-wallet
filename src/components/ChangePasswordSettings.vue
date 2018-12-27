@@ -1,6 +1,6 @@
 <template>
   <v-form
-    is-form-valid="isFormValid"
+    :is-form-valid="isFormValid"
     @submit="handleFormSubmit"
   >
     <label class="label">Change Password</label>

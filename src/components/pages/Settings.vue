@@ -6,6 +6,7 @@
       id="save-settings"
       class="save-settings"
       @submit="updateSettings"
+      :is-form-valid="isFormValid"
     >
       <v-input
         v-if="isDefaultIdentity"
@@ -38,6 +39,7 @@
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex';
 import error from '@/mixins/error';
+import form from '@/mixins/form';
 import BasePage from '@/components/pages/Base';
 import VForm from '@/components/ui/form/VForm.vue';
 import VSelect from '@/components/ui/form/VSelect.vue';
@@ -83,7 +85,7 @@ export default {
       });
     },
   },
-  mixins: [error],
+  mixins: [error, form],
   components: {
     BasePage,
     VForm,
