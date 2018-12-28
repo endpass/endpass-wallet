@@ -1,7 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 
-import { NotificationError } from '@/class';
-import { httpIdentity } from '@/class/singleton';
+import { NotificationError, httpIdentity } from '@/class';
 
 const authService = require.requireActual('@/services/auth').default;
 

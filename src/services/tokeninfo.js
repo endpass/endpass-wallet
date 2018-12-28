@@ -1,5 +1,4 @@
-import web3 from '@/class/singleton/web3';
-import { http } from '@/class/singleton';
+import { http, web3 } from '@/class';
 
 const { isAddress } = web3.utils;
 

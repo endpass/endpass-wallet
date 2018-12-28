@@ -1,8 +1,5 @@
 import Web3Dapp from 'web3-dapp';
-import web3 from '@/class/singleton/web3';
-import { NotificationError } from '@/class';
-import { dappBridge } from '@/class/singleton';
-import InpageProvider from '@/class/provider/InpageProvider';
+import { NotificationError, InpageProvider, web3, dappBridge } from '@/class';
 import { DAPP_WHITELISTED_METHODS } from '@/constants';
 import {
   ADD_REQUEST,

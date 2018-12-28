@@ -1,4 +1,4 @@
-import { httpIdentity } from '@/class/singleton';
+import { httpIdentity } from '@/class';
 import store from '@/store';
 import { REQUEST_TIMEOUT_MSEC } from '@/constants';
 

@@ -1,7 +1,6 @@
 import throttledQueue from 'throttled-queue';
 
-import { http } from '@/class/singleton';
-import { NotificationError } from '@/class';
+import { NotificationError, http } from '@/class';
 import { cryptoDataValidator } from '@/schema';
 
 const throttle = throttledQueue(3, ENV.serviceThrottleTimeout);

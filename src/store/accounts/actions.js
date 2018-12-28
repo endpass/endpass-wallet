@@ -1,6 +1,5 @@
 import { get, mapKeys, isEmpty } from 'lodash';
 import { userService, localSettingsService } from '@/services';
-import web3 from '@/class/singleton/web3';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';
@@ -10,6 +9,7 @@ import {
   TrezorProxy,
   LedgerProxy,
   HDProxy,
+  web3,
 } from '@/class';
 import { keystore } from '@endpass/utils';
 import { WALLET_TYPE } from '@/constants';

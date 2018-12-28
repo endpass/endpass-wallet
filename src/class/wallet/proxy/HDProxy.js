@@ -1,5 +1,5 @@
 import HDKey from 'ethereumjs-wallet/hdkey';
-import { NotificationError } from '@/class';
+import { NotificationError } from '@/class/internal';
 import getChildrenAddress from './utils/getChildrenAddress';
 
 export default class HDProxy {
