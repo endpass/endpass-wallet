@@ -1,5 +1,4 @@
-import { NotificationError } from '@/class';
-import { httpIdentity } from '@/class/singleton';
+import { NotificationError, httpIdentity } from '@/class';
 
 export default {
   async login({ email, redirectUri = '/' }) {

@@ -1,5 +1,5 @@
 import { Decorator, ProviderUrlDecorator } from './decorator';
-import { NotificationError } from '@/class';
+import { NotificationError } from '@/class/internal';
 import { IDENTITY_MODE } from '@/constants';
 import { createProvider } from './provider';
 

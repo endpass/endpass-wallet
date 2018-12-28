@@ -1,5 +1,5 @@
 import { upperFirst } from 'lodash';
-import { ajv } from '@/class/singleton';
+import { ajv } from '@/class';
 import * as cryptoDataSchemas from './cryptoData';
 import * as v3KeystoreSchemas from './v3Keystore';
 import * as identitySchemas from './identity';

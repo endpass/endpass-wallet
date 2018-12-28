@@ -100,7 +100,7 @@
 <script>
 import { get } from 'lodash';
 import { BigNumber } from 'bignumber.js';
-import web3 from '@/class/singleton/web3';
+import { web3 } from '@/class';
 
 const { fromWei } = web3.utils;
 

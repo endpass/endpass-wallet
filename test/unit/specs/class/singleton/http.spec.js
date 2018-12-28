@@ -1,4 +1,4 @@
-import { http } from '@/class/singleton';
+import { http } from '@/class';
 
 describe('http', () => {
   describe('defaults', () => {

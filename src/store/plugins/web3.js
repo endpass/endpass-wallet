@@ -1,7 +1,6 @@
 import Web3 from 'web3';
 
-import web3 from '@/class/singleton/web3';
-import { ProviderFactory } from '@/class';
+import { ProviderFactory, web3 } from '@/class';
 
 const setProvider = ({ dispatch }, provider) => {
   web3.setProvider(provider);
