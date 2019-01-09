@@ -7,9 +7,11 @@ import UIComponents from '@endpass/ui';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import WalletsList from '@/components/importWallet/WalletsList/WalletsList';
-import { WALLET_TYPE } from '@/constants';
+import { Wallet } from '@/class';
 
 import { addresses, address } from 'fixtures/accounts';
+
+const WALLET_TYPE = Wallet.getTypes();
 
 const addressPos = addresses.indexOf(address);
 

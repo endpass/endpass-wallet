@@ -1,9 +1,10 @@
 import MockAdapter from 'axios-mock-adapter';
 
-import { NotificationError } from '@/class';
+import { NotificationError, Wallet } from '@/class';
 import { httpIdentity } from '@/class/singleton';
-import { WALLET_TYPE } from '@/constants';
 import { successResponse } from 'fixtures/identity';
+
+const WALLET_TYPE = Wallet.getTypes();
 
 const userService = require.requireActual('@/services/user').default;
 

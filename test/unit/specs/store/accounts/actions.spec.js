@@ -23,7 +23,8 @@ import {
 import { keystore } from '@endpass/utils';
 import userService from '@/services/user';
 import localSettingsService from '@/services/localSettings';
-import { WALLET_TYPE } from '@/constants';
+
+const WALLET_TYPE = Wallet.getTypes();
 
 describe('Accounts actions', () => {
   let dispatch;

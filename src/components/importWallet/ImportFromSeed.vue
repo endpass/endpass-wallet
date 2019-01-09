@@ -52,8 +52,10 @@ import { mapActions } from 'vuex';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
-import { WALLET_TYPE } from '@/constants';
+import { Wallet } from '@/class';
 import WalletsList from './WalletsList';
+
+const WALLET_TYPE = Wallet.getTypes();
 
 export default {
   name: 'ImportFromSeed',
