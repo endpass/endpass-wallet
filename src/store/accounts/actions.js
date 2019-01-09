@@ -12,7 +12,6 @@ import {
   web3,
 } from '@/class';
 import { keystore } from '@endpass/utils';
-import { WALLET_TYPE } from '@/constants';
 import {
   CHANGE_INIT_STATUS,
   SET_ADDRESS,
@@ -21,6 +20,8 @@ import {
   SET_BALANCE,
   SET_HD_CACHE_BY_TYPE,
 } from './mutations-types';
+
+const WALLET_TYPE = Wallet.getTypes();
 
 const { toChecksumAddress, fromWei } = web3.utils;
 

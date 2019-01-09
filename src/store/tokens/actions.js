@@ -1,4 +1,3 @@
-import { mapValues } from 'lodash';
 import {
   SET_LOADING,
   SET_TOKENS_BY_ADDRESS,
