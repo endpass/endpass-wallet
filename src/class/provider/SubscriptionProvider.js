@@ -105,21 +105,23 @@ export default class SubscriptionProvider {
 
           lastBlockNumber = blockNumber;
 
-          this.notificationCallbacks[EVENT_TYPES.DATA].forEach(callback => {
-            Object.entries(this.subsrciptionIds).forEach(
-              ([subsrciptionId, { type }]) => {
-                if (type === 'newHeads') {
-                  callback({
-                    method: 'eth_subscribe',
-                    params: {
-                      subscription: subsrciptionId,
-                      result: block,
-                    },
-                  });
-                }
-              },
-            );
-          });
+          this.parent.notificationCallbacks[EVENT_TYPES.DATA].forEach(
+            callback => {
+              Object.entries(this.parent.subsrciptionIds).forEach(
+                ([subsrciptionId, { type }]) => {
+                  if (type === 'newHeads') {
+                    callback({
+                      method: 'eth_subscribe',
+                      params: {
+                        subscription: subsrciptionId,
+                        result: block,
+                      },
+                    });
+                  }
+                },
+              );
+            },
+          );
         }
       } catch (error) {
         console.error(error);

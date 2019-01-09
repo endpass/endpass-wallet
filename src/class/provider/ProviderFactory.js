@@ -32,10 +32,7 @@ export default class ProviderFactory {
     const AdditionalProvider = window.Cypress ? MockProvider : DebounceProvider;
     const BaseProvider = ProviderFactory.getProviderClass(url);
     const Provider = providerMixin(BaseProvider, AdditionalProvider);
-
-    // TODO not work status (syncing) in ui tabbar with fallback
-    return window.Cypress ? new Provider(url) : new BaseProvider(url);
-    // return new Provider(url);
+    return new Provider(url);
   }
 
   /**

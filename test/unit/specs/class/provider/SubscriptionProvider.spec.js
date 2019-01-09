@@ -251,10 +251,13 @@ describe('SubscriptionProvider class', () => {
     it('should start polling and call callbacks', async () => {
       expect.assertions(2);
 
-      provider.notificationCallbacks.data = [callback];
-      provider.subsrciptionIds = {
+      let parent = {};
+      parent.notificationCallbacks = {};
+      parent.notificationCallbacks.data = [callback];
+      parent.subsrciptionIds = {
         [subsrciptionId]: { type: 'newHeads' },
       };
+      provider.setParent(parent);
 
       provider.startPollingNewBlockHeaders(getBlockNumber, getBlock);
 
@@ -275,10 +278,13 @@ describe('SubscriptionProvider class', () => {
     it('should start polling and not call callbacks', async () => {
       expect.assertions(1);
 
-      provider.notificationCallbacks.data = [callback];
-      provider.subsrciptionIds = {
+      let parent = {};
+      parent.notificationCallbacks = {};
+      parent.notificationCallbacks.data = [callback];
+      parent.subsrciptionIds = {
         [subsrciptionId]: { type: 'logs' },
       };
+      provider.setParent(parent);
 
       provider.startPollingNewBlockHeaders(getBlockNumber, getBlock);
 
@@ -292,11 +298,13 @@ describe('SubscriptionProvider class', () => {
     it('should not call callback if getBlock return null', async () => {
       expect.assertions(1);
 
-      provider.notificationCallbacks.data = [callback];
-      provider.subsrciptionIds = {
+      let parent = {};
+      parent.notificationCallbacks = {};
+      parent.notificationCallbacks.data = [callback];
+      parent.subsrciptionIds = {
         [subsrciptionId]: { type: 'newHeads' },
       };
-
+      provider.setParent(parent);
       getBlock.mockResolvedValueOnce(null);
 
       provider.startPollingNewBlockHeaders(getBlockNumber, getBlock);

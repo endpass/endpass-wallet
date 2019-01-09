@@ -1,8 +1,8 @@
 <template>
   <div class="sync-status">
-    <span 
-      :title="'synced to block '+ blockNumber" 
-      :class="statusClass" 
+    <span
+      :title="blockNumber ? 'synced to block '+ blockNumber : 'Awaiting block number'"
+      :class="statusClass"
       class="tag"
     >{{ appStatus }}</span>
   </div>
