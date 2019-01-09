@@ -6,12 +6,7 @@ import {
   SET_TRANSACTION_HISTORY,
 } from '@/store/transactions/mutations-types';
 import ethplorerService from '@/services/ethplorer';
-import {
-  EventEmitter,
-  Transaction,
-  TransactionFactory,
-  NotificationError,
-} from '@/class';
+import { EventEmitter, TransactionFactory, NotificationError } from '@/class';
 import { address } from 'fixtures/accounts';
 import {
   transactionHash,
@@ -42,7 +37,6 @@ describe('transactions actions', () => {
     transaction = {
       ...ethplorerTransactions[0],
       nonce: 1,
-      getApiObject: jest.fn(),
     };
     stateInstance = {
       ...transactionsState,
@@ -255,7 +249,7 @@ describe('transactions actions', () => {
 
       const expectedHistory = []
         .concat(ethplorerHistory, ethplorerTransactions)
-        .map(trx => new Transaction(trx));
+        .map(trx => TransactionFactory.fromSendForm(trx));
 
       await actions.updateTransactionHistory({
         dispatch,
@@ -365,7 +359,7 @@ describe('transactions actions', () => {
       );
 
       expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toBeCalledWith(ADD_TRANSACTION, expect.any(Transaction));
+      expect(commit).toBeCalledWith(ADD_TRANSACTION, expect.any(Object));
     });
 
     it('should not add existing transactions in history', () => {
@@ -525,9 +519,16 @@ describe('transactions actions', () => {
         { commit },
         { transaction, newHash },
       );
+      const afterApply = {
+        ...transaction,
+        date: res.date,
+        hash: newHash,
+        state: 'pending',
+      };
 
-      expect(commit).toHaveBeenCalledWith(ADD_TRANSACTION, transaction);
-      expect(res).toEqual(newHash);
+      expect(commit).toHaveBeenCalledWith(ADD_TRANSACTION, afterApply);
+      expect(res).not.toEqual(transaction);
+      expect(res.hash).toEqual(newHash);
     });
   });
 
@@ -605,7 +606,6 @@ describe('transactions actions', () => {
 
     it('should send transaction on hash event', () => {
       expect.assertions(2);
-
       actions
         .processTransactionAction(
           {

@@ -110,6 +110,14 @@ export const DAPP_WHITELISTED_METHODS = [
   'eth_sendTransaction',
 ];
 
+export const TRANSACTION_STATUS = Object.freeze({
+  SUCCESS: 'success',
+  ERROR: 'error',
+  CANCELED: 'canceled',
+  PENDING: 'pending',
+  RESENT: 'resent',
+});
+
 export default {
   AVAILABLE_FIAT_CURRENCIES,
   MAIN_NET_ID,
@@ -124,4 +132,5 @@ export default {
   HARDWARE_WALLET_TYPE,
   WALLET_TYPE,
   DAPP_WHITELISTED_METHODS,
+  TRANSACTION_STATUS,
 };

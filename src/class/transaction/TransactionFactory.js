@@ -1,32 +1,32 @@
-import { Transaction } from '@/class';
 import web3 from '@/class/singleton/web3';
+
+import Transaction from './Transaction';
 
 const { hexToNumber, hexToNumberString, fromWei } = web3.utils;
 
 export default class TransactionFactory {
   static fromSendForm(trx) {
-    return new Transaction(trx);
+    const value = trx.tokenInfo ? Transaction.getValueFromWei(trx) : trx.value;
+    return Transaction.create({ ...trx, value });
   }
 
   static fromBlock(trx) {
-    const { value: valueWei, gasPrice, nonce, chainId, networkId } = trx;
+    const { gasPrice, nonce, chainId, networkId } = trx;
 
     const adaptData = {
       networkId: chainId ? hexToNumber(chainId) : networkId,
-      valueWei,
-      date: new Date(),
+      value: Transaction.getValueFromWei(trx),
+      timestamp: new Date().getTime() / 1000,
       nonce: String(nonce),
       gasPrice: fromWei(gasPrice, 'Gwei'),
     };
-    return Object.assign(new Transaction(trx), adaptData);
+
+    return Transaction.create({ ...trx, ...adaptData });
   }
 
   static fromRequestParams(trx) {
     const { value, gasPrice, gas } = trx;
     const adaptData = {};
-    if (value) {
-      adaptData.value = fromWei(hexToNumberString(value));
-    }
     if (value) {
       adaptData.value = fromWei(hexToNumberString(value));
     }
@@ -36,6 +36,7 @@ export default class TransactionFactory {
     if (gas) {
       adaptData.gasLimit = hexToNumberString(gas);
     }
-    return Object.assign(new Transaction(trx), adaptData);
+
+    return Transaction.create({ ...trx, ...adaptData });
   }
 }

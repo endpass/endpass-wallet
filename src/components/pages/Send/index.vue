@@ -130,8 +130,10 @@ export default {
       this.isWaitingConfirm = false;
 
       try {
+        const trx = TransactionFactory.fromSendForm(this.transaction);
+
         const hash = await this.sendTransaction({
-          transaction: TransactionFactory.fromSendForm(this.transaction),
+          transaction: trx,
           password,
         });
         const shortHash = getShortStringWithEllipsis(hash);

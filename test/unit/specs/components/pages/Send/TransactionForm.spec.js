@@ -4,7 +4,7 @@ import VeeValidate from 'vee-validate';
 import { shallow, createLocalVue } from '@vue/test-utils';
 import { testUtils } from '@endpass/utils';
 import TransactionForm from '@/components/pages/Send/TransactionForm.vue';
-import Transaction from '@/class/Transaction';
+import { Transaction } from '@/class';
 import ENSResolver from '@/class/ens';
 import { transaction } from 'fixtures/transactions';
 import { address } from 'fixtures/accounts';
@@ -250,7 +250,7 @@ describe('Send – TransactionForm', () => {
       describe('estimateGasCost', () => {
         beforeAll(() => {
           Transaction.getGasFullPrice = jest.fn();
-          Transaction.isTransactionToContract = jest.fn();
+          Transaction.isToContract = jest.fn();
         });
 
         it('should estimate gas cost for transaction', async () => {
@@ -277,7 +277,7 @@ describe('Send – TransactionForm', () => {
 
           expect(wrapper.vm.estimatedGasCost).toBe(previousEstimatedGas);
           expect(wrapper.vm.ensError).toBe(previousEnsError);
-          expect(Transaction.isTransactionToContract).toBeCalledWith(
+          expect(Transaction.isToContract).toBeCalledWith(
             wrapper.vm.transaction,
           );
         });
@@ -289,7 +289,7 @@ describe('Send – TransactionForm', () => {
           const previousEstimatedGas = wrapper.vm.estimatedGasCost;
 
           Transaction.getGasFullPrice.mockRejectedValueOnce(error);
-          Transaction.isTransactionToContract.mockResolvedValueOnce(false);
+          Transaction.isToContract.mockResolvedValueOnce(false);
 
           await wrapper.vm.estimateGasCost();
 
@@ -297,7 +297,7 @@ describe('Send – TransactionForm', () => {
           expect(wrapper.vm.ensError).toBe(
             'Transaction will always fail, try other address.',
           );
-          expect(Transaction.isTransactionToContract).toBeCalledWith(
+          expect(Transaction.isToContract).toBeCalledWith(
             wrapper.vm.transaction,
           );
         });

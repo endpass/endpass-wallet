@@ -93,17 +93,7 @@ export const transactionToSend = {
   to: address,
   data: '0x',
   networkId: 1,
-  clone() {
-    return {
-      ...this,
-    };
-  },
-  getUpGasPrice() {
-    return this.gasPrice;
-  },
-  getApiObject() {
-    return this;
-  },
+  nonce: null,
 };
 
 export const blockTransactions = [

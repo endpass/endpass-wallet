@@ -211,13 +211,8 @@ export default {
     ...mapActions('gasPrice', ['getGasPrice']),
 
     changeTokenInfo(value) {
-      if (value) {
-        const tokenInfo = this.currentAccountTokenBySymbol(value);
-
-        this.$set(this.transaction, 'tokenInfo', tokenInfo);
-      } else {
-        this.$set(this.transaction, 'tokenInfo', null);
-      }
+      const tokenInfo = value ? this.currentAccountTokenBySymbol(value) : null;
+      this.$set(this.transaction, 'tokenInfo', tokenInfo);
     },
 
     handleFormSubmit() {
@@ -259,9 +254,7 @@ export default {
         // TODO: check send on main net. If it is ok, disallow sending
         console.log(err);
 
-        const isContract = await Transaction.isTransactionToContract(
-          this.transaction,
-        );
+        const isContract = await Transaction.isToContract(this.transaction);
 
         if (!isContract && err.message.includes('always failing transaction')) {
           this.ensError = 'Transaction will always fail, try other address.';

@@ -1,3 +1,4 @@
+import { Transaction } from '@/class';
 import {
   ADD_TRANSACTION,
   SET_TRANSACTION_HISTORY,
@@ -13,7 +14,13 @@ const updateTransaction = (state, { hash, payload }) => {
     trx => trx.hash === hash,
   );
 
-  Object.assign(state.pendingTransactions[trxIndex], payload);
+  if (trxIndex === -1) {
+    console.warn('Transaction not found, is it normal?');
+    return;
+  }
+
+  const trx = state.pendingTransactions[trxIndex];
+  state.pendingTransactions[trxIndex] = Transaction.applyProps(trx, payload);
 };
 
 const setTransactionHistory = (state, transactions) => {

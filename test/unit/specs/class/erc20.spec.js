@@ -51,7 +51,7 @@ describe('ERC20 Token', () => {
 
     const token = await erc20.getToken();
 
-    expect(token).toBeInstanceOf(Token);
+    expect(token).toBeInstanceOf(Object);
 
     expect(token.name).toEqual(tokenInfo.name);
     expect(token.symbol).toEqual(tokenInfo.symbol);

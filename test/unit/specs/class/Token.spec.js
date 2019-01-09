@@ -13,14 +13,14 @@ describe('Transaction Class', () => {
   it('throws if address not present', () => {
     expect(() => {
       /* eslint-disable-next-line */
-      new Token({
+      Token.asObject({
         address: null,
       });
     }).toThrow();
   });
 
   it('creates transaction with API format', () => {
-    const token = new Token(apiResponse);
+    const token = Token.asObject(apiResponse);
     expect(token.address).toBe(
       web3.utils.toChecksumAddress(apiResponse.address),
     );

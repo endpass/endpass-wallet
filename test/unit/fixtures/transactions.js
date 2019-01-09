@@ -16,6 +16,32 @@ export const transaction = {
   data: '0x',
 };
 
+export const metamaskTransaction = {
+  blockHash:
+    '0x3ab5a03331eb5301f8562ab05aab7503ca692216e16e7dea27d8117eb1a3add1',
+  blockNumber: 4707534,
+  chainId: '0x3',
+  condition: null,
+  creates: null,
+  from: '0x56232EdcC87984206eEAB89b4C204cE02fdD7CC7',
+  gas: 21000,
+  gasPrice: '20000000000',
+  hash: '0x7eb98e91c2dc16347709b996d4898ba4d1a4cfdeb9d23f03ef32fcbe26e4ec63',
+  input: '0x',
+  nonce: 13,
+  publicKey:
+    '0x8219700cce9f8e1b70ddef6cb7943c0495d1c70d7f4216fa69569bb173a037d141e2a962ebaaca58fee2fbf15243ebaadc919148e53627501a34350529779cc1',
+  r: '0x39c0faaaa17f8d5d0cf4f6312b446122027725d8c04bdada657dee77950fcdf1',
+  raw:
+    '0xf86b0d8504a817c80082520894aef74e25181b0879d293396dd9949cf25b339407872386f26fc100008029a039c0faaaa17f8d5d0cf4f6312b446122027725d8c04bdada657dee77950fcdf1a01278f4fabc5700478af5ff8ce3ee758a557afc355ea156fdb50a6be9ccf5e3cf',
+  s: '0x1278f4fabc5700478af5ff8ce3ee758a557afc355ea156fdb50a6be9ccf5e3cf',
+  standardV: '0x0',
+  to: '0xaEF74e25181b0879d293396Dd9949Cf25b339407',
+  transactionIndex: 0,
+  v: '0x29',
+  value: '10000000000000000',
+};
+
 export const paramsTransaction = {
   value: '0x2',
   gasPrice: '0x2',
@@ -85,6 +111,8 @@ export const ethplorerTransactions = [
     value: 0.048671,
     input: '0x',
     success: true,
+    state: 'success',
+    date: new Date(1535035155 * 1000),
   },
   {
     timestamp: 1534823940,
@@ -105,7 +133,7 @@ export const pendingTransactions = [
     networkId: 2,
     state: 'pending',
     valueWei: '2',
-    gasCost: '5',
+    gasPrice: '2',
     hash: '0xea9ac0110e2cab67d43188375acfe4f474b20ca5453a4eb68d9089bb9a9e40f3',
   },
   {
@@ -115,7 +143,7 @@ export const pendingTransactions = [
     networkId: 1,
     state: 'pending',
     valueWei: '2',
-    gasCost: '5',
+    gasPrice: '1',
     hash: '0x766a342b3e1f460d768873e8f1b1867097bbf2ca78425dd3c9a924aa5e83637a',
   },
   {
@@ -125,7 +153,7 @@ export const pendingTransactions = [
     networkId: 2,
     state: 'success',
     valueWei: '2',
-    gasCost: '5',
+    gasPrice: '1',
     date: new Date('01/03/2001'),
     hash: '0xe595e9c4b7188dc5bd7efcd39c1704f3507cad6c53d2ef01889942e7c0e6c8ef',
   },
@@ -136,7 +164,7 @@ export const pendingTransactions = [
     networkId: 1,
     state: 'pending',
     valueWei: '1',
-    gasCost: '6',
+    gasPrice: '2',
     date: new Date('01/01/2001'),
     hash: '0x9d92b835d8b9fab8c27d45045ed61d728ec6280c60b792b2a623ad600d911261',
   },

@@ -70,6 +70,7 @@ import VForm from '@/components/ui/form/VForm.vue';
 import VInput from '@/components/ui/form/VInput.vue';
 import VButton from '@/components/ui/form/VButton.vue';
 import formMixin from '@/mixins/form';
+import { Transaction } from '@/class';
 
 export default {
   name: 'ResendModal',
@@ -95,7 +96,7 @@ export default {
     },
   },
   created() {
-    this.newTransaction = this.transaction.clone();
+    this.newTransaction = Transaction.clone(this.transaction);
   },
   mixins: [formMixin],
   components: {

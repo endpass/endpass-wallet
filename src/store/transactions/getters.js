@@ -59,11 +59,7 @@ const pendingBalance = (state, getters, rootState) => {
         tnx.from === address &&
         tnx.networkId === networkId,
     )
-    .map(tnx => {
-      const tnxValue = tnx.token === 'ETH' ? tnx.valueWei : '0';
-
-      return BigNumber(tnx.gasCost).plus(tnxValue);
-    })
+    .map(Transaction.getUpGasCost)
     .reduce((total, item) => total.plus(item), BigNumber('0'))
     .toFixed();
 };
