@@ -1,6 +1,5 @@
 import { httpIdentity } from '@/class/singleton';
 import store from '@/store';
-import { REQUEST_TIMEOUT_MSEC } from '@/class/constants';
 
 jest.mock('@/store', () => ({
   dispatch: jest.fn(),
