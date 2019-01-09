@@ -1,9 +1,8 @@
 import TrezorConnect from 'trezor-connect';
 import Tx from 'ethereumjs-tx';
 import HDKey from 'ethereumjs-wallet/hdkey';
-import { NotificationError } from '@/class/internal';
-import web3 from '@/class/singleton/web3';
-import { HARDWARE_DERIVIATION_PATH } from '@/constants';
+import { NotificationError, web3 } from '@/class/internal';
+import { HARDWARE_DERIVIATION_PATH } from '@/class/constants';
 import getChildrenAddress from '../utils/getChildrenAddress';
 
 const { sha3, toHex, toDecimal } = web3.utils;

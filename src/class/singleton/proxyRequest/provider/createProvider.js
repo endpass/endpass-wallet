@@ -1,4 +1,4 @@
-import { IDENTITY_MODE } from '@/constants/index';
+import { IDENTITY_MODE } from '@/constants';
 
 import CustomProvider from './CustomProvider';
 import LocalProvider from './LocalProvider';

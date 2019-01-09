@@ -1,5 +1,5 @@
-import { INPAGE_EVENT } from '@/constants';
-import EventEmitter from '../EventEmitter';
+import { INPAGE_EVENT } from '@/class/constants';
+import { EventEmitter } from '@/class/internal';
 
 class DappBridge extends EventEmitter {
   constructor(...props) {
