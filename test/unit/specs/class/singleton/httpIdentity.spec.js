@@ -1,6 +1,6 @@
 import { httpIdentity } from '@/class';
 import store from '@/store';
-import { REQUEST_TIMEOUT_MSEC } from '@/constants';
+import { REQUEST_TIMEOUT_MSEC } from '@/class/constants';
 
 jest.mock('@/store', () => ({
   dispatch: jest.fn(),

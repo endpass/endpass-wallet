@@ -1,5 +1,8 @@
 import { pick } from 'lodash';
-import { STORAGE_USER_META_KEY, AVAILABLE_USER_META_PROPS } from '@/constants';
+import {
+  STORAGE_USER_META_KEY,
+  AVAILABLE_USER_META_PROPS,
+} from '@/class/constants';
 
 class SettingsStorage {
   constructor({ storage }) {

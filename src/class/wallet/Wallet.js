@@ -1,6 +1,6 @@
 import Tx from 'ethereumjs-tx';
 import HDKey from 'ethereumjs-wallet/hdkey';
-import web3 from '@/class/singleton/web3';
+import { web3 } from '@/class/internal';
 import { keystore } from '@endpass/utils';
 import { WALLET_TYPE, HARDWARE_WALLET_TYPE } from '@/constants';
 import { TrezorProxy, LedgerProxy } from './proxy';

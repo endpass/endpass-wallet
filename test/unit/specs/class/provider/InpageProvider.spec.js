@@ -1,5 +1,5 @@
 import { EventEmitter } from '@/class';
-import { INPAGE_EVENT, INPAGE_ID_PREFIX } from '@/constants';
+import { INPAGE_EVENT, INPAGE_ID_PREFIX } from '@/class/constants';
 
 const InpageProvider = require.requireActual('@/class/provider/InpageProvider')
   .default;

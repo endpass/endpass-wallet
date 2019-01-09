@@ -1,6 +1,6 @@
 import LocalProvider from './LocalProvider';
 import ServerProvider from './ServerProvider';
-import NotificationError from '@/class/error/NotificationError';
+import { NotificationError } from '@/class/internal';
 
 const error = new NotificationError({
   title: 'Error saving account',
