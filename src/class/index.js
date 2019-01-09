@@ -3,7 +3,7 @@ export { ProviderFactory } from './provider';
 export {
   default as TransactionFactory,
 } from './transaction/TransactionFactory';
-export { default as Transaction } from './Transaction';
+export { default as Transaction } from './transaction/Transaction';
 export { default as EventEmitter } from './EventEmitter';
 export { NotificationError } from './error';
 export { default as Wallet } from './wallet';

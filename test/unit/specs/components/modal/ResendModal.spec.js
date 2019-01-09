@@ -1,5 +1,5 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
-import { Transaction } from '@/class';
+import { TransactionFactory } from '@/class';
 import VeeValidate from 'vee-validate';
 
 import ResendModal from '@/components/modal/ResendModal';
@@ -12,7 +12,7 @@ describe('ResendModal', () => {
   let wrapper;
 
   beforeEach(() => {
-    const transaction = new Transaction({
+    const transaction = TransactionFactory.fromSendForm({
       data: '0x0',
       from: '0x0',
     });
@@ -41,7 +41,7 @@ describe('ResendModal', () => {
         wrapper.vm.confirmResend();
         expect(wrapper.emitted().confirm).toBeTruthy();
         expect(wrapper.emitted().confirm[0][0]).toMatchObject(
-          new Transaction({
+          TransactionFactory.fromSendForm({
             data: '0x0',
             from: '0x0',
           }),

@@ -3,8 +3,8 @@ import { BigNumber } from 'bignumber.js';
 import {
   EventEmitter,
   NotificationError,
-  Transaction,
   TransactionFactory,
+  Transaction,
 } from '@/class';
 import ethplorerService from '@/services/ethplorer';
 import web3 from '@/class/singleton/web3';
@@ -54,12 +54,11 @@ const sendSignedTransaction = async (
   try {
     if (!transaction.nonce) {
       const nonce = await dispatch('getNextNonce');
-
-      Object.assign(transaction, { nonce });
+      transaction = Transaction.applyProps(transaction, { nonce });
     }
 
     const preTrx = {
-      ...transaction.getApiObject(web3.eth),
+      ...Transaction.getApiObject(transaction),
       chainId: transaction.networkId,
     };
 
@@ -142,7 +141,7 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
   try {
     const { address } = rootState.accounts;
     const res = await ethplorerService.getTransactionHistory(address);
-    const transactions = res.map(trx => new Transaction(trx));
+    const transactions = res.map(trx => TransactionFactory.fromSendForm(trx));
 
     commit(SET_TRANSACTION_HISTORY, transactions);
     dispatch(
@@ -268,15 +267,15 @@ const cancelTransaction = async ({ dispatch }, { transaction, password }) => {
 };
 
 const handleTransactionSendingHash = ({ commit }, { transaction, newHash }) => {
-  Object.assign(transaction, {
+  const trx = Transaction.applyProps(transaction, {
     state: 'pending',
     date: new Date(),
     hash: newHash,
   });
 
-  commit(ADD_TRANSACTION, transaction);
+  commit(ADD_TRANSACTION, trx);
 
-  return newHash;
+  return trx;
 };
 
 const handleTransactionResendingHash = (
@@ -318,22 +317,25 @@ const processTransactionAction = async (
   { transaction, sendEvent, actionType },
 ) =>
   new Promise((res, rej) => {
+    let updatedTransaction = transaction;
+
     sendEvent.once('transactionHash', async newHash => {
       switch (actionType) {
         case 'send':
-          return res(
-            dispatch('handleTransactionSendingHash', {
-              transaction,
-              newHash,
-            }),
-          );
+          updatedTransaction = await dispatch('handleTransactionSendingHash', {
+            transaction,
+            newHash,
+          });
+          return res(get(updatedTransaction, 'hash'));
         case 'resend':
-          return res(
-            dispatch('handleTransactionResendingHash', {
+          updatedTransaction = await dispatch(
+            'handleTransactionResendingHash',
+            {
               transaction,
               newHash,
-            }),
+            },
           );
+          return res(get(updatedTransaction, 'hash'));
         case 'cancel':
           await dispatch('handleTransactionCancelingHash', {
             transaction,
@@ -350,18 +352,19 @@ const processTransactionAction = async (
         payload: {
           state: actionType === 'cancel' ? 'canceled' : 'success',
         },
-        hash: transaction.hash,
+        hash: get(updatedTransaction, 'hash'),
       });
     });
 
     sendEvent.once('error', error => {
-      if (transaction.hash) {
+      const hash = get(updatedTransaction, 'hash');
+      if (hash) {
         commit(UPDATE_TRANSACTION, {
           payload: {
             state: 'error',
             error,
           },
-          hash: transaction.hash,
+          hash,
         });
       }
 

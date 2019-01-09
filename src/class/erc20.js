@@ -53,7 +53,7 @@ export default class ERC20Token {
 
     const tokenInfo = await this.getInfo();
 
-    this.token = new Token({
+    this.token = Token.asObject({
       address: this.address,
       ...tokenInfo,
     });

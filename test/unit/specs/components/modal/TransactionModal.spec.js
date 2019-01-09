@@ -1,5 +1,5 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
-import { Transaction } from '@/class';
+import { TransactionFactory } from '@/class';
 import Vuex from 'vuex';
 
 import TransactionModal from '@/components/modal/TransactionModal';
@@ -12,9 +12,8 @@ describe('TransactionModal', () => {
   describe('render', () => {
     let wrapper;
     beforeEach(() => {
-      const transaction = new Transaction({
+      const transaction = TransactionFactory.fromSendForm({
         data: '0x0',
-        from: '0x0',
         from: '0x0',
       });
       const store = new Vuex.Store({

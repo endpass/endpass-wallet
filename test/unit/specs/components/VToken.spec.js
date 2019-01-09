@@ -9,7 +9,7 @@ describe('Token', () => {
   let mockToken;
 
   beforeEach(() => {
-    mockToken = new Token({
+    mockToken = Token.asObject({
       address: '0xe41d2489571d322189246dafa5ebde1f4699f498',
       name: '0x Protocol Token',
       decimals: 18,
