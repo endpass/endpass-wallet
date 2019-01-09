@@ -3,7 +3,9 @@ export { default as EventEmitter } from './EventEmitter';
 export { ProviderFactory } from './provider';
 
 export { default as web3 } from './singleton/web3';
-export { dappBridge, ajv, proxyRequest, http, httpIdentity } from './singleton';
+export { default as dappBridge } from './singleton/dappBridge';
+export { default as ajv } from './singleton/ajv';
+export { default as http } from './singleton/http';
 
 export { default as InpageProvider } from './provider/InpageProvider';
 export { LocalStorage, SettingsStorage } from './storage';

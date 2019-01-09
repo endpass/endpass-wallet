@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { NotificationError, proxyRequest } from '@/class';
+import { NotificationError } from '@/class';
+import { proxyRequest } from '@/class/singleton';
 import { IDENTITY_MODE } from '@/constants';
 
 const STORAGE_KEY = 'identityMode';
