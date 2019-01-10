@@ -1,8 +1,7 @@
-import { httpIdentity } from '@/class/singleton';
-
 export default class ServerProvider {
-  constructor(serverUrl) {
+  constructor(serverUrl, connection) {
     this.url = serverUrl;
+    this.connection = connection;
   }
 
   request(params) {
@@ -17,7 +16,7 @@ export default class ServerProvider {
   read = async params => {
     try {
       const { url } = params;
-      const { data } = await httpIdentity.get(url);
+      const { data } = await this.connection.get(url);
 
       return data;
     } catch (e) {
@@ -32,7 +31,7 @@ export default class ServerProvider {
   write = async params => {
     try {
       const { url, payload } = params;
-      const { data } = await httpIdentity.post(url, payload);
+      const { data } = await this.connection.post(url, payload);
 
       return data;
     } catch (e) {
@@ -47,7 +46,7 @@ export default class ServerProvider {
   remove = async params => {
     try {
       const { url, payload } = params;
-      const { data } = await httpIdentity.delete(url, payload);
+      const { data } = await this.connection.delete(url, payload);
 
       return data;
     } catch (e) {

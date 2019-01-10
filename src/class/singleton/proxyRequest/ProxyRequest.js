@@ -1,16 +1,17 @@
 import { Decorator, ProviderUrlDecorator } from './decorator';
 import { NotificationError } from '@/class/internal';
-import { IDENTITY_MODE } from '@/constants';
+import { IDENTITY_MODE } from './provider/identityModes';
 import { createProvider } from './provider';
 
 export default class ProxyRequest {
-  constructor() {
+  constructor(connection) {
     this.decorator = new Decorator();
+    this.connection = connection;
     this.setMode();
   }
 
   setMode(type = IDENTITY_MODE.DEFAULT, url = ENV.identityAPIUrl) {
-    this.provider = createProvider(type, url);
+    this.provider = createProvider(type, url, this.connection);
 
     const decorators = [new ProviderUrlDecorator(url)];
     this.decorator.setDecorators(decorators);
