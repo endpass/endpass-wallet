@@ -6,8 +6,7 @@ import {
   ADD_TOKENS_PRICES,
   SET_USER_TOKENS,
 } from './mutations-types';
-import { NotificationError, Token } from '@/class';
-import ERC20Token from '@/class/erc20';
+import { NotificationError, Token, ERC20Token } from '@/class';
 import {
   tokenInfoService,
   ethplorerService,
