@@ -58,9 +58,13 @@ export default class Transaction {
   }
 
   static applyProps(trx, newProps) {
-    const res = { ...trx }; // unfreeze
+    const res = Transaction.unfreeze(trx);
     applyProps(res, newProps);
     return res;
+  }
+
+  static unfreeze(trx) {
+    return { ...trx };
   }
 
   static clone(trx) {

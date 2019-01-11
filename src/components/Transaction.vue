@@ -61,6 +61,7 @@
             <a
               title="Details"
               class="level-item has-text-info"
+              data-test="transaction-details-button"
               @click="toggleExpanded"
             >
               <span
@@ -78,6 +79,7 @@
     <div
       v-if="isExpanded"
       class="transaction-detail"
+      data-test="transaction-details"
     >
       <div v-if="transaction.hash.length">
         <span class="text-label">Txid</span>
