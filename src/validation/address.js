@@ -1,6 +1,4 @@
-import web3 from 'web3';
-
-const { isAddress } = web3.utils;
+import { isAddress } from 'web3-utils';
 
 export default {
   getMessage(field, params, data) {

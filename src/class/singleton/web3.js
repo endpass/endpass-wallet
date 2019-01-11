@@ -1,5 +1,5 @@
 // Wrapper around global web3 instance
-import Web3Factory from '@endpass/class/web3/Web3Factory';
+import Web3Factory from '@/class/web3/Web3Factory';
 import { ProviderFactory } from '@endpass/class/provider';
 import { DEFAULT_NETWORKS } from '@/constants';
 

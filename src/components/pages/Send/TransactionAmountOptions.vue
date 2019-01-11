@@ -100,9 +100,7 @@
 <script>
 import { get } from 'lodash';
 import { BigNumber } from 'bignumber.js';
-import { web3 } from '@/class';
-
-const { fromWei } = web3.utils;
+import { fromWei } from 'web3-utils';
 
 export default {
   name: 'TransactionAmountOptions',

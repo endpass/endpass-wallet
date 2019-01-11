@@ -1,5 +1,6 @@
 import { get } from 'lodash';
 import { BigNumber } from 'bignumber.js';
+import { toChecksumAddress } from 'web3-utils';
 import {
   EventEmitter,
   NotificationError,
@@ -17,8 +18,6 @@ import {
   UPDATE_TRANSACTION,
   SET_TRANSACTION_HISTORY,
 } from './mutations-types';
-
-const { toChecksumAddress } = web3.utils;
 
 const getNonceInBlock = async ({ rootState }) => {
   const { address } = rootState.accounts;

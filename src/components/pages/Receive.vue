@@ -60,12 +60,11 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
+import { fromWei } from 'web3-utils';
 import { web3 } from '@/class';
 import AppTransaction from '@/components/Transaction';
 import Account from '@/components/Account';
 import AccountWalletCard from '@/components/AccountWalletCard';
-
-const { fromWei } = web3.utils;
 
 export default {
   name: 'ReceivePage',

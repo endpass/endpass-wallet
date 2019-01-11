@@ -1,6 +1,5 @@
-import { http, web3 } from '@/class';
-
-const { isAddress } = web3.utils;
+import { http } from '@/class';
+import { isAddress } from 'web3-utils';
 
 export default {
   getTokensList() {
