@@ -24,9 +24,7 @@
 
 <script>
 import { decodeTx } from 'ethereum-tx-decoder';
-import { web3 } from '@/class';
-
-const { toChecksumAddress } = web3.utils;
+import { toChecksumAddress } from 'web3-utils';
 
 export default {
   name: 'RecoverTransaction',

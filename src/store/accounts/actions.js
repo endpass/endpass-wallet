@@ -3,6 +3,7 @@ import { userService, localSettingsService } from '@/services';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';
+import { toChecksumAddress, fromWei } from 'web3-utils';
 import {
   Wallet,
   NotificationError,
@@ -22,8 +23,6 @@ import {
 } from './mutations-types';
 
 const WALLET_TYPE = Wallet.getTypes();
-
-const { toChecksumAddress, fromWei } = web3.utils;
 
 const selectWallet = async ({ commit, dispatch }, address) => {
   commit(SET_ADDRESS, toChecksumAddress(address));

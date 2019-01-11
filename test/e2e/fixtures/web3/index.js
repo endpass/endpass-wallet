@@ -1,9 +1,7 @@
-import web3 from 'web3';
+import { toWei } from 'web3-utils';
 import addressInfo_b14ab from '../addressinfo/b14ab';
 import addressInfo_31ea8 from '../addressinfo/31ea8';
 import { address } from '../accounts';
-
-const { toWei } = web3.utils;
 
 const BLOCK_NUMBER = '0x4051fb';
 const BLOCK_HASH =

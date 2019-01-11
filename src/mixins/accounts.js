@@ -1,7 +1,5 @@
 // Mixin for common methods for Ethereum accounts
-import web3 from 'web3';
-
-const { fromWei } = web3.utils;
+import { fromWei } from 'web3-utils';
 
 export default {
   computed: {

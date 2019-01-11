@@ -1,9 +1,8 @@
 import { BigNumber } from 'bignumber.js';
 import { uniq, uniqWith } from 'lodash';
+import { toChecksumAddress } from 'web3-utils';
 import { MAIN_NET_ID } from '@/constants';
-import { Transaction, web3 } from '@/class';
-
-const { toChecksumAddress } = web3.utils;
+import { Transaction } from '@/class';
 
 const accountTransactions = (state, getters, rootState) => {
   if (!rootState.accounts.address) {

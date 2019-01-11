@@ -1,6 +1,5 @@
 import web3 from 'web3';
-
-const { toChecksumAddress } = web3.utils;
+import { toChecksumAddress } from 'web3-utils';
 
 const privKey = Uint8Array.from([
   252,
