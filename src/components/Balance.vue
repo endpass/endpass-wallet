@@ -29,7 +29,6 @@
 </template>
 <script>
 import { BigNumber } from 'bignumber.js';
-import VSpinner from '@/components/ui/VSpinner';
 
 export default {
   name: 'Balance',
@@ -108,9 +107,6 @@ export default {
     update() {
       this.$emit('update');
     },
-  },
-  components: {
-    VSpinner,
   },
 };
 </script>

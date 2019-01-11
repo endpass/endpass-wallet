@@ -4,7 +4,6 @@ import { mount, shallow, createLocalVue } from '@vue/test-utils';
 
 import { IDENTITY_MODE } from '@/constants';
 import LoginByEmailModal from '@/components/modal/LoginByEmailModal';
-import { testUtils } from '@endpass/utils';
 
 const localVue = createLocalVue();
 
@@ -30,7 +29,6 @@ describe('LoginByEmailModal', () => {
     wrapper = shallow(LoginByEmailModal, {
       store,
       localVue,
-      stubs: testUtils.generateStubs(LoginByEmailModal),
       mocks: {
         $ga,
       },

@@ -67,7 +67,6 @@
 import { isEmpty, get } from 'lodash';
 import { mapActions, mapState, mapGetters } from 'vuex';
 import { TransactionFactory } from '@/class';
-import VInput from '@/components/ui/form/VInput';
 import PasswordModal from '@/components/modal/PasswordModal';
 import TransactionTable from '@/components/TransactionTable';
 import privatePage from '@/mixins/privatePage';
@@ -191,7 +190,6 @@ export default {
   mixins: [privatePage],
 
   components: {
-    VInput,
     PasswordModal,
     TransactionTable,
   },

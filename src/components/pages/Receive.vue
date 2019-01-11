@@ -1,6 +1,6 @@
 <template>
-  <div 
-    v-if="address" 
+  <div
+    v-if="address"
     class="app-page receive-page"
   >
     <div class="section">
@@ -38,12 +38,12 @@
             <h2 class="card-header-title">Incoming Payment History</h2>
           </div>
           <div class="card-content">
-            <ul 
-              v-if="incomingTransactions.length" 
+            <ul
+              v-if="incomingTransactions.length"
               class="transactions"
             >
-              <li 
-                v-for="transaction in incomingTransactions" 
+              <li
+                v-for="transaction in incomingTransactions"
                 :key="transaction.hash"
               >
                 <app-transaction :transaction="transaction"/>
@@ -61,10 +61,8 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import web3 from '@/class/singleton/web3';
-import VButton from '@/components/ui/form/VButton';
 import AppTransaction from '@/components/Transaction';
 import Account from '@/components/Account';
-import VSpinner from '@/components/ui/VSpinner';
 import AccountWalletCard from '@/components/AccountWalletCard';
 
 const { fromWei } = web3.utils;
@@ -141,8 +139,6 @@ export default {
   components: {
     Account,
     AppTransaction,
-    VSpinner,
-    VButton,
     AccountWalletCard,
   },
 };

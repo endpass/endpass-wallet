@@ -41,6 +41,7 @@
           name="password"
           v-validate="'required|min:8'"
           data-vv-as="password"
+          data-vv-name="password"
           :error="errors.first('password')"
           aria-describedby="jsonKeystorePassword"
           placeholder="wallet password"
@@ -64,9 +65,6 @@ import BasePage from '@/components/pages/Base';
 import Bip39 from 'bip39';
 import VueTimers from 'vue-timers/mixin';
 import { mapActions, mapState } from 'vuex';
-import VForm from '@/components/ui/form/VForm.vue';
-import VPassword from '@/components/ui/form/VPassword.vue';
-import VButton from '@/components/ui/form/VButton.vue';
 import formMixin from '@/mixins/form';
 
 const SEED_PHRASE_TIMEOUT_SEC = 10;
@@ -140,9 +138,6 @@ export default {
   },
   components: {
     BasePage,
-    VForm,
-    VPassword,
-    VButton,
   },
 };
 </script>

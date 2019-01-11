@@ -1,6 +1,5 @@
 import VeeValidate from 'vee-validate';
 import { shallow, createLocalVue } from '@vue/test-utils';
-import { testUtils } from '@endpass/utils';
 import { token } from 'fixtures/tokens';
 import TransactionAmountOptions from '@/components/pages/Send/TransactionAmountOptions.vue';
 
@@ -29,7 +28,6 @@ describe('Send – TransactionAmountOptions', () => {
     jest.clearAllMocks();
 
     wrapper = shallow(TransactionAmountOptions, {
-      stubs: testUtils.generateStubs(TransactionAmountOptions),
       propsData: mountProps,
       provide: () => ({
         $validator: new VeeValidate.Validator(),
@@ -67,7 +65,6 @@ describe('Send – TransactionAmountOptions', () => {
 
         it('should not do anything if disabled prop is truthy', () => {
           wrapper = shallow(TransactionAmountOptions, {
-            stubs: testUtils.generateStubs(TransactionAmountOptions),
             provide: () => ({
               $validator: new VeeValidate.Validator(),
             }),
@@ -90,7 +87,6 @@ describe('Send – TransactionAmountOptions', () => {
       describe('getAmountFromPrice', () => {
         beforeEach(() => {
           wrapper = shallow(TransactionAmountOptions, {
-            stubs: testUtils.generateStubs(TransactionAmountOptions),
             propsData: mountProps,
             provide: () => ({
               $validator: new VeeValidate.Validator(),
@@ -114,7 +110,6 @@ describe('Send – TransactionAmountOptions', () => {
 
         it('should correctly transform price to amount without token and emit result', () => {
           wrapper = shallow(TransactionAmountOptions, {
-            stubs: testUtils.generateStubs(TransactionAmountOptions),
             propsData: {
               ...mountProps,
               currentToken: null,
@@ -183,7 +178,6 @@ describe('Send – TransactionAmountOptions', () => {
       describe('handleChangeBalanceAndEstimatedGasCost', () => {
         beforeEach(() => {
           wrapper = shallow(TransactionAmountOptions, {
-            stubs: testUtils.generateStubs(TransactionAmountOptions),
             provide: () => ({
               $validator: new VeeValidate.Validator(),
             }),

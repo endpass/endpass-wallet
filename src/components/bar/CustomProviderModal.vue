@@ -89,11 +89,6 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import VModal from '@/components/ui/VModal';
-import VForm from '@/components/ui/form/VForm';
-import VInput from '@/components/ui/form/VInput';
-import VSelect from '@/components/ui/form/VSelect';
-import VButton from '@/components/ui/form/VButton';
 import { CURRENCIES } from '@/constants';
 import formMixin from '@/mixins/form';
 
@@ -199,13 +194,6 @@ export default {
     },
   },
   mixins: [formMixin],
-  components: {
-    VModal,
-    VInput,
-    VSelect,
-    VForm,
-    VButton,
-  },
 };
 </script>
 <style lang="css">

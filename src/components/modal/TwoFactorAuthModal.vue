@@ -41,6 +41,7 @@
         label="Verification Code"
         name="verificationCode"
         v-validate="'required|digits:6'"
+        data-vv-name="verificationCode"
         :error="errors.first('verificationCode')"
         data-test="input-two-auth-code"
         autofocus
@@ -64,10 +65,6 @@
 </template>
 
 <script>
-import VModal from '@/components/ui/VModal';
-import VForm from '@/components/ui/form/VForm';
-import VInput from '@/components/ui/form/VInput';
-import VButton from '@/components/ui/form/VButton';
 import formMixin from '@/mixins/form';
 
 export default {
@@ -109,11 +106,5 @@ export default {
     },
   },
   mixins: [formMixin],
-  components: {
-    VModal,
-    VForm,
-    VInput,
-    VButton,
-  },
 };
 </script>

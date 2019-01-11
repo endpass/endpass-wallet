@@ -49,9 +49,6 @@
 
 <script>
 import { mapActions } from 'vuex';
-import VForm from '@/components/ui/form/VForm';
-import VInput from '@/components/ui/form/VInput';
-import VButton from '@/components/ui/form/VButton';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
@@ -97,9 +94,6 @@ export default {
   },
   mixins: [modalMixin, formMixin],
   components: {
-    VForm,
-    VInput,
-    VButton,
     PasswordModal,
     WalletsList,
   },

@@ -1,6 +1,6 @@
 <template>
-  <v-form 
-    data-test="verifying-message-form" 
+  <v-form
+    data-test="verifying-message-form"
     @submit="verifyMessage"
   >
     <v-textarea
@@ -13,9 +13,9 @@
       class-name="is-primary is-medium"
       data-test="verify-button"
     >Verify message</v-button>
-    <div 
-      v-if="address" 
-      class="field" 
+    <div
+      v-if="address"
+      class="field"
       data-test="address-field"
     >
       <label class="label">Address</label>
@@ -26,9 +26,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import VForm from '@/components/ui/form/VForm.vue';
-import VButton from '@/components/ui/form/VButton.vue';
-import VTextarea from '@/components/ui/form/VTextarea.vue';
 
 export default {
   name: 'VerifyMessage',
@@ -67,11 +64,6 @@ export default {
         console.error(error);
       }
     },
-  },
-  components: {
-    VForm,
-    VButton,
-    VTextarea,
   },
 };
 </script>

@@ -39,7 +39,6 @@
 import { mapState, mapActions, mapGetters } from 'vuex';
 import Account from '@/components/Account';
 import Balance from '@/components/Balance';
-import VSpinner from '@/components/ui/VSpinner';
 
 export default {
   name: 'WalletItem',
@@ -90,7 +89,6 @@ export default {
   components: {
     Account,
     Balance,
-    VSpinner,
   },
 };
 </script>

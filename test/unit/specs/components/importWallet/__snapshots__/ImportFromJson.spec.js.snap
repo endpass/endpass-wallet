@@ -6,8 +6,6 @@ exports[`ImportFromJson render should render initial state of the component 1`] 
 <div>
   <v-form
     data-test="import-json-form"
-    isformvalid="true"
-    v-on:submit="bound togglePasswordModal"
   >
     <div
       class="field"
@@ -25,8 +23,6 @@ exports[`ImportFromJson render should render initial state of the component 1`] 
             data-test="input-file"
             name="jsonWallet"
             type="file"
-            v-on:change="bound setFile"
-            v-validate="'required'"
           />
            
           <span
@@ -54,7 +50,6 @@ exports[`ImportFromJson render should render initial state of the component 1`] 
       <p
         class="help is-danger"
         style="display: none;"
-        v-show="errors.has('fileName')"
       >
         
       </p>
@@ -72,13 +67,12 @@ exports[`ImportFromJson render should render initial state of the component 1`] 
       name="jsonKeystorePassword"
       placeholder="V3 JSON keystore password"
       required=""
-      v-model="jsonKeystorePassword"
-      v-validate="'required|min:8'"
     />
      
     <v-button
       class-name="is-primary is-cta"
       data-test="submit-import"
+      disabled="true"
     >
       
       Import

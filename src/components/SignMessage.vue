@@ -24,9 +24,9 @@
         data-test="signed-message-textarea"
       />
     </v-form>
-    <password-modal 
-      v-if="isPasswordModal" 
-      @confirm="signMessage" 
+    <password-modal
+      v-if="isPasswordModal"
+      @confirm="signMessage"
       @close="togglePasswordModal"
     >
       <div class="field">
@@ -39,9 +39,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import VForm from '@/components/ui/form/VForm.vue';
-import VButton from '@/components/ui/form/VButton.vue';
-import VTextarea from '@/components/ui/form/VTextarea.vue';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
 
@@ -82,9 +79,6 @@ export default {
   mixins: [modalMixin],
 
   components: {
-    VForm,
-    VButton,
-    VTextarea,
     PasswordModal,
   },
 };

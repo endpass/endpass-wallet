@@ -46,12 +46,6 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import { TransactionFactory } from '@/class';
-import VForm from '@/components/ui/form/VForm.vue';
-import VRadio from '@/components/ui/form/VRadio.vue';
-import VSelect from '@/components/ui/form/VSelect';
-import VInput from '@/components/ui/form/VInput.vue';
-import VSpinner from '@/components/ui/VSpinner';
-import VButton from '@/components/ui/form/VButton.vue';
 import AccountChooser from '@/components/AccountChooser';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
@@ -181,12 +175,6 @@ export default {
   mixins: [privatePage],
 
   components: {
-    VForm,
-    VButton,
-    VRadio,
-    VSpinner,
-    VInput,
-    VSelect,
     AccountChooser,
     TransactionModal,
     PasswordModal,

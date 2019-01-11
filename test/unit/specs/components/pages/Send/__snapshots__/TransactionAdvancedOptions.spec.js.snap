@@ -6,7 +6,7 @@ exports[`Send – TransactionAdvancedOptions render should render with data inpu
         <label class="label">Data</label>
     </div>
     <div class="field-body">
-        <v-input id="data" name="data" data-vv-name="data" aria-describedby="data" placeholder="Data" required="" data-test="transaction-data-input" v-validate="'required|hex'" v-model="form.data" aria-required="true" aria-invalid="false"></v-input>
+        <v-input id="data" name="data" data-vv-name="data" aria-describedby="data" placeholder="Data" required="" data-test="transaction-data-input" aria-required="true" aria-invalid="false"></v-input>
     </div>
 </div>
 `;
@@ -17,7 +17,7 @@ exports[`Send – TransactionAdvancedOptions render should render without data i
         <label class="label">Data</label>
     </div>
     <div class="field-body">
-        <v-input id="data" name="data" data-vv-name="data" aria-describedby="data" placeholder="Data" required="" data-test="transaction-data-input" v-validate="'required|hex'" v-model="form.data" aria-required="true" aria-invalid="false"></v-input>
+        <v-input id="data" name="data" data-vv-name="data" aria-describedby="data" placeholder="Data" required="" data-test="transaction-data-input" aria-required="true" aria-invalid="false"></v-input>
     </div>
 </div>
 `;

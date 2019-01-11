@@ -19,7 +19,7 @@ exports[`Send – TransactionPriorityOptions render should render correctly pric
         <label class="label">Priority</label>
     </div>
     <div class="field-body">
-        <v-radio id="priority" options="[object Object],[object Object],[object Object]" value="3" name="priority" v-on:input="bound emitPriorityInput"></v-radio>
+        <v-radio id="priority" options="[object Object],[object Object],[object Object]" value="3" name="priority"></v-radio>
     </div>
 </div>
 `;

@@ -62,10 +62,6 @@
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
-import VModal from '@/components/ui/VModal';
-import VInput from '@/components/ui/form/VInput.vue';
-import VForm from '@/components/ui/form/VForm.vue';
-import VButton from '@/components/ui/form/VButton.vue';
 import PasswordModal from '@/components/modal/PasswordModal';
 
 export default {
@@ -128,10 +124,6 @@ export default {
     },
   },
   components: {
-    VModal,
-    VInput,
-    VForm,
-    VButton,
     PasswordModal,
   },
 };

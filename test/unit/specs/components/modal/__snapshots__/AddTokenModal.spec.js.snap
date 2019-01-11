@@ -3,19 +3,13 @@
 exports[`AddTokenModal render should render component 1`] = `
 <v-modal
   data-test="add-token-modal"
-  v-on:close="bound close"
 >
-  <template
-    slot="header"
-  >
+  <template>
     Add custom token
   </template>
    
   <v-form
     id="addToken"
-    isformvalid="true"
-    v-model="isFormValid"
-    v-on:submit="bound addToken"
   >
     <v-input
       aria-describedby="address"
@@ -29,8 +23,6 @@ exports[`AddTokenModal render should render component 1`] = `
       name="address"
       placeholder="Contract address"
       required=""
-      v-model="token.address"
-      v-validate="'required|address'"
     />
      
     <!---->
@@ -49,6 +41,7 @@ exports[`AddTokenModal render should render component 1`] = `
       <v-button
         class-name="is-primary"
         data-test="find-button"
+        disabled="true"
         type="button"
       >
         
@@ -63,7 +56,6 @@ exports[`AddTokenModal render should render component 1`] = `
       <a
         class="button"
         data-test="close-button"
-        v-on:click="bound close"
       >
         
         Close

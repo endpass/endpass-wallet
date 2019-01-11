@@ -41,43 +41,9 @@ describe('PasswordModal', () => {
       expect(wrapper.name()).toBe('PasswordModal');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
-  });
 
-  describe('behavior', () => {
-    beforeEach(() => {
-      wrapper = mount(PasswordModal, {
-        ...options,
-      });
-    });
-
-    it('should validate the password', async () => {
-      wrapper = mount(PasswordModal, {
-        ...options,
-        methods: {
-          validatePassword: () => Promise.resolve(),
-        },
-      });
-
-      await wrapper.vm.confirm();
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.errors.has('jsonKeystorePassword')).toBeFalsy();
-      expect(wrapper.contains('.is-danger')).toBeFalsy();
-
-      wrapper.vm.validatePassword = () => Promise.reject();
-
-      await wrapper.vm.confirm();
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.errors.has('jsonKeystorePassword')).toBeTruthy();
-      expect(wrapper.contains('.is-danger')).toBeTruthy();
-    });
-
-    it('should have button that submits form', () => {
-      expect(wrapper.find('form').attributes().id).toBe('password-form');
-      expect(
-        wrapper.find('[data-test=submit-password]').attributes().form,
-      ).toBe('password-form');
+    it('should render component', () => {
+      expect(wrapper.element).toMatchSnapshot();
     });
   });
 });
