@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Intercom from 'vue-intercom';
 import VueAnalytics from 'vue-analytics';
 import Notifications from 'vue-notification';
+import UIComponents from '@endpass/ui';
 
 import router from './router';
 import store from './store';
@@ -23,6 +24,7 @@ Vue.use(VueAnalytics, {
 });
 
 Vue.use(Intercom, { appId: ENV.intercomAppId });
+Vue.use(UIComponents);
 
 /* eslint-disable no-new */
 const app = new Vue({

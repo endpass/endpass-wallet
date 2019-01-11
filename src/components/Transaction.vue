@@ -139,7 +139,6 @@ import get from 'lodash/get';
 import Account from '@/components/Account';
 import ResendModal from '@/components/modal/ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
-import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { formateDate, fromNow } from '@endpass/utils/date';
 import { getShortStringWithEllipsis } from '@endpass/utils/strings';
@@ -326,7 +325,6 @@ export default {
     Account,
     ResendModal,
     PasswordModal,
-    VSpinner,
   },
   filters: {
     truncateHash(value) {

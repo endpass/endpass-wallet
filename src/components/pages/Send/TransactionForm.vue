@@ -83,12 +83,6 @@
 import { debounce } from 'lodash';
 import { mapGetters, mapState, mapActions } from 'vuex';
 import { ENSResolver, Transaction } from '@/class';
-import VForm from '@/components/ui/form/VForm';
-import VRadio from '@/components/ui/form/VRadio';
-import VSelect from '@/components/ui/form/VSelect';
-import VInput from '@/components/ui/form/VInput';
-import VSpinner from '@/components/ui/VSpinner';
-import VButton from '@/components/ui/form/VButton';
 import AccountChooser from '@/components/AccountChooser';
 import TransactionAdvancedOptions from './TransactionAdvancedOptions';
 import TransactionAmountOptions from './TransactionAmountOptions';
@@ -294,12 +288,6 @@ export default {
   },
   mixins: [formMixin],
   components: {
-    VForm,
-    VRadio,
-    VSelect,
-    VInput,
-    VSpinner,
-    VButton,
     AccountChooser,
     TransactionAdvancedOptions,
     TransactionAmountOptions,

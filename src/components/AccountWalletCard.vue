@@ -49,8 +49,6 @@
 import { mapActions, mapGetters } from 'vuex';
 import Account from '@/components/Account';
 import TokensList from '@/components/TokensList';
-import VSpinner from '@/components/ui/VSpinner';
-import VButton from '@/components/ui/form/VButton';
 
 export default {
   name: 'AccountWalletCard',
@@ -137,8 +135,6 @@ export default {
   components: {
     Account,
     TokensList,
-    VSpinner,
-    VButton,
   },
 };
 </script>

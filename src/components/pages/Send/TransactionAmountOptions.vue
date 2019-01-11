@@ -101,8 +101,6 @@
 import { get } from 'lodash';
 import { BigNumber } from 'bignumber.js';
 import web3 from '@/class/singleton/web3';
-import VInput from '@/components/ui/form/VInput';
-import VSelect from '@/components/ui/form/VSelect';
 
 const { fromWei } = web3.utils;
 
@@ -352,11 +350,6 @@ export default {
     emitChangeTokenInfo(value) {
       this.$emit('change-token', value);
     },
-  },
-
-  components: {
-    VInput,
-    VSelect,
   },
 };
 </script>

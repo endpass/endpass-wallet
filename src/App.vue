@@ -1,6 +1,6 @@
 <template>
-  <div 
-    id="app" 
+  <div
+    id="app"
     class="app-container"
   >
     <header class="app-header">
@@ -30,20 +30,27 @@
 
     <quick-actions class="is-hidden-desktop"/>
     <app-footer class="is-hidden-touch"/>
-    <page-loader/>
+    <v-page-loader :isLoading="isLoading"/>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import NavSidebar from '@/components/NavSidebar.vue';
 import InfoBar from '@/components/bar/InfoBar.vue';
 import QuickActions from '@/components/QuickActions.vue';
 import errorHandler from '@/mixins/errorHandler';
-import PageLoader from '@/components/ui/PageLoader';
 import AppFooter from '@/components/AppFooter.vue';
 
 export default {
   name: 'App',
+
+  computed: {
+    ...mapState({
+      isLoading: state => state.isPageLoading,
+    }),
+  },
 
   created() {
     this.$store.dispatch('init');
@@ -61,7 +68,6 @@ export default {
     NavSidebar,
     InfoBar,
     QuickActions,
-    PageLoader,
     AppFooter,
   },
 };

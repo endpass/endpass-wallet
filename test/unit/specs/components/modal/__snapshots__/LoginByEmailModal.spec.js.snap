@@ -1,18 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LoginByEmailModal render should display a field for custom identity server 1`] = `
-<v-input id="customIdentityServer" label="Custom Identity Server" data-vv-name="customIdentityServer" name="customIdentityServer" placeholder="Custom Identity Server" help="Example: https://yourserver.com/api" v-validate="'required|url:require_protocol:true'"
-    v-model="customIdentityServer" aria-required="true" aria-invalid="false"></v-input>
-`;
+exports[`LoginByEmailModal render should display a field for custom identity server 1`] = `<v-input id="customIdentityServer" label="Custom Identity Server" data-vv-name="customIdentityServer" name="customIdentityServer" placeholder="Custom Identity Server" help="Example: https://yourserver.com/api" aria-required="true" aria-invalid="false"></v-input>`;
 
 exports[`LoginByEmailModal render should render component 1`] = `
 <v-modal
   class="is-dark"
-  v-on:close="bound handleClose"
 >
-  <template
-    slot="header"
-  >
+  <template>
     Get Started
   </template>
    
@@ -24,8 +18,6 @@ exports[`LoginByEmailModal render should render component 1`] = `
    
   <v-form
     id="loginByEmail"
-    isformvalid="true"
-    v-on:submit="bound handleSubmit"
   >
     <v-input
       aria-invalid="true"
@@ -36,22 +28,17 @@ exports[`LoginByEmailModal render should render component 1`] = `
       label="Email"
       name="email"
       placeholder="Your email"
-      v-model="email"
-      v-validate="'required|email'"
     />
      
     <v-select
       label="Identity Server"
       name="currentIdentityServerType"
       options="[object Object],[object Object],[object Object]"
-      v-model="currentIdentityServerType"
     />
      
     <!---->
      
-    <v-checkbox
-      v-model="termsAccepted"
-    >
+    <v-checkbox>
       
       I accept the
       
@@ -82,6 +69,7 @@ exports[`LoginByEmailModal render should render component 1`] = `
     <v-button
       class-name="is-primary is-medium"
       data-test="submit-login"
+      disabled="true"
       form="loginByEmail"
     >
       Continue

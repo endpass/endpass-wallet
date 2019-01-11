@@ -122,9 +122,30 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@endpass/utils@^1.0.9":
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.0.9.tgz#c85321ceaf575acdd926c7d039bd2d4986171908"
+"@endpass/ui@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@endpass/ui/-/ui-0.2.0.tgz#26b362b162ace4314408d428a24d15204a2d1698"
+  integrity sha512-yKmLSauaeGAdD/Ps5KGbcvLvBM1LPxIZ2FWqHYPb05vND6qWJow25XOk8ijtehoIxIopjoHcCdK5lPtiKLXmxg==
+  dependencies:
+    "@endpass/utils" "^1.0.11"
+    vue "^2.5.21"
+
+"@endpass/utils@^1.0.10":
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.0.10.tgz#9f338ff9160f757b67f7d5504fcd646675d5368c"
+  integrity sha512-+yntssNyhy4f1u4gWU7O10d7yQsAQxAO9ZsU6dgZr6dtQNOri19oZM2G7wtNFCJ/ERDBTlNVW7jkbRz/XzYrRw==
+  dependencies:
+    bs58check "^2.1.2"
+    dayjs "^1.7.8"
+    ethereumjs-wallet "^0.6.2"
+    export-files "^2.1.1"
+    keythereum "^1.0.4"
+    lodash "^4.17.11"
+
+"@endpass/utils@^1.0.11":
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.0.11.tgz#0cccd476acc619c50a039cd3ffbda18a726262da"
+  integrity sha512-2N5ZxR2N7yOgRZlp8aGFJWgvKVG7fTylB5UZ3FubYu9KZ6UgLg0WP2jr2RkxTzEcNegkIJ7NxcCRRhIG4WC+0Q==
   dependencies:
     bs58check "^2.1.2"
     dayjs "^1.7.8"
@@ -9533,6 +9554,11 @@ vue-timers@^1.7.3:
 vue@^2.5.2:
   version "2.5.16"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.16.tgz#07edb75e8412aaeed871ebafa99f4672584a0085"
+
+vue@^2.5.21:
+  version "2.5.22"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.22.tgz#3bf88041af08b8539c37b268b70ca79245e9cc30"
+  integrity sha512-pxY3ZHlXNJMFQbkjEgGVMaMMkSV1ONpz+4qB55kZuJzyJOhn6MSy/YZdzhdnumegNzVTL/Dn3Pp4UrVBYt1j/g==
 
 vuex@^3.0.1:
   version "3.0.1"

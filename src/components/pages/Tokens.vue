@@ -104,7 +104,6 @@ import VToken from '@/components/VToken';
 import TokensList from '@/components/TokensList';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/modal/AddTokenModal';
-import VSpinner from '@/components/ui/VSpinner';
 import { matchString } from '@endpass/utils/strings';
 import { MAIN_NET_ID } from '@/constants';
 
@@ -200,7 +199,6 @@ export default {
     Balance,
     AddTokenModal,
     Multiselect,
-    VSpinner,
     VToken,
     TokensList,
   },

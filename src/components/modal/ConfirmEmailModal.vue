@@ -11,17 +11,12 @@
 </template>
 
 <script>
-import VModal from '@/components/ui/VModal';
-
 export default {
   name: 'ConfirmEmailModal',
   methods: {
     handleClose() {
       this.$emit('close');
     },
-  },
-  components: {
-    VModal,
   },
 };
 </script>

@@ -49,10 +49,6 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import VList from '@/components/ui/VList';
-import VButton from '@/components/ui/form/VButton';
-import VSpinner from '@/components/ui/VSpinner';
-import VPagination from '@/components/ui/VPagination';
 import modalMixin from '@/mixins/modal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import WalletItem from './WalletItem';
@@ -151,10 +147,6 @@ export default {
   },
   mixins: [modalMixin],
   components: {
-    VButton,
-    VList,
-    VPagination,
-    VSpinner,
     WalletItem,
     PasswordModal,
   },

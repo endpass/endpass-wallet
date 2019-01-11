@@ -4,7 +4,6 @@ import Notifications from 'vue-notification';
 import VerifyMessage from '@/components/VerifyMessage';
 import ethereumWalletMock from 'fixtures/wallet';
 import { address } from 'fixtures/accounts';
-import { testUtils } from '@endpass/utils';
 import web3 from '@/class/singleton/web3';
 
 const localVue = createLocalVue();
@@ -34,7 +33,6 @@ describe('VerifyMessage', () => {
     wrapper = shallow(VerifyMessage, {
       localVue,
       store,
-      stubs: testUtils.generateStubs(VerifyMessage),
     });
   });
 

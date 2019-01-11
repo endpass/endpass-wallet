@@ -11,7 +11,6 @@
 
 <script>
 import { WALLET_TYPE } from '@/constants';
-import VList from '@/components/ui/VList';
 
 const hardwareList = {
   [WALLET_TYPE.LEDGER]: 'Ledger wallet',
@@ -28,9 +27,6 @@ export default {
     hardwareType(type) {
       this.$emit('input', type);
     },
-  },
-  components: {
-    VList,
   },
 };
 </script>

@@ -129,8 +129,6 @@
 <script>
 import { pick } from 'lodash';
 import { mapActions } from 'vuex';
-import VInput from '@/components/ui/form/VInput';
-import VSpinner from '@/components/ui/VSpinner';
 
 export default {
   name: 'AdvancedTransactionOptions',
@@ -246,11 +244,6 @@ export default {
     this.nonceInterval = setInterval(async () => {
       this.nextNonceInBlock = await this.getNonceInBlock();
     }, 2000);
-  },
-
-  components: {
-    VInput,
-    VSpinner,
   },
 };
 </script>

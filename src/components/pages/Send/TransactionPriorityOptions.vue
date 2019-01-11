@@ -25,9 +25,6 @@
 </template>
 
 <script>
-import VRadio from '@/components/ui/form/VRadio';
-import VSpinner from '@/components/ui/VSpinner';
-
 export default {
   name: 'TransactionPriorityOptions',
 
@@ -82,11 +79,6 @@ export default {
     emitPriorityInput(value) {
       this.$emit('input', value);
     },
-  },
-
-  components: {
-    VRadio,
-    VSpinner,
   },
 };
 </script>

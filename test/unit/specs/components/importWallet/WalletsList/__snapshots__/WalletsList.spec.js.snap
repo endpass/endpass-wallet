@@ -9,7 +9,6 @@ exports[`WalletsList render should render initial state of the component 1`] = `
   >
     <v-button
       class-name="is-primary is-medium"
-      v-on:click="bound getNextAddressess"
     >
       
       Load wallets
@@ -23,9 +22,7 @@ exports[`WalletsList render should render initial state of the component 1`] = `
     style="display: none;"
   >
      
-    <v-pagination
-      v-on:input="bound changePage"
-    />
+    <v-pagination />
      
     <div
       class="buttons"
@@ -34,7 +31,6 @@ exports[`WalletsList render should render initial state of the component 1`] = `
         class-name="is-primary is-medium"
         data-test="import-wallet-button"
         disabled="true"
-        v-on:click="bound handleImport"
       >
         
         Import

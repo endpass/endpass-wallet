@@ -38,7 +38,6 @@
 
 <script>
 import { mapState } from 'vuex';
-import VModal from '@/components/ui/VModal';
 import TransactionTable from '@/components/TransactionTable';
 
 export default {
@@ -63,7 +62,6 @@ export default {
     },
   },
   components: {
-    VModal,
     TransactionTable,
   },
 };

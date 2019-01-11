@@ -4,7 +4,6 @@ import VeeValidate from 'vee-validate';
 import Notifications from 'vue-notification';
 
 import ChangePasswordSettings from '@/components/ChangePasswordSettings';
-import { testUtils } from '@endpass/utils';
 
 describe('ChangePasswordSettings', () => {
   let accountsActions;
@@ -41,7 +40,6 @@ describe('ChangePasswordSettings', () => {
     wrapper = shallow(ChangePasswordSettings, {
       store,
       localVue,
-      stubs: testUtils.generateStubs(ChangePasswordSettings),
     });
   });
 

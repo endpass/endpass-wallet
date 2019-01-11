@@ -5,7 +5,6 @@ import Notifications from 'vue-notification';
 import AddTokenModal from '@/components/modal/AddTokenModal';
 import { ERC20Token } from '@/class';
 import { tokens } from 'fixtures/tokens';
-import { testUtils } from '@endpass/utils';
 
 const localVue = createLocalVue();
 
@@ -36,7 +35,6 @@ describe('AddTokenModal', () => {
     wrapper = shallow(AddTokenModal, {
       store,
       localVue,
-      stubs: testUtils.generateStubs(AddTokenModal),
     });
     fakeEmptyTokenData = {
       symbol: undefined,

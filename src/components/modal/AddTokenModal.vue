@@ -136,10 +136,6 @@
 <script>
 import { mapActions } from 'vuex';
 import { ERC20Token } from '@/class';
-import VModal from '@/components/ui/VModal';
-import VForm from '@/components/ui/form/VForm';
-import VInput from '@/components/ui/form/VInput';
-import VButton from '@/components/ui/form/VButton';
 import formMixin from '@/mixins/form';
 
 export default {
@@ -229,12 +225,6 @@ export default {
     },
   },
   mixins: [formMixin],
-  components: {
-    VModal,
-    VForm,
-    VInput,
-    VButton,
-  },
 };
 </script>
 

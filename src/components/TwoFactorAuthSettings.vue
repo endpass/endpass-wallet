@@ -21,8 +21,6 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import VForm from '@/components/ui/form/VForm';
-import VButton from '@/components/ui/form/VButton';
 import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
 import modalMixin from '@/mixins/modal';
 
@@ -78,8 +76,6 @@ export default {
   },
   mixins: [modalMixin],
   components: {
-    VForm,
-    VButton,
     TwoFactorAuthModal,
   },
 };

@@ -30,9 +30,6 @@
 </template>
 
 <script>
-import VModal from '@/components/ui/VModal';
-import VButton from '@/components/ui/form/VButton';
-
 export default {
   name: 'ConfirmModal',
   methods: {
@@ -42,10 +39,6 @@ export default {
     handleClose() {
       this.$emit('close');
     },
-  },
-  components: {
-    VButton,
-    VModal,
   },
 };
 </script>

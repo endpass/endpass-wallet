@@ -1,7 +1,6 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import RecoverTransaction from '@/components/RecoverTransaction';
-import { testUtils } from '@endpass/utils';
 import { ethplorerTransactions } from 'fixtures/transactions';
 
 describe('RecoverTransaction', () => {
@@ -14,7 +13,6 @@ describe('RecoverTransaction', () => {
 
     wrapper = shallow(RecoverTransaction, {
       localVue,
-      stubs: testUtils.generateStubs(RecoverTransaction),
     });
   });
 

@@ -1,5 +1,4 @@
 import { shallow, createLocalVue } from '@vue/test-utils';
-import { testUtils } from '@endpass/utils';
 import ConfirmModal from '@/components/modal/ConfirmModal';
 
 const localVue = createLocalVue();
@@ -11,7 +10,6 @@ describe('ConfirmModal', () => {
     beforeEach(() => {
       wrapper = shallow(ConfirmModal, {
         localVue,
-        stubs: testUtils.generateStubs(ConfirmModal),
       });
     });
 

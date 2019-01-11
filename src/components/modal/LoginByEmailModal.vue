@@ -89,12 +89,6 @@
 </template>
 
 <script>
-import VModal from '@/components/ui/VModal';
-import VForm from '@/components/ui/form/VForm';
-import VInput from '@/components/ui/form/VInput';
-import VButton from '@/components/ui/form/VButton';
-import VCheckbox from '@/components/ui/form/VCheckbox';
-import VSelect from '@/components/ui/form/VSelect';
 import { IDENTITY_MODE } from '@/constants';
 import { mapActions } from 'vuex';
 import error from '@/mixins/error';
@@ -173,13 +167,5 @@ export default {
     },
   },
   mixins: [error, formMixin],
-  components: {
-    VModal,
-    VForm,
-    VInput,
-    VButton,
-    VCheckbox,
-    VSelect,
-  },
 };
 </script>

@@ -4,12 +4,10 @@ exports[`SignTransaction render should enable "Sign transaction" button 1`] = `
 <div>
   <v-form
     id="signing-transaction-form"
-    v-on:submit="bound togglePasswordModal"
   >
     <v-textarea
       label="Transaction object (JSON)"
       placeholder="This is a transaction that you are signing to prove that you own it."
-      v-model="transaction"
     />
      
     <v-button
@@ -29,12 +27,10 @@ exports[`SignTransaction render should render the initial state of the component
 <div>
   <v-form
     id="signing-transaction-form"
-    v-on:submit="bound togglePasswordModal"
   >
     <v-textarea
       label="Transaction object (JSON)"
       placeholder="This is a transaction that you are signing to prove that you own it."
-      v-model="transaction"
     />
      
     <v-button
@@ -55,12 +51,10 @@ exports[`SignTransaction render should show modal window for password confirmati
 <div>
   <v-form
     id="signing-transaction-form"
-    v-on:submit="bound togglePasswordModal"
   >
     <v-textarea
       label="Transaction object (JSON)"
       placeholder="This is a transaction that you are signing to prove that you own it."
-      v-model="transaction"
     />
      
     <v-button
@@ -85,12 +79,10 @@ exports[`SignTransaction render should show signed message 1`] = `
 <div>
   <v-form
     id="signing-transaction-form"
-    v-on:submit="bound togglePasswordModal"
   >
     <v-textarea
       label="Transaction object (JSON)"
       placeholder="This is a transaction that you are signing to prove that you own it."
-      v-model="transaction"
     />
      
     <v-button

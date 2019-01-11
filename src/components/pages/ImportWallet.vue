@@ -25,7 +25,6 @@
 
 <script>
 import BasePage from '@/components/pages/Base';
-import VList from '@/components/ui/VList.vue';
 import ImportFromSeed from '@/components/importWallet/ImportFromSeed';
 import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
 import ImportFromPublicKey from '@/components/importWallet/ImportFromPublicKey';
@@ -65,7 +64,6 @@ export default {
   },
   components: {
     BasePage,
-    VList,
     ImportFromSeed,
     ImportFromPrivateKey,
     ImportFromPublicKey,

@@ -3,11 +3,8 @@
 exports[`ConfirmModal render should render component 1`] = `
 <v-modal
   class="is-dark"
-  v-on:close="bound handleClose"
 >
-  <template
-    slot="header"
-  >
+  <template>
     Are you sure?
   </template>
     
@@ -18,7 +15,6 @@ exports[`ConfirmModal render should render component 1`] = `
     <v-button
       class-name="is-primary is-medium"
       data-test="submit-logout"
-      v-on:click="bound handleConfirm"
     >
       
       Confirm
@@ -28,7 +24,6 @@ exports[`ConfirmModal render should render component 1`] = `
     <v-button
       class-name="is-medium"
       data-test="submit-logout"
-      v-on:click="bound handleClose"
     >
       
       Cancel
