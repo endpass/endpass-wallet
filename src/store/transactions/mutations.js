@@ -21,6 +21,7 @@ const updateTransaction = (state, { hash, payload }) => {
 
   const trx = state.pendingTransactions[trxIndex];
   state.pendingTransactions[trxIndex] = Transaction.applyProps(trx, payload);
+  state.pendingTransactions = [...state.pendingTransactions];
 };
 
 const setTransactionHistory = (state, transactions) => {

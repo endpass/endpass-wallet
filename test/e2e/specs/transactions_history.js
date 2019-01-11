@@ -1,5 +1,11 @@
 import { blockTransactions, transactionToSend } from '../fixtures/transactions';
 
+const historyTransaction = Object.freeze({
+  ...transactionToSend,
+  state: 'pending',
+  hash: '0x24802a752fbd9e7a71484fbef5e5c6cc6180031817b6ad3254874fce596c1af0',
+});
+
 describe('Transactions History Page', () => {
   beforeEach(() => {
     cy.getInitialData();
@@ -24,7 +30,7 @@ describe('Transactions History Page', () => {
       cy.get('@store').invoke(
         'commit',
         'transactions/ADD_TRANSACTION',
-        transactionToSend,
+        historyTransaction,
       );
 
       cy.get('[data-test=transactions-history-item]')
@@ -35,10 +41,11 @@ describe('Transactions History Page', () => {
 
   describe('Transactions history actions', () => {
     beforeEach(() => {
-      cy.get('@store').invoke('commit', 'transactions/ADD_TRANSACTION', {
-        ...transactionToSend,
-        state: 'pending',
-      });
+      cy.get('@store').invoke(
+        'commit',
+        'transactions/ADD_TRANSACTION',
+        historyTransaction,
+      );
     });
 
     it('should send requests to cancel transaction', () => {
@@ -61,7 +68,7 @@ describe('Transactions History Page', () => {
         cy.focused().should('have.attr', 'data-test', 'gas-price-input');
         cy.get('[data-test=gas-price-input]')
           .clear()
-          .type(transactionToSend.gasPrice);
+          .type(historyTransaction.gasPrice);
         cy.get('[data-test=submit-button]').click();
       });
       cy.get('[data-test=resend-modal]').should('not.visible');
@@ -70,6 +77,25 @@ describe('Transactions History Page', () => {
 
       cy.get('[data-test=app-notification] .is-info').contains(
         'Transaction was resent',
+      );
+    });
+
+    it('should change state of transaction from pending to success', () => {
+      cy.get('[data-test=transaction-details-button]').click();
+
+      cy.get('[data-test=transaction-details] .status-text').contains(
+        'pending',
+      );
+
+      cy.get('@store').invoke('commit', 'transactions/UPDATE_TRANSACTION', {
+        hash: historyTransaction.hash,
+        payload: {
+          state: 'success',
+        },
+      });
+
+      cy.get('[data-test=transaction-details] .status-text').contains(
+        'success',
       );
     });
   });
@@ -123,10 +149,11 @@ describe('Transactions History Page', () => {
 
   describe('Transactions history forms validation', () => {
     it('should validate resend transaction form parameters', () => {
-      cy.get('@store').invoke('commit', 'transactions/ADD_TRANSACTION', {
-        ...transactionToSend,
-        state: 'pending',
-      });
+      cy.get('@store').invoke(
+        'commit',
+        'transactions/ADD_TRANSACTION',
+        historyTransaction,
+      );
 
       cy.get('[data-test=transactions-history-item]').within(() => {
         cy.get('[data-test=transaction-resend-button]').click();

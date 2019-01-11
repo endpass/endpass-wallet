@@ -52,6 +52,24 @@ const apiTokenResponse = {
 
 describe('Transaction Class', () => {
   describe('static methods', () => {
+    describe('unfreeze', () => {
+      it('should return new object if passed object is frozen', async () => {
+        const toFreeze = {};
+        const checkObj = Transaction.unfreeze(Object.freeze(toFreeze));
+
+        expect(checkObj === toFreeze).toBeFalsy();
+        expect(Object.isFrozen(checkObj)).toBeFalsy();
+      });
+
+      it('should return new object if passed is NOT frozen', async () => {
+        const toFreeze = {};
+        const checkObj = Transaction.unfreeze(toFreeze);
+
+        expect(checkObj === toFreeze).toBeFalsy();
+        expect(Object.isFrozen(checkObj)).toBeFalsy();
+      });
+    });
+
     describe('isToContract', () => {
       it('should returns true if resolved code not equals to 0x', async () => {
         const res = await Transaction.isToContract(transaction);
