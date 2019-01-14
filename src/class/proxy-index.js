@@ -1,11 +1,11 @@
 export { createENSClass } from './ens';
 export { createWalletClass } from './wallet';
-export { createERC20TokenClass } from './erc20';
 
 export { ProxyRequest } from './singleton';
 
 export {
   createTransactionClass,
+  createERC20TokenClass,
   LocalStorage,
   SettingsStorage,
   ProviderFactory,
