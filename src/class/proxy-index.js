@@ -14,8 +14,6 @@ export { LocalStorage, SettingsStorage } from './storage';
 export {
   default as TransactionFactory,
 } from './transaction/TransactionFactory';
-export { NotificationError } from './error';
-export { default as Token } from './Token';
 export { TrezorProxy } from './wallet/proxy';
 export { LedgerProxy } from './wallet/proxy';
 export { HDProxy } from './wallet/proxy';

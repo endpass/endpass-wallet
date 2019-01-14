@@ -4,6 +4,7 @@ export const HARDWARE_WALLET_TYPE = Object.freeze({
 });
 
 export const WALLET_TYPE = Object.freeze({
+  STANDART: 'StandardAccount',
   PUBLIC: 'PublicAccount',
   HD_PUBLIC: 'HDPublicAccount',
   HD_MAIN: 'HDMainAccount',
