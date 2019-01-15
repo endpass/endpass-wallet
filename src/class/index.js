@@ -4,7 +4,7 @@ import {
   createENSClass,
   createWalletClass,
   createTransactionClass,
-} from './proxy-index';
+} from '@endpass/class';
 import web3 from './singleton/web3';
 
 const ERC20Token = createERC20TokenClass(web3);
@@ -19,15 +19,14 @@ export { default as http } from './singleton/http';
 
 export {
   ProviderFactory,
-  default as dappBridge,
-  default as InpageProvider,
+  dappBridge,
+  InpageProvider,
   LocalStorage,
   SettingsStorage,
-  default as TransactionFactory,
+  TransactionFactory,
   NotificationError,
-  default as Token,
-  TrezorProxy,
-  LedgerProxy,
-  HDProxy,
+  Token,
+  loadProxy,
+  proxies,
   EventEmitter,
-} from './proxy-index';
+} from '@endpass/class';
