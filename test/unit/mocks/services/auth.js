@@ -1,7 +1,7 @@
 import authService from '@/services/auth';
 
 jest.mock('@/services/auth', () => ({
-  login: jest.fn().mockResolvedValue('email_auth'),
+  login: jest.fn().mockResolvedValue('emailAuth'),
 
   logout: jest.fn().mockResolvedValue({ success: true }),
 

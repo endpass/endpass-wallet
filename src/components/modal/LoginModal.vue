@@ -37,7 +37,7 @@ export default {
         if (challengeType === 'otp') {
           this.email = email;
           this.currentModal = TwoFactorAuthModal.name;
-        } else if (challengeType === 'email_link') {
+        } else if (challengeType === 'emailLink') {
           this.currentModal = ConfirmEmailModal.name;
         } else {
           this.handleSuccessfulLogin();

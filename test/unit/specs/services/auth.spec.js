@@ -22,7 +22,7 @@ describe('Auth service', () => {
     const successResp = {
       success: true,
       challenge: {
-        challenge_type: 'email_auth',
+        challengeType: 'emailAuth',
       },
     };
 
@@ -52,7 +52,7 @@ describe('Auth service', () => {
 
       const challengeType = await authService.login({ email, redirectUri });
 
-      expect(challengeType).toBe(successResp.challenge.challenge_type);
+      expect(challengeType).toBe(successResp.challenge.challengeType);
     });
 
     it('should handle failed POST /auth request', async () => {
@@ -93,7 +93,7 @@ describe('Auth service', () => {
         expect(config.url).toBe(url);
         expect(config.data).toBe(
           JSON.stringify({
-            challenge_type: 'otp',
+            challengeType: 'otp',
             code,
             email,
           }),
