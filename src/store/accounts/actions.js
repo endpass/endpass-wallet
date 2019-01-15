@@ -320,16 +320,16 @@ const getNextWalletsFromHd = async (
     xpub: savedXpub,
   };
 
-  let result = {};
+  let proxyWallet;
   switch (walletType) {
     case WALLET_TYPE.TREZOR:
-      result = await loadProxy(proxies.TrezorProxy).getNextWallets(params);
+      proxyWallet = await loadProxy(proxies.TrezorProxy);
       break;
     case WALLET_TYPE.LEDGER:
-      result = await loadProxy(proxies.LedgerProxy).getNextWallets(params);
+      proxyWallet = await loadProxy(proxies.LedgerProxy);
       break;
     case WALLET_TYPE.HD_PUBLIC:
-      result = await loadProxy(proxies.HDProxy).getNextWallets(params);
+      proxyWallet = await loadProxy(proxies.HDProxy);
       break;
     default:
       throw new NotificationError({
@@ -338,6 +338,7 @@ const getNextWalletsFromHd = async (
         type: 'is-danger',
       });
   }
+  const result = await proxyWallet.getNextWallets(params);
   const { xpub, addresses } = result;
 
   if (savedXpub !== xpub) {
