@@ -137,10 +137,10 @@ describe('LoginModal', () => {
         jest.spyOn(wrapper.vm, '$notify');
       });
 
-      it('should login user via email_link challenge type', async () => {
+      it('should login user via emailLink challenge type', async () => {
         expect.assertions(3);
 
-        actions.login.mockResolvedValueOnce('email_link');
+        actions.login.mockResolvedValueOnce('emailLink');
 
         await wrapper.vm.handleLoginByEmailModalConfirm(email);
 

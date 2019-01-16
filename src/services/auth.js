@@ -15,7 +15,7 @@ export default {
         throw new Error();
       }
 
-      return challenge.challenge_type;
+      return challenge.challengeType;
     } catch (e) {
       throw new NotificationError({
         title: 'Auth error',
@@ -30,7 +30,7 @@ export default {
       const {
         data: { success },
       } = await httpIdentity.post(`${ENV.identityAPIUrl}/auth/token`, {
-        challenge_type: 'otp',
+        challengeType: 'otp',
         code,
         email,
       });
