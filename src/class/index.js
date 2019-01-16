@@ -4,7 +4,7 @@ import {
   createENSClass,
   createWalletClass,
   createTransactionClass,
-} from 'endpass-core/packages/class';
+} from '@endpass/class';
 import web3 from './singleton/web3';
 
 const ERC20Token = createERC20TokenClass(web3);
@@ -29,4 +29,4 @@ export {
   loadProxy,
   proxies,
   EventEmitter,
-} from 'endpass-core/packages/class';
+} from '@endpass/class';
