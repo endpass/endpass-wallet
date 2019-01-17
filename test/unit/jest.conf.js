@@ -1,5 +1,6 @@
 const path = require('path');
 const ENV = require('../../config/test.env');
+
 module.exports = {
   rootDir: path.resolve(__dirname, '../../'),
   moduleFileExtensions: ['js', 'json', 'vue', 'ts', 'tsx', 'jsx', 'node'],
@@ -16,11 +17,11 @@ module.exports = {
     '.+\\.(css|styl|less|sass|scss|png|jpe?g|ttf|woff2?|svg)$':
       'jest-transform-stub',
   },
-  //globals as webpack DefinePlugin mocks
+  // globals as webpack DefinePlugin mocks
   globals: {
     ENV,
   },
-  transformIgnorePatterns: ['node_modules/(?!vue-timers)'],
+  transformIgnorePatterns: ['node_modules/(?!(vue-timers|@endpass/class))'],
   snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
   setupFiles: ['<rootDir>/test/unit/setup', 'jest-canvas-mock'],
   setupTestFrameworkScriptFile: '<rootDir>/test/unit/setupTests',
