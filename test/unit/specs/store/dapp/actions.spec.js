@@ -5,7 +5,7 @@ import {
   CHANGE_INJECT_STATUS,
 } from '@/store/dapp/mutations-types';
 import { MAIN_NET_ID } from '@/constants';
-import { web3, dappBridge, NotificationError } from '@/class';
+import { web3, dappBridge } from '@/class';
 import { checksumAddress, v3password } from 'fixtures/accounts';
 import {
   commonRequest,
