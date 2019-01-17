@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils';
 
 import VToken from '@/components/VToken';
-import Token from '@/class/Token';
+import { Token } from '@/class';
 
 describe('Token', () => {
   let wrapper;
