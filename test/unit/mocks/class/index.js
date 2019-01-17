@@ -21,10 +21,17 @@ jest.mock('@/class', () => {
 
   const loadProxy = proxy => proxy;
 
+  const LocalStorage = {
+    save: jest.fn(),
+    remove: jest.fn(),
+    load: jest.fn(),
+  };
+
   return {
     ...originClass,
     proxies,
     loadProxy,
+    LocalStorage,
     web3,
     ENSResolver: ens,
     ERC20Token: erc20,

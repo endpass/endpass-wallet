@@ -1,6 +1,6 @@
 import { LocalStorage } from '@/class';
-import { STORAGE_USER_META_KEY } from '@/class/constants';
-
+// import { STORAGE_USER_META_KEY } from '@/class/constants';
+const STORAGE_USER_META_KEY = 'endpass-user-meta';
 const localSettings = require.requireActual('@/services/localSettings').default;
 
 describe('localSettings', () => {
