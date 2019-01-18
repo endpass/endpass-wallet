@@ -6,7 +6,7 @@ export const settings = {
   id: 'c23809bd-bb68-44a0-946c-40823dc4b80e',
   email: 'user@example.com',
   fiatCurrency: 'USD',
-  otp_enabled: false,
+  otpEnabled: false,
   tokens: {
     '1': [
       {

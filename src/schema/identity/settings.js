@@ -3,7 +3,7 @@ import userTokenSchema from './token';
 
 export default {
   type: 'object',
-  required: ['email', 'fiatCurrency', 'otp_enabled'],
+  required: ['email', 'fiatCurrency', 'otpEnabled'],
   properties: {
     email: {
       type: 'string',
@@ -14,7 +14,7 @@ export default {
       minLength: 1,
       default: 'USD',
     },
-    otp_enabled: {
+    otpEnabled: {
       type: 'boolean',
     },
     net: {
