@@ -1,5 +1,4 @@
 import Web3 from 'web3';
-import { get } from 'lodash';
 
 export default class Web3Factory {
   static create(provider) {
