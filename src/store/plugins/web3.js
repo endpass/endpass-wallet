@@ -3,6 +3,19 @@ import Web3 from 'web3';
 import web3 from '@/class/singleton/web3';
 import { ProviderFactory } from '@/class';
 
+const setProvider = ({ dispatch }, provider) => {
+  web3.setProvider(provider);
+
+  if (provider.startPollingNewBlockHeaders) {
+    provider.startPollingNewBlockHeaders(
+      web3.eth.getBlockNumber,
+      web3.eth.getBlock,
+    );
+  }
+
+  dispatch('web3/subscribeOnBlockUpdates');
+};
+
 const getProvider = (store, url) => {
   const newProvider = ProviderFactory.create(url);
 
@@ -33,19 +46,6 @@ const getProvider = (store, url) => {
   }
 
   return newProvider;
-};
-
-const setProvider = ({ dispatch }, provider) => {
-  web3.setProvider(provider);
-
-  if (provider.startPollingNewBlockHeaders) {
-    provider.startPollingNewBlockHeaders(
-      web3.eth.getBlockNumber,
-      web3.eth.getBlock,
-    );
-  }
-
-  dispatch('web3/subscribeOnBlockUpdates');
 };
 
 export default store => {

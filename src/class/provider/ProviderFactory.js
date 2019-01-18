@@ -45,14 +45,12 @@ export default class ProviderFactory {
    */
   static create(url) {
     // For string url
-    const netUrls = [].concat(url);
+    const [providerUrl, ...fallbackUrls] = [].concat(url);
+    const provider = ProviderFactory.getInstance(providerUrl);
 
-    const [provider, ...fallbackProviders] = netUrls.map(urlItem =>
-      ProviderFactory.getInstance(urlItem),
-    );
-
-    if (!isEmpty(fallbackProviders) && !window.Cypress) {
-      provider.getFallbackProviders = () => fallbackProviders;
+    if (!isEmpty(fallbackUrls) && !window.Cypress) {
+      provider.getFallbackProviders = () =>
+        fallbackUrls.map(urlItem => ProviderFactory.getInstance(urlItem));
     }
 
     provider.setErrorHandler = handler => {
