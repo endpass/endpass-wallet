@@ -169,7 +169,7 @@ describe('Schema validators', () => {
           { ...settings, email: '123' },
           { ...settings, networks: ['123'] },
           { ...settings, tokens: { address } },
-          { ...settings, otp_enabled: 1 },
+          { ...settings, otpEnabled: 1 },
         ];
 
         invalidDataArray.forEach(invalidData =>
