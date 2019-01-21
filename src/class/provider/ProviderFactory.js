@@ -32,7 +32,9 @@ export default class ProviderFactory {
     const AdditionalProvider = window.Cypress ? MockProvider : DebounceProvider;
     const BaseProvider = ProviderFactory.getProviderClass(url);
     const Provider = providerMixin(BaseProvider, AdditionalProvider);
-    return new Provider(url);
+    let provider = new Provider(url);
+    console.log(provider, 'kek12345');
+    return provider;
   }
 
   /**

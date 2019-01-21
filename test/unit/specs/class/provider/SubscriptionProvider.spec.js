@@ -1,4 +1,5 @@
 import SubscriptionProvider from '@/class/provider/SubscriptionProvider';
+import superclass from 'fixtures/providerSuperclass';
 
 jest.useFakeTimers();
 
@@ -7,8 +8,9 @@ describe('SubscriptionProvider class', () => {
   let provider;
 
   beforeEach(() => {
-    provider = new SubscriptionProvider();
-
+    provider = new (SubscriptionProvider(superclass))();
+    jest.spyOn(provider, 'send');
+    jest.spyOn(provider, 'sendAsync');
     jest.clearAllTimers();
     jest.clearAllMocks();
   });
@@ -147,7 +149,6 @@ describe('SubscriptionProvider class', () => {
       provider.sendAsync(payload, callback);
 
       Date.now.mockRestore();
-
       expect(provider.subsrciptionIds[subsrciptionId]).toEqual({
         type: subscribeType,
       });
@@ -179,31 +180,17 @@ describe('SubscriptionProvider class', () => {
       });
     });
 
-    it('should call parent sendAsync method', () => {
+    it('should call superclass sendAsync method', () => {
       const payload = {
         id: 1,
         method: 'eth_call',
         params: [],
       };
 
-      provider.parent = {
-        sendAsync: jest.fn(),
-      };
-
       provider.sendAsync(payload, callback);
 
-      expect(provider.parent.sendAsync).toHaveBeenCalledTimes(1);
-      expect(provider.parent.sendAsync).toHaveBeenCalledWith(payload, callback);
-    });
-  });
-
-  describe('setParent', () => {
-    it('should set parent', () => {
-      const parent = {};
-
-      provider.setParent(parent);
-
-      expect(provider.parent).toEqual(parent);
+      expect(provider.sendAsync).toHaveBeenCalledTimes(1);
+      expect(provider.sendAsync).toHaveBeenCalledWith(payload, callback);
     });
   });
 
@@ -251,13 +238,11 @@ describe('SubscriptionProvider class', () => {
     it('should start polling and call callbacks', async () => {
       expect.assertions(2);
 
-      let parent = {};
-      parent.notificationCallbacks = {};
-      parent.notificationCallbacks.data = [callback];
-      parent.subsrciptionIds = {
+      provider.notificationCallbacks = {};
+      provider.notificationCallbacks.data = [callback];
+      provider.subsrciptionIds = {
         [subsrciptionId]: { type: 'newHeads' },
       };
-      provider.setParent(parent);
 
       provider.startPollingNewBlockHeaders(getBlockNumber, getBlock);
 
@@ -278,13 +263,11 @@ describe('SubscriptionProvider class', () => {
     it('should start polling and not call callbacks', async () => {
       expect.assertions(1);
 
-      let parent = {};
-      parent.notificationCallbacks = {};
-      parent.notificationCallbacks.data = [callback];
-      parent.subsrciptionIds = {
+      provider.notificationCallbacks = {};
+      provider.notificationCallbacks.data = [callback];
+      provider.subsrciptionIds = {
         [subsrciptionId]: { type: 'logs' },
       };
-      provider.setParent(parent);
 
       provider.startPollingNewBlockHeaders(getBlockNumber, getBlock);
 
@@ -298,13 +281,11 @@ describe('SubscriptionProvider class', () => {
     it('should not call callback if getBlock return null', async () => {
       expect.assertions(1);
 
-      let parent = {};
-      parent.notificationCallbacks = {};
-      parent.notificationCallbacks.data = [callback];
-      parent.subsrciptionIds = {
+      provider.notificationCallbacks = {};
+      provider.notificationCallbacks.data = [callback];
+      provider.subsrciptionIds = {
         [subsrciptionId]: { type: 'newHeads' },
       };
-      provider.setParent(parent);
       getBlock.mockResolvedValueOnce(null);
 
       provider.startPollingNewBlockHeaders(getBlockNumber, getBlock);

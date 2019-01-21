@@ -1,5 +1,6 @@
 import DebounceProvider from '@/class/provider/DebounceProvider';
 import debounce from 'lodash/debounce';
+import superclass from 'fixtures/providerSuperclass';
 
 jest.mock('lodash/debounce', () => jest.fn(fn => fn));
 
@@ -7,8 +8,9 @@ describe('DebounceProvider Class', () => {
   let provider;
 
   beforeEach(() => {
-    provider = new DebounceProvider();
-    provider.parent = { send: jest.fn() };
+    provider = new (DebounceProvider(superclass))();
+    jest.spyOn(provider, 'send');
+    jest.spyOn(provider, 'sendAsync');
   });
 
   describe('instance methods', () => {
@@ -59,7 +61,7 @@ describe('DebounceProvider Class', () => {
       });
 
       it('should not call callback when the cache doesn`t exist', () => {
-        provider.parent.send.mockImplementation((_, callback) =>
+        provider.send.mockImplementation((_, callback) =>
           callback(null, { result: 1 }),
         );
 

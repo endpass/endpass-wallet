@@ -1,38 +1,18 @@
 export default (BaseClass, ...mixins) => {
-  const copyProps = (target, source) => {
-    Object.getOwnPropertyNames(source)
-      .concat(Object.getOwnPropertySymbols(source))
-      .forEach(prop => {
-        if (
-          !prop.match(
-            /^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/,
-          )
-        )
-          Object.defineProperty(
-            target,
-            prop,
-            Object.getOwnPropertyDescriptor(source, prop),
-          );
-      });
-  };
+  let mix = superclass => new MixinBuilder(superclass);
 
-  class Base extends BaseClass {
-    constructor(...args) {
-      super(...args);
-      mixins.forEach(Mixin => {
-        copyProps(this, new Mixin());
-      });
+  class MixinBuilder {
+    constructor(superclass) {
+      this.superclass = superclass;
+    }
 
-      if (this.setParent) {
-        this.setParent(new BaseClass(...args));
-      }
+    with(mixins) {
+      return mixins.reduce((c, mixin) => mixin(c), this.superclass);
     }
   }
-
-  mixins.forEach(mixin => {
-    copyProps(Base.prototype, mixin.prototype);
-    copyProps(Base, mixin);
-  });
-
-  return Base;
+  return class Base extends mix(BaseClass).with(mixins) {
+    constructor(...args) {
+      super(...args);
+    }
+  };
 };

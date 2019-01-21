@@ -9,105 +9,105 @@ const toPayload = (id, result) => ({
   jsonrpc: '2.0',
 });
 
-export default class SubscriptionProvider {
-  notificationCallbacks = {
-    [EVENT_TYPES.DATA]: [],
-    [EVENT_TYPES.ERROR]: () => {},
-  };
-  subsrciptionIds = {};
-  newBlocksIntervalId = null;
+export default superclass =>
+  class SubscriptionProvider extends superclass {
+    notificationCallbacks = {
+      [EVENT_TYPES.DATA]: [],
+      [EVENT_TYPES.ERROR]: () => {},
+    };
+    subsrciptionIds = {};
+    newBlocksIntervalId = null;
 
-  on(type, callback) {
-    if (typeof callback !== 'function') {
-      throw new Error('The second parameter callback must be a function.');
+    constructor(...args) {
+      super(...args);
     }
 
-    if (type === EVENT_TYPES.DATA) {
-      this.notificationCallbacks[type].push(callback);
-    } else {
-      this.notificationCallbacks[type] = callback;
-    }
-  }
+    on(type, callback) {
+      if (typeof callback !== 'function') {
+        throw new Error('The second parameter callback must be a function.');
+      }
 
-  removeListener(type, callback) {
-    if (type === EVENT_TYPES.DATA) {
-      this.notificationCallbacks[EVENT_TYPES.DATA].forEach(
-        (cb, index, callbacks) => {
-          if (cb === callback) {
-            callbacks.splice(index, 1);
-          }
-        },
-      );
-    }
-  }
-
-  removeAllListeners(type) {
-    if (!type) {
-      return;
+      if (type === EVENT_TYPES.DATA) {
+        this.notificationCallbacks[type].push(callback);
+      } else {
+        this.notificationCallbacks[type] = callback;
+      }
     }
 
-    this.notificationCallbacks[type] =
-      type === EVENT_TYPES.DATA ? [] : () => {};
-  }
-
-  reset() {
-    this.notificationCallbacks = {};
-
-    this.stopPollingNewBlockHeaders();
-  }
-
-  sendAsync(payload, callback) {
-    const { method, params } = payload;
-
-    if (method.indexOf('_subscribe') !== -1) {
-      const subscriptionId = Date.now();
-
-      this.subsrciptionIds[subscriptionId] = { type: params[0] };
-
-      return callback(null, toPayload(payload.id, subscriptionId));
+    removeListener(type, callback) {
+      if (type === EVENT_TYPES.DATA) {
+        this.notificationCallbacks[EVENT_TYPES.DATA].forEach(
+          (cb, index, callbacks) => {
+            if (cb === callback) {
+              callbacks.splice(index, 1);
+            }
+          },
+        );
+      }
     }
 
-    if (method.indexOf('_unsubscribe') !== -1) {
-      delete this.subsrciptionIds[params[0]];
+    removeAllListeners(type) {
+      if (!type) {
+        return;
+      }
 
-      return callback(null, toPayload(payload.id, true));
+      this.notificationCallbacks[type] =
+        type === EVENT_TYPES.DATA ? [] : () => {};
     }
 
-    return this.parent.sendAsync(payload, callback);
-  }
+    reset() {
+      this.notificationCallbacks = {};
 
-  setParent(parent) {
-    this.parent = parent;
-  }
-
-  startPollingNewBlockHeaders(getBlockNumber, getBlock) {
-    let lastBlockNumber = null;
-
-    if (!getBlockNumber || !getBlock) {
-      return;
-    }
-
-    if (this.newBlocksIntervalId) {
       this.stopPollingNewBlockHeaders();
     }
 
-    this.newBlocksIntervalId = setInterval(async () => {
-      try {
-        const blockNumber = await getBlockNumber();
+    sendAsync(payload, callback) {
+      const { method, params } = payload;
 
-        if (lastBlockNumber !== blockNumber) {
-          const block = await getBlock(blockNumber);
+      if (method.indexOf('_subscribe') !== -1) {
+        const subscriptionId = Date.now();
 
-          if (!block) {
-            // Probably if node is not synced
-            return;
-          }
+        this.subsrciptionIds[subscriptionId] = { type: params[0] };
 
-          lastBlockNumber = blockNumber;
+        return callback(null, toPayload(payload.id, subscriptionId));
+      }
 
-          this.parent.notificationCallbacks[EVENT_TYPES.DATA].forEach(
-            callback => {
-              Object.entries(this.parent.subsrciptionIds).forEach(
+      if (method.indexOf('_unsubscribe') !== -1) {
+        delete this.subsrciptionIds[params[0]];
+
+        return callback(null, toPayload(payload.id, true));
+      }
+
+      return super.sendAsync(payload, callback);
+    }
+
+    startPollingNewBlockHeaders(getBlockNumber, getBlock) {
+      let lastBlockNumber = null;
+
+      if (!getBlockNumber || !getBlock) {
+        return;
+      }
+
+      if (this.newBlocksIntervalId) {
+        this.stopPollingNewBlockHeaders();
+      }
+
+      this.newBlocksIntervalId = setInterval(async () => {
+        try {
+          const blockNumber = await getBlockNumber();
+
+          if (lastBlockNumber !== blockNumber) {
+            const block = await getBlock(blockNumber);
+
+            if (!block) {
+              // Probably if node is not synced
+              return;
+            }
+
+            lastBlockNumber = blockNumber;
+
+            this.notificationCallbacks[EVENT_TYPES.DATA].forEach(callback => {
+              Object.entries(this.subsrciptionIds).forEach(
                 ([subsrciptionId, { type }]) => {
                   if (type === 'newHeads') {
                     callback({
@@ -120,18 +120,17 @@ export default class SubscriptionProvider {
                   }
                 },
               );
-            },
-          );
+            });
+          }
+        } catch (error) {
+          console.error(error);
+          this.notificationCallbacks[EVENT_TYPES.ERROR](error);
         }
-      } catch (error) {
-        console.error(error);
-        this.notificationCallbacks[EVENT_TYPES.ERROR](error);
-      }
-    }, ENV.blockUpdateInterval);
-  }
+      }, ENV.blockUpdateInterval);
+    }
 
-  stopPollingNewBlockHeaders() {
-    clearInterval(this.newBlocksIntervalId);
-    this.newBlocksIntervalId = null;
-  }
-}
+    stopPollingNewBlockHeaders() {
+      clearInterval(this.newBlocksIntervalId);
+      this.newBlocksIntervalId = null;
+    }
+  };

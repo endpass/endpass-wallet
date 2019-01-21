@@ -1,15 +1,13 @@
 import MockProvider from '@/class/provider/MockProvider';
+import superclass from 'fixtures/providerSuperclass';
 
 describe('MockProvider', () => {
   let provider;
 
   beforeEach(() => {
-    provider = new MockProvider();
-
-    provider.parent = {
-      send: jest.fn(),
-      sendAsync: jest.fn(),
-    };
+    provider = new (MockProvider(superclass))();
+    jest.spyOn(provider, 'send');
+    jest.spyOn(provider, 'sendAsync');
   });
 
   describe('methods', () => {
@@ -82,15 +80,15 @@ describe('MockProvider', () => {
     });
 
     describe('send', () => {
-      it('should call parent method', () => {
+      it('should call superclass method', () => {
         const payload = {};
 
         console.warn = jest.fn();
 
         provider.send(payload);
 
-        expect(provider.parent.send).toHaveBeenCalledTimes(1);
-        expect(provider.parent.send).toHaveBeenCalledWith(payload);
+        expect(provider.send).toHaveBeenCalledTimes(1);
+        expect(provider.send).toHaveBeenCalledWith(payload);
       });
     });
 
