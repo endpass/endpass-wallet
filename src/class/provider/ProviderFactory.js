@@ -1,9 +1,10 @@
 import { isEmpty } from 'lodash';
 import Web3 from 'web3';
-import DebounceProvider from './DebounceProvider';
-import SubscriptionProvider from './SubscriptionProvider';
-import MockProvider from './MockProvider';
+import getDebounceProviderClass from './DebounceProvider';
+import getSubscriptionProviderClass from './SubscriptionProvider';
+import getMockProviderClass from './MockProvider';
 import providerMixin from './providerMixin';
+import composeProviderClass from './composeProviders';
 
 export default class ProviderFactory {
   static getProviderClass(url) {
@@ -15,13 +16,20 @@ export default class ProviderFactory {
 
     switch (true) {
       case url.indexOf('http') === 0:
-        return providerMixin(HttpProvider, SubscriptionProvider);
+        return composeProviderClass(
+          HttpProvider,
+          getDebounceProviderClass,
+          getSubscriptionProviderClass,
+        );
 
       case url.indexOf('ws') === 0:
-        return WebsocketProvider;
+        return composeProviderClass(
+          WebsocketProvider,
+          getDebounceProviderClass,
+        );
 
       case url.indexOf('.ipc') > 0:
-        return IpcProvider;
+        return composeProviderClass(IpcProvider, getDebounceProviderClass);
 
       default:
         throw new Error('Invalid url or path parameter for the provider');
@@ -29,13 +37,12 @@ export default class ProviderFactory {
   }
 
   static getInstance(url) {
-    const AdditionalProvider = window.Cypress ? MockProvider : DebounceProvider;
     const BaseProvider = ProviderFactory.getProviderClass(url);
-    const Provider = providerMixin(BaseProvider, AdditionalProvider);
+    const Provider = window.Cypress
+      ? getMockProviderClass(BaseProvider)
+      : BaseProvider;
 
-    // TODO not work status (syncing) in ui tabbar with fallback
-    return window.Cypress ? new Provider(url) : new BaseProvider(url);
-    // return new Provider(url);
+    return new Provider(url);
   }
 
   /**
