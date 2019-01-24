@@ -1,16 +1,23 @@
-import SubscriptionProvider from '@/class/provider/SubscriptionProvider';
+import SubscriptionMixin from '@/class/provider/mixins/SubscriptionMixin';
+import BaseProvider from 'fixtures/BaseProvider';
 
 jest.useFakeTimers();
 
 describe('SubscriptionProvider class', () => {
   const callback = jest.fn();
   let provider;
+  let SubscriptionProvider;
 
   beforeEach(() => {
+    SubscriptionProvider = SubscriptionMixin(BaseProvider);
     provider = new SubscriptionProvider();
 
     jest.clearAllTimers();
     jest.clearAllMocks();
+  });
+
+  it('should return correct class', () => {
+    expect(provider).toBeInstanceOf(BaseProvider);
   });
 
   describe('on', () => {
@@ -186,24 +193,13 @@ describe('SubscriptionProvider class', () => {
         params: [],
       };
 
-      provider.parent = {
-        sendAsync: jest.fn(),
-      };
-
       provider.sendAsync(payload, callback);
 
-      expect(provider.parent.sendAsync).toHaveBeenCalledTimes(1);
-      expect(provider.parent.sendAsync).toHaveBeenCalledWith(payload, callback);
-    });
-  });
-
-  describe('setParent', () => {
-    it('should set parent', () => {
-      const parent = {};
-
-      provider.setParent(parent);
-
-      expect(provider.parent).toEqual(parent);
+      expect(BaseProvider.prototype.sendAsync).toHaveBeenCalledTimes(1);
+      expect(BaseProvider.prototype.sendAsync).toHaveBeenCalledWith(
+        payload,
+        callback,
+      );
     });
   });
 

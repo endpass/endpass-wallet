@@ -43,9 +43,7 @@ export default ParentProvider => {
     }
 
     removeAllListeners(type) {
-      if (!type) {
-        return;
-      }
+      if (!type) return;
 
       this.notificationCallbacks[type] =
         type === EVENT_TYPES.DATA ? [] : () => {};
@@ -80,9 +78,7 @@ export default ParentProvider => {
     startPollingNewBlockHeaders(getBlockNumber, getBlock) {
       let lastBlockNumber = null;
 
-      if (!getBlockNumber || !getBlock) {
-        return;
-      }
+      if (!getBlockNumber || !getBlock) return;
 
       if (this.newBlocksIntervalId) {
         this.stopPollingNewBlockHeaders();
@@ -95,10 +91,8 @@ export default ParentProvider => {
           if (lastBlockNumber !== blockNumber) {
             const block = await getBlock(blockNumber);
 
-            if (!block) {
-              // Probably if node is not synced
-              return;
-            }
+            // Probably if node is not synced
+            if (!block) return;
 
             lastBlockNumber = blockNumber;
 
@@ -130,10 +124,6 @@ export default ParentProvider => {
       this.newBlocksIntervalId = null;
     }
   }
-
-  Object.defineProperty(SubscriptionProvider, 'name', {
-    value: ParentProvider.name,
-  });
 
   return SubscriptionProvider;
 };

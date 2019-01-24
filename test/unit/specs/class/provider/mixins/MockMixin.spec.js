@@ -1,15 +1,17 @@
-import MockProvider from '@/class/provider/MockProvider';
+import MockMixin from '@/class/provider/mixins/MockMixin';
+import BaseProvider from 'fixtures/BaseProvider';
 
-describe('MockProvider', () => {
+describe('MockMixin', () => {
   let provider;
+  let MockProvider;
 
   beforeEach(() => {
+    MockProvider = MockMixin(BaseProvider);
     provider = new MockProvider();
+  });
 
-    provider.parent = {
-      send: jest.fn(),
-      sendAsync: jest.fn(),
-    };
+  it('should return correct class', () => {
+    expect(provider).toBeInstanceOf(BaseProvider);
   });
 
   describe('methods', () => {
@@ -89,8 +91,8 @@ describe('MockProvider', () => {
 
         provider.send(payload);
 
-        expect(provider.parent.send).toHaveBeenCalledTimes(1);
-        expect(provider.parent.send).toHaveBeenCalledWith(payload);
+        expect(BaseProvider.prototype.send).toHaveBeenCalledTimes(1);
+        expect(BaseProvider.prototype.send).toHaveBeenCalledWith(payload);
       });
     });
 

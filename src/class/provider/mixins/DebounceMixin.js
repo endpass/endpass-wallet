@@ -1,9 +1,10 @@
-import { debounce, get } from 'lodash';
+import get from 'lodash/get';
+import debounce from 'lodash/debounce';
 
 export default ParentProvider => {
   class DebounceProvider extends ParentProvider {
-    constructor(params) {
-      super(params);
+    constructor(...args) {
+      super(...args);
       this.cache = {};
       this.intervalTime = 10000;
       this.cleanCacheDebounced = debounce(this.cleanCache, 10000, {
@@ -19,6 +20,11 @@ export default ParentProvider => {
       return this.updateCacheAndSend(args, 'sendAsync');
     }
 
+    /**
+     * Clean requests cache and handle request sending
+     * @param {Array<JSONRPCRequest, callback>} args web3 provider params
+     * @param {String} method provider method for request
+     */
     updateCacheAndSend(args, method) {
       this.cleanCacheDebounced();
       const { id: requestId, ...rest } = args[0];
@@ -29,29 +35,32 @@ export default ParentProvider => {
         this.cache[cacheKey].date = new Date();
         this.cache[cacheKey].buffer.push(args);
       } else {
-        const send = (...args) => {
-          super[method](args[0], (e, result) => {
-            if (!get(this, `cache.${cacheKey}.buffer`)) return;
-
-            const dfdArr = [...this.cache[cacheKey].buffer];
-            this.cache[cacheKey].buffer = [];
-            this.cache[cacheKey].func = null;
-            dfdArr.forEach(([payload, callback]) => {
-              const { id } = payload;
-              callback(e, { ...result, id });
-            });
-          });
-        };
-        const func = debounce(send, 1000, { maxWait: 1000 });
-
         this.cache[cacheKey] = {
           date: new Date(),
-          func,
+          func: this.createRequestHandler(cacheKey, method),
           buffer: [args],
         };
       }
 
       return this.cache[cacheKey].func(...args);
+    }
+
+    createRequestHandler(cacheKey, method) {
+      const send = (...args) => {
+        super[method](args[0], (e, result) => {
+          if (!get(this, `cache.${cacheKey}.buffer`)) return;
+
+          const cachedRequestParams = [...this.cache[cacheKey].buffer];
+          this.cache[cacheKey].buffer = [];
+          this.cache[cacheKey].func = null;
+          cachedRequestParams.forEach(([payload, callback]) => {
+            const { id } = payload;
+            callback(e, { ...result, id });
+          });
+        });
+      };
+
+      return debounce(send, 1000, { maxWait: 1000 });
     }
 
     toHashString(str) {
@@ -83,10 +92,6 @@ export default ParentProvider => {
       });
     }
   }
-
-  Object.defineProperty(DebounceProvider, 'name', {
-    value: ParentProvider.name,
-  });
 
   return DebounceProvider;
 };

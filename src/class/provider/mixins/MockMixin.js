@@ -88,9 +88,5 @@ export default ParentProvider => {
     }
   }
 
-  Object.defineProperty(MockProvider, 'name', {
-    value: ParentProvider.name,
-  });
-
   return MockProvider;
 };
