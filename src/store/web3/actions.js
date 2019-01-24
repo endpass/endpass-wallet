@@ -17,6 +17,7 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
 
   commit(CHANGE_NETWORK, network);
   commit(SET_HANDLED_BLOCK_NUMBER, null);
+  commit(SET_BLOCK_NUMBER, null);
 
   return Promise.all([
     userService.setSettings({ net: network.id }),

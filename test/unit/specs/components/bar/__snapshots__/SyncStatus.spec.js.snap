@@ -6,7 +6,7 @@ exports[`SyncStatus render should render initial state of the component 1`] = `
 >
   <span
     class="tag is-danger"
-    title="synced to block 1"
+    title="Synced to block 1"
   >
     failed
   </span>

@@ -1,10 +1,9 @@
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import Web3 from 'web3';
-import getDebounceProviderClass from './DebounceProvider';
-import getSubscriptionProviderClass from './SubscriptionProvider';
-import getMockProviderClass from './MockProvider';
-import providerMixin from './providerMixin';
-import composeProviderClass from './composeProviders';
+import DebounceMixin from './mixins/DebounceMixin';
+import SubscriptionMixin from './mixins/SubscriptionMixin';
+import MockMixin from './mixins/MockMixin';
+import applyMixinsToClass from './applyMixinsToClass';
 
 export default class ProviderFactory {
   static getProviderClass(url) {
@@ -15,21 +14,17 @@ export default class ProviderFactory {
     IpcProvider.prototype.sendAsync = IpcProvider.prototype.send;
 
     switch (true) {
-      case url.indexOf('http') === 0:
-        return composeProviderClass(
-          HttpProvider,
-          getDebounceProviderClass,
-          getSubscriptionProviderClass,
-        );
+      case /^(http(s?)):\/\//i.test(url):
+        return applyMixinsToClass(HttpProvider, [
+          DebounceMixin,
+          SubscriptionMixin,
+        ]);
 
-      case url.indexOf('ws') === 0:
-        return composeProviderClass(
-          WebsocketProvider,
-          getDebounceProviderClass,
-        );
+      case /^(ws(s?)):\/\//i.test(url):
+        return applyMixinsToClass(WebsocketProvider, [DebounceMixin]);
 
-      case url.indexOf('.ipc') > 0:
-        return composeProviderClass(IpcProvider, getDebounceProviderClass);
+      case /\.ipc+$/i.test(url):
+        return applyMixinsToClass(IpcProvider, [DebounceMixin]);
 
       default:
         throw new Error('Invalid url or path parameter for the provider');
@@ -39,7 +34,7 @@ export default class ProviderFactory {
   static getInstance(url) {
     const BaseProvider = ProviderFactory.getProviderClass(url);
     const Provider = window.Cypress
-      ? getMockProviderClass(BaseProvider)
+      ? applyMixinsToClass(BaseProvider, [MockMixin])
       : BaseProvider;
 
     return new Provider(url);

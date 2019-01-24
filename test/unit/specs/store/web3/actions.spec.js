@@ -31,7 +31,7 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(commit).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenCalledTimes(3);
       expect(commit).toHaveBeenNthCalledWith(
         1,
         mutationsTypes.CHANGE_NETWORK,
@@ -44,10 +44,23 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(commit).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenCalledTimes(3);
       expect(commit).toHaveBeenNthCalledWith(
         2,
         mutationsTypes.SET_HANDLED_BLOCK_NUMBER,
+        null,
+      );
+    });
+
+    it('should call SET_HANDLED_BLOCK_NUMBER mutation', async () => {
+      expect.assertions(2);
+
+      await changeNetwork({ commit, dispatch, getters }, { networkUrl });
+
+      expect(commit).toHaveBeenCalledTimes(3);
+      expect(commit).toHaveBeenNthCalledWith(
+        3,
+        mutationsTypes.SET_BLOCK_NUMBER,
         null,
       );
     });

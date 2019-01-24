@@ -74,25 +74,22 @@ jest.mock('web3', () => {
     sendEvent,
   }));
 
+  const {
+    WebsocketProvider,
+    HttpProvider,
+    IpcProvider,
+  } = originalWeb3.providers;
+  WebsocketProvider.prototype.send = jest.fn();
+  WebsocketProvider.prototype.sendAsync = jest.fn();
+  HttpProvider.prototype.send = jest.fn();
+  HttpProvider.prototype.sendAsync = jest.fn();
+  IpcProvider.prototype.send = jest.fn();
+  IpcProvider.prototype.sendAsync = jest.fn();
+
   mockWeb3.providers = {
-    HttpProvider: jest.fn(() => ({
-      prototype: {
-        send: jest.fn(),
-        sendAsync: jest.fn(),
-      },
-    })),
-    WebsocketProvider: jest.fn(() => ({
-      prototype: {
-        send: jest.fn(),
-        sendAsync: jest.fn(),
-      },
-    })),
-    IpcProvider: jest.fn(() => ({
-      prototype: {
-        send: jest.fn(),
-        sendAsync: jest.fn(),
-      },
-    })),
+    HttpProvider,
+    WebsocketProvider,
+    IpcProvider,
   };
 
   // Allows you to replace stubs of web3 instance methods in unit tests

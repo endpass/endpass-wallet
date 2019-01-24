@@ -1,14 +1,20 @@
-import DebounceProvider from '@/class/provider/DebounceProvider';
+import DebounceMixin from '@/class/provider/mixins/DebounceMixin';
+import BaseProvider from 'fixtures/BaseProvider';
 import debounce from 'lodash/debounce';
 
 jest.mock('lodash/debounce', () => jest.fn(fn => fn));
 
-describe('DebounceProvider Class', () => {
+describe('DebounceProvider mixin', () => {
   let provider;
+  let DebounceProvider;
 
   beforeEach(() => {
+    DebounceProvider = DebounceMixin(BaseProvider);
     provider = new DebounceProvider();
-    provider.parent = { send: jest.fn() };
+  });
+
+  it('should return correct class', () => {
+    expect(provider).toBeInstanceOf(BaseProvider);
   });
 
   describe('instance methods', () => {
@@ -59,9 +65,11 @@ describe('DebounceProvider Class', () => {
       });
 
       it('should not call callback when the cache doesn`t exist', () => {
-        provider.parent.send.mockImplementation((_, callback) =>
+        BaseProvider.prototype.send.mockImplementationOnce((_, callback) =>
           callback(null, { result: 1 }),
         );
+        DebounceProvider = DebounceMixin(BaseProvider);
+        provider = new DebounceProvider();
 
         jest.useFakeTimers();
 

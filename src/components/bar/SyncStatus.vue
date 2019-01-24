@@ -1,8 +1,8 @@
 <template>
   <div class="sync-status">
-    <span 
-      :title="'synced to block '+ blockNumber" 
-      :class="statusClass" 
+    <span
+      :title="message"
+      :class="statusClass"
       class="tag"
     >{{ appStatus }}</span>
   </div>
@@ -16,6 +16,10 @@ export default {
     return {};
   },
   computed: {
+    ...mapState({
+      blockNumber: state => state.web3.blockNumber,
+    }),
+    ...mapGetters('connectionStatus', ['appStatus']),
     statusClass() {
       switch (this.appStatus) {
         case 'failed':
@@ -28,10 +32,11 @@ export default {
           return '';
       }
     },
-    ...mapState({
-      blockNumber: state => state.web3.blockNumber,
-    }),
-    ...mapGetters('connectionStatus', ['appStatus']),
+    message() {
+      return this.blockNumber
+        ? `Synced to block ${this.blockNumber}`
+        : 'Awaiting block number';
+    },
   },
 };
 </script>
