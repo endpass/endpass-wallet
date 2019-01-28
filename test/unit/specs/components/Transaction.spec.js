@@ -1,10 +1,22 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import dayjs from 'dayjs';
 import Notifications from 'vue-notification';
+import VeeValidate from 'vee-validate';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
+
 import Transaction from '@/components/Transaction';
-import { testUtils } from '@endpass/utils';
+
 import { checksumAddress } from 'fixtures/accounts';
+
+const localVue = createLocalVue();
+
+localVue.use(Notifications);
+localVue.use(Vuex);
+localVue.use(validation);
+localVue.use(VeeValidate);
+localVue.use(UIComponents);
 
 describe('Transaction', () => {
   const accountsActions = {
@@ -14,11 +26,6 @@ describe('Transaction', () => {
   let wrapper;
 
   beforeEach(() => {
-    const localVue = createLocalVue();
-
-    localVue.use(Notifications);
-    localVue.use(Vuex);
-
     const storeOptions = {
       modules: {
         accounts: {
@@ -42,13 +49,14 @@ describe('Transaction', () => {
     const transaction = {
       state: 'pending',
       value: 0,
+      from: 'fromAddr',
+      to: 'toAddr',
     };
     const store = new Vuex.Store(storeOptions);
 
-    wrapper = shallow(Transaction, {
+    wrapper = shallowMount(Transaction, {
       localVue,
       store,
-      stubs: testUtils.generateStubs(Transaction),
       propsData: {
         transaction,
       },
@@ -74,13 +82,13 @@ describe('Transaction', () => {
           },
         });
 
-        expect(wrapper.find('v-spinner').html()).toMatchSnapshot();
+        expect(wrapper.find('v-spinner-stub').html()).toMatchSnapshot();
 
         wrapper.setData({
           state: 'canceled',
         });
 
-        expect(wrapper.find('v-spinner').html()).toMatchSnapshot();
+        expect(wrapper.find('v-spinner-stub').html()).toMatchSnapshot();
       });
 
       it('should not render loader', () => {
@@ -88,7 +96,7 @@ describe('Transaction', () => {
           transactionToSend: null,
         });
 
-        expect(wrapper.find('v-spinner').exists()).toBeFalsy();
+        expect(wrapper.find('v-spinner-stub').exists()).toBeFalsy();
       });
     });
   });

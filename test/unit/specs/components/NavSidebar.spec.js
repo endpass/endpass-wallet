@@ -1,13 +1,18 @@
 import Vuex from 'vuex';
-import { shallow, createLocalVue } from '@vue/test-utils';
+import VueRouter from 'vue-router';
+import { createLocalVue } from '@vue/test-utils';
+import { wrapShallowMountFactory } from '@/testUtils';
+
 import NavSidebar from '@/components/NavSidebar';
 
 const localVue = createLocalVue();
 
+localVue.use(VueRouter);
 localVue.use(Vuex);
 
 describe('NavSidebar', () => {
   let wrapper;
+  let wrapperFactory;
   let store;
 
   beforeEach(() => {
@@ -32,10 +37,11 @@ describe('NavSidebar', () => {
         },
       },
     });
-    wrapper = shallow(NavSidebar, {
+    wrapperFactory = wrapShallowMountFactory(NavSidebar, {
       localVue,
       store,
     });
+    wrapper = wrapperFactory();
   });
 
   describe('render', () => {
@@ -49,10 +55,7 @@ describe('NavSidebar', () => {
     });
 
     it('should not render items for private account if current account is public', () => {
-      wrapper = shallow(NavSidebar, {
-        localVue,
-        store,
-      });
+      wrapper = wrapperFactory();
 
       expect(wrapper.element).toMatchSnapshot();
     });

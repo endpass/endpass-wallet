@@ -1,11 +1,15 @@
 import Vuex from 'vuex';
-import { shallow, createLocalVue } from '@vue/test-utils';
-import { testUtils } from '@endpass/utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
+import UIComponents from '@endpass/ui';
+
 import AccountWalletCard from '@/components/AccountWalletCard';
+
 import { address } from 'fixtures/accounts';
 import { tokensMappedByAddresses } from 'fixtures/tokens';
+
 const localVue = createLocalVue();
 localVue.use(Vuex);
+localVue.use(UIComponents);
 
 describe('AccountWalletCard', () => {
   let wrapper;
@@ -44,9 +48,8 @@ describe('AccountWalletCard', () => {
 
   describe('render', () => {
     beforeEach(() => {
-      wrapper = shallow(AccountWalletCard, {
+      wrapper = shallowMount(AccountWalletCard, {
         ...options,
-        stubs: testUtils.generateStubs(AccountWalletCard),
       });
     });
 
@@ -59,13 +62,20 @@ describe('AccountWalletCard', () => {
       expect(wrapper.html()).toMatchSnapshot();
     });
 
-    it('should correctly render component with current account', () => {
+    it('should correctly render component with current account', async () => {
+      expect.assertions(1);
+
+      wrapper = shallowMount(AccountWalletCard, {
+        ...options,
+        computed: {
+          accountTokensList: () => [],
+        },
+      });
       wrapper.setProps({
         isCurrentAccount: true,
       });
-      wrapper.setComputed({
-        accountTokensList: [],
-      });
+
+      await wrapper.vm.$nextTick();
 
       expect(wrapper.html()).toMatchSnapshot();
     });
@@ -83,7 +93,7 @@ describe('AccountWalletCard', () => {
         isLoading: true,
       });
 
-      expect(wrapper.find('tokens-list').exists()).toBe(false);
+      expect(wrapper.find('tokens-list-stub').exists()).toBe(false);
     });
 
     it('should render tokens list if it is not loading', () => {
@@ -91,7 +101,7 @@ describe('AccountWalletCard', () => {
         isLoading: false,
       });
 
-      expect(wrapper.find('tokens-list').exists()).toBe(true);
+      expect(wrapper.find('tokens-list-stub').exists()).toBe(true);
     });
   });
 
@@ -99,7 +109,7 @@ describe('AccountWalletCard', () => {
     it('should load tokens data on component create if tokens are empty', async () => {
       expect.assertions(2);
 
-      wrapper = shallow(AccountWalletCard, {
+      wrapper = shallowMount(AccountWalletCard, {
         ...options,
         computed: {
           accountTokens: () => ({}),
@@ -115,7 +125,7 @@ describe('AccountWalletCard', () => {
     it('should not load tokens data on component create if tokens are not empty', async () => {
       expect.assertions(2);
 
-      wrapper = shallow(AccountWalletCard, {
+      wrapper = shallowMount(AccountWalletCard, {
         ...options,
         computed: {
           accountTokens: () => tokensMappedByAddresses,

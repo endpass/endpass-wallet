@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ConfirmModal render should render component 1`] = `
-<v-modal
+<v-modal-stub
   class="is-dark"
 >
   <template>
@@ -10,25 +10,24 @@ exports[`ConfirmModal render should render component 1`] = `
     
   <div
     class="buttons"
-    slot="footer"
   >
-    <v-button
-      class-name="is-primary is-medium"
+    <v-button-stub
+      classname="is-primary is-medium"
       data-test="submit-logout"
     >
       
       Confirm
     
-    </v-button>
+    </v-button-stub>
      
-    <v-button
-      class-name="is-medium"
+    <v-button-stub
+      classname="is-medium"
       data-test="submit-logout"
     >
       
       Cancel
     
-    </v-button>
+    </v-button-stub>
   </div>
-</v-modal>
+</v-modal-stub>
 `;

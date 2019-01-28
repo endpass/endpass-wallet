@@ -1,8 +1,8 @@
 import Vuex from 'vuex';
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { createLocalVue } from '@vue/test-utils';
+import { wrapShallowMountFactory } from '@/testUtils';
 
 import ProviderSelect from '@/components/bar/ProviderSelect';
-import { testUtils } from '@endpass/utils';
 
 describe('ProviderSelect', () => {
   const activeNet = {
@@ -18,6 +18,7 @@ describe('ProviderSelect', () => {
     isCustomNetwork: jest.fn(() => false),
   };
   let wrapper;
+  let wrapperFactory;
   let componentOptions;
 
   beforeEach(() => {
@@ -42,11 +43,12 @@ describe('ProviderSelect', () => {
       store,
       localVue,
     };
+    wrapperFactory = wrapShallowMountFactory(ProviderSelect, componentOptions);
   });
 
   describe('render', () => {
     beforeEach(() => {
-      wrapper = shallow(ProviderSelect, componentOptions);
+      wrapper = wrapperFactory();
     });
 
     it('should be a Vue component', () => {
@@ -57,14 +59,16 @@ describe('ProviderSelect', () => {
 
   describe('behavior', () => {
     beforeEach(() => {
-      wrapper = shallow(ProviderSelect, componentOptions);
+      wrapper = wrapperFactory();
     });
 
     it('should unite providers and option for adding a provider', () => {
       expect(wrapper.vm.networkOptions).toHaveLength(2);
 
-      wrapper.setComputed({
-        networks: [{}, {}],
+      wrapper = wrapperFactory({
+        computed: {
+          networks: [{}, {}],
+        },
       });
 
       expect(wrapper.vm.networkOptions).toHaveLength(3);

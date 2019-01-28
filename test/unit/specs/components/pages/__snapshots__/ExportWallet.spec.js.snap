@@ -1,12 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ExportWallet page render should render initial state of the component 1`] = `
-<base-page
+<base-page-stub
   class="export-wallet"
 >
-  <template
-    slot="title"
-  >
+  <template>
     Export Wallet
   </template>
    
@@ -78,9 +76,9 @@ exports[`ExportWallet page render should render initial state of the component 1
       class="column"
     >
       <div>
-        <export-to-private-key />
+        <export-to-private-key-stub />
       </div>
     </div>
   </div>
-</base-page>
+</base-page-stub>
 `;

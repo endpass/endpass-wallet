@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LoginByEmailModal render should display a field for custom identity server 1`] = `<v-input id="customIdentityServer" label="Custom Identity Server" data-vv-name="customIdentityServer" name="customIdentityServer" placeholder="Custom Identity Server" help="Example: https://yourserver.com/api" aria-required="true" aria-invalid="false"></v-input>`;
+exports[`LoginByEmailModal render should display a field for custom identity server 1`] = `<v-input-stub label="Custom Identity Server" classname="" help="Example: https://yourserver.com/api" id="customIdentityServer" data-vv-name="customIdentityServer" name="customIdentityServer" placeholder="Custom Identity Server" aria-required="true" aria-invalid="false"></v-input-stub>`;
 
 exports[`LoginByEmailModal render should render component 1`] = `
-<v-modal
+<v-modal-stub
   class="is-dark"
 >
   <template>
@@ -16,29 +16,35 @@ exports[`LoginByEmailModal render should render component 1`] = `
     Please enter your email address below to access your wallet or create a new one.
   </p>
    
-  <v-form
+  <v-form-stub
     id="loginByEmail"
   >
-    <v-input
+    <v-input-stub
       aria-invalid="true"
       aria-required="true"
       autofocus=""
+      classname=""
       data-vv-name="email"
       help="Your email address may be used to help recover your wallet in case you lose access."
       label="Email"
       name="email"
       placeholder="Your email"
+      value=""
     />
      
-    <v-select
+    <v-select-stub
       label="Identity Server"
       name="currentIdentityServerType"
       options="[object Object],[object Object],[object Object]"
+      value="default"
     />
      
     <!---->
      
-    <v-checkbox>
+    <v-checkbox-stub
+      name="checkbox"
+      value="true"
+    >
       
       I accept the
       
@@ -59,21 +65,20 @@ exports[`LoginByEmailModal render should render component 1`] = `
       </a>
       .
     
-    </v-checkbox>
-  </v-form>
+    </v-checkbox-stub>
+  </v-form-stub>
    
   <div
     class="buttons"
-    slot="footer"
   >
-    <v-button
-      class-name="is-primary is-medium"
+    <v-button-stub
+      classname="is-primary is-medium"
       data-test="submit-login"
       disabled="true"
       form="loginByEmail"
     >
       Continue
-    </v-button>
+    </v-button-stub>
   </div>
-</v-modal>
+</v-modal-stub>
 `;

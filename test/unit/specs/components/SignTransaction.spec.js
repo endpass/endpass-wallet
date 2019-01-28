@@ -1,9 +1,11 @@
 import Vuex from 'vuex';
-import { ethplorerTransactions } from 'fixtures/transactions';
-import { mount, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
+import UIComponents from '@endpass/ui';
+
 import SignTransaction from '@/components/SignTransaction';
-import { testUtils } from '@endpass/utils';
+
+import { ethplorerTransactions } from 'fixtures/transactions';
 
 describe('SignTransaction', () => {
   let wrapper;
@@ -13,6 +15,7 @@ describe('SignTransaction', () => {
 
     localVue.use(Notifications);
     localVue.use(Vuex);
+    localVue.use(UIComponents);
 
     const store = new Vuex.Store({
       modules: {
@@ -30,10 +33,10 @@ describe('SignTransaction', () => {
       },
     });
 
-    wrapper = mount(SignTransaction, {
+    wrapper = shallowMount(SignTransaction, {
       store,
       localVue,
-      stubs: testUtils.generateStubs(SignTransaction),
+      sync: false,
     });
   });
 
@@ -42,27 +45,42 @@ describe('SignTransaction', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
 
-    it('should enable "Sign transaction" button', () => {
+    it('should enable "Sign transaction" button', async () => {
+      expect.assertions(1);
+
       wrapper.setData({
         transaction: JSON.stringify(ethplorerTransactions[0]),
       });
 
+      wrapper.vm.$forceUpdate();
+      await wrapper.vm.$nextTick();
+
       expect(wrapper.element).toMatchSnapshot();
     });
 
-    it('should show signed message', () => {
+    it('should show signed message', async () => {
+      expect.assertions(1);
+
       wrapper.setData({
         signedTransaction: '0x0',
       });
 
+      wrapper.vm.$forceUpdate();
+      await wrapper.vm.$nextTick();
+
       expect(wrapper.element).toMatchSnapshot();
     });
 
-    it('should show modal window for password confirmation', () => {
+    it('should show modal window for password confirmation', async () => {
+      expect.assertions(1);
+
       wrapper.setData({
         transaction: JSON.stringify(ethplorerTransactions[0]),
         isPasswordModal: true,
       });
+
+      wrapper.vm.$forceUpdate();
+      await wrapper.vm.$nextTick();
 
       expect(wrapper.element).toMatchSnapshot();
     });

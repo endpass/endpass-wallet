@@ -1,7 +1,6 @@
 import Vuex from 'vuex';
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Message from '@/components/pages/Message';
-import { testUtils } from '@endpass/utils';
 
 const localVue = createLocalVue();
 
@@ -27,8 +26,7 @@ describe('Message page', () => {
         },
       },
     });
-    wrapper = shallow(Message, {
-      stubs: testUtils.generateStubs(Message),
+    wrapper = shallowMount(Message, {
       localVue,
       store,
     });

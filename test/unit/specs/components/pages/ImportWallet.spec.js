@@ -1,18 +1,23 @@
-import Vue from 'vue';
 import { mount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
+import UIComponents from '@endpass/ui';
 import ImportWallet from '@/components/pages/ImportWallet.vue';
-import LocalStorageMock from 'mocks/localStorage';
+import validation from '@/validation';
+
 import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
 import ImportFromSeed from '@/components/importWallet/ImportFromSeed';
+
+import LocalStorageMock from 'mocks/localStorage';
 
 global.localStorage = LocalStorageMock;
 
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
+localVue.use(validation);
 localVue.use(VeeValidate);
+localVue.use(UIComponents);
 
 describe('ImportWallet', () => {
   let actions;
@@ -26,7 +31,11 @@ describe('ImportWallet', () => {
       },
       actions,
     });
-    wrapper = mount(ImportWallet, { store, localVue });
+    wrapper = mount(ImportWallet, {
+      store,
+      localVue,
+      sync: false,
+    });
   });
 
   it('defaults to import by seed phrase', () => {
@@ -35,8 +44,12 @@ describe('ImportWallet', () => {
     expect(wrapper.find(ImportFromPrivateKey).exists()).toBeFalsy();
   });
 
-  it('shows import by private key', () => {
+  it('shows import by private key', async () => {
+    expect.assertions(2);
+
     wrapper.setData({ importType: 'privateKey' });
+
+    await wrapper.vm.$nextTick();
 
     expect(wrapper.find(ImportFromSeed).exists()).toBeFalsy();
     expect(wrapper.find(ImportFromPrivateKey).exists()).toBeTruthy();

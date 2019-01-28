@@ -1,12 +1,16 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
+import UIComponents from '@endpass/ui';
+
 import ExportToJson from '@/components/ExportToJson';
 import { Wallet } from '@/class';
+
 import { v3, v3password } from 'fixtures/accounts';
 
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
+localVue.use(UIComponents);
 
 describe('ExportToJson', () => {
   let store;
@@ -23,7 +27,7 @@ describe('ExportToJson', () => {
         },
       },
     });
-    wrapper = shallow(ExportToJson, { store, localVue });
+    wrapper = shallowMount(ExportToJson, { store, localVue });
   });
 
   describe('render', () => {
@@ -35,6 +39,8 @@ describe('ExportToJson', () => {
 
   describe('behavior', () => {
     it('should correctly save v3 keystore to json', async () => {
+      expect.assertions(1);
+
       wrapper.vm.saveJSON = jest.fn();
 
       await wrapper.vm.exportJSON(v3password);

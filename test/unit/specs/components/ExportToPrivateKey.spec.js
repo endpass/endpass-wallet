@@ -1,7 +1,9 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
+
 import ExportToPrivateKey from '@/components/ExportToPrivateKey';
 import { Wallet } from '@/class';
+
 import { v3, v3password, privateKeyString } from 'fixtures/accounts';
 
 const localVue = createLocalVue();
@@ -23,7 +25,7 @@ describe('ExportToPrivateKey', () => {
         },
       },
     });
-    wrapper = shallow(ExportToPrivateKey, { store, localVue });
+    wrapper = shallowMount(ExportToPrivateKey, { store, localVue });
   });
 
   describe('render', () => {
@@ -35,6 +37,8 @@ describe('ExportToPrivateKey', () => {
 
   describe('behavior', () => {
     it('should correctly set the private key', async () => {
+      expect.assertions(1);
+
       await wrapper.vm.getPrivateKey(v3password);
 
       expect(wrapper.vm.privateKey).toBe(privateKeyString);

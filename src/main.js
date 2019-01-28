@@ -7,13 +7,15 @@ import UIComponents from '@endpass/ui';
 import router from './router';
 import store from './store';
 import App from './App';
-import './validation';
-import './directives';
+import validation from './validation';
+import directives from './directives';
 
 Vue.config.productionTip = false;
 Vue.config.performance = true;
 
 Vue.use(Notifications);
+Vue.use(validation);
+Vue.use(directives);
 
 Vue.use(VueAnalytics, {
   id: ENV.googleAnalyticsId,

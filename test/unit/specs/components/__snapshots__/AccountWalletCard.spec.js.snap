@@ -10,12 +10,12 @@ exports[`AccountWalletCard render should correctly render component with current
             Your Active Address:
         </div>
         <div class="card-section">
-            <account currency="ETH" address="0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c" balance="20"></account>
+            <account-stub address="0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c" currency="ETH" balance="20" size="50"></account-stub>
         </div>
         <!---->
         <div class="card-tokens">
             <!---->
-            <tokens-list tokens=""></tokens-list>
+            <tokens-list-stub tokens="" itemclass=""></tokens-list-stub>
         </div>
     </div>
 </div>
@@ -29,16 +29,16 @@ exports[`AccountWalletCard render should correctly render component with send bu
     <div data-test="current-account" class="card-content">
         <!---->
         <div class="card-section">
-            <account currency="ETH" address="0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c" balance="20"></account>
+            <account-stub address="0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c" currency="ETH" balance="20" size="50"></account-stub>
         </div>
         <div class="card-section">
-            <v-button type="button" name="button" data-test="send-button">
+            <v-button-stub classname="" type="button" name="button" data-test="send-button">
                 Send ethereum
-            </v-button>
+            </v-button-stub>
         </div>
         <div class="card-tokens">
             <!---->
-            <tokens-list tokens=""></tokens-list>
+            <tokens-list-stub tokens="" itemclass=""></tokens-list-stub>
         </div>
     </div>
 </div>
@@ -52,12 +52,12 @@ exports[`AccountWalletCard render should render initial state of the component 1
     <div data-test="current-account" class="card-content">
         <!---->
         <div class="card-section">
-            <account currency="ETH" address="0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c" balance="20"></account>
+            <account-stub address="0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c" currency="ETH" balance="20" size="50"></account-stub>
         </div>
         <!---->
         <div class="card-tokens">
             <!---->
-            <tokens-list tokens=""></tokens-list>
+            <tokens-list-stub tokens="" itemclass=""></tokens-list-stub>
         </div>
     </div>
 </div>

@@ -1,17 +1,19 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
-
-import { testUtils } from '@endpass/utils';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
 
 import ImportFromSeed from '@/components/importWallet/ImportFromSeed';
 
 const localVue = createLocalVue();
 
+localVue.use(validation);
 localVue.use(Vuex);
 localVue.use(VueRouter);
 localVue.use(VeeValidate);
+localVue.use(UIComponents);
 
 jest.useFakeTimers();
 
@@ -34,11 +36,11 @@ describe('ImportFromSeed', () => {
     };
     router = new VueRouter();
     const store = new Vuex.Store(storeOptions);
-    wrapper = shallow(ImportFromSeed, {
+    wrapper = shallowMount(ImportFromSeed, {
       localVue,
       store,
       router,
-      stubs: testUtils.generateStubs(ImportFromSeed),
+      sync: false,
     });
   });
 
@@ -122,6 +124,7 @@ describe('ImportFromSeed', () => {
           id: 'wrongPhrase',
         });
         expect(wrapper.vm.errors.has('hdkeyPhrase')).toBe(true);
+
         wrapper.vm.handleInput();
         expect(wrapper.vm.errors.has('hdkeyPhrase')).toBe(false);
       });

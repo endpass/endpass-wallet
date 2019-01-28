@@ -1,28 +1,25 @@
 /* eslint-disable no-underscore-dangle */
-import { mount, createLocalVue } from '@vue/test-utils';
+import { createLocalVue } from '@vue/test-utils';
 import AccountChooser from '@/components/AccountChooser';
 import { addresses } from 'fixtures/accounts';
+import { wrapMountFactory } from '@/testUtils';
 
 const localVue = createLocalVue();
 
 describe('AccountChooser', () => {
   let wrapper;
-  let options;
+  let wrapperFactory;
 
   beforeEach(() => {
-    options = { localVue };
-    wrapper = mount(AccountChooser, options);
+    wrapperFactory = wrapMountFactory(AccountChooser, {
+      localVue,
+      sync: false,
+    });
+    wrapper = wrapperFactory();
   });
 
   describe('render', () => {
     it('should render account chooser component', () => {
-      expect(wrapper.element).toMatchSnapshot();
-    });
-
-    it('should render error', () => {
-      wrapper.setData({
-        error: 'foo',
-      });
       expect(wrapper.element).toMatchSnapshot();
     });
   });
@@ -49,19 +46,21 @@ describe('AccountChooser', () => {
 
     describe('creatable mode', () => {
       beforeEach(() => {
-        options = {
-          localVue,
+        wrapper = wrapperFactory({
           propsData: {
             creatable: true,
           },
-        };
-        wrapper = mount(AccountChooser, options);
+        });
       });
 
       it('should set listeners to search input', async () => {
         expect.assertions(2);
 
-        wrapper = mount(AccountChooser, options);
+        wrapper = wrapperFactory({
+          propsData: {
+            creatable: true,
+          },
+        });
 
         jest.spyOn(wrapper.vm, 'handleSearchBlur');
         jest.spyOn(wrapper.vm, 'handleSearchBlur');
@@ -127,10 +126,14 @@ describe('AccountChooser', () => {
 
         wrapper.setData({
           newAccountAddress: 'foo',
+        });
+        wrapper.setProps({
           value: addresses[0],
         });
 
         searchInput.trigger('focus');
+
+        await wrapper.vm.$nextTick();
 
         expect(searchInput.element.value).toEqual(addresses[0]);
       });

@@ -1,11 +1,15 @@
 import { set } from 'lodash';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
-import { shallow, createLocalVue } from '@vue/test-utils';
-import { testUtils } from '@endpass/utils';
-import TransactionForm from '@/components/pages/Send/TransactionForm.vue';
+import { createLocalVue } from '@vue/test-utils';
+import UIComponents from '@endpass/ui';
 import { Transaction } from '@/class';
 import ENSResolver from '@/class/ens';
+import validation from '@/validation';
+import { wrapShallowMountFactory } from '@/testUtils';
+
+import TransactionForm from '@/components/pages/Send/TransactionForm.vue';
+
 import { transaction } from 'fixtures/transactions';
 import { address } from 'fixtures/accounts';
 import { token, tokens } from 'fixtures/tokens';
@@ -14,11 +18,14 @@ import { gasPrice } from 'fixtures/gasPrice';
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
+localVue.use(validation);
 localVue.use(VeeValidate);
+localVue.use(UIComponents);
 
 describe('Send – TransactionForm', () => {
   let store;
   let wrapper;
+  let wrapperFactory;
 
   const tokensGetters = {
     currentAccountTokensCurrencies: jest.fn(),
@@ -73,6 +80,12 @@ describe('Send – TransactionForm', () => {
         actions: gasPriceActions,
       },
     },
+
+    mutations: {
+      testActiveNet(state, net) {
+        state.web3.activeNet = net;
+      },
+    },
   };
 
   beforeEach(() => {
@@ -80,17 +93,18 @@ describe('Send – TransactionForm', () => {
 
     store = new Vuex.Store(Object.assign({}, defaultStore));
 
-    wrapper = shallow(TransactionForm, {
+    wrapperFactory = wrapShallowMountFactory(TransactionForm, {
       store,
       localVue,
+      sync: false,
       provide: () => ({
         $validator: new VeeValidate.Validator(),
       }),
-      stubs: testUtils.generateStubs(TransactionForm),
       propsData: {
         transaction: transactionProp,
       },
     });
+    wrapper = wrapperFactory();
   });
 
   describe('render', () => {
@@ -105,24 +119,23 @@ describe('Send – TransactionForm', () => {
     });
 
     it('should render message if ens address resolved', () => {
-      wrapper = shallow(TransactionForm, {
+      wrapper = wrapperFactory({
         store,
         localVue,
         provide: () => ({
           $validator: new VeeValidate.Validator(),
         }),
-        stubs: testUtils.generateStubs(TransactionForm),
         propsData: {
           transaction: {
             ...transactionProp,
             to: address,
           },
         },
+        computed: {
+          isEnsTransaction: true,
+        },
       });
 
-      wrapper.setComputed({
-        isEnsTransaction: true,
-      });
       wrapper.setData({
         ensError: null,
         isEnsAddressLoading: false,
@@ -136,14 +149,21 @@ describe('Send – TransactionForm', () => {
       );
     });
 
-    it('should render error on ens error', () => {
-      wrapper.setComputed({
-        isEnsTransaction: true,
+    it('should render error on ens error', async () => {
+      expect.assertions(4);
+
+      wrapper = wrapperFactory({
+        computed: {
+          isEnsTransaction: true,
+        },
       });
       wrapper.setData({
         ensError: 'foo',
         isEnsAddressLoading: false,
       });
+
+      wrapper.vm.$forceUpdate();
+      await wrapper.vm.$nextTick();
 
       expect(wrapper.html()).toMatchSnapshot();
       expect(wrapper.find('.help.is-danger').exists()).toBe(true);
@@ -161,7 +181,9 @@ describe('Send – TransactionForm', () => {
       });
 
       expect(wrapper.html()).toMatchSnapshot();
-      expect(wrapper.find('transaction-priority-options').exists()).toBe(true);
+      expect(wrapper.find('transaction-priority-options-stub').exists()).toBe(
+        true,
+      );
     });
   });
 
@@ -192,13 +214,12 @@ describe('Send – TransactionForm', () => {
               currentAccountTokenBySymbol: () => tokenBySymbolGetterMock,
             }),
           );
-          wrapper = shallow(TransactionForm, {
+          wrapper = wrapperFactory({
             store,
             localVue,
             provide: () => ({
               $validator: new VeeValidate.Validator(),
             }),
-            stubs: testUtils.generateStubs(TransactionForm),
             propsData: {
               transaction: transactionProp,
             },
@@ -236,6 +257,10 @@ describe('Send – TransactionForm', () => {
           wrapper.setData({
             address: 'hello.eth',
           });
+
+          wrapper.vm.$forceUpdate();
+          await wrapper.vm.$nextTick();
+
           ENSResolver.getAddress.mockRejectedValueOnce(new Error());
 
           const res = await wrapper.vm.resolveEnsAddress();
@@ -322,13 +347,17 @@ describe('Send – TransactionForm', () => {
         jest.spyOn(wrapper.vm, 'resolveEnsAddress');
       });
 
-      it('should request gas cost on changing token info', () => {
+      it('should request gas cost on changing token info', async () => {
+        expect.assertions(1);
+
         wrapper.setProps({
           transaction: {
             ...transactionProp,
-            tokenInfo: '0x0',
+            tokenInfo: {},
           },
         });
+
+        await wrapper.vm.$nextTick();
 
         expect(wrapper.vm.debouncedGasCostEstimation).toBeCalledTimes(1);
       });
@@ -347,16 +376,19 @@ describe('Send – TransactionForm', () => {
       it('should resolve esn address and request gas cost on changing address to ens', async () => {
         expect.assertions(2);
 
-        const getAddressMock = jest.fn().mockResolvedValue(address);
-
-        wrapper.setComputed({
-          isEnsTransaction: true,
+        wrapper = wrapperFactory({
+          computed: {
+            isEnsTransaction: true,
+          },
         });
+
+        jest.spyOn(wrapper.vm, 'debouncedGasCostEstimation');
+        jest.spyOn(wrapper.vm, 'resolveEnsAddress');
+
+        ENSResolver.getAddress.mockResolvedValue(address);
+
         wrapper.setData({
           address: 'hello.eth',
-          ensResolver: {
-            getAddress: getAddressMock,
-          },
         });
 
         await global.flushPromises();
@@ -365,12 +397,14 @@ describe('Send – TransactionForm', () => {
         expect(wrapper.vm.debouncedGasCostEstimation).toBeCalledTimes(1);
       });
 
-      it('should request gas cost and set address to transaction on changing address', () => {
+      it('should request gas cost and set address to transaction on changing address', async () => {
         expect.assertions(2);
 
         wrapper.setData({
           address,
         });
+
+        await wrapper.vm.$nextTick();
 
         expect(wrapper.vm.transaction.to).toBe(address);
         expect(wrapper.vm.debouncedGasCostEstimation).toBeCalledTimes(1);
@@ -379,12 +413,15 @@ describe('Send – TransactionForm', () => {
       it('should resolve ens address on change active network if current address is ens', async () => {
         expect.assertions(1);
 
-        wrapper.setComputed({
-          isEnsTransaction: true,
-          activeNet: {
-            id: 2,
+        wrapper = wrapperFactory({
+          computed: {
+            isEnsTransaction: true,
           },
         });
+
+        jest.spyOn(wrapper.vm, 'resolveEnsAddress');
+
+        store.commit('testActiveNet', { id: 2 });
 
         await global.flushPromises();
 
@@ -394,12 +431,18 @@ describe('Send – TransactionForm', () => {
       it('should not resolve ens address on change active network if network id was not changed', async () => {
         expect.assertions(1);
 
-        wrapper.setComputed({
-          isEnsTransaction: true,
-          activeNet: {
-            id: 1,
+        // revert default value
+        store.commit('testActiveNet', { id: 1 });
+
+        wrapper = wrapperFactory({
+          computed: {
+            isEnsTransaction: true,
           },
         });
+
+        jest.spyOn(wrapper.vm, 'resolveEnsAddress');
+
+        store.commit('testActiveNet', { id: 1 });
 
         await global.flushPromises();
 

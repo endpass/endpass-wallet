@@ -1,20 +1,26 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
 
-import { address } from '../../../fixtures/accounts';
+import { address } from 'fixtures/accounts';
 
 import ImportFromPublicKey from '@/components/importWallet/ImportFromPublicKey';
 
 const localVue = createLocalVue();
 
+localVue.use(validation);
 localVue.use(Vuex);
 localVue.use(VeeValidate);
 localVue.use(VueRouter);
+localVue.use(UIComponents);
 
 describe('ImportFromPublicKey', () => {
-  let wrapper, actions, router;
+  let wrapper;
+  let actions;
+  let router;
   beforeEach(() => {
     actions = {
       addWalletWithPublicKey: jest.fn(),
@@ -29,10 +35,11 @@ describe('ImportFromPublicKey', () => {
     };
     router = new VueRouter();
     const store = new Vuex.Store(storeOptions);
-    wrapper = shallow(ImportFromPublicKey, {
+    wrapper = shallowMount(ImportFromPublicKey, {
       localVue,
       store,
       router,
+      sync: false,
     });
   });
   describe('render', () => {
@@ -51,6 +58,7 @@ describe('ImportFromPublicKey', () => {
       it('should call vuex addWalletWithPublicKey with correct arguments', () => {
         wrapper.setData({ address });
         wrapper.vm.submitAddWallet();
+
         expect(actions.addWalletWithPublicKey).toBeCalledWith(
           expect.any(Object),
           address,
@@ -60,17 +68,22 @@ describe('ImportFromPublicKey', () => {
 
       it('should redirect to root after successful wallet creation', async () => {
         expect.assertions(2);
+
         router.push('/kek');
         expect(router.currentRoute.fullPath).toBe('/kek');
+
         await wrapper.vm.submitAddWallet();
         expect(router.currentRoute.fullPath).toBe('/');
       });
 
       it('should add error to field if failed to create wallet', () => {
+        expect.assertions(1);
+
         actions.addWalletWithPublicKey.mockImplementationOnce(() => {
           throw new Error();
         });
         wrapper.vm.submitAddWallet();
+
         expect(wrapper.vm.errors.items[0]).toEqual({
           field: 'address',
           id: 'wrongAddress',
@@ -89,6 +102,7 @@ describe('ImportFromPublicKey', () => {
           id: 'wrongAddress',
         });
         expect(wrapper.vm.errors.has('address')).toBe(true);
+
         wrapper.vm.handleInput();
         expect(wrapper.vm.errors.has('address')).toBe(false);
       });

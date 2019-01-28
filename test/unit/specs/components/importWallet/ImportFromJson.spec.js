@@ -1,12 +1,13 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import VeeValidate from 'vee-validate';
+import UIComponents from '@endpass/ui';
 
 import ImportFromJson from '@/components/importWallet/ImportFromJson';
-import { testUtils } from '@endpass/utils';
 
 const localVue = createLocalVue();
 
 localVue.use(VeeValidate);
+localVue.use(UIComponents);
 
 describe('ImportFromJson', () => {
   let wrapper;
@@ -16,10 +17,10 @@ describe('ImportFromJson', () => {
       push: jest.fn(),
     };
 
-    wrapper = shallow(ImportFromJson, {
+    wrapper = shallowMount(ImportFromJson, {
       localVue,
-      stubs: testUtils.generateStubs(ImportFromJson),
       mocks: { $router },
+      sync: false,
     });
   });
 
@@ -42,10 +43,14 @@ describe('ImportFromJson', () => {
         );
       });
 
-      it('should show file name', () => {
+      it('should show file name', async () => {
+        expect.assertions(1);
+
         const file = { name: 'file name' };
 
         wrapper.setData({ file });
+
+        await wrapper.vm.$nextTick();
 
         expect(wrapper.find('.file-cta .file-label').text()).toBe(file.name);
       });
@@ -54,15 +59,17 @@ describe('ImportFromJson', () => {
 
   describe('behavior', () => {
     it('should toggle password modal window', async () => {
-      wrapper.find('v-form').trigger('submit');
+      expect.assertions(2);
+
+      wrapper.find('v-form-stub').vm.$emit('submit');
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.find('password-modal').html()).toMatchSnapshot();
+      expect(wrapper.find('password-modal-stub').html()).toMatchSnapshot();
 
-      wrapper.find('password-modal').trigger('close');
+      wrapper.find('password-modal-stub').vm.$emit('close');
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.find('password-modal').exists()).toBeFalsy();
+      expect(wrapper.find('password-modal-stub').exists()).toBeFalsy();
     });
 
     describe('create a wallet from a json', () => {
@@ -75,11 +82,13 @@ describe('ImportFromJson', () => {
       });
 
       it('should close password modal', async () => {
-        wrapper.find('password-modal').trigger('confirm');
+        expect.assertions(1);
+
+        wrapper.find('password-modal-stub').vm.$emit('confirm');
 
         await wrapper.vm.$nextTick();
 
-        expect(wrapper.find('password-modal').exists()).toBeFalsy();
+        expect(wrapper.find('password-modal-stub').exists()).toBeFalsy();
       });
 
       it('should call addWalletWithV3', () => {
@@ -92,7 +101,7 @@ describe('ImportFromJson', () => {
           addWalletWithV3: jest.fn(),
         });
 
-        wrapper.find('password-modal').trigger('confirm', { password });
+        wrapper.find('password-modal-stub').vm.$emit('confirm', { password });
 
         expect(wrapper.vm.addWalletWithV3).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.addWalletWithV3).toHaveBeenCalledWith({
@@ -103,11 +112,13 @@ describe('ImportFromJson', () => {
       });
 
       it('should redirect to the site root', async () => {
+        expect.assertions(2);
+
         wrapper.setMethods({
           addWalletWithV3: jest.fn().mockResolvedValue(),
         });
 
-        wrapper.find('password-modal').trigger('confirm');
+        wrapper.find('password-modal-stub').vm.$emit('confirm');
 
         await flushPromises();
 
@@ -116,13 +127,15 @@ describe('ImportFromJson', () => {
       });
 
       it('should handle errors', async () => {
+        expect.assertions(2);
+
         const spyErrorsAdd = spyOn(wrapper.vm.errors, 'add');
 
         wrapper.setMethods({
           addWalletWithV3: jest.fn().mockRejectedValue(),
         });
 
-        wrapper.find('password-modal').trigger('confirm');
+        wrapper.find('password-modal-stub').vm.$emit('confirm');
 
         await flushPromises();
 

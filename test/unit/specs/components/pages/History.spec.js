@@ -1,15 +1,19 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
+import UIComponents from '@endpass/ui';
+import { wrapShallowMountFactory } from '@/testUtils';
+
 import HistoryPage from '@/components/pages/History.vue';
-import { testUtils } from '@endpass/utils';
 
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
+localVue.use(UIComponents);
 
 describe('HistoryPage', () => {
   let wrapper;
   let store;
+  let wrapperFactory;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -73,13 +77,22 @@ describe('HistoryPage', () => {
           },
         },
       },
+
+      mutations: {
+        testActiveNet(state, net) {
+          state.web3.activeNet = net;
+        },
+        testAccountAddress(state, address) {
+          state.accounts.address = address;
+        },
+      },
     });
 
-    wrapper = shallow(HistoryPage, {
+    wrapperFactory = wrapShallowMountFactory(HistoryPage, {
       store,
       localVue,
-      stubs: testUtils.generateStubs(HistoryPage),
     });
+    wrapper = wrapperFactory();
   });
 
   describe('render', () => {
@@ -87,7 +100,12 @@ describe('HistoryPage', () => {
       expect(wrapper.contains('ul.transactions')).toBeTruthy();
       expect(wrapper.findAll('ul.transactions li')).toHaveLength(2);
 
-      wrapper.setComputed({ currentNetTransactions: [], activeNet: { id: 2 } });
+      wrapper = wrapperFactory({
+        computed: {
+          currentNetTransactions: [],
+          activeNet: { id: 2 },
+        },
+      });
 
       expect(wrapper.contains('ul.transactions')).toBeFalsy();
       expect(wrapper.html()).toContain(
@@ -95,24 +113,34 @@ describe('HistoryPage', () => {
       );
     });
 
-    it('should display a message about the absence of transactions', () => {
-      wrapper.setComputed({ currentNetTransactions: [] });
+    it('should display a message about the absence of transactions', async () => {
+      expect.assertions(2);
+
+      wrapper = wrapperFactory({
+        computed: {
+          currentNetTransactions: [],
+        },
+      });
+
       wrapper.setData({ isLoading: false });
 
+      await wrapper.vm.$nextTick();
+
       expect(wrapper.find('ul.transactions').exists()).toBe(false);
-      // TODO: It works fine, but data is not correctly sets
-      // expect(wrapper.html()).toContain('This account has no transactions');
+      expect(wrapper.html()).toContain('This account has no transactions');
     });
 
     describe('v-spinner', () => {
       it('should render v-spinner', () => {
-        wrapper.setData({ isLoading: true });
-        wrapper.setComputed({
-          isHistoryAvailable: true,
-          currentNetTransactions: [],
+        wrapper = wrapperFactory({
+          computed: {
+            isHistoryAvailable: true,
+            currentNetTransactions: [],
+          },
         });
+        wrapper.setData({ isLoading: true });
 
-        expect(wrapper.find('v-spinner').exists()).toBe(true);
+        expect(wrapper.find('v-spinner-stub').exists()).toBe(true);
       });
 
       it('should not render v-spinner', () => {
@@ -120,7 +148,7 @@ describe('HistoryPage', () => {
           isLoading: false,
         });
 
-        expect(wrapper.find('v-spinner').exists()).toBeFalsy();
+        expect(wrapper.find('v-spinner-stub').exists()).toBeFalsy();
       });
     });
   });
@@ -128,7 +156,7 @@ describe('HistoryPage', () => {
   describe('behavior', () => {
     it('should download transaction history', () => {
       const getHistory = jest.fn();
-      wrapper = shallow(HistoryPage, {
+      wrapper = shallowMount(HistoryPage, {
         store,
         localVue,
         methods: {
@@ -143,18 +171,21 @@ describe('HistoryPage', () => {
     it('should update history when the account/net is changed', () => {
       const watcher = jest.spyOn(wrapper.vm, 'updateTransactionHistory');
 
-      wrapper.setComputed({ address: '0x0' });
-      wrapper.setComputed({ activeNet: { id: 2 } });
-      wrapper.setComputed({ activeNet: { id: 1 } });
+      store.commit('testAccountAddress', '0x0');
+      store.commit('testActiveNet', { id: 2 });
+      store.commit('testActiveNet', { id: 1 });
 
-      expect(watcher).toHaveBeenCalledTimes(3);
+      expect(watcher).toHaveBeenCalledTimes(2);
     });
 
     it('should`t update history when the account/net is not valid', () => {
       const watcher = jest.spyOn(wrapper.vm, 'updateTransactionHistory');
 
-      wrapper.setComputed({ address: null, isHistoryAvailable: true });
-      wrapper.setComputed({ address: '0x0', isHistoryAvailable: false });
+      store.commit('testAccountAddress', null);
+      store.commit('testActiveNet', { id: 1 });
+
+      store.commit('testActiveNet', { id: 10 });
+      store.commit('testAccountAddress', '0x0');
 
       expect(watcher).toHaveBeenCalledTimes(0);
     });

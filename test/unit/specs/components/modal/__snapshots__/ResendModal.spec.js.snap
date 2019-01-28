@@ -5,16 +5,17 @@ exports[`ResendModal render should render initial state of the component 1`] = `
   class="new-account-modal"
   data-test="resend-modal"
 >
-  <v-modal>
-    <v-form
+  <v-modal-stub>
+    <v-form-stub
       id="sendEther"
       isformvalid="true"
     >
-      <v-input
+      <v-input-stub
         aria-describedby="gasPrice"
         aria-invalid="false"
         aria-required="true"
         autofocus=""
+        classname=""
         data-test="gas-price-input"
         data-vv-name="gasPrice"
         id="gasPrice"
@@ -23,10 +24,10 @@ exports[`ResendModal render should render initial state of the component 1`] = `
         placeholder="Gas price"
         required=""
         type="number"
+        value="90"
       >
         <div
           class="control"
-          slot="addon"
         >
           <a
             class="button is-static"
@@ -34,12 +35,13 @@ exports[`ResendModal render should render initial state of the component 1`] = `
             Gwei
           </a>
         </div>
-      </v-input>
+      </v-input-stub>
        
-      <v-input
+      <v-input-stub
         aria-describedby="gasLimit"
         aria-invalid="false"
         aria-required="true"
+        classname=""
         data-test="gas-limit-input"
         data-vv-name="gasLimit"
         id="gasLimit"
@@ -48,23 +50,23 @@ exports[`ResendModal render should render initial state of the component 1`] = `
         placeholder="Gas limit"
         required=""
         type="number"
+        value="22000"
       />
-    </v-form>
+    </v-form-stub>
      
     <div
       class="buttons"
-      slot="footer"
     >
-      <v-button
-        class-name="is-primary is-medium"
+      <v-button-stub
+        classname="is-primary is-medium"
         data-test="submit-button"
         form="sendEther"
       >
         
         Send
       
-      </v-button>
+      </v-button-stub>
     </div>
-  </v-modal>
+  </v-modal-stub>
 </div>
 `;

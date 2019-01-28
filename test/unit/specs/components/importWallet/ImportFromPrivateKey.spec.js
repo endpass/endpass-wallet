@@ -1,18 +1,19 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
-
-import { testUtils } from '@endpass/utils';
-import { privateKeyString, v3password } from '../../../fixtures/accounts';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
 
 import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
 
 const localVue = createLocalVue();
 
+localVue.use(validation);
 localVue.use(Vuex);
 localVue.use(VeeValidate);
 localVue.use(VueRouter);
+localVue.use(UIComponents);
 
 jest.useFakeTimers();
 
@@ -35,11 +36,11 @@ describe('ImportFromPrivateKey', () => {
     };
     const store = new Vuex.Store(storeOptions);
     router = new VueRouter();
-    wrapper = shallow(ImportFromPrivateKey, {
+    wrapper = shallowMount(ImportFromPrivateKey, {
       localVue,
       store,
-      stubs: testUtils.generateStubs(ImportFromPrivateKey),
       router,
+      sync: false,
     });
   });
 
@@ -59,10 +60,10 @@ describe('ImportFromPrivateKey', () => {
       const password = 'password';
 
       it('should call vuex addWalletWithPrivateKey with correct arguments', done => {
+        expect.assertions(2);
+
         const privateKey = '0xprivateKey';
         const expectedPrivateKey = privateKey.replace(/^0x/, '');
-
-        expect.assertions(2);
 
         wrapper.setData({ privateKey });
         wrapper.setMethods({
@@ -137,6 +138,7 @@ describe('ImportFromPrivateKey', () => {
           id: 'wrongPrivateKey',
         });
         expect(wrapper.vm.errors.has('privateKey')).toBe(true);
+
         wrapper.vm.handleInput();
         expect(wrapper.vm.errors.has('privateKey')).toBe(false);
       });

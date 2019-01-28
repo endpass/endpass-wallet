@@ -11,19 +11,21 @@ exports[`WalletItem render should render initial state of the component 1`] = `
       <a
         class=""
       >
-        <account
+        <account-stub
           address="addr"
+          currency="ETH"
           size="10"
         >
-          <template
-            slot="balance"
-          >
-            <balance
+          <template>
+            <balance-stub
+              amount="0"
               currency="usd"
-              v-on:update="bound getBalance"
+              decimals="18"
+              price="1"
+              round="4"
             />
           </template>
-        </account>
+        </account-stub>
       </a>
     </li>
   </ul>

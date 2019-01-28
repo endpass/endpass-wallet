@@ -6,6 +6,7 @@ module.exports = {
   moduleNameMapper: {
     '^fixtures/(.*)$': '<rootDir>/test/unit/fixtures/$1',
     '^mocks/(.*)$': '<rootDir>/test/unit/mocks/$1',
+    '^@/testUtils$': '<rootDir>/test/unit/testUtils.js',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   testMatch: ['<rootDir>/(test/unit/**/*.spec.js|**/__tests__/*.js)'],

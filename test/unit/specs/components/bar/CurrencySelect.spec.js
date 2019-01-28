@@ -1,5 +1,4 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
-import { testUtils } from '@endpass/utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import { CURRENCIES } from '@/constants';
 import CurrencySelect from '@/components/bar/CurrencySelect';
 import Vuex from 'vuex';
@@ -25,10 +24,9 @@ describe('CurrencySelect', () => {
       },
     });
 
-    wrapper = shallow(CurrencySelect, {
+    wrapper = shallowMount(CurrencySelect, {
       localVue,
       store,
-      stubs: testUtils.generateStubs(CurrencySelect),
     });
   });
 

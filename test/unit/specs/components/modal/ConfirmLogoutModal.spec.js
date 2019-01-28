@@ -1,5 +1,4 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
-import { testUtils } from '@endpass/utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import ConfirmLogoutModal from '@/components/modal/ConfirmLogoutModal';
 
 const localVue = createLocalVue();
@@ -9,9 +8,8 @@ describe('ConfirmModal', () => {
 
   describe('render', () => {
     beforeEach(() => {
-      wrapper = shallow(ConfirmLogoutModal, {
+      wrapper = shallowMount(ConfirmLogoutModal, {
         localVue,
-        stubs: testUtils.generateStubs(ConfirmLogoutModal),
       });
     });
 
@@ -27,7 +25,7 @@ describe('ConfirmModal', () => {
 
   describe('behavior', () => {
     beforeEach(() => {
-      wrapper = shallow(ConfirmLogoutModal, {
+      wrapper = shallowMount(ConfirmLogoutModal, {
         localVue,
       });
     });

@@ -1,14 +1,18 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
+import UIComponents from '@endpass/ui';
+
 import ConfirmModal from '@/components/modal/ConfirmModal';
 
 const localVue = createLocalVue();
+
+localVue.use(UIComponents);
 
 describe('ConfirmModal', () => {
   let wrapper;
 
   describe('render', () => {
     beforeEach(() => {
-      wrapper = shallow(ConfirmModal, {
+      wrapper = shallowMount(ConfirmModal, {
         localVue,
       });
     });
@@ -25,7 +29,7 @@ describe('ConfirmModal', () => {
 
   describe('behavior', () => {
     beforeEach(() => {
-      wrapper = shallow(ConfirmModal, {
+      wrapper = shallowMount(ConfirmModal, {
         localVue,
       });
     });

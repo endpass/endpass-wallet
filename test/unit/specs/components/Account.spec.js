@@ -1,4 +1,4 @@
-import { shallow } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 
 import Account from '@/components/Account';
 
@@ -7,7 +7,7 @@ describe('Account', () => {
     let wrapper;
 
     beforeEach(() => {
-      wrapper = shallow(Account, {
+      wrapper = shallowMount(Account, {
         propsData: {
           address: '0x9999999999999999999999999999999999999999',
         },
