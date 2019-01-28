@@ -1,10 +1,10 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
-
-import { testUtils } from '@endpass/utils';
+import UIComponents from '@endpass/ui';
+import { wrapShallowMountFactory } from '@/testUtils';
 
 import WalletsList from '@/components/importWallet/WalletsList/WalletsList';
 import { WALLET_TYPE } from '@/constants';
@@ -19,11 +19,13 @@ localVue.use(Vuex);
 localVue.use(VueRouter);
 localVue.use(VeeValidate);
 localVue.use(Notifications);
+localVue.use(UIComponents);
 
 jest.useFakeTimers();
 
 describe('WalletsList', () => {
   let wrapper;
+  let wrapperFactory;
   let actions;
   let router;
 
@@ -46,15 +48,16 @@ describe('WalletsList', () => {
     };
     router = new VueRouter();
     const store = new Vuex.Store(storeOptions);
-    wrapper = shallow(WalletsList, {
+    wrapperFactory = wrapShallowMountFactory(WalletsList, {
       localVue,
       store,
       router,
-      stubs: testUtils.generateStubs(WalletsList),
+      // sync: false,
       propsData: {
         type: WALLET_TYPE.HD_PUBLIC,
       },
     });
+    wrapper = wrapperFactory();
   });
 
   describe('render', () => {
@@ -110,25 +113,34 @@ describe('WalletsList', () => {
     describe('handleImport', () => {
       const password = 'password';
 
-      beforeEach(() => {
-        router.push('/kek');
-        wrapper.setMethods({
+      function extendWrap(inst) {
+        inst.setMethods({
           getNextWalletsFromHd: jest.fn().mockResolvedValue(addresses),
           addPublicWallet: jest.fn().mockResolvedValue(),
           addHdChildWallets: jest.fn().mockResolvedValue(),
         });
-        wrapper.setData({
+        inst.setData({
           activeAddress: address,
           addresses,
         });
+      }
+
+      beforeEach(() => {
+        router.push('/kek');
+
+        extendWrap(wrapper);
       });
 
       it('should call vuex addPublicWallet with correct arguments and redirect to root', async () => {
         expect.assertions(6);
 
-        wrapper.setComputed({
-          isHDv3WalletByType: jest.fn().mockReturnValue(false),
+        wrapper = wrapperFactory({
+          computed: {
+            isHDv3WalletByType: jest.fn().mockReturnValue(false),
+          },
         });
+
+        extendWrap(wrapper);
 
         expect(wrapper.vm.isPasswordModal).toBe(false);
         await wrapper.vm.handleImport();
@@ -150,9 +162,14 @@ describe('WalletsList', () => {
       it('should call vuex addHdChildWallets with correct arguments and redirect to root', async () => {
         expect.assertions(6);
 
-        wrapper.setComputed({
-          isHDv3WalletByType: jest.fn().mockReturnValue(true),
+        wrapper = wrapperFactory({
+          computed: {
+            isHDv3WalletByType: jest.fn().mockReturnValue(true),
+          },
         });
+
+        extendWrap(wrapper);
+
         router.push('/kek');
 
         expect(wrapper.vm.isPasswordModal).toBe(false);
@@ -174,14 +191,18 @@ describe('WalletsList', () => {
       it('should call throw error', async () => {
         expect.assertions(4);
 
+        wrapper = wrapperFactory({
+          computed: {
+            isHDv3WalletByType: jest.fn().mockReturnValue(false),
+          },
+        });
+
+        extendWrap(wrapper);
+
         const spy = jest.spyOn(wrapper.vm, '$notify');
 
         wrapper.setMethods({
           getNextWalletsFromHd: jest.fn().mockResolvedValue([]),
-        });
-
-        wrapper.setComputed({
-          isHDv3WalletByType: jest.fn().mockReturnValue(false),
         });
 
         wrapper.setData({

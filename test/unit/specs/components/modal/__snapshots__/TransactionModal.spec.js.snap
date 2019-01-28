@@ -5,18 +5,20 @@ exports[`TransactionModal render should render initial state of the component 1`
   class="transaction-modal"
   data-test="transaction-modal"
 >
-  <v-modal>
+  <v-modal-stub>
     <template>
       Are you sure?
     </template>
      
     <div>
-      <!---->
+      <transaction-table-stub
+        currency="[object Object]"
+        transaction="[object Object]"
+      />
     </div>
      
     <div
       class="buttons"
-      slot="footer"
     >
       <a
         class="button is-primary"
@@ -35,6 +37,6 @@ exports[`TransactionModal render should render initial state of the component 1`
       
       </a>
     </div>
-  </v-modal>
+  </v-modal-stub>
 </div>
 `;

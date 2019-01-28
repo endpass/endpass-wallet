@@ -6,18 +6,18 @@ exports[`Send – TransactionAdvancedOptions render should render with data inpu
         <label class="label">Data</label>
     </div>
     <div class="field-body">
-        <v-input id="data" name="data" data-vv-name="data" aria-describedby="data" placeholder="Data" required="" data-test="transaction-data-input" aria-required="true" aria-invalid="false"></v-input>
+        <v-input-stub value="0x" classname="" id="data" name="data" data-vv-name="data" aria-describedby="data" placeholder="Data" required="" data-test="transaction-data-input" aria-required="true" aria-invalid="false"></v-input-stub>
     </div>
 </div>
 `;
 
 exports[`Send – TransactionAdvancedOptions render should render without data input if current token is passed 1`] = `
-<div class="field is-horizontal" style="display: none;">
+<div class="field is-horizontal">
     <div class="field-label">
         <label class="label">Data</label>
     </div>
     <div class="field-body">
-        <v-input id="data" name="data" data-vv-name="data" aria-describedby="data" placeholder="Data" required="" data-test="transaction-data-input" aria-required="true" aria-invalid="false"></v-input>
+        <v-input-stub value="0x" classname="" id="data" name="data" data-vv-name="data" aria-describedby="data" placeholder="Data" required="" data-test="transaction-data-input" aria-required="true" aria-invalid="false"></v-input-stub>
     </div>
 </div>
 `;

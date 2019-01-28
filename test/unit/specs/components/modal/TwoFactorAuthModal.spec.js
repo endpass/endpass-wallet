@@ -1,11 +1,15 @@
 import { mount, createLocalVue } from '@vue/test-utils';
 import VeeValidate from 'vee-validate';
+import UIComponents from '@endpass/ui';
 
 import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
+import validation from '@/validation';
 
 const localVue = createLocalVue();
 
+localVue.use(validation);
 localVue.use(VeeValidate);
+localVue.use(UIComponents);
 
 describe('TwoFactorAuthModal', () => {
   let wrapper;
@@ -13,6 +17,7 @@ describe('TwoFactorAuthModal', () => {
   beforeEach(() => {
     wrapper = mount(TwoFactorAuthModal, {
       localVue,
+      sync: false,
     });
   });
 

@@ -33,12 +33,14 @@ exports[`Home page render should render initial state of the component 1`] = `
               <div
                 class="is-centered"
               >
-                <router-link
+                <router-link-stub
                   class="button is-success is-cta"
+                  event="click"
+                  tag="a"
                   to="[object Object]"
                 >
                   Create New Wallet
-                </router-link>
+                </router-link-stub>
               </div>
             </div>
           </div>

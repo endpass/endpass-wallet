@@ -1,12 +1,16 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import { TransactionFactory } from '@/class';
 import Vuex from 'vuex';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
 
 import TransactionModal from '@/components/modal/TransactionModal';
 
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
+localVue.use(validation);
+localVue.use(UIComponents);
 
 describe('TransactionModal', () => {
   describe('render', () => {
@@ -21,17 +25,18 @@ describe('TransactionModal', () => {
           web3: {
             namespaced: true,
             state: {
-              activeCurrency: 'KEK',
+              activeCurrency: { name: 'KEK' },
             },
           },
         },
       });
-      wrapper = shallow(TransactionModal, {
+      wrapper = shallowMount(TransactionModal, {
         store,
         localVue,
         propsData: {
           transaction,
         },
+        sync: false,
       });
     });
 

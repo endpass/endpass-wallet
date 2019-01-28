@@ -1,14 +1,18 @@
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
-import { mount, shallow, createLocalVue } from '@vue/test-utils';
+import { mount, shallowMount, createLocalVue } from '@vue/test-utils';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
 
 import { IDENTITY_MODE } from '@/constants';
 import LoginByEmailModal from '@/components/modal/LoginByEmailModal';
 
 const localVue = createLocalVue();
 
+localVue.use(validation);
 localVue.use(Vuex);
 localVue.use(VeeValidate);
+localVue.use(UIComponents);
 
 describe('LoginByEmailModal', () => {
   let wrapper;
@@ -26,9 +30,10 @@ describe('LoginByEmailModal', () => {
       },
     });
 
-    wrapper = shallow(LoginByEmailModal, {
+    wrapper = shallowMount(LoginByEmailModal, {
       store,
       localVue,
+      sync: false,
       mocks: {
         $ga,
       },
@@ -45,10 +50,15 @@ describe('LoginByEmailModal', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
 
-    it('should display a field for custom identity server', () => {
+    it('should display a field for custom identity server', async () => {
+      expect.assertions(1);
+
       wrapper.setData({
         currentIdentityServerType: IDENTITY_MODE.CUSTOM,
       });
+
+      wrapper.vm.$forceUpdate();
+      await wrapper.vm.$nextTick();
 
       expect(wrapper.find('#customIdentityServer').html()).toMatchSnapshot();
     });
@@ -229,6 +239,7 @@ describe('LoginByEmailModal', () => {
       beforeEach(() => {
         wrapper = mount(LoginByEmailModal, {
           localVue,
+          sync: false,
         });
       });
 

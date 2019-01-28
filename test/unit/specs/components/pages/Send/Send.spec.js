@@ -1,10 +1,12 @@
 import Vuex from 'vuex';
 import Web3 from 'web3';
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
-import { testUtils } from '@endpass/utils';
+import { wrapShallowMountFactory } from '@/testUtils';
+
 import Send from '@/components/pages/Send/index.vue';
 import { TransactionFactory } from '@/class';
+
 import { checksumAddress, v3password } from 'fixtures/accounts';
 import { transactionHash, shortTransactionHash } from 'fixtures/transactions';
 
@@ -22,6 +24,7 @@ describe('Send', () => {
   };
   let store;
   let wrapper;
+  let wrapperFactory;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -82,12 +85,12 @@ describe('Send', () => {
         },
       },
     });
-
-    wrapper = shallow(Send, {
+    wrapperFactory = wrapShallowMountFactory(Send, {
       store,
       localVue,
-      stubs: testUtils.generateStubs(Send),
+      sync: false,
     });
+    wrapper = wrapperFactory();
   });
 
   describe('render', () => {
@@ -111,10 +114,15 @@ describe('Send', () => {
       expect(wrapper.html()).toMatchSnapshot();
     });
 
-    it('should render transaction hash if it not empty', () => {
+    it('should render transaction hash if it not empty', async () => {
+      expect.assertions(2);
+
       wrapper.setData({
         transactionHash: '0x0',
       });
+
+      wrapper.vm.$forceUpdate();
+      await wrapper.vm.$nextTick();
 
       expect(wrapper.html()).toMatchSnapshot();
       expect(wrapper.find('[data-test=transaction-status] .code').text()).toBe(
@@ -130,14 +138,18 @@ describe('Send', () => {
     });
 
     it('should request next nonce on change active net and address', () => {
-      wrapper.setComputed({
-        activeNet: 'foo',
+      wrapper = wrapperFactory({
+        computed: {
+          activeNet: 'foo',
+        },
       });
 
       expect(transactionsActions.getNextNonce).toBeCalledTimes(2);
 
-      wrapper.setComputed({
-        address: 'foo',
+      wrapper = wrapperFactory({
+        computed: {
+          address: 'foo',
+        },
       });
 
       expect(transactionsActions.getNextNonce).toBeCalledTimes(3);
@@ -150,7 +162,7 @@ describe('Send', () => {
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.isWaitingConfirm).toBe(true);
-      expect(wrapper.find('transaction-modal').exists()).toBe(true);
+      expect(wrapper.find('transaction-modal-stub').exists()).toBe(true);
     });
 
     it('should show password modal on transaction confirm and hide transaction modal', async () => {
@@ -165,8 +177,8 @@ describe('Send', () => {
 
       expect(wrapper.vm.isWaitingConfirm).toBe(false);
       expect(wrapper.vm.isTransactionConfirmed).toBe(true);
-      expect(wrapper.find('transaction-modal').exists()).toBe(false);
-      expect(wrapper.find('password-modal').exists()).toBe(true);
+      expect(wrapper.find('transaction-modal-stub').exists()).toBe(false);
+      expect(wrapper.find('password-modal-stub').exists()).toBe(true);
     });
 
     it('should close transaction modal on send cancel', async () => {
@@ -180,7 +192,7 @@ describe('Send', () => {
       await await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.isWaitingConfirm).toBe(false);
-      expect(wrapper.find('transaction-modal').exists()).toBe(false);
+      expect(wrapper.find('transaction-modal-stub').exists()).toBe(false);
     });
 
     it('should close password modal on send cancel', async () => {
@@ -194,7 +206,7 @@ describe('Send', () => {
       await await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.isTransactionConfirmed).toBe(false);
-      expect(wrapper.find('password-modal').exists()).toBe(false);
+      expect(wrapper.find('password-modal-stub').exists()).toBe(false);
     });
 
     it('should reset form with default transaction', async () => {
@@ -202,14 +214,15 @@ describe('Send', () => {
 
       const defaultTx = { ...wrapper.vm.transaction };
 
+      const checkTrx = { name: 'foo' };
       wrapper.setData({
-        transaction: 'foo',
+        transaction: checkTrx,
       });
 
       await wrapper.vm.resetForm();
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.vm.transaction).not.toBe('foo');
+      expect(wrapper.vm.transaction).not.toBe(checkTrx);
       expect(wrapper.vm.transaction).toEqual(defaultTx);
     });
 

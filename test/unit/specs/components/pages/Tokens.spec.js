@@ -1,19 +1,26 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
-import '@/validation';
-import { allTokens, tokens, tokensMappedByAddresses } from 'fixtures/tokens';
+import VeeValidate from 'vee-validate';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
+import { wrapShallowMountFactory } from '@/testUtils';
 
 import TokensPage from '@/components/pages/Tokens.vue';
-import { testUtils } from '@endpass/utils';
+
+import { allTokens, tokens, tokensMappedByAddresses } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
 localVue.use(Notifications);
+localVue.use(validation);
+localVue.use(VeeValidate);
+localVue.use(UIComponents);
 
 describe('TokensPage', () => {
   let wrapper;
+  let wrapperFactory;
   let actions;
   let getters;
   let store;
@@ -73,6 +80,7 @@ describe('TokensPage', () => {
       store,
       localVue,
     };
+    wrapperFactory = wrapShallowMountFactory(TokensPage, options);
   });
 
   afterEach(() => {
@@ -84,10 +92,7 @@ describe('TokensPage', () => {
 
   describe('render', () => {
     beforeEach(() => {
-      wrapper = shallow(TokensPage, {
-        ...options,
-        stubs: testUtils.generateStubs(TokensPage),
-      });
+      wrapper = wrapperFactory();
     });
 
     it('should be a Vue component', () => {
@@ -101,26 +106,30 @@ describe('TokensPage', () => {
 
     describe('v-spinner', () => {
       it('should render v-spinner', () => {
-        wrapper.setComputed({
-          isLoading: true,
+        wrapper = wrapperFactory({
+          computed: {
+            isLoading: true,
+          },
         });
 
-        expect(wrapper.find('v-spinner').exists()).toBe(true);
+        expect(wrapper.find('v-spinner-stub').exists()).toBe(true);
       });
 
       it('should not render v-spinner', () => {
-        wrapper.setComputed({
-          isLoading: false,
+        wrapper = wrapperFactory({
+          computed: {
+            isLoading: false,
+          },
         });
 
-        expect(wrapper.find('v-spinner').exists()).toBe(false);
+        expect(wrapper.find('v-spinner-stub').exists()).toBe(false);
       });
     });
   });
 
   describe('behavior', () => {
     beforeEach(() => {
-      wrapper = shallow(TokensPage, options);
+      wrapper = wrapperFactory();
     });
 
     describe('search', () => {
@@ -135,8 +144,10 @@ describe('TokensPage', () => {
       });
 
       it('should correctly find token in list', () => {
-        wrapper.setComputed({
-          allCurrentAccountFullTokens: {},
+        wrapper = wrapperFactory({
+          computed: {
+            allCurrentAccountFullTokens: {},
+          },
         });
 
         expect(wrapper.vm.filteredTokens).toHaveLength(2);
@@ -167,8 +178,12 @@ describe('TokensPage', () => {
       });
 
       it('should filter out user tokens', async () => {
-        wrapper.setComputed({
-          allCurrentAccountFullTokens: {},
+        expect.assertions(3);
+
+        wrapper = wrapperFactory({
+          computed: {
+            allCurrentAccountFullTokens: {},
+          },
         });
 
         expect(wrapper.vm.filteredTokens).toHaveLength(2);
@@ -182,8 +197,10 @@ describe('TokensPage', () => {
       });
 
       it('should contains empty array if current net is not main', () => {
-        wrapper.setComputed({
-          activeNetId: 3,
+        wrapper = wrapperFactory({
+          computed: {
+            activeNetId: 3,
+          },
         });
 
         expect(wrapper.vm.filteredTokens).toEqual([]);

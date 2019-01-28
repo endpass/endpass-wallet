@@ -1,15 +1,19 @@
 import Vuex from 'vuex';
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
+import UIComponents from '@endpass/ui';
+import web3 from '@/class/singleton/web3';
+
 import VerifyMessage from '@/components/VerifyMessage';
+
 import ethereumWalletMock from 'fixtures/wallet';
 import { address } from 'fixtures/accounts';
-import web3 from '@/class/singleton/web3';
 
 const localVue = createLocalVue();
 
 localVue.use(Notifications);
 localVue.use(Vuex);
+localVue.use(UIComponents);
 
 describe('VerifyMessage', () => {
   let wrapper;
@@ -30,7 +34,7 @@ describe('VerifyMessage', () => {
       },
     });
 
-    wrapper = shallow(VerifyMessage, {
+    wrapper = shallowMount(VerifyMessage, {
       localVue,
       store,
     });

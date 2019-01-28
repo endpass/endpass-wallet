@@ -1,75 +1,85 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`RecoverTransaction render should disable "Recover" button 1`] = `
-<v-form>
-  <v-textarea
+<v-form-stub
+  isformvalid="true"
+>
+  <v-textarea-stub
     label="RLP encoded transaction"
+    value=""
   />
    
-  <v-button
-    class-name="is-primary is-medium"
+  <v-button-stub
+    classname="is-primary is-medium"
     disabled="true"
   >
     
     Recover transaction
   
-  </v-button>
+  </v-button-stub>
    
   <!---->
-</v-form>
+</v-form-stub>
 `;
 
 exports[`RecoverTransaction render should enable "Recover" button 1`] = `
-<v-form>
-  <v-textarea
+<v-form-stub
+  isformvalid="true"
+>
+  <v-textarea-stub
     label="RLP encoded transaction"
+    value="0x0"
   />
    
-  <v-button
-    class-name="is-primary is-medium"
+  <v-button-stub
+    classname="is-primary is-medium"
   >
     
     Recover transaction
   
-  </v-button>
+  </v-button-stub>
    
   <!---->
-</v-form>
+</v-form-stub>
 `;
 
 exports[`RecoverTransaction render should render the initial state of the component 1`] = `
-<v-form>
-  <v-textarea
+<v-form-stub
+  isformvalid="true"
+>
+  <v-textarea-stub
     label="RLP encoded transaction"
   />
    
-  <v-button
-    class-name="is-primary is-medium"
+  <v-button-stub
+    classname="is-primary is-medium"
     disabled="true"
   >
     
     Recover transaction
   
-  </v-button>
+  </v-button-stub>
    
   <!---->
-</v-form>
+</v-form-stub>
 `;
 
 exports[`RecoverTransaction render should show restored transaction data 1`] = `
-<v-form>
-  <v-textarea
+<v-form-stub
+  isformvalid="true"
+>
+  <v-textarea-stub
     label="RLP encoded transaction"
   />
    
-  <v-button
-    class-name="is-primary is-medium"
+  <v-button-stub
+    classname="is-primary is-medium"
     disabled="true"
   >
     
     Recover transaction
   
-  </v-button>
+  </v-button-stub>
    
   <div
     class="field"
@@ -88,5 +98,5 @@ exports[`RecoverTransaction render should show restored transaction data 1`] = `
     
     </p>
   </div>
-</v-form>
+</v-form-stub>
 `;

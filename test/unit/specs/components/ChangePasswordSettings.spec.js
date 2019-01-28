@@ -1,7 +1,8 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import Notifications from 'vue-notification';
+import UIComponents from '@endpass/ui';
 
 import ChangePasswordSettings from '@/components/ChangePasswordSettings';
 
@@ -34,12 +35,14 @@ describe('ChangePasswordSettings', () => {
     localVue.use(Vuex);
     localVue.use(Notifications);
     localVue.use(VeeValidate);
+    localVue.use(UIComponents);
 
     const store = new Vuex.Store(storeOptions);
 
-    wrapper = shallow(ChangePasswordSettings, {
+    wrapper = shallowMount(ChangePasswordSettings, {
       store,
       localVue,
+      sync: false,
     });
   });
 
@@ -54,64 +57,101 @@ describe('ChangePasswordSettings', () => {
     });
 
     describe('old password field', () => {
-      it('should disable field', () => {
+      it('should disable field', async () => {
+        expect.assertions(1);
+
         wrapper.setData({
           isLoading: true,
         });
 
+        // hack for vue test utils pass correct values in attrs
+        wrapper.vm.$forceUpdate();
+        await wrapper.vm.$nextTick();
+
         expect(
-          wrapper.find('v-password[name=oldPassword]').attributes().disabled,
+          wrapper.find('v-password-stub[name=oldPassword]').attributes()
+            .disabled,
         ).toBeTruthy();
       });
 
-      it('should enable field', () => {
+      it('should enable field', async () => {
+        expect.assertions(1);
+
         wrapper.setData({
           isLoading: false,
         });
 
+        wrapper.vm.$forceUpdate();
+        await wrapper.vm.$nextTick();
+
         expect(
-          wrapper.find('v-password[name=oldPassword]').attributes().disabled,
+          wrapper.find('v-password-stub[name=oldPassword]').attributes()
+            .disabled,
         ).toBeUndefined();
       });
     });
 
     describe('new password field', () => {
-      it('should disable field', () => {
+      it('should disable field', async () => {
+        expect.assertions(1);
+
         wrapper.setData({
           isLoading: true,
         });
 
+        wrapper.vm.$forceUpdate();
+        await wrapper.vm.$nextTick();
+
         expect(
-          wrapper.find('v-password[name=newPassword]').attributes().disabled,
+          wrapper.find('v-password-stub[name=newPassword]').attributes()
+            .disabled,
         ).toBeTruthy();
       });
 
-      it('should enable field', () => {
+      it('should enable field', async () => {
+        expect.assertions(1);
+
         wrapper.setData({
           isLoading: false,
         });
 
+        wrapper.vm.$forceUpdate();
+        await wrapper.vm.$nextTick();
+
         expect(
-          wrapper.find('v-password[name=newPassword]').attributes().disabled,
+          wrapper.find('v-password-stub[name=newPassword]').attributes()
+            .disabled,
         ).toBeUndefined();
       });
     });
 
     describe('button', () => {
-      it('should show loader', () => {
+      it('should show loader', async () => {
+        expect.assertions(1);
+
         wrapper.setData({
           isLoading: true,
         });
 
-        expect(wrapper.find('v-button').attributes().loading).toBeTruthy();
+        wrapper.vm.$forceUpdate();
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.find('v-button-stub').attributes().loading).toBeTruthy();
       });
 
-      it('should not show loader', () => {
+      it('should not show loader', async () => {
+        expect.assertions(1);
+
         wrapper.setData({
           isLoading: false,
         });
 
-        expect(wrapper.find('v-button').attributes().loading).toBeUndefined();
+        wrapper.vm.$forceUpdate();
+        await wrapper.vm.$nextTick();
+
+        expect(
+          wrapper.find('v-button-stub').attributes().loading,
+        ).toBeUndefined();
       });
     });
   });

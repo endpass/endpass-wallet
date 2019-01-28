@@ -1,6 +1,8 @@
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
-import { shallow, createLocalVue } from '@vue/test-utils';
+import UIComponents from '@endpass/ui';
+import { createLocalVue } from '@vue/test-utils';
+import { wrapShallowMountFactory } from '@/testUtils';
 
 import CustomProviderModal from '@/components/bar/CustomProviderModal';
 
@@ -15,12 +17,14 @@ describe('CustomProviderModal', () => {
   };
   let wrapper;
   let componentOptions;
+  let wrapFactory;
 
   beforeEach(() => {
     const localVue = createLocalVue();
 
     localVue.use(Vuex);
     localVue.use(VeeValidate);
+    localVue.use(UIComponents);
 
     const store = new Vuex.Store({
       modules: {
@@ -38,14 +42,18 @@ describe('CustomProviderModal', () => {
     componentOptions = {
       store,
       localVue,
+      sync: false,
     };
+
+    wrapFactory = wrapShallowMountFactory(
+      CustomProviderModal,
+      componentOptions,
+    );
   });
 
   describe('render', () => {
     beforeEach(() => {
-      wrapper = shallow(CustomProviderModal, {
-        ...componentOptions,
-      });
+      wrapper = wrapFactory();
     });
 
     it('should be a Vue component', () => {
@@ -60,34 +68,54 @@ describe('CustomProviderModal', () => {
     });
 
     describe('header', () => {
-      it('should render header for create new provider', () => {
+      it('should render header for create new provider', async () => {
+        expect.assertions(1);
+
         wrapper.setProps({});
+
+        wrapper.vm.$forceUpdate();
+        await wrapper.vm.$nextTick();
 
         expect(wrapper.find('header').text()).toBe('Add New Provider');
       });
 
-      it('should render header for update provider', () => {
+      it('should render header for update provider', async () => {
+        expect.assertions(1);
+
         wrapper.setProps({
           provider: {},
         });
+
+        wrapper.vm.$forceUpdate();
+        await wrapper.vm.$nextTick();
 
         expect(wrapper.find('header').text()).toBe('Update Provider');
       });
     });
 
     describe('footer', () => {
-      it('should render button text for create new provider', () => {
+      it('should render button text for create new provider', async () => {
+        expect.assertions(1);
+
         wrapper.setProps({});
+
+        wrapper.vm.$forceUpdate();
+        await wrapper.vm.$nextTick();
 
         expect(wrapper.find('[data-test=add-provider-button]').text()).toBe(
           'Create New Provider',
         );
       });
 
-      it('should render button text for update provider', () => {
+      it('should render button text for update provider', async () => {
+        expect.assertions(1);
+
         wrapper.setProps({
           provider: {},
         });
+
+        wrapper.vm.$forceUpdate();
+        await wrapper.vm.$nextTick();
 
         expect(wrapper.find('[data-test=add-provider-button]').text()).toBe(
           'Update Provider',
@@ -98,7 +126,7 @@ describe('CustomProviderModal', () => {
 
   describe('computed', () => {
     beforeEach(() => {
-      wrapper = shallow(CustomProviderModal, componentOptions);
+      wrapper = wrapFactory();
     });
 
     describe('providersLinks', () => {
@@ -108,50 +136,63 @@ describe('CustomProviderModal', () => {
       it('should return provider links when creating a new provider', () => {
         let expected;
 
-        wrapper.setProps({});
-        wrapper.setComputed({
-          networks: [{ url: providerUrl1 }],
+        wrapper = wrapFactory({
+          computed: {
+            networks: [{ url: providerUrl1 }],
+          },
         });
+
+        wrapper.setProps({});
         expected = providerUrl1;
 
         expect(wrapper.vm.providersLinks).toBe(expected);
 
-        wrapper.setComputed({
-          networks: [{ url: providerUrl1 }, { url: providerUrl2 }],
+        wrapper = wrapFactory({
+          computed: {
+            networks: [{ url: providerUrl1 }, { url: providerUrl2 }],
+          },
         });
+
         expected = `${providerUrl1},${providerUrl2}`;
 
         expect(wrapper.vm.providersLinks).toBe(expected);
       });
 
       it('should return provider links when provider updates', () => {
-        let expected;
+        wrapper = wrapFactory({
+          computed: {
+            networks: [{ url: providerUrl1 }],
+          },
+        });
 
         wrapper.setProps({
           provider: {
             url: providerUrl1,
           },
         });
-        wrapper.setComputed({
-          networks: [{ url: providerUrl1 }],
+
+        expect(wrapper.vm.providersLinks).toBe('');
+
+        wrapper = wrapFactory({
+          computed: {
+            networks: [{ url: providerUrl1 }, { url: providerUrl2 }],
+          },
         });
-        expected = '';
 
-        expect(wrapper.vm.providersLinks).toBe(expected);
-
-        wrapper.setComputed({
-          networks: [{ url: providerUrl1 }, { url: providerUrl2 }],
+        wrapper.setProps({
+          provider: {
+            url: providerUrl1,
+          },
         });
-        expected = providerUrl2;
 
-        expect(wrapper.vm.providersLinks).toBe(expected);
+        expect(wrapper.vm.providersLinks).toBe(providerUrl2);
       });
     });
   });
 
   describe('methods', () => {
     beforeEach(() => {
-      wrapper = shallow(CustomProviderModal, componentOptions);
+      wrapper = wrapFactory();
     });
 
     describe('handleButtonClick', () => {
@@ -175,6 +216,8 @@ describe('CustomProviderModal', () => {
         });
 
         it('should create new provider', async () => {
+          expect.assertions(6);
+
           const networkType = 'ropsten';
           const networkId = 3;
           const isSuccess = true;
@@ -185,8 +228,6 @@ describe('CustomProviderModal', () => {
               .fn()
               .mockResolvedValueOnce([networkType, networkId]),
           });
-
-          expect.assertions(6);
 
           await wrapper.vm.handleButtonClick();
 
@@ -209,12 +250,12 @@ describe('CustomProviderModal', () => {
         });
 
         it('should handle the validation error of the network', async () => {
+          expect.assertions(5);
+
           wrapper.setMethods({
             validateNetwork: jest.fn().mockRejectedValue(),
           });
           spyOn(wrapper.vm.errors, 'add');
-
-          expect.assertions(5);
 
           await wrapper.vm.handleButtonClick();
 
@@ -239,6 +280,8 @@ describe('CustomProviderModal', () => {
         });
 
         it('should update provider', async () => {
+          expect.assertions(6);
+
           const networkType = 'ropsten';
           const networkId = 3;
           const isSuccess = true;
@@ -249,8 +292,6 @@ describe('CustomProviderModal', () => {
               .fn()
               .mockResolvedValue([networkType, networkId]),
           });
-
-          expect.assertions(6);
 
           await wrapper.vm.handleButtonClick();
 
@@ -274,12 +315,12 @@ describe('CustomProviderModal', () => {
         });
 
         it('should handle the validation error of the network', async () => {
+          expect.assertions(5);
+
           wrapper.setMethods({
             validateNetwork: jest.fn().mockRejectedValue(),
           });
           spyOn(wrapper.vm.errors, 'add');
-
-          expect.assertions(5);
 
           await wrapper.vm.handleButtonClick();
 
@@ -297,7 +338,7 @@ describe('CustomProviderModal', () => {
 
   describe('behavior', () => {
     beforeEach(() => {
-      wrapper = shallow(CustomProviderModal, componentOptions);
+      wrapper = wrapFactory();
     });
 
     it('should emit close event when not loading', () => {

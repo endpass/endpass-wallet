@@ -1,13 +1,15 @@
 import Vuex from 'vuex';
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
+import UIComponents from '@endpass/ui';
+
 import SignMessage from '@/components/SignMessage';
-import { testUtils } from '@endpass/utils';
 
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
 localVue.use(Notifications);
+localVue.use(UIComponents);
 
 describe('SignMessage', () => {
   const signedMessage = {};
@@ -33,10 +35,9 @@ describe('SignMessage', () => {
       },
     });
 
-    wrapper = shallow(SignMessage, {
+    wrapper = shallowMount(SignMessage, {
       localVue,
       store,
-      stubs: testUtils.generateStubs(SignMessage),
     });
   });
 

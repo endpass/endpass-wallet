@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Transaction render action process should render loader 1`] = `<v-spinner label="Resending..." class="level-item has-text-info actions-loader"></v-spinner>`;
+exports[`Transaction render action process should render loader 1`] = `<v-spinner-stub label="Resending..." class="level-item has-text-info actions-loader"></v-spinner-stub>`;
 
-exports[`Transaction render action process should render loader 2`] = `<v-spinner label="Canceling..." class="level-item has-text-info actions-loader"></v-spinner>`;
+exports[`Transaction render action process should render loader 2`] = `<v-spinner-stub label="Resending..." class="level-item has-text-info actions-loader"></v-spinner-stub>`;
 
 exports[`Transaction render should render the initial state of the component 1`] = `
 <div
@@ -11,9 +11,11 @@ exports[`Transaction render should render the initial state of the component 1`]
   <div
     class="transaction-header"
   >
-    <account
+    <account-stub
+      address="toAddr"
       balance="0"
       currency="ETH"
+      size="50"
     >
       <div
         class="transaction-actions level is-mobile"
@@ -40,7 +42,6 @@ exports[`Transaction render should render the initial state of the component 1`]
             data-test="transaction-resend-button"
             role="button"
             title="Resend"
-            v-on:click="bound resend"
           >
             <span
               class="icon is-small"
@@ -62,7 +63,6 @@ exports[`Transaction render should render the initial state of the component 1`]
             data-test="transaction-cancel-button"
             role="button"
             title="Cancel"
-            v-on:click="bound cancel"
           >
             <span
               class="icon is-small"
@@ -83,7 +83,6 @@ exports[`Transaction render should render the initial state of the component 1`]
             class="level-item has-text-info"
             data-test="transaction-details-button"
             title="Details"
-            v-on:click="bound toggleExpanded"
           >
             <span
               class="icon is-small"
@@ -99,7 +98,7 @@ exports[`Transaction render should render the initial state of the component 1`]
           </a>
         </div>
       </div>
-    </account>
+    </account-stub>
   </div>
    
   <!---->

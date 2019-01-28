@@ -1,6 +1,6 @@
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import CodePasswordModal from '@/components/modal/CodePasswordModal';
 
 const localVue = createLocalVue();
@@ -13,7 +13,7 @@ describe('CodePasswordModal', () => {
 
   describe('render', () => {
     beforeEach(() => {
-      wrapper = shallow(CodePasswordModal, {
+      wrapper = shallowMount(CodePasswordModal, {
         props: {
           code: 'foo',
         },

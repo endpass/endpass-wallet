@@ -2,13 +2,14 @@
 
 exports[`ImportFromSeed render should render initial state of the component 1`] = `
 <div>
-  <v-form
+  <v-form-stub
     data-test="import-seed-form"
   >
-    <v-input
+    <v-input-stub
       aria-describedby="hdkeyPhrase"
       aria-invalid="false"
       aria-required="true"
+      classname=""
       data-test="input-seed-phrase"
       data-vv-as="seed phrase"
       data-vv-name="hdkeyPhrase"
@@ -17,18 +18,19 @@ exports[`ImportFromSeed render should render initial state of the component 1`] 
       name="hdkeyPhrase"
       placeholder="Seed phrase"
       required=""
+      value=""
     />
      
-    <v-button
-      class-name="is-primary is-cta"
+    <v-button-stub
+      classname="is-primary is-cta"
       data-test="submit-import"
       disabled="true"
     >
       
       Import
     
-    </v-button>
-  </v-form>
+    </v-button-stub>
+  </v-form-stub>
    
   <!---->
 </div>

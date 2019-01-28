@@ -1,8 +1,7 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
-
-import { testUtils } from '@endpass/utils';
+import UIComponents from '@endpass/ui';
 
 import WalletItem from '@/components/importWallet/WalletsList/WalletItem';
 
@@ -10,6 +9,7 @@ const localVue = createLocalVue();
 
 localVue.use(Vuex);
 localVue.use(VeeValidate);
+localVue.use(UIComponents);
 
 jest.useFakeTimers();
 
@@ -37,10 +37,9 @@ describe('WalletItem', () => {
       },
     };
     const store = new Vuex.Store(storeOptions);
-    wrapper = shallow(WalletItem, {
+    wrapper = shallowMount(WalletItem, {
       localVue,
       store,
-      stubs: testUtils.generateStubs(WalletItem),
       propsData: {
         address: 'addr',
       },

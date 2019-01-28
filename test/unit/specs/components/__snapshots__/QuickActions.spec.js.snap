@@ -7,10 +7,12 @@ exports[`QuickActions render should render initial state of the component 1`] = 
   <div
     class="navbar is-fixed-bottom"
   >
-    <router-link
-      active-class="is-active"
+    <router-link-stub
+      activeclass="is-active"
       class="navbar-item button"
-      exact=""
+      event="click"
+      exact="true"
+      tag="a"
       to="/"
     >
       <span
@@ -24,12 +26,14 @@ exports[`QuickActions render should render initial state of the component 1`] = 
       >
         Home
       </span>
-    </router-link>
+    </router-link-stub>
      
-    <router-link
-      active-class="is-active"
+    <router-link-stub
+      activeclass="is-active"
       class="navbar-item button"
       disabled="true"
+      event="click"
+      tag="a"
       to="[object Object]"
     >
       <span
@@ -43,12 +47,14 @@ exports[`QuickActions render should render initial state of the component 1`] = 
       >
         Send
       </span>
-    </router-link>
+    </router-link-stub>
      
-    <router-link
-      active-class="is-active"
+    <router-link-stub
+      activeclass="is-active"
       class="navbar-item button"
       disabled="true"
+      event="click"
+      tag="a"
       to="[object Object]"
     >
       <span
@@ -62,12 +68,14 @@ exports[`QuickActions render should render initial state of the component 1`] = 
       >
         Recieve
       </span>
-    </router-link>
+    </router-link-stub>
      
-    <router-link
-      active-class="is-active"
+    <router-link-stub
+      activeclass="is-active"
       class="navbar-item button"
       disabled="true"
+      event="click"
+      tag="a"
       to="[object Object]"
     >
       <span
@@ -81,7 +89,7 @@ exports[`QuickActions render should render initial state of the component 1`] = 
       >
         History
       </span>
-    </router-link>
+    </router-link-stub>
   </div>
 </div>
 `;

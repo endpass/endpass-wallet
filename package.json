@@ -54,7 +54,7 @@
     "throttled-queue": "^1.0.5",
     "trezor-connect": "^6.0.0",
     "vee-validate": "^2.0.9",
-    "vue": "^2.5.2",
+    "vue": "2.5.16",
     "vue-analytics": "^5.12.2",
     "vue-intercom": "^1.0.12",
     "vue-multiselect": "^2.1.0",
@@ -67,7 +67,7 @@
     "web3-dapp": "npm:web3@0.19"
   },
   "devDependencies": {
-    "@vue/test-utils": "1.0.0-beta.10",
+    "@vue/test-utils": "1.0.0-beta.28",
     "autoprefixer": "^7.1.2",
     "axios-mock-adapter": "^1.15.0",
     "babel-core": "^6.22.1",

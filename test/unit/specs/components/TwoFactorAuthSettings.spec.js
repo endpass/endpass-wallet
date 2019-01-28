@@ -1,11 +1,15 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
+import UIComponents from '@endpass/ui';
+import { wrapShallowMountFactory } from '@/testUtils';
 
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
-import { testUtils } from '@endpass/utils';
 
 describe('TwoFactorAuthSettings', () => {
+  let localVue;
+  let store;
+
   const userActions = {
     getOtpSettings: jest.fn(),
     setOtpSettings: jest.fn(),
@@ -34,20 +38,23 @@ describe('TwoFactorAuthSettings', () => {
     },
   };
   let wrapper;
+  let wrapFactory;
 
   beforeEach(() => {
-    const localVue = createLocalVue();
+    localVue = createLocalVue();
 
     localVue.use(Vuex);
     localVue.use(Notifications);
+    localVue.use(UIComponents);
 
-    const store = new Vuex.Store(storeOptions);
+    store = new Vuex.Store(storeOptions);
 
-    wrapper = shallow(TwoFactorAuthSettings, {
+    wrapFactory = wrapShallowMountFactory(TwoFactorAuthSettings, {
       store,
       localVue,
-      stubs: testUtils.generateStubs(TwoFactorAuthSettings),
     });
+
+    wrapper = wrapFactory();
   });
 
   describe('render', () => {
@@ -56,68 +63,90 @@ describe('TwoFactorAuthSettings', () => {
     });
 
     it('should correctly render button text', () => {
-      wrapper.setComputed({
-        otpSettings: {
-          secret: 'secret',
+      wrapper = wrapFactory({
+        computed: {
+          otpSettings: {
+            secret: 'secret',
+          },
         },
       });
-      expect(wrapper.find('v-button').text()).toBe('Enable Two Factor Auth');
 
-      wrapper.setComputed({
-        otpSettings: {
-          secret: null,
+      expect(wrapper.find('v-button-stub').text()).toBe(
+        'Enable Two Factor Auth',
+      );
+
+      wrapper = wrapFactory({
+        computed: {
+          otpSettings: {
+            secret: null,
+          },
         },
       });
-      expect(wrapper.find('v-button').text()).toBe('Disable Two Factor Auth');
+
+      expect(wrapper.find('v-button-stub').text()).toBe(
+        'Disable Two Factor Auth',
+      );
     });
 
     it('should correctly change button "disabled" property', () => {
-      wrapper.setComputed({
-        otpSettings: {
+      wrapper = wrapFactory({
+        computed: {
           secret: null,
           status: null,
         },
       });
-      expect(wrapper.find('v-button').attributes().disabled).toBeTruthy();
 
-      wrapper.setComputed({
-        otpSettings: {
-          secret: 'secret',
-          status: null,
+      expect(wrapper.find('v-button-stub').attributes().disabled).toBeTruthy();
+
+      wrapper = wrapFactory({
+        computed: {
+          otpSettings: {
+            secret: 'secret',
+            status: null,
+          },
         },
       });
-      expect(wrapper.find('v-button').attributes().disabled).toBeFalsy();
 
-      wrapper.setComputed({
-        otpSettings: {
-          secret: null,
-          status: 'status',
+      expect(wrapper.find('v-button-stub').attributes().disabled).toBeFalsy();
+
+      wrapper = wrapFactory({
+        computed: {
+          otpSettings: {
+            secret: null,
+            status: 'status',
+          },
         },
       });
-      expect(wrapper.find('v-button').attributes().disabled).toBeFalsy();
 
-      wrapper.setComputed({
-        otpSettings: {
-          secret: 'secret',
-          status: 'status',
+      expect(wrapper.find('v-button-stub').attributes().disabled).toBeFalsy();
+
+      wrapper = wrapFactory({
+        computed: {
+          otpSettings: {
+            secret: 'secret',
+            status: 'status',
+          },
         },
       });
-      expect(wrapper.find('v-button').attributes().disabled).toBeFalsy();
+
+      expect(wrapper.find('v-button-stub').attributes().disabled).toBeFalsy();
     });
 
     it('should correctly change button "loading" property', () => {
       wrapper.setData({
         isLoading: false,
       });
-      expect(wrapper.find('v-button').attributes().loading).toBeFalsy();
+      expect(wrapper.find('v-button-stub').attributes().loading).toBeFalsy();
 
       wrapper.setData({
         isLoading: true,
       });
-      expect(wrapper.find('v-button').attributes().loading).toBeTruthy();
+      expect(wrapper.find('v-button-stub').attributes().loading).toBeTruthy();
     });
 
     it('should show modal window for two factor auth', async () => {
+      expect.assertions(1);
+
       wrapper.setData({
         isTwoFactorAuthModal: true,
       });
@@ -128,19 +157,28 @@ describe('TwoFactorAuthSettings', () => {
 
   describe('methods', () => {
     describe('handleFormSubmit', () => {
-      it('should call toggleTwoFactorAuthModal', () => {
+      it('should not call toggleTwoFactorAuthModal', () => {
+        wrapper = wrapFactory({
+          computed: {
+            isButtonDisabled: true,
+          },
+        });
+
         spyOn(wrapper.vm, 'toggleTwoFactorAuthModal');
 
-        wrapper.setComputed({
-          isButtonDisabled: true,
-        });
         wrapper.vm.handleFormSubmit();
 
         expect(wrapper.vm.toggleTwoFactorAuthModal).toHaveBeenCalledTimes(0);
+      });
 
-        wrapper.setComputed({
-          isButtonDisabled: false,
+      it('should call toggleTwoFactorAuthModal', () => {
+        wrapper = wrapFactory({
+          computed: {
+            isButtonDisabled: false,
+          },
         });
+
+        spyOn(wrapper.vm, 'toggleTwoFactorAuthModal');
         wrapper.vm.handleFormSubmit();
 
         expect(wrapper.vm.toggleTwoFactorAuthModal).toHaveBeenCalledTimes(1);
@@ -163,6 +201,7 @@ describe('TwoFactorAuthSettings', () => {
 
       it('should notify about successful update', async () => {
         expect.assertions(1);
+
         jest.spyOn(wrapper.vm, '$notify');
 
         await wrapper.vm.handleConfirmTwoFactorAuthModal(code);
@@ -176,6 +215,7 @@ describe('TwoFactorAuthSettings', () => {
 
       it('should catch error and show notification', async () => {
         expect.assertions(2);
+
         const error = new Error();
         userActions.deleteOtpSettings.mockRejectedValueOnce(error);
         await wrapper.vm.handleConfirmTwoFactorAuthModal(code);
@@ -191,9 +231,12 @@ describe('TwoFactorAuthSettings', () => {
       it('should call setOtpSettings', () => {
         const secret = 'secret';
 
-        wrapper.setComputed({
-          otpSettings: { secret },
+        wrapper = wrapFactory({
+          computed: {
+            otpSettings: { secret },
+          },
         });
+
         wrapper.vm.handleConfirmTwoFactorAuthModal(code);
 
         expect(userActions.setOtpSettings).toHaveBeenCalledTimes(1);

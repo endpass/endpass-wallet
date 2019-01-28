@@ -1,9 +1,12 @@
 import Vuex from 'vuex';
-import { shallow, createLocalVue } from '@vue/test-utils';
+import VueRouter from 'vue-router';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
+
 import QuickActions from '@/components/QuickActions';
 
 const localVue = createLocalVue();
 
+localVue.use(VueRouter);
 localVue.use(Vuex);
 
 describe('QuickActions', () => {
@@ -26,7 +29,7 @@ describe('QuickActions', () => {
 
     const store = new Vuex.Store(storeOptions);
 
-    wrapper = shallow(QuickActions, {
+    wrapper = shallowMount(QuickActions, {
       localVue,
       store,
     });

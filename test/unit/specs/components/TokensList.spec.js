@@ -1,7 +1,9 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
+import { wrapShallowMountFactory } from '@/testUtils';
+
 import TokensList from '@/components/TokensList';
-import { testUtils } from '@endpass/utils';
+
 import { tokens, fullTokensMappedByAddresses } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
@@ -11,6 +13,7 @@ localVue.use(Vuex);
 describe('TokensList', () => {
   let actions;
   let wrapper;
+  let wrapperFactory;
   let store;
 
   beforeEach(() => {
@@ -58,14 +61,14 @@ describe('TokensList', () => {
       },
     });
 
-    wrapper = shallow(TokensList, {
+    wrapperFactory = wrapShallowMountFactory(TokensList, {
       store,
       localVue,
-      stubs: testUtils.generateStubs(TokensList),
       propsData: {
         tokens,
       },
     });
+    wrapper = wrapperFactory();
   });
 
   describe('render', () => {
@@ -80,6 +83,8 @@ describe('TokensList', () => {
 
   describe('behavior', () => {
     it('fetches token prices on mount', async () => {
+      expect.assertions(1);
+
       expect(actions.getTokensPrices).toHaveBeenCalledTimes(1);
     });
 
@@ -88,14 +93,24 @@ describe('TokensList', () => {
       expect(wrapper.vm.getTokenPrice('BADSYMBOL')).toBe('0');
     });
 
-    it('should render remove button only for user tokens with non zero balance', () => {
+    it('should render remove button only for user tokens with non zero balance', async () => {
+      expect.assertions(3);
+
+      wrapper = wrapperFactory({
+        propsData: {
+          tokens,
+        },
+        computed: {
+          currentNetUserFullTokens: fullTokensMappedByAddresses,
+        },
+      });
+
       wrapper.setProps({
         hasRemove: true,
         tokens: Object.values(fullTokensMappedByAddresses),
       });
-      wrapper.setComputed({
-        currentNetUserFullTokens: fullTokensMappedByAddresses,
-      });
+
+      await wrapper.vm.$nextTick();
 
       expect(wrapper.findAll('.remove-token-button')).toHaveLength(1);
 

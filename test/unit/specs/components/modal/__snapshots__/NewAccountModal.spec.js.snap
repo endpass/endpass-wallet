@@ -4,53 +4,104 @@ exports[`NewAccountModal render should render component 1`] = `
 <div
   class="new-account-modal"
 >
-  <v-modal>
-    <template>
-      Create New Address
-    </template>
-     
-    <div>
-      <p
-        class="subtitle"
-      >
-        You currently have
-      
-        <strong>
-          0
-        </strong>
-         active addresses in your wallet.
-      </p>
-       
-      <p
-        class="subtitle"
-      >
-        Click the button below to create or import an additional address you can use to receive Ethereum and tokens.
-      </p>
-    </div>
+  <div
+    class="modal is-active"
+  >
+    <div
+      class="modal-background"
+    />
      
     <div
-      class="buttons"
-      slot="footer"
+      class="modal-logo"
+    />
+     
+    <div
+      class="modal-card"
     >
-      <v-form>
-        <v-button
-          class-name="is-primary is-medium"
-        >
-          Create address
-        </v-button>
-      </v-form>
-       
-      <v-form
-        isformvalid="true"
+      <div
+        class="modal-card-head"
       >
-        <v-button
-          class-name="is-primary is-medium"
+        <h3
+          class="modal-card-title"
         >
-          Import address
-        </v-button>
-      </v-form>
+          Create New Address
+        </h3>
+         
+        <button
+          class="delete is-large"
+        />
+      </div>
+       
+      <div
+        class="modal-card-body"
+      >
+         
+        <div>
+          <p
+            class="subtitle"
+          >
+            You currently have
+      
+            <strong>
+              0
+            </strong>
+             active addresses in your wallet.
+          </p>
+           
+          <p
+            class="subtitle"
+          >
+            Click the button below to create or import an additional address you can use to receive Ethereum and tokens.
+          </p>
+        </div>
+         
+      </div>
+       
+      <div
+        class="modal-card-foot"
+      >
+        <div
+          class="buttons"
+        >
+          <form
+            class="control"
+          >
+            <div
+              class="field"
+            >
+              <div
+                class="control"
+              >
+                <button
+                  class="button is-primary is-medium"
+                >
+                  Create address
+                </button>
+              </div>
+            </div>
+          </form>
+           
+          <form
+            class="control"
+          >
+            <div
+              class="field"
+            >
+              <div
+                class="control"
+              >
+                <button
+                  class="button is-primary is-medium"
+                >
+                  Import address
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-  </v-modal>
+  </div>
    
   <!---->
 </div>

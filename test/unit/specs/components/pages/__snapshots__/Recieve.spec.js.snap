@@ -10,7 +10,13 @@ exports[`ReceivePage render should render component 1`] = `
     <div
       class="container"
     >
-      <!---->
+      <account-wallet-card-stub
+        activecurrencyname="KEK"
+        address="0x9ECEEfDF3554E178a6549006F2C02163E63C9fd8"
+        balance="0"
+        data-test="current-account"
+        iscurrentaccount="true"
+      />
     </div>
   </div>
    
@@ -21,7 +27,13 @@ exports[`ReceivePage render should render component 1`] = `
       class="container"
     >
       <!---->
-      <!---->
+      <account-wallet-card-stub
+        activecurrencyname="KEK"
+        address="0x4Ce2109f8DB1190cd44BC6554E35642214FbE144"
+        allowsend="true"
+        balance="0.000000000000000001"
+        data-test="account"
+      />
     </div>
   </div>
    
@@ -51,10 +63,14 @@ exports[`ReceivePage render should render component 1`] = `
             class="transactions"
           >
             <li>
-              <!---->
+              <app-transaction-stub
+                transaction="[object Object]"
+              />
             </li>
             <li>
-              <!---->
+              <app-transaction-stub
+                transaction="[object Object]"
+              />
             </li>
           </ul>
         </div>

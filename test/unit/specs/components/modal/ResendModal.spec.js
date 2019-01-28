@@ -1,12 +1,16 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import { TransactionFactory } from '@/class';
 import VeeValidate from 'vee-validate';
+import UIComponents from '@endpass/ui';
 
 import ResendModal from '@/components/modal/ResendModal';
+import validation from '@/validation';
 
 const localVue = createLocalVue();
 
 localVue.use(VeeValidate);
+localVue.use(validation);
+localVue.use(UIComponents);
 
 describe('ResendModal', () => {
   let wrapper;
@@ -16,11 +20,12 @@ describe('ResendModal', () => {
       data: '0x0',
       from: '0x0',
     });
-    wrapper = shallow(ResendModal, {
+    wrapper = shallowMount(ResendModal, {
       localVue,
       propsData: {
         transaction,
       },
+      sync: false,
     });
   });
 

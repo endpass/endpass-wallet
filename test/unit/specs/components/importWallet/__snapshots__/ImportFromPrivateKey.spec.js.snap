@@ -2,10 +2,10 @@
 
 exports[`ImportFromPrivateKey render should render initial state of the component 1`] = `
 <div>
-  <v-form
+  <v-form-stub
     data-test="import-private-form"
   >
-    <v-password
+    <v-password-stub
       aria-describedby="privateKey"
       aria-invalid="false"
       aria-required="true"
@@ -17,18 +17,19 @@ exports[`ImportFromPrivateKey render should render initial state of the componen
       name="privateKey"
       placeholder="Private key"
       required=""
+      value=""
     />
      
-    <v-button
-      class-name="is-primary is-cta"
+    <v-button-stub
+      classname="is-primary is-cta"
       data-test="submit-import"
       disabled="true"
     >
       
       Import
     
-    </v-button>
-  </v-form>
+    </v-button-stub>
+  </v-form-stub>
    
   <!---->
 </div>

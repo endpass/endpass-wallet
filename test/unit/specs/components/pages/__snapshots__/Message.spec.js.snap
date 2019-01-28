@@ -1,10 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Message page render should render the initial state of the page 1`] = `
-<base-page>
-  <template
-    slot="title"
-  >
+<base-page-stub>
+  <template>
     Message
   </template>
    
@@ -38,22 +36,17 @@ exports[`Message page render should render the initial state of the page 1`] = `
     </ul>
   </div>
    
-  <sign-message
-    v-show="isSignTabActive"
-  />
+  <sign-message-stub />
    
-  <verify-message
+  <verify-message-stub
     style="display: none;"
-    v-show="isVerifyTabActive"
   />
-</base-page>
+</base-page-stub>
 `;
 
 exports[`Message page render should set Sign tab 1`] = `
-<base-page>
-  <template
-    slot="title"
-  >
+<base-page-stub>
+  <template>
     Message
   </template>
    
@@ -87,22 +80,17 @@ exports[`Message page render should set Sign tab 1`] = `
     </ul>
   </div>
    
-  <sign-message
-    v-show="isSignTabActive"
-  />
+  <sign-message-stub />
    
-  <verify-message
+  <verify-message-stub
     style="display: none;"
-    v-show="isVerifyTabActive"
   />
-</base-page>
+</base-page-stub>
 `;
 
 exports[`Message page render should set Verify tab 1`] = `
-<base-page>
-  <template
-    slot="title"
-  >
+<base-page-stub>
+  <template>
     Message
   </template>
    
@@ -136,14 +124,12 @@ exports[`Message page render should set Verify tab 1`] = `
     </ul>
   </div>
    
-  <sign-message
+  <sign-message-stub
     style="display: none;"
-    v-show="isSignTabActive"
   />
    
-  <verify-message
+  <verify-message-stub
     style=""
-    v-show="isVerifyTabActive"
   />
-</base-page>
+</base-page-stub>
 `;

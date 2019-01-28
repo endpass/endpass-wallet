@@ -5,13 +5,13 @@ exports[`DappPage render should render error 1`] = `
     <div class="container">
         <div class="card app-card">
             <div class="card-header dapp-form">
-                <v-input name="url" data-vv-name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" data-test="dapp-url-input" aria-required="true" aria-invalid="true">
-                    <div slot="addon" class="control">
+                <v-input-stub value="" classname="dapp-form-input" name="url" data-vv-name="url" placeholder="Enter dapp url..." data-vv-as="Dapp url" data-test="dapp-url-input" aria-required="true" aria-invalid="true">
+                    <div class="control">
                         <button disabled="disabled" data-test="dapp-open-button" class="button is-primary">
                             Open
                         </button>
                     </div>
-                </v-input>
+                </v-input-stub>
             </div>
             <!---->
             <p class="dapp-error help is-danger">
@@ -28,13 +28,13 @@ exports[`DappPage render should render iframe if it loading but it must be hidde
     <div class="container">
         <div class="card app-card">
             <div class="card-header dapp-form">
-                <v-input name="url" data-vv-name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" data-test="dapp-url-input" aria-required="true" aria-invalid="true" disabled="true">
-                    <div slot="addon" class="control">
+                <v-input-stub value="" classname="dapp-form-input" name="url" data-vv-name="url" placeholder="Enter dapp url..." data-vv-as="Dapp url" data-test="dapp-url-input" aria-required="true" aria-invalid="true" disabled="true">
+                    <div class="control">
                         <button disabled="disabled" data-test="dapp-open-button" class="button is-primary">
                             Open
                         </button>
                     </div>
-                </v-input>
+                </v-input-stub>
             </div>
             <iframe src="https://wildproxy-dev.endpass.com/" class="dapp-frame" style="display: none;"></iframe>
             <!---->
@@ -49,13 +49,13 @@ exports[`DappPage render should render iframe it loaded 1`] = `
     <div class="container">
         <div class="card app-card">
             <div class="card-header dapp-form">
-                <v-input name="url" data-vv-name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" data-test="dapp-url-input" aria-required="true" aria-invalid="true">
-                    <div slot="addon" class="control">
+                <v-input-stub value="" classname="dapp-form-input" name="url" data-vv-name="url" placeholder="Enter dapp url..." data-vv-as="Dapp url" data-test="dapp-url-input" aria-required="true" aria-invalid="true">
+                    <div class="control">
                         <button disabled="disabled" data-test="dapp-open-button" class="button is-primary">
                             Open
                         </button>
                     </div>
-                </v-input>
+                </v-input-stub>
             </div>
             <iframe src="https://wildproxy-dev.endpass.com/" class="dapp-frame"></iframe>
             <!---->
@@ -70,21 +70,21 @@ exports[`DappPage render should render password modal if currentRequest exists 1
     <div class="container">
         <div class="card app-card">
             <div class="card-header dapp-form">
-                <v-input name="url" data-vv-name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" data-test="dapp-url-input" aria-required="true" aria-invalid="true">
-                    <div slot="addon" class="control">
+                <v-input-stub value="" classname="dapp-form-input" name="url" data-vv-name="url" placeholder="Enter dapp url..." data-vv-as="Dapp url" data-test="dapp-url-input" aria-required="true" aria-invalid="false">
+                    <div class="control">
                         <button disabled="disabled" data-test="dapp-open-button" class="button is-primary">
                             Open
                         </button>
                     </div>
-                </v-input>
+                </v-input-stub>
             </div>
             <!---->
             <!---->
         </div>
     </div>
-    <password-modal title="Opened dapp requests your password" v-on:confirm="bound confirmSign" v-on:close="bound cancelSign">
+    <password-modal-stub title="Opened dapp requests your password">
         <!---->
-    </password-modal>
+    </password-modal-stub>
 </div>
 `;
 
@@ -93,21 +93,21 @@ exports[`DappPage render should render password modal with table if currentReque
     <div class="container">
         <div class="card app-card">
             <div class="card-header dapp-form">
-                <v-input name="url" data-vv-name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" data-test="dapp-url-input" aria-required="true" aria-invalid="true">
-                    <div slot="addon" class="control">
+                <v-input-stub value="" classname="dapp-form-input" name="url" data-vv-name="url" placeholder="Enter dapp url..." data-vv-as="Dapp url" data-test="dapp-url-input" aria-required="true" aria-invalid="false">
+                    <div class="control">
                         <button disabled="disabled" data-test="dapp-open-button" class="button is-primary">
                             Open
                         </button>
                     </div>
-                </v-input>
+                </v-input-stub>
             </div>
             <!---->
             <!---->
         </div>
     </div>
-    <password-modal title="Opened dapp requests your password" v-on:confirm="bound confirmSign" v-on:close="bound cancelSign">
-        <transaction-table transaction="[object Object]"></transaction-table>
-    </password-modal>
+    <password-modal-stub title="Opened dapp requests your password">
+        <transaction-table-stub transaction="[object Object]" currency="[object Object]"></transaction-table-stub>
+    </password-modal-stub>
 </div>
 `;
 
@@ -116,13 +116,13 @@ exports[`DappPage render should render without iframe, modals and errors by defa
     <div class="container">
         <div class="card app-card">
             <div class="card-header dapp-form">
-                <v-input name="url" data-vv-name="url" placeholder="Enter dapp url..." class-name="dapp-form-input" data-vv-as="Dapp url" data-test="dapp-url-input" aria-required="true" aria-invalid="true">
-                    <div slot="addon" class="control">
+                <v-input-stub value="" classname="dapp-form-input" name="url" data-vv-name="url" placeholder="Enter dapp url..." data-vv-as="Dapp url" data-test="dapp-url-input" aria-required="true" aria-invalid="true">
+                    <div class="control">
                         <button disabled="disabled" data-test="dapp-open-button" class="button is-primary">
                             Open
                         </button>
                     </div>
-                </v-input>
+                </v-input-stub>
             </div>
             <!---->
             <!---->

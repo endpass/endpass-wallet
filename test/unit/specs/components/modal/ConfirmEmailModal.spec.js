@@ -1,12 +1,20 @@
-import { mount } from '@vue/test-utils';
+import { mount, createLocalVue } from '@vue/test-utils';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
 
 import ConfirmEmailModal from '@/components/modal/ConfirmEmailModal';
+
+const localVue = createLocalVue();
+localVue.use(validation);
+localVue.use(UIComponents);
 
 describe('ConfirmEmailModal', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(ConfirmEmailModal);
+    wrapper = mount(ConfirmEmailModal, {
+      localVue,
+    });
   });
 
   describe('render', () => {

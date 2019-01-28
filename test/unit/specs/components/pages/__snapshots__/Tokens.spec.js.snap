@@ -38,9 +38,9 @@ exports[`TokensPage render should render component 1`] = `
                 <div
                   class="panel-block"
                 >
-                  <search-input
+                  <search-input-stub
                     data-test="token-search-input"
-                    v-model="userTokenQuery"
+                    value=""
                   />
                 </div>
                  
@@ -49,10 +49,10 @@ exports[`TokensPage render should render component 1`] = `
                 <div
                   class="scroller"
                 >
-                  <tokens-list
+                  <tokens-list-stub
                     data-test="tokens-list"
-                    has-remove="true"
-                    item-class="panel-block is-clearfix is-block"
+                    hasremove="true"
+                    itemclass="panel-block is-clearfix is-block"
                     tokens="[object Object],[object Object]"
                   />
                 </div>
@@ -95,7 +95,26 @@ exports[`TokensPage render should render component 1`] = `
             <div
               class="card-content"
             >
-              <!---->
+              <multiselect-stub
+                data-test="tokens-select"
+                deselectgrouplabel="Press enter to deselect group"
+                deselectlabel="Press enter to remove"
+                label="name"
+                limit="99999"
+                limittext="function(t){return\\"and \\".concat(t,\\" more\\")}"
+                maxheight="300"
+                name=""
+                opendirection=""
+                options=""
+                options-limit="10"
+                placeholder="Type to search tokens..."
+                selectedlabel="Selected"
+                selectgrouplabel="Press enter to select group"
+                selectlabel="Press enter to select"
+                shownoresults="true"
+                tabindex="0"
+                track-by="address"
+              />
             </div>
           </div>
         </div>

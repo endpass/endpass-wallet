@@ -1,8 +1,7 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
+
 import VToken from '@/components/VToken';
 import Token from '@/class/Token';
-
-const localVue = createLocalVue();
 
 describe('Token', () => {
   let wrapper;
@@ -17,7 +16,7 @@ describe('Token', () => {
       symbol: '$KEK',
     });
 
-    wrapper = shallow(VToken, {
+    wrapper = shallowMount(VToken, {
       propsData: {
         token: mockToken,
       },

@@ -1,14 +1,16 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
-
 import Vuex from 'vuex';
+import { createLocalVue } from '@vue/test-utils';
+import { wrapShallowMountFactory } from '@/testUtils';
+
+import SyncStatus from '@/components/bar/SyncStatus';
+
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
 
-import SyncStatus from '@/components/bar/SyncStatus';
-
 describe('SyncStatus', () => {
   let wrapper;
+  let wrapperFactory;
   beforeEach(() => {
     const store = new Vuex.Store({
       modules: {
@@ -26,10 +28,11 @@ describe('SyncStatus', () => {
         },
       },
     });
-    wrapper = shallow(SyncStatus, {
+    wrapperFactory = wrapShallowMountFactory(SyncStatus, {
       localVue,
       store,
     });
+    wrapper = wrapperFactory();
   });
   describe('render', () => {
     it('should be a Vue component', () => {
@@ -46,9 +49,19 @@ describe('SyncStatus', () => {
     describe('statusClass', () => {
       it('should return correct statusClass', () => {
         expect(wrapper.vm.statusClass).toBe('is-danger');
-        wrapper.setComputed({ appStatus: 'syncing' });
+
+        wrapper = wrapperFactory({
+          computed: {
+            appStatus: 'syncing',
+          },
+        });
         expect(wrapper.vm.statusClass).toBe('is-warning');
-        wrapper.setComputed({ appStatus: 'ready' });
+
+        wrapper = wrapperFactory({
+          computed: {
+            appStatus: 'ready',
+          },
+        });
         expect(wrapper.vm.statusClass).toBe('is-success');
       });
     });

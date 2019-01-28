@@ -1,12 +1,17 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
+import directives from '@/directives';
 
 import LoginModal from '@/components/modal/LoginModal';
 import LoginByEmailModal from '@/components/modal/LoginByEmailModal';
 import ConfirmEmailModal from '@/components/modal/ConfirmEmailModal';
 import TwoFactorAuthModal from '@/components/modal/TwoFactorAuthModal';
-import { testUtils } from '@endpass/utils';
+
+const localVue = createLocalVue();
+localVue.use(Vuex);
+localVue.use(Notifications);
+localVue.use(directives);
 
 jest.mock('@/components/modal/LoginByEmailModal', () => ({
   name: 'login-by-email-modal',
@@ -24,8 +29,9 @@ describe('LoginModal', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(LoginModal, {
-      stubs: testUtils.generateStubs(LoginModal),
+    wrapper = shallowMount(LoginModal, {
+      localVue,
+      sync: false,
     });
   });
 
@@ -39,42 +45,65 @@ describe('LoginModal', () => {
       expect(wrapper.element).toMatchSnapshot();
     });
 
-    it('should render LoginByEmailModal component', () => {
+    it('should render LoginByEmailModal component', async () => {
+      expect.assertions(1);
+
       wrapper.setData({
         currentModal: LoginByEmailModal.name,
       });
 
-      expect(wrapper.is(LoginByEmailModal.name)).toBeTruthy();
+      wrapper.vm.$forceUpdate();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.is(`${LoginByEmailModal.name}-stub`)).toBeTruthy();
     });
 
-    it('should render ConfirmEmailModal component', () => {
+    it('should render ConfirmEmailModal component', async () => {
+      expect.assertions(1);
+
       wrapper.setData({
         currentModal: ConfirmEmailModal.name,
       });
 
-      expect(wrapper.is(ConfirmEmailModal.name)).toBeTruthy();
+      wrapper.vm.$forceUpdate();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.is(`${ConfirmEmailModal.name}-stub`)).toBeTruthy();
     });
 
-    it('should render TwoFactorAuthModal component', () => {
+    it('should render TwoFactorAuthModal component', async () => {
+      expect.assertions(1);
+
       wrapper.setData({
         currentModal: TwoFactorAuthModal.name,
       });
 
-      expect(wrapper.is(TwoFactorAuthModal.name)).toBeTruthy();
+      wrapper.vm.$forceUpdate();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.is(`${TwoFactorAuthModal.name}-stub`)).toBeTruthy();
     });
   });
 
   describe('data', () => {
     describe('isLoading', () => {
-      it('should correctly change "loading" property', () => {
+      it('should correctly change "loading" property', async () => {
         wrapper.setData({
           isLoading: false,
         });
+
+        wrapper.vm.$forceUpdate();
+        await wrapper.vm.$nextTick();
+
         expect(wrapper.attributes()['is-loading']).toBeUndefined();
 
         wrapper.setData({
           isLoading: true,
         });
+
+        wrapper.vm.$forceUpdate();
+        await wrapper.vm.$nextTick();
+
         expect(wrapper.attributes()['is-loading']).toBeTruthy();
       });
     });
@@ -88,7 +117,6 @@ describe('LoginModal', () => {
     let wrapper;
 
     beforeEach(() => {
-      const localVue = createLocalVue();
       const $router = {
         push: jest.fn(),
       };
@@ -96,9 +124,6 @@ describe('LoginModal', () => {
         query: {},
       };
       const $ga = { event: jest.fn() };
-
-      localVue.use(Vuex);
-      localVue.use(Notifications);
 
       const store = new Vuex.Store({
         modules: {
@@ -118,7 +143,7 @@ describe('LoginModal', () => {
         },
       });
 
-      wrapper = shallow(LoginModal, {
+      wrapper = shallowMount(LoginModal, {
         store,
         localVue,
         mocks: { $route, $router, $ga },

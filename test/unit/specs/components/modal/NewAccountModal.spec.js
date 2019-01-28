@@ -1,11 +1,17 @@
 import Vuex from 'vuex';
+import VeeValidate from 'vee-validate';
 import { mount, createLocalVue } from '@vue/test-utils';
+import UIComponents from '@endpass/ui';
 
 import NewAccountModal from '@/components/modal/NewAccountModal';
+import validation from '@/validation';
 
 const localVue = createLocalVue();
 
+localVue.use(VeeValidate);
+localVue.use(validation);
 localVue.use(Vuex);
+localVue.use(UIComponents);
 
 describe('NewAccountModal', () => {
   let wrapper;
