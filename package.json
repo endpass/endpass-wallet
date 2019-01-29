@@ -30,7 +30,7 @@
     ]
   },
   "dependencies": {
-    "@endpass/class": "^0.1.0",
+    "@endpass/class": "^0.1.1",
     "@endpass/ui": "^0.2.0",
     "@endpass/utils": "^1.0.10",
     "ajv": "^6.5.5",
