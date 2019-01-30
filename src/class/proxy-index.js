@@ -5,13 +5,11 @@ export { createERC20TokenClass } from './erc20';
 
 export { ProxyRequest } from './singleton';
 
+export { ProviderFactory } from './provider';
+
 export { default as dappBridge } from './singleton/dappBridge';
-export {
-  LocalStorage,
-  SettingsStorage,
-  ProviderFactory,
-  InpageProvider,
-} from '@endpass/class';
+export { default as InpageProvider } from './provider/InpageProvider';
+export { LocalStorage, SettingsStorage } from './storage';
 
 export {
   default as TransactionFactory,
