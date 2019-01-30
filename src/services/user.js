@@ -3,7 +3,7 @@ import { proxyRequest } from '@/class/singleton';
 import { keystore } from '@endpass/utils';
 import { identityValidator, v3KeystoreValidator } from '@/schema';
 
-const WALLET_TYPE = Wallet.getTypes();
+const WALLET_TYPES = Wallet.getTypes();
 
 export default {
   async getSettings() {
@@ -190,7 +190,7 @@ export default {
     );
 
     return (
-      hdAccounts.find(({ info = {} }) => info.type === WALLET_TYPE.HD_MAIN) ||
+      hdAccounts.find(({ info = {} }) => info.type === WALLET_TYPES.HD_MAIN) ||
       hdAccounts[0]
     );
   },

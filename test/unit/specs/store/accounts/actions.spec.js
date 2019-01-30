@@ -24,7 +24,7 @@ import { keystore } from '@endpass/utils';
 import userService from '@/services/user';
 import localSettingsService from '@/services/localSettings';
 
-const WALLET_TYPE = Wallet.getTypes();
+const WALLET_TYPES = Wallet.getTypes();
 
 describe('Accounts actions', () => {
   let dispatch;
@@ -125,7 +125,7 @@ describe('Accounts actions', () => {
     const info = {
       address: checksumAddress,
       hidden: false,
-      type: WALLET_TYPE.PUBLIC,
+      type: WALLET_TYPES.PUBLIC,
     };
 
     it('should save public key and select added wallet', async () => {
@@ -327,7 +327,7 @@ describe('Accounts actions', () => {
       expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'addWallet', {
         address: checksumAddress,
-        info: { type: WALLET_TYPE.PUBLIC },
+        info: { type: WALLET_TYPES.PUBLIC },
       });
     });
 
@@ -516,7 +516,7 @@ describe('Accounts actions', () => {
       });
       const expectedInfo = {
         address,
-        type: WALLET_TYPE.HD_MAIN,
+        type: WALLET_TYPES.HD_MAIN,
         hidden: false,
       };
 
@@ -566,7 +566,7 @@ describe('Accounts actions', () => {
           password: v3password,
           address: addressHdChild,
           index: 1,
-          type: WALLET_TYPE.HD_PUBLIC,
+          type: WALLET_TYPES.HD_PUBLIC,
         },
       );
 
@@ -593,7 +593,7 @@ describe('Accounts actions', () => {
           password: v3password,
           address: 'wrongAddr',
           index: 0,
-          type: WALLET_TYPE.HD_PUBLIC,
+          type: WALLET_TYPES.HD_PUBLIC,
         },
       );
 
@@ -618,7 +618,7 @@ describe('Accounts actions', () => {
           password: v3password,
           address: addressHdChild,
           index: 0,
-          type: WALLET_TYPE.HD_PUBLIC,
+          type: WALLET_TYPES.HD_PUBLIC,
         },
       );
 
@@ -936,7 +936,7 @@ describe('Accounts actions', () => {
 
   describe('getNextWalletsFromHd', () => {
     const payload = {
-      walletType: WALLET_TYPE.HD_PUBLIC,
+      walletType: WALLET_TYPES.HD_PUBLIC,
     };
 
     const getters = {
@@ -945,7 +945,7 @@ describe('Accounts actions', () => {
 
     const state = {
       hdCacheByType: {
-        [WALLET_TYPE.HD_PUBLIC]: {
+        [WALLET_TYPES.HD_PUBLIC]: {
           xpub: hdv3.address,
         },
       },
@@ -966,7 +966,7 @@ describe('Accounts actions', () => {
 
       expect(dispatch).toBeCalledWith('saveToCache', {
         xpub: 'other',
-        walletType: WALLET_TYPE.HD_PUBLIC,
+        walletType: WALLET_TYPES.HD_PUBLIC,
       });
       expect(res).toBe(addresses);
     });

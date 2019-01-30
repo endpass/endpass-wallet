@@ -15,7 +15,7 @@ import {
   SET_HD_CACHE_BY_TYPE,
 } from './mutations-types';
 
-const WALLET_TYPE = Wallet.getTypes();
+const WALLET_TYPES = Wallet.getTypes();
 
 const selectWallet = async ({ commit, dispatch }, address) => {
   commit(SET_ADDRESS, toChecksumAddress(address));
@@ -51,7 +51,7 @@ const addPublicWallet = async (
   try {
     const address = toChecksumAddress(rawAddress);
     const info = {
-      type: WALLET_TYPE.PUBLIC,
+      type: WALLET_TYPES.PUBLIC,
       hidden: false,
       ...extraInfo,
       address,
@@ -114,7 +114,7 @@ const addWalletWithPublicKey = async ({ dispatch }, publicKeyOrAddress) => {
   // TODO convert public key to address, accept xPub key
   try {
     const address = toChecksumAddress(publicKeyOrAddress);
-    const info = { type: WALLET_TYPE.PUBLIC };
+    const info = { type: WALLET_TYPES.PUBLIC };
     await dispatch('addWallet', { address, info });
 
     return dispatch('selectWallet', address);
@@ -158,7 +158,7 @@ const addHdWallet = async ({ dispatch }, { key, password }) => {
     const v3KeyStore = keystore.encryptHDWallet(password, hdWallet);
     const info = {
       address: v3KeyStore.address,
-      type: WALLET_TYPE.HD_MAIN,
+      type: WALLET_TYPES.HD_MAIN,
       hidden: false,
     };
 
@@ -206,7 +206,7 @@ const addHdPublicWallet = async ({ commit, dispatch }, { key, password }) => {
 
     const info = {
       address: v3KeyStore.address,
-      type: WALLET_TYPE.HD_PUBLIC,
+      type: WALLET_TYPES.HD_PUBLIC,
       hidden: false,
     };
 
@@ -218,7 +218,7 @@ const addHdPublicWallet = async ({ commit, dispatch }, { key, password }) => {
     commit(SET_HD_CACHE_BY_TYPE, {
       xpub: v3KeyStore.address,
       v3KeyStore,
-      walletType: WALLET_TYPE.HD_PUBLIC,
+      walletType: WALLET_TYPES.HD_PUBLIC,
     });
   } catch (e) {
     return dispatch('errors/emitError', e, { root: true });
@@ -322,13 +322,13 @@ const getNextWalletsFromHd = async (
 
   let proxyWallet;
   switch (walletType) {
-    case WALLET_TYPE.TREZOR:
+    case WALLET_TYPES.TREZOR:
       proxyWallet = await loadProxy(proxies.TrezorProxy);
       break;
-    case WALLET_TYPE.LEDGER:
+    case WALLET_TYPES.LEDGER:
       proxyWallet = await loadProxy(proxies.LedgerProxy);
       break;
-    case WALLET_TYPE.HD_PUBLIC:
+    case WALLET_TYPES.HD_PUBLIC:
       proxyWallet = await loadProxy(proxies.HDProxy);
       break;
     default:
