@@ -4,7 +4,7 @@ import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';
 import { toChecksumAddress, fromWei } from 'web3-utils';
-import { Wallet, NotificationError, loadProxy, proxies, web3 } from '@/class';
+import { Wallet, NotificationError, web3 } from '@/class';
 import { keystore } from '@endpass/utils';
 import {
   CHANGE_INIT_STATUS,
@@ -16,6 +16,7 @@ import {
 } from './mutations-types';
 
 const WALLET_TYPES = Wallet.getTypes();
+const WALLET_PROXY_TYPES = Wallet.getProxyTypes();
 
 const selectWallet = async ({ commit, dispatch }, address) => {
   commit(SET_ADDRESS, toChecksumAddress(address));
@@ -323,13 +324,13 @@ const getNextWalletsFromHd = async (
   let proxyWallet;
   switch (walletType) {
     case WALLET_TYPES.TREZOR:
-      proxyWallet = await loadProxy(proxies.TrezorProxy);
+      proxyWallet = await Wallet.loadProxy(WALLET_PROXY_TYPES.TrezorProxy);
       break;
     case WALLET_TYPES.LEDGER:
-      proxyWallet = await loadProxy(proxies.LedgerProxy);
+      proxyWallet = await Wallet.loadProxy(WALLET_PROXY_TYPES.LedgerProxy);
       break;
     case WALLET_TYPES.HD_PUBLIC:
-      proxyWallet = await loadProxy(proxies.HDProxy);
+      proxyWallet = await Wallet.loadProxy(WALLET_PROXY_TYPES.HDProxy);
       break;
     default:
       throw new NotificationError({
@@ -338,6 +339,7 @@ const getNextWalletsFromHd = async (
         type: 'is-danger',
       });
   }
+
   const result = await proxyWallet.getNextWallets(params);
   const { xpub, addresses } = result;
 

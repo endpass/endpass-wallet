@@ -21,6 +21,7 @@ module.exports = {
   globals: {
     ENV,
   },
+  // TODO: check usage (@endpass/class) after update to vue-cli3
   transformIgnorePatterns: ['node_modules/(?!(vue-timers|@endpass/class))'],
   snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
   setupFiles: ['<rootDir>/test/unit/setup', 'jest-canvas-mock'],

@@ -10,7 +10,7 @@ import {
   privateKeyString,
   checksumAddress,
 } from 'fixtures/accounts';
-import { Wallet, NotificationError, web3, proxies } from '@/class';
+import { Wallet, NotificationError, web3 } from '@/class';
 import actions from '@/store/accounts/actions';
 import {
   SET_ADDRESS,
@@ -23,6 +23,8 @@ import {
 import { keystore } from '@endpass/utils';
 import userService from '@/services/user';
 import localSettingsService from '@/services/localSettings';
+
+import proxies from 'mocks/class/proxies';
 
 const WALLET_TYPES = Wallet.getTypes();
 

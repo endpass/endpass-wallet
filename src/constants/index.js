@@ -91,7 +91,13 @@ export const TRANSACTION_STATUS = Object.freeze({
   RESENT: 'resent',
 });
 
+export const REQUEST_TIMEOUT_MSEC = 30000;
+
+export const STORAGE_USER_META_KEY = 'endpass-user-meta';
+
 export default {
+  REQUEST_TIMEOUT_MSEC,
+  STORAGE_USER_META_KEY,
   AVAILABLE_FIAT_CURRENCIES,
   MAIN_NET_ID,
   DEFAULT_NETWORKS,
