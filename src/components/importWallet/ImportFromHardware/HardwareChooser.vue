@@ -12,11 +12,11 @@
 <script>
 import { Wallet } from '@/class';
 
-const WALLET_TYPES = Wallet.getTypes();
+const WALLET_TYPE = Wallet.getTypes();
 
 const hardwareList = {
-  [WALLET_TYPES.LEDGER]: 'Ledger wallet',
-  [WALLET_TYPES.TREZOR]: 'Trezor wallet',
+  [WALLET_TYPE.LEDGER]: 'Ledger wallet',
+  [WALLET_TYPE.TREZOR]: 'Trezor wallet',
 };
 
 export default {

@@ -55,7 +55,7 @@ import formMixin from '@/mixins/form';
 import { Wallet } from '@/class';
 import WalletsList from './WalletsList';
 
-const WALLET_TYPES = Wallet.getTypes();
+const WALLET_TYPE = Wallet.getTypes();
 
 export default {
   name: 'ImportFromSeed',
@@ -64,7 +64,7 @@ export default {
     isCreating: false,
     isPasswordModal: false,
     key: '',
-    walletType: WALLET_TYPES.HD_PUBLIC,
+    walletType: WALLET_TYPE.HD_PUBLIC,
   }),
   methods: {
     ...mapActions('accounts', ['addHdPublicWallet']),
