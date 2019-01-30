@@ -1,5 +1,5 @@
 import erc20ABI from './abi/erc20.json';
-export { Token } from '@endpass/class';
+import Token from './Token';
 import injectWeb3 from './injectWeb3';
 let web3;
 
