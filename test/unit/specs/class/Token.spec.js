@@ -1,5 +1,5 @@
 import { Token } from '@/class';
-import { toChecksumAddress } from 'web3-utils';
+import web3 from 'web3';
 
 const apiResponse = {
   address: '0xe41d2489571d322189246dafa5ebde1f4699f498',
@@ -21,7 +21,9 @@ describe('Transaction Class', () => {
 
   it('creates transaction with API format', () => {
     const token = Token.asObject(apiResponse);
-    expect(token.address).toBe(toChecksumAddress(apiResponse.address));
+    expect(token.address).toBe(
+      web3.utils.toChecksumAddress(apiResponse.address),
+    );
     expect(token.name).toBe(apiResponse.name);
     expect(token.decimals).toBe(apiResponse.decimals);
     expect(token.logo).toBe(apiResponse.logo);

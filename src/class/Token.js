@@ -1,4 +1,6 @@
-import { toChecksumAddress } from 'web3-utils';
+import web3 from 'web3';
+
+const { toChecksumAddress } = web3.utils;
 
 export default class Token {
   static asObject({ address, decimals, logo, name, symbol, balance }) {

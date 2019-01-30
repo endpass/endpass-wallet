@@ -1,7 +1,9 @@
 import { get } from 'lodash';
-import { fromWei, hexToBytes } from 'web3-utils';
+import web3 from 'web3';
 import { BigNumber } from 'bignumber.js';
 import { keystore } from '@endpass/utils';
+
+const { fromWei, hexToBytes } = web3.utils;
 
 const wallet = state => get(state.wallets, state.address);
 

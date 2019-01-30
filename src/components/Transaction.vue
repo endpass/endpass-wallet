@@ -136,15 +136,17 @@
 <script>
 import dayjs from 'dayjs';
 import get from 'lodash/get';
-import { hexToString } from 'web3-utils';
 import Account from '@/components/Account';
 import ResendModal from '@/components/modal/ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { formateDate, fromNow } from '@endpass/utils/date';
 import { getShortStringWithEllipsis } from '@endpass/utils/strings';
+import { web3 } from '@/class';
 import { Transaction } from '@/class';
 import { TRANSACTION_STATUS } from '@/constants';
+
+const { hexToString } = web3.utils;
 
 export default {
   props: {

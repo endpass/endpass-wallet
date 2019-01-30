@@ -3,7 +3,8 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import { createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
-import { Transaction, ENSResolver } from '@/class';
+import { Transaction } from '@/class';
+import ENSResolver from '@/class/ens';
 import validation from '@/validation';
 import { wrapShallowMountFactory } from '@/testUtils';
 
