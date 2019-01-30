@@ -1,0 +1,17 @@
+export {
+  createWalletClass,
+  createTransactionClass,
+  createERC20TokenClass,
+  createENSClass,
+  LocalStorage,
+  SettingsStorage,
+  ProviderFactory,
+  InpageProvider,
+  TransactionFactory,
+  dappBridge,
+  NotificationError,
+  EventEmitter,
+  TrezorProxy,
+  LedgerProxy,
+  HDProxy,
+} from '@endpass/class';

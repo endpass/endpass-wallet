@@ -4,7 +4,14 @@ import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';
 import { toChecksumAddress, fromWei } from 'web3-utils';
-import { Wallet, NotificationError, loadProxy, proxies, web3 } from '@/class';
+import {
+  Wallet,
+  NotificationError,
+  TrezorProxy,
+  LedgerProxy,
+  HDProxy,
+  web3,
+} from '@/class';
 import { keystore } from '@endpass/utils';
 import {
   CHANGE_INIT_STATUS,
@@ -323,13 +330,13 @@ const getNextWalletsFromHd = async (
   let result = {};
   switch (walletType) {
     case WALLET_TYPE.TREZOR:
-      result = await loadProxy(proxies.TrezorProxy).getNextWallets(params);
+      result = await TrezorProxy.getNextWallets(params);
       break;
     case WALLET_TYPE.LEDGER:
-      result = await loadProxy(proxies.LedgerProxy).getNextWallets(params);
+      result = await LedgerProxy.getNextWallets(params);
       break;
     case WALLET_TYPE.HD_PUBLIC:
-      result = await loadProxy(proxies.HDProxy).getNextWallets(params);
+      result = await HDProxy.getNextWallets(params);
       break;
     default:
       throw new NotificationError({
