@@ -1,5 +1,5 @@
-import { NotificationError } from '@/class/internal';
-import { PROXY_REQUEST_PREFIX } from '@/class/constants';
+import NotificationError from '@/class/error/NotificationError';
+import { PROXY_REQUEST_PREFIX } from '@/constants';
 import { Decorator, PrefixUrlDecorator } from '../../decorator/index';
 
 async function setDatabase(url) {

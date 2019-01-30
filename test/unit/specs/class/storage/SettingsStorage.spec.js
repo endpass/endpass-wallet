@@ -1,5 +1,5 @@
 import { SettingsStorage, LocalStorage } from '@/class/storage';
-import { STORAGE_USER_META_KEY } from '@/class/constants';
+import { STORAGE_USER_META_KEY } from '@/constants';
 
 describe('SettingsStorage', () => {
   const key = 'foo';

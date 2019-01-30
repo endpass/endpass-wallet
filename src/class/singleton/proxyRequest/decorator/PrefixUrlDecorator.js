@@ -1,4 +1,4 @@
-import { PROXY_REQUEST_PREFIX } from '@/class/constants';
+import { PROXY_REQUEST_PREFIX } from '@/constants';
 
 export default class PrefixUrlDecorator {
   constructor(prefix = PROXY_REQUEST_PREFIX) {

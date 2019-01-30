@@ -1,4 +1,5 @@
-import { Transaction, web3 } from '@/class/internal';
+import web3 from '@/class/singleton/web3';
+import { Transaction } from '@/class/internal';
 
 import Transaction from './Transaction';
 
