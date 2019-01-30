@@ -14,13 +14,12 @@ const Transaction = createTransactionClass(web3);
 
 export { web3, ERC20Token, ENSResolver, Wallet, Transaction };
 
-export { default as ajv } from './singleton/ajv';
-export { default as http } from './singleton/http';
-
 export {
   default as EventEmitter,
   ProviderFactory,
   default as dappBridge,
+  default as ajv,
+  default as http,
   default as InpageProvider,
   LocalStorage,
   SettingsStorage,
