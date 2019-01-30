@@ -11,7 +11,7 @@ import { Wallet } from '@/class';
 
 import { addresses, address } from 'fixtures/accounts';
 
-const WALLET_TYPE = Wallet.getTypes();
+const WALLET_TYPES = Wallet.getTypes();
 
 const addressPos = addresses.indexOf(address);
 
@@ -56,7 +56,7 @@ describe('WalletsList', () => {
       router,
       // sync: false,
       propsData: {
-        type: WALLET_TYPE.HD_PUBLIC,
+        type: WALLET_TYPES.HD_PUBLIC,
       },
     });
     wrapper = wrapperFactory();
@@ -90,7 +90,7 @@ describe('WalletsList', () => {
         expect(wrapper.vm.getNextWalletsFromHd).toBeCalledWith({
           offset: 10,
           limit: 20,
-          walletType: WALLET_TYPE.HD_PUBLIC,
+          walletType: WALLET_TYPES.HD_PUBLIC,
         });
       });
 
@@ -107,7 +107,7 @@ describe('WalletsList', () => {
         expect(wrapper.vm.getNextWalletsFromHd).toBeCalledWith({
           offset: 20,
           limit: 10,
-          walletType: WALLET_TYPE.HD_PUBLIC,
+          walletType: WALLET_TYPES.HD_PUBLIC,
         });
       });
     });
@@ -153,7 +153,7 @@ describe('WalletsList', () => {
         expect(wrapper.vm.addPublicWallet).toBeCalledWith({
           address,
           info: {
-            type: WALLET_TYPE.HD_PUBLIC,
+            type: WALLET_TYPES.HD_PUBLIC,
             index: addressPos,
           },
         });
@@ -185,7 +185,7 @@ describe('WalletsList', () => {
           address,
           index: addressPos,
           password,
-          type: WALLET_TYPE.HD_PUBLIC,
+          type: WALLET_TYPES.HD_PUBLIC,
         });
         expect(router.currentRoute.fullPath).toBe('/');
       });
