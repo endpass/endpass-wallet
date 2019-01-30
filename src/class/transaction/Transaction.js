@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { cloneDeep, get } from 'lodash';
 import { BigNumber } from 'bignumber.js';
 import { isNumeric } from '@endpass/utils/numbers';
@@ -8,30 +7,10 @@ import web3 from '@/class/singleton/web3';
 import applyProps from './applyProps';
 
 const { toWei, numberToHex, isAddress } = web3.utils;
-=======
-import cloneDeep from 'lodash/cloneDeep';
-import get from 'lodash/get';
-import { BigNumber } from 'bignumber.js';
-import { isNumeric } from '@endpass/utils/numbers';
-import { toWei, numberToHex, isAddress } from 'web3-utils';
-import { ERC20Token } from '../internal';
-
-import applyProps from './applyProps';
-import injectWeb3 from '../injectWeb3';
-
-let web3;
->>>>>>> refactor: Step first. Move EventEmitter to core/class
 
 const DEFAULT_ZERO = '0';
 
 export default class Transaction {
-<<<<<<< HEAD
-=======
-  static set web3(val) {
-    web3 = val;
-  }
-
->>>>>>> refactor: Step first. Move EventEmitter to core/class
   static create({
     data,
     from,
@@ -79,22 +58,15 @@ export default class Transaction {
   }
 
   static applyProps(trx, newProps) {
-<<<<<<< HEAD
     const res = Transaction.unfreeze(trx);
-=======
-    const res = { ...trx }; // unfreeze
->>>>>>> refactor: Step first. Move EventEmitter to core/class
     applyProps(res, newProps);
     return res;
   }
 
-<<<<<<< HEAD
   static unfreeze(trx) {
     return { ...trx };
   }
 
-=======
->>>>>>> refactor: Step first. Move EventEmitter to core/class
   static clone(trx) {
     return cloneDeep(trx);
   }
@@ -205,18 +177,11 @@ export default class Transaction {
   }
 
   static async getGasFullPrice(transaction) {
-<<<<<<< HEAD
     const estimationParams = {
       data: Transaction.getValidData(transaction),
       to: Transaction.getValidTo(transaction),
     };
     const estimatedGas = await web3.eth.estimateGas(estimationParams);
-=======
-    const estimatedGas = await web3.eth.estimateGas({
-      data: Transaction.getValidData(transaction),
-      to: Transaction.getValidTo(transaction),
-    });
->>>>>>> refactor: Step first. Move EventEmitter to core/class
     const gasPriceWei = Transaction.getPriceWei(transaction);
 
     return BigNumber(gasPriceWei)
@@ -249,7 +214,6 @@ export default class Transaction {
       ...tokenPassData,
     };
   }
-<<<<<<< HEAD
 
   static async getFullPrice(trx) {
     const estimation = await Transaction.estimateGas(trx);
@@ -271,10 +235,3 @@ export default class Transaction {
     return estimatedGas;
   }
 }
-=======
-}
-
-const createTransactionClass = injectWeb3(Transaction);
-
-export { createTransactionClass };
->>>>>>> refactor: Step first. Move EventEmitter to core/class
