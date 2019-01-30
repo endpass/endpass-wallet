@@ -14,7 +14,6 @@ import ExportWalletPage from '@/components/pages/ExportWallet';
 import SettingsPage from '@/components/pages/Settings';
 import MessagePage from '@/components/pages/Message';
 import TransactionPage from '@/components/pages/Transaction';
-import DappPage from '@/components/pages/Dapp';
 
 Vue.use(Router);
 
@@ -83,12 +82,6 @@ export default new Router({
       path: '/transaction',
       name: 'TransactionPage',
       component: TransactionPage,
-      beforeEnter: multiguard([hasLoginGuard, privateWalletGuard]),
-    },
-    {
-      path: '/dapp',
-      name: 'DappPage',
-      component: DappPage,
       beforeEnter: multiguard([hasLoginGuard, privateWalletGuard]),
     },
   ],

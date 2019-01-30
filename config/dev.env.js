@@ -5,7 +5,7 @@ const identityAPIUrl = '/identity/api/v1.1';
 const tokenImageUrl = 'https://tokeninfo-dev.endpass.com';
 const tokenInfoAPIUrl = '/tokeninfo/api/v1';
 const cryptoDataAPIUrl = '/cryptodata/api/v1';
-const wildproxyUrl = '/';
+const dappBrowserUrl = 'https://browser-dev.endpass.com';
 
 const intercomAppId = 'o0u2wypb';
 
@@ -21,7 +21,7 @@ module.exports = merge(prodEnv, {
   cryptoDataAPIUrl,
   identityAPIUrl,
   tokenImageUrl,
-  wildproxyUrl,
+  dappBrowserUrl,
   tokenInfoAPIUrl,
   kdfParams,
   intercomAppId,

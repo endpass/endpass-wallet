@@ -30,14 +30,14 @@ const kdfParams = {
 const googleAnalyticsId = 'UA-115004766-3';
 const intercomAppId = 'ap1xxb8t';
 
-const wildproxyUrl = 'https://wildproxy.endpass.com/';
+const dappBrowserUrl = 'https://browser.endpass.com';
 
 const isProduction = true;
 
 module.exports = {
   hdKeyMnemonic,
   infuraConf,
-  wildproxyUrl,
+  dappBrowserUrl,
   serviceThrottleTimeout,
   blockUpdateInterval,
   priceUpdateInterval,
