@@ -76,6 +76,18 @@ export const IDENTITY_MODE = Object.freeze({
   LOCAL: 'local',
 });
 
+export const HARDWARE_WALLET_TYPE = Object.freeze({
+  TREZOR: 'TrezorAccount',
+  LEDGER: 'LedgerAccount',
+});
+
+export const WALLET_TYPE = Object.freeze({
+  PUBLIC: 'PublicAccount',
+  HD_PUBLIC: 'HDPublicAccount',
+  HD_MAIN: 'HDMainAccount',
+  ...HARDWARE_WALLET_TYPE,
+});
+
 export const DAPP_WHITELISTED_METHODS = [
   'personal_sign',
   'eth_personalSign',
@@ -97,6 +109,8 @@ export default {
   DEFAULT_NETWORKS,
   CURRENCIES,
   IDENTITY_MODE,
+  HARDWARE_WALLET_TYPE,
+  WALLET_TYPE,
   DAPP_WHITELISTED_METHODS,
   TRANSACTION_STATUS,
 };

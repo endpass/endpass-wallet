@@ -10,9 +10,7 @@
 </template>
 
 <script>
-import { Wallet } from '@/class';
-
-const WALLET_TYPE = Wallet.getTypes();
+import { WALLET_TYPE } from '@/constants';
 
 const hardwareList = {
   [WALLET_TYPE.LEDGER]: 'Ledger wallet',

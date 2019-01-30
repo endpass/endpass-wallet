@@ -1,9 +1,8 @@
-import { NotificationError, Wallet } from '@/class';
+import { NotificationError } from '@/class';
 import { proxyRequest } from '@/class/singleton';
 import { keystore } from '@endpass/utils';
+import { WALLET_TYPE } from '@/constants';
 import { identityValidator, v3KeystoreValidator } from '@/schema';
-
-const WALLET_TYPE = Wallet.getTypes();
 
 export default {
   async getSettings() {

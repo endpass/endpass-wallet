@@ -2,7 +2,7 @@ import Tx from 'ethereumjs-tx';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import { web3 } from '@/class/internal';
 import { keystore } from '@endpass/utils';
-import { WALLET_TYPE, HARDWARE_WALLET_TYPE } from './types';
+import { WALLET_TYPE, HARDWARE_WALLET_TYPE } from '@/constants';
 import { TrezorProxy, LedgerProxy } from './proxy';
 
 const { isAddress, bytesToHex, toChecksumAddress } = web3.utils;
@@ -25,11 +25,8 @@ export default class Wallet {
     if (!isAddress(address)) {
       throw new Error(`${address} is not valid Etherium address!`);
     }
-    const { type: accountType, index } = info;
 
-    if (accountType && !Object.values(WALLET_TYPE).includes(accountType)) {
-      throw new Error(`${accountType} is not valid Wallet type!`);
-    }
+    const { type: accountType, index } = info;
 
     const isPublic = !keystore.isV3(v3Keystore);
     const isHardware = Object.values(HARDWARE_WALLET_TYPE).includes(
@@ -186,13 +183,5 @@ export default class Wallet {
     await tx.sign(privateKey);
 
     return `0x${tx.serialize().toString('hex')}`;
-  }
-
-  /**
-   * Return Wallet Types
-   * @return {Object<WALLET_TYPE>} list of types
-   */
-  static getTypes() {
-    return WALLET_TYPE;
   }
 }
