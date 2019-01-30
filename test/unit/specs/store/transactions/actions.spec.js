@@ -1,3 +1,4 @@
+import web3 from '@/class/singleton/web3';
 import state from '@/store/transactions';
 import {
   ADD_TRANSACTION,
@@ -5,13 +6,7 @@ import {
   SET_TRANSACTION_HISTORY,
 } from '@/store/transactions/mutations-types';
 import ethplorerService from '@/services/ethplorer';
-import {
-  EventEmitter,
-  Transaction,
-  TransactionFactory,
-  NotificationError,
-  web3,
-} from '@/class';
+import { EventEmitter, TransactionFactory, NotificationError } from '@/class';
 import { address } from 'fixtures/accounts';
 import {
   transactionHash,

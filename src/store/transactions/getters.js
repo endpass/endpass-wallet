@@ -1,7 +1,8 @@
 import { BigNumber } from 'bignumber.js';
 import { uniq, uniqWith } from 'lodash';
+import web3 from '@/class/singleton/web3';
 import { MAIN_NET_ID } from '@/constants';
-import { Transaction, web3 } from '@/class';
+import { Transaction } from '@/class';
 
 const { toChecksumAddress } = web3.utils;
 

@@ -1,4 +1,4 @@
-import { http } from '@/class';
+import { http } from '@/class/singleton';
 import throttledQueue from 'throttled-queue';
 
 const throttle = throttledQueue(1, 5000);

@@ -5,9 +5,9 @@ import {
   NotificationError,
   TransactionFactory,
   Transaction,
-  web3,
 } from '@/class';
 import ethplorerService from '@/services/ethplorer';
+import web3 from '@/class/singleton/web3';
 import {
   getShortStringWithEllipsis,
   matchString,

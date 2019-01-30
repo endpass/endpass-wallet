@@ -1,4 +1,4 @@
-import { web3 } from '@/class';
+import web3 from '@/class/singleton/web3';
 
 const appStatus = state => {
   if (!state.web3Connection) {

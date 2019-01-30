@@ -24,7 +24,7 @@
 
 <script>
 import { decodeTx } from 'ethereum-tx-decoder';
-import { web3 } from '@/class';
+import web3 from '@/class/singleton/web3';
 
 const { toChecksumAddress } = web3.utils;
 

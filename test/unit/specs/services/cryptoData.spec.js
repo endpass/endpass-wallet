@@ -1,6 +1,7 @@
 import MockAdapter from 'axios-mock-adapter';
 
-import { NotificationError, http } from '@/class';
+import { http } from '@/class/singleton';
+import { NotificationError } from '@/class';
 import { cryptoDataValidator } from '@/schema';
 import { gasPrice } from 'fixtures/gasPrice';
 import { price, priceMulti } from 'fixtures/price';

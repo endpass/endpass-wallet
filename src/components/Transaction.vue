@@ -142,7 +142,7 @@ import PasswordModal from '@/components/modal/PasswordModal';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { formateDate, fromNow } from '@endpass/utils/date';
 import { getShortStringWithEllipsis } from '@endpass/utils/strings';
-import { web3 } from '@/class';
+import web3 from '@/class/singleton/web3';
 import { Transaction } from '@/class';
 import { TRANSACTION_STATUS } from '@/constants';
 

@@ -1,7 +1,8 @@
 import Web3 from 'web3';
 
+import web3 from '@/class/singleton/web3';
 import { userService } from '@/services';
-import { ProviderFactory, web3 } from '@/class';
+import { ProviderFactory } from '@/class';
 import {
   CHANGE_NETWORK,
   CHANGE_CURRENCY,

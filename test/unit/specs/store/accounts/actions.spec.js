@@ -1,3 +1,4 @@
+import web3 from '@/class/singleton/web3';
 import {
   address,
   addressHdChild,
@@ -10,7 +11,7 @@ import {
   privateKeyString,
   checksumAddress,
 } from 'fixtures/accounts';
-import { Wallet, NotificationError, HDProxy, web3 } from '@/class';
+import { Wallet, NotificationError, HDProxy } from '@/class';
 import actions from '@/store/accounts/actions';
 import {
   SET_ADDRESS,

@@ -2,9 +2,9 @@ import Tx from 'ethereumjs-tx';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import LedgerTransport from '@ledgerhq/hw-transport-u2f'; // for browser
 import Eth from '@ledgerhq/hw-app-eth';
-import { NotificationError } from '@/class/internal';
-import web3 from '@/class/singleton/web3';
+import { NotificationError } from '@/class';
 import { HARDWARE_DERIVIATION_PATH } from '@/constants';
+import web3 from '@/class/singleton/web3';
 import getChildrenAddress from '../utils/getChildrenAddress';
 
 const { sha3, toHex } = web3.utils;

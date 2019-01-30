@@ -1,4 +1,4 @@
-import { LocalStorage, SettingsStorage } from '@/class';
+import { LocalStorage, SettingsStorage } from '@/class/storage';
 
 const settingsStorage = new SettingsStorage({ storage: LocalStorage });
 

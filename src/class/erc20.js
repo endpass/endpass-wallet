@@ -1,6 +1,6 @@
+import web3 from '@/class/singleton/web3';
 import erc20ABI from '@/abi/erc20.json';
-import Token from './Token';
-import web3 from './singleton/web3';
+import { Token } from '@/class';
 
 // Service for functions related to ERC20 tokens
 export default class ERC20Token {

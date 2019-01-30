@@ -1,6 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 
-import { http } from '@/class';
+import { http } from '@/class/singleton';
 import { address } from 'fixtures/accounts';
 
 const ethplorerService = require.requireActual('@/services/ethplorer').default;
