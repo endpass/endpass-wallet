@@ -1,5 +1,7 @@
 export { createWalletClass } from './wallet';
 
+export { ProxyRequest } from './singleton';
+
 export {
   createTransactionClass,
   createERC20TokenClass,
@@ -11,7 +13,6 @@ export {
   TransactionFactory,
   dappBridge,
   NotificationError,
-  EventEmitter,
 } from '@endpass/class';
 
 export { TrezorProxy } from './wallet/proxy';

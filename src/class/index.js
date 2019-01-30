@@ -17,6 +17,8 @@ export { web3, ERC20Token, ENSResolver, Wallet, Transaction };
 export { default as ajv } from './singleton/ajv';
 export { default as http } from './singleton/http';
 
+export { EventEmitter } from './external';
+
 export {
   ProviderFactory,
   default as dappBridge,
@@ -29,5 +31,4 @@ export {
   TrezorProxy,
   LedgerProxy,
   HDProxy,
-  EventEmitter,
 } from './proxy-index';
