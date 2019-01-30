@@ -10,7 +10,7 @@ import {
   privateKeyString,
   checksumAddress,
 } from 'fixtures/accounts';
-import { Wallet, NotificationError, web3, proxies } from '@/class';
+import { Wallet, NotificationError, HDProxy, web3 } from '@/class';
 import actions from '@/store/accounts/actions';
 import {
   SET_ADDRESS,
@@ -954,7 +954,7 @@ describe('Accounts actions', () => {
     it('should save xpub if saved xpub is not eqials to received with given params', async () => {
       expect.assertions(2);
 
-      proxies.HDProxy.getNextWallets.mockImplementation(() => ({
+      HDProxy.getNextWallets.mockImplementation(() => ({
         xpub: 'other',
         addresses,
       }));
@@ -974,7 +974,7 @@ describe('Accounts actions', () => {
     it('should not save xpub if current xpub is equals to received xpub from service', async () => {
       expect.assertions(1);
 
-      proxies.HDProxy.getNextWallets.mockImplementation(() => ({
+      HDProxy.getNextWallets.mockImplementation(() => ({
         xpub: hdv3.address,
         addresses,
       }));
