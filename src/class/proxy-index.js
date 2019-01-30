@@ -1,5 +1,6 @@
+export { createWalletClass } from './wallet';
+
 export {
-  createWalletClass,
   createTransactionClass,
   createERC20TokenClass,
   createENSClass,
@@ -11,7 +12,8 @@ export {
   dappBridge,
   NotificationError,
   EventEmitter,
-  TrezorProxy,
-  LedgerProxy,
-  HDProxy,
 } from '@endpass/class';
+
+export { TrezorProxy } from './wallet/proxy';
+export { LedgerProxy } from './wallet/proxy';
+export { HDProxy } from './wallet/proxy';
