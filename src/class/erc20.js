@@ -1,4 +1,4 @@
-import erc20ABI from './abi/erc20.json';
+import erc20ABI from '@/abi/erc20.json';
 import Token from './Token';
 import web3 from './singleton/web3';
 
