@@ -8,6 +8,7 @@ import validation from '@/validation';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import TransactionForm from '@/components/pages/Send/TransactionForm.vue';
+import { Transaction, ENSResolver } from '@/class';
 import { transaction } from 'fixtures/transactions';
 import { address } from 'fixtures/accounts';
 import { token, tokens } from 'fixtures/tokens';
