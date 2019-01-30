@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { REQUEST_TIMEOUT_MSEC } from '@/class/constants';
+import { REQUEST_TIMEOUT_MSEC } from '@/constants';
 import store from '@/store';
 
 const identityConfig = {

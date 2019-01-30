@@ -26,7 +26,5 @@ export {
   TransactionFactory,
   NotificationError,
   Token,
-  loadProxy,
-  proxies,
   EventEmitter,
 } from '@endpass/class';

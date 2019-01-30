@@ -132,10 +132,10 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@endpass/class@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.1.1.tgz#3f7c8907a4be44e51f5fe92b17a2196a360b1518"
-  integrity sha512-lKpT7z9Nttk2vkxJrMDe+iEWDqvRba7wTt0yaahAXJqc3sqElQjByVcBtealNfY1tZ0SL6In0RQ0OFJz/sHHSA==
+"@endpass/class@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.1.3.tgz#a7a4d13c1cae55af6e7416bb04666b7f44cdac44"
+  integrity sha512-MWmTQ3vE0Slnnu7iLytZ2UVr9YQ9WLi4OBZAsyATPOjd0jRTslq93IpxuJVusRXCyb5pXCjepkpA2dp4qxurIg==
   dependencies:
     "@endpass/utils" "^1.0.9"
     "@ledgerhq/hw-app-eth" "^4.24.0"
