@@ -7,13 +7,14 @@ import {
   SET_BALANCES_BY_ADDRESS,
   ADD_TOKENS_PRICES,
 } from '@/store/tokens/mutations-types';
-import { NotificationError, Token, ERC20Token } from '@/class';
+import { NotificationError, Token } from '@/class';
 import {
   userService,
   tokenInfoService,
   ethplorerService,
   cryptoDataService,
 } from '@/services';
+import ERC20Token from '@/class/erc20';
 import { MAIN_NET_ID } from '@/constants';
 import { address } from 'fixtures/accounts';
 import {

@@ -1,5 +1,8 @@
-const { address } = require('fixtures/accounts');
+jest.mock('@/class/ens', () => {
+  /* eslint-disable global-require */
+  const { address } = require('fixtures/accounts');
 
-export default {
-  getAddress: jest.fn().mockResolvedValue(address),
-};
+  return {
+    getAddress: jest.fn().mockResolvedValue(address),
+  };
+});
