@@ -151,8 +151,7 @@
           <li>
             <router-link
               v-if="address"
-              :to="{name:
-              'ReceivePage'}"
+              :to="{name: 'ReceivePage'}"
               class="nav-link"
               active-class="is-active"
             >
@@ -166,8 +165,7 @@
           <li>
             <router-link
               v-if="address"
-              :to="{name:
-              'TokensPage'}"
+              :to="{name: 'TokensPage'}"
               class="nav-link"
               active-class="is-active"
             >
@@ -181,8 +179,7 @@
           <li>
             <router-link
               v-if="address"
-              :to="{name:
-              'SettingsPage'}"
+              :to="{name: 'SettingsPage'}"
               class="nav-link"
               active-class="is-active"
             >
@@ -199,11 +196,11 @@
           <p class="menu-label">Tools</p>
           <ul class="menu-list">
             <li>
-              <router-link 
-                :to="{name:'DappPage'}" 
-                class="nav-link" 
-                active-class="is-active"
-              >Dapp</router-link>
+              <a
+                :href="dappBrowserUrl"
+                class="nav-link"
+                target="_blank"
+              >Dapp</a>
             </li>
             <li>
               <router-link
@@ -259,6 +256,7 @@ export default {
   data: () => ({
     navMenuActive: false,
     newAccountModalOpen: false,
+    dappBrowserUrl: ENV.dappBrowserUrl,
   }),
 
   computed: {
