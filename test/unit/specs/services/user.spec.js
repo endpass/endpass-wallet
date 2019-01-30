@@ -1,7 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 
-import { NotificationError } from '@/class';
-import { httpIdentity } from '@/class/singleton';
+import { NotificationError, httpIdentity } from '@/class';
 import { WALLET_TYPE } from '@/constants';
 import { successResponse } from 'fixtures/identity';
 
