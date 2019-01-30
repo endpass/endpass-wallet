@@ -9,10 +9,10 @@ const error = new NotificationError({
 });
 
 export default class CustomProvider {
-  constructor(serverUrl, connection) {
+  constructor(serverUrl) {
     this.url = serverUrl;
     this.localProvider = new LocalProvider(serverUrl);
-    this.serverProvider = new ServerProvider(serverUrl, connection);
+    this.serverProvider = new ServerProvider(serverUrl);
   }
 
   request(params) {

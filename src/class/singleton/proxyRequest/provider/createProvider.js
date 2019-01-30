@@ -1,19 +1,16 @@
-import { IDENTITY_MODE } from './identityModes';
+import { IDENTITY_MODE } from '@/constants';
 
 import CustomProvider from './CustomProvider';
 import LocalProvider from './LocalProvider';
 import ServerProvider from './ServerProvider';
 
 const map = {
-  [IDENTITY_MODE.CUSTOM]: (url, connection) =>
-    new CustomProvider(url, connection),
-  [IDENTITY_MODE.LOCAL]: (url, connection) =>
-    new LocalProvider(url, connection),
-  [IDENTITY_MODE.DEFAULT]: (url, connection) =>
-    new ServerProvider(url, connection),
+  [IDENTITY_MODE.CUSTOM]: url => new CustomProvider(url),
+  [IDENTITY_MODE.LOCAL]: url => new LocalProvider(url),
+  [IDENTITY_MODE.DEFAULT]: url => new ServerProvider(url),
 };
 
-export default (type, url, connection) => {
+export default (type, url) => {
   const createMethod = map[type] || map[IDENTITY_MODE.DEFAULT];
-  return createMethod(url, connection);
+  return createMethod(url);
 };
