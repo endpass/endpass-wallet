@@ -55,7 +55,6 @@
     "vue-timers": "^1.7.3",
     "vuex": "^3.0.1",
     "web3": "1.0.0-beta.33",
-    "web3-dapp": "npm:web3@0.19",
     "web3-utils": "1.0.0-beta.33"
   },
   "devDependencies": {

@@ -3,8 +3,6 @@ jest.mock('@/class', () => {
   const erc20 = require.requireActual('./erc20').default;
   const ens = require.requireActual('./ens').default;
   const LocalStorage = require.requireActual('./localStorage').default;
-  const dappBridge = require.requireActual('./dappBridge').default;
-  const InpageProvider = require.requireActual('./InpageProvider').default;
   const proxies = require.requireActual('./proxies').default;
 
   const originClass = require.requireActual('@/class');
@@ -13,8 +11,7 @@ jest.mock('@/class', () => {
 
   return {
     ...originClass,
-    InpageProvider,
-    dappBridge,
+    proxies,
     LocalStorage,
     web3,
     ENSResolver: ens,

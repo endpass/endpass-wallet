@@ -23,7 +23,6 @@ const selectWallet = async ({ commit, dispatch }, address) => {
 
   dispatch('updateBalance');
   dispatch('updateAccountSettings');
-  dispatch('dapp/reset', null, { root: true });
   await dispatch('tokens/getCurrentAccountTokens', null, {
     root: true,
   });
