@@ -13,7 +13,6 @@ import transactions from './transactions';
 import errors from './errors';
 import connectionStatus from './connection-status';
 import user from './user';
-import dapp from './dapp';
 import { web3Plugin } from './plugins';
 
 Vue.use(Vuex);
@@ -32,7 +31,6 @@ const store = new Vuex.Store({
     errors,
     connectionStatus,
     user,
-    dapp,
   },
   strict: !ENV.isProduction,
   mutations,
@@ -66,7 +64,6 @@ if (module.hot) {
       './errors',
       './connection-status',
       './user',
-      './dapp',
     ],
     () => {
       /* eslint-disable global-require */
@@ -81,7 +78,6 @@ if (module.hot) {
       const newErrors = require('./errors').default;
       const newConnectionStatus = require('./connection-status').default;
       const newUserModule = require('./user').default;
-      const newDappModule = require('./dapp').default;
 
       // swap in the new actions and mutations
       store.hotUpdate({
@@ -97,7 +93,6 @@ if (module.hot) {
           errors: newErrors,
           connectionStatus: newConnectionStatus,
           user: newUserModule,
-          dapp: newDappModule,
         },
       });
     },

@@ -27,7 +27,6 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
     dispatch('tokens/getCurrentAccountTokensData', null, {
       root: true,
     }),
-    dispatch('dapp/reset', null, { root: true }),
   ]).catch(e => dispatch('errors/emitError', e, { root: true }));
 };
 

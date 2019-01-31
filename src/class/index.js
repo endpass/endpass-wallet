@@ -19,8 +19,6 @@ export { default as http } from './singleton/http';
 
 export {
   ProviderFactory,
-  dappBridge,
-  InpageProvider,
   LocalStorage,
   SettingsStorage,
   TransactionFactory,
