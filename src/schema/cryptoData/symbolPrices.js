@@ -1,23 +1,6 @@
 const symbolRegex = '^.+$';
 
-export const gasPrice = {
-  type: 'object',
-  additionalProperties: false,
-  required: ['low', 'medium', 'high'],
-  properties: {
-    low: {
-      type: 'number',
-    },
-    medium: {
-      type: 'number',
-    },
-    high: {
-      type: 'number',
-    },
-  },
-};
-
-const symbolPrice = {
+export const cryptoDataSymbolPrice = {
   type: 'object',
   maxProperties: 1,
   minProperties: 1,
@@ -29,14 +12,14 @@ const symbolPrice = {
   },
 };
 
-export const symbolsPrice = {
+export const cryptoDataSymbolPrices = {
   oneOf: [
-    symbolPrice,
+    cryptoDataSymbolPrice,
     {
       type: 'object',
       minProperties: 1,
       patternProperties: {
-        [symbolRegex]: symbolPrice,
+        [symbolRegex]: cryptoDataSymbolPrice,
       },
       propertyNames: {
         pattern: symbolRegex,
