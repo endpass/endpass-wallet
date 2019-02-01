@@ -14,7 +14,7 @@ import {
   ethplorerService,
   cryptoDataService,
 } from '@/services';
-import { MAIN_NET_ID } from '@/constants';
+import { NET_ID } from '@/constants';
 import { address } from 'fixtures/accounts';
 import {
   tokens,
@@ -47,7 +47,7 @@ describe('tokens actions', () => {
     dispatch = jest.fn();
     commit = jest.fn();
     rootGetters = {
-      'web3/activeNetwork': MAIN_NET_ID,
+      'web3/activeNetwork': NET_ID.MAIN,
     };
     rootState = {
       accounts: {
@@ -102,7 +102,7 @@ describe('tokens actions', () => {
       );
 
       expect(userService.addToken).toBeCalledWith(
-        MAIN_NET_ID,
+        NET_ID.MAIN,
         Token.getConsistent(token),
       );
       expect(commit).toHaveBeenCalledWith(
@@ -172,7 +172,7 @@ describe('tokens actions', () => {
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(userService.removeToken).toBeCalledWith(
-        MAIN_NET_ID,
+        NET_ID.MAIN,
         Token.getConsistent(tokens[0]).address,
       );
       expect(commit).toHaveBeenCalledWith(

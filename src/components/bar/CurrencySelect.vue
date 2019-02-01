@@ -9,6 +9,7 @@
         track-by="id"
         label="name"
         placeholder="Select currency"
+        data-test="currency-select"
         @select="selectCurrency"
       />
     </div>

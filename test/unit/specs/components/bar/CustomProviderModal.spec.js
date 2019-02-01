@@ -5,6 +5,7 @@ import { createLocalVue } from '@vue/test-utils';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import CustomProviderModal from '@/components/bar/CustomProviderModal';
+import { NET_ID } from '@/constants';
 
 describe('CustomProviderModal', () => {
   const web3Actions = {
@@ -219,7 +220,7 @@ describe('CustomProviderModal', () => {
           expect.assertions(6);
 
           const networkType = 'ropsten';
-          const networkId = 3;
+          const networkId = NET_ID.ROPSTEN;
           const isSuccess = true;
 
           wrapper.setMethods({
@@ -283,7 +284,7 @@ describe('CustomProviderModal', () => {
           expect.assertions(6);
 
           const networkType = 'ropsten';
-          const networkId = 3;
+          const networkId = NET_ID.ROPSTEN;
           const isSuccess = true;
 
           wrapper.setMethods({

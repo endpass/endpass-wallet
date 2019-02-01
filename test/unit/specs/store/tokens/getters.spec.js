@@ -1,6 +1,6 @@
 /* eslint-disable import/no-named-default */
 import tokensGetters from '@/store/tokens/getters';
-import { MAIN_NET_ID } from '@/constants';
+import { NET_ID } from '@/constants';
 import { address } from 'fixtures/accounts';
 import {
   token,
@@ -343,7 +343,7 @@ describe('tokens getters', () => {
 
       expect(
         tokensGetters.userTokensWithToken(state)({
-          net: MAIN_NET_ID,
+          net: NET_ID.MAIN,
           token,
         }),
       ).toEqual(expandedTokensMappedByNetworks);
@@ -358,7 +358,7 @@ describe('tokens getters', () => {
 
       expect(
         tokensGetters.userTokensWithoutToken(state)({
-          net: MAIN_NET_ID,
+          net: NET_ID.MAIN,
           token: tokens[0],
         }),
       ).toEqual(cuttedTokensMappedByNetworks);

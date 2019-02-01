@@ -9,6 +9,7 @@ exports[`CurrencySelect render should render initial state of the component 1`] 
   >
     <vue-multiselect-stub
       allow-empty="true"
+      data-test="currency-select"
       deselectgrouplabel="Press enter to deselect group"
       deselectlabel="Press enter to remove"
       label="name"

@@ -134,14 +134,13 @@
 </template>
 
 <script>
-import dayjs from 'dayjs';
 import get from 'lodash/get';
 import { hexToString } from 'web3-utils';
 import Account from '@/components/Account';
 import ResendModal from '@/components/modal/ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import { mapState, mapGetters, mapActions } from 'vuex';
-import { formateDate, fromNow } from '@endpass/utils/date';
+import { addToDate, formateDate, fromNow } from '@endpass/utils/date';
 import { getShortStringWithEllipsis } from '@endpass/utils/strings';
 import { Transaction } from '@/class';
 import { TRANSACTION_STATUS } from '@/constants';
@@ -303,15 +302,14 @@ export default {
       });
       this.requestPassword();
     },
-    incrementDIsplayDate() {
-      this.displayDate = dayjs(this.transaction.date)
-        .add(10, 's')
-        .toDate();
+    incrementDisplayDate() {
+      const newDate = addToDate(this.transaction.date, 10);
+      this.displayDate = newDate;
     },
   },
 
   created() {
-    this.dateTimer = setInterval(this.incrementDIsplayDate, 10000);
+    this.dateTimer = setInterval(this.incrementDisplayDate, 10000);
   },
 
   beforeDestroy() {

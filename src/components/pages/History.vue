@@ -34,7 +34,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import appTransaction from '@/components/Transaction';
-import { MAIN_NET_ID } from '@/constants';
+import { NET_ID } from '@/constants';
 
 export default {
   data: () => ({
@@ -49,7 +49,7 @@ export default {
     ...mapGetters('transactions', ['currentNetTransactions']),
 
     isHistoryAvailable() {
-      return this.activeNet.id === MAIN_NET_ID;
+      return this.activeNet.id === NET_ID.MAIN;
     },
   },
 

@@ -15,7 +15,7 @@ import {
 } from '@/services';
 import { merge } from '@endpass/utils/objects';
 import { mapArrayByProp } from '@endpass/utils/arrays';
-import { MAIN_NET_ID } from '@/constants';
+import { NET_ID } from '@/constants';
 
 const init = async ({ dispatch }) => {
   await dispatch('getNetworkTokens');
@@ -183,7 +183,7 @@ const getTokensBalancesByAddress = async (
 };
 
 const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
-  const isMainNetwork = rootGetters['web3/activeNetwork'] === MAIN_NET_ID;
+  const isMainNetwork = rootGetters['web3/activeNetwork'] === NET_ID.MAIN;
 
   if (!isMainNetwork) return;
 

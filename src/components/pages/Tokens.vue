@@ -105,7 +105,7 @@ import TokensList from '@/components/TokensList';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/modal/AddTokenModal';
 import { matchString } from '@endpass/utils/strings';
-import { MAIN_NET_ID } from '@/constants';
+import { NET_ID } from '@/constants';
 
 export default {
   name: 'TokensPage',
@@ -143,7 +143,7 @@ export default {
         networkTokenQuery,
       } = this;
 
-      if (this.activeNetId !== MAIN_NET_ID) {
+      if (this.activeNetId !== NET_ID.MAIN) {
         return [];
       }
 

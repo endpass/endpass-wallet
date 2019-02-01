@@ -3,7 +3,7 @@ import Web3 from 'web3';
 import actions from '@/store/web3/actions';
 import * as mutationsTypes from '@/store/web3/mutations-types';
 import { userService } from '@/services';
-import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
+import { NET_ID, DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
 import { blockTransactions } from 'fixtures/transactions';
 
 jest.useFakeTimers();
@@ -475,7 +475,7 @@ describe('web3 actions', () => {
       let result;
 
       networkType = 'ropsten';
-      networkId = 3;
+      networkId = NET_ID.ROPSTEN;
 
       Web3.eth.net.getNetworkType.mockResolvedValueOnce(networkType);
       Web3.eth.net.getId.mockResolvedValueOnce(networkId);
