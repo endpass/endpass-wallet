@@ -3,6 +3,7 @@ import Intercom from 'vue-intercom';
 import VueAnalytics from 'vue-analytics';
 import Notifications from 'vue-notification';
 import UIComponents from '@endpass/ui';
+import FaucetComponets from '@endpass/faucet';
 
 import router from './router';
 import store from './store';
@@ -16,6 +17,7 @@ Vue.config.performance = true;
 Vue.use(Notifications);
 Vue.use(validation);
 Vue.use(directives);
+Vue.use(FaucetComponets);
 
 Vue.use(VueAnalytics, {
   id: ENV.googleAnalyticsId,

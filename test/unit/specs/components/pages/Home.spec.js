@@ -37,7 +37,9 @@ describe('Home page', () => {
         },
         web3: {
           namespaced: true,
-          state: {},
+          state: {
+            activeNet: { id: '' },
+          },
         },
         tokens: {
           namespaced: true,

@@ -288,6 +288,14 @@ Cypress.Commands.add('uploadFile', (selector, fileUrl, type = '') =>
   ),
 );
 
+Cypress.Commands.add('switchCurrency', netName => {
+  cy.get('[data-test=currency-select]')
+    .click()
+    .within(() => {
+      cy.contains(netName).click();
+    });
+});
+
 Cypress.Commands.add('makeStoreAlias', () => {
   cy.window()
     .its('app.$store')

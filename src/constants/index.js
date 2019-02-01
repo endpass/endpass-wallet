@@ -1,4 +1,7 @@
-export const MAIN_NET_ID = 1;
+export const NET_ID = Object.freeze({
+  MAIN: 1,
+  ROPSTEN: 3,
+});
 
 export const NETWORK_URL = Object.freeze({
   ETH: [
@@ -21,14 +24,14 @@ export const NETWORK_URL = Object.freeze({
 
 export const DEFAULT_NETWORKS = Object.freeze([
   {
-    id: 1,
+    id: NET_ID.MAIN,
     networkType: 'main',
     currency: 1,
     name: 'Main',
     url: NETWORK_URL.ETH,
   },
   {
-    id: 3,
+    id: NET_ID.ROPSTEN,
     name: 'Ropsten',
     networkType: 'ropsten',
     currency: 2,
@@ -99,7 +102,7 @@ export default {
   REQUEST_TIMEOUT_MSEC,
   STORAGE_USER_META_KEY,
   AVAILABLE_FIAT_CURRENCIES,
-  MAIN_NET_ID,
+  NET_ID,
   DEFAULT_NETWORKS,
   CURRENCIES,
   IDENTITY_MODE,

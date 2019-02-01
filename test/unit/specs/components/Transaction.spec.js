@@ -1,5 +1,4 @@
 import Vuex from 'vuex';
-import dayjs from 'dayjs';
 import Notifications from 'vue-notification';
 import VeeValidate from 'vee-validate';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
@@ -121,7 +120,10 @@ describe('Transaction', () => {
       jest.advanceTimersByTime(10000);
 
       expect(wrapper.vm.displayDate).not.toBe(date);
-      expect(dayjs(wrapper.vm.displayDate).diff(dayjs(date), 's')).toBe(10);
+      const displaceDate = new Date(wrapper.vm.displayDate);
+      const diff = Math.abs(date - displaceDate);
+
+      expect(Math.floor(diff / 1000)).toBe(10); // 10 seconds
     });
   });
 });
