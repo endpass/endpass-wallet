@@ -12,7 +12,7 @@ const serviceThrottleTimeout = 2000;
 const blockUpdateInterval = 15 * 1000;
 
 const identityAPIUrl = 'https://identity.endpass.com/api/v1.1';
-const cryptoDataAPIUrl = 'https://cryptodata.endpass.com/api/v1';
+const cryptoDataAPIUrl = 'https://cryptodata.endpass.com/api/v1.1';
 
 // ERC20 Tokens
 const tokenInfoAPIUrl = 'https://tokeninfo.endpass.com/api/v1';

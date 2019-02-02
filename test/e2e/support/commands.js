@@ -55,7 +55,7 @@ import {
 } from '../fixtures/transactions';
 
 const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1.1';
-const cryptodataAPIUrl = '/cryptodata/api/v1';
+const cryptodataAPIUrl = '/cryptodata/api/v1.1';
 
 // Sets up server and routes to stub logged in user with fixtures.
 // Usage: cy.login()
