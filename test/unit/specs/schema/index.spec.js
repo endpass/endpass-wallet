@@ -86,6 +86,62 @@ describe('Schema validators', () => {
         });
       });
     });
+
+    describe('validatePendingTransactions', () => {
+      const transaction = {
+        hash: '',
+        from: '',
+        to: '',
+        value: '',
+        gas: '',
+        input: '',
+      };
+
+      it('should validate data', () => {
+        const validData = {
+          filterId: 1,
+          transactions: [transaction, transaction],
+        };
+
+        expect(
+          cryptoDataValidator.validatePendingTransactions(validData),
+        ).toEqual(validData);
+      });
+
+      it('should not validate data', () => {
+        const invalidDataArray = [
+          {},
+          {
+            filterId: 1,
+          },
+          {
+            transactions: [transaction],
+          },
+          {
+            filterId: '1',
+            transactions: [transaction],
+          },
+          {
+            filterId: 1,
+            transactions: {},
+          },
+          {
+            filterId: 1,
+            transactions: [{}],
+          },
+          {
+            filterId: 1,
+            transactions: [true],
+          },
+        ];
+
+        invalidDataArray.forEach(data => {
+          expect(() =>
+            cryptoDataValidator.validatePendingTransactions(data),
+          ).toThrow(expect.any(Error));
+        });
+      });
+    });
   });
 
   describe('v3KeystoreValidator', () => {

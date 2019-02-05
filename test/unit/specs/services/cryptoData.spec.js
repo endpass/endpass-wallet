@@ -141,7 +141,8 @@ describe('Crypto data service', () => {
   });
 
   describe('getGasPrice', () => {
-    const requestUrl = `${ENV.cryptoDataAPIUrl}/gas/price`;
+    const network = 1;
+    const requestUrl = `${ENV.cryptoDataAPIUrl}/${network}/gas/price`;
     const expectedError = new NotificationError({
       title: 'Failed to get suggested gas price',
       text:
@@ -157,13 +158,13 @@ describe('Crypto data service', () => {
         return [200, gasPrice];
       });
 
-      await cryptoDataService.getGasPrice();
+      await cryptoDataService.getGasPrice(network);
     });
 
     it('should handle successful GET /gas/price request', () => {
-      axiosMock.onGet(`${ENV.cryptoDataAPIUrl}/gas/price`).reply(200, gasPrice);
+      axiosMock.onGet(requestUrl).reply(200, gasPrice);
 
-      expect(cryptoDataService.getGasPrice()).resolves.toEqual(gasPrice);
+      expect(cryptoDataService.getGasPrice(network)).resolves.toEqual(gasPrice);
     });
 
     it('should handle data validation errors', async () => {
@@ -176,19 +177,92 @@ describe('Crypto data service', () => {
         throw gasPriceValidationError;
       });
 
-      await expect(cryptoDataService.getGasPrice()).rejects.toThrow(
+      await expect(cryptoDataService.getGasPrice(network)).rejects.toThrow(
         expectedError,
       );
     });
 
-    it('should handle rejected GET /price request', async () => {
+    it('should handle rejected GET /gas/price request', async () => {
       expect.assertions(1);
 
       axiosMock.onGet(requestUrl).reply(500);
 
-      await expect(cryptoDataService.getGasPrice()).rejects.toThrow(
+      await expect(cryptoDataService.getGasPrice(network)).rejects.toThrow(
         expectedError,
       );
+    });
+  });
+
+  describe('getPendingTransactions', () => {
+    const network = 1;
+    const address = 'address';
+    const filterId = 1;
+    const requestUrl = `${
+      ENV.cryptoDataAPIUrl
+    }/${network}/transactions/pending`;
+    const expectedError = new NotificationError({
+      title: 'Failed to get pending transactions',
+      text: 'An error occurred while getting pending transactions.',
+      type: 'is-warning',
+    });
+
+    it('should make correct request', async () => {
+      expect.assertions(2);
+
+      axiosMock.onGet(requestUrl).reply(config => {
+        expect(config.url).toBe(requestUrl);
+        expect(config.params).toEqual({
+          filterId,
+          from: address,
+        });
+
+        return [200, {}];
+      });
+
+      await cryptoDataService.getPendingTransactions(
+        network,
+        address,
+        filterId,
+      );
+    });
+
+    it('should handle successful GET /transactions/:networkId/pending request', () => {
+      const response = {};
+
+      axiosMock.onGet(requestUrl).reply(200, response);
+
+      expect(
+        cryptoDataService.getPendingTransactions(network, address, filterId),
+      ).resolves.toEqual(response);
+    });
+
+    it('should handle data validation errors', async () => {
+      expect.assertions(1);
+
+      const pendingTransactionsValidationError = new Error(
+        'pendingTransactionsValidationError',
+      );
+
+      axiosMock.onGet(requestUrl).reply(200);
+      cryptoDataValidator.validatePendingTransactions.mockImplementationOnce(
+        () => {
+          throw pendingTransactionsValidationError;
+        },
+      );
+
+      await expect(
+        cryptoDataService.getPendingTransactions(network, address, filterId),
+      ).rejects.toThrow(expectedError);
+    });
+
+    it('should handle rejected GET /transactions/:networkId/pending request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onGet(requestUrl).reply(500);
+
+      await expect(
+        cryptoDataService.getPendingTransactions(network, address, filterId),
+      ).rejects.toThrow(expectedError);
     });
   });
 });

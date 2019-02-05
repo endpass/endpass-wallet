@@ -5,6 +5,7 @@ import mutations from './mutations';
 const state = {
   pendingTransactions: [],
   transactionHistory: [],
+  pendingTransactionsFilterId: null,
 };
 
 export default {

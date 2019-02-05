@@ -44,3 +44,41 @@ export const symbolsPrice = {
     },
   ],
 };
+
+export const pendingTransactions = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['filterId', 'transactions'],
+  properties: {
+    filterId: {
+      type: 'number',
+    },
+    transactions: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['hash', 'from', 'to', 'value', 'gas', 'input'],
+        properties: {
+          hash: {
+            type: 'string',
+          },
+          from: {
+            type: 'string',
+          },
+          to: {
+            type: 'string',
+          },
+          value: {
+            type: 'string',
+          },
+          gas: {
+            type: 'string',
+          },
+          input: {
+            type: 'string',
+          },
+        },
+      },
+    },
+  },
+};

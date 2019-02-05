@@ -139,10 +139,10 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@endpass/class@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.2.1.tgz#fd7627a247b1083a207160db2e44e5d9649764d3"
-  integrity sha512-ZgcU1HKhKxN63nBHI+dxlq3KnEIu17veJ9RlIFHT+g3TfAidoHUdAkdvqbAXnXtZIAu6MIJXIjBW4rNVSgyT3g==
+"@endpass/class@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.4.0.tgz#a1bd1cee87d63f3443802a2ce22c71a3a7eb42e4"
+  integrity sha512-vRAURr77EvfKaZqBcz0NQcarpYlrO+OrxUjfIl0KPSx2ZhzMj8onC4NkEc10j0MyO7v3562TYqy+Ozz9Jqz1zQ==
   dependencies:
     "@endpass/utils" "^1.0.9"
     "@ledgerhq/hw-app-eth" "^4.24.0"
@@ -205,10 +205,22 @@
     "@endpass/utils" "^1.0.11"
     vue "^2.5.21"
 
-"@endpass/utils@^1.0.11", "@endpass/utils@^1.0.9":
+"@endpass/utils@^1.0.11":
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.0.11.tgz#0cccd476acc619c50a039cd3ffbda18a726262da"
   integrity sha512-2N5ZxR2N7yOgRZlp8aGFJWgvKVG7fTylB5UZ3FubYu9KZ6UgLg0WP2jr2RkxTzEcNegkIJ7NxcCRRhIG4WC+0Q==
+  dependencies:
+    bs58check "^2.1.2"
+    dayjs "^1.7.8"
+    ethereumjs-wallet "^0.6.2"
+    export-files "^2.1.1"
+    keythereum "^1.0.4"
+    lodash "^4.17.11"
+
+"@endpass/utils@^1.0.9":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.1.1.tgz#4b73c66808c3ab02ce67ceffe9fbdd53a98e266b"
+  integrity sha512-79PLqWl1/eJsAtUslx6yjazBCidlzI91DSyLCFFJWJReyOCaJsWDGtEf+TMTCaq6iScBJDeqJ2Vj5aGJQYu9BA==
   dependencies:
     bs58check "^2.1.2"
     dayjs "^1.7.8"

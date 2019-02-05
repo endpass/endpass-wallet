@@ -3,6 +3,7 @@ jest.mock('@/schema', () => ({
     validateGasPrice: jest.fn(data => data),
     validateSymbolPrice: jest.fn(data => data),
     validateSymbolsPrice: jest.fn(data => data),
+    validatePendingTransactions: jest.fn(data => data),
   },
   v3KeystoreValidator: {
     validateAddresses: jest.fn(data => data),
