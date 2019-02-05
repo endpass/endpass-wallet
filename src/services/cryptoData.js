@@ -44,9 +44,11 @@ export default {
     });
   },
 
-  async getGasPrice() {
+  async getGasPrice(networkId) {
     try {
-      const { data } = await http.get(`${ENV.cryptoDataAPIUrl}/gas/price`);
+      const { data } = await http.get(
+        `${ENV.cryptoDataAPIUrl}/${networkId}/gas/price`,
+      );
 
       return cryptoDataValidator.validateGasPrice(data);
     } catch (err) {
@@ -54,6 +56,28 @@ export default {
         title: 'Failed to get suggested gas price',
         text:
           'An error occurred while retrieving suggested gas price. Please, set manually or, try again.',
+        type: 'is-warning',
+      });
+    }
+  },
+
+  async getPendingTransactions(network, fromAddress, filterId) {
+    try {
+      const { data } = await http.get(
+        `${ENV.cryptoDataAPIUrl}/${network}/transactions/pending`,
+        {
+          params: {
+            filterId,
+            from: fromAddress,
+          },
+        },
+      );
+
+      return cryptoDataValidator.validatePendingTransactions(data);
+    } catch (err) {
+      throw new NotificationError({
+        title: 'Failed to get pending transactions',
+        text: 'An error occurred while getting pending transactions.',
         type: 'is-warning',
       });
     }

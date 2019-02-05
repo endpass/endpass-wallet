@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { BigNumber } from 'bignumber.js';
-import { toChecksumAddress } from 'web3-utils';
+import { toChecksumAddress, hexToNumberString, fromWei } from 'web3-utils';
 import {
   EventEmitter,
   NotificationError,
@@ -10,6 +10,7 @@ import {
 } from '@/class';
 import { TRANSACTION_STATUS } from '@/constants';
 import ethplorerService from '@/services/ethplorer';
+import cryptoDataService from '@/services/cryptoData';
 import {
   getShortStringWithEllipsis,
   matchString,
@@ -18,6 +19,7 @@ import {
   ADD_TRANSACTION,
   UPDATE_TRANSACTION,
   SET_TRANSACTION_HISTORY,
+  SET_PENDING_TRANSACTIONS_FILTER_ID,
 } from './mutations-types';
 
 const getNonceInBlock = async ({ rootState }) => {
@@ -169,9 +171,34 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
   }
 };
 
+const handleIncomingTransaction = async (
+  { commit, state },
+  { transaction },
+) => {
+  const { pendingTransactions, transactionHistory } = state;
+  const allTrx = [...pendingTransactions, ...transactionHistory];
+  const savedTransaction = allTrx.find(trxInList =>
+    Transaction.isEqual(transaction, trxInList, ['networkId', 'nonce']),
+  );
+
+  if (!savedTransaction) {
+    commit(ADD_TRANSACTION, transaction);
+  } else if (
+    savedTransaction.state == TRANSACTION_STATUS.PENDING &&
+    transaction.state !== TRANSACTION_STATUS.PENDING
+  ) {
+    commit(UPDATE_TRANSACTION, {
+      payload: {
+        state: transaction.state,
+      },
+      hash: savedTransaction.hash,
+    });
+  }
+};
+
 // Show notification of incoming transactions from block
 const handleBlockTransactions = (
-  { state, dispatch, commit, rootState, rootGetters },
+  { dispatch, rootState, rootGetters },
   { transactions, networkId },
 ) => {
   const userAddresses = rootGetters['accounts/accountAddresses'];
@@ -185,23 +212,10 @@ const handleBlockTransactions = (
 
   if (!toUserTrx.length) return;
 
-  const { pendingTransactions, transactionHistory } = state;
-  const allTrx = [...pendingTransactions, ...transactionHistory];
-
   toUserTrx.forEach(trx => {
     const incomeTrx = TransactionFactory.fromBlock({ ...trx, networkId });
 
-    const isCanceled = allTrx.some(trxInList =>
-      Transaction.isEqual(incomeTrx, trxInList, ['networkId', 'nonce']),
-    );
-
-    const isTrxExist = allTrx.some(trxInList =>
-      Transaction.isEqual(incomeTrx, trxInList),
-    );
-
-    if (!isTrxExist && !isCanceled) {
-      commit(ADD_TRANSACTION, incomeTrx);
-    }
+    dispatch('handleIncomingTransaction', { transaction: incomeTrx });
 
     const { hash, to } = trx;
     const shortAddress = getShortStringWithEllipsis(to);
@@ -373,10 +387,55 @@ const processTransactionAction = async (
     });
   });
 
+const getPendingTransactions = async ({
+  state,
+  commit,
+  dispatch,
+  rootState,
+  rootGetters,
+}) => {
+  try {
+    const { pendingTransactionsFilterId } = state;
+    const { address } = rootState.accounts;
+    const networkId = rootGetters['web3/activeNetwork'];
+
+    if (!address) {
+      return;
+    }
+
+    const {
+      filterId,
+      transactions,
+    } = await cryptoDataService.getPendingTransactions(
+      networkId,
+      address,
+      pendingTransactionsFilterId,
+    );
+
+    if (filterId !== pendingTransactionsFilterId) {
+      commit(SET_PENDING_TRANSACTIONS_FILTER_ID, filterId);
+    }
+
+    transactions.forEach(transaction => {
+      const trx = Transaction.applyProps(
+        TransactionFactory.fromCryptoData(transaction),
+        {
+          state: TRANSACTION_STATUS.PENDING,
+        },
+      );
+
+      dispatch('handleIncomingTransaction', { transaction: trx });
+    });
+  } catch (error) {
+    dispatch('errors/emitError', error, { root: true });
+  }
+};
+
 export default {
   handleTransactionSendingHash,
   handleTransactionResendingHash,
   handleTransactionCancelingHash,
+  handleIncomingTransaction,
   handleBlockTransactions,
   handleSendingError,
   getNonceInBlock,
@@ -387,4 +446,5 @@ export default {
   cancelTransaction,
   resendTransaction,
   processTransactionAction,
+  getPendingTransactions,
 };

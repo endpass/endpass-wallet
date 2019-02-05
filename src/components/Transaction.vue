@@ -5,6 +5,7 @@
   >
     <div class="transaction-header">
       <account
+        v-if="txAddress"
         :address="txAddress"
         :balance="transaction.value.toString()"
         :currency="symbol"

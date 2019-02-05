@@ -4,6 +4,9 @@ import actions from '@/store/gas-price/actions';
 import { gasPrice } from 'fixtures/gasPrice';
 
 describe('gas-price actions', () => {
+  const rootGetters = {
+    'web3/activeNetwork': 1,
+  };
   let dispatch;
 
   beforeEach(() => {
@@ -11,10 +14,19 @@ describe('gas-price actions', () => {
   });
 
   describe('getGasPrice', () => {
+    it('should correctly call cryptoDataService.getGasPrice', () => {
+      actions.getGasPrice({ dispatch, rootGetters });
+
+      expect(cryptoDataService.getGasPrice).toHaveBeenCalledTimes(1);
+      expect(cryptoDataService.getGasPrice).toHaveBeenCalledWith(
+        rootGetters['web3/activeNetwork'],
+      );
+    });
+
     it('should resolve value from service', async () => {
       expect.assertions(1);
 
-      const res = await actions.getGasPrice({ dispatch });
+      const res = await actions.getGasPrice({ dispatch, rootGetters });
 
       expect(res).toBe(gasPrice);
     });
@@ -26,7 +38,7 @@ describe('gas-price actions', () => {
 
       cryptoDataService.getGasPrice.mockRejectedValueOnce(err);
 
-      await actions.getGasPrice({ dispatch });
+      await actions.getGasPrice({ dispatch, rootGetters });
 
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', err, {
         root: true,
