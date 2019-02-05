@@ -8,6 +8,7 @@ import {
   Transaction,
   web3,
 } from '@/class';
+import { TRANSACTION_STATUS } from '@/constants';
 import ethplorerService from '@/services/ethplorer';
 import {
   getShortStringWithEllipsis,
@@ -189,11 +190,16 @@ const handleBlockTransactions = (
 
   toUserTrx.forEach(trx => {
     const incomeTrx = TransactionFactory.fromBlock({ ...trx, networkId });
+
+    const isCanceled = allTrx.some(trxInList =>
+      Transaction.isEqual(incomeTrx, trxInList, ['networkId', 'nonce']),
+    );
+
     const isTrxExist = allTrx.some(trxInList =>
       Transaction.isEqual(incomeTrx, trxInList),
     );
 
-    if (!isTrxExist) {
+    if (!isTrxExist && !isCanceled) {
       commit(ADD_TRANSACTION, incomeTrx);
     }
 
@@ -273,22 +279,15 @@ const handleTransactionSendingHash = ({ commit }, { transaction, newHash }) => {
   });
 
   commit(ADD_TRANSACTION, trx);
-
-  return trx;
 };
 
-const handleTransactionResendingHash = (
-  { commit },
-  { transaction, newHash },
-) => {
+const handleTransactionResendingHash = ({ commit }, { hash, newHash }) => {
   commit(UPDATE_TRANSACTION, {
-    hash: transaction.hash,
+    hash,
     payload: {
       hash: newHash,
     },
   });
-
-  return newHash;
 };
 
 const handleTransactionCancelingHash = async (
@@ -316,25 +315,26 @@ const processTransactionAction = async (
   { transaction, sendEvent, actionType },
 ) =>
   new Promise((res, rej) => {
-    let updatedTransaction = transaction;
+    let usedHash = transaction.hash;
 
     sendEvent.once('transactionHash', async newHash => {
       switch (actionType) {
         case 'send':
-          updatedTransaction = await dispatch('handleTransactionSendingHash', {
+          await dispatch('handleTransactionSendingHash', {
             transaction,
             newHash,
           });
-          return res(get(updatedTransaction, 'hash'));
+          usedHash = newHash;
+
+          return res(usedHash);
         case 'resend':
-          updatedTransaction = await dispatch(
-            'handleTransactionResendingHash',
-            {
-              transaction,
-              newHash,
-            },
-          );
-          return res(get(updatedTransaction, 'hash'));
+          await dispatch('handleTransactionResendingHash', {
+            hash: usedHash,
+            newHash,
+          });
+
+          usedHash = newHash;
+          return res(newHash);
         case 'cancel':
           await dispatch('handleTransactionCancelingHash', {
             transaction,
@@ -349,21 +349,23 @@ const processTransactionAction = async (
     sendEvent.once('confirmation', () => {
       commit(UPDATE_TRANSACTION, {
         payload: {
-          state: actionType === 'cancel' ? 'canceled' : 'success',
+          state:
+            actionType === 'cancel'
+              ? TRANSACTION_STATUS.CANCELED
+              : TRANSACTION_STATUS.SUCCESS,
         },
-        hash: get(updatedTransaction, 'hash'),
+        hash: usedHash,
       });
     });
 
     sendEvent.once('error', error => {
-      const hash = get(updatedTransaction, 'hash');
-      if (hash) {
+      if (usedHash) {
         commit(UPDATE_TRANSACTION, {
           payload: {
             state: 'error',
             error,
           },
-          hash,
+          hash: usedHash,
         });
       }
 

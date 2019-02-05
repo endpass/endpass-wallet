@@ -11,6 +11,7 @@ import {
   TransactionFactory,
   NotificationError,
   web3,
+  Wallet,
 } from '@/class';
 import { address } from 'fixtures/accounts';
 import {
@@ -520,29 +521,39 @@ describe('transactions actions', () => {
   describe('handleTransactionSendingHash', () => {
     it('should add transaction with commit and return new hash', () => {
       const newHash = '0x0';
-      const res = actions.handleTransactionSendingHash(
+      const date = new Date();
+
+      const spy = jest
+        .spyOn(Transaction, 'applyProps')
+        .mockImplementation((trx, newProps) => {
+          const res = { ...trx, ...newProps, date };
+          return res;
+        });
+
+      actions.handleTransactionSendingHash(
         { commit },
         { transaction, newHash },
       );
+
       const afterApply = {
         ...transaction,
-        date: res.date,
+        date,
         hash: newHash,
         state: 'pending',
       };
 
       expect(commit).toHaveBeenCalledWith(ADD_TRANSACTION, afterApply);
-      expect(res).not.toEqual(transaction);
-      expect(res.hash).toEqual(newHash);
+
+      spy.mockRestore();
     });
   });
 
   describe('handleTransactionResendingHash', () => {
     it('should update transaction with commit and return new hash', () => {
       const newHash = '0x0';
-      const res = actions.handleTransactionResendingHash(
+      actions.handleTransactionResendingHash(
         { commit },
-        { transaction, newHash },
+        { hash: transaction.hash, newHash },
       );
 
       expect(commit).toHaveBeenCalledWith(UPDATE_TRANSACTION, {
@@ -551,12 +562,12 @@ describe('transactions actions', () => {
           hash: newHash,
         },
       });
-      expect(res).toEqual(newHash);
     });
   });
 
   describe('handleTransactionCancelingHash', () => {
     let sendEvent;
+    const newHash = '0x0';
 
     beforeEach(() => {
       sendEvent = {
@@ -604,6 +615,7 @@ describe('transactions actions', () => {
 
   describe('processTransactionAction', () => {
     let sendEvent;
+    const newHash = '0x0';
 
     beforeEach(() => {
       sendEvent = new EventEmitter();
@@ -628,13 +640,13 @@ describe('transactions actions', () => {
             'handleTransactionSendingHash',
             {
               transaction,
-              newHash: '0x0',
+              newHash,
             },
           );
           expect(res).not.toBeNull();
         });
 
-      sendEvent.emit('transactionHash', '0x0');
+      sendEvent.emit('transactionHash', newHash);
     });
 
     it('should resend transaction on hash event', () => {
@@ -656,14 +668,14 @@ describe('transactions actions', () => {
           expect(dispatch).toHaveBeenCalledWith(
             'handleTransactionResendingHash',
             {
-              transaction,
-              newHash: '0x0',
+              hash: transaction.hash,
+              newHash,
             },
           );
           expect(res).not.toBeNull();
         });
 
-      sendEvent.emit('transactionHash', '0x0');
+      sendEvent.emit('transactionHash', newHash);
     });
 
     it('should cancel transaction on hash event', () => {
