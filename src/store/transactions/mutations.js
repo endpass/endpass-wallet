@@ -15,7 +15,7 @@ const updateTransaction = (state, { hash, payload }) => {
   );
 
   if (trxIndex === -1) {
-    console.warn('Transaction not found, is it normal?');
+    console.warn('Transaction not found, is it normal?', hash);
     return;
   }
 
