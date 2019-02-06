@@ -72,7 +72,7 @@
       </div>
       <div class="field-body">
         <v-input
-          v-model="gasFee"
+          :value="gasFee"
           :disabled="true"
           name="gasFee"
           data-vv-name="gasFee"
@@ -129,12 +129,12 @@ export default {
       default: '0',
     },
 
-    estimatedGasFee: {
+    gasPrice: {
       type: [String, Number],
       default: '0',
     },
 
-    gasPrice: {
+    gasLimit: {
       type: [String, Number],
       default: '0',
     },
@@ -171,20 +171,20 @@ export default {
       return get(currentToken, 'decimals') || 18;
     },
 
+    gasFeeBN() {
+      return BigNumber(toWei(this.gasPrice, 'gwei')).times(this.gasLimit);
+    },
+
     gasFee() {
-      return fromWei(BigNumber(this.estimatedGasFee).toFixed());
+      return fromWei(this.gasFeeBN.toFixed());
     },
 
     maxAmount() {
-      const { currentToken, balance, estimatedGasFee, gasPrice } = this;
+      const { currentToken, balance, gasFeeBN } = this;
 
       if (!currentToken) {
         const balanceBN = BigNumber(balance || '0');
-        const estimatedGasFeeBN = BigNumber(estimatedGasFee);
-        // TODO: Does cryptodata service send mwei instead gwei?
-        const amountBN = balanceBN
-          .minus(estimatedGasFeeBN)
-          .minus(toWei(gasPrice, 'gwei'));
+        const amountBN = balanceBN.minus(gasFeeBN);
         const amount = fromWei(amountBN.toFixed());
 
         return amount > 0 ? amount : 0;
@@ -251,11 +251,11 @@ export default {
     },
 
     balance() {
-      this.handleChangeBalanceAndEstimatedGasCost();
+      this.handleChangeBalanceAndGasFee();
     },
 
-    estimatedGasFee() {
-      this.handleChangeBalanceAndEstimatedGasCost();
+    gasFee() {
+      this.handleChangeBalanceAndGasFee();
     },
   },
 
@@ -316,10 +316,10 @@ export default {
       this.price = value;
     },
 
-    handleChangeBalanceAndEstimatedGasCost() {
-      const { balance, estimatedGasFee } = this;
+    handleChangeBalanceAndGasFee() {
+      const { balance, gasFeeBN } = this;
 
-      if (BigNumber(estimatedGasFee).gt(balance)) {
+      if (gasFeeBN.gt(balance)) {
         this.errors.add({
           field: 'value',
           msg: 'Insufficient funds',

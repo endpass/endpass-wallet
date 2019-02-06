@@ -35,8 +35,8 @@
       :current-token="transaction.token"
       :fiat-currency="fiatCurrency"
       :eth-price="ethPrice"
+      :gas-limit="transaction.gasLimit"
       :balance="balance"
-      :estimated-gas-fee="estimatedGasFee"
       :gas-price="transaction.gasPrice"
       :disabled="!address"
       :active-net="activeNet"
@@ -78,9 +78,8 @@
 </template>
 
 <script>
-import { debounce } from 'lodash';
 import { mapGetters, mapState, mapActions } from 'vuex';
-import { ENSResolver, Transaction } from '@/class';
+import { ENSResolver } from '@/class';
 import formMixin from '@/mixins/form';
 import AccountChooser from '@/components/AccountChooser';
 import TransactionAdvancedOptions from './TransactionAdvancedOptions.vue';
@@ -105,7 +104,6 @@ export default {
   data: () => ({
     address: '',
     prices: null,
-    estimatedGasFee: 0,
     ensError: null,
     isEnsAddressLoading: false,
     isLoadingGasPrice: true,
@@ -157,8 +155,6 @@ export default {
         this.ensError = null;
         this.transaction.to = this.address;
       }
-
-      this.debouncedGasCostEstimation(1);
     },
 
     async activeNet(newValue, prevValue) {
@@ -169,26 +165,6 @@ export default {
       if (this.isEnsTransaction) {
         this.transaction.to = await this.resolveEnsAddress();
       }
-
-      this.debouncedGasCostEstimation();
-    },
-
-    'transaction.token': {
-      handler() {
-        this.debouncedGasCostEstimation();
-      },
-    },
-
-    'transaction.gasPrice': {
-      handler() {
-        this.debouncedGasCostEstimation();
-      },
-    },
-
-    'transaction.gasLimit': {
-      handler() {
-        this.debouncedGasCostEstimation();
-      },
     },
 
     'transaction.to': {
@@ -229,35 +205,6 @@ export default {
         return '';
       } finally {
         this.isEnsAddressLoading = false;
-      }
-    },
-
-    debouncedGasCostEstimation: debounce(function() {
-      this.estimateGasFee();
-    }, 500),
-
-    async estimateGasFee() {
-      if (!this.transaction.to) return;
-
-      this.isEstimationInProcess = true;
-
-      try {
-        this.estimatedGasFee = await Transaction.getGasFullPrice(
-          this.transaction,
-        );
-      } catch (err) {
-        // TODO: check send on main net. If it is ok, disallow sending
-        console.log(err);
-
-        const isContract = await Transaction.isToContract(this.transaction);
-
-        if (!isContract && err.message.includes('always failing transaction')) {
-          this.ensError = 'Transaction will always fail, try other address.';
-        }
-
-        this.estimatedGasFee = 0;
-      } finally {
-        this.isEstimationInProcess = false;
       }
     },
 
