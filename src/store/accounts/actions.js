@@ -7,8 +7,8 @@ import {
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';
-import { toChecksumAddress, fromWei } from 'web3-utils';
-import { Wallet, NotificationError, web3 } from '@/class';
+import { toChecksumAddress } from 'web3-utils';
+import { Wallet, NotificationError } from '@/class';
 import { keystore } from '@endpass/utils';
 import {
   CHANGE_INIT_STATUS,
