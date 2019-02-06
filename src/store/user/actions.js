@@ -126,10 +126,10 @@ const setUserSettings = async ({ commit, dispatch }) => {
         netTokens.map(token => Token.getConsistent(token)),
       );
       const mappedTokens = mapValues(normalizedTokens, netTokens =>
-        mapKeys(netTokens, 'address'),
+        mapKeys(netTokens, 'symbol'),
       );
 
-      commit(`tokens/${SET_USER_TOKENS}`, mappedTokens, { root: true });
+      dispatch('tokens/setUserTokens', mappedTokens, { root: true });
     }
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });

@@ -2,24 +2,11 @@
   <div class="menu">
     <ul class="menu-list">
       <li>
-        <a
-          :class="{'is-active': isActive}"
-          @click="handleClick"
-        >
-          <account
-            :key="address"
-            :address="address"
-            :size="10"
-          >
+        <a :class="{ 'is-active': isActive }" @click="handleClick">
+          <account :key="address" :address="address" :size="10">
             <template slot="balance">
-              <div
-                v-if="isLoading"
-                class="column has-spinner"
-              >
-                <v-spinner
-                  :is-loading="isLoading"
-                  class="is-transparent"
-                />
+              <div v-if="isLoading" class="column has-spinner">
+                <v-spinner :is-loading="isLoading" class="is-transparent" />
               </div>
               <balance
                 v-else
@@ -67,12 +54,15 @@ export default {
   },
   methods: {
     ...mapActions('accounts', ['getBalanceByAddress']),
+
     async getBalance() {
       this.isLoading = true;
 
       try {
         const { address } = this;
-        this.balance = await this.getBalanceByAddress({ address });
+        const res = await this.getBalanceByAddress(address);
+
+        this.balance = res.balance;
       } catch (e) {
         this.balance = '0';
       } finally {
@@ -92,6 +82,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-</style>

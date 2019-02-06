@@ -22,8 +22,6 @@ export const NETWORK_URL = Object.freeze({
   ],
 });
 
-export const CRYPTODATA_API_URL = 'https://cryptodata-dev.endpass.com/api/v1';
-
 export const DEFAULT_NETWORKS = Object.freeze([
   {
     id: NET_ID.MAIN,
