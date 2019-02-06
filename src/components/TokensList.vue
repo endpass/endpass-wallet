@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="tokens-list"
-    data-test="tokens-list"
-  >
+  <div class="tokens-list" data-test="tokens-list">
     <ul v-if="tokens.length > 0">
       <li
         v-for="token in tokens"
@@ -10,11 +7,7 @@
         :key="token.address"
         data-test="user-token"
       >
-        <v-token
-          :token="token"
-          :currency="currency"
-          :price="prices.get(token.symbol)"
-        >
+        <v-token :token="token" :currency="currency">
           <a
             v-if="isTokenCanBeDeleted(token)"
             slot="right"
@@ -31,10 +24,7 @@
         </v-token>
       </li>
     </ul>
-    <p
-      v-else
-      class="small"
-    >
+    <p v-else class="small">
       You have no tokens at this address.
     </p>
   </div>
@@ -84,7 +74,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('tokens', ['getTokensPrices', 'removeUserToken']),
+    ...mapActions('tokens', ['removeUserToken']),
 
     isTokenCanBeDeleted(token) {
       const { hasRemove, currentNetUserFullTokens } = this;
@@ -107,27 +97,11 @@ export default {
       return new BigNumber(prices.ETH || 0).times(this.ethPrice).toString();
     },
 
-    loadTokensPrices() {
-      /**
-       * It needs because list can contain custom tokens list which not belongs to current
-       * user tokens
-       */
-      this.getTokensPrices({
-        tokensSymbols: this.tokens.map(({ symbol }) => symbol),
-      });
-    },
-
     async deleteToken(token) {
       await this.removeUserToken({
         token,
       });
     },
-  },
-
-  mounted() {
-    if (this.tokens.length > 0) {
-      this.loadTokensPrices();
-    }
   },
 
   mixins: [error],
@@ -138,5 +112,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

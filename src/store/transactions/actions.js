@@ -115,6 +115,9 @@ const handleSendingError = (
   { err = {}, receipt, transaction = {} } = {},
 ) => {
   const errorMessage = get(err, 'err') || get(err, 'message') || '';
+
+  console.log(errorMessage);
+
   const { hash } = transaction;
   const shortHash = hash ? ` ${getShortStringWithEllipsis(hash)}` : '';
   let cause = '';

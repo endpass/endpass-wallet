@@ -2,7 +2,7 @@ import Vue from 'vue';
 import {
   SET_LOADING,
   ADD_NETWORK_TOKENS,
-  ADD_TOKENS_PRICES,
+  SET_TOKENS_PRICES,
   SET_USER_TOKENS,
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
@@ -10,16 +10,25 @@ import {
 } from './mutations-types';
 
 const addNetworkTokens = (state, tokens) => {
-  // Freeze tokens for perfomance reasons
-  Object.assign(state.networkTokens, Object.freeze(tokens));
+  // FIXME: potentially slow part. Fix it when tokens will have common index
+  Object.keys(tokens).forEach(key => {
+    if (!state.networkTokens[key]) {
+      Object.assign(state.networkTokens, {
+        [key]: Object.freeze(tokens[key]), // Freeze tokens for perfomance reasons
+      });
+    }
+  });
 };
 
 const setLoading = (state, isLoading) => {
   state.isLoading = isLoading;
 };
 
-const addTokensPrices = (state, prices) => {
-  Object.assign(state.prices, prices);
+const setTokensPrices = (state, prices) => {
+  state.prices = {
+    ...state.prices,
+    ...prices,
+  };
 };
 
 const setUserTokens = (state, tokens) => {
@@ -43,7 +52,7 @@ export default {
   [SET_INTERVAL_ID]: setIntervalId,
   [SET_LOADING]: setLoading,
   [ADD_NETWORK_TOKENS]: addNetworkTokens,
-  [ADD_TOKENS_PRICES]: addTokensPrices,
+  [SET_TOKENS_PRICES]: setTokensPrices,
   [SET_USER_TOKENS]: setUserTokens,
   [SET_TOKENS_BY_ADDRESS]: setTokensByAddress,
   [SET_BALANCES_BY_ADDRESS]: setBalancesByAddress,

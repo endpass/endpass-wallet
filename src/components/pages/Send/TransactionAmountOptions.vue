@@ -1,22 +1,17 @@
 <template>
   <div class="send-amount ">
-    <div
-      class="field is-horizontal"
-      data-test="transaction-amount-group-field"
-    >
+    <div class="field is-horizontal" data-test="transaction-amount-group-field">
       <div class="field-label is-normal">
-        <label
-          class="label"
-          for="amount"
-        >
+        <label class="label" for="amount">
           Amount
         </label>
       </div>
       <div class="field-body">
         <v-input
+          v-validate="`required|decimal:${decimal}|between:0,${maxAmount}`"
           id="value"
           :value="value"
-          v-validate="`required|decimal:${decimal}|between:0,${maxAmount}`"
+          :error="errors.first('value')"
           :disabled="isLoading || disabled"
           type="number"
           data-vv-as="amount"
@@ -24,17 +19,13 @@
           step="any"
           name="value"
           data-vv-name="value"
-          :error="errors.first('value')"
           aria-describedby="value"
           placeholder="Amount"
           required
           data-test="transaction-amount-input"
           @input="handleAmountInput"
         >
-          <span
-            slot="addon"
-            class="select"
-          >
+          <span slot="addon" class="select">
             <v-select
               :value="currentTokenSymbol"
               :options="tokensCurrencies"
@@ -52,35 +43,30 @@
             v-html="require('@/img/arrow-thick-top.svg')"
           />
         </v-input>
+
         <v-input
+          v-validate="`required|decimal:2|between:0,${maxPrice}`"
           id="price"
           :value="price"
-          v-validate="`required|decimal:2|between:0,${maxPrice}`"
+          :error="errors.first('price')"
           :disabled="!ethPrice || disabled"
           type="number"
           min="0"
           step="0.01"
           name="price"
           data-vv-name="price"
-          :error="errors.first('price')"
           aria-describedby="price"
           placeholder="Price"
           required
           @input="handlePriceInput"
         >
-          <div
-            slot="addon"
-            class="amount-fiat-currency control"
-          >
+          <div slot="addon" class="amount-fiat-currency control">
             {{ fiatCurrency }}
           </div>
         </v-input>
       </div>
     </div>
-    <div
-      v-show="showFee"
-      class="field is-horizontal"
-    >
+    <div v-show="showFee" class="field is-horizontal">
       <div class="field-label">
         <label class="label">Gas Fee</label>
       </div>
@@ -100,7 +86,7 @@
 <script>
 import { get } from 'lodash';
 import { BigNumber } from 'bignumber.js';
-import { fromWei } from 'web3-utils';
+import { fromWei, toWei } from 'web3-utils';
 
 export default {
   name: 'TransactionAmountOptions',
@@ -143,7 +129,12 @@ export default {
       default: '0',
     },
 
-    estimatedGasCost: {
+    estimatedGasFee: {
+      type: [String, Number],
+      default: '0',
+    },
+
+    gasPrice: {
       type: [String, Number],
       default: '0',
     },
@@ -181,42 +172,42 @@ export default {
     },
 
     gasFee() {
-      return fromWei(BigNumber(this.estimatedGasCost).toFixed());
+      return fromWei(BigNumber(this.estimatedGasFee).toFixed());
     },
 
     maxAmount() {
-      const { currentToken, balance, estimatedGasCost } = this;
-      const tokenBalance = get(currentToken, 'balance') || 0;
+      const { currentToken, balance, estimatedGasFee, gasPrice } = this;
 
       if (!currentToken) {
         const balanceBN = BigNumber(balance || '0');
-        const estimatedGasCostBN = BigNumber(estimatedGasCost);
-        const amountBN = balanceBN.minus(estimatedGasCostBN);
+        const estimatedGasFeeBN = BigNumber(estimatedGasFee);
+        // TODO: Does cryptodata service send mwei instead gwei?
+        const amountBN = balanceBN
+          .minus(estimatedGasFeeBN)
+          .minus(toWei(gasPrice, 'gwei'));
         const amount = fromWei(amountBN.toFixed());
 
         return amount > 0 ? amount : 0;
       }
 
+      const tokenBalance = get(currentToken, 'balance') || 0;
+
       if (!tokenBalance) {
         return 0;
       }
 
-      const balanceBn = BigNumber(tokenBalance);
-      const decimalsBn = BigNumber(10).pow(this.decimal);
-
-      return balanceBn.div(decimalsBn).toString(10);
+      return tokenBalance;
     },
 
     maxPrice() {
-      const { currentToken, ethPrice, maxAmount } = this;
+      const { currentToken, ethPrice, maxAmount, fiatCurrency } = this;
 
       if (currentToken) {
         // TODO: change ETH price getting logic
-        const tokenPrice = get(currentToken, 'price.ETH') || 0;
+        const tokenPrice = get(currentToken, `price.${fiatCurrency}`) || 0;
 
         return BigNumber(tokenPrice)
           .times(maxAmount)
-          .times(ethPrice)
           .toFixed(2);
       }
 
@@ -263,7 +254,7 @@ export default {
       this.handleChangeBalanceAndEstimatedGasCost();
     },
 
-    estimatedGasCost() {
+    estimatedGasFee() {
       this.handleChangeBalanceAndEstimatedGasCost();
     },
   },
@@ -281,34 +272,32 @@ export default {
     },
 
     getAmountFromPrice() {
-      const { price, currentToken, ethPrice } = this;
-      let amount = null;
+      const { price, fiatCurrency, currentToken, ethPrice } = this;
 
       if (currentToken) {
-        const tokenPrice = get(currentToken, 'price.ETH') || 0;
-
-        amount = BigNumber(price)
-          .div(ethPrice)
+        const tokenPrice = get(currentToken, `price.${fiatCurrency}`, 0);
+        const amount = BigNumber(price)
           .div(tokenPrice)
           .toFixed(parseInt(this.decimal, 10));
+
+        this.emitInputValue(amount);
       } else {
-        amount = BigNumber(price)
+        const amount = BigNumber(price)
           .div(ethPrice)
           .toFixed(parseInt(this.decimal, 10));
-      }
 
-      this.emitInputValue(amount);
+        this.emitInputValue(amount);
+      }
     },
 
     getPriceFromAmount() {
-      const { value, currentToken, ethPrice } = this;
+      const { value, currentToken, ethPrice, fiatCurrency } = this;
 
       if (currentToken) {
-        const tokenPrice = get(currentToken, 'price.ETH') || 0;
+        const tokenPrice = get(currentToken, `price.${fiatCurrency}`) || 0;
 
         this.price = BigNumber(value)
           .times(tokenPrice)
-          .times(ethPrice)
           .toFixed(2);
       } else {
         this.price = BigNumber(value)
@@ -328,9 +317,9 @@ export default {
     },
 
     handleChangeBalanceAndEstimatedGasCost() {
-      const { balance, estimatedGasCost } = this;
+      const { balance, estimatedGasFee } = this;
 
-      if (BigNumber(estimatedGasCost).gt(balance)) {
+      if (BigNumber(estimatedGasFee).gt(balance)) {
         this.errors.add({
           field: 'value',
           msg: 'Insufficient funds',

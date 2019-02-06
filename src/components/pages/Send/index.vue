@@ -20,7 +20,10 @@
                 <p>Transaction Sent!</p>
               </div>
               <div class="message-body">
-                <p>Your transaction has been broadcast to the network. It may take a few minutes before the transaction is confirmed.</p>
+                <p>
+                  Your transaction has been broadcast to the network. It may
+                  take a few minutes before the transaction is confirmed.
+                </p>
                 <p class="label">Transaction Id</p>
                 <p class="code">{{ transactionHash }}</p>
               </div>
@@ -51,15 +54,16 @@ import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import privatePage from '@/mixins/privatePage';
 import { getShortStringWithEllipsis } from '@endpass/utils/strings';
-import TransactionForm from './TransactionForm';
+import TransactionForm from './TransactionForm.vue';
 
 const defaultTx = {
-  tokenInfo: null,
+  token: null,
   gasPrice: '40',
   gasLimit: '22000',
   value: '0',
   nonce: 0,
   to: '',
+  from: '',
   data: '0x',
 };
 
@@ -82,6 +86,8 @@ export default {
   watch: {
     async address(newValue, prevValue) {
       if (newValue === prevValue) return;
+
+      this.transaction.from = newValue;
 
       await this.updateNonceWithClearHash();
     },
@@ -125,7 +131,6 @@ export default {
 
       try {
         const trx = TransactionFactory.fromSendForm(this.transaction);
-
         const hash = await this.sendTransaction({
           transaction: trx,
           password,
@@ -170,6 +175,7 @@ export default {
 
   async created() {
     this.transaction.nonce = await this.getNextNonce();
+    this.transaction.from = this.address;
   },
 
   mixins: [privatePage],

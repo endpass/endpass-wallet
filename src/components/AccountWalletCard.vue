@@ -3,14 +3,8 @@
     <div class="card-header">
       <h2 class="card-header-title">Receive ETH</h2>
     </div>
-    <div
-      class="card-content"
-      data-test="current-account"
-    >
-      <div
-        v-if="isCurrentAccount"
-        class="card-section"
-      >
+    <div class="card-content" data-test="current-account">
+      <div v-if="isCurrentAccount" class="card-section">
         Your Active Address:
       </div>
       <div class="card-section">
@@ -18,13 +12,10 @@
           v-if="address"
           :currency="activeCurrencyName"
           :address="address"
-          :balance="balance"
+          :balance="accountBalance"
         />
       </div>
-      <div
-        v-if="allowSend"
-        class="card-section"
-      >
+      <div v-if="allowSend" class="card-section">
         <v-button
           type="button"
           name="button"
@@ -36,16 +27,16 @@
       </div>
       <div class="card-tokens">
         <v-spinner v-if="isLoading" />
-        <tokens-list
-          v-if="!isLoading"
-          :tokens="accountTokensList"
-        />
+        <tokens-list v-if="!isLoading" :tokens="accountTokensList" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Bignumber from 'bignumber.js';
+import { fromWei } from 'web3-utils';
+import { get, uniqBy, toString } from 'lodash';
 import { mapActions, mapGetters } from 'vuex';
 import Account from '@/components/Account';
 import TokensList from '@/components/TokensList';
@@ -54,6 +45,11 @@ export default {
   name: 'AccountWalletCard',
 
   props: {
+    activeNetId: {
+      type: Number,
+      required: true,
+    },
+
     isCurrentAccount: {
       type: Boolean,
       default: false,
@@ -69,11 +65,6 @@ export default {
       required: true,
     },
 
-    balance: {
-      type: String,
-      default: '0',
-    },
-
     allowSend: {
       type: Boolean,
       default: false,
@@ -81,44 +72,58 @@ export default {
   },
 
   data: () => ({
+    localBalanceData: {},
     isLoading: false,
   }),
 
   computed: {
-    ...mapGetters('tokens', ['fullTokensByAddress']),
-
-    accountTokens() {
-      return this.fullTokensByAddress(this.address);
-    },
+    ...mapGetters('accounts', ['balance']),
+    ...mapGetters('tokens', ['allCurrentAccountFullTokens']),
 
     accountTokensList() {
-      return Object.values(this.accountTokens);
+      const tokens = this.isCurrentAccount
+        ? Object.values(this.allCurrentAccountFullTokens)
+        : this.localBalanceData.tokens;
+
+      return uniqBy(tokens, 'address');
+    },
+
+    accountBalance() {
+      if (this.isCurrentAccount) {
+        const stringifiedBalance = toString(this.balance);
+
+        return Bignumber(stringifiedBalance).toFixed(4);
+      }
+
+      const balance = get(this.localBalanceData, 'balance', '0');
+      const stringifiedBalance = toString(balance);
+      const normalizedBalance = fromWei(stringifiedBalance);
+
+      return Bignumber(normalizedBalance).toFixed(4);
+    },
+  },
+
+  watch: {
+    async activeNetId(newValue, prevValue) {
+      if (newValue !== prevValue) {
+        await this.loadBalanceData();
+      }
     },
   },
 
   methods: {
-    ...mapActions('tokens', [
-      'getTokensByAddress',
-      'getTokensBalancesByAddress',
-    ]),
+    ...mapActions('accounts', ['getBalanceByAddress']),
 
-    async loadTokensData() {
-      const {
-        address,
-        accountTokens,
-        getTokensByAddress,
-        getTokensBalancesByAddress,
-      } = this;
-
+    async loadBalanceData() {
       this.isLoading = true;
 
-      if (Object.keys(accountTokens).length === 0) {
-        await getTokensByAddress({ address });
-      }
+      const { address } = this;
+      const { balance, tokens } = await this.getBalanceByAddress(address);
 
-      await getTokensBalancesByAddress({
-        address,
-      });
+      this.localBalanceData = {
+        balance,
+        tokens,
+      };
 
       this.isLoading = false;
     },
@@ -129,7 +134,9 @@ export default {
   },
 
   created() {
-    this.loadTokensData();
+    if (!this.isCurrentAccount) {
+      this.loadBalanceData();
+    }
   },
 
   components: {

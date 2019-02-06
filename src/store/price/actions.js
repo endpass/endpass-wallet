@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import { cryptoDataService } from '@/services';
 import {
   SET_PRICE,
@@ -10,11 +11,13 @@ import {
 const updatePrice = async ({ commit, getters, dispatch }) => {
   try {
     commit(START_LOADING);
+
     const price = await cryptoDataService.getSymbolsPrice(
       getters.activeCurrencyName,
       getters.fiatCurrency,
     );
-    commit(SET_PRICE, price[getters.fiatCurrency]);
+
+    commit(SET_PRICE, get(price, `ETH.${getters.fiatCurrency}`, 0));
     commit(SET_UPDATE_TIME, new Date().getTime());
     dispatch(
       'connectionStatus/updateApiErrorStatus',

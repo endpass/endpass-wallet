@@ -33,6 +33,7 @@ const isHDv3WalletByType = state => walletType => {
   const { xpub, v3KeyStore } = cache;
   const isPublic = keystore.isExtendedPublicKey(xpub);
   const isV3 = !!keystore.isV3(v3KeyStore);
+
   return isPublic && isV3;
 };
 

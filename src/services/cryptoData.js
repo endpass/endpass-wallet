@@ -2,7 +2,6 @@ import { get, uniqBy, mapKeys, mapValues, identity } from 'lodash';
 import throttledQueue from 'throttled-queue';
 import { NotificationError } from '@/class';
 import { http } from '@/class/singleton';
-import { CRYPTODATA_API_URL } from '@/constants';
 import { cryptoDataValidator } from '@/schema';
 
 const throttle = throttledQueue(3, ENV.serviceThrottleTimeout);
@@ -13,7 +12,7 @@ const cryptoDataService = {
    */
   async getGasPrice() {
     try {
-      const { data } = await http.get(`${ENV.cryptoDataAPIUrl}/gas/price`);
+      const { data } = await http.get(`/cryptodata/api/v1/gas/price`);
 
       return cryptoDataValidator.validateCryptoDataGasPrice(data);
     } catch (err) {
@@ -47,7 +46,7 @@ const cryptoDataService = {
 
       throttle(async () => {
         try {
-          const res = await http.get(`${ENV.cryptoDataAPIUrl}/price`, {
+          const res = await http.get(`/cryptodata/api/v1/price`, {
             params: {
               from: fromSymbolsArray.join(','),
               to: toSymbol,
@@ -57,9 +56,16 @@ const cryptoDataService = {
             res.data,
           );
 
+          if (fromSymbolsArray.length > 1) {
+            return resolve({
+              ...defaultSymbolsPrices,
+              ...data,
+            });
+          }
+
           return resolve({
             ...defaultSymbolsPrices,
-            ...data,
+            [fromSymbolsArray[0]]: data,
           });
         } catch (err) {
           return reject(err);
@@ -78,7 +84,7 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `${CRYPTODATA_API_URL}/balance/${network}/${address}/`,
+            `/cryptodata/api/v1/balance/${network}/${address}/`,
             {
               params: {
                 page: 1,
@@ -90,7 +96,7 @@ const cryptoDataService = {
             balance,
             tokens,
           } = cryptoDataValidator.validateCryptoDataBalance(res.data);
-          const actualTokens = tokens.filter(token => token.price);
+          const actualTokens = tokens.filter(token => !!token.price);
           const tokensPrices = await cryptoDataService.getSymbolsPrice(
             actualTokens.map(({ symbol }) => symbol),
             toSymbol,
@@ -99,7 +105,7 @@ const cryptoDataService = {
           return resolve({
             tokens: actualTokens.map(token => ({
               ...token,
-              price: tokensPrices[token.symbol] || 0,
+              price: tokensPrices[token.symbol] || {},
             })),
             balance,
           });
@@ -120,7 +126,7 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `${CRYPTODATA_API_URL}/transactions/${network}/${address}/token`,
+            `/cryptodata/api/v1/transactions/${network}/${address}/token`,
             {
               params: {
                 page: 1,
@@ -150,7 +156,7 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `${CRYPTODATA_API_URL}/transactions/${network}/${address}/`,
+            `/cryptodata/api/v1/transactions/${network}/${address}/`,
             {
               params: {
                 page: 1,

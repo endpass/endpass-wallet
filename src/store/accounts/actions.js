@@ -1,5 +1,9 @@
 import { get, mapKeys, isEmpty } from 'lodash';
-import { userService, localSettingsService } from '@/services';
+import {
+  cryptoDataService,
+  userService,
+  localSettingsService,
+} from '@/services';
 import Bip39 from 'bip39';
 import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';
@@ -23,12 +27,16 @@ const selectWallet = async ({ commit, dispatch }, address) => {
 
   dispatch('updateBalance');
   dispatch('updateAccountSettings');
+<<<<<<< HEAD
   await dispatch('tokens/getCurrentAccountTokens', null, {
     root: true,
   });
   await dispatch('tokens/getCurrentAccountTokensData', null, {
     root: true,
   });
+=======
+  dispatch('dapp/reset', null, { root: true });
+>>>>>>> Move balances and tokens modules to cryptodata service
 };
 
 const addWallet = async ({ commit, dispatch }, json) => {
@@ -240,22 +248,42 @@ const updateWallets = async ({ dispatch }, { wallets }) => {
   }
 };
 
+const getBalanceByAddress = async ({ rootGetters, rootState }, address) => {
+  const { balance, tokens } = await cryptoDataService.getAccountBalance({
+    network: rootGetters['web3/activeNetwork'],
+    toSymbol: rootState.user.settings.fiatCurrency,
+    address,
+  });
+
+  return {
+    balance,
+    tokens,
+  };
+};
+
 const updateBalance = async ({ commit, dispatch, state }) => {
   if (!state.address) return;
 
   try {
-    const balance = await web3.eth.getBalance(state.address);
+    const { balance, tokens } = await dispatch(
+      'getBalanceByAddress',
+      state.address,
+    );
 
     commit(SET_BALANCE, balance);
+    dispatch(
+      'tokens/setTokensInfoByAddress',
+      {
+        address: state.address,
+        tokens,
+      },
+      {
+        root: true,
+      },
+    );
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
   }
-};
-
-const getBalanceByAddress = async (ctx, { address }) => {
-  const balanceWei = await web3.eth.getBalance(address);
-
-  return fromWei(balanceWei);
 };
 
 const validatePassword = async ({ state, getters }, password) => {

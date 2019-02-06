@@ -1,15 +1,8 @@
 <template>
-  <div
-    class="media token"
-    data-test="token-item"
-  >
+  <div class="media token" data-test="token-item">
     <div class="media-left">
       <p class="image token-logo is-32x32">
-        <img
-          v-if="icon"
-          :src="icon"
-          :alt="token.name"
-        >
+        <img v-if="icon" :src="icon" :alt="token.name" />
         <span
           v-else
           :alt="token.name"
@@ -20,38 +13,31 @@
     </div>
     <div class="media-content">
       <div class="content">
-        <p
-          class="token-title"
-          data-test="token-name"
-        >
+        <p class="token-title" data-test="token-name">
           {{ token.name }}
         </p>
         <slot />
       </div>
     </div>
     <div class="media-right">
-      <span
-        v-if="!token.balance"
-        class="token-symbol"
-      >
+      <span v-if="!token.balance" class="token-symbol">
         {{ token.symbol }}
       </span>
       <balance
         v-if="token.balance"
-        :amount="amount"
+        :amount="token.balance"
         :currency="token.symbol"
         :decimals="token.decimals"
         :round="4"
         class="is-inline-block"
       />
-
       <balance
-        v-if="price"
-        :amount="amount"
+        v-if="token.price"
+        :amount="token.balance"
         :currency="currency"
         :decimals="2"
         :round="2"
-        :price="price"
+        :price="tokenPrice"
         class="is-inline-block"
       />
       <slot name="right" />
@@ -60,8 +46,8 @@
 </template>
 
 <script>
+import { get } from 'lodash';
 import Balance from '@/components/Balance';
-import { BigNumber } from 'bignumber.js';
 
 // Displays details about a single ERC20 token
 export default {
@@ -73,31 +59,15 @@ export default {
       required: true,
     },
 
-    // fiat currency
     currency: {
       type: String,
       default: 'USD',
     },
-
-    price: {
-      type: String,
-      default: '0',
-    },
   },
 
   computed: {
-    // Return token balance in wei
-    amount() {
-      let balanceBn;
-
-      if (this.token.balance instanceof BigNumber) {
-        balanceBn = this.token.balance;
-      } else {
-        balanceBn = new BigNumber(this.token.balance);
-      }
-      const decimalsBn = new BigNumber(10).pow(this.token.decimals);
-
-      return balanceBn.div(decimalsBn).toString(10);
+    tokenPrice() {
+      return get(this.token.price, this.currency, 0);
     },
 
     icon() {
