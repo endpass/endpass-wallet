@@ -82,12 +82,6 @@ describe('TokensList', () => {
   });
 
   describe('behavior', () => {
-    it('fetches token prices on mount', async () => {
-      expect.assertions(1);
-
-      expect(actions.getTokensPrices).toHaveBeenCalledTimes(1);
-    });
-
     it('correctly calculates token fiat price', () => {
       expect(wrapper.vm.getTokenPrice('FST')).toBe('2');
       expect(wrapper.vm.getTokenPrice('BADSYMBOL')).toBe('0');
