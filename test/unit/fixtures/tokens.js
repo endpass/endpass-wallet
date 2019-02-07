@@ -6,6 +6,9 @@ export const tokens = [
     address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
     decimals: 18,
     logo: 'http://images.com/img/FST.png',
+    price: {
+      USD: '1',
+    },
   },
   {
     name: 'second token',
@@ -13,6 +16,9 @@ export const tokens = [
     address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
     decimals: 8,
     logo: '',
+    price: {
+      USD: '0.01',
+    },
   },
 ];
 
@@ -42,6 +48,9 @@ export const tokensMappedByAddresses = {
     address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
     decimals: 18,
     logo: 'http://images.com/img/FST.png',
+    price: {
+      USD: '1',
+    },
   },
   '0xE41d2489571d322189246DaFA5ebDe1F4699F498': {
     name: 'second token',
@@ -49,6 +58,9 @@ export const tokensMappedByAddresses = {
     address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
     decimals: 8,
     logo: '',
+    price: {
+      USD: '2',
+    },
   },
 };
 

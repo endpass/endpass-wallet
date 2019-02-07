@@ -57,20 +57,9 @@ export default {
   computed: {
     ...mapGetters('tokens', ['currentNetUserFullTokens']),
     ...mapState({
-      tokenPrices: state => state.tokens.prices,
-      ethPrice: state => state.price.price,
       currency: state => state.user.settings.fiatCurrency,
       userTokens: state => state.tokens.userTokens,
     }),
-
-    prices() {
-      return new Map(
-        this.tokens.map(token => [
-          token.symbol,
-          this.getTokenPrice(token.symbol),
-        ]),
-      );
-    },
   },
 
   methods: {
@@ -84,17 +73,6 @@ export default {
         currentNetUserFullTokens[token.address] &&
         token.balance === '0'
       );
-    },
-
-    /**
-     * Returns value of tokens in fiat
-     * @param {String} symbol Token symbol
-     * @returns {String} Token price in fiat
-     */
-    getTokenPrice(symbol) {
-      const prices = this.tokenPrices[symbol] || {};
-
-      return new BigNumber(prices.ETH || 0).times(this.ethPrice).toString();
     },
 
     async deleteToken(token) {

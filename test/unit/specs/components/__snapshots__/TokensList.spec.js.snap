@@ -4,12 +4,12 @@ exports[`TokensList render should render given tokens list 1`] = `
 <div data-test="tokens-list" class="tokens-list">
     <ul>
         <li data-test="user-token" class="">
-            <v-token-stub token="[object Object]" currency="USD" price="2">
+            <v-token-stub token="[object Object]" currency="USD">
                 <!---->
             </v-token-stub>
         </li>
         <li data-test="user-token" class="">
-            <v-token-stub token="[object Object]" currency="USD" price="0">
+            <v-token-stub token="[object Object]" currency="USD">
                 <!---->
             </v-token-stub>
         </li>

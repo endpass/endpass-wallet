@@ -27,7 +27,9 @@ exports[`Home page render should render initial state of the component 1`] = `
               <p
                 class="subtitle"
               >
+                
                 Get started by generating an Ethereum wallet.
+              
               </p>
                
               <div
