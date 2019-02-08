@@ -89,11 +89,11 @@ const sendSignedTransaction = async (
           dispatch('handleSendingError', { err, receipt, transaction });
           sendEvent.emit('error', err);
         } else {
-          const interval = setInterval(async () => {
+          const intervalId = setInterval(async () => {
             const trx = await web3.eth.getTransactionReceipt(hash);
 
             if (trx && trx.status === true) {
-              clearInterval(interval);
+              clearInterval(intervalId);
               sendEvent.emit('confirmation');
             }
           }, 5000);

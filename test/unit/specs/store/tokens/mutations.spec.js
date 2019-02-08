@@ -7,6 +7,7 @@ import {
   SET_USER_TOKENS,
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
+  SET_INTERVAL_ID,
 } from '@/store/tokens/mutations-types';
 import { token, tokens, tokensPrices, balances } from 'fixtures/tokens';
 
@@ -26,6 +27,14 @@ describe('tokens mutations', () => {
 
         expect(state.isLoading).toBe(status);
       });
+    });
+  });
+
+  describe(SET_INTERVAL_ID, () => {
+    it('should set interval', () => {
+      const interval = 0;
+      mutations[SET_INTERVAL_ID](state, interval);
+      expect(state.intervalId).toBe(interval);
     });
   });
 

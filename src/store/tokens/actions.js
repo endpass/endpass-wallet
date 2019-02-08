@@ -5,6 +5,7 @@ import {
   ADD_NETWORK_TOKENS,
   ADD_TOKENS_PRICES,
   SET_USER_TOKENS,
+  SET_INTERVAL_ID,
 } from './mutations-types';
 import { NotificationError, Token, ERC20Token } from '@/class';
 import {
@@ -23,12 +24,13 @@ const init = async ({ dispatch }) => {
   dispatch('subscribeOnCurrentAccountTokensUpdates');
 };
 
-const subscribeOnCurrentAccountTokensUpdates = ({ dispatch }) => {
+const subscribeOnCurrentAccountTokensUpdates = ({ commit, dispatch }) => {
   dispatch('getCurrentAccountTokensData');
 
-  setInterval(() => {
+  const intervalId = setInterval(() => {
     dispatch('getCurrentAccountTokensData');
   }, ENV.priceUpdateInterval);
+  commit(SET_INTERVAL_ID, intervalId);
 };
 
 const addUserToken = async (
