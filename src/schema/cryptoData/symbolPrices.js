@@ -1,6 +1,6 @@
 const symbolRegex = '^.+$';
 
-export const cryptoDataSymbolPrice = {
+export const symbolPrice = {
   type: 'object',
   maxProperties: 1,
   minProperties: 1,
@@ -12,14 +12,14 @@ export const cryptoDataSymbolPrice = {
   },
 };
 
-export const cryptoDataSymbolPrices = {
+export const symbolsPrices = {
   oneOf: [
-    cryptoDataSymbolPrice,
+    symbolPrice,
     {
       type: 'object',
       minProperties: 1,
       patternProperties: {
-        [symbolRegex]: cryptoDataSymbolPrice,
+        [symbolRegex]: symbolPrice,
       },
       propertyNames: {
         pattern: symbolRegex,

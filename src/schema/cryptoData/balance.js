@@ -1,4 +1,4 @@
-export const cryptoDataBalance = {
+const balance = {
   type: 'object',
   required: ['balance', 'tokens'],
   tokens: {
@@ -31,4 +31,8 @@ export const cryptoDataBalance = {
       },
     },
   },
+};
+
+export default {
+  balance,
 };

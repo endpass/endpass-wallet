@@ -35,7 +35,7 @@ describe('Send – TransactionForm', () => {
   const transactionProp = {
     ...transaction,
     gasPrice: 0,
-    tokenInfo: token,
+    token,
   };
   const defaultStore = {
     state: {
@@ -202,7 +202,7 @@ describe('Send – TransactionForm', () => {
         });
       });
 
-      describe('changeTokenInfo', () => {
+      describe('changeToken', () => {
         const tokenBySymbolGetterMock = jest.fn().mockReturnValue(tokens[0]);
 
         beforeEach(() => {
@@ -225,17 +225,17 @@ describe('Send – TransactionForm', () => {
         });
 
         it('should change token info if it is not empty', () => {
-          wrapper.vm.changeTokenInfo('SCDT');
+          wrapper.vm.changeToken('SCDT');
 
           expect(tokenBySymbolGetterMock).toBeCalledWith('SCDT');
-          expect(wrapper.vm.transaction.tokenInfo).toEqual(tokens[0]);
+          expect(wrapper.vm.transaction.token).toEqual(tokens[0]);
         });
 
         it('should not change token info if it is empty', () => {
-          wrapper.vm.changeTokenInfo(null);
+          wrapper.vm.changeToken(null);
 
           expect(tokenBySymbolGetterMock).not.toBeCalled();
-          expect(wrapper.vm.transaction.tokenInfo).toBe(null);
+          expect(wrapper.vm.transaction.token).toBe(null);
         });
       });
 
@@ -270,62 +270,6 @@ describe('Send – TransactionForm', () => {
         });
       });
 
-      describe('estimateGasCost', () => {
-        beforeAll(() => {
-          Transaction.getGasFullPrice = jest.fn();
-          Transaction.isToContract = jest.fn();
-        });
-
-        it('should estimate gas cost for transaction', async () => {
-          expect.assertions(2);
-
-          Transaction.getGasFullPrice.mockResolvedValueOnce(1);
-
-          await wrapper.vm.estimateGasCost();
-
-          expect(Transaction.getGasFullPrice).toBeCalledWith(transactionProp);
-          expect(wrapper.vm.estimatedGasCost).toBe(1);
-        });
-
-        it('should handle error', async () => {
-          expect.assertions(3);
-
-          const error = new Error();
-          const previousEstimatedGas = wrapper.vm.estimatedGasCost;
-          const previousEnsError = wrapper.vm.ensError;
-
-          Transaction.getGasFullPrice.mockRejectedValueOnce(error);
-
-          await wrapper.vm.estimateGasCost();
-
-          expect(wrapper.vm.estimatedGasCost).toBe(previousEstimatedGas);
-          expect(wrapper.vm.ensError).toBe(previousEnsError);
-          expect(Transaction.isToContract).toBeCalledWith(
-            wrapper.vm.transaction,
-          );
-        });
-
-        it('should set ens error if failing transaction is contract and error contains always failing transaction', async () => {
-          expect.assertions(3);
-
-          const error = new Error('always failing transaction');
-          const previousEstimatedGas = wrapper.vm.estimatedGasCost;
-
-          Transaction.getGasFullPrice.mockRejectedValueOnce(error);
-          Transaction.isToContract.mockResolvedValueOnce(false);
-
-          await wrapper.vm.estimateGasCost();
-
-          expect(wrapper.vm.estimatedGasCost).toBe(previousEstimatedGas);
-          expect(wrapper.vm.ensError).toBe(
-            'Transaction will always fail, try other address.',
-          );
-          expect(Transaction.isToContract).toBeCalledWith(
-            wrapper.vm.transaction,
-          );
-        });
-      });
-
       describe('loadGasPrice', () => {
         it('should request gas price and set transaction price as medium price', async () => {
           expect.assertions(1);
@@ -341,23 +285,7 @@ describe('Send – TransactionForm', () => {
 
     describe('watchers', () => {
       beforeEach(() => {
-        jest.spyOn(wrapper.vm, 'debouncedGasCostEstimation');
         jest.spyOn(wrapper.vm, 'resolveEnsAddress');
-      });
-
-      it('should request gas cost on changing token info', async () => {
-        expect.assertions(1);
-
-        wrapper.setProps({
-          transaction: {
-            ...transactionProp,
-            tokenInfo: {},
-          },
-        });
-
-        await wrapper.vm.$nextTick();
-
-        expect(wrapper.vm.debouncedGasCostEstimation).toBeCalledTimes(1);
       });
 
       it('should set address as empty string if transaction to is not exist', () => {
@@ -371,8 +299,8 @@ describe('Send – TransactionForm', () => {
         expect(wrapper.vm.address).toBe('');
       });
 
-      it('should resolve esn address and request gas cost on changing address to ens', async () => {
-        expect.assertions(2);
+      it('should resolve esn address on changing address to ens', async () => {
+        expect.assertions(1);
 
         wrapper = wrapperFactory({
           computed: {
@@ -380,7 +308,6 @@ describe('Send – TransactionForm', () => {
           },
         });
 
-        jest.spyOn(wrapper.vm, 'debouncedGasCostEstimation');
         jest.spyOn(wrapper.vm, 'resolveEnsAddress');
 
         ENSResolver.getAddress.mockResolvedValue(address);
@@ -392,20 +319,6 @@ describe('Send – TransactionForm', () => {
         await global.flushPromises();
 
         expect(wrapper.vm.resolveEnsAddress).toBeCalledTimes(1);
-        expect(wrapper.vm.debouncedGasCostEstimation).toBeCalledTimes(1);
-      });
-
-      it('should request gas cost and set address to transaction on changing address', async () => {
-        expect.assertions(2);
-
-        wrapper.setData({
-          address,
-        });
-
-        await wrapper.vm.$nextTick();
-
-        expect(wrapper.vm.transaction.to).toBe(address);
-        expect(wrapper.vm.debouncedGasCostEstimation).toBeCalledTimes(1);
       });
 
       it('should resolve ens address on change active network if current address is ens', async () => {

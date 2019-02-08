@@ -29,6 +29,7 @@ import Balance from '@/components/Balance';
 
 export default {
   name: 'WalletItem',
+
   props: {
     address: {
       type: String,
@@ -39,19 +40,23 @@ export default {
       default: false,
     },
   },
+
   data: () => ({
     isLoading: true,
     balance: null,
   }),
+
   computed: {
     ...mapState('web3', ['activeCurrency']),
     ...mapGetters('web3', ['activeNetwork']),
   },
+
   watch: {
     activeNetwork() {
       this.getBalance();
     },
   },
+
   methods: {
     ...mapActions('accounts', ['getBalanceByAddress']),
 
@@ -69,13 +74,16 @@ export default {
         this.isLoading = false;
       }
     },
+
     handleClick() {
       this.$emit('click', this.address);
     },
   },
+
   mounted() {
     this.getBalance();
   },
+
   components: {
     Account,
     Balance,

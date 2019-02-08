@@ -49,7 +49,7 @@ describe('Schema validators', () => {
       });
     });
 
-    describe('validateSymbolsPrice', () => {
+    describe('cryptoDataValidator.validateSymbolsPrices', () => {
       it('should validate data', () => {
         const validData = {
           ETH: { USD: 0 },
@@ -57,7 +57,7 @@ describe('Schema validators', () => {
           '1WO': { USD: 0 },
         };
 
-        expect(cryptoDataValidator.validateSymbolsPrice(validData)).toEqual(
+        expect(cryptoDataValidator.validateSymbolsPrices(validData)).toEqual(
           validData,
         );
       });
@@ -80,7 +80,7 @@ describe('Schema validators', () => {
         ];
 
         invalidDataArray.forEach(data => {
-          expect(() => cryptoDataValidator.validateSymbolsPrice(data)).toThrow(
+          expect(() => cryptoDataValidator.validateSymbolsPrices(data)).toThrow(
             expect.any(Error),
           );
         });

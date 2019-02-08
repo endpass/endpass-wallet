@@ -33,7 +33,6 @@
 <script>
 import VToken from '@/components/VToken';
 import { mapState, mapActions, mapGetters } from 'vuex';
-import { BigNumber } from 'bignumber.js';
 import error from '@/mixins/error';
 
 export default {

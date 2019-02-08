@@ -7,7 +7,7 @@ import {
   STOP_LOADING,
   SET_INTERVAL_ID,
 } from '@/store/price/mutations-types';
-import { price, fiatCurrency } from 'fixtures/price';
+import { price, priceMulti, fiatCurrency } from 'fixtures/price';
 
 jest.useFakeTimers();
 
@@ -16,30 +16,35 @@ describe('price actions', () => {
   let dispatch;
   const getters = {
     activeCurrencyName: 'CHPOK',
-    fiatCurrency,
+    fiatCurrency: 'USD',
   };
 
   beforeEach(() => {
+    jest.clearAllMocks();
     commit = jest.fn();
     dispatch = jest.fn();
   });
+
   describe('updatePrice', () => {
     it('should perform price load with flad setting', async () => {
-      expect.assertions(5);
-
-      cryptoDataService.getSymbolsPrice.mockResolvedValue(price);
+      expect.assertions(7);
 
       await actions.updatePrice({ commit, dispatch, getters });
 
+      expect(commit).toHaveBeenCalledTimes(4);
       expect(commit).toHaveBeenNthCalledWith(1, START_LOADING);
-      expect(commit).toHaveBeenNthCalledWith(2, SET_PRICE, price[fiatCurrency]);
+      expect(commit).toHaveBeenNthCalledWith(
+        2,
+        SET_PRICE,
+        priceMulti.ETH[fiatCurrency],
+      );
       expect(commit).toHaveBeenNthCalledWith(
         3,
         SET_UPDATE_TIME,
         expect.any(Number),
       );
       expect(commit).toHaveBeenNthCalledWith(4, STOP_LOADING);
-
+      expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith(
         'connectionStatus/updateApiErrorStatus',
         {
@@ -49,6 +54,7 @@ describe('price actions', () => {
         { root: true },
       );
     });
+
     it('should handle error during performing price load', async () => {
       expect.assertions(3);
 

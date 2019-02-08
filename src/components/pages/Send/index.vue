@@ -160,6 +160,7 @@ export default {
 
       this.transaction = {
         ...defaultTx,
+        from: this.address,
         nonce,
       };
     },

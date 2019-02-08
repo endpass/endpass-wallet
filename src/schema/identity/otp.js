@@ -1,4 +1,4 @@
-export default {
+export const userOtpSetting = {
   oneOf: [
     {
       type: 'object',
@@ -20,4 +20,8 @@ export default {
       },
     },
   ],
+};
+
+export default {
+  userOtpSetting,
 };

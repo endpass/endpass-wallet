@@ -25,5 +25,5 @@ module.exports = {
   transformIgnorePatterns: ['node_modules/(?!(vue-timers|@endpass/class))'],
   snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
   setupFiles: ['<rootDir>/test/unit/setup', 'jest-canvas-mock'],
-  setupFilesAfterEnv: ['<rootDir>/test/unit/setupTests'],
+  setupTestFrameworkScriptFile: '<rootDir>/test/unit/setupTests',
 };

@@ -1,4 +1,4 @@
-export const cryptoDataToken = {
+export const token = {
   type: 'object',
   required: ['name', 'symbol', 'address'],
   properties: {
@@ -26,7 +26,12 @@ export const cryptoDataToken = {
   },
 };
 
-export const cryptoDataTokens = {
+export const tokens = {
   type: 'array',
-  items: cryptoDataToken,
+  items: token,
+};
+
+export default {
+  token,
+  tokens,
 };

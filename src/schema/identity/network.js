@@ -1,4 +1,4 @@
-export default {
+export const userNetwork = {
   type: 'object',
   required: ['id', 'name', 'url', 'currency'],
   properties: {
@@ -15,4 +15,8 @@ export default {
       type: 'integer',
     },
   },
+};
+
+export default {
+  userNetwork,
 };

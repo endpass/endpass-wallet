@@ -1,25 +1,26 @@
 {
   "presets": [
     [
-      "@babel/preset-env",
+      "env",
       {
         "modules": false,
         "targets": {
           "browsers": ["> 1%", "last 2 versions", "not ie > 0"]
         }
       }
-    ]
+    ],
+    "stage-2"
   ],
   "plugins": [
-    "@babel/plugin-syntax-dynamic-import",
+    "syntax-dynamic-import",
     "transform-vue-jsx",
-    "@babel/plugin-transform-runtime",
+    "transform-runtime",
     "lodash"
   ],
   "env": {
     "test": {
-      "presets": ["@babel/preset-env"],
-      "plugins": ["dynamic-import-node", "@babel/plugin-transform-modules-commonjs", "@babel/plugin-syntax-dynamic-import"]
+      "presets": ["env", "stage-2"],
+      "plugins": ["transform-es2015-modules-commonjs", "dynamic-import-node"]
     }
   },
   "ignore": ["*.babelrc"]
