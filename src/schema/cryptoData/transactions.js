@@ -1,4 +1,4 @@
-export const cryptoDataTransaction = {
+export const transaction = {
   type: 'object',
   required: ['timestamp', 'from', 'to', 'hash', 'value'],
   properties: {
@@ -43,7 +43,12 @@ export const cryptoDataTransaction = {
   },
 };
 
-export const cryptoDataTransactions = {
+export const transactions = {
   type: 'array',
-  items: cryptoDataTransaction,
+  items: transaction,
+};
+
+export default {
+  transaction,
+  transactions,
 };

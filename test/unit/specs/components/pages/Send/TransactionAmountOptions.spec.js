@@ -1,14 +1,14 @@
 import VeeValidate from 'vee-validate';
+import { toWei } from 'web3-utils';
 import { createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
 import validation from '@/validation';
 import { wrapShallowMountFactory } from '@/testUtils';
-
 import TransactionAmountOptions from '@/components/pages/Send/TransactionAmountOptions.vue';
-
 import { token } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
+
 localVue.use(validation);
 localVue.use(VeeValidate);
 localVue.use(UIComponents);
@@ -21,12 +21,7 @@ describe('Send – TransactionAmountOptions', () => {
     activeNet: {
       id: 1,
     },
-    currentToken: {
-      ...token,
-      price: {
-        ETH: 1,
-      },
-    },
+    currentToken: token,
   };
   let wrapper;
   let wrapperFactory;
@@ -114,7 +109,7 @@ describe('Send – TransactionAmountOptions', () => {
           wrapper.vm.getAmountFromPrice();
 
           expect(wrapper.vm.emitInputValue).toHaveBeenLastCalledWith(
-            '2.00000000',
+            '200.00000000',
           );
           expect(wrapper.emitted().input).toBeTruthy();
         });
@@ -149,7 +144,7 @@ describe('Send – TransactionAmountOptions', () => {
           });
           wrapper.vm.getPriceFromAmount();
 
-          expect(wrapper.vm.price).toBe('200.00');
+          expect(wrapper.vm.price).toBe('2.00');
         });
 
         it('should correctly change price without current token', () => {
@@ -186,32 +181,37 @@ describe('Send – TransactionAmountOptions', () => {
         });
       });
 
-      describe('handleChangeBalanceAndEstimatedGasCost', () => {
+      describe('handleChangeBalanceAndGasFee', () => {
         beforeEach(() => {
           wrapper = wrapperFactory({
             propsData: {
               ...mountProps,
-              balance: 10,
-              estimatedGasCost: 20,
+              currentToken: null,
+              balance: toWei('1', 'gwei'),
+              gasPrice: '60',
+              gasLimit: '400000',
             },
           });
         });
 
-        it('should add error if estimated gas cost greater than balance', () => {
-          wrapper.vm.handleChangeBalanceAndEstimatedGasCost();
+        it('should add error if estimated gas fee greater than balance', () => {
+          wrapper.vm.handleChangeBalanceAndGasFee();
 
           expect(wrapper.vm.errors.has('value')).toBe(true);
         });
 
-        it('should remove error if estimated gas cost lower than balance', () => {
-          wrapper = wrapperFactory();
-
-          wrapper.setProps({
-            balance: 20,
-            estimatedGasCost: 10,
+        it('should remove error if estimated gas fee lower than balance', () => {
+          wrapper = wrapperFactory({
+            propsData: {
+              ...mountProps,
+              currentToken: null,
+              balance: toWei('1', 'ether'),
+              gasPrice: '1',
+              gasLimit: '21000',
+            },
           });
 
-          wrapper.vm.handleChangeBalanceAndEstimatedGasCost();
+          wrapper.vm.handleChangeBalanceAndGasFee();
 
           expect(wrapper.vm.errors.has('value')).toBe(false);
         });
@@ -313,7 +313,7 @@ describe('Send – TransactionAmountOptions', () => {
       it('should handle balance changes', async () => {
         expect.assertions(1);
 
-        jest.spyOn(wrapper.vm, 'handleChangeBalanceAndEstimatedGasCost');
+        jest.spyOn(wrapper.vm, 'handleChangeBalanceAndGasFee');
 
         wrapper.setProps({
           balance: 999,
@@ -321,25 +321,23 @@ describe('Send – TransactionAmountOptions', () => {
 
         await wrapper.vm.$nextTick();
 
-        expect(
-          wrapper.vm.handleChangeBalanceAndEstimatedGasCost,
-        ).toBeCalledTimes(1);
+        expect(wrapper.vm.handleChangeBalanceAndGasFee).toBeCalledTimes(1);
       });
 
-      it('should handle gas cost changes', async () => {
+      it('should handle gas fee changes', async () => {
         expect.assertions(1);
 
-        jest.spyOn(wrapper.vm, 'handleChangeBalanceAndEstimatedGasCost');
+        jest.spyOn(wrapper.vm, 'handleChangeBalanceAndGasFee');
 
         wrapper.setProps({
-          estimatedGasCost: 999,
+          gasPrice: '40',
+          gasLimit: '40000',
         });
 
         await wrapper.vm.$nextTick();
+        await wrapper.vm.$nextTick();
 
-        expect(
-          wrapper.vm.handleChangeBalanceAndEstimatedGasCost,
-        ).toBeCalledTimes(1);
+        expect(wrapper.vm.handleChangeBalanceAndGasFee).toBeCalledTimes(1);
       });
     });
   });

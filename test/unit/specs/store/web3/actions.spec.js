@@ -83,14 +83,13 @@ describe('web3 actions', () => {
         ['price/updatePrice', {}, { root: true }],
         ['accounts/updateBalance', {}, { root: true }],
         ['tokens/getNetworkTokens', {}, { root: true }],
-        ['tokens/getCurrentAccountTokens', {}, { root: true }],
-        ['tokens/getCurrentAccountTokensData', null, { root: true }],
         ['transactions/updatePendingTransactionsStatus', {}, { root: true }],
+        ['dapp/reset', null, { root: true }],
       ]);
     });
 
     it('should handle errors', async () => {
-      expect.assertions(4);
+      expect.assertions(3);
 
       const error = new Error();
 
@@ -98,17 +97,7 @@ describe('web3 actions', () => {
 
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
-      expect(dispatch).toHaveBeenCalledTimes(7);
-      expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
-        root: true,
-      });
 
-      dispatch.mockClear();
-      dispatch.mockRejectedValueOnce(error);
-
-      await changeNetwork({ commit, dispatch, getters }, { networkUrl });
-
-      expect(dispatch).toHaveBeenCalledTimes(7);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -749,23 +738,8 @@ describe('web3 actions', () => {
       ]);
     });
 
-    it('should dispatch getCurrentAccountTokens action', async () => {
-      expect.assertions(2);
-
-      await init({ commit, dispatch, state });
-
-      expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toHaveBeenCalledWith(
-        'tokens/getCurrentAccountTokens',
-        {},
-        {
-          root: true,
-        },
-      );
-    });
-
     it('should handle errors', async () => {
-      expect.assertions(4);
+      expect.assertions(1);
 
       const error = new Error();
 
@@ -773,18 +747,7 @@ describe('web3 actions', () => {
 
       await init({ commit, dispatch, state });
 
-      expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
-        root: true,
-      });
-
-      dispatch.mockClear();
-      dispatch.mockRejectedValueOnce(error);
-
-      await init({ commit, dispatch, state });
-
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
+      expect(dispatch).toBeCalledWith('errors/emitError', error, {
         root: true,
       });
     });

@@ -168,8 +168,8 @@ export default {
     },
 
     'transaction.to': {
-      handler() {
-        if (!this.transaction.to) {
+      handler(newValue) {
+        if (!newValue) {
           this.address = '';
         }
       },

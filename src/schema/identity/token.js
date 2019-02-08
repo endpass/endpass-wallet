@@ -1,4 +1,4 @@
-export default {
+export const userToken = {
   type: 'object',
   required: ['address', 'decimals', 'logo', 'name', 'symbol'],
   properties: {
@@ -30,4 +30,8 @@ export default {
       type: 'boolean',
     },
   },
+};
+
+export default {
+  userToken,
 };

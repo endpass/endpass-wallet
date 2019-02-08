@@ -374,21 +374,15 @@ describe('user actions', () => {
 
       await actions.setUserSettings({ commit, dispatch });
 
-      expect(commit).toHaveBeenCalledTimes(3);
+      expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenNthCalledWith(1, SET_EMAIL, settings.email);
       expect(commit).toHaveBeenNthCalledWith(2, SET_SETTINGS, { fiatCurrency });
-      expect(commit).toHaveBeenNthCalledWith(
-        3,
-        `tokens/${SET_USER_TOKENS}`,
+      expect(dispatch).toBeCalledWith(
+        'tokens/setUserTokens',
+        expect.any(Object),
         {
-          [settings.net]: {
-            [settings.tokens['3'][0].address.toLowerCase()]: {
-              ...settings.tokens['3'][0],
-              address: settings.tokens['3'][0].address.toLowerCase(),
-            },
-          },
+          root: true,
         },
-        { root: true },
       );
     });
 

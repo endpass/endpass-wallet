@@ -4,7 +4,7 @@ import { wrapShallowMountFactory } from '@/testUtils';
 
 import TokensList from '@/components/TokensList';
 
-import { tokens, fullTokensMappedByAddresses } from 'fixtures/tokens';
+import { tokens, tokensWithBalancesMappedByAddresses } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
 
@@ -40,7 +40,7 @@ describe('TokensList', () => {
             },
           },
           getters: {
-            currentNetUserFullTokens: () => fullTokensMappedByAddresses,
+            currentNetUserFullTokens: () => tokensWithBalancesMappedByAddresses,
           },
           actions,
         },
@@ -82,11 +82,6 @@ describe('TokensList', () => {
   });
 
   describe('behavior', () => {
-    it('correctly calculates token fiat price', () => {
-      expect(wrapper.vm.getTokenPrice('FST')).toBe('2');
-      expect(wrapper.vm.getTokenPrice('BADSYMBOL')).toBe('0');
-    });
-
     it('should render remove button only for user tokens with non zero balance', async () => {
       expect.assertions(3);
 
@@ -95,13 +90,13 @@ describe('TokensList', () => {
           tokens,
         },
         computed: {
-          currentNetUserFullTokens: fullTokensMappedByAddresses,
+          currentNetUserFullTokens: tokensWithBalancesMappedByAddresses,
         },
       });
 
       wrapper.setProps({
         hasRemove: true,
-        tokens: Object.values(fullTokensMappedByAddresses),
+        tokens: Object.values(tokensWithBalancesMappedByAddresses),
       });
 
       await wrapper.vm.$nextTick();
@@ -114,7 +109,7 @@ describe('TokensList', () => {
       expect(actions.removeUserToken).toBeCalledWith(
         expect.any(Object),
         {
-          token: Object.values(fullTokensMappedByAddresses)[0],
+          token: Object.values(tokensWithBalancesMappedByAddresses)[0],
         },
         undefined,
       );

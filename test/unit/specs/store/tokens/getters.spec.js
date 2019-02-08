@@ -9,6 +9,7 @@ import {
   tokensPricesBySymbols,
   tokensMappedByNetworks,
   tokensMappedByAddresses,
+  tokensWithBalancesMappedByAddresses,
   fullTokensMappedByAddresses,
   expandedTokensMappedByNetworks,
   cuttedTokensMappedByNetworks,
@@ -223,7 +224,7 @@ describe('tokens getters', () => {
           address,
           tokensMappedByAddresses,
         ),
-      ).toEqual(fullTokensMappedByAddresses);
+      ).toEqual(tokensWithBalancesMappedByAddresses);
       expect(getters.balancesByAddress).toBeCalledTimes(1);
       expect(getters.balancesByAddress).toBeCalledWith(address);
     });

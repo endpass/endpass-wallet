@@ -213,8 +213,8 @@ describe('Send', () => {
       expect.assertions(2);
 
       const defaultTx = { ...wrapper.vm.transaction };
-
       const checkTrx = { name: 'foo' };
+
       wrapper.setData({
         transaction: checkTrx,
       });

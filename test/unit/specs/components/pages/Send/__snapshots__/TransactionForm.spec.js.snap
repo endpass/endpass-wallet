@@ -12,7 +12,7 @@ exports[`Send – TransactionForm render should render error on ens error 1`] = 
             foo
         </p>
     </div>
-    <transaction-amount-options-stub value="0" ethprice="10" fiatcurrency="USD" activenet="[object Object]" tokenscurrencies="" currenttoken="[object Object]" balance="1000000" estimatedgascost="0" disabled="true"></transaction-amount-options-stub>
+    <transaction-amount-options-stub value="0" ethprice="10" fiatcurrency="USD" activenet="[object Object]" tokenscurrencies="" currenttoken="[object Object]" balance="1000000" gasprice="3" gaslimit="22000" disabled="true"></transaction-amount-options-stub>
     <!---->
     <!---->
     <div class="field is-horizontal">
@@ -38,7 +38,7 @@ exports[`Send – TransactionForm render should render message if ens address re
         </p>
         <!---->
     </div>
-    <transaction-amount-options-stub value="0" ethprice="10" fiatcurrency="USD" activenet="[object Object]" tokenscurrencies="" currenttoken="[object Object]" balance="1000000" estimatedgascost="0" disabled="true" showfee="true"></transaction-amount-options-stub>
+    <transaction-amount-options-stub value="0" ethprice="10" fiatcurrency="USD" activenet="[object Object]" tokenscurrencies="" currenttoken="[object Object]" balance="1000000" gasprice="3" gaslimit="22000" disabled="true" showfee="true"></transaction-amount-options-stub>
     <!---->
     <!---->
     <div class="field is-horizontal">
@@ -62,7 +62,7 @@ exports[`Send – TransactionForm render should render priority options if gas p
         <!---->
         <!---->
     </div>
-    <transaction-amount-options-stub value="0" ethprice="10" fiatcurrency="USD" activenet="[object Object]" tokenscurrencies="" currenttoken="[object Object]" balance="1000000" estimatedgascost="0" disabled="true"></transaction-amount-options-stub>
+    <transaction-amount-options-stub value="0" ethprice="10" fiatcurrency="USD" activenet="[object Object]" tokenscurrencies="" currenttoken="[object Object]" balance="1000000" gasprice="3" gaslimit="22000" disabled="true"></transaction-amount-options-stub>
     <transaction-priority-options-stub prices="[object Object]" value="3"></transaction-priority-options-stub>
     <transaction-advanced-options-stub transaction="[object Object]" currenttoken="[object Object]"></transaction-advanced-options-stub>
     <div class="field is-horizontal">
@@ -86,7 +86,7 @@ exports[`Send – TransactionForm render should render without error and resolve
         <!---->
         <!---->
     </div>
-    <transaction-amount-options-stub value="0" ethprice="10" fiatcurrency="USD" activenet="[object Object]" tokenscurrencies="" currenttoken="[object Object]" balance="1000000" estimatedgascost="0" disabled="true"></transaction-amount-options-stub>
+    <transaction-amount-options-stub value="0" ethprice="10" fiatcurrency="USD" activenet="[object Object]" tokenscurrencies="" currenttoken="[object Object]" balance="1000000" gasprice="3" gaslimit="22000" disabled="true"></transaction-amount-options-stub>
     <transaction-priority-options-stub prices="[object Object]" value="3"></transaction-priority-options-stub>
     <transaction-advanced-options-stub transaction="[object Object]" currenttoken="[object Object]"></transaction-advanced-options-stub>
     <div class="field is-horizontal">

@@ -12,9 +12,9 @@ const cryptoDataService = {
    */
   async getGasPrice() {
     try {
-      const { data } = await http.get(`/cryptodata/api/v1/gas/price`);
+      const { data } = await http.get('/cryptodata/api/v1/gas/price');
 
-      return cryptoDataValidator.validateCryptoDataGasPrice(data);
+      return cryptoDataValidator.validateGasPrice(data);
     } catch (err) {
       throw new NotificationError({
         title: 'Failed to get suggested gas price',
@@ -37,7 +37,11 @@ const cryptoDataService = {
 
     return new Promise((resolve, reject) => {
       if (toSymbol === 'ETH-TEST') {
-        return resolve(defaultSymbolsPrices);
+        return resolve(
+          mapValues(mappedFromSymbols, () => ({
+            'ETH-TEST': 0,
+          })),
+        );
       }
 
       if (fromSymbols === 'ETH-TEST') {
@@ -52,9 +56,7 @@ const cryptoDataService = {
               to: toSymbol,
             },
           });
-          const data = cryptoDataValidator.validateCryptoDataSymbolPrices(
-            res.data,
-          );
+          const data = cryptoDataValidator.validateSymbolPrices(res.data);
 
           if (fromSymbolsArray.length > 1) {
             return resolve({
@@ -92,10 +94,9 @@ const cryptoDataService = {
               },
             },
           );
-          const {
-            balance,
-            tokens,
-          } = cryptoDataValidator.validateCryptoDataBalance(res.data);
+          const { balance, tokens } = cryptoDataValidator.validateBalance(
+            res.data,
+          );
           const actualTokens = tokens.filter(token => !!token.price);
           const tokensPrices = await cryptoDataService.getSymbolsPrice(
             actualTokens.map(({ symbol }) => symbol),
@@ -134,7 +135,7 @@ const cryptoDataService = {
               },
             },
           );
-          const data = cryptoDataValidator.validateCryptoDataTransactions(
+          const data = cryptoDataValidator.validateTransactions(
             get(res, 'data', []),
           );
 
@@ -165,7 +166,7 @@ const cryptoDataService = {
             },
           );
 
-          const data = cryptoDataValidator.validateCryptoDataTransactions(
+          const data = cryptoDataValidator.validateTransactions(
             get(res, 'data', []),
           );
 

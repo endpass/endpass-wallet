@@ -14,17 +14,19 @@ localVue.use(UIComponents);
 jest.useFakeTimers();
 
 describe('WalletItem', () => {
+  let accountsModule;
   let wrapper;
 
   beforeEach(() => {
+    accountsModule = {
+      namespaced: true,
+      actions: {
+        getBalanceByAddress: jest.fn(),
+      },
+    };
     const storeOptions = {
       modules: {
-        accounts: {
-          namespaced: true,
-          actions: {
-            getBalanceByAddress: jest.fn(),
-          },
-        },
+        accounts: accountsModule,
         web3: {
           namespaced: true,
           state: {
@@ -60,38 +62,40 @@ describe('WalletItem', () => {
   describe('methods', () => {
     describe('getBalance', () => {
       it('should call vuex getBalance with correct arguments', async () => {
-        expect.assertions(5);
-
-        wrapper.setMethods({
-          getBalanceByAddress: jest.fn().mockResolvedValue('10'),
-        });
+        expect.assertions(4);
 
         expect(wrapper.vm.isLoading).toBe(false);
-        await wrapper.vm.getBalance();
-        expect(wrapper.vm.balance).toEqual('10');
-        expect(wrapper.vm.getBalanceByAddress).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.getBalanceByAddress).toBeCalledWith({
-          address: 'addr',
+
+        accountsModule.actions.getBalanceByAddress.mockResolvedValueOnce({
+          balance: '10',
         });
+        await wrapper.vm.getBalance();
+
+        expect(wrapper.vm.balance).toEqual('10');
+        expect(accountsModule.actions.getBalanceByAddress).toBeCalledWith(
+          expect.anything(),
+          'addr',
+          undefined,
+        );
         expect(wrapper.vm.isLoading).toBe(false);
       });
 
       it('should throw error', async () => {
-        expect.assertions(5);
+        expect.assertions(4);
 
         const error = new Error('Balance error');
 
-        wrapper.setMethods({
-          getBalanceByAddress: jest.fn().mockRejectedValue(error),
-        });
-
+        accountsModule.actions.getBalanceByAddress.mockRejectedValue(error);
         expect(wrapper.vm.isLoading).toBe(false);
+
         await wrapper.vm.getBalance();
+
         expect(wrapper.vm.balance).toEqual('0');
-        expect(wrapper.vm.getBalanceByAddress).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.getBalanceByAddress).toBeCalledWith({
-          address: 'addr',
-        });
+        expect(accountsModule.actions.getBalanceByAddress).toBeCalledWith(
+          expect.anything(),
+          'addr',
+          undefined,
+        );
         expect(wrapper.vm.isLoading).toBe(false);
       });
     });

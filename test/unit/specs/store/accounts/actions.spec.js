@@ -52,31 +52,21 @@ describe('Accounts actions', () => {
       },
     };
 
-    it('should set address, save meta, request balance tokens with selected address', async () => {
-      expect.assertions(7);
+    it('should set address, save meta, reset dapp, request balance tokens with selected address', async () => {
+      expect.assertions(5);
 
       await actions.selectWallet(
         { state, commit, dispatch, rootState },
         checksumAddress,
       );
 
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toHaveBeenNthCalledWith(1, SET_ADDRESS, checksumAddress);
-      expect(dispatch).toHaveBeenCalledTimes(4);
+      expect(commit).toHaveBeenCalledWith(SET_ADDRESS, checksumAddress);
+      expect(dispatch).toHaveBeenCalledTimes(3);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'updateBalance');
       expect(dispatch).toHaveBeenNthCalledWith(2, 'updateAccountSettings');
-      expect(dispatch).toHaveBeenNthCalledWith(
-        3,
-        'tokens/getCurrentAccountTokens',
-        null,
-        { root: true },
-      );
-      expect(dispatch).toHaveBeenNthCalledWith(
-        4,
-        'tokens/getCurrentAccountTokensData',
-        null,
-        { root: true },
-      );
+      expect(dispatch).toHaveBeenNthCalledWith(3, 'dapp/reset', null, {
+        root: true,
+      });
     });
   });
 
@@ -732,16 +722,29 @@ describe('Accounts actions', () => {
       state = {
         address: checksumAddress,
       };
-      web3.eth.getBalance = jest.fn().mockResolvedValue(balance);
     });
 
     it('should set a new balance', async () => {
-      expect.assertions(2);
+      expect.assertions(4);
+
+      dispatch.mockResolvedValueOnce({
+        tokens: [],
+        balance,
+      });
 
       await actions.updateBalance({ commit, dispatch, state });
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toBeCalledWith(SET_BALANCE, balance);
+      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenLastCalledWith(
+        'tokens/setTokensInfoByAddress',
+        {
+          tokens: [],
+          address,
+        },
+        { root: true },
+      );
     });
 
     it('should not update the balance if the address does not exist', async () => {
@@ -759,11 +762,12 @@ describe('Accounts actions', () => {
       expect.assertions(2);
 
       const error = new Error('error');
-      web3.eth.getBalance.mockRejectedValueOnce(error);
+
+      dispatch.mockRejectedValueOnce(error);
 
       await actions.updateBalance({ dispatch, state });
 
-      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toBeCalledWith('errors/emitError', error, {
         root: true,
       });

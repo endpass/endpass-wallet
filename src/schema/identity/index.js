@@ -1,4 +1,11 @@
-export { default as userToken } from './token';
-export { default as userNetwork } from './network';
-export { default as userSettings } from './settings';
-export { default as userOtpSetting } from './otp';
+import userToken from './token';
+import userNetwork from './network';
+import userSettings from './settings';
+import userOtpSetting from './otp';
+
+export default {
+  ...userToken,
+  ...userNetwork,
+  ...userSettings,
+  ...userOtpSetting,
+};

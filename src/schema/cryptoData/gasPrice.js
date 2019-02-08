@@ -1,4 +1,4 @@
-export const cryptoDataGasPrice = {
+export const gasPrice = {
   type: 'object',
   additionalProperties: false,
   required: ['low', 'medium', 'high'],
@@ -13,4 +13,8 @@ export const cryptoDataGasPrice = {
       type: 'number',
     },
   },
+};
+
+export default {
+  gasPrice,
 };

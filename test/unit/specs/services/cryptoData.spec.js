@@ -15,8 +15,60 @@ describe('Crypto data service', () => {
     axiosMock.reset();
   });
 
+  describe('getGasPrice', () => {
+    const requestUrl = '/cryptodata/api/v1/gas/price';
+    const expectedError = new NotificationError({
+      title: 'Failed to get suggested gas price',
+      text:
+        'An error occurred while retrieving suggested gas price. Please, set manually or, try again.',
+      type: 'is-warning',
+    });
+
+    it('should make correct request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onGet(requestUrl).reply(config => {
+        expect(config.url).toBe(requestUrl);
+        return [200, gasPrice];
+      });
+
+      await cryptoDataService.getGasPrice();
+    });
+
+    it('should handle successful GET /gas/price request', () => {
+      axiosMock.onGet(requestUrl).reply(200, gasPrice);
+
+      expect(cryptoDataService.getGasPrice()).resolves.toEqual(gasPrice);
+    });
+
+    it('should handle data validation errors', async () => {
+      expect.assertions(1);
+
+      const gasPriceValidationError = new Error('gasPriceValidationError');
+
+      axiosMock.onGet(requestUrl).reply(200);
+      cryptoDataValidator.validateGasPrice.mockImplementationOnce(() => {
+        throw gasPriceValidationError;
+      });
+
+      await expect(cryptoDataService.getGasPrice()).rejects.toThrow(
+        expectedError,
+      );
+    });
+
+    it('should handle rejected GET /price request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onGet(requestUrl).reply(500);
+
+      await expect(cryptoDataService.getGasPrice()).rejects.toThrow(
+        expectedError,
+      );
+    });
+  });
+
   describe('getSymbolsPrice', () => {
-    const requestUrl = `${ENV.cryptoDataAPIUrl}/price`;
+    const requestUrl = `/cryptodata/api/v1/price`;
     const fromSymbols = ['ETH', 'BTC'];
     const toSymbol = 'USD';
     const priceMultiResponse = priceMulti;
@@ -25,17 +77,20 @@ describe('Crypto data service', () => {
     it('should correctly convert symbols to EHT-TEST', async () => {
       expect.assertions(2);
 
-      const toSymbol = 'ETH-TEST';
       const expectedResponse = {
-        ETH: { [toSymbol]: 0 },
-        BTC: { [toSymbol]: 0 },
+        ETH: {
+          'ETH-TEST': 0,
+        },
+        BTC: {
+          'ETH-TEST': 0,
+        },
       };
 
       axiosMock.onGet(requestUrl).reply(200, priceMultiResponse);
 
       const receivedResponse = await cryptoDataService.getSymbolsPrice(
         fromSymbols,
-        toSymbol,
+        'ETH-TEST',
       );
 
       expect(receivedResponse).toEqual(expectedResponse);
@@ -45,13 +100,14 @@ describe('Crypto data service', () => {
     it('should correctly convert EHT-TEST to symbol', async () => {
       expect.assertions(2);
 
-      const fromSymbols = 'ETH-TEST';
-      const expectedResponse = { [toSymbol]: 0 };
+      const expectedResponse = {
+        USD: 0,
+      };
 
       axiosMock.onGet(requestUrl).reply(200, priceMultiResponse);
 
       const receivedResponse = await cryptoDataService.getSymbolsPrice(
-        fromSymbols,
+        'ETH-TEST',
         toSymbol,
       );
 
@@ -92,14 +148,21 @@ describe('Crypto data service', () => {
     it('should handle successful GET /price request', async () => {
       expect.assertions(1);
 
-      axiosMock.onGet(requestUrl).reply(200, priceMultiResponse);
+      const expectedResponse = {
+        ETH: {
+          USD: 10,
+        },
+        BTC: {},
+      };
+
+      axiosMock.onGet(requestUrl).reply(200, expectedResponse);
 
       const response = await cryptoDataService.getSymbolsPrice(
         fromSymbols,
         toSymbol,
       );
 
-      expect(response).toEqual(priceMultiResponse);
+      expect(response).toEqual(expectedResponse);
     });
 
     it('should handle rejected GET /price request', async () => {
@@ -123,10 +186,10 @@ describe('Crypto data service', () => {
       );
 
       axiosMock.onGet(requestUrl).reply(200);
-      cryptoDataValidator.validateSymbolsPrice.mockImplementationOnce(() => {
+      cryptoDataValidator.validateSymbolPrices.mockImplementationOnce(() => {
         throw symbolPriceValidationError;
       });
-      cryptoDataValidator.validateSymbolsPrice.mockImplementationOnce(() => {
+      cryptoDataValidator.validateSymbolPrices.mockImplementationOnce(() => {
         throw symbolsPriceValidationError;
       });
 

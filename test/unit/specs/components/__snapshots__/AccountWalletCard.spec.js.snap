@@ -83,22 +83,3 @@ exports[`AccountWalletCard render should render initial state of the component 1
     </div>
 </div>
 `;
-
-exports[`AccountWalletCard render should render requested account balance and tokens if isCurrentAccount flag is falsy 1`] = `
-<div class="card app-card" balance="20">
-    <div class="card-header">
-        <h2 class="card-header-title">Receive ETH</h2>
-    </div>
-    <div data-test="current-account" class="card-content">
-        <!---->
-        <div class="card-section">
-            <account-stub address="0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c" currency="ETH" balance="0.0000" size="50"></account-stub>
-        </div>
-        <!---->
-        <div class="card-tokens">
-            <!---->
-            <tokens-list-stub tokens="" itemclass=""></tokens-list-stub>
-        </div>
-    </div>
-</div>
-`;
