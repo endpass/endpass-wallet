@@ -4,7 +4,7 @@ import {
   SET_UPDATE_TIME,
   START_LOADING,
   STOP_LOADING,
-  SET_INTERVAL,
+  SET_INTERVAL_ID,
 } from '@/store/price/mutations-types.js';
 
 describe('price mutations', () => {
@@ -40,11 +40,11 @@ describe('price mutations', () => {
     });
   });
 
-  describe(SET_INTERVAL, () => {
+  describe(SET_INTERVAL_ID, () => {
     it('should set interval', () => {
       const interval = 0;
-      mutations[SET_INTERVAL](state, interval);
-      expect(state.interval).toBe(interval);
+      mutations[SET_INTERVAL_ID](state, interval);
+      expect(state.intervalId).toBe(interval);
     });
   });
 });

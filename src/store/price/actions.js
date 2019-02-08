@@ -4,7 +4,7 @@ import {
   SET_UPDATE_TIME,
   START_LOADING,
   STOP_LOADING,
-  SET_INTERVAL,
+  SET_INTERVAL_ID,
 } from './mutations-types';
 
 const updatePrice = async ({ commit, getters, dispatch }) => {
@@ -37,10 +37,10 @@ const updatePrice = async ({ commit, getters, dispatch }) => {
 
 // Start polling for fiat price
 const subscribeOnPriceUpdates = ({ commit, dispatch }) => {
-  const interval = setInterval(() => {
+  const intervalId = setInterval(() => {
     dispatch('updatePrice');
   }, ENV.priceUpdateInterval);
-  commit(SET_INTERVAL, interval);
+  commit(SET_INTERVAL_ID, intervalId);
 };
 
 const init = async ({ dispatch }) => {

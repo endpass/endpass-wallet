@@ -3,8 +3,8 @@ import {
   SET_UPDATE_TIME,
   START_LOADING,
   STOP_LOADING,
-  SET_INTERVAL,
-} from './mutations-types.js';
+  SET_INTERVAL_ID,
+} from './mutations-types';
 
 const setPrice = (state, price) => {
   state.price = price;
@@ -22,8 +22,9 @@ const stopLoading = state => {
   state.isLoading = false;
 };
 
-const setInterval = (state, interval) => {
-  state.interval = interval;
+const setIntervalId = (state, id) => {
+  clearInterval(state.intervalId);
+  state.intervalId = id;
 };
 
 export default {
@@ -31,5 +32,5 @@ export default {
   [SET_UPDATE_TIME]: setUpdateTime,
   [START_LOADING]: startLoading,
   [STOP_LOADING]: stopLoading,
-  [SET_INTERVAL]: setInterval,
+  [SET_INTERVAL_ID]: setIntervalId,
 };

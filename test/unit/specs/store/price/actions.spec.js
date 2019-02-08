@@ -5,7 +5,7 @@ import {
   SET_UPDATE_TIME,
   START_LOADING,
   STOP_LOADING,
-  SET_INTERVAL,
+  SET_INTERVAL_ID,
 } from '@/store/price/mutations-types';
 import { price, fiatCurrency } from 'fixtures/price';
 
@@ -76,7 +76,7 @@ describe('price actions', () => {
         ENV.priceUpdateInterval,
       );
       expect(dispatch).toHaveBeenCalledWith('updatePrice');
-      expect(commit.mock.calls[0][0]).toBe(SET_INTERVAL);
+      expect(commit.mock.calls[0][0]).toBe(SET_INTERVAL_ID);
     });
   });
 

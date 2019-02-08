@@ -6,6 +6,7 @@ import {
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
   ADD_TOKENS_PRICES,
+  SET_INTERVAL_ID,
 } from '@/store/tokens/mutations-types';
 import { NotificationError, Token, ERC20Token } from '@/class';
 import {
@@ -73,15 +74,19 @@ describe('tokens actions', () => {
 
   describe('subscribeOnCurrentAccountTokensUpdates', () => {
     it('should set prices and balances updates interval', async () => {
-      expect.assertions(3);
+      expect.assertions(4);
 
       jest.useFakeTimers();
 
-      await actions.subscribeOnCurrentAccountTokensUpdates({ dispatch });
+      await actions.subscribeOnCurrentAccountTokensUpdates({
+        dispatch,
+        commit,
+      });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('getCurrentAccountTokensData');
       expect(setInterval).toHaveBeenCalledTimes(1);
+      expect(commit.mock.calls[0][0]).toBe(SET_INTERVAL_ID);
     });
   });
 

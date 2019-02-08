@@ -6,6 +6,7 @@ import {
   SET_USER_TOKENS,
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
+  SET_INTERVAL_ID,
 } from './mutations-types';
 
 const addNetworkTokens = (state, tokens) => {
@@ -33,7 +34,13 @@ const setBalancesByAddress = (state, { address, balances }) => {
   Vue.set(state.balancesByAddress, address, balances);
 };
 
+const setIntervalId = (state, id) => {
+  clearInterval(state.intervalId);
+  state.intervalId = id;
+};
+
 export default {
+  [SET_INTERVAL_ID]: setIntervalId,
   [SET_LOADING]: setLoading,
   [ADD_NETWORK_TOKENS]: addNetworkTokens,
   [ADD_TOKENS_PRICES]: addTokensPrices,

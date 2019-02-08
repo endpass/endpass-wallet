@@ -245,6 +245,11 @@ export default {
       this.nextNonceInBlock = await this.getNonceInBlock();
     }, 2000);
   },
+
+  beforeDestroy() {
+    clearInterval(this.nonceInterval);
+    this.nonceInterval = null;
+  },
 };
 </script>
 
