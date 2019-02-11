@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -53,6 +54,7 @@ import {
   ethplorerHistory,
   ethplorerTransactions,
 } from '../fixtures/transactions';
+import { tokens, prices } from '../fixtures/tokeninfo';
 
 const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1.1';
 const cryptodataAPIUrl = '/cryptodata/api/v1.1';
@@ -190,7 +192,7 @@ Cypress.Commands.add('getTokensInfo', () => {
   cy.route(
     'GET',
     '/tokeninfo/api/v1/tokens',
-    'fixture:tokeninfo/tokens.json',
+    'fixture:tokeninfo/networkTokens.json',
   ).as('tokenInfo');
 });
 
@@ -200,6 +202,25 @@ Cypress.Commands.add('getGasPrice', () => {
     `${cryptodataAPIUrl}/${mainNetworkId}/gas/price`,
     'fixture:cryptodata/gasprice',
   ).as('gasPriceMain');
+});
+
+Cypress.Commands.add('getAccountBalance', () => {
+  cy.route({
+    method: 'GET',
+    url: `${cryptodataAPIUrl}/balance/**`,
+    response: {
+      balance: 0,
+      tokens,
+    },
+  }).as('accountBalance');
+});
+
+Cypress.Commands.add('getTokensPrices', () => {
+  cy.route({
+    method: 'GET',
+    url: `${cryptodataAPIUrl}/price`,
+    response: prices,
+  }).as('tokensPrices');
 });
 
 Cypress.Commands.add('mockEthplorerRequests', () => {

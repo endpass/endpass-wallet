@@ -56,7 +56,7 @@ const cryptoDataService = {
               to: toSymbol,
             },
           });
-          const data = cryptoDataValidator.validateSymbolPrices(res.data);
+          const data = cryptoDataValidator.validateSymbolsPrices(res.data);
 
           if (fromSymbolsArray.length > 1) {
             return resolve({
