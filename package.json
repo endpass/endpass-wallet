@@ -16,6 +16,8 @@
     "build": "NODE_ENV=production node build/build.js",
     "dev-build": "node build/build.js",
     "pre-commit": "lint-staged",
+    "semantic-release": "semantic-release",
+    "commit": "git-cz",
     "lint": "eslint '**/*.{js,vue,json}' --quiet",
     "format": "prettier --write '**/*.{js,vue,json}'",
     "format:templates": "eslint src/**/*.vue --fix"
@@ -28,6 +30,33 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "release": {
+    "branch": "release",
+    "prepare": [
+      {
+        "path": "@semantic-release/changelog"
+      },
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md"
+          ]
+        }
+      ]
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
   },
   "dependencies": {
     "@endpass/class": "^0.2.1",
@@ -58,6 +87,10 @@
     "web3-utils": "1.0.0-beta.33"
   },
   "devDependencies": {
+    "@commitlint/cli": "^7.5.1",
+    "@commitlint/config-conventional": "^7.5.0",
+    "@semantic-release/changelog": "^3.0.2",
+    "@semantic-release/git": "^7.0.8",
     "@vue/test-utils": "1.0.0-beta.28",
     "autoprefixer": "^7.1.2",
     "axios-mock-adapter": "^1.15.0",
@@ -76,9 +109,11 @@
     "babel-preset-env": "^1.3.2",
     "babel-preset-stage-2": "^6.22.0",
     "chalk": "^2.0.1",
+    "commitizen": "^3.0.5",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.0",
     "cypress": "^3.1.2",
+    "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.1.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-config-prettier": "^2.9.0",
@@ -90,6 +125,7 @@
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^3.2.0",
+    "husky": "^1.3.1",
     "jest": "^23.5.0",
     "jest-canvas-mock": "^1.1.0",
     "jest-localstorage-mock": "^2.2.0",
@@ -109,6 +145,7 @@
     "rimraf": "^2.6.0",
     "sass-loader": "^6.0.7",
     "sass-resources-loader": "^1.3.3",
+    "semantic-release": "^15.13.3",
     "semver": "^5.3.0",
     "shelljs": "^0.7.6",
     "svg-inline-loader": "^0.8.0",
