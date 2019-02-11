@@ -1,9 +1,9 @@
 import MockAdapter from 'axios-mock-adapter';
-
 import { NotificationError, http } from '@/class';
 import { cryptoDataValidator } from '@/schema';
 import { gasPrice } from 'fixtures/gasPrice';
 import { price, priceMulti } from 'fixtures/price';
+import { address } from 'fixtures/accounts';
 
 const cryptoDataService = require.requireActual('@/services/cryptoData')
   .default;
@@ -203,56 +203,101 @@ describe('Crypto data service', () => {
     });
   });
 
-  describe('getGasPrice', () => {
-    const network = 1;
-    const requestUrl = `${ENV.cryptoDataAPIUrl}/${network}/gas/price`;
-    const expectedError = new NotificationError({
-      title: 'Failed to get suggested gas price',
-      text:
-        'An error occurred while retrieving suggested gas price. Please, set manually or, try again.',
-      type: 'is-warning',
-    });
+  describe('getAccountBalance', () => {
+    const networkId = 1;
+    const requestUrl = `/cryptodata/api/v1/balance/${networkId}/${address}/`;
+    const tokens = [
+      {
+        symbol: 'FST',
+        price: true,
+      },
+      {
+        symbol: 'SCDT',
+        price: true,
+      },
+    ];
+    const tokensPrices = {
+      FST: {
+        USD: 10,
+      },
+      SCDT: {
+        USD: 0,
+      },
+    };
 
-    it('should make correct request', async () => {
-      expect.assertions(1);
+    it('should request account balance and tokens with prices', async () => {
+      expect.assertions(2);
 
       axiosMock.onGet(requestUrl).reply(config => {
         expect(config.url).toBe(requestUrl);
-        return [200, gasPrice];
+
+        return [
+          200,
+          {
+            balance: 10,
+            tokens,
+          },
+        ];
       });
 
-      await cryptoDataService.getGasPrice(network);
-    });
+      cryptoDataService.getSymbolsPrice = jest
+        .fn()
+        .mockResolvedValueOnce(tokensPrices);
 
-    it('should handle successful GET /gas/price request', () => {
-      axiosMock.onGet(requestUrl).reply(200, gasPrice);
-
-      expect(cryptoDataService.getGasPrice(network)).resolves.toEqual(gasPrice);
-    });
-
-    it('should handle data validation errors', async () => {
-      expect.assertions(1);
-
-      const gasPriceValidationError = new Error('gasPriceValidationError');
-
-      axiosMock.onGet(requestUrl).reply(200);
-      cryptoDataValidator.validateGasPrice.mockImplementationOnce(() => {
-        throw gasPriceValidationError;
+      const res = await cryptoDataService.getAccountBalance({
+        network: networkId,
+        toSymbol: 'USD',
+        address,
       });
 
-      await expect(cryptoDataService.getGasPrice(network)).rejects.toThrow(
-        expectedError,
-      );
+      expect(res).toEqual({
+        balance: 10,
+        tokens: [
+          {
+            symbol: 'FST',
+            price: tokensPrices.FST,
+          },
+          {
+            symbol: 'SCDT',
+            price: tokensPrices.SCDT,
+          },
+        ],
+      });
     });
 
-    it('should handle rejected GET /gas/price request', async () => {
+    it('should reject on balance request error', () => {
+      axiosMock.onGet(requestUrl).reply(404);
+
+      expect(
+        cryptoDataService.getAccountBalance({
+          network: networkId,
+          toSymbol: 'USD',
+          address,
+        }),
+      ).rejects.toThrow();
+    });
+
+    it('should reject on price request error', async () => {
       expect.assertions(1);
 
-      axiosMock.onGet(requestUrl).reply(500);
+      const error = new Error();
 
-      await expect(cryptoDataService.getGasPrice(network)).rejects.toThrow(
-        expectedError,
-      );
+      axiosMock.onGet(requestUrl).reply(200, {
+        balance: 10,
+        tokens,
+      });
+
+      cryptoDataService.getSymbolsPrice = jest
+        .fn()
+        .mockRejectedValueOnce(error);
+
+      expect(
+        cryptoDataService.getAccountBalance({
+          network: networkId,
+          toSymbol: 'USD',
+          address,
+        }),
+      ).rejects.toThrow(error);
     });
   });
 
