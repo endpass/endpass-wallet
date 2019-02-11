@@ -19,7 +19,7 @@
           aria-describedby="gasPrice"
           placeholder="Gas price"
           data-test="gas-price-input"
-          v-validate="`required|numeric|integer|between:${transaction.gasPrice},100`"
+          v-validate="`required|numeric|integer|between:${minimumGasPrice},100`"
           :error="errors.first('gasPrice')"
           autofocus
           required
@@ -83,6 +83,11 @@ export default {
       newTransaction: null,
     };
   },
+  computed: {
+    minimumGasPrice() {
+      return Math.floor(Number(this.transaction.gasPrice) + 1);
+    },
+  },
   methods: {
     confirmResend() {
       this.$emit('confirm', this.newTransaction);
@@ -92,7 +97,10 @@ export default {
     },
   },
   created() {
-    this.newTransaction = Transaction.clone(this.transaction);
+    this.newTransaction = {
+      ...Transaction.clone(this.transaction),
+      gasPrice: this.minimumGasPrice,
+    };
   },
   mixins: [formMixin],
 };

@@ -19,6 +19,7 @@ describe('ResendModal', () => {
     const transaction = TransactionFactory.fromSendForm({
       data: '0x0',
       from: '0x0',
+      gasPrice: 90,
     });
     wrapper = shallowMount(ResendModal, {
       localVue,
@@ -45,12 +46,10 @@ describe('ResendModal', () => {
       it('should emit close event with new transaction', () => {
         wrapper.vm.confirmResend();
         expect(wrapper.emitted().confirm).toBeTruthy();
-        expect(wrapper.emitted().confirm[0][0]).toMatchObject(
-          TransactionFactory.fromSendForm({
-            data: '0x0',
-            from: '0x0',
-          }),
-        );
+        expect(wrapper.emitted().confirm[0][0]).toMatchObject({
+          ...wrapper.vm.transaction,
+          gasPrice: 91,
+        });
       });
     });
   });
