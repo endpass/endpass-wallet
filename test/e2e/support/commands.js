@@ -54,7 +54,7 @@ import {
   ethplorerTransactions,
 } from '../fixtures/transactions';
 
-const identityAPIUrl = '/identity/api/v1.1';
+const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1.1';
 const cryptodataAPIUrl = '/cryptodata/api/v1';
 
 // Sets up server and routes to stub logged in user with fixtures.

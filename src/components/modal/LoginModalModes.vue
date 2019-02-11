@@ -6,34 +6,15 @@
     <template slot="header">Get Started</template>
 
     <p
-      v-if="isSelectDefaultIdentity"
-      class="subtitle"
-    >Please enter your email address below to access your wallet or create a new one.</p>
-    <p
-      v-else-if="isSelectCustomIdentity"
+      v-if="isSelectCustomIdentity"
       class="subtitle"
     >Please enter your server address below to access your accounts.</p>
 
     <v-form
       id="loginByEmail"
+      :is-form-valid="isFormValid"
       @submit="handleSubmit"
-      :isFormValid="isFormValid"
     >
-      <v-input
-        v-if="isSelectDefaultIdentity"
-        key="email-input"
-        v-model="email"
-        :disabled="!isInputAllowed"
-        autofocus
-        label="Email"
-        help="Your email address may be used to help recover your wallet in case you lose access."
-        name="email"
-        data-vv-name="email"
-        v-validate="'required|email'"
-        :error="errors.first('email')"
-        placeholder="Your email"
-      />
-
       <v-select
         :disabled="!isInputAllowed"
         :options="availableIdentityServerTypes"
@@ -43,42 +24,27 @@
       />
 
       <v-input
+        v-validate="'required|url:require_protocol:true'"
         v-if="isSelectCustomIdentity"
         id="customIdentityServer"
         key="custom-identity-server"
         v-model="customIdentityServer"
         :disabled="!isInputAllowed"
+        :error="errors.first('customIdentityServer')"
         label="Custom Identity Server"
         data-vv-name="customIdentityServer"
         name="customIdentityServer"
-        v-validate="'required|url:require_protocol:true'"
-        :error="errors.first('customIdentityServer')"
         placeholder="Custom Identity Server"
         help="Example: https://yourserver.com/api"
       />
 
-      <v-checkbox
-        v-if="isSelectDefaultIdentity"
-        v-model="termsAccepted"
-      >
-        I accept the
-        <a
-          href="https://endpass.com/terms/"
-          target="_blank"
-        >Terms of Service</a>
-        and
-        <a
-          href="https://endpass.com/privacy/"
-          target="_blank"
-        >Privacy Policy</a>.
-      </v-checkbox>
     </v-form>
     <div
       slot="footer"
       class="buttons"
     >
       <v-button
-        :disabled="!termsAccepted || !isFormValid"
+        :disabled="!isFormValid"
         :loading="!isInputAllowed"
         class-name="is-primary is-medium"
         form="loginByEmail"
@@ -89,8 +55,8 @@
 </template>
 
 <script>
-import { IDENTITY_MODE } from '@/constants';
 import { mapActions } from 'vuex';
+import { IDENTITY_MODE } from '@/constants';
 import error from '@/mixins/error';
 import formMixin from '@/mixins/form';
 
@@ -101,7 +67,7 @@ const availableIdentityServerTypes = [
 ].filter(mode => !(ENV.isProduction && mode.val === IDENTITY_MODE.LOCAL));
 
 export default {
-  name: 'LoginByEmailModal',
+  name: 'LoginModalModes',
   props: {
     isLoading: {
       type: Boolean,
@@ -109,8 +75,6 @@ export default {
     },
   },
   data: () => ({
-    email: '',
-    termsAccepted: true,
     availableIdentityServerTypes,
     currentIdentityServerType: availableIdentityServerTypes[0].val,
     customIdentityServer: null,
@@ -157,7 +121,7 @@ export default {
           serverUrl,
         };
 
-        this.$emit('confirm', { email: this.email, mode });
+        this.$emit('confirm', { mode });
       } catch (e) {
         this.emitError(e);
       }

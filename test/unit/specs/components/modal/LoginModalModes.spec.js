@@ -5,7 +5,7 @@ import UIComponents from '@endpass/ui';
 import validation from '@/validation';
 
 import { IDENTITY_MODE } from '@/constants';
-import LoginByEmailModal from '@/components/modal/LoginByEmailModal';
+import LoginModalModes from '@/components/modal/LoginModalModes';
 
 const localVue = createLocalVue();
 
@@ -14,7 +14,7 @@ localVue.use(Vuex);
 localVue.use(VeeValidate);
 localVue.use(UIComponents);
 
-describe('LoginByEmailModal', () => {
+describe('LoginModalModes', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('LoginByEmailModal', () => {
       },
     });
 
-    wrapper = shallowMount(LoginByEmailModal, {
+    wrapper = shallowMount(LoginModalModes, {
       store,
       localVue,
       sync: false,
@@ -42,7 +42,7 @@ describe('LoginByEmailModal', () => {
 
   describe('render', () => {
     it('should be a Vue component', () => {
-      expect(wrapper.name()).toBe('LoginByEmailModal');
+      expect(wrapper.name()).toBe('LoginModalModes');
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
@@ -84,7 +84,6 @@ describe('LoginByEmailModal', () => {
     });
 
     describe('handle submit modal', () => {
-      const email = 'email';
       const customIdentityServer = 'http://custom.com/api///';
       const validCustomIdentityServer = customIdentityServer.replace(
         /\/+$/,
@@ -97,7 +96,6 @@ describe('LoginByEmailModal', () => {
         const currentIdentityServerType = IDENTITY_MODE.DEFAULT;
         const expected = [
           {
-            email,
             mode: {
               type: currentIdentityServerType,
               serverUrl: undefined,
@@ -105,7 +103,9 @@ describe('LoginByEmailModal', () => {
           },
         ];
 
-        wrapper.setData({ email, currentIdentityServerType });
+        wrapper.setData({ currentIdentityServerType });
+
+        await wrapper.vm.$nextTick();
 
         await wrapper.vm.handleSubmit();
 
@@ -118,7 +118,6 @@ describe('LoginByEmailModal', () => {
         const currentIdentityServerType = IDENTITY_MODE.CUSTOM;
         const expected = [
           {
-            email,
             mode: {
               type: currentIdentityServerType,
               serverUrl: validCustomIdentityServer,
@@ -127,7 +126,6 @@ describe('LoginByEmailModal', () => {
         ];
 
         wrapper.setData({
-          email,
           currentIdentityServerType,
           customIdentityServer,
         });
@@ -237,15 +235,15 @@ describe('LoginByEmailModal', () => {
 
     describe('validation', () => {
       beforeEach(() => {
-        wrapper = mount(LoginByEmailModal, {
+        wrapper = mount(LoginModalModes, {
           localVue,
           sync: false,
         });
       });
 
-      it('should disable submit button by default', () => {
+      it('should enable submit button by default', () => {
         const button = wrapper.find('[data-test=submit-login]');
-        expect(button.attributes().disabled).toBeTruthy();
+        expect(button.attributes().disabled).not.toBe(true);
       });
     });
   });

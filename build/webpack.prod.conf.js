@@ -16,8 +16,8 @@ const gitCommitHash = utils.getCommitHash();
 const isProduction = process.env.NODE_ENV === 'production';
 
 const env = isProduction
-  ? require('../config/prod.env')
-  : require('../config/test.env');
+  ? require('../config/env/prod.env')
+  : require('../config/env/test.env');
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({
