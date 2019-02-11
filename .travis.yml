@@ -1,32 +1,48 @@
 language: node_js
 node_js:
-- '10'
+  - '10'
 env:
   matrix:
-  - TEST_SUITE=unit
-  - TEST_SUITE=e2e
+    - TEST_SUITE=unit
+    - TEST_SUITE=e2e
 cache:
   directories:
-  - "~/.cache"
+    - "~/.cache"
 install: yarn install --frozen-lockfile
-before_script:
-- yarn run dev &
-- sleep 5
-script:
-- yarn run $TEST_SUITE
-- yarn dev-build
-deploy:
-  provider: s3
-  access_key_id:
-    secure: NYaLi/NMy+XSGrA3Aa/ln3sA1TD5iT+KzHBpEj0WJiCQe2h/ftN+mg+DikqAn073891d+8Glt2nULfFEF+LTXHfuLn1Buj7EK10f54lOQiniyMKJG5PRmV5X99bs85cqgc6drXXk6SfQv9DjJBpMJmO5cUUKpG9QOx6dXgnCN5xkrLtpnNZh9YyQaapLEsUHBUn10xxvvPIJ5dGlZPicHOSrc3Hn9RUHi/Xmen9s2mOEGBftw2ki+O3Zu3FawidvapZIEh16NqxJmQLeEgjUCfp6f6LR0CtnLJPJ12YzyWEVwWLvqsBxnLnKZRkkUc5vnmrf8yvCwTCEPVRXvlvG7051kAo8kQ9D3tW5fd+olfKTPqSysehLPsaDIq1s1Ra2gMiJd1TqJo6dWeM6gk7F+ff12ps9Lmza1tL2rcQYuh++kRz5LskButteGxjtljcBRdiJTGtgObmuOCtdLs91991eNglAWI2DKNDgTItNXIouSNia6bBi4acySBr4eZlFPX+/iVQgReGwthNayGxyPufQ1LHU4nDabLJ0QecIjfUv6aG7b4prQ+txWMyR+SyAJhrxEmsAlY3AXO8lRsllXgBNcI6wDPGcgHl2BnjGFVbNusA+9GiVeAiPqUszRwh94H8Wxe7CtEGOJkfXEaPcFtZRoQ6tnQUXGF8BjkZKpUI=
-  secret_access_key:
-    secure: V3iGjuZUQTzfS7pE8K0j07Srv6YtZhlAL23mnPU3EUpGLl8zDk+CysTRddFteqph3eTsB592F09NCWDrmFET/oCcfLQF1uLYEeYNrw78WtniXvK/VRBKOKyo+Ya9cx1pSFz5kOsyr5E0C5iniSYr6AUohRL5NkKnCfKPOgL3lU84EEZir2VSkJx6386x2J6WRpl13gpsFfDYKXmLGMM7vzrSNlDnthkZXAQKnX4/SkkglQZnPGTHWVdtqvx3g6es8XdfVZWoTF8184p846iDBUN0fmOBghZaqiBcw3Qi/fHcdY9kz3rA40B72K0R2wqPtQcnVwtAQifSkXKvnztdRs8NJ722LF2Z90o+5qw2bFL796xtlkvX92138jIRyFqqT4zu1vCjCMV9H8ZxT2qOgmu8EGEzYET5qsJo4mTojOlmwbvlLSIJcqIh6H4KcNmfUTLqbGikwgm8mZkjr27Igjapy8jjXoZsbj0iw2jmQD1Hx43RtlxHXJa0Ms42FTiUpfmuhaDuStRzcwLwd+pReBzAJiP3eOW0IX2AGjAEVYgHHFaRJojfAsjZ4vPusPfNFm9nfs7tGU8FgUGBSyRp9X0oKsGw+/nZJD2O/FffHFLLvBytWTMz85yG2K/eKT4vV6pkjDwGQFSITRnxI178yUc1ux3fEVZTsCUxGOghtPY=
-  bucket: wallet-dev.endpass.com
-  region: us-east-1
-  skip_cleanup: true
-  local_dir: dist
-  on:
-    branch: master
+stages:
+  - name: test
+  - name: deploy_npm
+    if: branch = release
+  - name: deploy_s3
+    if: branch = master
+jobs:
+  include:
+    - stage: test
+      script:
+        - yarn run dev &
+        - sleep 5
+        - yarn run $TEST_SUITE
+    - stage: deploy_npm
+      script:
+        - if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then
+          npm run dev-build && npm run semantic-release
+          fi
+    - stage: deploy_s3
+      script:
+        - npm run dev-build
+      deploy:
+        provider: s3
+        access_key_id:
+          secure: NYaLi/NMy+XSGrA3Aa/ln3sA1TD5iT+KzHBpEj0WJiCQe2h/ftN+mg+DikqAn073891d+8Glt2nULfFEF+LTXHfuLn1Buj7EK10f54lOQiniyMKJG5PRmV5X99bs85cqgc6drXXk6SfQv9DjJBpMJmO5cUUKpG9QOx6dXgnCN5xkrLtpnNZh9YyQaapLEsUHBUn10xxvvPIJ5dGlZPicHOSrc3Hn9RUHi/Xmen9s2mOEGBftw2ki+O3Zu3FawidvapZIEh16NqxJmQLeEgjUCfp6f6LR0CtnLJPJ12YzyWEVwWLvqsBxnLnKZRkkUc5vnmrf8yvCwTCEPVRXvlvG7051kAo8kQ9D3tW5fd+olfKTPqSysehLPsaDIq1s1Ra2gMiJd1TqJo6dWeM6gk7F+ff12ps9Lmza1tL2rcQYuh++kRz5LskButteGxjtljcBRdiJTGtgObmuOCtdLs91991eNglAWI2DKNDgTItNXIouSNia6bBi4acySBr4eZlFPX+/iVQgReGwthNayGxyPufQ1LHU4nDabLJ0QecIjfUv6aG7b4prQ+txWMyR+SyAJhrxEmsAlY3AXO8lRsllXgBNcI6wDPGcgHl2BnjGFVbNusA+9GiVeAiPqUszRwh94H8Wxe7CtEGOJkfXEaPcFtZRoQ6tnQUXGF8BjkZKpUI=
+        secret_access_key:
+          secure: V3iGjuZUQTzfS7pE8K0j07Srv6YtZhlAL23mnPU3EUpGLl8zDk+CysTRddFteqph3eTsB592F09NCWDrmFET/oCcfLQF1uLYEeYNrw78WtniXvK/VRBKOKyo+Ya9cx1pSFz5kOsyr5E0C5iniSYr6AUohRL5NkKnCfKPOgL3lU84EEZir2VSkJx6386x2J6WRpl13gpsFfDYKXmLGMM7vzrSNlDnthkZXAQKnX4/SkkglQZnPGTHWVdtqvx3g6es8XdfVZWoTF8184p846iDBUN0fmOBghZaqiBcw3Qi/fHcdY9kz3rA40B72K0R2wqPtQcnVwtAQifSkXKvnztdRs8NJ722LF2Z90o+5qw2bFL796xtlkvX92138jIRyFqqT4zu1vCjCMV9H8ZxT2qOgmu8EGEzYET5qsJo4mTojOlmwbvlLSIJcqIh6H4KcNmfUTLqbGikwgm8mZkjr27Igjapy8jjXoZsbj0iw2jmQD1Hx43RtlxHXJa0Ms42FTiUpfmuhaDuStRzcwLwd+pReBzAJiP3eOW0IX2AGjAEVYgHHFaRJojfAsjZ4vPusPfNFm9nfs7tGU8FgUGBSyRp9X0oKsGw+/nZJD2O/FffHFLLvBytWTMz85yG2K/eKT4vV6pkjDwGQFSITRnxI178yUc1ux3fEVZTsCUxGOghtPY=
+        bucket: wallet-dev.endpass.com
+        region: us-east-1
+        skip_cleanup: true
+        local_dir: dist
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
 notifications:
   slack:
     secure: kZwDmcoc5inpJsMal9hhqynyfRBF1HcbToZm9ihDWZ6+AIRa+YRdziwWxXajeax7JBYUuqzaOKWnx/TnliZJcacIHxTplHQAsQspT0QwXzhiA9Stxb4/Xw21pmbp+3fcgNroCUlHY76olwpOLOa4yoMn7Y1DasT6sxbk4EqgKHxT1jXL32MECE+3XTdW9LhQHfhUbqQlpcW89bkaFJ8yPapp2p6FoA0nt+fYdRYhXIvPThXiEz+o+oOsBsnl7Xct5a5um8eh5I8lqJFjXlSMXnQP2+Yu+IawHgScW98BBjQaRjDSQx7sAhC2+ZRfTzk4C5jU2unhhrOpnVexJrlieLs9B1vuf5Qq4uZisIhrIhOxBGkehrA47hnaMVxgADMH1Tg8zDOaxAJ4qqXAG/oCAjSR/a7jR25+NPH4QFNyEGP674pwFyO9QlgytLwW7WCk9Yyk8CC9JvVS88wjWo7UIao/t/P2++PN+NM716cJBaQAcG9AUT1TXVx88HIFttCOPMLeM5DTU3BYljk7fAmAVgMDzO07Dnidq0uzxGxiW1cALKD8ooCAPxdQ1agybE3AF1a80X7Ou5AJvLLoHC2WwnosG3mOMbdsjd4T0MnUBoJmxTDgHFmMttAdfcQS2YadHi0kDQgJe5pqcEmgPXNUU8p8iauDRvI8mqHQSkBhNYU=
