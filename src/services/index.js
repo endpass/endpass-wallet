@@ -1,5 +1,4 @@
 export { default as userService } from './user';
-export { default as authService } from './auth';
 export { default as identityModeService } from './identityMode';
 export { default as tokenInfoService } from './tokeninfo';
 export { default as ethplorerService } from './ethplorer';

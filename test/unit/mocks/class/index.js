@@ -4,6 +4,7 @@ jest.mock('@/class', () => {
   const ens = require.requireActual('./ens').default;
   const LocalStorage = require.requireActual('./localStorage').default;
   const proxies = require.requireActual('./proxies').default;
+  const connect = require.requireActual('./connect').default;
 
   const originClass = require.requireActual('@/class');
 
@@ -11,6 +12,7 @@ jest.mock('@/class', () => {
 
   return {
     ...originClass,
+    connect,
     proxies,
     LocalStorage,
     web3,

@@ -16,6 +16,7 @@ export { web3, ERC20Token, ENSResolver, Wallet, Transaction };
 
 export { default as ajv } from './singleton/ajv';
 export { default as http } from './singleton/http';
+export { default as connect } from './singleton/connect';
 
 export {
   ProviderFactory,

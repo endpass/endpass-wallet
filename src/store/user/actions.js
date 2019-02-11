@@ -1,6 +1,6 @@
 import { mapKeys, mapValues } from 'lodash';
-import { userService, authService, identityModeService } from '@/services';
-import { NotificationError, Token } from '@/class';
+import { userService, identityModeService } from '@/services';
+import { NotificationError, Token, connect } from '@/class';
 import { IDENTITY_MODE } from '@/constants';
 import {
   SET_AUTHORIZATION_STATUS,
@@ -30,24 +30,17 @@ const setAuthorizationStatus = (
   }
 };
 
-const login = async (
-  { commit, dispatch },
-  { email, redirectUri, mode = {} },
-) => {
+const login = async ({ commit, dispatch }, { mode = {} }) => {
   const { type = IDENTITY_MODE.DEFAULT, serverUrl } = mode;
 
   if (type === IDENTITY_MODE.DEFAULT) {
-    return authService.login({ email, redirectUri });
+    await connect.auth(window.location.origin);
   }
 
   try {
     identityModeService.setIdentityMode(type, serverUrl);
     commit(SET_IDENTITY_TYPE, type);
     commit(SET_AUTHORIZATION_STATUS, true);
-    commit(SET_EMAIL, email);
-    const settings = { email };
-
-    await userService.setSettings(settings);
 
     return dispatch('init', null, { root: true });
   } catch (e) {
@@ -59,6 +52,10 @@ const logout = async ({ commit, dispatch, getters }) => {
   commit(SET_EMAIL, null);
 
   try {
+    if (getters.isDefaultIdentity) {
+      await connect.logout();
+    }
+
     if (getters.isLocalIdentity) {
       await identityModeService.deleteIdentityData();
     }
@@ -66,10 +63,6 @@ const logout = async ({ commit, dispatch, getters }) => {
     try {
       identityModeService.setIdentityMode(IDENTITY_MODE.DEFAULT);
     } catch (e) {} // eslint-disable-line no-empty
-
-    if (getters.isDefaultIdentity) {
-      await authService.logout();
-    }
 
     window.location.reload();
   } catch (e) {
@@ -79,9 +72,6 @@ const logout = async ({ commit, dispatch, getters }) => {
 
 const validateCustomServer = (ctx, { serverUrl }) =>
   identityModeService.validateIdentityServer(serverUrl);
-
-const loginViaOTP = (ctx, { code, email }) =>
-  authService.loginViaOTP(code, email);
 
 const getOtpSettings = async ({ commit, dispatch }) => {
   try {
@@ -124,6 +114,7 @@ const setUserSettings = async ({ commit, dispatch }) => {
 
     if (email) {
       commit(SET_EMAIL, email);
+      await userService.setSettings({ email });
     }
 
     if (fiatCurrency) {
@@ -172,7 +163,6 @@ export default {
   updateSettings,
   login,
   logout,
-  loginViaOTP,
   getOtpSettings,
   setOtpSettings,
   setUserSettings,

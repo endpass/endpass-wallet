@@ -34,6 +34,8 @@ const dappBrowserUrl = 'https://browser.endpass.com';
 
 const isProduction = true;
 
+const connectUrl = 'https://auth.endpass.com';
+
 module.exports = {
   hdKeyMnemonic,
   infuraConf,
@@ -49,4 +51,5 @@ module.exports = {
   googleAnalyticsId,
   intercomAppId,
   isProduction,
+  connectUrl,
 };

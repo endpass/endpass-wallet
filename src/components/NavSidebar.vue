@@ -24,7 +24,7 @@
         <a 
           v-if="!isLoggedIn" 
           class="button is-success" 
-          @click.prevent="isLoginModal = true"
+          @click.prevent="handleLogin"
         >
           <span 
             class="icon is-small" 
@@ -299,7 +299,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('user', ['logout']),
+    ...mapActions('user', ['logout', 'login']),
     ...mapActions('accounts', ['selectWallet']),
 
     toggleNavMenu() {
@@ -317,6 +317,11 @@ export default {
     closeNewAccountModal() {
       this.newAccountModalOpen = false;
     },
+
+    async handleLogin() {
+      await this.login({});
+    },
+
     handleLogout() {
       if (this.isLocalIdentity) {
         this.toggleConfirmLogoutModal();

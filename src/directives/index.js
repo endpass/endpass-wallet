@@ -1,5 +1,5 @@
-import dynamicEvents from './dynamicEvents';
+import passEvents from './passEvents';
 
 export default Vue => {
-  dynamicEvents(Vue);
+  passEvents(Vue);
 };

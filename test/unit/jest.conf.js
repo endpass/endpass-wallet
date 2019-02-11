@@ -1,5 +1,5 @@
 const path = require('path');
-const ENV = require('../../config/test.env');
+const ENV = require('../../config/env/test.env');
 
 module.exports = {
   rootDir: path.resolve(__dirname, '../../'),

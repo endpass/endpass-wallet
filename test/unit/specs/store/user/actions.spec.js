@@ -1,5 +1,4 @@
 import userService from '@/services/user';
-import authService from '@/services/auth';
 import identityModeService from '@/services/identityMode';
 import actions from '@/store/user/actions';
 import { IDENTITY_MODE } from '@/constants';
@@ -10,19 +9,13 @@ import {
   SET_OTP_SETTINGS,
   SET_EMAIL,
 } from '@/store/user/mutations-types';
-import {
-  SAVE_TOKENS,
-  SET_USER_TOKENS,
-  SAVE_TRACKED_TOKENS,
-} from '@/store/tokens/mutations-types';
-import { NotificationError } from '@/class';
+import { SET_USER_TOKENS } from '@/store/tokens/mutations-types';
+import { connect } from '@/class';
 import { settings, otpSettings } from 'fixtures/accounts';
-import { tokens } from 'fixtures/tokens';
 
 describe('user actions', () => {
   let commit;
   let dispatch;
-  const email = 'email@email.com';
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -63,33 +56,21 @@ describe('user actions', () => {
     const serverUrl = 'http://server';
     const mode = { type, serverUrl };
 
-    it('should login through the user service by default', async () => {
-      expect.assertions(2);
+    it('should login through the connect by default', async () => {
+      expect.assertions(1);
 
-      const params = { email, redirectUri: '/uri' };
+      await actions.login({ commit, dispatch }, {});
 
-      await actions.login({ commit, dispatch }, params);
-
-      expect(authService.login).toHaveBeenCalledTimes(1);
-      expect(authService.login).toBeCalledWith(params);
+      expect(connect.auth).toHaveBeenCalledTimes(1);
     });
 
     describe('non default mode', () => {
-      it('should set the user email', async () => {
-        expect.assertions(2);
-
-        await actions.login({ commit, dispatch }, { email, mode });
-
-        expect(commit).toHaveBeenCalledTimes(3);
-        expect(commit).toHaveBeenNthCalledWith(3, SET_EMAIL, email);
-      });
-
       it('should set the user authorization status', async () => {
         expect.assertions(2);
 
-        await actions.login({ commit, dispatch }, { email, mode });
+        await actions.login({ commit, dispatch }, { mode });
 
-        expect(commit).toHaveBeenCalledTimes(3);
+        expect(commit).toHaveBeenCalledTimes(2);
         expect(commit).toHaveBeenNthCalledWith(
           2,
           SET_AUTHORIZATION_STATUS,
@@ -100,7 +81,7 @@ describe('user actions', () => {
       it('should reinit the store', async () => {
         expect.assertions(2);
 
-        await actions.login({ commit, dispatch }, { email, mode });
+        await actions.login({ commit, dispatch }, { mode });
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch).toBeCalledWith('init', null, {
@@ -111,7 +92,7 @@ describe('user actions', () => {
       it('should set the user identity mode through the user service', async () => {
         expect.assertions(2);
 
-        await actions.login({ commit, dispatch }, { email, mode });
+        await actions.login({ commit, dispatch }, { mode });
 
         expect(identityModeService.setIdentityMode).toHaveBeenCalledTimes(1);
         expect(identityModeService.setIdentityMode).toHaveBeenCalledWith(
@@ -123,19 +104,10 @@ describe('user actions', () => {
       it('should set the user identity type to the store', async () => {
         expect.assertions(2);
 
-        await actions.login({ commit, dispatch }, { email, mode });
+        await actions.login({ commit, dispatch }, { mode });
 
-        expect(commit).toHaveBeenCalledTimes(3);
+        expect(commit).toHaveBeenCalledTimes(2);
         expect(commit).toHaveBeenNthCalledWith(1, SET_IDENTITY_TYPE, type);
-      });
-
-      it('should save the user email through the user service', async () => {
-        expect.assertions(2);
-
-        await actions.login({ commit, dispatch }, { email, mode });
-
-        expect(userService.setSettings).toHaveBeenCalledTimes(1);
-        expect(userService.setSettings).toBeCalledWith({ email });
       });
 
       it('should handle error', async () => {
@@ -146,7 +118,7 @@ describe('user actions', () => {
           throw error;
         });
 
-        await actions.login({ commit, dispatch }, { email, mode });
+        await actions.login({ commit, dispatch }, { mode });
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch).toBeCalledWith('errors/emitError', error, {
@@ -207,8 +179,8 @@ describe('user actions', () => {
 
       await actions.logout({ commit, dispatch, getters });
 
-      expect(authService.logout).toHaveBeenCalledTimes(1);
-      expect(authService.logout).toBeCalledWith();
+      expect(connect.logout).toHaveBeenCalledTimes(1);
+      expect(connect.logout).toBeCalledWith();
     });
 
     it('should not call the user service if the identity mode isn`t default', async () => {
@@ -220,7 +192,7 @@ describe('user actions', () => {
 
       await actions.logout({ commit, dispatch, getters });
 
-      expect(authService.logout).toHaveBeenCalledTimes(0);
+      expect(connect.logout).toHaveBeenCalledTimes(0);
     });
 
     it('should reload the page', async () => {
@@ -240,7 +212,7 @@ describe('user actions', () => {
       expect.assertions(2);
 
       const error = new Error('error');
-      authService.logout.mockRejectedValueOnce(error);
+      connect.logout.mockRejectedValueOnce(error);
 
       await actions.logout({ commit, dispatch, getters });
 
@@ -248,19 +220,6 @@ describe('user actions', () => {
       expect(dispatch).toBeCalledWith('errors/emitError', error, {
         root: true,
       });
-    });
-  });
-
-  describe('loginViaOTP', () => {
-    const code = '123';
-
-    it('should otp login through the user service', async () => {
-      expect.assertions(2);
-
-      await actions.loginViaOTP({ commit, dispatch }, { email, code });
-
-      expect(authService.loginViaOTP).toHaveBeenCalledTimes(1);
-      expect(authService.loginViaOTP).toBeCalledWith(code, email);
     });
   });
 
