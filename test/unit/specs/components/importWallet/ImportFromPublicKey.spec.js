@@ -84,12 +84,10 @@ describe('ImportFromPublicKey', () => {
         });
         wrapper.vm.submitAddWallet();
 
-        expect(wrapper.vm.errors.items[0]).toEqual({
+        expect(wrapper.vm.errors.items[0]).toMatchObject({
           field: 'address',
           id: 'wrongAddress',
           msg: 'Address is invalid',
-          // vee validate added field
-          scope: null,
         });
       });
     });

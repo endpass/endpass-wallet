@@ -26,21 +26,8 @@ describe('AccountChooser', () => {
 
   describe('behavior', () => {
     describe('common mode', () => {
-      it('should not set listeners to search input', async () => {
-        expect.assertions(2);
-
-        jest.spyOn(wrapper.vm, 'handleSearchBlur');
-        jest.spyOn(wrapper.vm, 'handleSearchBlur');
-
-        await wrapper.vm.$nextTick();
-
-        const searchInput = wrapper.find('.multiselect__input');
-
-        searchInput.trigger('focus');
-        searchInput.trigger('blur');
-
-        expect(wrapper.vm.handleSearchBlur).not.toHaveBeenCalled();
-        expect(wrapper.vm.handleSearchBlur).not.toHaveBeenCalled();
+      it('should not render search input', () => {
+        expect(wrapper.find('.multiselect__input').exists()).toBe(false);
       });
     });
 

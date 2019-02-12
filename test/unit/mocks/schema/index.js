@@ -6,7 +6,7 @@ jest.mock('@/schema', () => ({
     validateTransactions: jest.fn(data => data),
     validateBalance: jest.fn(data => data),
     validateSymbolPrice: jest.fn(data => data),
-    validateSymbolPrices: jest.fn(data => data),
+    validateSymbolsPrices: jest.fn(data => data),
     validateGasPrice: jest.fn(data => data),
     validatePendingTransactions: jest.fn(data => data),
   },

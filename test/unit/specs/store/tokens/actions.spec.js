@@ -7,7 +7,11 @@ import {
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
 } from '@/store/tokens/mutations-types';
-
+import { NET_ID } from '@/constants';
+import tokenInfoService from '@/services/tokeninfo';
+import cryptoDataService from '@/services/cryptoData';
+import userService from '@/services/user';
+import { Token, NotificationError } from '@/class';
 import { address } from 'fixtures/accounts';
 import {
   tokens,
@@ -256,7 +260,7 @@ describe('tokens actions', () => {
       getters = {
         activeCurrencyName: 'ETH',
       };
-      cryptoDataService.getSymbolsPrice.mockResolvedValueOnce(tokensPrices);
+      cryptoDataService.getSymbolsPrices.mockResolvedValueOnce(tokensPrices);
 
       await actions.getTokensPrices(
         { commit, getters },
@@ -264,7 +268,7 @@ describe('tokens actions', () => {
       );
       await global.flushPromises();
 
-      expect(cryptoDataService.getSymbolsPrice).toHaveBeenCalledWith(
+      expect(cryptoDataService.getSymbolsPrices).toHaveBeenCalledWith(
         tokens,
         'ETH',
       );
@@ -277,7 +281,7 @@ describe('tokens actions', () => {
       await actions.getTokensPrices({ commit, getters }, { tokensSymbols: [] });
       await global.flushPromises();
 
-      expect(cryptoDataService.getSymbolsPrice).not.toBeCalled();
+      expect(cryptoDataService.getSymbolsPrices).not.toBeCalled();
       expect(commit).not.toBeCalled();
     });
   });

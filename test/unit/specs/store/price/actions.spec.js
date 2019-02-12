@@ -60,7 +60,7 @@ describe('price actions', () => {
 
       const err = new Error();
 
-      cryptoDataService.getSymbolsPrice.mockRejectedValueOnce(err);
+      cryptoDataService.getSymbolsPrices.mockRejectedValueOnce(err);
 
       await actions.updatePrice({ commit, dispatch, getters });
 

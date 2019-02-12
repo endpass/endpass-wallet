@@ -73,7 +73,7 @@ describe('Transaction', () => {
     });
 
     describe('action process', () => {
-      it('should render loader', () => {
+      it('should render loader with pending text', () => {
         wrapper.setData({
           state: 'resent',
           transactionToSend: {
@@ -82,9 +82,14 @@ describe('Transaction', () => {
         });
 
         expect(wrapper.find('v-spinner-stub').html()).toMatchSnapshot();
+      });
 
+      it('should render loader with canceling text', () => {
         wrapper.setData({
           state: 'canceled',
+          transactionToSend: {
+            state: 'pending',
+          },
         });
 
         expect(wrapper.find('v-spinner-stub').html()).toMatchSnapshot();

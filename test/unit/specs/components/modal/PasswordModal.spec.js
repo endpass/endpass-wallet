@@ -33,6 +33,7 @@ describe('PasswordModal', () => {
       methods: {
         validatePassword: () => null,
       },
+      sync: false,
     };
   });
 

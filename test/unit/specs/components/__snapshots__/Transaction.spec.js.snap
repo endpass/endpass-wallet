@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Transaction render action process should render loader 1`] = `<v-spinner-stub label="Resending..." class="level-item has-text-info actions-loader"></v-spinner-stub>`;
+exports[`Transaction render action process should render loader with canceling text 1`] = `<v-spinner-stub label="Canceling..." class="level-item has-text-info actions-loader"></v-spinner-stub>`;
 
-exports[`Transaction render action process should render loader 2`] = `<v-spinner-stub label="Resending..." class="level-item has-text-info actions-loader"></v-spinner-stub>`;
+exports[`Transaction render action process should render loader with pending text 1`] = `<v-spinner-stub label="Resending..." class="level-item has-text-info actions-loader"></v-spinner-stub>`;
 
 exports[`Transaction render should render the initial state of the component 1`] = `
 <div

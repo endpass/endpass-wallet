@@ -27,16 +27,6 @@ const selectWallet = async ({ commit, dispatch }, address) => {
 
   dispatch('updateBalance');
   dispatch('updateAccountSettings');
-<<<<<<< HEAD
-  await dispatch('tokens/getCurrentAccountTokens', null, {
-    root: true,
-  });
-  await dispatch('tokens/getCurrentAccountTokensData', null, {
-    root: true,
-  });
-=======
-  dispatch('dapp/reset', null, { root: true });
->>>>>>> Move balances and tokens modules to cryptodata service
 };
 
 const addWallet = async ({ commit, dispatch }, json) => {
@@ -269,6 +259,8 @@ const updateBalance = async ({ commit, dispatch, state }) => {
       'getBalanceByAddress',
       state.address,
     );
+
+    console.log('balance', balance, tokens);
 
     commit(SET_BALANCE, balance);
     dispatch(

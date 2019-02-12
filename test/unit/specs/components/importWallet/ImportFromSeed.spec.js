@@ -103,12 +103,10 @@ describe('ImportFromSeed', () => {
         });
 
         wrapper.vm.handlePasswordConfirm(password).then(() => {
-          expect(wrapper.vm.errors.items[0]).toEqual({
+          expect(wrapper.vm.errors.items[0]).toMatchObject({
             field: 'hdkeyPhrase',
             msg: 'Seed phrase is invalid',
             id: 'wrongPhrase',
-            // vee validate added field
-            scope: null,
           });
           done();
         });

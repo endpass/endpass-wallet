@@ -32,26 +32,16 @@ exports[`AccountChooser render should render account chooser component 1`] = `
           style="display: none;"
         />
          
-        <input
-          autocomplete="off"
-          class="multiselect__input"
-          name=""
-          placeholder="Select account"
-          style="display: none;"
-          tabindex="0"
-          type="text"
-        />
+        <!---->
          
         <!---->
          
-        <span>
-          <span
-            class="multiselect__single"
-          >
-            
-            Select account
+        <span
+          class="multiselect__placeholder"
+        >
           
-          </span>
+            Select account
+        
         </span>
       </div>
        
@@ -59,6 +49,7 @@ exports[`AccountChooser render should render account chooser component 1`] = `
         class="multiselect__content-wrapper"
         name="multiselect"
         style="max-height: 300px; display: none;"
+        tabindex="-1"
       >
         <ul
           class="multiselect__content"
@@ -78,6 +69,14 @@ exports[`AccountChooser render should render account chooser component 1`] = `
         No elements found. Consider changing the search query.
       
               </span>
+            </span>
+          </li>
+           
+          <li>
+            <span
+              class="multiselect__option"
+            >
+              List is empty.
             </span>
           </li>
            

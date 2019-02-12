@@ -5,7 +5,7 @@ jest.mock('@/services/cryptoData', () => {
   const { pendingTransactions } = require('fixtures/cryptoData');
 
   return {
-    getSymbolsPrice: jest.fn().mockResolvedValue(priceMulti),
+    getSymbolsPrices: jest.fn().mockResolvedValue(priceMulti),
     getGasPrice: jest.fn().mockResolvedValue(gasPrice),
     getPendingTransactions: jest.fn().mockResolvedValue(pendingTransactions),
   };
