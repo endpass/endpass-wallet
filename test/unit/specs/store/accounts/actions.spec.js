@@ -53,7 +53,7 @@ describe('Accounts actions', () => {
     };
 
     it('should set address, save meta, reset dapp, request balance tokens with selected address', async () => {
-      expect.assertions(5);
+      expect.assertions(4);
 
       await actions.selectWallet(
         { state, commit, dispatch, rootState },
@@ -61,12 +61,9 @@ describe('Accounts actions', () => {
       );
 
       expect(commit).toHaveBeenCalledWith(SET_ADDRESS, checksumAddress);
-      expect(dispatch).toHaveBeenCalledTimes(3);
+      expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'updateBalance');
       expect(dispatch).toHaveBeenNthCalledWith(2, 'updateAccountSettings');
-      expect(dispatch).toHaveBeenNthCalledWith(3, 'dapp/reset', null, {
-        root: true,
-      });
     });
   });
 

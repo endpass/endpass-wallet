@@ -56,7 +56,8 @@ exports[`Send render should render transaction hash if it not empty 1`] = `
                         </div>
                         <div class="message-body">
                             <p>
-                                Your transaction has been broadcast to the network. It may take a few minutes before the transaction is confirmed.
+                                Your transaction has been broadcast to the network. It may
+                                take a few minutes before the transaction is confirmed.
                             </p>
                             <p class="label">Transaction Id</p>
                             <p class="code">0x0</p>

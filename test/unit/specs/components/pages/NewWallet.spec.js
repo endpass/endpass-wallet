@@ -39,6 +39,7 @@ describe('NewWallet page', () => {
         wrapper = mount(NewWallet, {
           localVue,
           store,
+          sync: false,
           mixins: [VueTimers],
         });
       });
@@ -124,6 +125,7 @@ describe('NewWallet page', () => {
         wrapper = mount(NewWallet, {
           localVue,
           store,
+          sync: false,
           mocks: {
             $ga,
           },
@@ -134,8 +136,7 @@ describe('NewWallet page', () => {
       });
 
       it('should reduce the remainingSeedPhraseTimeout for one second', () => {
-        const remainingSeedPhraseTimeout =
-          wrapper.vm.remainingSeedPhraseTimeout;
+        const { remainingSeedPhraseTimeout } = wrapper.vm;
 
         wrapper.vm.handleSeedPhraseTimer();
 
@@ -180,6 +181,7 @@ describe('NewWallet page', () => {
       wrapper = shallowMount(NewWallet, {
         localVue,
         store,
+        sync: false,
         mixins: [VueTimers],
       });
     });

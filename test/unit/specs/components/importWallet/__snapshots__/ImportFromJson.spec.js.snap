@@ -17,7 +17,7 @@ exports[`ImportFromJson render should render initial state of the component 1`] 
           class="file-label"
         >
           <input
-            aria-invalid="true"
+            aria-invalid="false"
             aria-required="true"
             class="file-input"
             data-test="input-file"

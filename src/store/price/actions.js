@@ -12,7 +12,7 @@ const updatePrice = async ({ commit, getters, dispatch }) => {
   try {
     commit(START_LOADING);
 
-    const price = await cryptoDataService.getSymbolsPrice(
+    const price = await cryptoDataService.getSymbolsPrices(
       getters.activeCurrencyName,
       getters.fiatCurrency,
     );

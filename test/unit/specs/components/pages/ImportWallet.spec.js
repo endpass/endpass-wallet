@@ -8,10 +8,6 @@ import validation from '@/validation';
 import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
 import ImportFromSeed from '@/components/importWallet/ImportFromSeed';
 
-import LocalStorageMock from 'mocks/localStorage';
-
-global.localStorage = LocalStorageMock;
-
 const localVue = createLocalVue();
 
 localVue.use(Vuex);

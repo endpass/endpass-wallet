@@ -2,8 +2,7 @@
 
 exports[`Send – TransactionForm render should render error on ens error 1`] = `
 <v-form-stub isformvalid="true" id="sendEther" data-test="transaction-send-form">
-    <div class="field">
-        <label class="label">
+    <div class="field"><label class="label">
             To
         </label>
         <account-chooser-stub width="35" height="32" accounts="" placeholder="0x... or ENS" allowempty="true" value="" creatable="true" data-test="transaction-address-select"></account-chooser-stub>
@@ -28,8 +27,7 @@ exports[`Send – TransactionForm render should render error on ens error 1`] = 
 
 exports[`Send – TransactionForm render should render message if ens address resolved 1`] = `
 <v-form-stub id="sendEther" data-test="transaction-send-form">
-    <div class="field">
-        <label class="label">
+    <div class="field"><label class="label">
             To
         </label>
         <account-chooser-stub width="35" height="32" accounts="" placeholder="0x... or ENS" allowempty="true" value="" creatable="true" data-test="transaction-address-select"></account-chooser-stub>
@@ -54,8 +52,7 @@ exports[`Send – TransactionForm render should render message if ens address re
 
 exports[`Send – TransactionForm render should render priority options if gas price is not null 1`] = `
 <v-form-stub isformvalid="true" id="sendEther" data-test="transaction-send-form">
-    <div class="field">
-        <label class="label">
+    <div class="field"><label class="label">
             To
         </label>
         <account-chooser-stub width="35" height="32" accounts="" placeholder="0x... or ENS" allowempty="true" value="" creatable="true" data-test="transaction-address-select"></account-chooser-stub>
@@ -78,8 +75,7 @@ exports[`Send – TransactionForm render should render priority options if gas p
 
 exports[`Send – TransactionForm render should render without error and resolved address by default 1`] = `
 <v-form-stub isformvalid="true" id="sendEther" data-test="transaction-send-form">
-    <div class="field">
-        <label class="label">
+    <div class="field"><label class="label">
             To
         </label>
         <account-chooser-stub width="35" height="32" accounts="" placeholder="0x... or ENS" allowempty="true" value="" creatable="true" data-test="transaction-address-select"></account-chooser-stub>

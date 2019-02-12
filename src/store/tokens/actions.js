@@ -92,7 +92,7 @@ const getTokensPrices = async ({ commit, getters }, { tokensSymbols }) => {
   if (tokensSymbols.length === 0) return;
 
   try {
-    const prices = await cryptoDataService.getSymbolsPrice(
+    const prices = await cryptoDataService.getSymbolsPrices(
       tokensSymbols,
       getters.activeCurrencyName,
     );
@@ -147,7 +147,7 @@ const setUserTokens = async ({ commit, rootGetters, state }, tokens) => {
 
     commit(SET_USER_TOKENS, tokens);
 
-    const tokensPrices = await cryptoDataService.getSymbolsPrice(
+    const tokensPrices = await cryptoDataService.getSymbolsPrices(
       Object.keys(currentNetworkTokens),
       fiatCurrency,
     );

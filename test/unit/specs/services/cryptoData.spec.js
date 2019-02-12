@@ -67,7 +67,7 @@ describe('Crypto data service', () => {
     });
   });
 
-  describe('getSymbolsPrice', () => {
+  describe('getSymbolsPricess', () => {
     const requestUrl = `/cryptodata/api/v1/price`;
     const fromSymbols = ['ETH', 'BTC'];
     const toSymbol = 'USD';
@@ -88,7 +88,7 @@ describe('Crypto data service', () => {
 
       axiosMock.onGet(requestUrl).reply(200, priceMultiResponse);
 
-      const receivedResponse = await cryptoDataService.getSymbolsPrice(
+      const receivedResponse = await cryptoDataService.getSymbolsPrices(
         fromSymbols,
         'ETH-TEST',
       );
@@ -106,7 +106,7 @@ describe('Crypto data service', () => {
 
       axiosMock.onGet(requestUrl).reply(200, priceMultiResponse);
 
-      const receivedResponse = await cryptoDataService.getSymbolsPrice(
+      const receivedResponse = await cryptoDataService.getSymbolsPrices(
         'ETH-TEST',
         toSymbol,
       );
@@ -127,7 +127,7 @@ describe('Crypto data service', () => {
         return [200, priceResponse];
       });
 
-      await cryptoDataService.getSymbolsPrice(fromSymbols[0], toSymbol);
+      await cryptoDataService.getSymbolsPrices(fromSymbols[0], toSymbol);
     });
 
     it('should make correct request for many symbols', async () => {
@@ -142,7 +142,7 @@ describe('Crypto data service', () => {
         return [200, priceMultiResponse];
       });
 
-      await cryptoDataService.getSymbolsPrice(fromSymbols, toSymbol);
+      await cryptoDataService.getSymbolsPrices(fromSymbols, toSymbol);
     });
 
     it('should handle successful GET /price request', async () => {
@@ -157,7 +157,7 @@ describe('Crypto data service', () => {
 
       axiosMock.onGet(requestUrl).reply(200, expectedResponse);
 
-      const response = await cryptoDataService.getSymbolsPrice(
+      const response = await cryptoDataService.getSymbolsPrices(
         fromSymbols,
         toSymbol,
       );
@@ -171,7 +171,7 @@ describe('Crypto data service', () => {
       axiosMock.onGet(requestUrl).reply(500);
 
       await expect(
-        cryptoDataService.getSymbolsPrice(fromSymbols, toSymbol),
+        cryptoDataService.getSymbolsPrices(fromSymbols, toSymbol),
       ).rejects.toThrow(expect.any(Error));
     });
 
@@ -186,19 +186,19 @@ describe('Crypto data service', () => {
       );
 
       axiosMock.onGet(requestUrl).reply(200);
-      cryptoDataValidator.validateSymbolPrices.mockImplementationOnce(() => {
+      cryptoDataValidator.validateSymbolsPrices.mockImplementationOnce(() => {
         throw symbolPriceValidationError;
       });
-      cryptoDataValidator.validateSymbolPrices.mockImplementationOnce(() => {
+      cryptoDataValidator.validateSymbolsPrices.mockImplementationOnce(() => {
         throw symbolsPriceValidationError;
       });
 
       await expect(
-        cryptoDataService.getSymbolsPrice(fromSymbols[0], toSymbol),
+        cryptoDataService.getSymbolsPrices(fromSymbols[0], toSymbol),
       ).rejects.toThrow(symbolPriceValidationError);
 
       await expect(
-        cryptoDataService.getSymbolsPrice(fromSymbols, toSymbol),
+        cryptoDataService.getSymbolsPrices(fromSymbols, toSymbol),
       ).rejects.toThrow(symbolsPriceValidationError);
     });
   });
@@ -240,7 +240,7 @@ describe('Crypto data service', () => {
         ];
       });
 
-      cryptoDataService.getSymbolsPrice = jest
+      cryptoDataService.getSymbolsPrices = jest
         .fn()
         .mockResolvedValueOnce(tokensPrices);
 
@@ -287,7 +287,7 @@ describe('Crypto data service', () => {
         tokens,
       });
 
-      cryptoDataService.getSymbolsPrice = jest
+      cryptoDataService.getSymbolsPrices = jest
         .fn()
         .mockRejectedValueOnce(error);
 

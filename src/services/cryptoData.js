@@ -30,7 +30,7 @@ const cryptoDataService = {
    * @param {String} toSymbol
    * @returns {Promise}
    */
-  getSymbolsPrice(fromSymbols, toSymbol) {
+  getSymbolsPrices(fromSymbols, toSymbol) {
     const fromSymbolsArray = [].concat(fromSymbols);
     const mappedFromSymbols = mapKeys(fromSymbolsArray, identity);
     const defaultSymbolsPrices = mapValues(mappedFromSymbols, () => ({}));
@@ -87,18 +87,12 @@ const cryptoDataService = {
         try {
           const res = await http.get(
             `/cryptodata/api/v1/balance/${network}/${address}/`,
-            {
-              params: {
-                page: 1,
-                limit: 50,
-              },
-            },
           );
           const { balance, tokens } = cryptoDataValidator.validateBalance(
             res.data,
           );
           const actualTokens = tokens.filter(token => !!token.price);
-          const tokensPrices = await cryptoDataService.getSymbolsPrice(
+          const tokensPrices = await cryptoDataService.getSymbolsPrices(
             actualTokens.map(({ symbol }) => symbol),
             toSymbol,
           );

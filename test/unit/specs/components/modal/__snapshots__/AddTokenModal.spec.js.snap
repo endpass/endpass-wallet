@@ -13,7 +13,7 @@ exports[`AddTokenModal render should render component 1`] = `
   >
     <v-input-stub
       aria-describedby="address"
-      aria-invalid="true"
+      aria-invalid="false"
       aria-required="true"
       autofocus=""
       classname=""

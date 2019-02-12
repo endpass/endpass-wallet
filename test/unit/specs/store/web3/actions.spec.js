@@ -98,6 +98,8 @@ describe('web3 actions', () => {
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
 
+      expect(commit).toHaveBeenCalledTimes(3);
+      expect(dispatch).toHaveBeenCalledTimes(4);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });

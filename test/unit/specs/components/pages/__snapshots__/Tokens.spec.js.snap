@@ -96,6 +96,10 @@ exports[`TokensPage render should render component 1`] = `
               class="card-content"
             >
               <multiselect-stub
+                blockkeys=""
+                clearonselect="true"
+                closeonselect="true"
+                customlabel="function(t,e){return i(t)?\\"\\":e?t[e]:t}"
                 data-test="tokens-select"
                 deselectgrouplabel="Press enter to deselect group"
                 deselectlabel="Press enter to remove"
@@ -105,15 +109,22 @@ exports[`TokensPage render should render component 1`] = `
                 maxheight="300"
                 name=""
                 opendirection=""
+                optionheight="40"
                 options=""
-                options-limit="10"
+                optionslimit="10"
                 placeholder="Type to search tokens..."
+                searchable="true"
                 selectedlabel="Selected"
                 selectgrouplabel="Press enter to select group"
                 selectlabel="Press enter to select"
+                shownooptions="true"
                 shownoresults="true"
+                showpointer="true"
                 tabindex="0"
-                track-by="address"
+                tagplaceholder="Press enter to create a tag"
+                tagposition="top"
+                trackby="address"
+                value=""
               />
             </div>
           </div>
