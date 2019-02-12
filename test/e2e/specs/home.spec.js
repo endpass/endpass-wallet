@@ -1,10 +1,12 @@
 describe('Home Page', () => {
   beforeEach(() => {
     cy.getInitialData();
+    // cy.getAccountBalance();
     cy.visit('#/');
     cy.mockWeb3Requests();
     cy.makeStoreAlias();
     cy.waitPageLoad();
+    cy.wait('@identityUser');
   });
 
   it('should contain account address and export button for private account', () => {
@@ -19,17 +21,14 @@ describe('Home Page', () => {
     cy.get('[data-test=export-wallet-button]').should('not.exist');
   });
 
-  it('should render user current account tokens', () => {
-    cy.route({
-      method: 'GET',
-      url: '/tokeninfo/api/v1/tokens',
-      response: {},
+  describe('user tokens', () => {
+    it('should render user current account tokens', () => {
+      cy.get('[data-test=user-token]')
+        .its('length')
+        .should('eq', 1);
     });
-    cy.get('[data-test=user-token]')
-      .its('length')
-      .should('eq', 1);
-  });
 
+<<<<<<< HEAD
   it('should change visible state of test ETH button', () => {
     cy.get('[data-test=get-test-eth-button]').should('not.exist');
 
@@ -77,5 +76,11 @@ describe('Home Page', () => {
   it('should correctly navigate to add token page', () => {
     cy.get('[data-test=edit-tokens-button]').click();
     cy.url().should('eq', `${Cypress.config().baseUrl}/#/tokens`);
+=======
+    it('should correctly navigate to add token page', () => {
+      cy.get('[data-test=edit-tokens-button]').click();
+      cy.url().should('eq', `${Cypress.config().baseUrl}/#/tokens`);
+    });
+>>>>>>> Update cypress and failed e2e tests
   });
 });

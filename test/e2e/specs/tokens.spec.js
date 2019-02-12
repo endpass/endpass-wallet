@@ -41,7 +41,7 @@ describe('Tokens Page', () => {
         });
 
         cy.get('[data-test=tokens-list]').within(() => {
-          cy.get('[data-test=token-item]').should('have.length', 3);
+          cy.get('[data-test=token-item]').should('have.length', 4);
           cy.get('[data-test=token-name]').contains(customToken.name);
         });
       });
@@ -108,7 +108,7 @@ describe('Tokens Page', () => {
         });
 
         cy.get('[data-test=tokens-list]').within(() => {
-          cy.get('[data-test=token-item]').should('have.length', 1);
+          cy.get('[data-test=token-item]').should('have.length', 2);
           cy.get('[data-test=token-name]').contains(customToken.name);
         });
       });
