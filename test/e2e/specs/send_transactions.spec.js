@@ -14,9 +14,11 @@ describe('Send Transactions Page', () => {
   describe('the user is authorized', () => {
     beforeEach(() => {
       cy.getInitialData();
+      cy.getAccountBalance();
       cy.visit('#/send');
       cy.mockWeb3Requests();
       cy.waitPageLoad();
+      cy.wait('@accountBalance');
     });
 
     it('should validate form', () => {
@@ -93,11 +95,11 @@ describe('Send Transactions Page', () => {
     it('should send transaction', () => {
       cy.makeStoreAlias();
 
-      cy.get('@store').invoke(
-        'commit',
-        'accounts/SET_BALANCE',
-        '2000000000000000000',
-      );
+      // cy.get('@store').invoke(
+      //   'commit',
+      //   'accounts/SET_BALANCE',
+      //   '2000000000000000000',
+      // );
 
       cy.get('[data-test=transaction-send-form]').within(() => {
         cy.get('[data-test=transaction-address-select]')

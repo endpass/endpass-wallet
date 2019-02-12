@@ -209,7 +209,7 @@ Cypress.Commands.add('getAccountBalance', () => {
     method: 'GET',
     url: `${cryptodataAPIUrl}/balance/**`,
     response: {
-      balance: 0,
+      balance: '2000000000000000000',
       tokens,
     },
   }).as('accountBalance');

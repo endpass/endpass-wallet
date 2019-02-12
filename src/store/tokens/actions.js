@@ -138,19 +138,21 @@ const setTokensInfoByAddress = async ({ commit }, { address, tokens }) => {
   commit(ADD_NETWORK_TOKENS, networkTokens);
 };
 
-const setUserTokens = async ({ commit, rootGetters }, tokens) => {
+const setUserTokens = async ({ commit, rootGetters, state }, tokens) => {
   const currentNetwork = rootGetters['web3/activeNetwork'];
   const currentNetworkTokens = get(tokens, currentNetwork);
 
   if (currentNetworkTokens) {
     const fiatCurrency = rootGetters['price/fiatCurrency'];
+
+    commit(SET_USER_TOKENS, tokens);
+
     const tokensPrices = await cryptoDataService.getSymbolsPrice(
       Object.keys(currentNetworkTokens),
       fiatCurrency,
     );
 
     commit(SET_TOKENS_PRICES, tokensPrices);
-    commit(SET_USER_TOKENS, tokens);
   }
 };
 
