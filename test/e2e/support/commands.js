@@ -56,6 +56,7 @@ import {
 
 const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1.1';
 const cryptodataAPIUrl = '/cryptodata/api/v1.1';
+const mainNetworkId = 1;
 
 // Sets up server and routes to stub logged in user with fixtures.
 // Usage: cy.login()
@@ -196,9 +197,9 @@ Cypress.Commands.add('getTokensInfo', () => {
 Cypress.Commands.add('getGasPrice', () => {
   cy.route(
     'GET',
-    `${cryptodataAPIUrl}/gas/price`,
+    `${cryptodataAPIUrl}/${mainNetworkId}/gas/price`,
     'fixture:cryptodata/gasprice',
-  ).as('gasPrice');
+  ).as('gasPriceMain');
 });
 
 Cypress.Commands.add('mockEthplorerRequests', () => {
