@@ -107,7 +107,7 @@ describe('Transactions History Page', () => {
         },
       );
 
-      cy.get('.notification').should('not.exist');
+      cy.get('.app-notification').should('not.exist');
       cy.get('[data-test=transactions-history-item]').should('not.exist');
 
       cy.get('@store').invoke(
@@ -118,7 +118,7 @@ describe('Transactions History Page', () => {
         },
       );
 
-      cy.get('.notification.is-info').contains('Incoming transaction');
+      cy.get('.app-notification.is-info').contains('Incoming transaction');
       cy.get('[data-test=transactions-history-item]').should('not.exist');
 
       cy.get('@store').invoke(
@@ -129,7 +129,7 @@ describe('Transactions History Page', () => {
         },
       );
 
-      cy.get('.notification.is-info').should('have.length', 2);
+      cy.get('.app-notification.is-info').should('have.length', 2);
       cy.get('[data-test=transactions-history-item]')
         .should('have.length', 1)
         .and('be.visible');

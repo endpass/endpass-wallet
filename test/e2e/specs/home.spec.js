@@ -40,6 +40,13 @@ describe('Home Page', () => {
       cy.get('[data-test=get-test-eth-button]').should('not.exist');
     });
 
+    it('should correctly navigate to add token page', () => {
+      cy.get('[data-test=edit-tokens-button]').click();
+      cy.url().should('eq', `${Cypress.config().baseUrl}/#/tokens`);
+    });
+  });
+
+  describe('faucet', () => {
     it('should pass faucet ETH', () => {
       cy.switchCurrency('ETH-TEST');
 
@@ -51,7 +58,7 @@ describe('Home Page', () => {
       cy.get('[data-test=get-test-eth-button]').contains(
         'Next try after 2 mins',
       );
-      cy.get('.notification.is-info').contains(
+      cy.get('.app-notification.is-info').contains(
         'Please wait couple of minutes for receive ETH',
       );
     });
@@ -69,14 +76,9 @@ describe('Home Page', () => {
       cy.get('[data-test=get-test-eth-button]').click();
       cy.get('[data-test=get-test-eth-button]').contains('Too many attempts');
 
-      cy.get('.notification.is-warning').contains(
+      cy.get('.app-notification.is-warning').contains(
         'Your wallet address is banned',
       );
-    });
-
-    it('should correctly navigate to add token page', () => {
-      cy.get('[data-test=edit-tokens-button]').click();
-      cy.url().should('eq', `${Cypress.config().baseUrl}/#/tokens`);
     });
   });
 });
