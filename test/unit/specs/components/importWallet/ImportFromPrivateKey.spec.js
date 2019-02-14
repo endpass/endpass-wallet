@@ -59,29 +59,6 @@ describe('ImportFromPrivateKey', () => {
     describe('handlePasswordConfirm', () => {
       const password = 'password';
 
-      it('should call vuex addWalletWithPrivateKey with correct arguments', done => {
-        expect.assertions(2);
-
-        const privateKey = '0xprivateKey';
-        const expectedPrivateKey = privateKey.replace(/^0x/, '');
-
-        wrapper.setData({ privateKey });
-        wrapper.setMethods({
-          addWalletWithPrivateKey: jest.fn(),
-        });
-
-        wrapper.vm.handlePasswordConfirm(password).then(() => {
-          expect(wrapper.vm.addWalletWithPrivateKey).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.addWalletWithPrivateKey).toBeCalledWith({
-            privateKey: expectedPrivateKey,
-            password,
-          });
-          done();
-        });
-
-        jest.runAllTimers();
-      });
-
       it('should redirect to root after successful wallet creation', done => {
         expect.assertions(2);
 
@@ -124,6 +101,30 @@ describe('ImportFromPrivateKey', () => {
           });
           done();
         });
+        jest.runAllTimers();
+      });
+
+      // TODO: if this test will be first in describe block, it will be failed
+      it('should call vuex addWalletWithPrivateKey with correct arguments', done => {
+        expect.assertions(2);
+
+        const privateKey = '0xprivateKey';
+        const expectedPrivateKey = privateKey.replace(/^0x/, '');
+
+        wrapper.setData({ privateKey });
+        wrapper.setMethods({
+          addWalletWithPrivateKey: jest.fn(),
+        });
+
+        wrapper.vm.handlePasswordConfirm(password).then(() => {
+          expect(wrapper.vm.addWalletWithPrivateKey).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.addWalletWithPrivateKey).toBeCalledWith({
+            privateKey: expectedPrivateKey,
+            password,
+          });
+          done();
+        });
+
         jest.runAllTimers();
       });
     });
