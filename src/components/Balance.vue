@@ -26,7 +26,7 @@
   </div>
 </template>
 <script>
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { BigNumber } from 'bignumber.js';
 
 export default {

@@ -207,7 +207,7 @@ Cypress.Commands.add('getGasPrice', () => {
 Cypress.Commands.add('getAccountBalance', () => {
   cy.route({
     method: 'GET',
-    url: `${cryptodataAPIUrl}/balance/**`,
+    url: `${cryptodataAPIUrl}/*/balance/**`,
     response: {
       balance: '2000000000000000000',
       tokens,

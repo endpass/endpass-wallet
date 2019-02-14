@@ -1,38 +1,33 @@
 <template>
-  <div
-    id="app"
-    class="app-container"
-  >
+  <div id="app" class="app-container">
     <header class="app-header">
-      <info-bar class="app-section"/>
+      <info-bar class="app-section" />
     </header>
 
     <nav class="app-nav">
-      <nav-sidebar/>
+      <nav-sidebar />
     </nav>
 
     <main class="app-content">
       <div class>
-        <div class="notify-container">
-          <notifications
-            :speed="500"
-            :duration="5000"
-            width="auto"
-            position="top center"
-            data-test="app-notification"
-            classes="app-notification"
-          />
-        </div>
+        <notifications
+          :speed="500"
+          :duration="5000"
+          width="auto"
+          position="top center"
+          data-test="app-notification"
+          classes="notification app-notification"
+        />
 
         <div class="main app-content app-section">
-          <router-view/>
+          <router-view />
         </div>
       </div>
     </main>
 
-    <quick-actions class="is-hidden-desktop"/>
-    <app-footer class="is-hidden-touch"/>
-    <v-page-loader :isLoading="isLoading"/>
+    <quick-actions class="is-hidden-desktop" />
+    <app-footer class="is-hidden-touch" />
+    <v-page-loader :isLoading="isLoading" />
   </div>
 </template>
 

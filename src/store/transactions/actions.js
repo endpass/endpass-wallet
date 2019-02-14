@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { BigNumber } from 'bignumber.js';
 import { toChecksumAddress, hexToNumberString, fromWei } from 'web3-utils';
 import {

@@ -138,7 +138,7 @@ const setTokensInfoByAddress = async ({ commit }, { address, tokens }) => {
   commit(ADD_NETWORK_TOKENS, networkTokens);
 };
 
-const setUserTokens = async ({ commit, rootGetters, state }, tokens) => {
+const setUserTokens = async ({ commit, rootGetters }, tokens) => {
   const currentNetwork = rootGetters['web3/activeNetwork'];
   const currentNetworkTokens = get(tokens, currentNetwork);
 

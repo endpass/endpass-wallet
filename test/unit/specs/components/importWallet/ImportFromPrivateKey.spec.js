@@ -98,6 +98,7 @@ describe('ImportFromPrivateKey', () => {
           expect(wrapper.vm.errors.items[0]).toMatchObject({
             field: 'privateKey',
             msg: 'Private key is invalid',
+            id: 'wrongPrivateKey',
           });
           done();
         });

@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { cryptoDataService } from '@/services';
 import {
   SET_PRICE,

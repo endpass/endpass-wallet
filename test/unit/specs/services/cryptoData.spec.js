@@ -16,7 +16,7 @@ describe('Crypto data service', () => {
   });
 
   describe('getGasPrice', () => {
-    const requestUrl = '/cryptodata/api/v1/gas/price';
+    const requestUrl = `${ENV.cryptoDataAPIUrl}/gas/price`;
     const expectedError = new NotificationError({
       title: 'Failed to get suggested gas price',
       text:
@@ -67,8 +67,8 @@ describe('Crypto data service', () => {
     });
   });
 
-  describe('getSymbolsPricess', () => {
-    const requestUrl = `/cryptodata/api/v1/price`;
+  describe('getSymbolsPrices', () => {
+    const requestUrl = `${ENV.cryptoDataAPIUrl}/price`;
     const fromSymbols = ['ETH', 'BTC'];
     const toSymbol = 'USD';
     const priceMultiResponse = priceMulti;
@@ -205,7 +205,9 @@ describe('Crypto data service', () => {
 
   describe('getAccountBalance', () => {
     const networkId = 1;
-    const requestUrl = `/cryptodata/api/v1/balance/${networkId}/${address}/`;
+    const requestUrl = `${
+      ENV.cryptoDataAPIUrl
+    }/${networkId}/balance/${address}`;
     const tokens = [
       {
         symbol: 'FST',
