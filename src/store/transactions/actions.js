@@ -202,42 +202,52 @@ const handleBlockTransactions = (
   { transactions, networkId },
 ) => {
   const userAddresses = rootGetters['accounts/accountAddresses'];
-  const toUserTrx = transactions.filter(
-    trx =>
-      trx.to &&
-      userAddresses.some(
-        address => toChecksumAddress(address) === toChecksumAddress(trx.to),
-      ),
-  );
+  const userTrx = transactions.filter(trx => {
+    if (!trx.to) {
+      return;
+    }
 
-  if (!toUserTrx.length) return;
+    const checksumTrxFrom = toChecksumAddress(trx.from);
+    const checksumTrxTo = toChecksumAddress(trx.to);
 
-  toUserTrx.forEach(trx => {
-    const incomeTrx = TransactionFactory.fromBlock({ ...trx, networkId });
+    return userAddresses.some(address => {
+      const checksumAddress = toChecksumAddress(address);
 
-    dispatch('handleIncomingTransaction', { transaction: incomeTrx });
-
-    const { hash, to } = trx;
-    const shortAddress = getShortStringWithEllipsis(to);
-    const shortHash = getShortStringWithEllipsis(hash);
-    const error = new NotificationError({
-      title: 'Incoming transaction',
-      text: `Address ${shortAddress} received transaction ${shortHash}`,
+      return (
+        checksumAddress === checksumTrxFrom || checksumAddress === checksumTrxTo
+      );
     });
-
-    dispatch('errors/emitError', error, { root: true });
   });
 
-  if (!rootState.accounts.address) {
-    return;
-  }
+  if (!userTrx.length) return;
+
+  userTrx.forEach(trx => {
+    const transaction = TransactionFactory.fromBlock({ ...trx, networkId });
+    const incomeTrx = userAddresses.find(
+      address => toChecksumAddress(trx.to) === toChecksumAddress(address),
+    );
+
+    dispatch('handleIncomingTransaction', { transaction });
+
+    if (incomeTrx) {
+      const { hash, to } = trx;
+      const shortAddress = getShortStringWithEllipsis(to);
+      const shortHash = getShortStringWithEllipsis(hash);
+      const error = new NotificationError({
+        title: 'Incoming transaction',
+        text: `Address ${shortAddress} received transaction ${shortHash}`,
+      });
+
+      dispatch('errors/emitError', error, { root: true });
+    }
+  });
 
   const { address } = rootState.accounts;
-  const trxAddresses = toUserTrx.map(({ to }) => to);
 
   if (
+    address &&
     rootGetters['web3/isMainNetwork'] &&
-    trxAddresses.some(trxAddress => trxAddress === address)
+    userTrx.some(({ from, to }) => from === address || to === address)
   ) {
     dispatch('updateTransactionHistory');
   }
@@ -431,6 +441,49 @@ const getPendingTransactions = async ({
   }
 };
 
+const updatePendingTransactionsStatus = async ({
+  state,
+  commit,
+  rootGetters,
+  dispatch,
+}) => {
+  try {
+    const pendingTransactions = state.pendingTransactions.filter(
+      ({ state, networkId }) =>
+        state === TRANSACTION_STATUS.PENDING &&
+        networkId === rootGetters['web3/activeNetwork'],
+    );
+    const receipts = await Promise.all(
+      pendingTransactions.map(({ hash }) =>
+        web3.eth.getTransactionReceipt(hash),
+      ),
+    );
+
+    receipts.forEach((receipt, index) => {
+      if (!receipt) {
+        return;
+      }
+
+      commit(UPDATE_TRANSACTION, {
+        payload: {
+          state: receipt.status
+            ? TRANSACTION_STATUS.SUCCESS
+            : TRANSACTION_STATUS.ERROR,
+        },
+        hash: pendingTransactions[index].hash,
+      });
+    });
+  } catch (e) {
+    const error = new NotificationError({
+      title: 'Failed to update pending transactions',
+      text: 'An error occurred while updating pending transactions.',
+      type: 'is-warning',
+    });
+
+    dispatch('errors/emitError', error, { root: true });
+  }
+};
+
 export default {
   handleTransactionSendingHash,
   handleTransactionResendingHash,
@@ -447,4 +500,5 @@ export default {
   resendTransaction,
   processTransactionAction,
   getPendingTransactions,
+  updatePendingTransactionsStatus,
 };

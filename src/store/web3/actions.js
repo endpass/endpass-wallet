@@ -27,6 +27,11 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
     dispatch('tokens/getCurrentAccountTokensData', null, {
       root: true,
     }),
+    dispatch(
+      'transactions/updatePendingTransactionsStatus',
+      {},
+      { root: true },
+    ),
   ]).catch(e => dispatch('errors/emitError', e, { root: true }));
 };
 
