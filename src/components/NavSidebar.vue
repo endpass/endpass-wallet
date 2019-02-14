@@ -318,8 +318,8 @@ export default {
       this.newAccountModalOpen = false;
     },
 
-    async handleLogin() {
-      await this.login({});
+    handleLogin() {
+      this.isLoginModal = true;
     },
 
     handleLogout() {
