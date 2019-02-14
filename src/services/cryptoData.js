@@ -12,7 +12,7 @@ const cryptoDataService = {
    */
   async getGasPrice() {
     try {
-      const { data } = await http.get('/cryptodata/api/v1/gas/price');
+      const { data } = await http.get(`${ENV.cryptoDataAPIUrl}/gas/price`);
 
       return cryptoDataValidator.validateGasPrice(data);
     } catch (err) {
@@ -50,7 +50,7 @@ const cryptoDataService = {
 
       throttle(async () => {
         try {
-          const res = await http.get(`/cryptodata/api/v1/price`, {
+          const res = await http.get(`${ENV.cryptoDataAPIUrl}/price`, {
             params: {
               from: fromSymbolsArray.join(','),
               to: toSymbol,
@@ -86,7 +86,7 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `/cryptodata/api/v1/balance/${network}/${address}/`,
+            `${ENV.cryptoDataAPIUrl}/${network}/balance/${address}`,
           );
           const { balance, tokens } = cryptoDataValidator.validateBalance(
             res.data,
@@ -121,7 +121,7 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `/cryptodata/api/v1/transactions/${network}/${address}/token`,
+            `${ENV.cryptoDataAPIUrl}/transactions/${network}/${address}/token`,
             {
               params: {
                 page: 1,
@@ -151,7 +151,7 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `/cryptodata/api/v1/transactions/${network}/${address}/`,
+            `${ENV.cryptoDataAPIUrl}/transactions/${network}/${address}`,
             {
               params: {
                 page: 1,

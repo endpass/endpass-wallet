@@ -188,4 +188,8 @@ export default {
 .account-chooser .multiselect--active {
   z-index: 10;
 }
+
+.account-chooser .multiselect__input {
+  width: 100% !important;
+}
 </style>

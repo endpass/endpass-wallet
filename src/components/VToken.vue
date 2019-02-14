@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { get } from 'lodash';
+import get from 'lodash/get';
 import Balance from '@/components/Balance';
 
 // Displays details about a single ERC20 token

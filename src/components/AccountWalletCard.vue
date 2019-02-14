@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import Bignumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { fromWei } from 'web3-utils';
 import { get, uniqBy, toString } from 'lodash';
 import { mapActions, mapGetters } from 'vuex';
@@ -92,14 +92,14 @@ export default {
       if (this.isCurrentAccount) {
         const stringifiedBalance = toString(this.balance);
 
-        return Bignumber(stringifiedBalance).toFixed(4);
+        return BigNumber(stringifiedBalance).toFixed(4);
       }
 
       const balance = get(this.localBalanceData, 'balance', '0');
       const stringifiedBalance = toString(balance);
       const normalizedBalance = fromWei(stringifiedBalance);
 
-      return Bignumber(normalizedBalance).toFixed(4);
+      return BigNumber(normalizedBalance).toFixed(4);
     },
   },
 

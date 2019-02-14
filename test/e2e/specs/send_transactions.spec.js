@@ -1,4 +1,3 @@
-import { address } from '../fixtures/accounts';
 import { transactionToSend } from '../fixtures/transactions';
 
 describe('Send Transactions Page', () => {
@@ -94,12 +93,6 @@ describe('Send Transactions Page', () => {
 
     it('should send transaction', () => {
       cy.makeStoreAlias();
-
-      // cy.get('@store').invoke(
-      //   'commit',
-      //   'accounts/SET_BALANCE',
-      //   '2000000000000000000',
-      // );
 
       cy.get('[data-test=transaction-send-form]').within(() => {
         cy.get('[data-test=transaction-address-select]')

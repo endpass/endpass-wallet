@@ -260,8 +260,6 @@ const updateBalance = async ({ commit, dispatch, state }) => {
       state.address,
     );
 
-    console.log('balance', balance, tokens);
-
     commit(SET_BALANCE, balance);
     dispatch(
       'tokens/setTokensInfoByAddress',

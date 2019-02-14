@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { BigNumber } from 'bignumber.js';
 import { fromWei, toWei } from 'web3-utils';
 

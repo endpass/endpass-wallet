@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { IDENTITY_MODE } from '@/constants';
 
 const isLoggedIn = state => !!state.authorizationStatus;

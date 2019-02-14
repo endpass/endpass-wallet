@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { fromWei, hexToBytes } from 'web3-utils';
 import { BigNumber } from 'bignumber.js';
 import { keystore } from '@endpass/utils';
