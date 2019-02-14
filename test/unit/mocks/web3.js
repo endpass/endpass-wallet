@@ -60,6 +60,7 @@ jest.mock('web3', () => {
     getBlockNumber: jest.fn().mockResolvedValue(),
     getBlock: jest.fn().mockResolvedValue({}),
     getTransactionCount: jest.fn().mockResolvedValue(),
+    getTransactionReceipt: jest.fn().mockResolvedValue({}),
     getCode: jest.fn().mockResolvedValue('0x0123'),
     subscribe,
     clearSubscriptions,

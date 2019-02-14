@@ -1,3 +1,4 @@
+import Web3 from 'web3';
 import state from '@/store/transactions';
 import {
   ADD_TRANSACTION,
@@ -387,6 +388,26 @@ describe('transactions actions', () => {
       expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenNthCalledWith(
         2,
+        'errors/emitError',
+        expect.any(NotificationError),
+        { root: true },
+      );
+    });
+
+    it('should not show notification of incoming transactions', () => {
+      const transaction = {
+        ...blockTransactions[0],
+        from: rootGetters['accounts/accountAddresses'][0],
+        to: blockTransactions[0].from,
+      };
+
+      actions.handleBlockTransactions(
+        { dispatch, rootState, rootGetters },
+        { transactions: [transaction] },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).not.toHaveBeenCalledWith(
         'errors/emitError',
         expect.any(NotificationError),
         { root: true },
@@ -894,6 +915,121 @@ describe('transactions actions', () => {
         dispatch,
         rootState,
         rootGetters,
+      });
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+        root: true,
+      });
+    });
+  });
+
+  describe('updatePendingTransactionsStatus', () => {
+    const { updatePendingTransactionsStatus } = actions;
+    const hash = 'transaction hash';
+    let state;
+
+    beforeEach(() => {
+      state = {
+        pendingTransactions: [
+          {
+            hash,
+            state: TRANSACTION_STATUS.PENDING,
+            networkId: rootGetters['web3/activeNetwork'],
+          },
+        ],
+      };
+    });
+
+    it('should not update transactions', async () => {
+      expect.assertions(2);
+
+      let state = {
+        pendingTransactions: [],
+      };
+
+      await updatePendingTransactionsStatus({ state, commit, rootGetters });
+      expect(commit).toHaveBeenCalledTimes(0);
+
+      state = {
+        pendingTransactions: [
+          {
+            state: TRANSACTION_STATUS.SUCCESS,
+            networkId: rootGetters['web3/activeNetwork'],
+          },
+          {
+            state: TRANSACTION_STATUS.PENDING,
+            networkId: rootGetters['web3/activeNetwork'] + 1,
+          },
+        ],
+      };
+
+      await updatePendingTransactionsStatus({ state, commit, rootGetters });
+      expect(commit).toHaveBeenCalledTimes(0);
+    });
+
+    it('should not update transactions if it still pending', async () => {
+      expect.assertions(1);
+
+      Web3.eth.getTransactionReceipt.mockResolvedValueOnce(null);
+
+      await updatePendingTransactionsStatus({ state, commit, rootGetters });
+
+      expect(commit).toHaveBeenCalledTimes(0);
+    });
+
+    it('should set success transaction status', async () => {
+      expect.assertions(2);
+
+      Web3.eth.getTransactionReceipt.mockResolvedValueOnce({
+        status: true,
+      });
+
+      await updatePendingTransactionsStatus({ state, commit, rootGetters });
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(UPDATE_TRANSACTION, {
+        payload: {
+          state: TRANSACTION_STATUS.SUCCESS,
+        },
+        hash,
+      });
+    });
+
+    it('should set error transaction status', async () => {
+      expect.assertions(2);
+
+      Web3.eth.getTransactionReceipt.mockResolvedValueOnce({
+        status: false,
+      });
+
+      await updatePendingTransactionsStatus({ state, commit, rootGetters });
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(UPDATE_TRANSACTION, {
+        payload: {
+          state: TRANSACTION_STATUS.ERROR,
+        },
+        hash,
+      });
+    });
+
+    it('should handle errors', async () => {
+      expect.assertions(2);
+
+      const error = new NotificationError({
+        title: 'Failed to update pending transactions',
+        text: 'An error occurred while updating pending transactions.',
+        type: 'is-warning',
+      });
+
+      Web3.eth.getTransactionReceipt.mockRejectedValueOnce();
+
+      await updatePendingTransactionsStatus({
+        state,
+        commit,
+        rootGetters,
+        dispatch,
       });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
