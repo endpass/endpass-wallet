@@ -9,10 +9,7 @@
                 <p class="card-header-title">Your Tokens</p>
               </div>
               <div class="card-content is-narrow">
-                <nav
-                  v-if="isUserHasTokens"
-                  class="panel"
-                >
+                <nav v-if="isUserHasTokens" class="panel">
                   <div class="panel-block">
                     <search-input
                       v-model="userTokenQuery"
@@ -33,11 +30,7 @@
                     />
                   </div>
                 </nav>
-                <p
-                  v-else
-                  class="small"
-                  data-test="no-tokens-text"
-                >
+                <p v-else class="small" data-test="no-tokens-text">
                   You have no tokens on this network. Add some!
                 </p>
               </div>
@@ -84,14 +77,10 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
-    <add-token-modal
-      v-if="addTokenModalOpen"
-      @close="closeAddTokenModal"
-    />
+    <add-token-modal v-if="addTokenModalOpen" @close="closeAddTokenModal" />
   </div>
 </template>
 
@@ -143,20 +132,26 @@ export default {
         networkTokenQuery,
       } = this;
 
-      if (this.activeNetId !== NET_ID.MAIN) {
-        return [];
-      }
+      if (this.activeNetId !== NET_ID.MAIN) return [];
 
-      return Object.values(networkTokens).filter(token => {
-        const isUserHasToken = Object.keys(
-          allCurrentAccountFullTokens,
-        ).includes(token.address);
+      const networkTokensList = Object.values(networkTokens);
+      const currentAccountTokensSymbols = Object.keys(
+        allCurrentAccountFullTokens,
+      );
+
+      return networkTokensList.filter(token => {
+        const isUserHasToken = currentAccountTokensSymbols.includes(
+          token.symbol,
+        );
+
+        if (isUserHasToken) return false;
+
         const isTokenMatchesToSearch = this.matchTokenToQuery(
           token,
           networkTokenQuery,
         );
 
-        return !isUserHasToken && isTokenMatchesToSearch;
+        return isTokenMatchesToSearch;
       });
     },
 

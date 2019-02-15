@@ -16,6 +16,13 @@ const addNetworkTokens = (state, tokens) => {
       Object.assign(state.networkTokens, {
         [key]: Object.freeze(tokens[key]), // Freeze tokens for perfomance reasons
       });
+    } else {
+      Object.assign(state.networkTokens, {
+        [key]: Object.freeze({
+          ...state.networkTokens[key],
+          ...tokens[key],
+        }),
+      });
     }
   });
 };

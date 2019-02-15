@@ -139,6 +139,7 @@ describe('tokens actions', () => {
       getters = {
         userTokenByAddress: () => true,
         userTokensWithoutToken: () => cuttedTokensMappedByNetworks,
+        currentNetUserTokens: tokensMappedByAddresses,
       };
 
       await actions.removeUserToken(
@@ -163,11 +164,16 @@ describe('tokens actions', () => {
       getters = {
         userTokenByAddress: () => false,
         userTokensWithoutToken: () => cuttedTokensMappedByNetworks,
+        currentNetUserTokens: tokensMappedByAddresses,
       };
 
       await actions.removeUserToken(
         { state, commit, dispatch, getters, rootGetters },
-        { token: tokens[0] },
+        {
+          token: {
+            address: '0x0123',
+          },
+        },
       );
 
       expect(userService.removeToken).not.toBeCalled();
@@ -182,6 +188,7 @@ describe('tokens actions', () => {
       getters = {
         userTokenByAddress: () => true,
         userTokensWithoutToken: () => cuttedTokensMappedByNetworks,
+        currentNetUserTokens: tokensMappedByAddresses,
       };
       userService.removeToken.mockRejectedValueOnce(error);
 
