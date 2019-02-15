@@ -1,4 +1,4 @@
-import { get, omit } from 'lodash';
+import { get, omit, mapKeys } from 'lodash';
 import {
   SET_LOADING,
   SET_TOKENS_BY_ADDRESS,
@@ -28,8 +28,8 @@ const addUserToken = async (
 
     const net = rootGetters['web3/activeNetwork'];
     const updatedTokens = getters.userTokensWithToken({
-      net,
       token: consistentToken,
+      net,
     });
 
     await userService.addToken(net, consistentToken);
@@ -47,16 +47,15 @@ const removeUserToken = async (
   try {
     const consistentToken = Token.getConsistent(token);
 
-    if (!getters.userTokenByAddress(consistentToken.address)) return;
+    if (!getters.currentNetUserTokens[token.address]) return;
 
     const netId = rootGetters['web3/activeNetwork'];
     const updatedTokens = getters.userTokensWithoutToken({
       net: netId,
       token: consistentToken,
     });
-    const { address } = consistentToken;
 
-    await userService.removeToken(netId, address);
+    await userService.removeToken(netId, consistentToken.address);
 
     commit(SET_USER_TOKENS, updatedTokens);
   } catch (err) {
@@ -140,15 +139,27 @@ const setTokensInfoByAddress = async ({ commit }, { address, tokens }) => {
 
 const setUserTokens = async ({ commit, rootGetters }, tokens) => {
   const currentNetwork = rootGetters['web3/activeNetwork'];
-  const currentNetworkTokens = get(tokens, currentNetwork);
 
-  if (currentNetworkTokens) {
+  if (get(tokens, currentNetwork)) {
     const fiatCurrency = rootGetters['price/fiatCurrency'];
+    const tokensMappedByNetworksAndAddresses = Object.keys(tokens).reduce(
+      (acc, key) =>
+        Object.assign(acc, {
+          [key]: mapKeys(tokens[key], 'address'),
+        }),
+      {},
+    );
+    const currentNetworkTokens = get(
+      tokensMappedByNetworksAndAddresses,
+      currentNetwork,
+    );
 
-    commit(SET_USER_TOKENS, tokens);
+    commit(SET_USER_TOKENS, tokensMappedByNetworksAndAddresses);
 
     const tokensPrices = await cryptoDataService.getSymbolsPrices(
-      Object.keys(currentNetworkTokens),
+      Object.keys(currentNetworkTokens).map(
+        key => currentNetworkTokens[key].symbol,
+      ),
       fiatCurrency,
     );
 

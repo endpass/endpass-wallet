@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import get from 'lodash/get';
 import VToken from '@/components/VToken';
 import { mapState, mapActions, mapGetters } from 'vuex';
 import error from '@/mixins/error';
@@ -70,7 +71,7 @@ export default {
       return (
         hasRemove &&
         currentNetUserFullTokens[token.address] &&
-        token.balance === '0'
+        get(token, 'balance', '0') === '0'
       );
     },
 

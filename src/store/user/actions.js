@@ -9,7 +9,6 @@ import {
   SET_SETTINGS,
   SET_OTP_SETTINGS,
 } from './mutations-types';
-import { SET_USER_TOKENS } from '@/store/tokens/mutations-types';
 
 const setAuthorizationStatus = (
   { commit, getters },

@@ -1,6 +1,10 @@
 const balance = {
   type: 'object',
   required: ['balance', 'tokens'],
+  balance: {
+    type: 'string',
+    pattern: '[0-9]+',
+  },
   tokens: {
     type: 'array',
     items: {
