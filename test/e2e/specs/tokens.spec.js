@@ -61,13 +61,9 @@ describe('Tokens Page', () => {
             cy.get('[data-test=token-name]')
               .contains(tokenName)
               .click();
-
-            cy.get('[data-test=token-name]').should('not.contain', tokenName);
           });
 
-        cy.get('[data-test=tokens-list]').within(() => {
-          cy.get('[data-test=token-name]').contains(tokenName);
-        });
+        cy.get('[data-test=tokens-list]').contains(tokenName);
       });
     });
 

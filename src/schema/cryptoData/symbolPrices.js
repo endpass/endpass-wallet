@@ -65,3 +65,9 @@ export const pendingTransactions = {
     },
   },
 };
+
+export default {
+  symbolPrice,
+  symbolsPrices,
+  pendingTransactions,
+};

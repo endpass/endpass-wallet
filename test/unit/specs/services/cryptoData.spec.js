@@ -16,7 +16,8 @@ describe('Crypto data service', () => {
   });
 
   describe('getGasPrice', () => {
-    const requestUrl = `${ENV.cryptoDataAPIUrl}/gas/price`;
+    const networkId = 1;
+    const requestUrl = `${ENV.cryptoDataAPIUrl}/${networkId}/gas/price`;
     const expectedError = new NotificationError({
       title: 'Failed to get suggested gas price',
       text:
@@ -32,13 +33,15 @@ describe('Crypto data service', () => {
         return [200, gasPrice];
       });
 
-      await cryptoDataService.getGasPrice();
+      await cryptoDataService.getGasPrice(networkId);
     });
 
     it('should handle successful GET /gas/price request', () => {
       axiosMock.onGet(requestUrl).reply(200, gasPrice);
 
-      expect(cryptoDataService.getGasPrice()).resolves.toEqual(gasPrice);
+      expect(cryptoDataService.getGasPrice(networkId)).resolves.toEqual(
+        gasPrice,
+      );
     });
 
     it('should handle data validation errors', async () => {
@@ -51,7 +54,7 @@ describe('Crypto data service', () => {
         throw gasPriceValidationError;
       });
 
-      await expect(cryptoDataService.getGasPrice()).rejects.toThrow(
+      await expect(cryptoDataService.getGasPrice(networkId)).rejects.toThrow(
         expectedError,
       );
     });
@@ -61,7 +64,7 @@ describe('Crypto data service', () => {
 
       axiosMock.onGet(requestUrl).reply(500);
 
-      await expect(cryptoDataService.getGasPrice()).rejects.toThrow(
+      await expect(cryptoDataService.getGasPrice(networkId)).rejects.toThrow(
         expectedError,
       );
     });

@@ -10,9 +10,11 @@ const cryptoDataService = {
   /**
    * @returns {Promise<>}
    */
-  async getGasPrice() {
+  async getGasPrice(network) {
     try {
-      const { data } = await http.get(`${ENV.cryptoDataAPIUrl}/gas/price`);
+      const { data } = await http.get(
+        `${ENV.cryptoDataAPIUrl}/${network}/gas/price`,
+      );
 
       return cryptoDataValidator.validateGasPrice(data);
     } catch (err) {
