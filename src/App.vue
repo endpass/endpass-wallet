@@ -10,14 +10,16 @@
 
     <main class="app-content">
       <div class>
-        <notifications
-          :speed="500"
-          :duration="5000"
-          width="auto"
-          position="top center"
-          data-test="app-notification"
-          classes="notification app-notification"
-        />
+        <div class="notify-container">
+          <notifications
+            :speed="500"
+            :duration="5000"
+            width="auto"
+            position="top center"
+            data-test="app-notification"
+            classes="notification app-notification"
+          />
+        </div>
 
         <div class="main app-content app-section">
           <router-view />
