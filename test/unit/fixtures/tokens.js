@@ -22,6 +22,81 @@ export const tokens = [
   },
 ];
 
+export const zeroBalancedTokens = [
+  {
+    name: 'First Token',
+    symbol: 'FST',
+    address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+    decimals: 18,
+    logo: 'http://images.com/img/FST.png',
+    balance: 0,
+    price: {
+      USD: '0',
+    },
+  },
+  {
+    name: 'second token',
+    symbol: 'SCDT',
+    address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
+    decimals: 8,
+    logo: '',
+    balance: 0,
+    price: {
+      USD: '0',
+    },
+  },
+];
+
+export const dustAmountTokens = [
+  {
+    name: 'First Token',
+    symbol: 'FST',
+    address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+    decimals: 18,
+    logo: 'http://images.com/img/FST.png',
+    balance: 200,
+    price: {
+      USD: '0',
+    },
+  },
+  {
+    name: 'second token',
+    symbol: 'SCDT',
+    address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
+    decimals: 8,
+    logo: '',
+    balance: 100,
+    price: {
+      USD: '0',
+    },
+  },
+];
+
+export const valuableTokens = [
+  {
+    name: 'First Token',
+    symbol: 'FST',
+    address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+    decimals: 18,
+    logo: 'http://images.com/img/FST.png',
+    balance: 200,
+    price: {
+      USD: '2',
+    },
+  },
+  {
+    name: 'second token',
+    symbol: 'SCDT',
+    address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
+    decimals: 8,
+    logo: '',
+    balance: 100,
+    price: {
+      USD: '1',
+    },
+  },
+];
+
 export const token = {
   name: 'Single token',
   symbol: 'SNGLTK',
@@ -181,6 +256,9 @@ export const allTokens = tokens.reduce(
 
 export default {
   tokens,
+  dustAmountTokens,
+  valuableTokens,
+  zeroBalancedTokens,
   token,
   tokensPrices,
   tokensPricesBySymbols,

@@ -38,7 +38,7 @@ exports[`AccountWalletCard render should correctly render component with send bu
         </div>
         <div class="card-tokens">
             <!---->
-            <tokens-list-stub tokens="" itemclass=""></tokens-list-stub>
+            <tokens-list-stub tokens="" itemclass="" collapsable="true"></tokens-list-stub>
         </div>
     </div>
 </div>
@@ -59,7 +59,7 @@ exports[`AccountWalletCard render should render currenct account balance and tok
         <!---->
         <div class="card-tokens">
             <!---->
-            <tokens-list-stub tokens="[object Object],[object Object]" itemclass=""></tokens-list-stub>
+            <tokens-list-stub tokens="[object Object],[object Object]" itemclass="" collapsable="true"></tokens-list-stub>
         </div>
     </div>
 </div>
@@ -78,7 +78,7 @@ exports[`AccountWalletCard render should render initial state of the component 1
         <!---->
         <div class="card-tokens">
             <!---->
-            <tokens-list-stub tokens="" itemclass=""></tokens-list-stub>
+            <tokens-list-stub tokens="" itemclass="" collapsable="true"></tokens-list-stub>
         </div>
     </div>
 </div>
