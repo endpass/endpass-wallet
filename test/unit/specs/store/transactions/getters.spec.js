@@ -38,7 +38,7 @@ describe('transactions getters', () => {
         },
       );
 
-      expect(transactions).toHaveLength(3);
+      expect(transactions).toHaveLength(5);
       expect(transactions).toContainEqual(stateInstance.pendingTransactions[0]);
     });
 
@@ -176,7 +176,7 @@ describe('transactions getters', () => {
           },
         },
       );
-      expect(pendingBalance).toBe('66000000000000');
+      expect(pendingBalance).toBe('1000154000000000000');
     });
 
     it('should return zero pending balance with a nullable address', () => {

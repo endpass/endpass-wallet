@@ -332,6 +332,10 @@ Cypress.Commands.add('switchAccount', () => {
     });
 });
 
+Cypress.Commands.add('getBalanceTokenElement', () =>
+  cy.get('.info-item:nth-child(2) [data-test=balance-value]'),
+);
+
 // Mock web3 requests. Use after the cy.visit() command
 Cypress.Commands.add('mockWeb3Requests', () => {
   cy.window()
