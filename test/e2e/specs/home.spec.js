@@ -23,11 +23,20 @@ describe('Home Page', () => {
 
   describe('user tokens', () => {
     it('should render user current account tokens', () => {
+      cy.get('[data-test=user-token]').should('not.exist');
+      cy.get('[data-test=dustbin-toggler]').click();
       cy.get('[data-test=user-token]')
         .its('length')
         .should('eq', 1);
     });
 
+    it('should correctly navigate to add token page', () => {
+      cy.get('[data-test=edit-tokens-button]').click();
+      cy.url().should('eq', `${Cypress.config().baseUrl}/#/tokens`);
+    });
+  });
+
+  describe('faucet', () => {
     it('should change visible state of test ETH button', () => {
       cy.get('[data-test=get-test-eth-button]').should('not.exist');
 
@@ -40,13 +49,6 @@ describe('Home Page', () => {
       cy.get('[data-test=get-test-eth-button]').should('not.exist');
     });
 
-    it('should correctly navigate to add token page', () => {
-      cy.get('[data-test=edit-tokens-button]').click();
-      cy.url().should('eq', `${Cypress.config().baseUrl}/#/tokens`);
-    });
-  });
-
-  describe('faucet', () => {
     it('should pass faucet ETH', () => {
       cy.switchCurrency('ETH-TEST');
 

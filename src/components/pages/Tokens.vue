@@ -26,6 +26,7 @@
                       :tokens="userTokensList"
                       :has-remove="true"
                       :item-class="'panel-block is-clearfix is-block'"
+                      :collapsable="false"
                       data-test="tokens-list"
                     />
                   </div>
