@@ -1,5 +1,5 @@
 import Vuex from 'vuex';
-import { createLocalVue } from '@vue/test-utils';
+import { createLocalVue, shallowMount } from '@vue/test-utils';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import SyncStatus from '@/components/bar/SyncStatus';
@@ -11,8 +11,10 @@ localVue.use(Vuex);
 describe('SyncStatus', () => {
   let wrapper;
   let wrapperFactory;
+  let apiConnection = true;
+  let state;
   beforeEach(() => {
-    const store = new Vuex.Store({
+    state = {
       modules: {
         web3: {
           namespaced: true,
@@ -25,9 +27,14 @@ describe('SyncStatus', () => {
           getters: {
             appStatus: () => 'failed',
           },
+          state: {
+            apiConnection,
+          },
         },
       },
-    });
+    };
+    const store = new Vuex.Store(state);
+
     wrapperFactory = wrapShallowMountFactory(SyncStatus, {
       localVue,
       store,
@@ -63,6 +70,14 @@ describe('SyncStatus', () => {
           },
         });
         expect(wrapper.vm.statusClass).toBe('is-success');
+        state.modules.connectionStatus.state.apiConnection = false;
+        state.modules.connectionStatus.getters.appStatus = () => 'ready';
+        const store = new Vuex.Store(state);
+        wrapper = shallowMount(SyncStatus, {
+          localVue,
+          store,
+        });
+        expect(wrapper.vm.statusClass).toBe('is-warning');
       });
     });
   });

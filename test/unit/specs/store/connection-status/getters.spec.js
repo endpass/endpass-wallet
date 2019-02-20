@@ -20,15 +20,6 @@ describe('connection-status getters', () => {
       expect(getters.appStatus(state)).toBe('syncing');
     });
 
-    it('should return syncing if synched and connected to web3 and cant connect to api', () => {
-      let state = {
-        web3Connection: true,
-        isSyncing: false,
-        apiConnection: false,
-      };
-      expect(getters.appStatus(state)).toBe('syncing');
-    });
-
     it('should return failed failed to connect to web3', () => {
       let state = {
         web3Connection: false,

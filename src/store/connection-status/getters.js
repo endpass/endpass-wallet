@@ -3,7 +3,7 @@ import { web3 } from '@/class';
 const appStatus = state => {
   if (!state.web3Connection) {
     return 'failed';
-  } else if (state.isSyncing || !state.apiConnection) {
+  } else if (state.isSyncing) {
     return 'syncing';
   } else {
     return 'ready';
