@@ -94,6 +94,8 @@ describe('Send Transactions Page', () => {
     it('should send transaction', () => {
       cy.makeStoreAlias();
 
+      cy.getBalanceTokenElement().contains('2');
+
       cy.get('[data-test=transaction-send-form]').within(() => {
         cy.get('[data-test=transaction-address-select]')
           .click()
@@ -119,6 +121,8 @@ describe('Send Transactions Page', () => {
       cy.get('[data-test=app-notification] .is-info').contains(
         'Transaction 0x63...42a7 sent',
       );
+
+      cy.getBalanceTokenElement().contains('0.9999');
 
       cy.get('[data-test=transaction-status]').should('be.visible');
     });

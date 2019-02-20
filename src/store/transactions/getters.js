@@ -57,7 +57,7 @@ const pendingBalance = (state, getters, rootState) => {
         tnx.from === address &&
         tnx.networkId === networkId,
     )
-    .map(Transaction.getUpGasCost)
+    .map(Transaction.getFullCost)
     .reduce((total, item) => total.plus(item), BigNumber('0'))
     .toFixed();
 };

@@ -7,6 +7,7 @@
       <span
         :title="balanceString"
         :class="{ 'long-number': balanceString.length > 6 }"
+        data-test="balance-value"
         class="title amount"
       >
         {{ balanceStringShort }}
