@@ -1,6 +1,8 @@
 <template>
   <base-page class="settings-page">
-    <template slot="title">Settings</template>
+    <template slot="title">
+      Settings
+    </template>
 
     <v-form
       id="save-settings"
@@ -29,10 +31,10 @@
         data-test="select-fiat"
         @input="updateSettings"
       />
-
     </v-form>
     <two-factor-auth-settings v-if="isDefaultIdentity" />
     <change-password-settings v-if="isDefaultIdentity" />
+    <password-recovery v-if="isDefaultIdentity" />
   </base-page>
 </template>
 
@@ -43,6 +45,7 @@ import form from '@/mixins/form';
 import BasePage from '@/components/pages/Base';
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
 import ChangePasswordSettings from '@/components/ChangePasswordSettings';
+import PasswordRecovery from '@/components/PasswordRecovery';
 
 export default {
   name: 'SettingsPage',
@@ -86,6 +89,7 @@ export default {
     BasePage,
     TwoFactorAuthSettings,
     ChangePasswordSettings,
+    PasswordRecovery,
   },
 };
 </script>

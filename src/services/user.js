@@ -115,10 +115,13 @@ export default {
   },
 
   // Update the encrypted keystore for an existing accounts
-  async updateAccounts(accounts) {
+  async updateAccounts({ accounts, clearAll }) {
     try {
       return await proxyRequest.write('/accounts', {
-        payload: accounts,
+        payload: {
+          accounts,
+          clearAll,
+        },
       });
     } catch (error) {
       throw new NotificationError({

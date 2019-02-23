@@ -23,6 +23,11 @@ import 'mocks/class';
  */
 import 'mocks/schema';
 
+/**
+ * Validators mocks
+ */
+import 'mocks/validation';
+
 Vue.config.productionTip = false;
 
 // console.error and console.warn throws errors and fails tests

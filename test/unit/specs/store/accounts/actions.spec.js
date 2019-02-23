@@ -15,6 +15,7 @@ import actions from '@/store/accounts/actions';
 import {
   SET_ADDRESS,
   ADD_WALLET,
+  REMOVE_WALLETS,
   SET_HD_KEY,
   SET_BALANCE,
   CHANGE_INIT_STATUS,
@@ -640,24 +641,67 @@ describe('Accounts actions', () => {
   });
 
   describe('updateWallets', () => {
-    const walletAddress1 = 'wallet address 1';
-    const walletAddress2 = 'wallet address 2';
-    const wallet1 = { address: walletAddress1 };
-    const wallet2 = { address: walletAddress2 };
-    const wallets = {
-      [walletAddress1]: wallet1,
-      [walletAddress2]: wallet2,
+    const accountAddress1 = 'account address 1';
+    const accountAddress2 = 'account address 2';
+    const keystore1 = { address: accountAddress1 };
+    const keystore2 = { address: accountAddress2 };
+    const accounts = {
+      [accountAddress1]: {
+        keystore: keystore1,
+      },
+      [accountAddress2]: {
+        keystore: keystore2,
+      },
     };
+    const clearAll = true;
 
     it('should call userService.updateAccounts', async () => {
       expect.assertions(2);
 
       userService.updateAccounts = jest.fn();
 
-      await actions.updateWallets({ dispatch }, { wallets });
+      await actions.updateWallets({ dispatch }, { accounts, clearAll });
 
       expect(userService.updateAccounts).toHaveBeenCalledTimes(1);
-      expect(userService.updateAccounts).toHaveBeenCalledWith(wallets);
+      expect(userService.updateAccounts).toHaveBeenCalledWith({
+        accounts,
+        clearAll,
+      });
+    });
+
+    it('should remove wallets', async () => {
+      expect.assertions(2);
+
+      userService.updateAccounts = jest
+        .fn()
+        .mockResolvedValue({ success: true });
+
+      await actions.updateWallets({ dispatch, commit }, { accounts, clearAll });
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(REMOVE_WALLETS);
+    });
+
+    it('should not remove wallets', async () => {
+      expect.assertions(3);
+
+      userService.updateAccounts = jest
+        .fn()
+        .mockResolvedValue({ success: true });
+      await actions.updateWallets({ dispatch, commit }, { accounts });
+      expect(commit).toHaveBeenCalledTimes(0);
+
+      userService.updateAccounts = jest
+        .fn()
+        .mockResolvedValue({ success: false });
+      await actions.updateWallets({ dispatch, commit }, { accounts, clearAll });
+      expect(commit).toHaveBeenCalledTimes(0);
+
+      userService.updateAccounts = jest
+        .fn()
+        .mockResolvedValue({ success: false });
+      await actions.updateWallets({ dispatch, commit }, { accounts });
+      expect(commit).toHaveBeenCalledTimes(0);
     });
 
     it('should call commitWallet actions', async () => {
@@ -667,11 +711,11 @@ describe('Accounts actions', () => {
         .fn()
         .mockResolvedValue({ success: true });
 
-      await actions.updateWallets({ dispatch }, { wallets });
+      await actions.updateWallets({ dispatch }, { accounts });
 
       expect(dispatch.mock.calls).toEqual([
-        ['commitWallet', { wallet: wallet1 }],
-        ['commitWallet', { wallet: wallet2 }],
+        ['commitWallet', { wallet: keystore1 }],
+        ['commitWallet', { wallet: keystore2 }],
       ]);
     });
 
@@ -682,7 +726,7 @@ describe('Accounts actions', () => {
 
       userService.updateAccounts = jest.fn().mockRejectedValue(error);
 
-      await actions.updateWallets({ dispatch }, { wallets });
+      await actions.updateWallets({ dispatch }, { accounts });
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
@@ -699,13 +743,13 @@ describe('Accounts actions', () => {
       userService.updateAccounts = jest
         .fn()
         .mockResolvedValue(updateAccountsResponse);
-      response = await actions.updateWallets({ dispatch }, { wallets });
+      response = await actions.updateWallets({ dispatch }, { accounts });
 
       expect(response).toEqual(updateAccountsResponse.success);
 
       updateAccountsResponse = { success: false };
       userService.updateAccounts.mockResolvedValue(updateAccountsResponse);
-      response = await actions.updateWallets({ dispatch }, { wallets });
+      response = await actions.updateWallets({ dispatch }, { accounts });
 
       expect(response).toEqual(updateAccountsResponse.success);
     });
@@ -1232,12 +1276,16 @@ describe('Accounts actions', () => {
         payload,
       );
       expect(dispatch).toHaveBeenNthCalledWith(2, 'updateWallets', {
-        wallets: {
+        accounts: {
           '0x0': {
-            address: '0x0',
+            keystore: {
+              address: '0x0',
+            },
           },
           '0x1': {
-            address: '0x1',
+            keystore: {
+              address: '0x1',
+            },
           },
         },
       });
@@ -1254,6 +1302,166 @@ describe('Accounts actions', () => {
       await actions.updateWalletsWithNewPassword({ dispatch }, payload);
 
       expect(dispatch).toBeCalledTimes(1);
+    });
+  });
+
+  describe('recoverWalletsPassword', () => {
+    const { address } = hdv3;
+
+    it('should check hdKey exists', () => {
+      const state = {};
+      const error = new NotificationError({
+        title: 'Recover password',
+        text: 'Main HD wallet not found.',
+        type: 'is-danger',
+      });
+
+      actions.recoverWalletsPassword({ state, dispatch }, {});
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+        root: true,
+      });
+    });
+
+    it('should handle incorrect seed phrase', () => {
+      const state = {
+        hdKey: {},
+      };
+      const error = new NotificationError({
+        title: 'Recover password',
+        text: 'Incorrect seed phrase.',
+        type: 'is-danger',
+      });
+
+      actions.recoverWalletsPassword(
+        { state, dispatch },
+        { seedPhrase: mnemonic },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+        root: true,
+      });
+    });
+
+    it('should handle other errors', async () => {
+      expect.assertions(2);
+
+      const state = {
+        hdKey: { address },
+      };
+      const error = new Error();
+
+      dispatch.mockRejectedValueOnce(error);
+
+      await actions.recoverWalletsPassword(
+        { state, dispatch },
+        { seedPhrase: mnemonic },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'errors/emitError', error, {
+        root: true,
+      });
+    });
+
+    it('should recover wallets password', async () => {
+      expect.assertions(3);
+
+      const publicWalletAddress = 'public wallet address';
+      const publicWallet = {
+        address: publicWalletAddress,
+        isPublic: true,
+        type: WALLET_TYPES.PUBLIC,
+      };
+      const hardwareWalletAddress = 'hardware wallet address';
+      const hardwareWallet = {
+        address: hardwareWalletAddress,
+        isHardware: true,
+        type: WALLET_TYPES.TREZOR,
+        index: 2,
+      };
+      const externalStandartWalletAddress =
+        'external standart wallet address 1';
+      const externalStandartWallet = {
+        address: externalStandartWalletAddress,
+        type: WALLET_TYPES.STANDART,
+        index: 0,
+      };
+      const standartWalletAddress =
+        '0xC2013cAf34b224572B66F4d44313E73D437EB6E3';
+      const standartWallet = {
+        address: standartWalletAddress,
+        type: WALLET_TYPES.STANDART,
+        index: 1,
+      };
+      const state = {
+        hdKey: { address },
+        wallets: {
+          [publicWalletAddress]: publicWallet,
+          [hardwareWalletAddress]: hardwareWallet,
+          [externalStandartWalletAddress]: externalStandartWallet,
+          [standartWalletAddress]: standartWallet,
+        },
+      };
+      const password = 'pasword';
+      const expectedAccountsToUpdate = {
+        [address]: {
+          keystore: expect.objectContaining({ address }),
+          info: {
+            type: WALLET_TYPES.HD_MAIN,
+            hidden: false,
+            address,
+          },
+        },
+        [publicWalletAddress]: {
+          keystore: { address: publicWalletAddress },
+          info: {
+            type: WALLET_TYPES.PUBLIC,
+            hidden: false,
+            address: publicWalletAddress,
+          },
+        },
+        [hardwareWalletAddress]: {
+          keystore: { address: hardwareWalletAddress },
+          info: {
+            type: WALLET_TYPES.TREZOR,
+            hidden: false,
+            address: hardwareWalletAddress,
+            index: 2,
+          },
+        },
+        [standartWalletAddress]: {
+          keystore: expect.objectContaining({ address: standartWalletAddress }),
+          info: {
+            type: WALLET_TYPES.STANDART,
+            hidden: false,
+            address: standartWalletAddress,
+            index: 1,
+          },
+        },
+      };
+
+      dispatch.mockResolvedValueOnce({ address });
+      keystore.encryptWallet = jest
+        .fn()
+        .mockImplementationOnce(() => ({ address: standartWalletAddress }));
+
+      await actions.recoverWalletsPassword(
+        { state, dispatch },
+        { seedPhrase: mnemonic, password },
+      );
+
+      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'encryptHdWallet', {
+        hdWallet: expect.any(Object),
+        password,
+      });
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'updateWallets', {
+        accounts: expectedAccountsToUpdate,
+        clearAll: true,
+      });
     });
   });
 

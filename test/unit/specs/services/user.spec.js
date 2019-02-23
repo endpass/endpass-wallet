@@ -388,6 +388,7 @@ describe('User service', () => {
       'address 1': {},
       'address 2': {},
     };
+    const clearAll = true;
     const expectedError = new NotificationError({
       title: 'Error updating accounts',
       text: `An error occurred updating accounts. Please try again later`,
@@ -400,12 +401,12 @@ describe('User service', () => {
       axiosMock.onAny(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
-        expect(config.data).toBe(JSON.stringify(accounts));
+        expect(config.data).toBe(JSON.stringify({ accounts, clearAll }));
 
         return [200];
       });
 
-      await userService.updateAccounts(accounts);
+      await userService.updateAccounts({ accounts, clearAll });
     });
 
     it('should handle successful POST /accounts request', async () => {
