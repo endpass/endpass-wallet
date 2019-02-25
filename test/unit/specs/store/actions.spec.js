@@ -23,16 +23,34 @@ describe('Root Store actions', () => {
     expect(mutations[STOP_PAGE_LOADING]).toHaveBeenCalledTimes(1);
 
     // User identity mode should be initialized first
-    expect(dispatch).toHaveBeenNthCalledWith(1, 'user/initIdentityMode');
+    expect(dispatch).toHaveBeenNthCalledWith(
+      1,
+      'user/initIdentityMode',
+      undefined,
+    );
     expect(dispatch).toHaveBeenNthCalledWith(2, 'web3/init');
     expect(dispatch).toHaveBeenNthCalledWith(3, 'accounts/init');
 
     // Initialize all other stores
-    expect(dispatch).toHaveBeenCalledWith('user/initIdentityMode');
+    expect(dispatch).toHaveBeenCalledWith('user/initIdentityMode', undefined);
     expect(dispatch).toHaveBeenCalledWith('accounts/init');
     expect(dispatch).toHaveBeenCalledWith('web3/init');
     expect(dispatch).toHaveBeenCalledWith('tokens/init');
     expect(dispatch).toHaveBeenCalledWith('price/init');
     expect(dispatch).toHaveBeenCalledWith('connectionStatus/init');
+  });
+
+  it('initializes state and check mode pass', async () => {
+    expect.assertions(1);
+
+    const mode = {
+      type: 'type',
+      serverUrl: 'serverUrl',
+    };
+
+    await actions.init({ dispatch, commit }, mode);
+
+    // User identity mode should be initialized first
+    expect(dispatch).toHaveBeenCalledWith('user/initIdentityMode', mode);
   });
 });

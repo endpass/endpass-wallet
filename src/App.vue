@@ -29,7 +29,7 @@
 
     <quick-actions class="is-hidden-desktop" />
     <app-footer class="is-hidden-touch" />
-    <v-page-loader :isLoading="isLoading" />
+    <v-page-loader :is-loading="isLoading" />
   </div>
 </template>
 
@@ -51,8 +51,28 @@ export default {
     }),
   },
 
+  methods: {
+    initMode() {
+      const lines = (window.location.search || '').slice(1).split('&');
+      const query = lines.reduce((map, line) => {
+        const values = line.split('=');
+        const key = values[0];
+        // eslint-disable-next-line
+        map[key] = values[1];
+        return map;
+      }, {});
+
+      const initModeParams = {
+        type: query.mode,
+        serverUrl: query.serverUrl,
+      };
+
+      this.$store.dispatch('init', initModeParams.type ? initModeParams : null);
+    },
+  },
+
   created() {
-    this.$store.dispatch('init');
+    this.initMode();
   },
 
   mounted() {

@@ -29,12 +29,10 @@ const setAuthorizationStatus = (
   }
 };
 
-const login = async ({ commit, dispatch }, { mode = {} }) => {
-  const { type = IDENTITY_MODE.DEFAULT, serverUrl } = mode;
+const login = async ({ commit, dispatch }) => {
+  const res = await connect.auth(window.location.origin);
 
-  if (type === IDENTITY_MODE.DEFAULT) {
-    await connect.auth(window.location.origin);
-  }
+  const { type = IDENTITY_MODE.DEFAULT, serverUrl } = res || {};
 
   try {
     identityModeService.setIdentityMode(type, serverUrl);
@@ -135,9 +133,9 @@ const setUserSettings = async ({ commit, dispatch }) => {
   }
 };
 
-const initIdentityMode = async ({ commit, dispatch }) => {
+const initIdentityMode = async ({ commit, dispatch }, mode) => {
   try {
-    const { type, serverUrl } = identityModeService.getIdentityMode();
+    const { type, serverUrl } = mode || identityModeService.getIdentityMode();
     identityModeService.setIdentityMode(type, serverUrl);
 
     if (type !== IDENTITY_MODE.DEFAULT) {

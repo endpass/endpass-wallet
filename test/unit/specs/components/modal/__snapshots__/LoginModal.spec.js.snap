@@ -1,8 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`LoginModal render should render component 1`] = `
-<login-modal-modes-stub
-  class="login-modal"
-  data-test="login-modal"
-/>
-`;
