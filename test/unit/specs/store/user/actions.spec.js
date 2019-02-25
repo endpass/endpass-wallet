@@ -9,7 +9,6 @@ import {
   SET_OTP_SETTINGS,
   SET_EMAIL,
 } from '@/store/user/mutations-types';
-import { SET_USER_TOKENS } from '@/store/tokens/mutations-types';
 import { connect } from '@/class';
 import { settings, otpSettings } from 'fixtures/accounts';
 
@@ -59,7 +58,7 @@ describe('user actions', () => {
     it('should login through the connect by default', async () => {
       expect.assertions(1);
 
-      await actions.login({ commit, dispatch }, {});
+      await actions.login({ commit, dispatch });
 
       expect(connect.auth).toHaveBeenCalledTimes(1);
     });
@@ -68,7 +67,9 @@ describe('user actions', () => {
       it('should set the user authorization status', async () => {
         expect.assertions(2);
 
-        await actions.login({ commit, dispatch }, { mode });
+        connect.auth = jest.fn().mockResolvedValue(mode);
+
+        await actions.login({ commit, dispatch });
 
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit).toHaveBeenNthCalledWith(
@@ -81,7 +82,9 @@ describe('user actions', () => {
       it('should reinit the store', async () => {
         expect.assertions(2);
 
-        await actions.login({ commit, dispatch }, { mode });
+        connect.auth = jest.fn().mockResolvedValue(mode);
+
+        await actions.login({ commit, dispatch });
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch).toBeCalledWith('init', null, {
@@ -92,7 +95,9 @@ describe('user actions', () => {
       it('should set the user identity mode through the user service', async () => {
         expect.assertions(2);
 
-        await actions.login({ commit, dispatch }, { mode });
+        connect.auth = jest.fn().mockResolvedValue(mode);
+
+        await actions.login({ commit, dispatch });
 
         expect(identityModeService.setIdentityMode).toHaveBeenCalledTimes(1);
         expect(identityModeService.setIdentityMode).toHaveBeenCalledWith(
@@ -104,7 +109,9 @@ describe('user actions', () => {
       it('should set the user identity type to the store', async () => {
         expect.assertions(2);
 
-        await actions.login({ commit, dispatch }, { mode });
+        connect.auth = jest.fn().mockResolvedValue(mode);
+
+        await actions.login({ commit, dispatch });
 
         expect(commit).toHaveBeenCalledTimes(2);
         expect(commit).toHaveBeenNthCalledWith(1, SET_IDENTITY_TYPE, type);
@@ -118,7 +125,9 @@ describe('user actions', () => {
           throw error;
         });
 
-        await actions.login({ commit, dispatch }, { mode });
+        connect.auth = jest.fn().mockResolvedValue(mode);
+
+        await actions.login({ commit, dispatch });
 
         expect(dispatch).toHaveBeenCalledTimes(1);
         expect(dispatch).toBeCalledWith('errors/emitError', error, {
@@ -414,6 +423,23 @@ describe('user actions', () => {
   });
 
   describe('initIdentityMode', () => {
+    it('should set the identity mode as param', async () => {
+      expect.assertions(2);
+
+      const type = IDENTITY_MODE.CUSTOM;
+      const serverUrl = 'url';
+      const mode = { type, serverUrl };
+      identityModeService.getIdentityMode = jest.fn().mockReturnValueOnce(null);
+
+      await actions.initIdentityMode({ commit, dispatch }, mode);
+
+      expect(identityModeService.setIdentityMode).toHaveBeenCalledTimes(1);
+      expect(identityModeService.setIdentityMode).toHaveBeenCalledWith(
+        type,
+        serverUrl,
+      );
+    });
+
     it('should set the identity mode', async () => {
       expect.assertions(2);
 
