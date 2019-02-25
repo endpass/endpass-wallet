@@ -100,7 +100,7 @@ const addWalletWithPrivateKey = async (
     const wallet = EthWallet.fromPrivateKey(
       Buffer.from(privateKey.replace(/^0x/, ''), 'hex'),
     );
-    const v3KeyStore = keystore.encryptWallet(password, wallet);
+    const v3KeyStore = keystore.encryptWallet(password, wallet, ENV.kdfParams);
 
     return dispatch('addWalletAndSelect', v3KeyStore);
   } catch (e) {
@@ -129,7 +129,7 @@ const generateWallet = async ({ dispatch, state }, password) => {
   const decryptedHdWallet = await dispatch('decryptAccountHdWallet', password);
   const i = Object.keys(state.wallets).length;
   const wallet = decryptedHdWallet.deriveChild(i).getWallet();
-  const v3KeyStore = keystore.encryptWallet(password, wallet);
+  const v3KeyStore = keystore.encryptWallet(password, wallet, ENV.kdfParams);
 
   await dispatch('addWalletAndSelect', v3KeyStore);
 };
@@ -153,7 +153,11 @@ const addHdWallet = async ({ dispatch }, { key, password }) => {
     const hdKey = HDKey.fromMasterSeed(seed);
     const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
     // Encrypt extended private key
-    const v3KeyStore = keystore.encryptHDWallet(password, hdWallet);
+    const v3KeyStore = keystore.encryptHDWallet(
+      password,
+      hdWallet,
+      ENV.kdfParams,
+    );
     const info = {
       address: v3KeyStore.address,
       type: WALLET_TYPES.HD_MAIN,
@@ -200,7 +204,11 @@ const addHdPublicWallet = async ({ commit, dispatch }, { key, password }) => {
     const hdKey = HDKey.fromMasterSeed(seed);
     const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
 
-    const v3KeyStore = keystore.encryptHDWallet(password, hdWallet);
+    const v3KeyStore = keystore.encryptHDWallet(
+      password,
+      hdWallet,
+      ENV.kdfParams,
+    );
 
     const info = {
       address: v3KeyStore.address,
@@ -381,10 +389,10 @@ const decryptAccountWallets = async ({ state }, password) =>
     .map(item => keystore.decryptWallet(password, item.v3));
 
 const encryptHdWallet = async (ctx, { password, hdWallet }) =>
-  hdWallet ? keystore.encryptHDWallet(password, hdWallet) : null;
+  hdWallet ? keystore.encryptHDWallet(password, hdWallet, ENV.kdfParams) : null;
 
 const encryptWallets = async (ctx, { password, wallets = [] }) =>
-  wallets.map(item => keystore.encryptWallet(password, item));
+  wallets.map(item => keystore.encryptWallet(password, item, ENV.kdfParams));
 
 const reencryptAllAccountWallets = async (
   { dispatch },

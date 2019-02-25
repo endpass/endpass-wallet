@@ -1097,6 +1097,7 @@ describe('Accounts actions', () => {
       expect(keystore.encryptHDWallet).toBeCalledWith(
         payload.password,
         payload.hdWallet,
+        ENV.kdfParams,
       );
     });
 
@@ -1127,11 +1128,12 @@ describe('Accounts actions', () => {
         ],
       };
 
-      const res = await actions.encryptWallets(null, payload);
+      const res = await actions.encryptWallets(null, payload, ENV.kdfParams);
 
       expect(keystore.encryptWallet).toBeCalledWith(
         payload.password,
         payload.wallets[0],
+        ENV.kdfParams,
       );
       expect(res).toEqual(payload.wallets);
     });
