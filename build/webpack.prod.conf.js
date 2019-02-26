@@ -1,10 +1,11 @@
 'use strict';
 const path = require('path');
-const utils = require('./utils');
+const utils = require('@endpass/utils/build');
 const webpack = require('webpack');
 const config = require('../config');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
+const styleLoaders = require('./style-loaders');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -20,7 +21,7 @@ const env = isProduction
   : require('../config/env/test.env');
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
-    rules: utils.styleLoaders({
+    rules: styleLoaders.styleLoaders({
       sourceMap: config.build.productionSourceMap,
       extract: true,
       usePostCSS: true,
@@ -30,8 +31,8 @@ const webpackConfig = merge(baseWebpackConfig, {
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
     path: config.build.assetsRoot,
-    filename: utils.assetsPath('js/[name].[chunkhash].js'),
-    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js'),
+    filename: utils.assetsPath('js/[name].[chunkhash].js', config),
+    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js', config),
   },
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
@@ -52,7 +53,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
     // extract css into its own file
     new ExtractTextPlugin({
-      filename: utils.assetsPath('css/[name].[contenthash].css'),
+      filename: utils.assetsPath('css/[name].[contenthash].css', config),
       // Setting the following option to `false` will not extract CSS from codesplit chunks.
       // Their CSS will instead be inserted dynamically with style-loader when the codesplit chunk has been loaded by webpack.
       // It's currently set to `true` because we are seeing that sourcemaps are included in the codesplit bundle as well when it's `false`,

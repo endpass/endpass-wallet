@@ -1,5 +1,5 @@
 'use strict';
-const utils = require('./utils');
+const styleLoaders = require('./style-loaders');
 const config = require('../config');
 const isProduction = process.env.NODE_ENV === 'production';
 const sourceMapEnabled = isProduction
@@ -7,7 +7,7 @@ const sourceMapEnabled = isProduction
   : config.dev.cssSourceMap;
 
 module.exports = {
-  loaders: utils.cssLoaders({
+  loaders: styleLoaders.cssLoaders({
     sourceMap: sourceMapEnabled,
     extract: isProduction,
   }),
