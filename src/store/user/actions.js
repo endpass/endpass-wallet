@@ -46,6 +46,7 @@ const login = async ({ commit, dispatch }) => {
 };
 
 const logout = async ({ commit, dispatch, getters }) => {
+  commit(SET_AUTHORIZATION_STATUS, false);
   commit(SET_EMAIL, null);
 
   try {
