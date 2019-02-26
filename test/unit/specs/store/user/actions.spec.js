@@ -144,12 +144,13 @@ describe('user actions', () => {
     };
 
     it('should reset the email', async () => {
-      expect.assertions(2);
+      expect.assertions(3);
 
       await actions.logout({ commit, dispatch, getters });
 
-      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toBeCalledWith(SET_EMAIL, null);
+      expect(commit).toBeCalledWith(SET_AUTHORIZATION_STATUS, false);
     });
 
     it('should delete identity data when the identity mode is local', async () => {

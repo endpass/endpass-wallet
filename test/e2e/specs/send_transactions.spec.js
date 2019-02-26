@@ -1,4 +1,5 @@
 import { transactionToSend } from '../fixtures/transactions';
+import { tokens } from '../fixtures/tokeninfo';
 
 describe('Send Transactions Page', () => {
   describe('the user is not authorized', () => {
@@ -116,13 +117,29 @@ describe('Send Transactions Page', () => {
         cy.get('[data-test=confirm-button]').click();
       });
 
+      const cryptodataAPIUrl = '/cryptodata/api/v1.1';
+      cy.route({
+        method: 'GET',
+        url: `${cryptodataAPIUrl}/*/balance/**`,
+        response: {
+          balance: '999900000000000000',
+          tokens,
+        },
+      }).as('accountBalanceOnce');
+
       cy.inputPassword();
+
+      cy.get('@store').then(store => {
+        store.dispatch('accounts/updateBalance');
+      });
+
+      cy.wait('@accountBalanceOnce');
+
+      cy.getBalanceTokenElement().contains('0.9999');
 
       cy.get('[data-test=app-notification] .is-info').contains(
         'Transaction 0x63...42a7 sent',
       );
-
-      cy.getBalanceTokenElement().contains('0.9999');
 
       cy.get('[data-test=transaction-status]').should('be.visible');
     });

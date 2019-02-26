@@ -12,47 +12,57 @@ const identityConfig = {
   timeout: REQUEST_TIMEOUT_MSEC,
 };
 
-function handleResponseError(error) {
+const createHandlerResponseError = storeInstance => error => {
   const { config, response } = error;
+  const storeLink = storeInstance || store;
 
   if (
     (!response || response.status === 401) &&
     config.url.includes(ENV.identityAPIUrl)
   ) {
-    store.dispatch({
+    const isLoggedIn = storeLink.getters['user/isLoggedIn'];
+
+    storeLink.dispatch({
       type: 'user/setAuthorizationStatus',
       authorizationStatus: false,
     });
+
+    if (isLoggedIn) {
+      storeLink.dispatch({
+        type: 'user/logout',
+      });
+    }
   }
 
   return Promise.reject(error);
-}
+};
 
-function handleResponseSuccess(response) {
+const createHandleResponseSuccess = storeInstance => response => {
   const { config, status } = response;
+  const storeLink = storeInstance || store;
+
   const ignorePaths = ['auth'];
   const ignorePath = ignorePaths.some(path => config.url.includes(path));
-
   if (
     status === 200 &&
     config.url.includes(ENV.identityAPIUrl) &&
     !ignorePath
   ) {
-    store.dispatch({
+    storeLink.dispatch({
       type: 'user/setAuthorizationStatus',
       authorizationStatus: true,
     });
   }
 
   return response;
-}
+};
 
-function createAxiosInstance() {
+export function createAxiosInstance(storeInstance = store) {
   const instance = axios.create(identityConfig);
 
   instance.interceptors.response.use(
-    handleResponseSuccess,
-    handleResponseError,
+    createHandleResponseSuccess(storeInstance),
+    createHandlerResponseError(storeInstance),
   );
 
   return instance;
