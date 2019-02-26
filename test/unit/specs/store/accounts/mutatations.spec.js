@@ -6,7 +6,7 @@ import {
   ADD_WALLET,
   SET_HD_KEY,
   SET_BALANCE,
-  SET_HARDWARE_XPUB,
+  SET_HD_CACHE_BY_TYPE,
 } from '@/store/accounts/mutations-types';
 
 describe('Accounts mutations', () => {
@@ -63,17 +63,20 @@ describe('Accounts mutations', () => {
     });
   });
 
-  describe(SET_HARDWARE_XPUB, () => {
+  describe(SET_HD_CACHE_BY_TYPE, () => {
     it('should set hardware wallet xpub', () => {
-      const state = { hardwareXpub: {} };
+      const state = { hdCacheByType: {} };
 
-      mutations[SET_HARDWARE_XPUB](state, {
+      mutations[SET_HD_CACHE_BY_TYPE](state, {
         walletType: 'foo',
         xpub: 'bar',
       });
 
-      expect(state.hardwareXpub).toEqual({
-        foo: 'bar',
+      expect(state.hdCacheByType).toMatchObject({
+        foo: {
+          xpub: 'bar',
+          v3KeyStore: undefined,
+        },
       });
     });
   });

@@ -1,8 +1,9 @@
-import { NotificationError } from '@/class';
+import { NotificationError, Wallet } from '@/class';
 import { proxyRequest } from '@/class/singleton';
-import keyUtil from '@/utils/keystore';
-import { WALLET_TYPE } from '@/constants';
+import { keystore } from '@endpass/utils';
 import { identityValidator, v3KeystoreValidator } from '@/schema';
+
+const WALLET_TYPES = Wallet.getTypes();
 
 export default {
   async getSettings() {
@@ -158,7 +159,7 @@ export default {
     try {
       const accounts = await this.getAccounts();
       const allAcc = accounts
-        .filter(acc => !keyUtil.isExtendedPublicKey(acc))
+        .filter(acc => !keystore.isExtendedPublicKey(acc))
         .map(this.getAccount);
 
       return await Promise.all(allAcc);
@@ -181,7 +182,7 @@ export default {
     const accounts = await this.getAccounts();
 
     const hdAddresses = accounts.filter(acc =>
-      keyUtil.isExtendedPublicKey(acc),
+      keystore.isExtendedPublicKey(acc),
     );
 
     const hdAccounts = await Promise.all(
@@ -189,7 +190,7 @@ export default {
     );
 
     return (
-      hdAccounts.find(({ info = {} }) => info.type === WALLET_TYPE.HD_MAIN) ||
+      hdAccounts.find(({ info = {} }) => info.type === WALLET_TYPES.HD_MAIN) ||
       hdAccounts[0]
     );
   },

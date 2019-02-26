@@ -1,7 +1,9 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
+import UIComponents from '@endpass/ui';
+
 import RecoverTransaction from '@/components/RecoverTransaction';
-import { generateStubs } from '@/utils/testUtils';
+
 import { ethplorerTransactions } from 'fixtures/transactions';
 
 describe('RecoverTransaction', () => {
@@ -11,10 +13,10 @@ describe('RecoverTransaction', () => {
     const localVue = createLocalVue();
 
     localVue.use(Notifications);
+    localVue.use(UIComponents);
 
-    wrapper = shallow(RecoverTransaction, {
+    wrapper = shallowMount(RecoverTransaction, {
       localVue,
-      stubs: generateStubs(RecoverTransaction),
     });
   });
 

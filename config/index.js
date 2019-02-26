@@ -9,15 +9,15 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: [
-      {
-        context: '/identity/api/v1.1',
-        target: 'https://identity-dev.endpass.com',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/identity/api/v1.1': '/api/v1.1',
-        },
-        cookieDomainRewrite: 'localhost',
-      },
+      // {
+      //   context: '/identity/api/v1.1',
+      //   target: 'https://identity-dev.endpass.com',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/identity/api/v1.1': '/api/v1.1',
+      //   },
+      //   cookieDomainRewrite: 'localhost',
+      // },
       {
         context: '/tokeninfo/api/v1',
         target: 'https://tokeninfo-dev.endpass.com',
@@ -27,11 +27,11 @@ module.exports = {
         },
       },
       {
-        context: '/cryptodata/api/v1',
+        context: '/cryptodata/api/v1.1',
         target: 'https://cryptodata-dev.endpass.com',
         changeOrigin: true,
         pathRewrite: {
-          '^/cryptodata/api/v1': '/api/v1',
+          '^/cryptodata/api/v1.1': '/api/v1.1',
         },
       },
       {

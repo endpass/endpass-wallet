@@ -1,4 +1,4 @@
-import { shallow } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 
 import Balance from '@/components/Balance';
 
@@ -7,7 +7,7 @@ describe('Balance', () => {
     let wrapper;
 
     beforeEach(() => {
-      wrapper = shallow(Balance, {});
+      wrapper = shallowMount(Balance, {});
     });
 
     it('should be a Vue component', () => {

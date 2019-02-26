@@ -1,7 +1,5 @@
-import web3 from '@/class/singleton/web3';
-import { http } from '@/class/singleton';
-
-const { isAddress } = web3.utils;
+import { http } from '@/class';
+import { isAddress } from 'web3-utils';
 
 export default {
   getTokensList() {

@@ -1,9 +1,9 @@
 <template>
   <v-form
     id="sendEther"
+    :is-form-valid="isSendAllowed && isFormValid"
     data-test="transaction-send-form"
     @submit="handleFormSubmit"
-    :isFormValid="isSendAllowed && isFormValid"
   >
     <div class="field">
       <label class="label">
@@ -24,10 +24,7 @@
       >
         Resolved ENS address: {{ transaction.to }}
       </p>
-      <p
-        v-if="ensError && !isEnsAddressLoading"
-        class="help is-danger"
-      >
+      <p v-if="ensError && !isEnsAddressLoading" class="help is-danger">
         {{ ensError }}
       </p>
     </div>
@@ -35,16 +32,17 @@
     <transaction-amount-options
       v-model="transaction.value"
       :tokens-currencies="currentAccountTokensCurrencies"
-      :current-token="transaction.tokenInfo"
+      :current-token="transaction.token"
       :fiat-currency="fiatCurrency"
       :eth-price="ethPrice"
+      :gas-limit="transaction.gasLimit"
       :balance="balance"
-      :estimated-gas-cost="estimatedGasCost"
+      :gas-price="transaction.gasPrice"
       :disabled="!address"
       :active-net="activeNet"
       :is-loading="isLoading"
       :show-fee="!!transaction.to"
-      @change-token="changeTokenInfo"
+      @change-token="changeToken"
     />
 
     <transaction-priority-options
@@ -57,7 +55,7 @@
     <transaction-advanced-options
       v-if="!isLoadingGasPrice"
       :transaction="transaction"
-      :current-token="transaction.tokenInfo"
+      :current-token="transaction.token"
       :is-loading="isLoading"
       :is-opened="!prices"
       @change="handleAdvancedChange"
@@ -80,23 +78,17 @@
 </template>
 
 <script>
-import { debounce } from 'lodash';
 import { mapGetters, mapState, mapActions } from 'vuex';
-import { ENSResolver, Transaction } from '@/class';
-import VForm from '@/components/ui/form/VForm';
-import VRadio from '@/components/ui/form/VRadio';
-import VSelect from '@/components/ui/form/VSelect';
-import VInput from '@/components/ui/form/VInput';
-import VSpinner from '@/components/ui/VSpinner';
-import VButton from '@/components/ui/form/VButton';
-import AccountChooser from '@/components/AccountChooser';
-import TransactionAdvancedOptions from './TransactionAdvancedOptions';
-import TransactionAmountOptions from './TransactionAmountOptions';
-import TransactionPriorityOptions from './TransactionPriorityOptions';
+import { ENSResolver } from '@/class';
 import formMixin from '@/mixins/form';
+import AccountChooser from '@/components/AccountChooser';
+import TransactionAdvancedOptions from './TransactionAdvancedOptions.vue';
+import TransactionAmountOptions from './TransactionAmountOptions.vue';
+import TransactionPriorityOptions from './TransactionPriorityOptions.vue';
 
 export default {
   name: 'TransactionForm',
+
   props: {
     isLoading: {
       type: Boolean,
@@ -112,7 +104,6 @@ export default {
   data: () => ({
     address: '',
     prices: null,
-    estimatedGasCost: 0,
     ensError: null,
     isEnsAddressLoading: false,
     isLoadingGasPrice: true,
@@ -164,8 +155,6 @@ export default {
         this.ensError = null;
         this.transaction.to = this.address;
       }
-
-      this.debouncedGasCostEstimation(1);
     },
 
     async activeNet(newValue, prevValue) {
@@ -176,31 +165,11 @@ export default {
       if (this.isEnsTransaction) {
         this.transaction.to = await this.resolveEnsAddress();
       }
-
-      this.debouncedGasCostEstimation();
-    },
-
-    'transaction.tokenInfo': {
-      handler() {
-        this.debouncedGasCostEstimation();
-      },
-    },
-
-    'transaction.gasPrice': {
-      handler() {
-        this.debouncedGasCostEstimation();
-      },
-    },
-
-    'transaction.gasLimit': {
-      handler() {
-        this.debouncedGasCostEstimation();
-      },
     },
 
     'transaction.to': {
-      handler() {
-        if (!this.transaction.to) {
+      handler(newValue) {
+        if (!newValue) {
           this.address = '';
         }
       },
@@ -210,14 +179,11 @@ export default {
   methods: {
     ...mapActions('gasPrice', ['getGasPrice']),
 
-    changeTokenInfo(value) {
-      if (value) {
-        const tokenInfo = this.currentAccountTokenBySymbol(value);
+    changeToken(value) {
+      const token = value ? this.currentAccountTokenBySymbol(value) : null;
 
-        this.$set(this.transaction, 'tokenInfo', tokenInfo);
-      } else {
-        this.$set(this.transaction, 'tokenInfo', null);
-      }
+      this.transaction.token = token;
+      this.transaction.value = 0;
     },
 
     handleFormSubmit() {
@@ -239,37 +205,6 @@ export default {
         return '';
       } finally {
         this.isEnsAddressLoading = false;
-      }
-    },
-
-    debouncedGasCostEstimation: debounce(function() {
-      this.estimateGasCost();
-    }, 500),
-
-    async estimateGasCost() {
-      if (!this.transaction.to) return;
-
-      this.isEstimationInProcess = true;
-
-      try {
-        this.estimatedGasCost = await Transaction.getGasFullPrice(
-          this.transaction,
-        );
-      } catch (err) {
-        // TODO: check send on main net. If it is ok, disallow sending
-        console.log(err);
-
-        const isContract = await Transaction.isTransactionToContract(
-          this.transaction,
-        );
-
-        if (!isContract && err.message.includes('always failing transaction')) {
-          this.ensError = 'Transaction will always fail, try other address.';
-        }
-
-        this.estimatedGasCost = 0;
-      } finally {
-        this.isEstimationInProcess = false;
       }
     },
 
@@ -301,12 +236,6 @@ export default {
   },
   mixins: [formMixin],
   components: {
-    VForm,
-    VRadio,
-    VSelect,
-    VInput,
-    VSpinner,
-    VButton,
     AccountChooser,
     TransactionAdvancedOptions,
     TransactionAmountOptions,
@@ -315,5 +244,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

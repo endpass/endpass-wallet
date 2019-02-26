@@ -24,12 +24,7 @@
 
 <script>
 import { decodeTx } from 'ethereum-tx-decoder';
-import web3 from '@/class/singleton/web3';
-import VForm from '@/components/ui/form/VForm.vue';
-import VButton from '@/components/ui/form/VButton.vue';
-import VTextarea from '@/components/ui/form/VTextarea.vue';
-
-const { toChecksumAddress } = web3.utils;
+import { toChecksumAddress } from 'web3-utils';
 
 export default {
   name: 'RecoverTransaction',
@@ -66,12 +61,6 @@ export default {
         console.error(error);
       }
     },
-  },
-
-  components: {
-    VForm,
-    VButton,
-    VTextarea,
   },
 };
 </script>

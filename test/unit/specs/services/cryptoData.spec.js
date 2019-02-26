@@ -1,10 +1,9 @@
 import MockAdapter from 'axios-mock-adapter';
-
-import { http } from '@/class/singleton';
-import { NotificationError } from '@/class';
+import { NotificationError, http } from '@/class';
 import { cryptoDataValidator } from '@/schema';
 import { gasPrice } from 'fixtures/gasPrice';
 import { price, priceMulti } from 'fixtures/price';
+import { address } from 'fixtures/accounts';
 
 const cryptoDataService = require.requireActual('@/services/cryptoData')
   .default;
@@ -16,7 +15,62 @@ describe('Crypto data service', () => {
     axiosMock.reset();
   });
 
-  describe('getSymbolsPrice', () => {
+  describe('getGasPrice', () => {
+    const networkId = 1;
+    const requestUrl = `${ENV.cryptoDataAPIUrl}/${networkId}/gas/price`;
+    const expectedError = new NotificationError({
+      title: 'Failed to get suggested gas price',
+      text:
+        'An error occurred while retrieving suggested gas price. Please, set manually or, try again.',
+      type: 'is-warning',
+    });
+
+    it('should make correct request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onGet(requestUrl).reply(config => {
+        expect(config.url).toBe(requestUrl);
+        return [200, gasPrice];
+      });
+
+      await cryptoDataService.getGasPrice(networkId);
+    });
+
+    it('should handle successful GET /gas/price request', () => {
+      axiosMock.onGet(requestUrl).reply(200, gasPrice);
+
+      expect(cryptoDataService.getGasPrice(networkId)).resolves.toEqual(
+        gasPrice,
+      );
+    });
+
+    it('should handle data validation errors', async () => {
+      expect.assertions(1);
+
+      const gasPriceValidationError = new Error('gasPriceValidationError');
+
+      axiosMock.onGet(requestUrl).reply(200);
+      cryptoDataValidator.validateGasPrice.mockImplementationOnce(() => {
+        throw gasPriceValidationError;
+      });
+
+      await expect(cryptoDataService.getGasPrice(networkId)).rejects.toThrow(
+        expectedError,
+      );
+    });
+
+    it('should handle rejected GET /price request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onGet(requestUrl).reply(500);
+
+      await expect(cryptoDataService.getGasPrice(networkId)).rejects.toThrow(
+        expectedError,
+      );
+    });
+  });
+
+  describe('getSymbolsPrices', () => {
     const requestUrl = `${ENV.cryptoDataAPIUrl}/price`;
     const fromSymbols = ['ETH', 'BTC'];
     const toSymbol = 'USD';
@@ -26,17 +80,20 @@ describe('Crypto data service', () => {
     it('should correctly convert symbols to EHT-TEST', async () => {
       expect.assertions(2);
 
-      const toSymbol = 'ETH-TEST';
       const expectedResponse = {
-        ETH: { [toSymbol]: 0 },
-        BTC: { [toSymbol]: 0 },
+        ETH: {
+          'ETH-TEST': 0,
+        },
+        BTC: {
+          'ETH-TEST': 0,
+        },
       };
 
       axiosMock.onGet(requestUrl).reply(200, priceMultiResponse);
 
-      const receivedResponse = await cryptoDataService.getSymbolsPrice(
+      const receivedResponse = await cryptoDataService.getSymbolsPrices(
         fromSymbols,
-        toSymbol,
+        'ETH-TEST',
       );
 
       expect(receivedResponse).toEqual(expectedResponse);
@@ -46,13 +103,14 @@ describe('Crypto data service', () => {
     it('should correctly convert EHT-TEST to symbol', async () => {
       expect.assertions(2);
 
-      const fromSymbols = 'ETH-TEST';
-      const expectedResponse = { [toSymbol]: 0 };
+      const expectedResponse = {
+        USD: 0,
+      };
 
       axiosMock.onGet(requestUrl).reply(200, priceMultiResponse);
 
-      const receivedResponse = await cryptoDataService.getSymbolsPrice(
-        fromSymbols,
+      const receivedResponse = await cryptoDataService.getSymbolsPrices(
+        'ETH-TEST',
         toSymbol,
       );
 
@@ -72,7 +130,7 @@ describe('Crypto data service', () => {
         return [200, priceResponse];
       });
 
-      await cryptoDataService.getSymbolsPrice(fromSymbols[0], toSymbol);
+      await cryptoDataService.getSymbolsPrices(fromSymbols[0], toSymbol);
     });
 
     it('should make correct request for many symbols', async () => {
@@ -87,20 +145,27 @@ describe('Crypto data service', () => {
         return [200, priceMultiResponse];
       });
 
-      await cryptoDataService.getSymbolsPrice(fromSymbols, toSymbol);
+      await cryptoDataService.getSymbolsPrices(fromSymbols, toSymbol);
     });
 
     it('should handle successful GET /price request', async () => {
       expect.assertions(1);
 
-      axiosMock.onGet(requestUrl).reply(200, priceMultiResponse);
+      const expectedResponse = {
+        ETH: {
+          USD: 10,
+        },
+        BTC: {},
+      };
 
-      const response = await cryptoDataService.getSymbolsPrice(
+      axiosMock.onGet(requestUrl).reply(200, expectedResponse);
+
+      const response = await cryptoDataService.getSymbolsPrices(
         fromSymbols,
         toSymbol,
       );
 
-      expect(response).toEqual(priceMultiResponse);
+      expect(response).toEqual(expectedResponse);
     });
 
     it('should handle rejected GET /price request', async () => {
@@ -109,7 +174,7 @@ describe('Crypto data service', () => {
       axiosMock.onGet(requestUrl).reply(500);
 
       await expect(
-        cryptoDataService.getSymbolsPrice(fromSymbols, toSymbol),
+        cryptoDataService.getSymbolsPrices(fromSymbols, toSymbol),
       ).rejects.toThrow(expect.any(Error));
     });
 
@@ -124,72 +189,193 @@ describe('Crypto data service', () => {
       );
 
       axiosMock.onGet(requestUrl).reply(200);
-      cryptoDataValidator.validateSymbolsPrice.mockImplementationOnce(() => {
+      cryptoDataValidator.validateSymbolsPrices.mockImplementationOnce(() => {
         throw symbolPriceValidationError;
       });
-      cryptoDataValidator.validateSymbolsPrice.mockImplementationOnce(() => {
+      cryptoDataValidator.validateSymbolsPrices.mockImplementationOnce(() => {
         throw symbolsPriceValidationError;
       });
 
       await expect(
-        cryptoDataService.getSymbolsPrice(fromSymbols[0], toSymbol),
+        cryptoDataService.getSymbolsPrices(fromSymbols[0], toSymbol),
       ).rejects.toThrow(symbolPriceValidationError);
 
       await expect(
-        cryptoDataService.getSymbolsPrice(fromSymbols, toSymbol),
+        cryptoDataService.getSymbolsPrices(fromSymbols, toSymbol),
       ).rejects.toThrow(symbolsPriceValidationError);
     });
   });
 
-  describe('getGasPrice', () => {
-    const requestUrl = `${ENV.cryptoDataAPIUrl}/gas/price`;
+  describe('getAccountBalance', () => {
+    const networkId = 1;
+    const requestUrl = `${
+      ENV.cryptoDataAPIUrl
+    }/${networkId}/balance/${address}`;
+    const tokens = [
+      {
+        symbol: 'FST',
+        price: true,
+      },
+      {
+        symbol: 'SCDT',
+        price: true,
+      },
+    ];
+    const tokensPrices = {
+      FST: {
+        USD: 10,
+      },
+      SCDT: {
+        USD: 0,
+      },
+    };
+
+    it('should request account balance and tokens with prices', async () => {
+      expect.assertions(2);
+
+      axiosMock.onGet(requestUrl).reply(config => {
+        expect(config.url).toBe(requestUrl);
+
+        return [
+          200,
+          {
+            balance: 10,
+            tokens,
+          },
+        ];
+      });
+
+      cryptoDataService.getSymbolsPrices = jest
+        .fn()
+        .mockResolvedValueOnce(tokensPrices);
+
+      const res = await cryptoDataService.getAccountBalance({
+        network: networkId,
+        toSymbol: 'USD',
+        address,
+      });
+
+      expect(res).toEqual({
+        balance: 10,
+        tokens: [
+          {
+            symbol: 'FST',
+            price: tokensPrices.FST,
+          },
+          {
+            symbol: 'SCDT',
+            price: tokensPrices.SCDT,
+          },
+        ],
+      });
+    });
+
+    it('should reject on balance request error', () => {
+      axiosMock.onGet(requestUrl).reply(404);
+
+      expect(
+        cryptoDataService.getAccountBalance({
+          network: networkId,
+          toSymbol: 'USD',
+          address,
+        }),
+      ).rejects.toThrow();
+    });
+
+    it('should reject on price request error', async () => {
+      expect.assertions(1);
+
+      const error = new Error();
+
+      axiosMock.onGet(requestUrl).reply(200, {
+        balance: 10,
+        tokens,
+      });
+
+      cryptoDataService.getSymbolsPrices = jest
+        .fn()
+        .mockRejectedValueOnce(error);
+
+      expect(
+        cryptoDataService.getAccountBalance({
+          network: networkId,
+          toSymbol: 'USD',
+          address,
+        }),
+      ).rejects.toThrow(error);
+    });
+  });
+
+  describe('getPendingTransactions', () => {
+    const network = 1;
+    const address = 'address';
+    const filterId = 1;
+    const requestUrl = `${
+      ENV.cryptoDataAPIUrl
+    }/${network}/transactions/pending`;
     const expectedError = new NotificationError({
-      title: 'Failed to get suggested gas price',
-      text:
-        'An error occurred while retrieving suggested gas price. Please, set manually or, try again.',
+      title: 'Failed to get pending transactions',
+      text: 'An error occurred while getting pending transactions.',
       type: 'is-warning',
     });
 
     it('should make correct request', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       axiosMock.onGet(requestUrl).reply(config => {
         expect(config.url).toBe(requestUrl);
-        return [200, gasPrice];
+        expect(config.params).toEqual({
+          filterId,
+          from: address,
+        });
+
+        return [200, {}];
       });
 
-      await cryptoDataService.getGasPrice();
+      await cryptoDataService.getPendingTransactions(
+        network,
+        address,
+        filterId,
+      );
     });
 
-    it('should handle successful GET /gas/price request', () => {
-      axiosMock.onGet(`${ENV.cryptoDataAPIUrl}/gas/price`).reply(200, gasPrice);
+    it('should handle successful GET /transactions/:networkId/pending request', () => {
+      const response = {};
 
-      expect(cryptoDataService.getGasPrice()).resolves.toEqual(gasPrice);
+      axiosMock.onGet(requestUrl).reply(200, response);
+
+      expect(
+        cryptoDataService.getPendingTransactions(network, address, filterId),
+      ).resolves.toEqual(response);
     });
 
     it('should handle data validation errors', async () => {
       expect.assertions(1);
 
-      const gasPriceValidationError = new Error('gasPriceValidationError');
+      const pendingTransactionsValidationError = new Error(
+        'pendingTransactionsValidationError',
+      );
 
       axiosMock.onGet(requestUrl).reply(200);
-      cryptoDataValidator.validateGasPrice.mockImplementationOnce(() => {
-        throw gasPriceValidationError;
-      });
-
-      await expect(cryptoDataService.getGasPrice()).rejects.toThrow(
-        expectedError,
+      cryptoDataValidator.validatePendingTransactions.mockImplementationOnce(
+        () => {
+          throw pendingTransactionsValidationError;
+        },
       );
+
+      await expect(
+        cryptoDataService.getPendingTransactions(network, address, filterId),
+      ).rejects.toThrow(expectedError);
     });
 
-    it('should handle rejected GET /price request', async () => {
+    it('should handle rejected GET /transactions/:networkId/pending request', async () => {
       expect.assertions(1);
 
       axiosMock.onGet(requestUrl).reply(500);
 
-      await expect(cryptoDataService.getGasPrice()).rejects.toThrow(
-        expectedError,
-      );
+      await expect(
+        cryptoDataService.getPendingTransactions(network, address, filterId),
+      ).rejects.toThrow(expectedError);
     });
   });
 });

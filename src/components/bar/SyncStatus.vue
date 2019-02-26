@@ -1,10 +1,10 @@
 <template>
   <div class="sync-status">
-    <span 
-      :title="'synced to block '+ blockNumber" 
-      :class="statusClass" 
+    <span
+      :title="message"
+      :class="statusClass"
       class="tag"
-    >{{ appStatus }}</span>
+    >{{ statusMessage }}</span>
   </div>
 </template>
 <script>
@@ -16,6 +16,11 @@ export default {
     return {};
   },
   computed: {
+    ...mapState({
+      blockNumber: state => state.web3.blockNumber,
+      apiStatus: state => state.connectionStatus.apiConnection,
+    }),
+    ...mapGetters('connectionStatus', ['appStatus']),
     statusClass() {
       switch (this.appStatus) {
         case 'failed':
@@ -23,15 +28,23 @@ export default {
         case 'syncing':
           return 'is-warning';
         case 'ready':
-          return 'is-success';
+          return this.apiStatus ? 'is-success' : 'is-warning';
         default:
           return '';
       }
     },
-    ...mapState({
-      blockNumber: state => state.web3.blockNumber,
-    }),
-    ...mapGetters('connectionStatus', ['appStatus']),
+    statusMessage() {
+      let message = `${this.appStatus}`;
+      if (!this.apiStatus && message === 'ready') {
+        message = 'API connection error';
+      }
+      return message;
+    },
+    message() {
+      return this.blockNumber
+        ? `Synced to block ${this.blockNumber}`
+        : 'Awaiting block number';
+    },
   },
 };
 </script>

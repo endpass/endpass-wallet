@@ -5,6 +5,7 @@
   >
     <div class="transaction-header">
       <account
+        v-if="txAddress"
         :address="txAddress"
         :balance="transaction.value.toString()"
         :currency="symbol"
@@ -17,13 +18,13 @@
           </div>
           <div class="level-right">
             <v-spinner
-              v-if="isHavePendingRelatedTransaction && transaction.state === 'pending'"
+              v-if="isHavePendingRelatedTransaction && isPending"
               :label="pendingActionText"
               class="level-item has-text-info actions-loader"
             />
             <template v-else>
               <a
-                v-if="transaction.state === 'pending' && !isPublicAccount"
+                v-if="isPending && !isPublicAccount"
                 :disabled="isSyncing"
                 class="level-item has-text-info"
                 title="Resend"
@@ -40,7 +41,7 @@
                 </span>
               </a>
               <a
-                v-if="transaction.state === 'pending' && !isPublicAccount"
+                v-if="isPending && !isPublicAccount"
                 :disabled="isSyncing"
                 class="level-item has-text-danger"
                 title="Cancel"
@@ -61,6 +62,7 @@
             <a
               title="Details"
               class="level-item has-text-info"
+              data-test="transaction-details-button"
               @click="toggleExpanded"
             >
               <span
@@ -78,6 +80,7 @@
     <div
       v-if="isExpanded"
       class="transaction-detail"
+      data-test="transaction-details"
     >
       <div v-if="transaction.hash.length">
         <span class="text-label">Txid</span>
@@ -132,17 +135,16 @@
 </template>
 
 <script>
-import dayjs from 'dayjs';
+import get from 'lodash/get';
+import { hexToString } from 'web3-utils';
 import Account from '@/components/Account';
 import ResendModal from '@/components/modal/ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
-import VSpinner from '@/components/ui/VSpinner';
 import { mapState, mapGetters, mapActions } from 'vuex';
-import { fromNow, formateDate } from '@/utils/date';
-import { getShortStringWithEllipsis } from '@/utils/strings';
-import web3 from '@/class/singleton/web3';
-
-const { hexToString } = web3.utils;
+import { addToDate, formateDate, fromNow } from '@endpass/utils/date';
+import { getShortStringWithEllipsis } from '@endpass/utils/strings';
+import { Transaction } from '@/class';
+import { TRANSACTION_STATUS } from '@/constants';
 
 export default {
   props: {
@@ -173,25 +175,25 @@ export default {
       return this.transaction.to === this.address;
     },
     isSuccess() {
-      return this.transaction.state === 'success';
+      return this.transaction.state === TRANSACTION_STATUS.SUCCESS;
     },
     isError() {
       return (
-        this.transaction.state === 'error' ||
-        this.state === 'error' ||
-        this.state === 'canceled'
+        this.transaction.state === TRANSACTION_STATUS.ERROR ||
+        this.state === TRANSACTION_STATUS.ERROR ||
+        this.state === TRANSACTION_STATUS.CANCELED
       );
     },
     isPending() {
-      return this.transaction.state === 'pending';
+      return this.transaction.state === TRANSACTION_STATUS.PENDING;
     },
     pendingActionText() {
       let text = '';
 
       if (this.isHavePendingRelatedTransaction) {
-        if (this.state === 'canceled') {
+        if (this.state === TRANSACTION_STATUS.CANCELED) {
           text = 'Canceling...';
-        } else if (this.state === 'resent') {
+        } else if (this.state === TRANSACTION_STATUS.RESENT) {
           text = 'Resending...';
         }
       }
@@ -200,7 +202,7 @@ export default {
     },
     isHavePendingRelatedTransaction() {
       return (
-        this.transactionToSend && this.transactionToSend.state === 'pending'
+        get(this.transactionToSend, 'state') === TRANSACTION_STATUS.PENDING
       );
     },
     // Dynamic class based on transaction status
@@ -214,10 +216,7 @@ export default {
       };
     },
     symbol() {
-      return (
-        (this.transaction.tokenInfo && this.transaction.tokenInfo.symbol) ||
-        'ETH'
-      );
+      return Transaction.getTokenSymbol(this.transaction);
     },
 
     transactionFormatedDate() {
@@ -255,11 +254,14 @@ export default {
       this.passwordModalOpen = false;
 
       const sendTransaction =
-        this.state === 'canceled'
+        this.state === TRANSACTION_STATUS.CANCELED
           ? this.cancelTransaction
           : this.resendTransaction;
 
-      this.transactionToSend.state = 'pending';
+      this.transactionToSend = Transaction.applyProps(this.transactionToSend, {
+        state: TRANSACTION_STATUS.PENDING,
+      });
+
       sendTransaction({ transaction: this.transactionToSend, password })
         .then(() => {
           this.$notify({
@@ -283,31 +285,32 @@ export default {
       this.resendModalOpen = false;
     },
     resend() {
-      this.transactionToSend = this.transaction.clone();
-      this.transactionToSend.state = null;
+      this.transactionToSend = Transaction.applyProps(this.transaction, {
+        state: null,
+      });
       this.resendModalOpen = true;
-      this.state = 'resent';
+      this.state = TRANSACTION_STATUS.RESENT;
     },
     cancel() {
-      if (this.transaction.state !== 'pending') return;
+      if (this.transaction.state !== TRANSACTION_STATUS.PENDING) return;
 
-      this.state = 'canceled';
-      this.transactionToSend = this.transaction.clone();
-      this.transactionToSend.value = '0';
-      this.transactionToSend.to = this.address;
-      this.transactionToSend.gasPrice = this.transactionToSend.getUpGasPrice();
-      this.transactionToSend.state = null;
+      this.state = TRANSACTION_STATUS.CANCELED;
+      this.transactionToSend = Transaction.applyProps(this.transaction, {
+        value: '0',
+        to: this.address,
+        gasPrice: Transaction.getUpGasPrice(this.transaction),
+        state: null,
+      });
       this.requestPassword();
     },
-    incrementDIsplayDate() {
-      this.displayDate = dayjs(this.transaction.date)
-        .add(10, 's')
-        .toDate();
+    incrementDisplayDate() {
+      const newDate = addToDate(this.transaction.date, 10);
+      this.displayDate = newDate;
     },
   },
 
   created() {
-    this.dateTimer = setInterval(this.incrementDIsplayDate, 10000);
+    this.dateTimer = setInterval(this.incrementDisplayDate, 10000);
   },
 
   beforeDestroy() {
@@ -319,7 +322,6 @@ export default {
     Account,
     ResendModal,
     PasswordModal,
-    VSpinner,
   },
   filters: {
     truncateHash(value) {

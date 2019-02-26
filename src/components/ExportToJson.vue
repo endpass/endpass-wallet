@@ -20,9 +20,6 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import PasswordModal from '@/components/modal/PasswordModal';
-import VForm from '@/components/ui/form/VForm';
-import VInput from '@/components/ui/form/VInput';
-import VButton from '@/components/ui/form/VButton';
 
 export default {
   name: 'ExportToJson',
@@ -108,9 +105,6 @@ export default {
   },
 
   components: {
-    VForm,
-    VInput,
-    VButton,
     PasswordModal,
   },
 };

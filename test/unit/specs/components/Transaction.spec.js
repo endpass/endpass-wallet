@@ -1,10 +1,21 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
-import dayjs from 'dayjs';
 import Notifications from 'vue-notification';
+import VeeValidate from 'vee-validate';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
+
 import Transaction from '@/components/Transaction';
-import { generateStubs } from '@/utils/testUtils';
+
 import { checksumAddress } from 'fixtures/accounts';
+
+const localVue = createLocalVue();
+
+localVue.use(Notifications);
+localVue.use(Vuex);
+localVue.use(validation);
+localVue.use(VeeValidate);
+localVue.use(UIComponents);
 
 describe('Transaction', () => {
   const accountsActions = {
@@ -14,11 +25,6 @@ describe('Transaction', () => {
   let wrapper;
 
   beforeEach(() => {
-    const localVue = createLocalVue();
-
-    localVue.use(Notifications);
-    localVue.use(Vuex);
-
     const storeOptions = {
       modules: {
         accounts: {
@@ -42,13 +48,14 @@ describe('Transaction', () => {
     const transaction = {
       state: 'pending',
       value: 0,
+      from: 'fromAddr',
+      to: 'toAddr',
     };
     const store = new Vuex.Store(storeOptions);
 
-    wrapper = shallow(Transaction, {
+    wrapper = shallowMount(Transaction, {
       localVue,
       store,
-      stubs: generateStubs(Transaction),
       propsData: {
         transaction,
       },
@@ -66,7 +73,7 @@ describe('Transaction', () => {
     });
 
     describe('action process', () => {
-      it('should render loader', () => {
+      it('should render loader with pending text', () => {
         wrapper.setData({
           state: 'resent',
           transactionToSend: {
@@ -74,13 +81,18 @@ describe('Transaction', () => {
           },
         });
 
-        expect(wrapper.find('v-spinner').html()).toMatchSnapshot();
+        expect(wrapper.find('v-spinner-stub').html()).toMatchSnapshot();
+      });
 
+      it('should render loader with canceling text', () => {
         wrapper.setData({
           state: 'canceled',
+          transactionToSend: {
+            state: 'pending',
+          },
         });
 
-        expect(wrapper.find('v-spinner').html()).toMatchSnapshot();
+        expect(wrapper.find('v-spinner-stub').html()).toMatchSnapshot();
       });
 
       it('should not render loader', () => {
@@ -88,7 +100,7 @@ describe('Transaction', () => {
           transactionToSend: null,
         });
 
-        expect(wrapper.find('v-spinner').exists()).toBeFalsy();
+        expect(wrapper.find('v-spinner-stub').exists()).toBeFalsy();
       });
     });
   });
@@ -113,7 +125,10 @@ describe('Transaction', () => {
       jest.advanceTimersByTime(10000);
 
       expect(wrapper.vm.displayDate).not.toBe(date);
-      expect(dayjs(wrapper.vm.displayDate).diff(dayjs(date), 's')).toBe(10);
+      const displaceDate = new Date(wrapper.vm.displayDate);
+      const diff = Math.abs(date - displaceDate);
+
+      expect(Math.floor(diff / 1000)).toBe(10); // 10 seconds
     });
   });
 });

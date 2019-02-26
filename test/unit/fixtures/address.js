@@ -1,6 +1,5 @@
 import web3 from 'web3';
-
-const { bytesToHex, toChecksumAddress } = web3.utils;
+import { bytesToHex, toChecksumAddress } from 'web3-utils';
 
 export const address = Uint8Array.from([
   76,

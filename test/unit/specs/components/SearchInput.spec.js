@@ -1,4 +1,4 @@
-import { shallow } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 
 import SearchInput from '@/components/SearchInput';
 
@@ -6,7 +6,7 @@ describe('SearchInput', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallow(SearchInput, {
+    wrapper = shallowMount(SearchInput, {
       propsData: {
         value: '0',
       },

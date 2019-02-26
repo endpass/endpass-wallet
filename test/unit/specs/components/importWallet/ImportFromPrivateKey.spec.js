@@ -1,18 +1,19 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
-
-import { generateStubs } from '@/utils/testUtils';
-import { privateKeyString, v3password } from '../../../fixtures/accounts';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
 
 import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
 
 const localVue = createLocalVue();
 
+localVue.use(validation);
 localVue.use(Vuex);
 localVue.use(VeeValidate);
 localVue.use(VueRouter);
+localVue.use(UIComponents);
 
 jest.useFakeTimers();
 
@@ -35,11 +36,11 @@ describe('ImportFromPrivateKey', () => {
     };
     const store = new Vuex.Store(storeOptions);
     router = new VueRouter();
-    wrapper = shallow(ImportFromPrivateKey, {
+    wrapper = shallowMount(ImportFromPrivateKey, {
       localVue,
       store,
-      stubs: generateStubs(ImportFromPrivateKey),
       router,
+      sync: false,
     });
   });
 
@@ -57,29 +58,6 @@ describe('ImportFromPrivateKey', () => {
   describe('methods', () => {
     describe('handlePasswordConfirm', () => {
       const password = 'password';
-
-      it('should call vuex addWalletWithPrivateKey with correct arguments', done => {
-        const privateKey = '0xprivateKey';
-        const expectedPrivateKey = privateKey.replace(/^0x/, '');
-
-        expect.assertions(2);
-
-        wrapper.setData({ privateKey });
-        wrapper.setMethods({
-          addWalletWithPrivateKey: jest.fn(),
-        });
-
-        wrapper.vm.handlePasswordConfirm(password).then(() => {
-          expect(wrapper.vm.addWalletWithPrivateKey).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.addWalletWithPrivateKey).toBeCalledWith({
-            privateKey: expectedPrivateKey,
-            password,
-          });
-          done();
-        });
-
-        jest.runAllTimers();
-      });
 
       it('should redirect to root after successful wallet creation', done => {
         expect.assertions(2);
@@ -117,18 +95,41 @@ describe('ImportFromPrivateKey', () => {
           throw new Error();
         });
         wrapper.vm.handlePasswordConfirm().catch(() => {
-          expect(wrapper.vm.errors.items[0]).toEqual({
+          expect(wrapper.vm.errors.items[0]).toMatchObject({
             field: 'privateKey',
             msg: 'Private key is invalid',
             id: 'wrongPrivateKey',
-            // vee validate added field
-            scope: null,
           });
           done();
         });
         jest.runAllTimers();
       });
+
+      // TODO: if this test will be first in describe block, it will be failed
+      it('should call vuex addWalletWithPrivateKey with correct arguments', done => {
+        expect.assertions(2);
+
+        const privateKey = '0xprivateKey';
+        const expectedPrivateKey = privateKey.replace(/^0x/, '');
+
+        wrapper.setData({ privateKey });
+        wrapper.setMethods({
+          addWalletWithPrivateKey: jest.fn(),
+        });
+
+        wrapper.vm.handlePasswordConfirm(password).then(() => {
+          expect(wrapper.vm.addWalletWithPrivateKey).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.addWalletWithPrivateKey).toBeCalledWith({
+            privateKey: expectedPrivateKey,
+            password,
+          });
+          done();
+        });
+
+        jest.runAllTimers();
+      });
     });
+
     describe('handleInput', () => {
       it('should clear error with wrongPrivateKey id', () => {
         wrapper.vm.errors.add({
@@ -137,6 +138,7 @@ describe('ImportFromPrivateKey', () => {
           id: 'wrongPrivateKey',
         });
         expect(wrapper.vm.errors.has('privateKey')).toBe(true);
+
         wrapper.vm.handleInput();
         expect(wrapper.vm.errors.has('privateKey')).toBe(false);
       });

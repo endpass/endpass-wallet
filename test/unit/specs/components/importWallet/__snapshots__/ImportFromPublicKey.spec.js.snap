@@ -1,3 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ImportFromPublicKey render should render initial state of the component 1`] = `<!---->`;
+exports[`ImportFromPublicKey render should render initial state of the component 1`] = `
+<v-form-stub
+  data-test="import-public-form"
+>
+  <v-input-stub
+    aria-describedby="address"
+    aria-invalid="false"
+    aria-required="true"
+    classname=""
+    data-test="input-public-key"
+    data-vv-as="public key"
+    data-vv-name="address"
+    id="address"
+    label="Address"
+    name="address"
+    placeholder="0x...."
+    required=""
+    value=""
+  />
+   
+  <v-button-stub
+    classname="is-primary is-cta"
+    data-test="submit-import"
+    disabled="true"
+  >
+    
+    Import
+  
+  </v-button-stub>
+</v-form-stub>
+`;

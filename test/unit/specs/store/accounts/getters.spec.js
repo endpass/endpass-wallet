@@ -1,6 +1,5 @@
 import accountsGetters from '@/store/accounts/getters';
-import { HARDWARE_WALLET_TYPE } from '@/constants';
-import { v3 } from 'fixtures/accounts';
+import { v3, hdv3 } from 'fixtures/accounts';
 
 describe('Accounts getters', () => {
   describe('wallet', () => {
@@ -90,6 +89,40 @@ describe('Accounts getters', () => {
       expect(accountsGetters.balance(state, null, null, rootGetters)).toBe(
         '0.1234',
       );
+    });
+  });
+
+  describe('cache store', () => {
+    const type = 'walletType';
+    const otherType = 'otherType';
+    const state = {
+      hdCacheByType: {
+        [type]: {
+          xpub: hdv3.address,
+          v3KeyStore: hdv3,
+        },
+      },
+    };
+
+    it('should return v3 keyStore', () => {
+      expect(
+        accountsGetters.cachedHdV3KeyStoreByType(state)(otherType),
+      ).toBeUndefined();
+      expect(
+        accountsGetters.cachedHdV3KeyStoreByType(state)(type),
+      ).toMatchObject(hdv3);
+    });
+
+    it('should return xpub address', () => {
+      expect(
+        accountsGetters.cachedXpubByType(state)(otherType),
+      ).toBeUndefined();
+      expect(accountsGetters.cachedXpubByType(state)(type)).toBe(hdv3.address);
+    });
+
+    it('should check stored keystore', () => {
+      expect(accountsGetters.isHDv3WalletByType(state)(otherType)).toBe(false);
+      expect(accountsGetters.isHDv3WalletByType(state)(type)).toBe(true);
     });
   });
 });

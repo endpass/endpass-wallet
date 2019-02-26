@@ -1,4 +1,4 @@
-import { shallow } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import VeeValidate from 'vee-validate';
 import BasePage from '@/components/pages/Base';
 
@@ -13,7 +13,7 @@ describe('Base page', () => {
       }),
     };
 
-    wrapper = shallow(BasePage, options);
+    wrapper = shallowMount(BasePage, options);
   });
 
   describe('render', () => {
@@ -27,7 +27,7 @@ describe('Base page', () => {
     });
 
     it('should render default slot', () => {
-      const wrapper = shallow(BasePage, {
+      const wrapper = shallowMount(BasePage, {
         ...options,
         slots: {
           default: '<div>default slot</div>',
@@ -38,7 +38,7 @@ describe('Base page', () => {
     });
 
     it('should render title slot', () => {
-      const wrapper = shallow(BasePage, {
+      const wrapper = shallowMount(BasePage, {
         ...options,
         slots: {
           title: 'title',

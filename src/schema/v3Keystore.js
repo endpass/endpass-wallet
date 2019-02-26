@@ -91,3 +91,10 @@ export const addresses = {
   type: 'array',
   items: address,
 };
+
+export default {
+  address,
+  nonEmptyAccount,
+  account,
+  addresses,
+};

@@ -1,91 +1,89 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`VerifyMessage render should disable "Verify message" button 1`] = `
-<v-form
+<v-form-stub
   data-test="verifying-message-form"
-  v-on:submit="bound verifyMessage"
+  isformvalid="true"
 >
-  <v-textarea
+  <v-textarea-stub
     data-test="signed-message-textarea"
     label="Signature"
-    v-model="signedMessageString"
+    value="string"
   />
    
-  <v-button
-    class-name="is-primary is-medium"
+  <v-button-stub
+    classname="is-primary is-medium"
     data-test="verify-button"
     disabled="true"
   >
     Verify message
-  </v-button>
+  </v-button-stub>
    
   <!---->
-</v-form>
+</v-form-stub>
 `;
 
 exports[`VerifyMessage render should enable "Verify message" button 1`] = `
-<v-form
+<v-form-stub
   data-test="verifying-message-form"
-  v-on:submit="bound verifyMessage"
+  isformvalid="true"
 >
-  <v-textarea
+  <v-textarea-stub
     data-test="signed-message-textarea"
     label="Signature"
-    v-model="signedMessageString"
+    value="{}"
   />
    
-  <v-button
-    class-name="is-primary is-medium"
+  <v-button-stub
+    classname="is-primary is-medium"
     data-test="verify-button"
   >
     Verify message
-  </v-button>
+  </v-button-stub>
    
   <!---->
-</v-form>
+</v-form-stub>
 `;
 
 exports[`VerifyMessage render should render the initial state of the component 1`] = `
-<v-form
+<v-form-stub
   data-test="verifying-message-form"
-  v-on:submit="bound verifyMessage"
+  isformvalid="true"
 >
-  <v-textarea
+  <v-textarea-stub
     data-test="signed-message-textarea"
     label="Signature"
-    v-model="signedMessageString"
   />
    
-  <v-button
-    class-name="is-primary is-medium"
+  <v-button-stub
+    classname="is-primary is-medium"
     data-test="verify-button"
     disabled="true"
   >
     Verify message
-  </v-button>
+  </v-button-stub>
    
   <!---->
-</v-form>
+</v-form-stub>
 `;
 
 exports[`VerifyMessage render should show the received address 1`] = `
-<v-form
+<v-form-stub
   data-test="verifying-message-form"
-  v-on:submit="bound verifyMessage"
+  isformvalid="true"
 >
-  <v-textarea
+  <v-textarea-stub
     data-test="signed-message-textarea"
     label="Signature"
-    v-model="signedMessageString"
   />
    
-  <v-button
-    class-name="is-primary is-medium"
+  <v-button-stub
+    classname="is-primary is-medium"
     data-test="verify-button"
     disabled="true"
   >
     Verify message
-  </v-button>
+  </v-button-stub>
    
   <div
     class="field"
@@ -101,5 +99,5 @@ exports[`VerifyMessage render should show the received address 1`] = `
       0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c
     </p>
   </div>
-</v-form>
+</v-form-stub>
 `;

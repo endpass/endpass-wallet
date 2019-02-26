@@ -19,7 +19,7 @@
           aria-describedby="gasPrice"
           placeholder="Gas price"
           data-test="gas-price-input"
-          v-validate="`required|numeric|integer|between:${transaction.gasPrice},100`"
+          v-validate="`required|numeric|integer|between:${minimumGasPrice},100`"
           :error="errors.first('gasPrice')"
           autofocus
           required
@@ -65,11 +65,8 @@
 </template>
 
 <script>
-import VModal from '@/components/ui/VModal';
-import VForm from '@/components/ui/form/VForm.vue';
-import VInput from '@/components/ui/form/VInput.vue';
-import VButton from '@/components/ui/form/VButton.vue';
 import formMixin from '@/mixins/form';
+import { Transaction } from '@/class';
 
 export default {
   name: 'ResendModal',
@@ -86,6 +83,11 @@ export default {
       newTransaction: null,
     };
   },
+  computed: {
+    minimumGasPrice() {
+      return Math.floor(Number(this.transaction.gasPrice) + 1);
+    },
+  },
   methods: {
     confirmResend() {
       this.$emit('confirm', this.newTransaction);
@@ -95,15 +97,12 @@ export default {
     },
   },
   created() {
-    this.newTransaction = this.transaction.clone();
+    this.newTransaction = {
+      ...Transaction.clone(this.transaction),
+      gasPrice: this.minimumGasPrice,
+    };
   },
   mixins: [formMixin],
-  components: {
-    VModal,
-    VForm,
-    VInput,
-    VButton,
-  },
 };
 </script>
 

@@ -1,18 +1,21 @@
 import Vuex from 'vuex';
-import { shallow, createLocalVue, mount } from '@vue/test-utils';
+import { createLocalVue, mount } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import VeeValidate from 'vee-validate';
-// import validation from '@/validation';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
+import { wrapShallowMountFactory } from '@/testUtils';
 
 import { IDENTITY_MODE } from '@/constants';
 import SettingsPage from '@/components/pages/Settings.vue';
-import { generateStubs } from '@/utils/testUtils';
 
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
+localVue.use(validation);
 localVue.use(VeeValidate);
 localVue.use(Notifications);
+localVue.use(UIComponents);
 
 describe('SettingsPage', () => {
   const actions = {
@@ -52,6 +55,7 @@ describe('SettingsPage', () => {
     },
   };
   let wrapper;
+  let wrapperFactory;
   let store;
   let options;
 
@@ -61,10 +65,10 @@ describe('SettingsPage', () => {
     options = {
       store,
       localVue,
-      stubs: generateStubs(SettingsPage),
+      sync: false,
     };
-
-    wrapper = shallow(SettingsPage, options);
+    wrapperFactory = wrapShallowMountFactory(SettingsPage, options);
+    wrapper = wrapperFactory();
   });
 
   afterEach(() => {
@@ -77,10 +81,16 @@ describe('SettingsPage', () => {
     });
 
     it('should not render email and otp settings when not default identity type', () => {
-      wrapper.setComputed({ isDefaultIdentity: false });
+      wrapper = wrapperFactory({
+        computed: {
+          isDefaultIdentity: false,
+        },
+      });
 
-      expect(wrapper.find('v-input[type=email]').exists()).toBeFalsy();
-      expect(wrapper.find('two-factor-auth-settings').exists()).toBeFalsy();
+      expect(wrapper.find('v-input-stub[type=email]').exists()).toBeFalsy();
+      expect(
+        wrapper.find('two-factor-auth-settings-stub').exists(),
+      ).toBeFalsy();
       expect(wrapper.element).toMatchSnapshot();
     });
   });
@@ -114,7 +124,11 @@ describe('SettingsPage', () => {
     it('should validate settings properly', async () => {
       expect.assertions(3);
 
-      wrapper = mount(SettingsPage, { store, localVue });
+      wrapper = mount(SettingsPage, {
+        store,
+        localVue,
+        sync: false,
+      });
 
       expect(wrapper.vm.errors.any()).toBeFalsy();
 

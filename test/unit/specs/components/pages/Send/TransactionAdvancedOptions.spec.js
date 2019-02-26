@@ -1,30 +1,37 @@
 import { default as VeeValidate, Validator } from 'vee-validate';
-import { mount, createLocalVue } from '@vue/test-utils';
-import { generateStubs } from '@/utils/testUtils';
+import { createLocalVue } from '@vue/test-utils';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
+import { wrapShallowMountFactory } from '@/testUtils';
+
 import TransactionAdvancedOptions from '@/components/pages/Send/TransactionAdvancedOptions.vue';
+
 import { transaction } from 'fixtures/transactions';
 
 Validator.extend('hex', () => true);
 const localVue = createLocalVue();
 localVue.use(VeeValidate);
+localVue.use(validation);
+localVue.use(UIComponents);
 
 describe('Send – TransactionAdvancedOptions', () => {
   const mountProps = {
     transaction,
   };
   let wrapper;
+  let wrapperFactory;
 
   beforeEach(() => {
     jest.clearAllMocks();
-
-    wrapper = mount(TransactionAdvancedOptions, {
-      stubs: generateStubs(TransactionAdvancedOptions),
+    wrapperFactory = wrapShallowMountFactory(TransactionAdvancedOptions, {
       propsData: mountProps,
       provide: () => ({
         $validator: new VeeValidate.Validator(),
       }),
       localVue,
+      sync: false,
     });
+    wrapper = wrapperFactory();
   });
 
   describe('render', () => {
@@ -71,9 +78,11 @@ describe('Send – TransactionAdvancedOptions', () => {
 
     describe('watchers', () => {
       it('should update gas price in form if transaction gas price changed', () => {
-        wrapper.setProps({
-          transaction: {
-            gasPrice: 999,
+        wrapper = wrapperFactory({
+          propsData: {
+            transaction: {
+              gasPrice: 999,
+            },
           },
         });
 
@@ -81,16 +90,20 @@ describe('Send – TransactionAdvancedOptions', () => {
       });
 
       it('should update nonce in form if transaction nonce changed', () => {
-        wrapper.setProps({
-          transaction: {
-            nonce: 999,
+        wrapper = wrapperFactory({
+          propsData: {
+            transaction: {
+              nonce: 999,
+            },
           },
         });
 
         expect(wrapper.vm.form.nonce).toBe(999);
       });
 
-      it('should update form nonce if next nonce in block is greater', () => {
+      it('should update form nonce if next nonce in block is greater', async () => {
+        expect.assertions(1);
+
         wrapper.setData({
           form: {
             nonce: 10,
@@ -100,12 +113,17 @@ describe('Send – TransactionAdvancedOptions', () => {
           nextNonceInBlock: 15,
         });
 
+        await wrapper.vm.$nextTick();
+
         expect(wrapper.vm.form.nonce).toBe(15);
       });
 
       it('should unfold options if isOpened truthy', () => {
-        wrapper.setProps({
-          isOpened: true,
+        wrapper = wrapperFactory({
+          propsData: {
+            transaction: {},
+            isOpened: true,
+          },
         });
 
         expect(wrapper.vm.isCollapsed).toBe(false);

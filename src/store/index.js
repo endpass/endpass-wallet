@@ -13,7 +13,7 @@ import transactions from './transactions';
 import errors from './errors';
 import connectionStatus from './connection-status';
 import user from './user';
-import dapp from './dapp';
+import { web3Plugin } from './plugins';
 
 Vue.use(Vuex);
 
@@ -31,22 +31,21 @@ const store = new Vuex.Store({
     errors,
     connectionStatus,
     user,
-    dapp,
   },
   strict: !ENV.isProduction,
   mutations,
   actions,
+  plugins: [web3Plugin],
 });
 
 // Dispatch on change in block number
 // This triggers when a new block is found OR network provider is changed
 store.watch(
   state => state.web3.blockNumber,
-  () =>
-    Promise.all([
-      store.dispatch('accounts/updateBalance'),
-      store.dispatch('tokens/getCurrentAccountTokensData'),
-    ]),
+  () => Promise.all([
+    store.dispatch('accounts/updateBalance'),
+    store.dispatch('transactions/getPendingTransactions'),
+  ])  
 );
 
 // Enable hot reloading in development
@@ -64,7 +63,6 @@ if (module.hot) {
       './errors',
       './connection-status',
       './user',
-      './dapp',
     ],
     () => {
       /* eslint-disable global-require */
@@ -79,7 +77,6 @@ if (module.hot) {
       const newErrors = require('./errors').default;
       const newConnectionStatus = require('./connection-status').default;
       const newUserModule = require('./user').default;
-      const newDappModule = require('./dapp').default;
 
       // swap in the new actions and mutations
       store.hotUpdate({
@@ -95,7 +92,6 @@ if (module.hot) {
           errors: newErrors,
           connectionStatus: newConnectionStatus,
           user: newUserModule,
-          dapp: newDappModule,
         },
       });
     },

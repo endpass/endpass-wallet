@@ -1,20 +1,21 @@
 <template>
-  <div
-    class="tokens-list"
-    data-test="tokens-list"
-  >
-    <ul v-if="tokens.length > 0">
+  <div class="tokens-list" data-test="tokens-list">
+    <label v-if="collapsable && tokens.length > 0" class="tokens-list-toggler">
+      <input
+        v-model="isDustbinTokensVisible"
+        type="checkbox"
+        data-test="dustbin-toggler"
+      />
+      <span>Show dust amount tokens</span>
+    </label>
+    <ul v-if="actualTokens.length > 0">
       <li
-        v-for="token in tokens"
+        v-for="token in actualTokens"
         :class="itemClass"
         :key="token.address"
         data-test="user-token"
       >
-        <v-token
-          :token="token"
-          :currency="currency"
-          :price="prices.get(token.symbol)"
-        >
+        <v-token :token="token" :currency="currency">
           <a
             v-if="isTokenCanBeDeleted(token)"
             slot="right"
@@ -31,19 +32,17 @@
         </v-token>
       </li>
     </ul>
-    <p
-      v-else
-      class="small"
-    >
+    <p v-if="tokens.length === 0" class="small">
       You have no tokens at this address.
     </p>
   </div>
 </template>
 
 <script>
-import VToken from '@/components/VToken';
-import { mapState, mapActions, mapGetters } from 'vuex';
+import get from 'lodash/get';
 import { BigNumber } from 'bignumber.js';
+import { mapState, mapActions, mapGetters } from 'vuex';
+import VToken from '@/components/VToken';
 import error from '@/mixins/error';
 
 export default {
@@ -62,29 +61,45 @@ export default {
       type: [Object, Array, String],
       default: '',
     },
+
+    collapsable: {
+      type: Boolean,
+      default: true,
+    },
   },
+
+  data: () => ({
+    isDustbinTokensVisible: false,
+  }),
 
   computed: {
     ...mapGetters('tokens', ['currentNetUserFullTokens']),
     ...mapState({
-      tokenPrices: state => state.tokens.prices,
-      ethPrice: state => state.price.price,
       currency: state => state.user.settings.fiatCurrency,
-      userTokens: state => state.tokens.userTokens,
     }),
 
-    prices() {
-      return new Map(
-        this.tokens.map(token => [
-          token.symbol,
-          this.getTokenPrice(token.symbol),
-        ]),
+    actualTokens() {
+      const { collapsable, isDustbinTokensVisible } = this;
+
+      if (!collapsable || isDustbinTokensVisible) {
+        return this.tokens;
+      }
+
+      return this.tokens.filter(token =>
+        this.getTokenAmountBN(token).gt('0.01'),
       );
     },
   },
 
   methods: {
-    ...mapActions('tokens', ['getTokensPrices', 'removeUserToken']),
+    ...mapActions('tokens', ['removeUserToken']),
+
+    getTokenAmountBN(token) {
+      const tokenPrice = get(token, `price.${this.currency}`, 0);
+      const tokenBalance = get(token, 'balance', 0);
+
+      return BigNumber(tokenBalance).times(tokenPrice);
+    },
 
     isTokenCanBeDeleted(token) {
       const { hasRemove, currentNetUserFullTokens } = this;
@@ -92,29 +107,8 @@ export default {
       return (
         hasRemove &&
         currentNetUserFullTokens[token.address] &&
-        token.balance === '0'
+        get(token, 'balance', '0') === '0'
       );
-    },
-
-    /**
-     * Returns value of tokens in fiat
-     * @param {String} symbol Token symbol
-     * @returns {String} Token price in fiat
-     */
-    getTokenPrice(symbol) {
-      const prices = this.tokenPrices[symbol] || {};
-
-      return new BigNumber(prices.ETH || 0).times(this.ethPrice).toString();
-    },
-
-    loadTokensPrices() {
-      /**
-       * It needs because list can contain custom tokens list which not belongs to current
-       * user tokens
-       */
-      this.getTokensPrices({
-        tokensSymbols: this.tokens.map(({ symbol }) => symbol),
-      });
     },
 
     async deleteToken(token) {
@@ -122,12 +116,10 @@ export default {
         token,
       });
     },
-  },
 
-  mounted() {
-    if (this.tokens.length > 0) {
-      this.loadTokensPrices();
-    }
+    toggleDustbinTokens() {
+      this.isDustbinTokensVisible = !this.isDustbinTokensVisible;
+    },
   },
 
   mixins: [error],
@@ -139,4 +131,23 @@ export default {
 </script>
 
 <style lang="scss">
+.tokens-list-toggler {
+  display: block;
+  margin-bottom: 20px;
+
+  &:only-child {
+    margin-bottom: 0;
+  }
+
+  & > input[type='checkbox'] {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  & > span {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+  }
+}
 </style>

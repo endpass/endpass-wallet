@@ -1,16 +1,20 @@
-import { mount, shallow, createLocalVue } from '@vue/test-utils';
+import { mount, shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
 import VueTimers from 'vue-timers/mixin';
 import VeeValidate from 'vee-validate';
+import UIComponents from '@endpass/ui';
 
 import NewWallet from '@/components/pages/NewWallet.vue';
+import validation from '@/validation';
 
 const localVue = createLocalVue();
 
 localVue.use(Notifications);
 localVue.use(Vuex);
+localVue.use(validation);
 localVue.use(VeeValidate);
+localVue.use(UIComponents);
 
 jest.useFakeTimers();
 
@@ -35,6 +39,7 @@ describe('NewWallet page', () => {
         wrapper = mount(NewWallet, {
           localVue,
           store,
+          sync: false,
           mixins: [VueTimers],
         });
       });
@@ -120,6 +125,7 @@ describe('NewWallet page', () => {
         wrapper = mount(NewWallet, {
           localVue,
           store,
+          sync: false,
           mocks: {
             $ga,
           },
@@ -130,8 +136,7 @@ describe('NewWallet page', () => {
       });
 
       it('should reduce the remainingSeedPhraseTimeout for one second', () => {
-        const remainingSeedPhraseTimeout =
-          wrapper.vm.remainingSeedPhraseTimeout;
+        const { remainingSeedPhraseTimeout } = wrapper.vm;
 
         wrapper.vm.handleSeedPhraseTimer();
 
@@ -173,9 +178,10 @@ describe('NewWallet page', () => {
       });
 
       localVue.use(VeeValidate);
-      wrapper = shallow(NewWallet, {
+      wrapper = shallowMount(NewWallet, {
         localVue,
         store,
+        sync: false,
         mixins: [VueTimers],
       });
     });

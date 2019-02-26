@@ -1,52 +1,78 @@
 <template>
-  <div 
-    id="app" 
-    class="app-container"
-  >
+  <div id="app" class="app-container">
     <header class="app-header">
-      <info-bar class="app-section"/>
+      <info-bar class="app-section" />
     </header>
 
     <nav class="app-nav">
-      <nav-sidebar/>
+      <nav-sidebar />
     </nav>
 
     <main class="app-content">
       <div class>
-        <notifications
-          :speed="500"
-          :duration="5000"
-          position="top center"
-          width="100%"
-          data-test="app-notification"
-          classes="app-notification"
-        />
+        <div class="notify-container">
+          <notifications
+            :speed="500"
+            :duration="5000"
+            width="auto"
+            position="top center"
+            data-test="app-notification"
+            classes="notification app-notification"
+          />
+        </div>
 
         <div class="main app-content app-section">
-          <router-view/>
+          <router-view />
         </div>
       </div>
     </main>
 
-    <quick-actions class="is-hidden-desktop"/>
-    <app-footer class="is-hidden-touch"/>
-    <page-loader/>
+    <quick-actions class="is-hidden-desktop" />
+    <app-footer class="is-hidden-touch" />
+    <v-page-loader :is-loading="isLoading" />
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import NavSidebar from '@/components/NavSidebar.vue';
 import InfoBar from '@/components/bar/InfoBar.vue';
 import QuickActions from '@/components/QuickActions.vue';
 import errorHandler from '@/mixins/errorHandler';
-import PageLoader from '@/components/ui/PageLoader';
 import AppFooter from '@/components/AppFooter.vue';
 
 export default {
   name: 'App',
 
+  computed: {
+    ...mapState({
+      isLoading: state => state.isPageLoading,
+    }),
+  },
+
+  methods: {
+    initMode() {
+      const lines = (window.location.search || '').slice(1).split('&');
+      const query = lines.reduce((map, line) => {
+        const values = line.split('=');
+        const key = values[0];
+        // eslint-disable-next-line
+        map[key] = values[1];
+        return map;
+      }, {});
+
+      const initModeParams = {
+        type: query.mode,
+        serverUrl: query.serverUrl,
+      };
+
+      this.$store.dispatch('init', initModeParams.type ? initModeParams : null);
+    },
+  },
+
   created() {
-    this.$store.dispatch('init');
+    this.initMode();
   },
 
   mounted() {
@@ -61,7 +87,6 @@ export default {
     NavSidebar,
     InfoBar,
     QuickActions,
-    PageLoader,
     AppFooter,
   },
 };

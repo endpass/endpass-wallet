@@ -1,9 +1,10 @@
 import MockAdapter from 'axios-mock-adapter';
 
-import { NotificationError } from '@/class';
+import { NotificationError, Wallet } from '@/class';
 import { httpIdentity } from '@/class/singleton';
-import { WALLET_TYPE } from '@/constants';
 import { successResponse } from 'fixtures/identity';
+
+const WALLET_TYPES = Wallet.getTypes();
 
 const userService = require.requireActual('@/services/user').default;
 
@@ -472,7 +473,7 @@ describe('User service', () => {
       axiosMock.onGet(`${ENV.identityAPIUrl}/accounts`).reply(200, addresses);
       axiosMock
         .onGet(`${ENV.identityAPIUrl}/account/${mainAddress}/info`)
-        .reply(200, { type: WALLET_TYPE.HD_MAIN });
+        .reply(200, { type: WALLET_TYPES.HD_MAIN });
       axiosMock
         .onGet(new RegExp(`${ENV.identityAPIUrl}/account/.+`))
         .reply(200, {});

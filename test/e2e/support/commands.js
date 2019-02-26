@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -53,9 +54,11 @@ import {
   ethplorerHistory,
   ethplorerTransactions,
 } from '../fixtures/transactions';
+import { tokens, prices } from '../fixtures/tokeninfo';
 
-const identityAPIUrl = '/identity/api/v1.1';
-const cryptodataAPIUrl = '/cryptodata/api/v1';
+const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1.1';
+const cryptodataAPIUrl = '/cryptodata/api/v1.1';
+const mainNetworkId = 1;
 
 // Sets up server and routes to stub logged in user with fixtures.
 // Usage: cy.login()
@@ -189,16 +192,35 @@ Cypress.Commands.add('getTokensInfo', () => {
   cy.route(
     'GET',
     '/tokeninfo/api/v1/tokens',
-    'fixture:tokeninfo/tokens.json',
+    'fixture:tokeninfo/networkTokens.json',
   ).as('tokenInfo');
 });
 
 Cypress.Commands.add('getGasPrice', () => {
   cy.route(
     'GET',
-    `${cryptodataAPIUrl}/gas/price`,
+    `${cryptodataAPIUrl}/${mainNetworkId}/gas/price`,
     'fixture:cryptodata/gasprice',
-  ).as('gasPrice');
+  ).as('gasPriceMain');
+});
+
+Cypress.Commands.add('getAccountBalance', () => {
+  cy.route({
+    method: 'GET',
+    url: `${cryptodataAPIUrl}/*/balance/**`,
+    response: {
+      balance: '2000000000000000000',
+      tokens,
+    },
+  }).as('accountBalance');
+});
+
+Cypress.Commands.add('getTokensPrices', () => {
+  cy.route({
+    method: 'GET',
+    url: `${cryptodataAPIUrl}/price`,
+    response: prices,
+  }).as('tokensPrices');
 });
 
 Cypress.Commands.add('mockEthplorerRequests', () => {
@@ -288,6 +310,14 @@ Cypress.Commands.add('uploadFile', (selector, fileUrl, type = '') =>
   ),
 );
 
+Cypress.Commands.add('switchCurrency', netName => {
+  cy.get('[data-test=currency-select]')
+    .click()
+    .within(() => {
+      cy.contains(netName).click();
+    });
+});
+
 Cypress.Commands.add('makeStoreAlias', () => {
   cy.window()
     .its('app.$store')
@@ -301,6 +331,10 @@ Cypress.Commands.add('switchAccount', () => {
       cy.get('[data-select]:not(.multiselect__option--selected)').click();
     });
 });
+
+Cypress.Commands.add('getBalanceTokenElement', () =>
+  cy.get('.info-item:nth-child(2) [data-test=balance-value]'),
+);
 
 // Mock web3 requests. Use after the cy.visit() command
 Cypress.Commands.add('mockWeb3Requests', () => {

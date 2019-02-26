@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AccountChooser render should render account chooser component 1`] = `
+<div
+  class="account-chooser"
+  data-test="account-chooser"
+>
+  <div
+    class="field"
+  >
+    <div
+      class="multiselect"
+      tabindex="0"
+    >
+      <div
+        class="multiselect__select"
+      />
+        
+      <div
+        class="multiselect__tags"
+      >
+        <div
+          class="multiselect__tags-wrap"
+          style="display: none;"
+        />
+         
+        <!---->
+         
+        <div
+          class="multiselect__spinner"
+          name="multiselect__loading"
+          style="display: none;"
+        />
+         
+        <!---->
+         
+        <!---->
+         
+        <span
+          class="multiselect__placeholder"
+        >
+          
+            Select account
+        
+        </span>
+      </div>
+       
+      <div
+        class="multiselect__content-wrapper"
+        name="multiselect"
+        style="max-height: 300px; display: none;"
+        tabindex="-1"
+      >
+        <ul
+          class="multiselect__content"
+          style="display: block;"
+        >
+           
+          <!---->
+            
+          <li
+            style="display: none;"
+          >
+            <span
+              class="multiselect__option"
+            >
+              <span>
+                
+        No elements found. Consider changing the search query.
+      
+              </span>
+            </span>
+          </li>
+           
+          <li>
+            <span
+              class="multiselect__option"
+            >
+              List is empty.
+            </span>
+          </li>
+           
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+`;

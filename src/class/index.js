@@ -1,14 +1,28 @@
-export { default as Web3Factory } from './web3/Web3Factory';
-export { ProviderFactory } from './provider';
+// external point for other modules
+import {
+  createERC20TokenClass,
+  createENSClass,
+  createWalletClass,
+} from '@endpass/class';
+import web3 from './singleton/web3';
+
+const ERC20Token = createERC20TokenClass(web3);
+const ENSResolver = createENSClass(web3);
+const Wallet = createWalletClass(web3);
+
+export { web3, ERC20Token, ENSResolver, Wallet };
+
+export { default as ajv } from './singleton/ajv';
+export { default as http } from './singleton/http';
+export { default as connect } from './singleton/connect';
+
 export {
-  default as TransactionFactory,
-} from './transaction/TransactionFactory';
-export { default as Transaction } from './Transaction';
-export { default as EventEmitter } from './EventEmitter';
-export { NotificationError } from './error';
-export { default as Wallet } from './wallet';
-export { default as ENSResolver } from './ens';
-export { default as Token } from './Token';
-export { default as ERC20Token } from './erc20';
-export { TrezorWallet } from './hardwareWallet';
-export { LedgerWallet } from './hardwareWallet';
+  ProviderFactory,
+  LocalStorage,
+  SettingsStorage,
+  TransactionFactory,
+  NotificationError,
+  Token,
+  EventEmitter,
+  Transaction,
+} from '@endpass/class';

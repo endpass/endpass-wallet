@@ -1,20 +1,23 @@
+import get from 'lodash/get';
 import { cryptoDataService } from '@/services';
 import {
   SET_PRICE,
   SET_UPDATE_TIME,
   START_LOADING,
   STOP_LOADING,
-  SET_INTERVAL,
+  SET_INTERVAL_ID,
 } from './mutations-types';
 
 const updatePrice = async ({ commit, getters, dispatch }) => {
   try {
     commit(START_LOADING);
-    const price = await cryptoDataService.getSymbolsPrice(
+
+    const price = await cryptoDataService.getSymbolsPrices(
       getters.activeCurrencyName,
       getters.fiatCurrency,
     );
-    commit(SET_PRICE, price[getters.fiatCurrency]);
+
+    commit(SET_PRICE, get(price, `ETH.${getters.fiatCurrency}`, 0));
     commit(SET_UPDATE_TIME, new Date().getTime());
     dispatch(
       'connectionStatus/updateApiErrorStatus',
@@ -37,10 +40,10 @@ const updatePrice = async ({ commit, getters, dispatch }) => {
 
 // Start polling for fiat price
 const subscribeOnPriceUpdates = ({ commit, dispatch }) => {
-  const interval = setInterval(() => {
+  const intervalId = setInterval(() => {
     dispatch('updatePrice');
   }, ENV.priceUpdateInterval);
-  commit(SET_INTERVAL, interval);
+  commit(SET_INTERVAL_ID, intervalId);
 };
 
 const init = async ({ dispatch }) => {

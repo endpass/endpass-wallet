@@ -1,40 +1,58 @@
 import Vuex from 'vuex';
-import { shallow, createLocalVue } from '@vue/test-utils';
-import { generateStubs } from '@/utils/testUtils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
+import UIComponents from '@endpass/ui';
+
 import AccountWalletCard from '@/components/AccountWalletCard';
+
 import { address } from 'fixtures/accounts';
 import { tokensMappedByAddresses } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
-
 localVue.use(Vuex);
+localVue.use(UIComponents);
 
 describe('AccountWalletCard', () => {
   let wrapper;
   let store;
   let options;
-  let tokensActions;
+  let accoutsModule;
+  let tokensModule;
 
   beforeEach(() => {
-    tokensActions = {
-      getTokensByAddress: jest.fn(),
-      getTokensBalancesByAddress: jest.fn(),
+    tokensModule = {
+      namespaced: true,
+      actions: {
+        getTokensByAddress: jest.fn(),
+        getTokensBalancesByAddress: jest.fn(),
+      },
+      getters: {
+        fullTokensByAddress: () => ({}),
+        allCurrentAccountFullTokens: () => tokensMappedByAddresses,
+      },
+    };
+    accoutsModule = {
+      namespaced: true,
+      actions: {
+        getBalanceByAddress: jest.fn().mockResolvedValue({
+          balance: 10000000000000,
+          tokens: [],
+        }),
+      },
+      getters: {
+        balance: jest.fn(() => '10'),
+      },
     };
     store = new Vuex.Store({
       modules: {
-        tokens: {
-          namespaced: true,
-          getters: {
-            fullTokensByAddress: jest.fn(() => () => ({})),
-          },
-          actions: tokensActions,
-        },
+        accounts: accoutsModule,
+        tokens: tokensModule,
       },
     });
     options = {
       propsData: {
         activeCurrencyName: 'ETH',
         balance: '20',
+        activeNetId: 1,
         address,
       },
       store,
@@ -46,9 +64,8 @@ describe('AccountWalletCard', () => {
 
   describe('render', () => {
     beforeEach(() => {
-      wrapper = shallow(AccountWalletCard, {
+      wrapper = shallowMount(AccountWalletCard, {
         ...options,
-        stubs: generateStubs(AccountWalletCard),
       });
     });
 
@@ -61,13 +78,20 @@ describe('AccountWalletCard', () => {
       expect(wrapper.html()).toMatchSnapshot();
     });
 
-    it('should correctly render component with current account', () => {
+    it('should correctly render component with current account', async () => {
+      expect.assertions(1);
+
+      wrapper = shallowMount(AccountWalletCard, {
+        ...options,
+        computed: {
+          accountTokensList: () => [],
+        },
+      });
       wrapper.setProps({
         isCurrentAccount: true,
       });
-      wrapper.setComputed({
-        accountTokensList: [],
-      });
+
+      await wrapper.vm.$nextTick();
 
       expect(wrapper.html()).toMatchSnapshot();
     });
@@ -80,54 +104,69 @@ describe('AccountWalletCard', () => {
       expect(wrapper.html()).toMatchSnapshot();
     });
 
-    it('should not render tokens list during loading', () => {
-      wrapper.setData({
-        isLoading: true,
+    it('should render spinner and not render tokens list if isLoading is truthy', () => {
+      wrapper = shallowMount(AccountWalletCard, {
+        ...options,
+        propsData: {
+          ...options.propsData,
+          isLoading: true,
+        },
       });
 
-      expect(wrapper.find('tokens-list').exists()).toBe(false);
+      expect(wrapper.find('v-spinner-stub').exists()).toBe(true);
+      expect(wrapper.find('tokens-list-stub').exists()).toBe(false);
     });
 
-    it('should render tokens list if it is not loading', () => {
-      wrapper.setData({
-        isLoading: false,
+    it('should render currenct account balance and tokens if isCurrentAccount flag is truthy', () => {
+      wrapper = shallowMount(AccountWalletCard, {
+        ...options,
+        propsData: {
+          ...options.propsData,
+          isCurrentAccount: true,
+        },
       });
 
-      expect(wrapper.find('tokens-list').exists()).toBe(true);
+      expect(wrapper.html()).toMatchSnapshot();
     });
   });
 
   describe('behavior', () => {
-    it('should load tokens data on component create if tokens are empty', async () => {
-      expect.assertions(2);
-
-      wrapper = shallow(AccountWalletCard, {
+    it('should request balance data is isCurrentAccount flag is falsy', () => {
+      wrapper = shallowMount(AccountWalletCard, {
         ...options,
-        computed: {
-          accountTokens: () => ({}),
+        propsData: {
+          ...options.propsData,
+          isCurrentAccount: false,
         },
       });
 
-      await global.flushPromises();
-
-      expect(tokensActions.getTokensByAddress).toBeCalled();
-      expect(tokensActions.getTokensBalancesByAddress).toBeCalled();
+      expect(accoutsModule.actions.getBalanceByAddress).toBeCalled();
     });
 
-    it('should not load tokens data on component create if tokens are not empty', async () => {
-      expect.assertions(2);
-
-      wrapper = shallow(AccountWalletCard, {
+    it('should not request balance data is isCurrentAccount flag is truthy', () => {
+      wrapper = shallowMount(AccountWalletCard, {
         ...options,
-        computed: {
-          accountTokens: () => tokensMappedByAddresses,
+        propsData: {
+          ...options.propsData,
+          isCurrentAccount: true,
         },
       });
 
-      await global.flushPromises();
+      expect(accoutsModule.actions.getBalanceByAddress).not.toBeCalled();
+    });
 
-      expect(tokensActions.getTokensByAddress).not.toBeCalled();
-      expect(tokensActions.getTokensBalancesByAddress).toBeCalled();
+    it('should emit send event by send button click', () => {
+      wrapper = shallowMount(AccountWalletCard, {
+        ...options,
+        propsData: {
+          ...options.propsData,
+          allowSend: true,
+        },
+      });
+
+      wrapper.find('[data-test=send-button]').vm.$emit('click');
+
+      expect(wrapper.emitted().send).toBeTruthy();
     });
   });
 });

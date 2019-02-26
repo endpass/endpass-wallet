@@ -1,16 +1,20 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import VueRouter from 'vue-router';
+import { createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
-import VeeValidate from 'vee-validate';
-import { generateStubs } from '@/utils/testUtils';
-import { checksumAddress } from 'fixtures/accounts';
+import { wrapShallowMountFactory } from '@/testUtils';
 
 import Home from '@/components/pages/Home';
 
+import { checksumAddress } from 'fixtures/accounts';
+
+const localVue = createLocalVue();
+
+localVue.use(Vuex);
+localVue.use(VueRouter);
+
 describe('Home page', () => {
   let wrapper;
-  const localVue = createLocalVue();
-
-  localVue.use(Vuex);
+  let wrapperFactory;
 
   beforeEach(() => {
     const store = new Vuex.Store({
@@ -33,7 +37,9 @@ describe('Home page', () => {
         },
         web3: {
           namespaced: true,
-          state: {},
+          state: {
+            activeNet: { id: '' },
+          },
         },
         tokens: {
           namespaced: true,
@@ -45,10 +51,13 @@ describe('Home page', () => {
         },
       },
     });
-    wrapper = shallow(Home, {
+    wrapperFactory = wrapShallowMountFactory(Home, {
       store,
       localVue,
+      sync: false,
     });
+
+    wrapper = wrapperFactory();
   });
 
   describe('render', () => {
@@ -64,9 +73,11 @@ describe('Home page', () => {
 
   describe('behavior', () => {
     it('should render export button when exportable account', () => {
-      wrapper.setComputed({
-        isExportable: true,
-        address: checksumAddress,
+      wrapper = wrapperFactory({
+        computed: {
+          isExportable: true,
+          address: checksumAddress,
+        },
       });
 
       expect(
@@ -75,7 +86,11 @@ describe('Home page', () => {
     });
 
     it('should not render export button when is not exportable account', () => {
-      wrapper.setComputed({ isExportable: false });
+      wrapper = wrapperFactory({
+        computed: {
+          isExportable: false,
+        },
+      });
 
       expect(
         wrapper.find('[data-test=export-wallet-button]').exists(),

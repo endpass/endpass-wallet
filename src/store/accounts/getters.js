@@ -1,9 +1,7 @@
-import { get } from 'lodash';
-import web3 from 'web3';
+import get from 'lodash/get';
+import { fromWei, hexToBytes } from 'web3-utils';
 import { BigNumber } from 'bignumber.js';
-import { HARDWARE_WALLET_TYPE } from '@/constants';
-
-const { fromWei, hexToBytes } = web3.utils;
+import { keystore } from '@endpass/utils';
 
 const wallet = state => get(state.wallets, state.address);
 
@@ -29,9 +27,32 @@ const balance = (state, getters, rootState, rootGetters) => {
   return fromWei(balanceWei);
 };
 
+const isHDv3WalletByType = state => walletType => {
+  const cache = state.hdCacheByType[walletType];
+  if (!cache) return false;
+  const { xpub, v3KeyStore } = cache;
+  const isPublic = keystore.isExtendedPublicKey(xpub);
+  const isV3 = !!keystore.isV3(v3KeyStore);
+
+  return isPublic && isV3;
+};
+
+const cachedXpubByType = state => walletType => {
+  const cache = state.hdCacheByType[walletType];
+  return get(cache, 'xpub');
+};
+
+const cachedHdV3KeyStoreByType = state => walletType => {
+  const cache = state.hdCacheByType[walletType];
+  return get(cache, 'v3KeyStore');
+};
+
 export default {
   wallet,
   addressBuffer,
+  isHDv3WalletByType,
+  cachedXpubByType,
+  cachedHdV3KeyStoreByType,
   accountAddresses,
   isPublicAccount,
   isHardwareAccount,

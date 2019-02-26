@@ -1,10 +1,8 @@
 import { BigNumber } from 'bignumber.js';
 import { uniq, uniqWith } from 'lodash';
-import web3 from '@/class/singleton/web3';
-import { MAIN_NET_ID } from '@/constants';
+import { toChecksumAddress } from 'web3-utils';
+import { NET_ID } from '@/constants';
 import { Transaction } from '@/class';
-
-const { toChecksumAddress } = web3.utils;
 
 const accountTransactions = (state, getters, rootState) => {
   if (!rootState.accounts.address) {
@@ -15,7 +13,7 @@ const accountTransactions = (state, getters, rootState) => {
   const { address } = rootState.accounts;
   const transactions = [...state.pendingTransactions];
 
-  if (currentNetID === MAIN_NET_ID) {
+  if (currentNetID === NET_ID.MAIN) {
     transactions.push(...getters.filteredHistoryTransactions);
   }
 
@@ -59,11 +57,7 @@ const pendingBalance = (state, getters, rootState) => {
         tnx.from === address &&
         tnx.networkId === networkId,
     )
-    .map(tnx => {
-      const tnxValue = tnx.token === 'ETH' ? tnx.valueWei : '0';
-
-      return BigNumber(tnx.gasCost).plus(tnxValue);
-    })
+    .map(Transaction.getFullCost)
     .reduce((total, item) => total.plus(item), BigNumber('0'))
     .toFixed();
 };

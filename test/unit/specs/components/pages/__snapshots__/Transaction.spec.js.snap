@@ -1,10 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Transaction page render should render the initial state of the page 1`] = `
-<base-page>
-  <template
-    slot="title"
-  >
+<base-page-stub>
+  <template>
     Transaction
   </template>
    
@@ -37,22 +35,17 @@ exports[`Transaction page render should render the initial state of the page 1`]
     </ul>
   </div>
    
-  <sign-transaction
-    v-show="currentTab === 'sign'"
-  />
+  <sign-transaction-stub />
    
-  <recover-transaction
+  <recover-transaction-stub
     style="display: none;"
-    v-show="currentTab === 'recover'"
   />
-</base-page>
+</base-page-stub>
 `;
 
 exports[`Transaction page render should set Recover tab 1`] = `
-<base-page>
-  <template
-    slot="title"
-  >
+<base-page-stub>
+  <template>
     Transaction
   </template>
    
@@ -85,23 +78,19 @@ exports[`Transaction page render should set Recover tab 1`] = `
     </ul>
   </div>
    
-  <sign-transaction
+  <sign-transaction-stub
     style="display: none;"
-    v-show="currentTab === 'sign'"
   />
    
-  <recover-transaction
+  <recover-transaction-stub
     style=""
-    v-show="currentTab === 'recover'"
   />
-</base-page>
+</base-page-stub>
 `;
 
 exports[`Transaction page render should set Sign tab 1`] = `
-<base-page>
-  <template
-    slot="title"
-  >
+<base-page-stub>
+  <template>
     Transaction
   </template>
    
@@ -134,13 +123,10 @@ exports[`Transaction page render should set Sign tab 1`] = `
     </ul>
   </div>
    
-  <sign-transaction
-    v-show="currentTab === 'sign'"
-  />
+  <sign-transaction-stub />
    
-  <recover-transaction
+  <recover-transaction-stub
     style="display: none;"
-    v-show="currentTab === 'recover'"
   />
-</base-page>
+</base-page-stub>
 `;

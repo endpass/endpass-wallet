@@ -1,8 +1,10 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import { set } from 'lodash';
 import Vuex from 'vuex';
 import VueRouter from 'vue-router';
+
 import ReceivePage from '@/components/pages/Receive.vue';
+
 import ethereumWalletMock from 'fixtures/wallet';
 import ethereumAddressWalletMock from 'fixtures/address';
 import transactions from 'fixtures/transactions';
@@ -40,7 +42,7 @@ describe('ReceivePage', () => {
         web3: {
           namespaced: true,
           state: {
-            activeCurrency: 'KEK',
+            activeCurrency: { name: 'KEK' },
             activeNet: {
               id: 1,
             },
@@ -80,10 +82,11 @@ describe('ReceivePage', () => {
 
     router = new VueRouter();
     store = new Vuex.Store(storeState);
-    wrapper = shallow(ReceivePage, {
+    wrapper = shallowMount(ReceivePage, {
       localVue,
       store,
       router,
+      sync: false,
     });
   });
 
@@ -103,7 +106,7 @@ describe('ReceivePage', () => {
       it('should not call updateTransactionHistory if address is not present', async () => {
         expect.assertions(1);
 
-        wrapper = shallow(ReceivePage, {
+        wrapper = shallowMount(ReceivePage, {
           localVue,
           store: new Vuex.Store(
             set(storeState, 'modules.accounts.state.address', null),
@@ -120,6 +123,7 @@ describe('ReceivePage', () => {
 
       it('should call updateTransactionHistory', async () => {
         expect.assertions(1);
+
         await wrapper.vm.getHistory();
         expect(trxActions.updateTransactionHistory).toHaveBeenCalled();
       });

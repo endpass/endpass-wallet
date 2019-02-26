@@ -1,26 +1,32 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
-import { Transaction } from '@/class';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { TransactionFactory } from '@/class';
 import VeeValidate from 'vee-validate';
+import UIComponents from '@endpass/ui';
 
 import ResendModal from '@/components/modal/ResendModal';
+import validation from '@/validation';
 
 const localVue = createLocalVue();
 
 localVue.use(VeeValidate);
+localVue.use(validation);
+localVue.use(UIComponents);
 
 describe('ResendModal', () => {
   let wrapper;
 
   beforeEach(() => {
-    const transaction = new Transaction({
+    const transaction = TransactionFactory.fromSendForm({
       data: '0x0',
       from: '0x0',
+      gasPrice: 90,
     });
-    wrapper = shallow(ResendModal, {
+    wrapper = shallowMount(ResendModal, {
       localVue,
       propsData: {
         transaction,
       },
+      sync: false,
     });
   });
 
@@ -40,13 +46,10 @@ describe('ResendModal', () => {
       it('should emit close event with new transaction', () => {
         wrapper.vm.confirmResend();
         expect(wrapper.emitted().confirm).toBeTruthy();
-        expect(wrapper.emitted().confirm[0][0]).toMatchObject(
-          new Transaction({
-            data: '0x0',
-            from: '0x0',
-            from: '0x0',
-          }),
-        );
+        expect(wrapper.emitted().confirm[0][0]).toMatchObject({
+          ...wrapper.vm.transaction,
+          gasPrice: 91,
+        });
       });
     });
   });

@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`VForm page render should render initial state of the component 1`] = `
-<form
-  class="control"
-/>
-`;

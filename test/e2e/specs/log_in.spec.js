@@ -4,18 +4,25 @@ describe('Log In To an Existing Account', () => {
     // Not logged in
     cy.route({
       method: 'GET',
-      url: '/identity/api/v1.1/*',
+      url: 'https://identity-dev.endpass.com/api/v1.1*',
       response: {},
       status: 401,
     });
 
-    cy.route('POST', '/identity/api/v1.1/auth', 'fixture:identity/auth');
+    cy.route(
+      'POST',
+      'https://identity-dev.endpass.com/api/v1.1/auth',
+      'fixture:identity/auth',
+    );
 
     cy.visit('#/');
     cy.mockWeb3Requests();
-    cy.get('[data-test=login-modal] input[name=email]').type(
-      'user@example.com{enter}',
-    );
+
+    cy.get('iframe[data-endpass=dialog]').should('not.exist');
+
+    cy.get('[data-test=button-login]').click();
+
+    cy.get('iframe[data-endpass=dialog]').should('exist');
   });
 
   it('should not show login modal if already logged in', () => {

@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const env = require('../config/dev.env');
+const getEnv = require('../config/env/getEnv');
 const merge = require('webpack-merge');
 const path = require('path');
 const baseWebpackConfig = require('./webpack.base.conf');
@@ -13,6 +13,8 @@ const utils = require('./utils');
 
 const HOST = process.env.HOST;
 const PORT = process.env.PORT && Number(process.env.PORT);
+
+const env = getEnv(process.env.NODE_ENV);
 
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {

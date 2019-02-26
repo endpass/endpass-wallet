@@ -17,22 +17,25 @@ exports[`NavSidebar render should not render items for private account if curren
       <span />
     </a>
      
-    <router-link
+    <router-link-stub
       class="logo logo-icon"
-      exact=""
+      event="click"
+      exact="true"
+      tag="a"
       to="/"
     >
       <img
         alt="Endpass Wallet"
         src="@/img/logo-light.png"
       />
-    </router-link>
+    </router-link-stub>
      
     <div
       class="login-control"
     >
       <a
         class="button is-success"
+        data-test="button-login"
       >
         <span
           class="icon is-small"
@@ -70,7 +73,7 @@ exports[`NavSidebar render should not render items for private account if curren
             <div
               class="control is-expanded"
             >
-              <!---->
+              <currency-select-stub />
             </div>
           </div>
         </div>
@@ -90,7 +93,7 @@ exports[`NavSidebar render should not render items for private account if curren
             <div
               class="control is-expanded"
             >
-              <!---->
+              <provider-select-stub />
             </div>
           </div>
         </div>
@@ -109,10 +112,12 @@ exports[`NavSidebar render should not render items for private account if curren
         class="menu-list"
       >
         <li>
-          <router-link
-            active-class="is-active"
+          <router-link-stub
+            activeclass="is-active"
             class="nav-link"
-            exact=""
+            event="click"
+            exact="true"
+            tag="a"
             to="/"
           >
             <span
@@ -123,7 +128,7 @@ exports[`NavSidebar render should not render items for private account if curren
             
             Home
           
-          </router-link>
+          </router-link-stub>
         </li>
          
         <li>
@@ -154,8 +159,6 @@ exports[`NavSidebar render should not render items for private account if curren
       class="nav-sidebar-footer"
     />
   </div>
-   
-  <!---->
    
   <!---->
    
@@ -180,22 +183,25 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
       <span />
     </a>
      
-    <router-link
+    <router-link-stub
       class="logo logo-icon"
-      exact=""
+      event="click"
+      exact="true"
+      tag="a"
       to="/"
     >
       <img
         alt="Endpass Wallet"
         src="@/img/logo-light.png"
       />
-    </router-link>
+    </router-link-stub>
      
     <div
       class="login-control"
     >
       <a
         class="button is-success"
+        data-test="button-login"
       >
         <span
           class="icon is-small"
@@ -233,7 +239,7 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
             <div
               class="control is-expanded"
             >
-              <!---->
+              <currency-select-stub />
             </div>
           </div>
         </div>
@@ -253,7 +259,7 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
             <div
               class="control is-expanded"
             >
-              <!---->
+              <provider-select-stub />
             </div>
           </div>
         </div>
@@ -272,10 +278,12 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
         class="menu-list"
       >
         <li>
-          <router-link
-            active-class="is-active"
+          <router-link-stub
+            activeclass="is-active"
             class="nav-link"
-            exact=""
+            event="click"
+            exact="true"
+            tag="a"
             to="/"
           >
             <span
@@ -286,7 +294,7 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
             
             Home
           
-          </router-link>
+          </router-link-stub>
         </li>
          
         <li>
@@ -317,8 +325,6 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
       class="nav-sidebar-footer"
     />
   </div>
-   
-  <!---->
    
   <!---->
    

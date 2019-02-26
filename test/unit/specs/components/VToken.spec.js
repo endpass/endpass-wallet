@@ -1,15 +1,14 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
-import VToken from '@/components/VToken';
-import Token from '@/class/Token';
+import { shallowMount } from '@vue/test-utils';
 
-const localVue = createLocalVue();
+import VToken from '@/components/VToken';
+import { Token } from '@/class';
 
 describe('Token', () => {
   let wrapper;
   let mockToken;
 
   beforeEach(() => {
-    mockToken = new Token({
+    mockToken = Token.asObject({
       address: '0xe41d2489571d322189246dafa5ebde1f4699f498',
       name: '0x Protocol Token',
       decimals: 18,
@@ -17,7 +16,7 @@ describe('Token', () => {
       symbol: '$KEK',
     });
 
-    wrapper = shallow(VToken, {
+    wrapper = shallowMount(VToken, {
       propsData: {
         token: mockToken,
       },

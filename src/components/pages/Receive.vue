@@ -1,15 +1,12 @@
 <template>
-  <div 
-    v-if="address" 
-    class="app-page receive-page"
-  >
+  <div v-if="address" class="app-page receive-page">
     <div class="section">
       <div class="container">
         <account-wallet-card
           :address="address"
-          :balance="balance"
           :is-current-account="true"
           :active-currency-name="activeCurrency.name"
+          :active-net-id="activeNetId"
           data-test="current-account"
         />
       </div>
@@ -22,9 +19,9 @@
           v-if="walletAddress !== address"
           :key="walletAddress"
           :address="walletAddress"
-          :balance="balances[walletAddress]"
           :active-currency-name="activeCurrency.name"
           :allow-send="!wallet.isPublic"
+          :active-net-id="activeNetId"
           data-test="account"
           @send="clickSendButton(walletAddress)"
         />
@@ -38,18 +35,15 @@
             <h2 class="card-header-title">Incoming Payment History</h2>
           </div>
           <div class="card-content">
-            <ul 
-              v-if="incomingTransactions.length" 
-              class="transactions"
-            >
-              <li 
-                v-for="transaction in incomingTransactions" 
+            <ul v-if="incomingTransactions.length" class="transactions">
+              <li
+                v-for="transaction in incomingTransactions"
                 :key="transaction.hash"
               >
-                <app-transaction :transaction="transaction"/>
+                <app-transaction :transaction="transaction" />
               </li>
             </ul>
-            <v-spinner v-else-if="isLoading"/>
+            <v-spinner v-else-if="isLoading" />
             <p v-else>This account has no transactions.</p>
           </div>
         </div>
@@ -60,24 +54,16 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
-import web3 from '@/class/singleton/web3';
-import VButton from '@/components/ui/form/VButton';
 import AppTransaction from '@/components/Transaction';
 import Account from '@/components/Account';
-import VSpinner from '@/components/ui/VSpinner';
 import AccountWalletCard from '@/components/AccountWalletCard';
-
-const { fromWei } = web3.utils;
 
 export default {
   name: 'ReceivePage',
 
-  data() {
-    return {
-      isLoading: true,
-      balances: {},
-    };
-  },
+  data: () => ({
+    isLoading: true,
+  }),
 
   computed: {
     ...mapState({
@@ -102,11 +88,6 @@ export default {
       },
       immediate: true,
     },
-
-    activeNetId: {
-      handler: 'getBalances',
-      immediate: true,
-    },
   },
 
   methods: {
@@ -123,26 +104,18 @@ export default {
         this.isLoading = false;
         return;
       }
+
       this.isLoading = true;
+
       await this.updateTransactionHistory();
+
       this.isLoading = false;
-    },
-
-    // TODO: move balances to the store, because it is not logic of view layer
-    getBalances() {
-      Object.keys(this.wallets).forEach(async address => {
-        const balance = await web3.eth.getBalance(address);
-
-        this.$set(this.balances, address, fromWei(balance));
-      });
     },
   },
 
   components: {
     Account,
     AppTransaction,
-    VSpinner,
-    VButton,
     AccountWalletCard,
   },
 };

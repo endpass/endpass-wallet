@@ -1,24 +1,22 @@
-export { INPAGE_EVENT, INPAGE_ID_PREFIX } from './InpageProvider';
-
-export const MAIN_NET_ID = 1;
+export const NET_ID = Object.freeze({
+  MAIN: 1,
+  ROPSTEN: 3,
+});
 
 export const NETWORK_URL = Object.freeze({
   ETH: [
     'wss://eth-mainnet.endpass.com:2084',
-    'wss://eth-mainnet.endpass.com',
     'https://eth-mainnet.endpass.com:2083',
     `https://mainnet.infura.io/${ENV.infuraConf.key}`,
   ],
   ROP: [
     'wss://eth-ropsten.endpass.com:2084',
-    'wss://eth-ropsten.endpass.com',
     'https://eth-ropsten.endpass.com:2083',
     `https://ropsten.infura.io/${ENV.infuraConf.key}`,
   ],
   RIN: `https://rinkeby.infura.io/${ENV.infuraConf.key}`,
   ETC: [
     'wss://etc-mainnet.endpass.com:2084',
-    'wss://etc-mainnet.endpass.com',
     'https://etc-mainnet.endpass.com:2083',
     'https://etc-geth.0xinfra.com',
   ],
@@ -26,14 +24,14 @@ export const NETWORK_URL = Object.freeze({
 
 export const DEFAULT_NETWORKS = Object.freeze([
   {
-    id: 1,
+    id: NET_ID.MAIN,
     networkType: 'main',
     currency: 1,
     name: 'Main',
     url: NETWORK_URL.ETH,
   },
   {
-    id: 3,
+    id: NET_ID.ROPSTEN,
     name: 'Ropsten',
     networkType: 'ropsten',
     currency: 2,
@@ -81,28 +79,6 @@ export const IDENTITY_MODE = Object.freeze({
   LOCAL: 'local',
 });
 
-export const PROXY_REQUEST_PREFIX = 'endpass-identity';
-
-export const STORAGE_USER_META_KEY = 'endpass-user-meta';
-
-export const AVAILABLE_USER_META_PROPS = ['activeAccount'];
-
-export const REQUEST_TIMEOUT_MSEC = 30000;
-
-export const HARDWARE_DERIVIATION_PATH = `m/44'/60'/0'/0/`;
-
-export const HARDWARE_WALLET_TYPE = Object.freeze({
-  TREZOR: 'TrezorAccount',
-  LEDGER: 'LedgerAccount',
-});
-
-export const WALLET_TYPE = Object.freeze({
-  PUBLIC: 'PublicAccount',
-  HD_PUBLIC: 'HDPublicAccount',
-  HD_MAIN: 'HDMainAccount',
-  ...HARDWARE_WALLET_TYPE,
-});
-
 export const DAPP_WHITELISTED_METHODS = [
   'personal_sign',
   'eth_personalSign',
@@ -110,18 +86,26 @@ export const DAPP_WHITELISTED_METHODS = [
   'eth_sendTransaction',
 ];
 
+export const TRANSACTION_STATUS = Object.freeze({
+  SUCCESS: 'success',
+  ERROR: 'error',
+  CANCELED: 'canceled',
+  PENDING: 'pending',
+  RESENT: 'resent',
+});
+
+export const REQUEST_TIMEOUT_MSEC = 30000;
+
+export const STORAGE_USER_META_KEY = 'endpass-user-meta';
+
 export default {
+  REQUEST_TIMEOUT_MSEC,
+  STORAGE_USER_META_KEY,
   AVAILABLE_FIAT_CURRENCIES,
-  MAIN_NET_ID,
+  NET_ID,
   DEFAULT_NETWORKS,
   CURRENCIES,
   IDENTITY_MODE,
-  PROXY_REQUEST_PREFIX,
-  STORAGE_USER_META_KEY,
-  AVAILABLE_USER_META_PROPS,
-  REQUEST_TIMEOUT_MSEC,
-  HARDWARE_DERIVIATION_PATH,
-  HARDWARE_WALLET_TYPE,
-  WALLET_TYPE,
   DAPP_WHITELISTED_METHODS,
+  TRANSACTION_STATUS,
 };

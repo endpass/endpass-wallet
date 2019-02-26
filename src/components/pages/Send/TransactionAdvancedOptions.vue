@@ -129,8 +129,6 @@
 <script>
 import { pick } from 'lodash';
 import { mapActions } from 'vuex';
-import VInput from '@/components/ui/form/VInput';
-import VSpinner from '@/components/ui/VSpinner';
 
 export default {
   name: 'AdvancedTransactionOptions',
@@ -248,9 +246,9 @@ export default {
     }, 2000);
   },
 
-  components: {
-    VInput,
-    VSpinner,
+  beforeDestroy() {
+    clearInterval(this.nonceInterval);
+    this.nonceInterval = null;
   },
 };
 </script>

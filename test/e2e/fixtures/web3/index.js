@@ -1,9 +1,7 @@
-import web3 from 'web3';
+import { toWei } from 'web3-utils';
 import addressInfo_b14ab from '../addressinfo/b14ab';
 import addressInfo_31ea8 from '../addressinfo/31ea8';
 import { address } from '../accounts';
-
-const { toWei } = web3.utils;
 
 const BLOCK_NUMBER = '0x4051fb';
 const BLOCK_HASH =
@@ -230,7 +228,7 @@ export const sendRawTransaction_b14ab_31ea8_cancel = {
   payload: {
     method: 'eth_sendRawTransaction',
     params: [
-      '0xf862300385323230303094b14ab53e38da1c172f877dbc6d65e4a1b0474c3c308026a0848433c19ca9529111f25f90d9d0acfa8751151ef3a29cb6f481424c59cb6f70a06eca4bc38073e1742667fe00ac9a12ace4f03663a8aabcd958d052162f9fa6fc',
+      '0xf86480850306dc42008255f094b14ab53e38da1c172f877dbc6d65e4a1b0474c3c808025a08894aae36d7b6b67396a1e06919875a38093f73633a7febd826f079ecf8f1e9fa00740a8fe1c5f2e75495c0213fc78b1ec8cc5f0adb6977787b36259b33a27ed5a',
     ],
   },
   result: CANCEL_TRANSACTION_HASH,
@@ -257,7 +255,7 @@ export const sendRawTransaction_b14ab_31ea8_resend = {
   payload: {
     method: 'eth_sendRawTransaction',
     params: [
-      '0xf86230338532323030309431ea8795ee32d782c8ff41a5c68dcbf0f5b27f6d318025a03acb174496563c289990f7ff18856024a610c6e1c0f881264add646db123847da063b1988b17710ed9ff2b4191df46cc83ee1e3f6e60754caf35e2281a8586e891',
+      '0xf86b8084ee6b28008255f09431ea8795ee32d782c8ff41a5c68dcbf0f5b27f6d880de0b6b3a76400008026a06e3e887b76a9b27b0fefc3445daff90f618250e9501e80d382dc08f09de79366a0400cafa567d5023d99754fbfc57b62c83e64a0da02e143f485e7a6fb9cec4827',
     ],
   },
   result: RESEND_TRANSACTION_HASH,

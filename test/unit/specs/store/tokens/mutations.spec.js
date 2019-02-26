@@ -3,10 +3,11 @@ import mutations from '@/store/tokens/mutations';
 import {
   SET_LOADING,
   ADD_NETWORK_TOKENS,
-  ADD_TOKENS_PRICES,
+  SET_TOKENS_PRICES,
   SET_USER_TOKENS,
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
+  SET_INTERVAL_ID,
 } from '@/store/tokens/mutations-types';
 import { token, tokens, tokensPrices, balances } from 'fixtures/tokens';
 
@@ -29,6 +30,14 @@ describe('tokens mutations', () => {
     });
   });
 
+  describe(SET_INTERVAL_ID, () => {
+    it('should set interval', () => {
+      const interval = 0;
+      mutations[SET_INTERVAL_ID](state, interval);
+      expect(state.intervalId).toBe(interval);
+    });
+  });
+
   describe('ADD_NETWORK_TOKENS', () => {
     it('should merge existing network tokens with given', () => {
       const networkTokens = {
@@ -48,9 +57,9 @@ describe('tokens mutations', () => {
     });
   });
 
-  describe('ADD_TOKENS_PRICES', () => {
+  describe('SET_TOKENS_PRICES', () => {
     it('should set token prices', () => {
-      mutations[ADD_TOKENS_PRICES](state, tokensPrices);
+      mutations[SET_TOKENS_PRICES](state, tokensPrices);
 
       expect(state.prices).toEqual(tokensPrices);
     });
@@ -58,7 +67,7 @@ describe('tokens mutations', () => {
     it('should merge token prices with given', () => {
       state.prices = tokensPrices;
 
-      mutations[ADD_TOKENS_PRICES](state, {
+      mutations[SET_TOKENS_PRICES](state, {
         '0x0': '0',
       });
 

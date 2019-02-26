@@ -1,17 +1,19 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
-
-import { generateStubs } from '@/utils/testUtils';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
 
 import ImportFromSeed from '@/components/importWallet/ImportFromSeed';
 
 const localVue = createLocalVue();
 
+localVue.use(validation);
 localVue.use(Vuex);
 localVue.use(VueRouter);
 localVue.use(VeeValidate);
+localVue.use(UIComponents);
 
 jest.useFakeTimers();
 
@@ -22,7 +24,7 @@ describe('ImportFromSeed', () => {
 
   beforeEach(() => {
     actions = {
-      addMultiHdWallet: jest.fn(),
+      addHdPublicWallet: jest.fn(),
     };
     const storeOptions = {
       modules: {
@@ -34,13 +36,14 @@ describe('ImportFromSeed', () => {
     };
     router = new VueRouter();
     const store = new Vuex.Store(storeOptions);
-    wrapper = shallow(ImportFromSeed, {
+    wrapper = shallowMount(ImportFromSeed, {
       localVue,
       store,
       router,
-      stubs: generateStubs(ImportFromSeed),
+      sync: false,
     });
   });
+
   describe('render', () => {
     it('should be a Vue component', () => {
       expect(wrapper.name()).toBe('ImportFromSeed');
@@ -56,33 +59,22 @@ describe('ImportFromSeed', () => {
     describe('handlePasswordConfirm', () => {
       const password = 'password';
 
-      it('should call vuex addMultiHdWallet with correct arguments', done => {
+      it('should call vuex addHdPublicWallet with correct arguments', done => {
         const key = 'key';
 
         expect.assertions(2);
 
         wrapper.setData({ key });
         wrapper.setMethods({
-          addMultiHdWallet: jest.fn(),
+          addHdPublicWallet: jest.fn(),
         });
 
         wrapper.vm.handlePasswordConfirm(password).then(() => {
-          expect(wrapper.vm.addMultiHdWallet).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.addMultiHdWallet).toBeCalledWith({ key, password });
-          done();
-        });
-
-        jest.runAllTimers();
-      });
-
-      it('should redirect to root after successful wallet creation', done => {
-        expect.assertions(2);
-
-        router.push('/kek');
-
-        expect(router.currentRoute.fullPath).toBe('/kek');
-        wrapper.vm.handlePasswordConfirm(password).then(() => {
-          expect(router.currentRoute.fullPath).toBe('/');
+          expect(wrapper.vm.addHdPublicWallet).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.addHdPublicWallet).toBeCalledWith({
+            key,
+            password,
+          });
           done();
         });
 
@@ -93,12 +85,12 @@ describe('ImportFromSeed', () => {
         expect.assertions(4);
 
         wrapper.vm.handlePasswordConfirm(password).then(() => {
-          expect(actions.addMultiHdWallet).toBeCalled();
+          expect(actions.addHdPublicWallet).toBeCalled();
           expect(wrapper.vm.isCreating).toBe(false);
           done();
         });
 
-        expect(actions.addMultiHdWallet).not.toBeCalled();
+        expect(actions.addHdPublicWallet).not.toBeCalled();
         expect(wrapper.vm.isCreating).toBe(true);
         jest.runAllTimers();
       });
@@ -106,17 +98,15 @@ describe('ImportFromSeed', () => {
       it('should add error to field if failed to create wallet', done => {
         expect.assertions(1);
 
-        actions.addMultiHdWallet.mockImplementationOnce(() => {
+        actions.addHdPublicWallet.mockImplementationOnce(() => {
           throw new Error();
         });
 
-        wrapper.vm.handlePasswordConfirm(password).catch(() => {
-          expect(wrapper.vm.errors.items[0]).toEqual({
+        wrapper.vm.handlePasswordConfirm(password).then(() => {
+          expect(wrapper.vm.errors.items[0]).toMatchObject({
             field: 'hdkeyPhrase',
             msg: 'Seed phrase is invalid',
             id: 'wrongPhrase',
-            // vee validate added field
-            scope: null,
           });
           done();
         });
@@ -132,6 +122,7 @@ describe('ImportFromSeed', () => {
           id: 'wrongPhrase',
         });
         expect(wrapper.vm.errors.has('hdkeyPhrase')).toBe(true);
+
         wrapper.vm.handleInput();
         expect(wrapper.vm.errors.has('hdkeyPhrase')).toBe(false);
       });

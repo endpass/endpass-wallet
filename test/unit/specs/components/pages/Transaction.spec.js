@@ -1,7 +1,6 @@
 import Vuex from 'vuex';
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Transaction from '@/components/pages/Transaction';
-import { generateStubs } from '@/utils/testUtils';
 
 const localVue = createLocalVue();
 
@@ -22,8 +21,7 @@ describe('Transaction page', () => {
         },
       },
     });
-    wrapper = shallow(Transaction, {
-      stubs: generateStubs(Transaction),
+    wrapper = shallowMount(Transaction, {
       localVue,
       store,
     });

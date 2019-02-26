@@ -9,10 +9,7 @@
                 <p class="card-header-title">Your Tokens</p>
               </div>
               <div class="card-content is-narrow">
-                <nav
-                  v-if="isUserHasTokens"
-                  class="panel"
-                >
+                <nav v-if="isUserHasTokens" class="panel">
                   <div class="panel-block">
                     <search-input
                       v-model="userTokenQuery"
@@ -29,15 +26,12 @@
                       :tokens="userTokensList"
                       :has-remove="true"
                       :item-class="'panel-block is-clearfix is-block'"
+                      :collapsable="false"
                       data-test="tokens-list"
                     />
                   </div>
                 </nav>
-                <p
-                  v-else
-                  class="small"
-                  data-test="no-tokens-text"
-                >
+                <p v-else class="small" data-test="no-tokens-text">
                   You have no tokens on this network. Add some!
                 </p>
               </div>
@@ -84,14 +78,10 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
-    <add-token-modal
-      v-if="addTokenModalOpen"
-      @close="closeAddTokenModal"
-    />
+    <add-token-modal v-if="addTokenModalOpen" @close="closeAddTokenModal" />
   </div>
 </template>
 
@@ -104,9 +94,8 @@ import VToken from '@/components/VToken';
 import TokensList from '@/components/TokensList';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/modal/AddTokenModal';
-import VSpinner from '@/components/ui/VSpinner';
-import { matchString } from '@/utils/strings';
-import { MAIN_NET_ID } from '@/constants';
+import { matchString } from '@endpass/utils/strings';
+import { NET_ID } from '@/constants';
 
 export default {
   name: 'TokensPage',
@@ -144,20 +133,26 @@ export default {
         networkTokenQuery,
       } = this;
 
-      if (this.activeNetId !== MAIN_NET_ID) {
-        return [];
-      }
+      if (this.activeNetId !== NET_ID.MAIN) return [];
 
-      return Object.values(networkTokens).filter(token => {
-        const isUserHasToken = Object.keys(
-          allCurrentAccountFullTokens,
-        ).includes(token.address);
+      const networkTokensList = Object.values(networkTokens);
+      const currentAccountTokensSymbols = Object.keys(
+        allCurrentAccountFullTokens,
+      );
+
+      return networkTokensList.filter(token => {
+        const isUserHasToken = currentAccountTokensSymbols.includes(
+          token.symbol,
+        );
+
+        if (isUserHasToken) return false;
+
         const isTokenMatchesToSearch = this.matchTokenToQuery(
           token,
           networkTokenQuery,
         );
 
-        return !isUserHasToken && isTokenMatchesToSearch;
+        return isTokenMatchesToSearch;
       });
     },
 
@@ -200,7 +195,6 @@ export default {
     Balance,
     AddTokenModal,
     Multiselect,
-    VSpinner,
     VToken,
     TokensList,
   },

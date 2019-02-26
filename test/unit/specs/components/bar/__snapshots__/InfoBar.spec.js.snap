@@ -19,7 +19,7 @@ exports[`InfoBar render should render initial state of the component 1`] = `
       <div
         class="control is-expanded"
       >
-        <!---->
+        <sync-status-stub />
       </div>
     </div>
   </div>
@@ -33,7 +33,14 @@ exports[`InfoBar render should render initial state of the component 1`] = `
       Balance
     </p>
      
-    <!---->
+    <balance-stub
+      amount="0"
+      class="level-stat"
+      currency="ETH"
+      decimals="18"
+      price="1"
+      round="4"
+    />
   </div>
    
   <div
@@ -45,7 +52,14 @@ exports[`InfoBar render should render initial state of the component 1`] = `
       Value
     </p>
      
-    <!---->
+    <balance-stub
+      amount="0"
+      class="level-stat"
+      currency="ETH"
+      decimals="2"
+      price="0"
+      round="0"
+    />
   </div>
 </div>
 `;

@@ -24,6 +24,29 @@ jest.mock('web3', () => {
       }),
     ),
   };
+  let subscriptions = {};
+  const subscriptionEventEmiter = {
+    on: jest.fn((type, callback) => {
+      if (!subscriptions[type]) {
+        subscriptions[type] = [];
+      }
+
+      subscriptions[type].push(callback);
+
+      return subscriptionEventEmiter;
+    }),
+    emit: jest.fn((type, data) => {
+      if (!subscriptions[type]) {
+        return;
+      }
+
+      subscriptions[type].forEach(callback => callback(data));
+
+      return subscriptionEventEmiter;
+    }),
+  };
+  const subscribe = jest.fn(() => subscriptionEventEmiter);
+  const clearSubscriptions = jest.fn(() => (subscriptions = {}));
   const eth = {
     net: {
       getNetworkType: jest.fn().mockResolvedValue('ropsten'),
@@ -37,7 +60,11 @@ jest.mock('web3', () => {
     getBlockNumber: jest.fn().mockResolvedValue(),
     getBlock: jest.fn().mockResolvedValue({}),
     getTransactionCount: jest.fn().mockResolvedValue(),
+    getTransactionReceipt: jest.fn().mockResolvedValue({}),
     getCode: jest.fn().mockResolvedValue('0x0123'),
+    subscribe,
+    clearSubscriptions,
+    subscriptionEventEmiter,
   };
   const { utils } = originalWeb3;
   const mockWeb3 = jest.fn(() => ({
@@ -48,25 +75,22 @@ jest.mock('web3', () => {
     sendEvent,
   }));
 
+  const {
+    WebsocketProvider,
+    HttpProvider,
+    IpcProvider,
+  } = originalWeb3.providers;
+  WebsocketProvider.prototype.send = jest.fn();
+  WebsocketProvider.prototype.sendAsync = jest.fn();
+  HttpProvider.prototype.send = jest.fn();
+  HttpProvider.prototype.sendAsync = jest.fn();
+  IpcProvider.prototype.send = jest.fn();
+  IpcProvider.prototype.sendAsync = jest.fn();
+
   mockWeb3.providers = {
-    HttpProvider: jest.fn(() => ({
-      prototype: {
-        send: jest.fn(),
-        sendAsync: jest.fn(),
-      },
-    })),
-    WebsocketProvider: jest.fn(() => ({
-      prototype: {
-        send: jest.fn(),
-        sendAsync: jest.fn(),
-      },
-    })),
-    IpcProvider: jest.fn(() => ({
-      prototype: {
-        send: jest.fn(),
-        sendAsync: jest.fn(),
-      },
-    })),
+    HttpProvider,
+    WebsocketProvider,
+    IpcProvider,
   };
 
   // Allows you to replace stubs of web3 instance methods in unit tests

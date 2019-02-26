@@ -9,6 +9,7 @@ export const state = {
   tokensByAddress: {},
   balancesByAddress: {},
   isLoading: false,
+  intervalId: null,
 };
 
 export default {

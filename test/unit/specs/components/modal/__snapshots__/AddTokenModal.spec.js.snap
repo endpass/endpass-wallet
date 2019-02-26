@@ -1,27 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AddTokenModal render should render component 1`] = `
-<v-modal
+<v-modal-stub
   data-test="add-token-modal"
-  v-on:close="bound close"
 >
-  <template
-    slot="header"
-  >
+  <template>
     Add custom token
   </template>
    
-  <v-form
+  <v-form-stub
     id="addToken"
-    isformvalid="true"
-    v-model="isFormValid"
-    v-on:submit="bound addToken"
   >
-    <v-input
+    <v-input-stub
       aria-describedby="address"
-      aria-invalid="true"
+      aria-invalid="false"
       aria-required="true"
       autofocus=""
+      classname=""
       data-test="address-input"
       data-vv-name="address"
       id="address"
@@ -29,8 +24,7 @@ exports[`AddTokenModal render should render component 1`] = `
       name="address"
       placeholder="Contract address"
       required=""
-      v-model="token.address"
-      v-validate="'required|address'"
+      value=""
     />
      
     <!---->
@@ -38,23 +32,22 @@ exports[`AddTokenModal render should render component 1`] = `
     <!---->
      
     <!---->
-  </v-form>
+  </v-form-stub>
    
-  <div
-    slot="footer"
-  >
+  <div>
     <div
       class="buttons"
     >
-      <v-button
-        class-name="is-primary"
+      <v-button-stub
+        classname="is-primary"
         data-test="find-button"
+        disabled="true"
         type="button"
       >
         
         Find
       
-      </v-button>
+      </v-button-stub>
     </div>
      
     <div
@@ -63,7 +56,6 @@ exports[`AddTokenModal render should render component 1`] = `
       <a
         class="button"
         data-test="close-button"
-        v-on:click="bound close"
       >
         
         Close
@@ -71,5 +63,5 @@ exports[`AddTokenModal render should render component 1`] = `
       </a>
     </div>
   </div>
-</v-modal>
+</v-modal-stub>
 `;

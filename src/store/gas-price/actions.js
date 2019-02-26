@@ -1,8 +1,10 @@
 import { cryptoDataService } from '@/services';
 
-const getGasPrice = async ({ dispatch }) => {
+const getGasPrice = async ({ dispatch, rootGetters }) => {
   try {
-    return await cryptoDataService.getGasPrice();
+    const network = rootGetters['web3/activeNetwork'];
+
+    return await cryptoDataService.getGasPrice(network);
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });
 

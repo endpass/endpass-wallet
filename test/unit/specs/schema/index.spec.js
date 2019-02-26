@@ -49,7 +49,7 @@ describe('Schema validators', () => {
       });
     });
 
-    describe('validateSymbolsPrice', () => {
+    describe('cryptoDataValidator.validateSymbolsPrices', () => {
       it('should validate data', () => {
         const validData = {
           ETH: { USD: 0 },
@@ -57,7 +57,7 @@ describe('Schema validators', () => {
           '1WO': { USD: 0 },
         };
 
-        expect(cryptoDataValidator.validateSymbolsPrice(validData)).toEqual(
+        expect(cryptoDataValidator.validateSymbolsPrices(validData)).toEqual(
           validData,
         );
       });
@@ -80,9 +80,65 @@ describe('Schema validators', () => {
         ];
 
         invalidDataArray.forEach(data => {
-          expect(() => cryptoDataValidator.validateSymbolsPrice(data)).toThrow(
+          expect(() => cryptoDataValidator.validateSymbolsPrices(data)).toThrow(
             expect.any(Error),
           );
+        });
+      });
+    });
+
+    describe('validatePendingTransactions', () => {
+      const transaction = {
+        hash: '',
+        from: '',
+        to: '',
+        value: '',
+        gas: '',
+        input: '',
+      };
+
+      it('should validate data', () => {
+        const validData = {
+          filterId: 1,
+          transactions: [transaction, transaction],
+        };
+
+        expect(
+          cryptoDataValidator.validatePendingTransactions(validData),
+        ).toEqual(validData);
+      });
+
+      it('should not validate data', () => {
+        const invalidDataArray = [
+          {},
+          {
+            filterId: 1,
+          },
+          {
+            transactions: [transaction],
+          },
+          {
+            filterId: '1',
+            transactions: [transaction],
+          },
+          {
+            filterId: 1,
+            transactions: {},
+          },
+          {
+            filterId: 1,
+            transactions: [{}],
+          },
+          {
+            filterId: 1,
+            transactions: [true],
+          },
+        ];
+
+        invalidDataArray.forEach(data => {
+          expect(() =>
+            cryptoDataValidator.validatePendingTransactions(data),
+          ).toThrow(expect.any(Error));
         });
       });
     });
@@ -169,7 +225,7 @@ describe('Schema validators', () => {
           { ...settings, email: '123' },
           { ...settings, networks: ['123'] },
           { ...settings, tokens: { address } },
-          { ...settings, otp_enabled: 1 },
+          { ...settings, otpEnabled: 1 },
         ];
 
         invalidDataArray.forEach(invalidData =>

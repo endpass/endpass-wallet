@@ -1,4 +1,4 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 
 import Vuex from 'vuex';
 const localVue = createLocalVue();
@@ -54,7 +54,7 @@ describe('InfoBar', () => {
         },
       };
       const store = new Vuex.Store(storeOptions);
-      wrapper = shallow(InfoBar, {
+      wrapper = shallowMount(InfoBar, {
         localVue,
         store,
         mixins,

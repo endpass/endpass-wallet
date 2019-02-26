@@ -9,7 +9,7 @@ exports[`Send render should not render any modals by default 1`] = `
                     <h1 class="card-header-title">Send ETH</h1>
                 </div>
                 <div class="card-content">
-                    <transaction-form transaction="[object Object]" v-on:submit="bound handleTransactionSend"></transaction-form>
+                    <transaction-form-stub transaction="[object Object]"></transaction-form-stub>
                     <!---->
                 </div>
             </div>
@@ -29,14 +29,14 @@ exports[`Send render should render password modal if transaction confirmed 1`] =
                     <h1 class="card-header-title">Send ETH</h1>
                 </div>
                 <div class="card-content">
-                    <transaction-form transaction="[object Object]" v-on:submit="bound handleTransactionSend"></transaction-form>
+                    <transaction-form-stub transaction="[object Object]"></transaction-form-stub>
                     <!---->
                 </div>
             </div>
         </div>
     </div>
     <!---->
-    <password-modal v-on:confirm="bound sendConfirmedTransaction" v-on:close="bound cancelTransaction"></password-modal>
+    <!---->
 </div>
 `;
 
@@ -49,13 +49,16 @@ exports[`Send render should render transaction hash if it not empty 1`] = `
                     <h1 class="card-header-title">Send ETH</h1>
                 </div>
                 <div class="card-content">
-                    <transaction-form transaction="[object Object]" v-on:submit="bound handleTransactionSend"></transaction-form>
+                    <transaction-form-stub transaction="[object Object]"></transaction-form-stub>
                     <div data-test="transaction-status" class="transaction-status message is-success">
                         <div class="message-header">
                             <p>Transaction Sent!</p>
                         </div>
                         <div class="message-body">
-                            <p>Your transaction has been broadcast to the network. It may take a few minutes before the transaction is confirmed.</p>
+                            <p>
+                                Your transaction has been broadcast to the network. It may
+                                take a few minutes before the transaction is confirmed.
+                            </p>
                             <p class="label">Transaction Id</p>
                             <p class="code">0x0</p>
                         </div>
@@ -78,13 +81,13 @@ exports[`Send render should render transaction modal if transaction waiting conf
                     <h1 class="card-header-title">Send ETH</h1>
                 </div>
                 <div class="card-content">
-                    <transaction-form transaction="[object Object]" v-on:submit="bound handleTransactionSend"></transaction-form>
+                    <transaction-form-stub transaction="[object Object]"></transaction-form-stub>
                     <!---->
                 </div>
             </div>
         </div>
     </div>
-    <transaction-modal transaction="[object Object]" v-on:confirm="bound confirmTransaction" v-on:close="bound cancelTransaction"></transaction-modal>
+    <!---->
     <!---->
 </div>
 `;

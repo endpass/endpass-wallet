@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-form 
-      id="signing-transaction-form" 
+    <v-form
+      id="signing-transaction-form"
       @submit="togglePasswordModal"
     >
       <v-textarea
@@ -9,12 +9,12 @@
         label="Transaction object (JSON)"
         placeholder="This is a transaction that you are signing to prove that you own it."
       />
-      <v-button 
-        :disabled="!transaction" 
+      <v-button
+        :disabled="!transaction"
         class-name="is-primary is-medium"
       >Sign transaction</v-button>
-      <div 
-        v-if="signedTransaction" 
+      <div
+        v-if="signedTransaction"
         class="field"
       >
         <label class="label">RLP encoded transaction</label>
@@ -33,9 +33,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import VForm from '@/components/ui/form/VForm.vue';
-import VButton from '@/components/ui/form/VButton.vue';
-import VTextarea from '@/components/ui/form/VTextarea.vue';
 import CodePasswordModal from '@/components/modal/CodePasswordModal';
 import modalMixin from '@/mixins/modal';
 
@@ -76,9 +73,6 @@ export default {
   mixins: [modalMixin],
 
   components: {
-    VForm,
-    VButton,
-    VTextarea,
     CodePasswordModal,
   },
 };

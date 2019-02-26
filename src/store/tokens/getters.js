@@ -37,7 +37,7 @@ const fullTokens = (state, getters) => (address, tokens) => {
     return Object.assign(acc, {
       [key]: {
         ...token,
-        balance: balances[key] || '0',
+        balance: balances[token.symbol] || '0',
         price: state.prices[token.symbol] || '0',
       },
     });
@@ -81,10 +81,11 @@ const allCurrentAccountFullTokens = (state, getters, rootState) => {
   return getters.fullTokens(address, tokens);
 };
 
-const allCurrentAccountTokensWithNonZeroBalance = (state, getters) =>
-  pickBy(getters.allCurrentAccountFullTokens, ({ balance }) =>
-    Boolean(parseInt(balance, 10)),
+const allCurrentAccountTokensWithNonZeroBalance = (state, getters) => {
+  return pickBy(getters.allCurrentAccountFullTokens, ({ balance }) =>
+    Boolean(parseFloat(balance)),
   );
+};
 
 const userTokensWithToken = state => ({ net, token }) => {
   const { userTokens } = state;

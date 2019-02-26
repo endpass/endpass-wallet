@@ -1,10 +1,15 @@
 import state from '@/store/transactions';
+import { TransactionFactory } from '@/class';
 
 import {
   ethplorerTransactions,
-  pendingTransactions,
+  pendingTransactions as rawPendingTransaction,
 } from 'fixtures/transactions';
 import { checksumAddress } from 'fixtures/accounts';
+
+const pendingTransactions = rawPendingTransaction.map(item =>
+  TransactionFactory.fromSendForm(item),
+);
 
 describe('transactions getters', () => {
   let stateInstance;
@@ -33,7 +38,7 @@ describe('transactions getters', () => {
         },
       );
 
-      expect(transactions).toHaveLength(3);
+      expect(transactions).toHaveLength(5);
       expect(transactions).toContainEqual(stateInstance.pendingTransactions[0]);
     });
 
@@ -171,7 +176,7 @@ describe('transactions getters', () => {
           },
         },
       );
-      expect(pendingBalance).toBe('14');
+      expect(pendingBalance).toBe('1000154000000000000');
     });
 
     it('should return zero pending balance with a nullable address', () => {
@@ -182,7 +187,7 @@ describe('transactions getters', () => {
           networkId: 1,
           state: 'pending',
           valueWei: '1',
-          gasCost: '6',
+          // gasCost: '6',
         },
       ];
 

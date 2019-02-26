@@ -5,6 +5,68 @@ exports[`ResendModal render should render initial state of the component 1`] = `
   class="new-account-modal"
   data-test="resend-modal"
 >
-  <!---->
+  <v-modal-stub>
+    <v-form-stub
+      id="sendEther"
+      isformvalid="true"
+    >
+      <v-input-stub
+        aria-describedby="gasPrice"
+        aria-invalid="false"
+        aria-required="true"
+        autofocus=""
+        classname=""
+        data-test="gas-price-input"
+        data-vv-name="gasPrice"
+        id="gasPrice"
+        label="Gas price"
+        name="gasPrice"
+        placeholder="Gas price"
+        required=""
+        type="number"
+        value="91"
+      >
+        <div
+          class="control"
+        >
+          <a
+            class="button is-static"
+          >
+            Gwei
+          </a>
+        </div>
+      </v-input-stub>
+       
+      <v-input-stub
+        aria-describedby="gasLimit"
+        aria-invalid="false"
+        aria-required="true"
+        classname=""
+        data-test="gas-limit-input"
+        data-vv-name="gasLimit"
+        id="gasLimit"
+        label="Gas limit"
+        name="gasLimit"
+        placeholder="Gas limit"
+        required=""
+        type="number"
+        value="22000"
+      />
+    </v-form-stub>
+     
+    <div
+      class="buttons"
+    >
+      <v-button-stub
+        classname="is-primary is-medium"
+        data-test="submit-button"
+        form="sendEther"
+      >
+        
+        Send
+      
+      </v-button-stub>
+    </div>
+  </v-modal-stub>
 </div>
 `;

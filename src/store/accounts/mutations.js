@@ -4,7 +4,7 @@ import {
   ADD_WALLET,
   SET_HD_KEY,
   SET_BALANCE,
-  SET_HARDWARE_XPUB,
+  SET_HD_CACHE_BY_TYPE,
 } from './mutations-types';
 
 const changeInitStatus = (state, status) => {
@@ -32,8 +32,11 @@ const setBalance = (state, balance) => {
   state.balance = balance;
 };
 
-const setHardwareXpub = (state, { xpub, walletType }) => {
-  Object.assign(state.hardwareXpub, { [walletType]: xpub });
+const setHdCacheByType = (state, { xpub, v3KeyStore, walletType }) => {
+  state.hdCacheByType[walletType] = {
+    xpub,
+    v3KeyStore,
+  };
 };
 
 export default {
@@ -42,5 +45,5 @@ export default {
   [ADD_WALLET]: addWallet,
   [SET_HD_KEY]: setHdKey,
   [SET_BALANCE]: setBalance,
-  [SET_HARDWARE_XPUB]: setHardwareXpub,
+  [SET_HD_CACHE_BY_TYPE]: setHdCacheByType,
 };

@@ -3,6 +3,7 @@ import {
   ADD_TRANSACTION,
   UPDATE_TRANSACTION,
   SET_TRANSACTION_HISTORY,
+  SET_PENDING_TRANSACTIONS_FILTER_ID,
 } from '@/store/transactions/mutations-types';
 import { ethplorerTransactions } from 'fixtures/transactions';
 
@@ -60,6 +61,16 @@ describe('transactions  mutations', () => {
       mutations[SET_TRANSACTION_HISTORY](stateInstance, null);
 
       expect(stateInstance.transactionHistory).toEqual([]);
+    });
+  });
+
+  describe('SET_PENDING_TRANSACTIONS_FILTER_ID', () => {
+    it('should set pendingTransactionsFilterId', () => {
+      const newFilterId = 1;
+
+      mutations[SET_PENDING_TRANSACTIONS_FILTER_ID](stateInstance, newFilterId);
+
+      expect(stateInstance.pendingTransactionsFilterId).toBe(newFilterId);
     });
   });
 });

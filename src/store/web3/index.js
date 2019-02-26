@@ -5,7 +5,7 @@ import mutations from './mutations';
 
 const state = {
   storedNetworks: [],
-  blockNumber: 0,
+  blockNumber: null,
   handledBlockNumber: null,
   activeNet: {},
   interval: null,

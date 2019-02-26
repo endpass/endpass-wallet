@@ -1,6 +1,5 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
-import { generateStubs } from '@/utils/testUtils';
 import ExportWallet from '@/components/pages/ExportWallet';
 
 const localVue = createLocalVue();
@@ -23,8 +22,7 @@ describe('ExportWallet page', () => {
         },
       },
     });
-    wrapper = shallow(ExportWallet, {
-      stubs: generateStubs(ExportWallet),
+    wrapper = shallowMount(ExportWallet, {
       localVue,
       store,
     });
@@ -44,18 +42,18 @@ describe('ExportWallet page', () => {
       wrapper.setData({
         exportType: 'privateKey',
       });
-      expect(wrapper.find('export-to-private-key').exists()).toBe(true);
-      expect(wrapper.find('export-to-json').exists()).toBe(false);
+      expect(wrapper.find('export-to-private-key-stub').exists()).toBe(true);
+      expect(wrapper.find('export-to-json-stub').exists()).toBe(false);
       wrapper.setData({
         exportType: 'json',
       });
-      expect(wrapper.find('export-to-json').exists()).toBe(true);
-      expect(wrapper.find('export-to-private-key').exists()).toBe(false);
+      expect(wrapper.find('export-to-json-stub').exists()).toBe(true);
+      expect(wrapper.find('export-to-private-key-stub').exists()).toBe(false);
       wrapper.setData({
         exportType: 'seedPhrase',
       });
-      expect(wrapper.find('export-to-json').exists()).toBe(false);
-      expect(wrapper.find('export-to-private-key').exists()).toBe(false);
+      expect(wrapper.find('export-to-json-stub').exists()).toBe(false);
+      expect(wrapper.find('export-to-private-key-stub').exists()).toBe(false);
       // type is unsupportable message
       expect(wrapper.find('.subtitle').exists()).toBe(true);
     });

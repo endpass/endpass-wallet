@@ -1,21 +1,26 @@
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { BigNumber } from 'bignumber.js';
+import { toChecksumAddress, hexToNumberString, fromWei } from 'web3-utils';
 import {
   EventEmitter,
   NotificationError,
-  Transaction,
   TransactionFactory,
+  Transaction,
+  web3,
 } from '@/class';
+import { TRANSACTION_STATUS } from '@/constants';
 import ethplorerService from '@/services/ethplorer';
-import web3 from '@/class/singleton/web3';
-import { getShortStringWithEllipsis, matchString } from '@/utils/strings';
+import cryptoDataService from '@/services/cryptoData';
+import {
+  getShortStringWithEllipsis,
+  matchString,
+} from '@endpass/utils/strings';
 import {
   ADD_TRANSACTION,
   UPDATE_TRANSACTION,
   SET_TRANSACTION_HISTORY,
+  SET_PENDING_TRANSACTIONS_FILTER_ID,
 } from './mutations-types';
-
-const { toChecksumAddress } = web3.utils;
 
 const getNonceInBlock = async ({ rootState }) => {
   const { address } = rootState.accounts;
@@ -51,12 +56,11 @@ const sendSignedTransaction = async (
   try {
     if (!transaction.nonce) {
       const nonce = await dispatch('getNextNonce');
-
-      Object.assign(transaction, { nonce });
+      transaction = Transaction.applyProps(transaction, { nonce });
     }
 
     const preTrx = {
-      ...transaction.getApiObject(web3.eth),
+      ...Transaction.getApiObject(transaction),
       chainId: transaction.networkId,
     };
 
@@ -87,11 +91,11 @@ const sendSignedTransaction = async (
           dispatch('handleSendingError', { err, receipt, transaction });
           sendEvent.emit('error', err);
         } else {
-          const interval = setInterval(async () => {
+          const intervalId = setInterval(async () => {
             const trx = await web3.eth.getTransactionReceipt(hash);
 
             if (trx && trx.status === true) {
-              clearInterval(interval);
+              clearInterval(intervalId);
               sendEvent.emit('confirmation');
             }
           }, 5000);
@@ -139,7 +143,7 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
   try {
     const { address } = rootState.accounts;
     const res = await ethplorerService.getTransactionHistory(address);
-    const transactions = res.map(trx => new Transaction(trx));
+    const transactions = res.map(trx => TransactionFactory.fromSendForm(trx));
 
     commit(SET_TRANSACTION_HISTORY, transactions);
     dispatch(
@@ -167,56 +171,83 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
   }
 };
 
+const handleIncomingTransaction = async (
+  { commit, state },
+  { transaction },
+) => {
+  const { pendingTransactions, transactionHistory } = state;
+  const allTrx = [...pendingTransactions, ...transactionHistory];
+  const savedTransaction = allTrx.find(trxInList =>
+    Transaction.isEqual(transaction, trxInList, ['networkId', 'nonce']),
+  );
+
+  if (!savedTransaction) {
+    commit(ADD_TRANSACTION, transaction);
+  } else if (
+    savedTransaction.state == TRANSACTION_STATUS.PENDING &&
+    transaction.state !== TRANSACTION_STATUS.PENDING
+  ) {
+    commit(UPDATE_TRANSACTION, {
+      payload: {
+        state: transaction.state,
+      },
+      hash: savedTransaction.hash,
+    });
+  }
+};
+
 // Show notification of incoming transactions from block
 const handleBlockTransactions = (
-  { state, dispatch, commit, rootState, rootGetters },
+  { dispatch, rootState, rootGetters },
   { transactions, networkId },
 ) => {
   const userAddresses = rootGetters['accounts/accountAddresses'];
-  const toUserTrx = transactions.filter(
-    trx =>
-      trx.to &&
-      userAddresses.some(
-        address => toChecksumAddress(address) === toChecksumAddress(trx.to),
-      ),
-  );
-
-  if (!toUserTrx.length) return;
-
-  const { pendingTransactions, transactionHistory } = state;
-  const allTrx = [...pendingTransactions, ...transactionHistory];
-
-  toUserTrx.forEach(trx => {
-    const incomeTrx = TransactionFactory.fromBlock({ ...trx, networkId });
-    const isTrxExist = allTrx.some(trxInList =>
-      Transaction.isEqual(incomeTrx, trxInList),
-    );
-
-    if (!isTrxExist) {
-      commit(ADD_TRANSACTION, incomeTrx);
+  const userTrx = transactions.filter(trx => {
+    if (!trx.to) {
+      return;
     }
 
-    const { hash, to } = trx;
-    const shortAddress = getShortStringWithEllipsis(to);
-    const shortHash = getShortStringWithEllipsis(hash);
-    const error = new NotificationError({
-      title: 'Incoming transaction',
-      text: `Address ${shortAddress} received transaction ${shortHash}`,
-    });
+    const checksumTrxFrom = toChecksumAddress(trx.from);
+    const checksumTrxTo = toChecksumAddress(trx.to);
 
-    dispatch('errors/emitError', error, { root: true });
+    return userAddresses.some(address => {
+      const checksumAddress = toChecksumAddress(address);
+
+      return (
+        checksumAddress === checksumTrxFrom || checksumAddress === checksumTrxTo
+      );
+    });
   });
 
-  if (!rootState.accounts.address) {
-    return;
-  }
+  if (!userTrx.length) return;
+
+  userTrx.forEach(trx => {
+    const transaction = TransactionFactory.fromBlock({ ...trx, networkId });
+    const incomeTrx = userAddresses.find(
+      address => toChecksumAddress(trx.to) === toChecksumAddress(address),
+    );
+
+    dispatch('handleIncomingTransaction', { transaction });
+
+    if (incomeTrx) {
+      const { hash, to } = trx;
+      const shortAddress = getShortStringWithEllipsis(to);
+      const shortHash = getShortStringWithEllipsis(hash);
+      const error = new NotificationError({
+        title: 'Incoming transaction',
+        text: `Address ${shortAddress} received transaction ${shortHash}`,
+      });
+
+      dispatch('errors/emitError', error, { root: true });
+    }
+  });
 
   const { address } = rootState.accounts;
-  const trxAddresses = toUserTrx.map(({ to }) => to);
 
   if (
+    address &&
     rootGetters['web3/isMainNetwork'] &&
-    trxAddresses.some(trxAddress => trxAddress === address)
+    userTrx.some(({ from, to }) => from === address || to === address)
   ) {
     dispatch('updateTransactionHistory');
   }
@@ -265,29 +296,22 @@ const cancelTransaction = async ({ dispatch }, { transaction, password }) => {
 };
 
 const handleTransactionSendingHash = ({ commit }, { transaction, newHash }) => {
-  Object.assign(transaction, {
+  const trx = Transaction.applyProps(transaction, {
     state: 'pending',
     date: new Date(),
     hash: newHash,
   });
 
-  commit(ADD_TRANSACTION, transaction);
-
-  return newHash;
+  commit(ADD_TRANSACTION, trx);
 };
 
-const handleTransactionResendingHash = (
-  { commit },
-  { transaction, newHash },
-) => {
+const handleTransactionResendingHash = ({ commit }, { hash, newHash }) => {
   commit(UPDATE_TRANSACTION, {
-    hash: transaction.hash,
+    hash,
     payload: {
       hash: newHash,
     },
   });
-
-  return newHash;
 };
 
 const handleTransactionCancelingHash = async (
@@ -315,22 +339,26 @@ const processTransactionAction = async (
   { transaction, sendEvent, actionType },
 ) =>
   new Promise((res, rej) => {
+    let usedHash = transaction.hash;
+
     sendEvent.once('transactionHash', async newHash => {
       switch (actionType) {
         case 'send':
-          return res(
-            dispatch('handleTransactionSendingHash', {
-              transaction,
-              newHash,
-            }),
-          );
+          await dispatch('handleTransactionSendingHash', {
+            transaction,
+            newHash,
+          });
+          usedHash = newHash;
+
+          return res(usedHash);
         case 'resend':
-          return res(
-            dispatch('handleTransactionResendingHash', {
-              transaction,
-              newHash,
-            }),
-          );
+          await dispatch('handleTransactionResendingHash', {
+            hash: usedHash,
+            newHash,
+          });
+
+          usedHash = newHash;
+          return res(newHash);
         case 'cancel':
           await dispatch('handleTransactionCancelingHash', {
             transaction,
@@ -345,20 +373,23 @@ const processTransactionAction = async (
     sendEvent.once('confirmation', () => {
       commit(UPDATE_TRANSACTION, {
         payload: {
-          state: actionType === 'cancel' ? 'canceled' : 'success',
+          state:
+            actionType === 'cancel'
+              ? TRANSACTION_STATUS.CANCELED
+              : TRANSACTION_STATUS.SUCCESS,
         },
-        hash: transaction.hash,
+        hash: usedHash,
       });
     });
 
     sendEvent.once('error', error => {
-      if (transaction.hash) {
+      if (usedHash) {
         commit(UPDATE_TRANSACTION, {
           payload: {
             state: 'error',
             error,
           },
-          hash: transaction.hash,
+          hash: usedHash,
         });
       }
 
@@ -366,10 +397,98 @@ const processTransactionAction = async (
     });
   });
 
+const getPendingTransactions = async ({
+  state,
+  commit,
+  dispatch,
+  rootState,
+  rootGetters,
+}) => {
+  try {
+    const { pendingTransactionsFilterId } = state;
+    const { address } = rootState.accounts;
+    const networkId = rootGetters['web3/activeNetwork'];
+
+    if (!address) {
+      return;
+    }
+
+    const {
+      filterId,
+      transactions,
+    } = await cryptoDataService.getPendingTransactions(
+      networkId,
+      address,
+      pendingTransactionsFilterId,
+    );
+
+    if (filterId !== pendingTransactionsFilterId) {
+      commit(SET_PENDING_TRANSACTIONS_FILTER_ID, filterId);
+    }
+
+    transactions.forEach(transaction => {
+      const trx = Transaction.applyProps(
+        TransactionFactory.fromCryptoData(transaction),
+        {
+          state: TRANSACTION_STATUS.PENDING,
+        },
+      );
+
+      dispatch('handleIncomingTransaction', { transaction: trx });
+    });
+  } catch (error) {
+    dispatch('errors/emitError', error, { root: true });
+  }
+};
+
+const updatePendingTransactionsStatus = async ({
+  state,
+  commit,
+  rootGetters,
+  dispatch,
+}) => {
+  try {
+    const pendingTransactions = state.pendingTransactions.filter(
+      ({ state, networkId }) =>
+        state === TRANSACTION_STATUS.PENDING &&
+        networkId === rootGetters['web3/activeNetwork'],
+    );
+    const receipts = await Promise.all(
+      pendingTransactions.map(({ hash }) =>
+        web3.eth.getTransactionReceipt(hash),
+      ),
+    );
+
+    receipts.forEach((receipt, index) => {
+      if (!receipt) {
+        return;
+      }
+
+      commit(UPDATE_TRANSACTION, {
+        payload: {
+          state: receipt.status
+            ? TRANSACTION_STATUS.SUCCESS
+            : TRANSACTION_STATUS.ERROR,
+        },
+        hash: pendingTransactions[index].hash,
+      });
+    });
+  } catch (e) {
+    const error = new NotificationError({
+      title: 'Failed to update pending transactions',
+      text: 'An error occurred while updating pending transactions.',
+      type: 'is-warning',
+    });
+
+    dispatch('errors/emitError', error, { root: true });
+  }
+};
+
 export default {
   handleTransactionSendingHash,
   handleTransactionResendingHash,
   handleTransactionCancelingHash,
+  handleIncomingTransaction,
   handleBlockTransactions,
   handleSendingError,
   getNonceInBlock,
@@ -380,4 +499,6 @@ export default {
   cancelTransaction,
   resendTransaction,
   processTransactionAction,
+  getPendingTransactions,
+  updatePendingTransactionsStatus,
 };

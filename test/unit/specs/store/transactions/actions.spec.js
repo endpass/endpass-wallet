@@ -1,17 +1,22 @@
-import web3 from '@/class/singleton/web3';
+import Web3 from 'web3';
 import state from '@/store/transactions';
 import {
   ADD_TRANSACTION,
   UPDATE_TRANSACTION,
   SET_TRANSACTION_HISTORY,
+  SET_PENDING_TRANSACTIONS_FILTER_ID,
 } from '@/store/transactions/mutations-types';
 import ethplorerService from '@/services/ethplorer';
+import cryptoDataService from '@/services/cryptoData';
 import {
   EventEmitter,
   Transaction,
   TransactionFactory,
   NotificationError,
+  web3,
+  Wallet,
 } from '@/class';
+import { TRANSACTION_STATUS } from '@/constants';
 import { address } from 'fixtures/accounts';
 import {
   transactionHash,
@@ -20,6 +25,10 @@ import {
   ethplorerHistory,
   ethplorerTransactions,
 } from 'fixtures/transactions';
+import {
+  pendingTransactions,
+  emptyPendingTransactions,
+} from 'fixtures/cryptoData';
 
 const { state: transactionsState, actions } = state;
 
@@ -42,7 +51,6 @@ describe('transactions actions', () => {
     transaction = {
       ...ethplorerTransactions[0],
       nonce: 1,
-      getApiObject: jest.fn(),
     };
     stateInstance = {
       ...transactionsState,
@@ -73,6 +81,7 @@ describe('transactions actions', () => {
       'transactions/pendingBalance': 0,
       'accounts/accountAddresses': [address.toLowerCase()],
       'web3/isMainNetwork': false,
+      'web3/activeNetwork': 3,
     };
   });
 
@@ -255,7 +264,7 @@ describe('transactions actions', () => {
 
       const expectedHistory = []
         .concat(ethplorerHistory, ethplorerTransactions)
-        .map(trx => new Transaction(trx));
+        .map(trx => TransactionFactory.fromSendForm(trx));
 
       await actions.updateTransactionHistory({
         dispatch,
@@ -294,15 +303,111 @@ describe('transactions actions', () => {
     });
   });
 
+  describe('handleIncomingTransaction', () => {
+    const { handleIncomingTransaction } = actions;
+    const transaction = { ...blockTransactions[0] };
+
+    it('should add transaction', () => {
+      handleIncomingTransaction(
+        { commit, state: stateInstance },
+        { transaction },
+      );
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(ADD_TRANSACTION, transaction);
+    });
+
+    it('should update transaction', () => {
+      const pendingTransaction = {
+        ...transaction,
+        state: 'pending',
+      };
+      const newTransaction = {
+        ...transaction,
+        hash: 'hash',
+        state: 'success',
+      };
+      const state = {
+        ...stateInstance,
+        pendingTransactions: [pendingTransaction],
+      };
+
+      handleIncomingTransaction(
+        { commit, state },
+        { transaction: newTransaction },
+      );
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(UPDATE_TRANSACTION, {
+        payload: {
+          state: newTransaction.state,
+        },
+        hash: pendingTransaction.hash,
+      });
+    });
+
+    it("should don't update transaction", () => {
+      const pendingTransaction = {
+        ...transaction,
+        state: 'success',
+      };
+      const newTransaction = {
+        ...transaction,
+        hash: 'hash',
+        state: 'success',
+      };
+      const state = {
+        ...stateInstance,
+        pendingTransactions: [pendingTransaction],
+      };
+
+      handleIncomingTransaction(
+        { commit, state },
+        { transaction: newTransaction },
+      );
+
+      pendingTransaction.state = 'pending';
+      newTransaction.state = 'pending';
+
+      handleIncomingTransaction(
+        { commit, state },
+        { transaction: newTransaction },
+      );
+
+      expect(commit).toHaveBeenCalledTimes(0);
+    });
+  });
+
   describe('handleBlockTransactions', () => {
     it('should show notification of incoming transactions', () => {
       actions.handleBlockTransactions(
-        { state: stateInstance, commit, dispatch, rootState, rootGetters },
+        { dispatch, rootState, rootGetters },
         { transactions: blockTransactions },
       );
 
+      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenNthCalledWith(
+        2,
+        'errors/emitError',
+        expect.any(NotificationError),
+        { root: true },
+      );
+    });
+
+    it('should not show notification of incoming transactions', () => {
+      const transaction = {
+        ...blockTransactions[0],
+        from: rootGetters['accounts/accountAddresses'][0],
+        to: blockTransactions[0].from,
+      };
+
+      actions.handleBlockTransactions(
+        { dispatch, rootState, rootGetters },
+        { transactions: [transaction] },
+      );
+
       expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toBeCalledWith(
+      expect(dispatch).not.toHaveBeenCalledWith(
         'errors/emitError',
         expect.any(NotificationError),
         { root: true },
@@ -312,8 +417,6 @@ describe('transactions actions', () => {
     it('should update transaction history', () => {
       actions.handleBlockTransactions(
         {
-          state: stateInstance,
-          commit,
           dispatch,
           rootState,
           rootGetters: {
@@ -324,72 +427,39 @@ describe('transactions actions', () => {
         { transactions: blockTransactions },
       );
 
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenNthCalledWith(
-        1,
-        'errors/emitError',
-        expect.any(NotificationError),
-        { root: true },
-      );
-      expect(dispatch).toHaveBeenNthCalledWith(2, 'updateTransactionHistory');
+      expect(dispatch).toHaveBeenCalledTimes(3);
+      expect(dispatch).toHaveBeenNthCalledWith(3, 'updateTransactionHistory');
     });
 
     it('should add transaction to history with network id', () => {
       const networkId = 2;
-      const constantDate = new Date('2018-01-01T12:00:00');
-      const dateMock = jest
-        .spyOn(global, 'Date')
-        .mockImplementation(() => constantDate);
-      const { chainId, ...trxWithoutChainId } = blockTransactions[0];
 
       actions.handleBlockTransactions(
-        { state: stateInstance, commit, dispatch, rootState, rootGetters },
-        { transactions: [trxWithoutChainId, blockTransactions[1]], networkId },
+        { dispatch, rootState, rootGetters },
+        { transactions: blockTransactions, networkId },
       );
 
       const expectedTrx = TransactionFactory.fromBlock({
-        ...trxWithoutChainId,
+        ...blockTransactions[0],
         networkId,
       });
 
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toBeCalledWith(ADD_TRANSACTION, expectedTrx);
-
-      dateMock.mockRestore();
-    });
-
-    it('should add Transaction instance to history', () => {
-      actions.handleBlockTransactions(
-        { state: stateInstance, commit, dispatch, rootState, rootGetters },
-        { transactions: blockTransactions },
-      );
-
-      expect(commit).toHaveBeenCalledTimes(1);
-      expect(commit).toBeCalledWith(ADD_TRANSACTION, expect.any(Transaction));
-    });
-
-    it('should not add existing transactions in history', () => {
-      const existingTrx = TransactionFactory.fromBlock(blockTransactions[0]);
-
-      Object.assign(stateInstance, {
-        pendingTransactions: [existingTrx],
+      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'handleIncomingTransaction', {
+        transaction: expect.objectContaining({
+          ...expectedTrx,
+          date: expect.any(Date),
+        }),
       });
-
-      actions.handleBlockTransactions(
-        { state: stateInstance, commit, dispatch, rootState, rootGetters },
-        { transactions: [blockTransactions[0]] },
-      );
-
-      expect(commit).toHaveBeenCalledTimes(0);
     });
 
     it('should not handle transaction when "to" is null', () => {
       actions.handleBlockTransactions(
-        { commit, dispatch, rootState, rootGetters },
+        { dispatch, rootState, rootGetters },
         { transactions: [{ ...ethplorerTransactions[1], to: null }] },
       );
 
-      expect(commit).toHaveBeenCalledTimes(0);
+      expect(dispatch).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -521,22 +591,39 @@ describe('transactions actions', () => {
   describe('handleTransactionSendingHash', () => {
     it('should add transaction with commit and return new hash', () => {
       const newHash = '0x0';
-      const res = actions.handleTransactionSendingHash(
+      const date = new Date();
+
+      const spy = jest
+        .spyOn(Transaction, 'applyProps')
+        .mockImplementation((trx, newProps) => {
+          const res = { ...trx, ...newProps, date };
+          return res;
+        });
+
+      actions.handleTransactionSendingHash(
         { commit },
         { transaction, newHash },
       );
 
-      expect(commit).toHaveBeenCalledWith(ADD_TRANSACTION, transaction);
-      expect(res).toEqual(newHash);
+      const afterApply = {
+        ...transaction,
+        date,
+        hash: newHash,
+        state: 'pending',
+      };
+
+      expect(commit).toHaveBeenCalledWith(ADD_TRANSACTION, afterApply);
+
+      spy.mockRestore();
     });
   });
 
   describe('handleTransactionResendingHash', () => {
     it('should update transaction with commit and return new hash', () => {
       const newHash = '0x0';
-      const res = actions.handleTransactionResendingHash(
+      actions.handleTransactionResendingHash(
         { commit },
-        { transaction, newHash },
+        { hash: transaction.hash, newHash },
       );
 
       expect(commit).toHaveBeenCalledWith(UPDATE_TRANSACTION, {
@@ -545,12 +632,12 @@ describe('transactions actions', () => {
           hash: newHash,
         },
       });
-      expect(res).toEqual(newHash);
     });
   });
 
   describe('handleTransactionCancelingHash', () => {
     let sendEvent;
+    const newHash = '0x0';
 
     beforeEach(() => {
       sendEvent = {
@@ -598,6 +685,7 @@ describe('transactions actions', () => {
 
   describe('processTransactionAction', () => {
     let sendEvent;
+    const newHash = '0x0';
 
     beforeEach(() => {
       sendEvent = new EventEmitter();
@@ -605,7 +693,6 @@ describe('transactions actions', () => {
 
     it('should send transaction on hash event', () => {
       expect.assertions(2);
-
       actions
         .processTransactionAction(
           {
@@ -623,13 +710,13 @@ describe('transactions actions', () => {
             'handleTransactionSendingHash',
             {
               transaction,
-              newHash: '0x0',
+              newHash,
             },
           );
           expect(res).not.toBeNull();
         });
 
-      sendEvent.emit('transactionHash', '0x0');
+      sendEvent.emit('transactionHash', newHash);
     });
 
     it('should resend transaction on hash event', () => {
@@ -651,14 +738,14 @@ describe('transactions actions', () => {
           expect(dispatch).toHaveBeenCalledWith(
             'handleTransactionResendingHash',
             {
-              transaction,
-              newHash: '0x0',
+              hash: transaction.hash,
+              newHash,
             },
           );
           expect(res).not.toBeNull();
         });
 
-      sendEvent.emit('transactionHash', '0x0');
+      sendEvent.emit('transactionHash', newHash);
     });
 
     it('should cancel transaction on hash event', () => {
@@ -688,6 +775,267 @@ describe('transactions actions', () => {
         });
 
       sendEvent.emit('transactionHash');
+    });
+  });
+
+  describe('getPendingTransactions', () => {
+    const { getPendingTransactions } = actions;
+
+    it('should correctly call cryptoDataService.getPendingTransactions', async () => {
+      expect.assertions(2);
+
+      await getPendingTransactions({
+        state,
+        commit,
+        dispatch,
+        rootState,
+        rootGetters,
+      });
+
+      expect(cryptoDataService.getPendingTransactions).toHaveBeenCalledTimes(1);
+      expect(cryptoDataService.getPendingTransactions).toHaveBeenCalledWith(
+        rootGetters['web3/activeNetwork'],
+        rootState.accounts.address,
+        state.pendingTransactionsFilterId,
+      );
+    });
+
+    it('should save pendingTransactionsFilterId', async () => {
+      expect.assertions(2);
+
+      cryptoDataService.getPendingTransactions.mockResolvedValueOnce(
+        emptyPendingTransactions,
+      );
+      await getPendingTransactions({
+        state,
+        commit,
+        dispatch,
+        rootState,
+        rootGetters,
+      });
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(
+        SET_PENDING_TRANSACTIONS_FILTER_ID,
+        emptyPendingTransactions.filterId,
+      );
+    });
+
+    it("should don't save pendingTransactionsFilterId", async () => {
+      expect.assertions(1);
+
+      const state = {
+        pendingTransactionsFilterId: emptyPendingTransactions.filterId,
+      };
+
+      cryptoDataService.getPendingTransactions.mockResolvedValueOnce(
+        emptyPendingTransactions,
+      );
+      await getPendingTransactions({
+        state,
+        commit,
+        dispatch,
+        rootState,
+        rootGetters,
+      });
+
+      expect(commit).toHaveBeenCalledTimes(0);
+    });
+
+    it('should add new pending transactions', async () => {
+      const pendingTransactionsCount = pendingTransactions.transactions.length;
+
+      expect.assertions(pendingTransactionsCount + 1);
+
+      const state = {
+        pendingTransactionsFilterId: pendingTransactions.filterId,
+      };
+
+      await getPendingTransactions({
+        state,
+        commit,
+        dispatch,
+        rootState,
+        rootGetters,
+      });
+
+      expect(dispatch).toHaveBeenCalledTimes(pendingTransactionsCount);
+
+      pendingTransactions.transactions.forEach((transaction, index) => {
+        const trx = Transaction.applyProps(
+          TransactionFactory.fromCryptoData(transaction),
+          {
+            state: TRANSACTION_STATUS.PENDING,
+          },
+        );
+
+        expect(dispatch).toHaveBeenNthCalledWith(
+          index + 1,
+          'handleIncomingTransaction',
+          {
+            transaction: expect.objectContaining({
+              ...trx,
+              date: expect.any(Date),
+            }),
+          },
+        );
+      });
+    });
+
+    it("should don't add new pending transactions", async () => {
+      expect.assertions(1);
+
+      const state = {
+        pendingTransactionsFilterId: emptyPendingTransactions.filterId,
+      };
+
+      cryptoDataService.getPendingTransactions.mockResolvedValueOnce(
+        emptyPendingTransactions,
+      );
+      await getPendingTransactions({
+        state,
+        commit,
+        dispatch,
+        rootState,
+        rootGetters,
+      });
+
+      expect(commit).toHaveBeenCalledTimes(0);
+    });
+
+    it('should handle error', async () => {
+      expect.assertions(2);
+
+      const error = new Error();
+
+      cryptoDataService.getPendingTransactions.mockRejectedValueOnce(error);
+      await getPendingTransactions({
+        state,
+        commit,
+        dispatch,
+        rootState,
+        rootGetters,
+      });
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+        root: true,
+      });
+    });
+  });
+
+  describe('updatePendingTransactionsStatus', () => {
+    const { updatePendingTransactionsStatus } = actions;
+    const hash = 'transaction hash';
+    let state;
+
+    beforeEach(() => {
+      state = {
+        pendingTransactions: [
+          {
+            hash,
+            state: TRANSACTION_STATUS.PENDING,
+            networkId: rootGetters['web3/activeNetwork'],
+          },
+        ],
+      };
+    });
+
+    it('should not update transactions', async () => {
+      expect.assertions(2);
+
+      let state = {
+        pendingTransactions: [],
+      };
+
+      await updatePendingTransactionsStatus({ state, commit, rootGetters });
+      expect(commit).toHaveBeenCalledTimes(0);
+
+      state = {
+        pendingTransactions: [
+          {
+            state: TRANSACTION_STATUS.SUCCESS,
+            networkId: rootGetters['web3/activeNetwork'],
+          },
+          {
+            state: TRANSACTION_STATUS.PENDING,
+            networkId: rootGetters['web3/activeNetwork'] + 1,
+          },
+        ],
+      };
+
+      await updatePendingTransactionsStatus({ state, commit, rootGetters });
+      expect(commit).toHaveBeenCalledTimes(0);
+    });
+
+    it('should not update transactions if it still pending', async () => {
+      expect.assertions(1);
+
+      Web3.eth.getTransactionReceipt.mockResolvedValueOnce(null);
+
+      await updatePendingTransactionsStatus({ state, commit, rootGetters });
+
+      expect(commit).toHaveBeenCalledTimes(0);
+    });
+
+    it('should set success transaction status', async () => {
+      expect.assertions(2);
+
+      Web3.eth.getTransactionReceipt.mockResolvedValueOnce({
+        status: true,
+      });
+
+      await updatePendingTransactionsStatus({ state, commit, rootGetters });
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(UPDATE_TRANSACTION, {
+        payload: {
+          state: TRANSACTION_STATUS.SUCCESS,
+        },
+        hash,
+      });
+    });
+
+    it('should set error transaction status', async () => {
+      expect.assertions(2);
+
+      Web3.eth.getTransactionReceipt.mockResolvedValueOnce({
+        status: false,
+      });
+
+      await updatePendingTransactionsStatus({ state, commit, rootGetters });
+
+      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledWith(UPDATE_TRANSACTION, {
+        payload: {
+          state: TRANSACTION_STATUS.ERROR,
+        },
+        hash,
+      });
+    });
+
+    it('should handle errors', async () => {
+      expect.assertions(2);
+
+      const error = new NotificationError({
+        title: 'Failed to update pending transactions',
+        text: 'An error occurred while updating pending transactions.',
+        type: 'is-warning',
+      });
+
+      Web3.eth.getTransactionReceipt.mockRejectedValueOnce();
+
+      await updatePendingTransactionsStatus({
+        state,
+        commit,
+        rootGetters,
+        dispatch,
+      });
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith('errors/emitError', error, {
+        root: true,
+      });
     });
   });
 });

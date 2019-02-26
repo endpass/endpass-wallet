@@ -1,17 +1,22 @@
-import { shallow, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import Notifications from 'vue-notification';
-import AddTokenModal from '@/components/modal/AddTokenModal';
+import UIComponents from '@endpass/ui';
+import validation from '@/validation';
 import { ERC20Token } from '@/class';
+
+import AddTokenModal from '@/components/modal/AddTokenModal';
+
 import { tokens } from 'fixtures/tokens';
-import { generateStubs } from '@/utils/testUtils';
 
 const localVue = createLocalVue();
 
+localVue.use(validation);
 localVue.use(Vuex);
 localVue.use(VeeValidate);
 localVue.use(Notifications);
+localVue.use(UIComponents);
 
 describe('AddTokenModal', () => {
   let store;
@@ -33,10 +38,10 @@ describe('AddTokenModal', () => {
         },
       },
     });
-    wrapper = shallow(AddTokenModal, {
+    wrapper = shallowMount(AddTokenModal, {
       store,
       localVue,
-      stubs: generateStubs(AddTokenModal),
+      sync: false,
     });
     fakeEmptyTokenData = {
       symbol: undefined,
@@ -138,11 +143,11 @@ describe('AddTokenModal', () => {
 
       ['decimals', 'name', 'symbol'].forEach(item => {
         expect(
-          wrapper.find(`v-input[data-test=token-${item}-input]`).exists(),
+          wrapper.find(`v-input-stub[data-test=token-${item}-input]`).exists(),
         ).toBe(true);
       });
 
-      expect(wrapper.findAll('v-input')).toHaveLength(4);
+      expect(wrapper.findAll('v-input-stub')).toHaveLength(4);
     });
   });
 });

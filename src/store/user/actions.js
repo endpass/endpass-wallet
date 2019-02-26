@@ -1,6 +1,6 @@
-import { mapKeys, mapValues, pickBy } from 'lodash';
-import { userService, authService, identityModeService } from '@/services';
-import { NotificationError, Token } from '@/class';
+import { mapKeys, mapValues } from 'lodash';
+import { userService, identityModeService } from '@/services';
+import { NotificationError, Token, connect } from '@/class';
 import { IDENTITY_MODE } from '@/constants';
 import {
   SET_AUTHORIZATION_STATUS,
@@ -9,7 +9,6 @@ import {
   SET_SETTINGS,
   SET_OTP_SETTINGS,
 } from './mutations-types';
-import { SET_USER_TOKENS } from '@/store/tokens/mutations-types';
 
 const setAuthorizationStatus = (
   { commit, getters },
@@ -30,24 +29,15 @@ const setAuthorizationStatus = (
   }
 };
 
-const login = async (
-  { commit, dispatch },
-  { email, redirectUri, mode = {} },
-) => {
-  const { type = IDENTITY_MODE.DEFAULT, serverUrl } = mode;
+const login = async ({ commit, dispatch }) => {
+  const res = await connect.auth(window.location.origin);
 
-  if (type === IDENTITY_MODE.DEFAULT) {
-    return authService.login({ email, redirectUri });
-  }
+  const { type = IDENTITY_MODE.DEFAULT, serverUrl } = res || {};
 
   try {
     identityModeService.setIdentityMode(type, serverUrl);
     commit(SET_IDENTITY_TYPE, type);
     commit(SET_AUTHORIZATION_STATUS, true);
-    commit(SET_EMAIL, email);
-    const settings = { email };
-
-    await userService.setSettings(settings);
 
     return dispatch('init', null, { root: true });
   } catch (e) {
@@ -59,6 +49,10 @@ const logout = async ({ commit, dispatch, getters }) => {
   commit(SET_EMAIL, null);
 
   try {
+    if (getters.isDefaultIdentity) {
+      await connect.logout();
+    }
+
     if (getters.isLocalIdentity) {
       await identityModeService.deleteIdentityData();
     }
@@ -66,10 +60,6 @@ const logout = async ({ commit, dispatch, getters }) => {
     try {
       identityModeService.setIdentityMode(IDENTITY_MODE.DEFAULT);
     } catch (e) {} // eslint-disable-line no-empty
-
-    if (getters.isDefaultIdentity) {
-      await authService.logout();
-    }
 
     window.location.reload();
   } catch (e) {
@@ -79,9 +69,6 @@ const logout = async ({ commit, dispatch, getters }) => {
 
 const validateCustomServer = (ctx, { serverUrl }) =>
   identityModeService.validateIdentityServer(serverUrl);
-
-const loginViaOTP = (ctx, { code, email }) =>
-  authService.loginViaOTP(code, email);
 
 const getOtpSettings = async ({ commit, dispatch }) => {
   try {
@@ -115,14 +102,20 @@ const updateSettings = async ({ commit, dispatch }, settings) => {
 
 const setUserSettings = async ({ commit, dispatch }) => {
   try {
-    const { fiatCurrency, email, tokens } = await userService.getSettings();
+    const {
+      fiatCurrency,
+      email,
+      tokens,
+      lastActiveAccount,
+    } = await userService.getSettings();
 
     if (email) {
       commit(SET_EMAIL, email);
+      await userService.setSettings({ email });
     }
 
     if (fiatCurrency) {
-      commit(SET_SETTINGS, { fiatCurrency });
+      commit(SET_SETTINGS, { fiatCurrency, lastActiveAccount });
     }
 
     if (tokens) {
@@ -130,19 +123,19 @@ const setUserSettings = async ({ commit, dispatch }) => {
         netTokens.map(token => Token.getConsistent(token)),
       );
       const mappedTokens = mapValues(normalizedTokens, netTokens =>
-        mapKeys(netTokens, 'address'),
+        mapKeys(netTokens, 'symbol'),
       );
 
-      commit(`tokens/${SET_USER_TOKENS}`, mappedTokens, { root: true });
+      dispatch('tokens/setUserTokens', mappedTokens, { root: true });
     }
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });
   }
 };
 
-const initIdentityMode = async ({ commit, dispatch }) => {
+const initIdentityMode = async ({ commit, dispatch }, mode) => {
   try {
-    const { type, serverUrl } = identityModeService.getIdentityMode();
+    const { type, serverUrl } = mode || identityModeService.getIdentityMode();
     identityModeService.setIdentityMode(type, serverUrl);
 
     if (type !== IDENTITY_MODE.DEFAULT) {
@@ -167,7 +160,6 @@ export default {
   updateSettings,
   login,
   logout,
-  loginViaOTP,
   getOtpSettings,
   setOtpSettings,
   setUserSettings,

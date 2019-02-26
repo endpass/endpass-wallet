@@ -20,6 +20,7 @@
             name="jsonKeystorePassword"
             validator="required"
             data-vv-as="password"
+            data-vv-name="jsonKeystorePassword"
             v-validate="'required|min:8'"
             :error="errors.first('jsonKeystorePassword')"
             placeholder="Your Wallet Password"
@@ -51,10 +52,6 @@
 
 <script>
 import { mapActions } from 'vuex';
-import VModal from '@/components/ui/VModal';
-import VForm from '@/components/ui/form/VForm.vue';
-import VPassword from '@/components/ui/form/VPassword.vue';
-import VButton from '@/components/ui/form/VButton.vue';
 import formMixin from '@/mixins/form';
 
 export default {
@@ -105,12 +102,6 @@ export default {
     },
   },
   mixins: [formMixin],
-  components: {
-    VModal,
-    VForm,
-    VPassword,
-    VButton,
-  },
 };
 </script>
 

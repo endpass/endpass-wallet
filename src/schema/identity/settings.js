@@ -1,9 +1,9 @@
-import userNetworkSchema from './network';
-import userTokenSchema from './token';
+import { userNetwork } from './network';
+import { userToken } from './token';
 
-export default {
+const userSettings = {
   type: 'object',
-  required: ['email', 'fiatCurrency', 'otp_enabled'],
+  required: ['email', 'fiatCurrency', 'otpEnabled'],
   properties: {
     email: {
       type: 'string',
@@ -14,7 +14,7 @@ export default {
       minLength: 1,
       default: 'USD',
     },
-    otp_enabled: {
+    otpEnabled: {
       type: 'boolean',
     },
     net: {
@@ -22,15 +22,19 @@ export default {
     },
     networks: {
       type: 'array',
-      items: { ...userNetworkSchema },
+      items: { ...userNetwork },
     },
     tokens: {
       type: 'object',
       propertyNames: { type: 'string' },
       additionalProperties: {
         type: 'array',
-        items: { ...userTokenSchema },
+        items: { ...userToken },
       },
     },
   },
+};
+
+export default {
+  userSettings,
 };

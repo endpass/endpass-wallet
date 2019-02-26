@@ -1,6 +1,6 @@
 <template>
   <v-form
-    is-form-valid="isFormValid"
+    :is-form-valid="isFormValid"
     @submit="handleFormSubmit"
   >
     <label class="label">Change Password</label>
@@ -39,10 +39,7 @@
 
 <script>
 import { mapActions } from 'vuex';
-import { matchString } from '@/utils/strings';
-import VForm from '@/components/ui/form/VForm';
-import VButton from '@/components/ui/form/VButton';
-import VPassword from '@/components/ui/form/VPassword';
+import { matchString } from '@endpass/utils/strings';
 import formMixin from '@/mixins/form';
 
 export default {
@@ -101,10 +98,5 @@ export default {
     },
   },
   mixins: [formMixin],
-  components: {
-    VForm,
-    VButton,
-    VPassword,
-  },
 };
 </script>

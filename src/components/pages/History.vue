@@ -7,8 +7,8 @@
             <h1 class="card-header-title">Transaction history</h1>
           </div>
           <div class="card-content">
-            <ul 
-              v-if="currentNetTransactions.length > 0" 
+            <ul
+              v-if="currentNetTransactions.length > 0"
               class="transactions"
             >
               <li
@@ -33,9 +33,8 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
-import VSpinner from '@/components/ui/VSpinner';
 import appTransaction from '@/components/Transaction';
-import { MAIN_NET_ID } from '@/constants';
+import { NET_ID } from '@/constants';
 
 export default {
   data: () => ({
@@ -50,7 +49,7 @@ export default {
     ...mapGetters('transactions', ['currentNetTransactions']),
 
     isHistoryAvailable() {
-      return this.activeNet.id === MAIN_NET_ID;
+      return this.activeNet.id === NET_ID.MAIN;
     },
   },
 
@@ -85,7 +84,6 @@ export default {
 
   components: {
     appTransaction,
-    VSpinner,
   },
 };
 </script>

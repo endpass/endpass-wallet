@@ -1,6 +1,8 @@
+/* eslint-disable camelcase */
 import {
   customToken,
   tokens,
+  token,
   tokensMappedByAddress,
 } from '../fixtures/tokeninfo';
 import { call_custom_token_1, call_custom_token_3 } from '../fixtures/web3';
@@ -16,14 +18,16 @@ describe('Tokens Page', () => {
   });
 
   describe('the user is authorized', () => {
-    beforeEach(() => {
-      cy.getInitialData();
-      cy.visit('#/tokens');
-      cy.mockWeb3Requests();
-      cy.waitPageLoad();
-    });
-
     describe('add a token', () => {
+      beforeEach(() => {
+        cy.getInitialData();
+        cy.getAccountBalance();
+        cy.visit('#/tokens');
+        cy.mockWeb3Requests();
+        cy.wait('@accountBalance');
+        cy.waitPageLoad();
+      });
+
       it('should add a custom token', () => {
         cy.get('[data-test=add-custom-token-button]').click();
 
@@ -37,9 +41,38 @@ describe('Tokens Page', () => {
         });
 
         cy.get('[data-test=tokens-list]').within(() => {
-          cy.get('[data-test=token-item]').should('have.length', 2);
+          cy.get('[data-test=token-item]').should('have.length', 4);
           cy.get('[data-test=token-name]').contains(customToken.name);
         });
+      });
+
+      it('should add a token from the list', () => {
+        const tokenName = token.name;
+
+        cy.get('[data-test=tokens-select]')
+          .click()
+          .within(() => {
+            cy.get('.multiselect__input').type('invalid token name');
+            cy.contains('No elements found').should('be.visible');
+
+            cy.get('.multiselect__input')
+              .clear()
+              .type(tokenName);
+            cy.get('[data-test=token-name]')
+              .contains(tokenName)
+              .click();
+          });
+
+        cy.get('[data-test=tokens-list]').contains(tokenName);
+      });
+    });
+
+    describe('add custom token', () => {
+      beforeEach(() => {
+        cy.getInitialData();
+        cy.visit('#/tokens');
+        cy.mockWeb3Requests();
+        cy.waitPageLoad();
       });
 
       it('should add a custom token with token info from user', () => {
@@ -89,38 +122,17 @@ describe('Tokens Page', () => {
           cy.get('[data-test=close-button]').click();
         });
       });
-
-      it('should add a token from the list', () => {
-        const tokenName = tokens[0].name;
-
-        cy.get('[data-test=tokens-select]')
-          .click()
-          .within(() => {
-            cy.get('.multiselect__input').type('invalid token name');
-            cy.contains('No elements found').should('be.visible');
-
-            cy.get('.multiselect__input')
-              .clear()
-              .type(tokenName);
-            cy.get('[data-test=token-name]')
-              .contains(tokenName)
-              .click();
-
-            cy.get('[data-test=token-name]').should('not.contain', tokenName);
-          });
-
-        cy.get('[data-test=tokens-list]').within(() => {
-          cy.get('[data-test=token-name]').contains(tokenName);
-        });
-      });
     });
 
     describe('saved tokens list', () => {
       const [token1] = tokens;
 
       beforeEach(() => {
+        cy.getInitialData();
+        cy.visit('#/tokens');
+        cy.mockWeb3Requests();
+        cy.waitPageLoad();
         cy.makeStoreAlias();
-
         cy.get('@store').then(store => {
           store.commit('tokens/SET_USER_TOKENS', {
             '1': tokensMappedByAddress,

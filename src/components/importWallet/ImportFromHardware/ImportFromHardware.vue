@@ -4,16 +4,16 @@
       v-if="!hardwareType"
       v-model="hardwareType"
     />
-    <hardware-list
+    <wallets-list
       v-else
-      :wallet-type="hardwareType"
+      :type="hardwareType"
     />
   </div>
 </template>
 
 <script>
 import HardwareChooser from './HardwareChooser';
-import HardwareList from './HardwareList';
+import WalletsList from '../WalletsList';
 
 export default {
   name: 'ImportFromHardware',
@@ -22,7 +22,7 @@ export default {
   }),
   components: {
     HardwareChooser,
-    HardwareList,
+    WalletsList,
   },
 };
 </script>
