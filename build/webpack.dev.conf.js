@@ -9,7 +9,9 @@ const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const portfinder = require('portfinder');
 const config = require('../config');
-const utils = require('./utils');
+const packageConfig = require('../package.json');
+const utils = require('@endpass/utils/build');
+const styleLoaders = require('./style-loaders');
 
 const HOST = process.env.HOST;
 const PORT = process.env.PORT && Number(process.env.PORT);
@@ -18,7 +20,7 @@ const env = getEnv(process.env.NODE_ENV);
 
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
-    rules: utils.styleLoaders({
+    rules: styleLoaders.styleLoaders({
       sourceMap: config.dev.cssSourceMap,
       usePostCSS: true,
     }),
@@ -105,7 +107,7 @@ module.exports = new Promise((resolve, reject) => {
             ],
           },
           onErrors: config.dev.notifyOnErrors
-            ? utils.createNotifierCallback()
+            ? utils.createNotifierCallback(packageConfig)
             : undefined,
         }),
       );

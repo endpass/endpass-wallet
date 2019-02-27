@@ -10,7 +10,10 @@ const makeValidator = schema => {
 
   return (data, isOnlyLog = ENV.isProduction) => {
     if (!validator(data)) {
-      console.warn('Schema validation error', data);
+      console.warn('Schema validation error', {
+        data,
+        errors: validator.errors,
+      });
 
       if (!isOnlyLog) {
         throw new Error(ajv.errorsText(validator));

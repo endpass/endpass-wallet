@@ -30,11 +30,11 @@
     ]
   },
   "dependencies": {
-    "@endpass/class": "^0.6.1",
+    "@endpass/class": "^0.6.2",
     "@endpass/connect": "0.15.1-beta",
     "@endpass/faucet": "^0.1.1",
     "@endpass/ui": "^0.2.0",
-    "@endpass/utils": "^1.1.2",
+    "@endpass/utils": "^1.2.0",
     "ajv": "^6.5.5",
     "axios": "^0.18.0",
     "babel-helper-vue-jsx-merge-props": "2.0.3",

@@ -3,7 +3,7 @@ const chalk = require('chalk');
 const semver = require('semver');
 const packageConfig = require('../package.json');
 const shell = require('shelljs');
-const { exec } = require('./utils');
+const utils = require('@endpass/utils/build');
 
 const versionRequirements = [
   {
@@ -16,7 +16,7 @@ const versionRequirements = [
 if (shell.which('npm')) {
   versionRequirements.push({
     name: 'npm',
-    currentVersion: exec('npm --version'),
+    currentVersion: utils.exec('npm --version'),
     versionRequirement: packageConfig.engines.npm,
   });
 }

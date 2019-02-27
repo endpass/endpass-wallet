@@ -137,10 +137,10 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@endpass/class@^0.6.1":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.6.1.tgz#1c87fd45779083216d84c2796f5754391d797e17"
-  integrity sha512-ZlQLSAjK6eis3+M/vtjmcyeGzCqDy9vZB/KLwHBAd9YmwBnbo8dXIOUbJ3kOrtNNtFQAobfHLm/5pzM5oMWsYA==
+"@endpass/class@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.6.2.tgz#d999d1b6754a13ee98a6902fe260c472e14116e5"
+  integrity sha512-Vjhhjv9d6U/U9+uyYk/q3mKb4XjXBgOgMPx7DF9KQos3B+DblvQCYL49e0ZdvGh8Omkv6P3sTuyLAxouwIr91A==
   dependencies:
     "@endpass/utils" "^1.1.2"
     "@ledgerhq/hw-app-eth" "^4.24.0"
@@ -196,10 +196,10 @@
     keythereum "^1.0.4"
     lodash "^4.17.11"
 
-"@endpass/utils@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.1.2.tgz#aa11fbbc5c07fe80d47b600a474f1b31a2840a15"
-  integrity sha512-LgvlxPqtgyD0RqiXTj1/YgrOaZzDI2kwpO44iNgxdxArphBvXyUEWiKhDUjBRmogycJNivb1LQE6F2NvGwkO+g==
+"@endpass/utils@^1.1.2", "@endpass/utils@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.2.0.tgz#f6931ae6e39bd5ca6609934b047080355e71b08b"
+  integrity sha512-U+mAlp+P0sNAl2CC3Fq5V1ZOoxcSxDAVyX5BhzdpfpFsE6JjpC5FK1TjJ816JkxLzJvxCyFYxZzbbaFO8nA+tw==
   dependencies:
     bs58check "^2.1.2"
     dayjs "^1.7.8"
