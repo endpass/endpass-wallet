@@ -142,8 +142,14 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
 
   try {
     const { address } = rootState.accounts;
-    const res = await ethplorerService.getTransactionHistory(address);
-    const transactions = res.map(trx => TransactionFactory.fromSendForm(trx));
+    const networkId = rootState.web3.activeNet.id;
+    const res = await cryptoDataService.getTransactionHistory({
+      address,
+      network: networkId,
+    });
+    const transactions = res.map(trx =>
+      TransactionFactory.fromCryptoDataHistory(trx),
+    );
 
     commit(SET_TRANSACTION_HISTORY, transactions);
     dispatch(

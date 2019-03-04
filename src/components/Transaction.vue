@@ -1,8 +1,5 @@
 <template lang="html">
-  <div
-    :class="statusClass"
-    class="transaction"
-  >
+  <div :class="statusClass" class="transaction">
     <div class="transaction-header">
       <account
         v-if="txAddress"
@@ -49,10 +46,7 @@
                 data-test="transaction-cancel-button"
                 @click="cancel"
               >
-                <span
-                  class="icon is-small"
-                  v-html="require('@/img/ban.svg')"
-                />
+                <span class="icon is-small" v-html="require('@/img/ban.svg')" />
                 <span class="caption is-hidden-mobile">
                   Cancel
                 </span>
@@ -110,9 +104,7 @@
         <span class="">{{ transaction.nonce }}</span>
       </div>
 
-      <div
-        v-if="parsedData"
-      >
+      <div>
         <span class="text-label">Data</span>
         <p class="code">
           {{ parsedData }}
@@ -236,8 +228,7 @@ export default {
 
     parsedData() {
       const dataString = this.transaction.data || '0x';
-
-      return hexToString(dataString);
+      return dataString;
     },
   },
 

@@ -28,6 +28,7 @@ import {
 import {
   pendingTransactions,
   emptyPendingTransactions,
+  cryptoDataHistory,
 } from 'fixtures/cryptoData';
 
 const { state: transactionsState, actions } = state;
@@ -262,9 +263,9 @@ describe('transactions actions', () => {
     it('should recieve transaction history', async () => {
       expect.assertions(2);
 
-      const expectedHistory = []
-        .concat(ethplorerHistory, ethplorerTransactions)
-        .map(trx => TransactionFactory.fromSendForm(trx));
+      const expectedHistory = cryptoDataHistory.map(trx =>
+        TransactionFactory.fromSendForm(trx),
+      );
 
       await actions.updateTransactionHistory({
         dispatch,
@@ -285,7 +286,7 @@ describe('transactions actions', () => {
       expect.assertions(2);
 
       const error = new Error();
-      ethplorerService.getTransactionHistory.mockRejectedValueOnce(error);
+      cryptoDataService.getTransactionHistory.mockRejectedValueOnce(error);
       await actions.updateTransactionHistory({
         dispatch,
         commit,

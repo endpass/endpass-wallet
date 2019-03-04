@@ -123,7 +123,7 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `${ENV.cryptoDataAPIUrl}/transactions/${network}/${address}/token`,
+            `${ENV.cryptoDataAPIUrl}/${network}/transactions/${address}/token`,
             {
               params: {
                 page: 1,
@@ -153,7 +153,7 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `${ENV.cryptoDataAPIUrl}/transactions/${network}/${address}`,
+            `${ENV.cryptoDataAPIUrl}/${network}/transactions/${address}`,
             {
               params: {
                 page: 1,
@@ -189,7 +189,7 @@ const cryptoDataService = {
           ]);
 
           return resolve(
-            uniqBy([].concat(transactions, transactionsWithTokens), 'hash'),
+            uniqBy([].concat(transactionsWithTokens, transactions), 'hash'),
           );
         } catch (err) {
           return reject(err);
