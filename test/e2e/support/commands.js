@@ -50,10 +50,7 @@ import {
   sendRawTransaction_b14ab_31ea8_resend,
   getTransactionReceipt_b14ab_31ea8_resend,
 } from '../fixtures/web3';
-import {
-  ethplorerHistory,
-  ethplorerTransactions,
-} from '../fixtures/transactions';
+import { tokenTransactions, ethTransactions } from '../fixtures/cryptodata';
 import { tokens, prices } from '../fixtures/tokeninfo';
 
 const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1.1';
@@ -226,18 +223,16 @@ Cypress.Commands.add('getTokensPrices', () => {
 Cypress.Commands.add('mockEthplorerRequests', () => {
   cy.route({
     method: 'GET',
-    url: '/getAddressTransactions/*',
-    response: ethplorerTransactions,
-    status: 200,
-  }).as('addressTransactionsRequest');
-  cy.route({
-    method: 'GET',
-    url: '/getAddressHistory/*',
-    response: {
-      operations: ethplorerHistory,
-    },
+    url: `${cryptodataAPIUrl}/**/transactions/*/*`,
+    response: ethTransactions,
     status: 200,
   }).as('addressHistoryRequest');
+  cy.route({
+    method: 'GET',
+    url: `${cryptodataAPIUrl}/**/transactions/*`,
+    response: tokenTransactions,
+    status: 200,
+  }).as('addressTransactionsRequest');
 });
 
 Cypress.Commands.add('getInitialData', () => {
