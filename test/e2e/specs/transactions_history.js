@@ -23,7 +23,7 @@ describe('Transactions History Page', () => {
 
       cy.get('[data-test=transactions-history-item]')
         .its('length')
-        .should('eq', 4);
+        .should('eq', 2);
     });
 
     it('should add items to history after transactions send', () => {

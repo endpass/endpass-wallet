@@ -19,6 +19,9 @@ export const token = {
       pattern: '[0-9]+',
       default: '0',
     },
+    decimals: {
+      type: 'number',
+    },
     price: {
       type: 'boolean',
       default: false,
