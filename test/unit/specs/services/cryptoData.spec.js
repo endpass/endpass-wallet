@@ -313,11 +313,9 @@ describe('Crypto data service', () => {
     const requestUrl = `${
       ENV.cryptoDataAPIUrl
     }/${network}/transactions/pending`;
-    const expectedError = new NotificationError({
-      title: 'Failed to get pending transactions',
-      text: 'An error occurred while getting pending transactions.',
-      type: 'is-warning',
-    });
+    const expectedError = new Error(
+      'Failed to get pending transactions. An error occurred while getting pending transactions.',
+    );
 
     it('should make correct request', async () => {
       expect.assertions(2);

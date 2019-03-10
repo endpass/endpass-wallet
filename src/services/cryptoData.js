@@ -212,11 +212,9 @@ const cryptoDataService = {
 
       return cryptoDataValidator.validatePendingTransactions(data);
     } catch (err) {
-      throw new NotificationError({
-        title: 'Failed to get pending transactions',
-        text: 'An error occurred while getting pending transactions.',
-        type: 'is-warning',
-      });
+      throw new Error(
+        'Failed to get pending transactions. An error occurred while getting pending transactions.',
+      );
     }
   },
 };
