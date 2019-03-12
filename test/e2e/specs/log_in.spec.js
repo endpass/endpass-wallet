@@ -18,10 +18,6 @@ describe('Log In To an Existing Account', () => {
     cy.visit('#/');
     cy.mockWeb3Requests();
 
-    cy.get('iframe[data-endpass=dialog]').should('not.exist');
-
-    cy.get('[data-test=button-login]').click();
-
     cy.get('iframe[data-endpass=dialog]').should('exist');
   });
 
