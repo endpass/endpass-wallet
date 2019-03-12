@@ -1,7 +1,7 @@
 import { START_PAGE_LOADING, STOP_PAGE_LOADING } from './mutations-types';
 
 // Dispatch all Vuex init() actions
-const init = async ({ dispatch, commit }, initModeParams) => {
+const init = async ({ dispatch, commit, getters }, initModeParams) => {
   commit(START_PAGE_LOADING);
 
   // Wait init last or default identity mode
@@ -13,6 +13,9 @@ const init = async ({ dispatch, commit }, initModeParams) => {
 
   commit(STOP_PAGE_LOADING);
 
+  if (!getters['user/isLoggedIn']) {
+    await dispatch('user/login');
+  }
   return Promise.all([
     dispatch('tokens/init'),
     dispatch('price/init'),

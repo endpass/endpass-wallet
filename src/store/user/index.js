@@ -5,6 +5,7 @@ import { AVAILABLE_FIAT_CURRENCIES, IDENTITY_MODE } from '@/constants';
 
 const state = {
   prevAuthorizationStatus: null,
+  // TODO: switch to boolean
   authorizationStatus: null,
   identityType: IDENTITY_MODE.DEFAULT,
   email: null,
