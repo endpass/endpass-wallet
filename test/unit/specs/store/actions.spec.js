@@ -12,12 +12,18 @@ const mutations = {
 
 const dispatch = jest.fn();
 const commit = (type, payload) => mutations[type](payload);
+const getters = {
+  'user/isLoggedIn': false,
+};
 
 describe('Root Store actions', () => {
+  beforeEach(() => {
+    dispatch.mockClear();
+  });
   it('initializes state and shows loading indicator', async () => {
-    expect.assertions(11);
+    expect.assertions(12);
 
-    await actions.init({ dispatch, commit });
+    await actions.init({ dispatch, commit, getters });
 
     expect(mutations[START_PAGE_LOADING]).toHaveBeenCalledTimes(1);
     expect(mutations[STOP_PAGE_LOADING]).toHaveBeenCalledTimes(1);
@@ -37,7 +43,15 @@ describe('Root Store actions', () => {
     expect(dispatch).toHaveBeenCalledWith('web3/init');
     expect(dispatch).toHaveBeenCalledWith('tokens/init');
     expect(dispatch).toHaveBeenCalledWith('price/init');
+    expect(dispatch).toHaveBeenCalledWith('user/login');
     expect(dispatch).toHaveBeenCalledWith('connectionStatus/init');
+  });
+
+  it("shouldn't call user/login is user logged", async () => {
+    getters['user/isLoggedIn'] = true;
+    expect.assertions(1);
+    await actions.init({ dispatch, commit, getters });
+    expect(dispatch).not.toHaveBeenCalledWith('user/login');
   });
 
   it('initializes state and check mode pass', async () => {
@@ -48,7 +62,7 @@ describe('Root Store actions', () => {
       serverUrl: 'serverUrl',
     };
 
-    await actions.init({ dispatch, commit }, mode);
+    await actions.init({ dispatch, commit, getters }, mode);
 
     // User identity mode should be initialized first
     expect(dispatch).toHaveBeenCalledWith('user/initIdentityMode', mode);

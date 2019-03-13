@@ -5,7 +5,8 @@ const isLoggedIn = state => !!state.authorizationStatus;
 
 const isLoggedOut = state =>
   !state.authorizationStatus &&
-  state.authorizationStatus !== state.prevAuthorizationStatus;
+  state.authorizationStatus !== state.prevAuthorizationStatus &&
+  state.prevAuthorizationStatus !== null;
 
 const isCustomIdentity = state => state.identityType === IDENTITY_MODE.CUSTOM;
 
