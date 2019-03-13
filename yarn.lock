@@ -159,16 +159,16 @@
     web3-providers-ws "1.0.0-beta.33"
     web3-utils "1.0.0-beta.33"
 
-"@endpass/connect@0.15.1-beta":
-  version "0.15.1-beta"
-  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.15.1-beta.tgz#74830c8598b9fa1d2389d4cd2d91f84630e4646d"
-  integrity sha512-rqx8B0VerwY+KG56DTv5io4+7LaaF0PFr+imqDAa3WZA67GdG4l6iXk1mvvwCzr1gkCNII2tOcW/E9d/50bDlQ==
+"@endpass/connect@0.15.8-beta":
+  version "0.15.8-beta"
+  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.15.8-beta.tgz#7219a823bac0a89726647dbad1335b0fa8186a97"
+  integrity sha512-O2ct5ywcfQXj9Kwl803LK4fu0WlqKkoRnpGgAoIfw7HZniPjZLrDF9RSI8gdYNjSiBmWsA8WPFnAkJ5t3Ohfiw==
   dependencies:
     lodash.get "^4.4.2"
     lodash.omit "^4.5.0"
-    web3-providers-http "1.0.0-beta.37"
+    web3-providers-http "1.0.0-beta.33"
 
-"@endpass/faucet@^0.1.1":
+"@endpass/faucet@^0.1.2":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@endpass/faucet/-/faucet-0.1.2.tgz#5a5708cb9da1b3795315ea66ae6b7cb8a0e21712"
   integrity sha512-whENM1V4rBNm64cJBDCr8fEWghQrYPL2/j5jW9XgCtIc1Hy5rHT1m3i55fqd6drjm97XVcl32D0BVFRmFWtf7Q==
@@ -176,7 +176,7 @@
     axios "^0.18.0"
     vue "^2.5.22"
 
-"@endpass/ui@^0.2.0":
+"@endpass/ui@^0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@endpass/ui/-/ui-0.2.2.tgz#2e42c0445c0d5974653c87b11435f637f6774e33"
   integrity sha512-KvxNcqr16uq0Nqt7vtCv7pFmTpmqOYcxGErG/19KoXD5G9kh4QgNfjrWyfTNdr/ztPVNTS99Nexs42KNTGspJg==
@@ -196,7 +196,7 @@
     keythereum "^1.0.4"
     lodash "^4.17.11"
 
-"@endpass/utils@^1.1.2", "@endpass/utils@^1.2.0":
+"@endpass/utils@^1.1.2":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.2.0.tgz#f6931ae6e39bd5ca6609934b047080355e71b08b"
   integrity sha512-U+mAlp+P0sNAl2CC3Fq5V1ZOoxcSxDAVyX5BhzdpfpFsE6JjpC5FK1TjJ816JkxLzJvxCyFYxZzbbaFO8nA+tw==
@@ -207,6 +207,19 @@
     export-files "^2.1.1"
     keythereum "^1.0.4"
     lodash "^4.17.11"
+
+"@endpass/utils@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.2.1.tgz#3f25df77fad9967b8bfdcbd185cdb1ebdaa78ddb"
+  integrity sha512-RbLONPn+2yfT4O3Y9ilNRbFyxHL1bD3NX5zuiSOYFgaffzJwVU7zDWq4vrvw0hXQG6GP4fNRlaEBOQ+ZGQAX1A==
+  dependencies:
+    bs58check "^2.1.2"
+    dayjs "^1.7.8"
+    ethereumjs-wallet "^0.6.2"
+    export-files "^2.1.1"
+    keythereum "^1.0.4"
+    lodash "^4.17.11"
+    node-notifier "^5.4.0"
 
 "@ledgerhq/devices@^4.37.0":
   version "4.37.0"
@@ -2644,11 +2657,6 @@ cookie@0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.3.1.tgz#e7e0a1f9ef43b4c8ba925c5c5a96e806d16873bb"
   integrity sha1-5+Ch+e9DtMi6klxcWpboBtFoc7s=
-
-cookiejar@^2.1.1:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/cookiejar/-/cookiejar-2.1.2.tgz#dd8a235530752f988f9a0844f3fc589e3111125c"
-  integrity sha512-Mw+adcfzPxcPeI+0WlvRrr/3lGVO0bD75SxX6811cxSh1Wbxx7xZBGK1eVtDf6si8rg2lhnUjsVLMFMfbRIuwA==
 
 copy-concurrently@^1.0.0:
   version "1.0.5"
@@ -7270,7 +7278,7 @@ node-libs-browser@^2.0.0:
     util "^0.11.0"
     vm-browserify "0.0.4"
 
-node-notifier@^5.1.2, node-notifier@^5.2.1:
+node-notifier@^5.1.2, node-notifier@^5.2.1, node-notifier@^5.4.0:
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/node-notifier/-/node-notifier-5.4.0.tgz#7b455fdce9f7de0c63538297354f3db468426e6a"
   integrity sha512-SUDEb+o71XR5lXSTyivXd9J7fCloE3SyP4lSgt3lU2oSANiox+SxlNRGPjDKrwU1YN3ix2KN/VGGCg0t01rttQ==
@@ -10795,15 +10803,6 @@ web3-core-helpers@1.0.0-beta.33:
     web3-eth-iban "1.0.0-beta.33"
     web3-utils "1.0.0-beta.33"
 
-web3-core-helpers@1.0.0-beta.37:
-  version "1.0.0-beta.37"
-  resolved "https://registry.yarnpkg.com/web3-core-helpers/-/web3-core-helpers-1.0.0-beta.37.tgz#04ec354b7f5c57234c309eea2bda9bf1f2fe68ba"
-  integrity sha512-efaLOzN28RMnbugnyelgLwPWWaSwElQzcAJ/x3PZu+uPloM/lE5x0YuBKvIh7/PoSMlHqtRWj1B8CpuQOUQ5Ew==
-  dependencies:
-    underscore "1.8.3"
-    web3-eth-iban "1.0.0-beta.37"
-    web3-utils "1.0.0-beta.37"
-
 web3-core-method@1.0.0-beta.33:
   version "1.0.0-beta.33"
   resolved "https://registry.yarnpkg.com/web3-core-method/-/web3-core-method-1.0.0-beta.33.tgz#ed8ec4c4afab21dc0989de3583684466522b6e86"
@@ -10901,14 +10900,6 @@ web3-eth-iban@1.0.0-beta.33:
     bn.js "4.11.6"
     web3-utils "1.0.0-beta.33"
 
-web3-eth-iban@1.0.0-beta.37:
-  version "1.0.0-beta.37"
-  resolved "https://registry.yarnpkg.com/web3-eth-iban/-/web3-eth-iban-1.0.0-beta.37.tgz#313a3f18ae2ab00ba98678ea1156b09ef32a3655"
-  integrity sha512-WQRniGJFxH/XCbd7miO6+jnUG+6bvuzfeufPIiOtCbeIC1ypp1kSqER8YVBDrTyinU1xnf1U5v0KBZ2yiWBJxQ==
-  dependencies:
-    bn.js "4.11.6"
-    web3-utils "1.0.0-beta.37"
-
 web3-eth-personal@1.0.0-beta.33:
   version "1.0.0-beta.33"
   resolved "https://registry.yarnpkg.com/web3-eth-personal/-/web3-eth-personal-1.0.0-beta.33.tgz#b4e48587cc4e7eb018da26fde3b4f3ba5f9b98ef"
@@ -10955,14 +10946,6 @@ web3-providers-http@1.0.0-beta.33:
     web3-core-helpers "1.0.0-beta.33"
     xhr2 "0.1.4"
 
-web3-providers-http@1.0.0-beta.37:
-  version "1.0.0-beta.37"
-  resolved "https://registry.yarnpkg.com/web3-providers-http/-/web3-providers-http-1.0.0-beta.37.tgz#c06efd60e16e329e25bd268d2eefc68d82d13651"
-  integrity sha512-FM/1YDB1jtZuTo78habFj7S9tNHoqt0UipdyoQV29b8LkGKZV9Vs3is8L24hzuj1j/tbwkcAH+ewIseHwu0DTg==
-  dependencies:
-    web3-core-helpers "1.0.0-beta.37"
-    xhr2-cookies "1.1.0"
-
 web3-providers-ipc@1.0.0-beta.33:
   version "1.0.0-beta.33"
   resolved "https://registry.yarnpkg.com/web3-providers-ipc/-/web3-providers-ipc-1.0.0-beta.33.tgz#4f0adc9afe9d12c066e4be5c3c536f5073cb07c6"
@@ -10995,19 +10978,6 @@ web3-utils@1.0.0-beta.33:
   version "1.0.0-beta.33"
   resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.0.0-beta.33.tgz#e091b7994f09b714b0198a4057d3ad2eb8cbe238"
   integrity sha1-4JG3mU8JtxSwGYpAV9OtLrjL4jg=
-  dependencies:
-    bn.js "4.11.6"
-    eth-lib "0.1.27"
-    ethjs-unit "0.1.6"
-    number-to-bn "1.7.0"
-    randomhex "0.1.5"
-    underscore "1.8.3"
-    utf8 "2.1.1"
-
-web3-utils@1.0.0-beta.37:
-  version "1.0.0-beta.37"
-  resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.0.0-beta.37.tgz#ab868a90fe5e649337e38bdaf72133fcbf4d414d"
-  integrity sha512-kA1fyhO8nKgU21wi30oJQ/ssvu+9srMdjOTKbHYbQe4ATPcr5YNwwrxG3Bcpbu1bEwRUVKHCkqi+wTvcAWBdlQ==
   dependencies:
     bn.js "4.11.6"
     eth-lib "0.1.27"
@@ -11339,13 +11309,6 @@ xhr-request@^1.0.1:
     timed-out "^4.0.1"
     url-set-query "^1.0.0"
     xhr "^2.0.4"
-
-xhr2-cookies@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/xhr2-cookies/-/xhr2-cookies-1.1.0.tgz#7d77449d0999197f155cb73b23df72505ed89d48"
-  integrity sha1-fXdEnQmZGX8VXLc7I99yUF7YnUg=
-  dependencies:
-    cookiejar "^2.1.1"
 
 xhr2@0.1.4:
   version "0.1.4"
