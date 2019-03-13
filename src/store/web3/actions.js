@@ -9,7 +9,7 @@ import {
   SET_BLOCK_NUMBER,
   SET_HANDLED_BLOCK_NUMBER,
 } from './mutations-types';
-import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
+import { Network } from '@endpass/class';
 
 const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
   const network = getters.networks.find(net => net.url === networkUrl);
@@ -28,7 +28,6 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
       {},
       { root: true },
     ),
-    dispatch('dapp/reset', null, { root: true }),
   ]).catch(e => dispatch('errors/emitError', e, { root: true }));
 };
 
@@ -36,7 +35,7 @@ const changeCurrency = async (
   { commit, dispatch, getters, state },
   { currencyId },
 ) => {
-  const currency = CURRENCIES.find(({ id }) => id === currencyId);
+  const currency = Network.CURRENCIES.find(({ id }) => id === currencyId);
 
   commit(CHANGE_CURRENCY, currency);
 
@@ -182,11 +181,12 @@ const handleLastBlock = async (
 const init = async ({ commit, dispatch, state }) => {
   try {
     const { net = 1, networks = [] } = await userService.getSettings();
-    const activeNet = [...DEFAULT_NETWORKS, ...networks].find(
-      network => network.id === net,
-    );
+    const activeNet = [
+      ...Object.values(Network.DEFAULT_NETWORKS),
+      ...networks,
+    ].find(network => network.id === net);
     const activeCurrency =
-      CURRENCIES.find(currency => activeNet.currency === currency.id) ||
+      Network.CURRENCIES.find(currency => activeNet.currency === currency.id) ||
       state.activeCurrency;
 
     commit(SET_NETWORKS, networks);

@@ -1,5 +1,5 @@
 import getters from '@/store/web3/getters';
-import { DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
+import { Network } from '@endpass/class';
 
 describe('web3 getters', () => {
   describe('networks', () => {
@@ -7,14 +7,20 @@ describe('web3 getters', () => {
     const storedNetworks = [{ url: 'url 1', currency: 1 }, { url: 'url 2' }];
 
     it('should return all networks', () => {
-      const expected = [...DEFAULT_NETWORKS, ...storedNetworks];
+      const expected = [
+        ...Object.values(Network.DEFAULT_NETWORKS),
+        ...storedNetworks,
+      ];
 
       expect(networks({ storedNetworks })).toEqual(expected);
     });
 
     it('return the network with active currency', () => {
-      const activeCurrency = CURRENCIES[0];
-      const expected = [DEFAULT_NETWORKS[0], storedNetworks[0]];
+      const activeCurrency = Network.CURRENCIES[0];
+      const expected = [
+        Network.DEFAULT_NETWORKS[Network.NET_ID.MAIN],
+        storedNetworks[0],
+      ];
 
       expect(networks({ storedNetworks, activeCurrency })).toEqual(expected);
     });
@@ -39,7 +45,7 @@ describe('web3 getters', () => {
 
       network = {
         id: 1,
-        url: DEFAULT_NETWORKS[0].url,
+        url: Network.DEFAULT_NETWORKS[Network.NET_ID.MAIN].url,
       };
 
       expect(isCustomNetwork()(network)).toBeFalsy();

@@ -1,4 +1,4 @@
-import { CURRENCIES } from '@/constants';
+import { Network } from '@endpass/class';
 import actions from './actions';
 import getters from './getters';
 import mutations from './mutations';
@@ -9,7 +9,7 @@ const state = {
   handledBlockNumber: null,
   activeNet: {},
   interval: null,
-  activeCurrency: CURRENCIES[0],
+  activeCurrency: Network.CURRENCIES[0],
 };
 
 export default {

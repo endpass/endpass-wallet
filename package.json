@@ -30,7 +30,7 @@
     ]
   },
   "dependencies": {
-    "@endpass/class": "^0.7.0",
+    "@endpass/class": "^0.8.0",
     "@endpass/connect": "0.15.8-beta",
     "@endpass/faucet": "^0.1.2",
     "@endpass/ui": "^0.2.2",

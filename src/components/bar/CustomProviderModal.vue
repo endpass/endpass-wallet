@@ -3,11 +3,7 @@
     <v-modal @close="close">
       <header slot="header">{{ headerText }}</header>
       <div v-if="!providerAdded">
-        <v-form
-          :is-form-valid="isFormValid"
-          @submit="handleButtonClick"
-        >
-
+        <v-form :is-form-valid="isFormValid" @submit="handleButtonClick">
           <v-input
             v-validate="'required'"
             id="name"
@@ -25,7 +21,9 @@
           />
 
           <v-input
-            v-validate="`required|url:require_protocol:true|not_in:${providersLinks}`"
+            v-validate="
+              `required|url:require_protocol:true|not_in:${providersLinks}`
+            "
             id="url"
             v-model="innerProvider.url"
             :disabled="isLoading"
@@ -83,13 +81,12 @@
           </v-button>
         </div>
       </template>
-
     </v-modal>
   </div>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import { CURRENCIES } from '@/constants';
+import { Network } from '@endpass/class';
 import formMixin from '@/mixins/form';
 
 const defaultProvider = {
@@ -111,7 +108,7 @@ export default {
       providerAdded: false,
       isLoading: false,
       innerProvider: Object.assign({}, this.provider),
-      currencies: CURRENCIES.map(currency => ({
+      currencies: Network.CURRENCIES.map(currency => ({
         val: currency.id,
         text: currency.name,
       })),
@@ -196,5 +193,4 @@ export default {
   mixins: [formMixin],
 };
 </script>
-<style lang="css">
-</style>
+<style lang="css"></style>

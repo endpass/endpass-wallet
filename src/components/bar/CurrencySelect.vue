@@ -20,14 +20,14 @@
 import VueMultiselect from 'vue-multiselect';
 import { mapActions, mapState } from 'vuex';
 
-import { CURRENCIES } from '@/constants';
+import { Network } from '@endpass/class';
 
 export default {
   name: 'CurrencySelect',
 
   data() {
     return {
-      currencies: CURRENCIES,
+      currencies: Network.CURRENCIES,
     };
   },
   computed: {
@@ -49,7 +49,6 @@ export default {
 };
 </script>
 
-
 <style lang="scss">
 .provider-select {
   .net-select {
@@ -61,5 +60,4 @@ export default {
 }
 </style>
 
-<style src="vue-multiselect/dist/vue-multiselect.min.css">
-</style>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
