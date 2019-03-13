@@ -1,8 +1,9 @@
 // Wrapper around global web3 instance
-import { ProviderFactory, Web3Factory } from '@endpass/class';
-import { DEFAULT_NETWORKS } from '@/constants';
+import { ProviderFactory, Web3Factory, Network } from '@endpass/class';
 
-const defaultProvider = ProviderFactory.create(DEFAULT_NETWORKS[0].url);
+const defaultProvider = ProviderFactory.create(
+  Network.DEFAULT_NETWORKS[Network.NET_ID.MAIN].url,
+);
 
 const web3 = Web3Factory.create(defaultProvider);
 

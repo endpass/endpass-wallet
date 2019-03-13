@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { uniq, uniqWith } from 'lodash';
 import { toChecksumAddress } from 'web3-utils';
-import { NET_ID } from '@/constants';
+import { Network } from '@endpass/class';
 import { Transaction } from '@/class';
 
 const accountTransactions = (state, getters, rootState) => {
@@ -13,7 +13,7 @@ const accountTransactions = (state, getters, rootState) => {
   const { address } = rootState.accounts;
   const transactions = [...state.pendingTransactions];
 
-  if (currentNetID === NET_ID.MAIN) {
+  if (currentNetID === Network.NET_ID.MAIN) {
     transactions.push(...getters.filteredHistoryTransactions);
   }
 

@@ -11,7 +11,7 @@ import {
 import { NotificationError, Token } from '@/class';
 import { tokenInfoService, cryptoDataService, userService } from '@/services';
 import { mapArrayByProp } from '@endpass/utils/arrays';
-import { NET_ID } from '@/constants';
+import { Network } from '@endpass/class';
 
 const init = async ({ dispatch }) => {
   await dispatch('getNetworkTokens');
@@ -64,7 +64,8 @@ const removeUserToken = async (
 };
 
 const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
-  const isMainNetwork = rootGetters['web3/activeNetwork'] === NET_ID.MAIN;
+  const isMainNetwork =
+    rootGetters['web3/activeNetwork'] === Network.NET_ID.MAIN;
 
   if (!isMainNetwork) return;
 

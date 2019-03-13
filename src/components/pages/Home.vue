@@ -1,13 +1,7 @@
 <template>
   <div class="home-page app-page">
-    <div
-      v-if="address"
-      class="auth-content"
-    >
-      <div
-        class="section section-address"
-        data-test="address-card"
-      >
+    <div v-if="address" class="auth-content">
+      <div class="section section-address" data-test="address-card">
         <div class="container">
           <div class="card">
             <div class="card-header">
@@ -30,10 +24,7 @@
                     >Export Private Key</router-link
                   >
                 </div>
-                <div
-                  v-if="isFaucet"
-                  class="column"
-                >
+                <div v-if="isFaucet" class="column">
                   <v-faucet-button
                     :address="address"
                     :disabled="isFaucetDisable"
@@ -41,7 +32,8 @@
                     data-test="get-test-eth-button"
                     @donate="onDonate"
                     @donate-error="onDonateError"
-                  >{{ faucetTitle }}</v-faucet-button>
+                    >{{ faucetTitle }}</v-faucet-button
+                  >
                 </div>
               </div>
             </div>
@@ -128,7 +120,7 @@ import { VFaucetButton } from '@endpass/faucet';
 import Balance from '@/components/Balance';
 import Account from '@/components/Account';
 import TokensList from '@/components/TokensList';
-import { NET_ID } from '@/constants';
+import { Network } from '@endpass/class';
 
 const UPDATE_RESEND_TIMEOUT_SEC = 1000 * 60 * 2; // 2 mins
 
@@ -165,7 +157,7 @@ export default {
     },
 
     isFaucet() {
-      return this.activeNet.id === NET_ID.ROPSTEN;
+      return this.activeNet.id === Network.NET_ID.ROPSTEN;
     },
   },
 
