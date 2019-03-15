@@ -96,21 +96,10 @@ export default {
 
   // Saves the encrypted keystore for an account
   async setAccount(address, { info = {}, ...rest }) {
-    const account = Object.keys(rest).length ? rest : null;
+    const keystore = Object.keys(rest).length ? rest : null;
 
     await proxyRequest.write(`/account/${address}`, {
-      payload: account,
-    });
-
-    if (Object.keys(info).length) {
-      await this.setAccountInfo(address, info);
-    }
-  },
-
-  // Save the info for an account
-  setAccountInfo(address, info) {
-    return proxyRequest.write(`/account/${address}/info`, {
-      payload: info,
+      payload: { keystore, info },
     });
   },
 

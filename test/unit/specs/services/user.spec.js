@@ -344,7 +344,8 @@ describe('User service', () => {
   describe('setAccount', () => {
     const address = '0x123';
     // Account data can be anything
-    const account = { version: 3, crypto: {} };
+    const keystore = { version: 3, crypto: {} };
+    const info = { address };
     const url = `${ENV.identityAPIUrl}/account/${address}`;
 
     it('should make correct request', async () => {
@@ -353,32 +354,17 @@ describe('User service', () => {
       axiosMock.onPost(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
-        expect(config.data).toBe(JSON.stringify(account));
+        expect(config.data).toBe(
+          JSON.stringify({
+            keystore,
+            info,
+          }),
+        );
 
         return [200, successResponse];
       });
 
-      await userService.setAccount(address, account);
-    });
-  });
-
-  describe('setAccountInfo', () => {
-    const address = '0x123';
-    // Account data can be anything
-    const url = `${ENV.identityAPIUrl}/account/${address}/info`;
-    const info = { one: 'two' };
-
-    it('should make correct request', async () => {
-      expect.assertions(2);
-
-      axiosMock.onPost(url).reply(config => {
-        expect(config.method).toBe('post');
-        expect(config.data).toBe(JSON.stringify(info));
-
-        return [200, successResponse];
-      });
-
-      await userService.setAccountInfo(address, info);
+      await userService.setAccount(address, { info, ...keystore });
     });
   });
 
