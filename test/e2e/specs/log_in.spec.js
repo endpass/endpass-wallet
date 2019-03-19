@@ -18,7 +18,7 @@ describe('Log In To an Existing Account', () => {
     cy.visit('#/');
     cy.mockWeb3Requests();
 
-    cy.get('iframe[data-endpass=dialog]').should('exist');
+    cy.get('iframe[data-endpass=frame]').should('exist');
   });
 
   it('should not show login modal if already logged in', () => {

@@ -7,22 +7,19 @@
             <h1 class="card-header-title">Transaction history</h1>
           </div>
           <div class="card-content">
-            <ul
-              v-if="currentNetTransactions.length > 0"
-              class="transactions"
-            >
+            <ul v-if="currentNetTransactions.length > 0" class="transactions">
               <li
                 v-for="transaction in currentNetTransactions"
                 :key="transaction.hash"
                 data-test="transactions-history-item"
               >
-                <app-transaction :transaction="transaction"/>
+                <app-transaction :transaction="transaction" />
               </li>
             </ul>
-            <p
-              v-else-if="!isHistoryAvailable"
-            >Transaction history is only supported on the main network.</p>
-            <v-spinner v-else-if="isLoading"/>
+            <p v-else-if="!isHistoryAvailable">
+              Transaction history is only supported on the main network.
+            </p>
+            <v-spinner v-else-if="isLoading" />
             <p v-else>This account has no transactions.</p>
           </div>
         </div>
@@ -34,7 +31,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import appTransaction from '@/components/Transaction';
-import { NET_ID } from '@/constants';
+import { Network } from '@endpass/class';
 
 export default {
   data: () => ({
@@ -49,7 +46,7 @@ export default {
     ...mapGetters('transactions', ['currentNetTransactions']),
 
     isHistoryAvailable() {
-      return this.activeNet.id === NET_ID.MAIN;
+      return this.activeNet.id === Network.NET_ID.MAIN;
     },
   },
 

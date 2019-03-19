@@ -7,7 +7,7 @@ import {
   SET_TOKENS_BY_ADDRESS,
   SET_BALANCES_BY_ADDRESS,
 } from '@/store/tokens/mutations-types';
-import { NET_ID } from '@/constants';
+import { Network } from '@endpass/class';
 import tokenInfoService from '@/services/tokeninfo';
 import cryptoDataService from '@/services/cryptoData';
 import userService from '@/services/user';
@@ -42,7 +42,7 @@ describe('tokens actions', () => {
     dispatch = jest.fn();
     commit = jest.fn();
     rootGetters = {
-      'web3/activeNetwork': NET_ID.MAIN,
+      'web3/activeNetwork': Network.NET_ID.MAIN,
     };
     rootState = {
       accounts: {
@@ -78,7 +78,7 @@ describe('tokens actions', () => {
       );
 
       expect(userService.addToken).toBeCalledWith(
-        NET_ID.MAIN,
+        Network.NET_ID.MAIN,
         Token.getConsistent(token),
       );
       expect(commit).toHaveBeenCalledWith(
@@ -149,7 +149,7 @@ describe('tokens actions', () => {
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(userService.removeToken).toBeCalledWith(
-        NET_ID.MAIN,
+        Network.NET_ID.MAIN,
         Token.getConsistent(tokens[0]).address,
       );
       expect(commit).toHaveBeenCalledWith(

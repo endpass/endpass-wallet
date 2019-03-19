@@ -1,5 +1,5 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils';
-import { CURRENCIES } from '@/constants';
+import { Network } from '@endpass/class';
 import CurrencySelect from '@/components/bar/CurrencySelect';
 import Vuex from 'vuex';
 const localVue = createLocalVue();
@@ -17,7 +17,7 @@ describe('CurrencySelect', () => {
         web3: {
           namespaced: true,
           state: {
-            activeCurrency: CURRENCIES[0],
+            activeCurrency: Network.CURRENCIES[0],
           },
           actions,
         },

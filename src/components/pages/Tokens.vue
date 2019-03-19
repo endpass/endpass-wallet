@@ -95,7 +95,7 @@ import TokensList from '@/components/TokensList';
 import SearchInput from '@/components/SearchInput.vue';
 import AddTokenModal from '@/components/modal/AddTokenModal';
 import { matchString } from '@endpass/utils/strings';
-import { NET_ID } from '@/constants';
+import { Network } from '@endpass/class';
 
 export default {
   name: 'TokensPage',
@@ -133,7 +133,7 @@ export default {
         networkTokenQuery,
       } = this;
 
-      if (this.activeNetId !== NET_ID.MAIN) return [];
+      if (this.activeNetId !== Network.NET_ID.MAIN) return [];
 
       const networkTokensList = Object.values(networkTokens);
       const currentAccountTokensSymbols = Object.keys(

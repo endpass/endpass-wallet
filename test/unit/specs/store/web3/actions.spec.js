@@ -3,7 +3,7 @@ import Web3 from 'web3';
 import actions from '@/store/web3/actions';
 import * as mutationsTypes from '@/store/web3/mutations-types';
 import { userService } from '@/services';
-import { NET_ID, DEFAULT_NETWORKS, CURRENCIES } from '@/constants';
+import { Network } from '@endpass/class';
 import { blockTransactions } from 'fixtures/transactions';
 
 jest.useFakeTimers();
@@ -84,7 +84,6 @@ describe('web3 actions', () => {
         ['accounts/updateBalance', {}, { root: true }],
         ['tokens/getNetworkTokens', {}, { root: true }],
         ['transactions/updatePendingTransactionsStatus', {}, { root: true }],
-        ['dapp/reset', null, { root: true }],
       ]);
     });
 
@@ -98,7 +97,7 @@ describe('web3 actions', () => {
       await changeNetwork({ commit, dispatch, getters }, { networkUrl });
 
       expect(commit).toHaveBeenCalledTimes(3);
-      expect(dispatch).toHaveBeenCalledTimes(6);
+      expect(dispatch).toHaveBeenCalledTimes(5);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });
@@ -118,7 +117,9 @@ describe('web3 actions', () => {
       const state = {
         activeNet: {},
       };
-      const currency = CURRENCIES.find(currency => currency.id === currencyId);
+      const currency = Network.CURRENCIES.find(
+        currency => currency.id === currencyId,
+      );
 
       await changeCurrency(
         { commit, dispatch, getters, state },
@@ -466,7 +467,7 @@ describe('web3 actions', () => {
       let result;
 
       networkType = 'ropsten';
-      networkId = NET_ID.ROPSTEN;
+      networkId = Network.NET_ID.ROPSTEN;
 
       Web3.eth.net.getNetworkType.mockResolvedValueOnce(networkType);
       Web3.eth.net.getId.mockResolvedValueOnce(networkId);
@@ -689,7 +690,7 @@ describe('web3 actions', () => {
   describe('init', () => {
     const { init } = actions;
     const state = {
-      activeCurrency: CURRENCIES[0],
+      activeCurrency: Network.CURRENCIES[0],
     };
 
     it('should call SET_NETWORKS, CHANGE_NETWORK, CHANGE_CURRENCY mutations', async () => {
@@ -703,7 +704,7 @@ describe('web3 actions', () => {
         currency: 2,
       };
       const networks = [activeNet];
-      const activeCurrency = CURRENCIES.find(
+      const activeCurrency = Network.CURRENCIES.find(
         currency => currency.id === activeNet.currency,
       );
 
@@ -723,8 +724,8 @@ describe('web3 actions', () => {
 
       const net = 1;
       const networks = [];
-      const activeNet = DEFAULT_NETWORKS.find(network => network.id === net);
-      const activeCurrency = CURRENCIES.find(
+      const activeNet = Network.DEFAULT_NETWORKS[net];
+      const activeCurrency = Network.CURRENCIES.find(
         currency => currency.id === activeNet.currency,
       );
 
