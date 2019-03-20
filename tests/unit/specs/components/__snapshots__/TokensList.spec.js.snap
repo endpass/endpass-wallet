@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TokensList render should render given tokens list 1`] = `
+<div data-test="tokens-list" class="tokens-list"><label class="tokens-list-toggler"><input type="checkbox" data-test="dustbin-toggler"> <span>Show dust amount tokens</span></label>
+  <ul>
+    <li data-test="user-token" class="">
+      <v-token-stub token="[object Object]" currency="USD">
+        <!---->
+      </v-token-stub>
+    </li>
+    <li data-test="user-token" class="">
+      <v-token-stub token="[object Object]" currency="USD">
+        <!---->
+      </v-token-stub>
+    </li>
+  </ul>
+  <!---->
+</div>
+`;

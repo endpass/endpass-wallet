@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SearchInput render should render initial state of the component 1`] = `
+<div
+  class="search-control field is-expanded has-addons"
+>
+  <div
+    class="control is-expanded has-icons-left"
+  >
+    <input
+      class="input is-small"
+      placeholder="search"
+      type="text"
+    />
+     
+    <span
+      class="icon is-small is-left"
+    />
+  </div>
+   
+  <div
+    class="control"
+  >
+    <a
+      class="button is-small is-white"
+    >
+      <span
+        class="icon is-small"
+      />
+    </a>
+  </div>
+</div>
+`;
