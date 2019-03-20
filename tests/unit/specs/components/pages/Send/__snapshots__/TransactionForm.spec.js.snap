@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Send – TransactionForm render should render error on ens error 1`] = `
+<v-form-stub isformvalid="true" id="sendEther" data-test="transaction-send-form">
+  <div class="field"><label class="label">
+      To
+    </label>
+    <account-chooser-stub width="35" height="32" accounts="" placeholder="0x... or ENS" allowempty="true" value="" creatable="true" data-test="transaction-address-select"></account-chooser-stub>
+    <!---->
+    <p class="help is-danger">
+      foo
+    </p>
+  </div>
+  <transaction-amount-options-stub value="0" ethprice="10" fiatcurrency="USD" activenet="[object Object]" tokenscurrencies="" currenttoken="[object Object]" balance="1000000" gasprice="3" gaslimit="22000" disabled="true"></transaction-amount-options-stub>
+  <!---->
+  <!---->
+  <div class="field is-horizontal">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <v-button-stub classname="is-success is-medium is-cta" disabled="true" data-test="transaction-send-button">
+        Send
+      </v-button-stub>
+    </div>
+  </div>
+</v-form-stub>
+`;
+
+exports[`Send – TransactionForm render should render message if ens address resolved 1`] = `
+<v-form-stub id="sendEther" data-test="transaction-send-form">
+  <div class="field"><label class="label">
+      To
+    </label>
+    <account-chooser-stub width="35" height="32" accounts="" placeholder="0x... or ENS" allowempty="true" value="" creatable="true" data-test="transaction-address-select"></account-chooser-stub>
+    <p class="help ellipsis">
+      Resolved ENS address: 0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c
+    </p>
+    <!---->
+  </div>
+  <transaction-amount-options-stub value="0" ethprice="10" fiatcurrency="USD" activenet="[object Object]" tokenscurrencies="" currenttoken="[object Object]" balance="1000000" gasprice="3" gaslimit="22000" disabled="true" showfee="true"></transaction-amount-options-stub>
+  <!---->
+  <!---->
+  <div class="field is-horizontal">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <v-button-stub classname="is-success is-medium is-cta" disabled="true" data-test="transaction-send-button">
+        Send
+      </v-button-stub>
+    </div>
+  </div>
+</v-form-stub>
+`;
+
+exports[`Send – TransactionForm render should render priority options if gas price is not null 1`] = `
+<v-form-stub isformvalid="true" id="sendEther" data-test="transaction-send-form">
+  <div class="field"><label class="label">
+      To
+    </label>
+    <account-chooser-stub width="35" height="32" accounts="" placeholder="0x... or ENS" allowempty="true" value="" creatable="true" data-test="transaction-address-select"></account-chooser-stub>
+    <!---->
+    <!---->
+  </div>
+  <transaction-amount-options-stub value="0" ethprice="10" fiatcurrency="USD" activenet="[object Object]" tokenscurrencies="" currenttoken="[object Object]" balance="1000000" gasprice="3" gaslimit="22000" disabled="true"></transaction-amount-options-stub>
+  <transaction-priority-options-stub prices="[object Object]" value="3"></transaction-priority-options-stub>
+  <transaction-advanced-options-stub transaction="[object Object]" currenttoken="[object Object]"></transaction-advanced-options-stub>
+  <div class="field is-horizontal">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <v-button-stub classname="is-success is-medium is-cta" disabled="true" data-test="transaction-send-button">
+        Send
+      </v-button-stub>
+    </div>
+  </div>
+</v-form-stub>
+`;
+
+exports[`Send – TransactionForm render should render without error and resolved address by default 1`] = `
+<v-form-stub isformvalid="true" id="sendEther" data-test="transaction-send-form">
+  <div class="field"><label class="label">
+      To
+    </label>
+    <account-chooser-stub width="35" height="32" accounts="" placeholder="0x... or ENS" allowempty="true" value="" creatable="true" data-test="transaction-address-select"></account-chooser-stub>
+    <!---->
+    <!---->
+  </div>
+  <transaction-amount-options-stub value="0" ethprice="10" fiatcurrency="USD" activenet="[object Object]" tokenscurrencies="" currenttoken="[object Object]" balance="1000000" gasprice="3" gaslimit="22000" disabled="true"></transaction-amount-options-stub>
+  <transaction-priority-options-stub prices="[object Object]" value="3"></transaction-priority-options-stub>
+  <transaction-advanced-options-stub transaction="[object Object]" currenttoken="[object Object]"></transaction-advanced-options-stub>
+  <div class="field is-horizontal">
+    <div class="field-label"></div>
+    <div class="field-body">
+      <v-button-stub classname="is-success is-medium is-cta" disabled="true" data-test="transaction-send-button">
+        Send
+      </v-button-stub>
+    </div>
+  </div>
+</v-form-stub>
+`;
