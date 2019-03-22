@@ -834,25 +834,13 @@
     axios "^0.18.0"
     vue "^2.5.22"
 
-"@endpass/ui@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@endpass/ui/-/ui-0.2.2.tgz#2e42c0445c0d5974653c87b11435f637f6774e33"
-  integrity sha512-KvxNcqr16uq0Nqt7vtCv7pFmTpmqOYcxGErG/19KoXD5G9kh4QgNfjrWyfTNdr/ztPVNTS99Nexs42KNTGspJg==
+"@endpass/ui@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@endpass/ui/-/ui-0.3.2.tgz#648a5dc5b2cd8559d0022c8c2bb26a08bde26d62"
+  integrity sha512-hJmGAkG8rWbaqyzTZs/lKSXS5NZ5wbChTv4hUj34nVrS34EKIsWfpCU3iMylS4lROAKqVop9m6A3byHW8CDGhg==
   dependencies:
-    "@endpass/utils" "^1.1.1"
+    "@endpass/utils" "^1.2.1"
     vue "^2.5.21"
-
-"@endpass/utils@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.1.1.tgz#4b73c66808c3ab02ce67ceffe9fbdd53a98e266b"
-  integrity sha512-79PLqWl1/eJsAtUslx6yjazBCidlzI91DSyLCFFJWJReyOCaJsWDGtEf+TMTCaq6iScBJDeqJ2Vj5aGJQYu9BA==
-  dependencies:
-    bs58check "^2.1.2"
-    dayjs "^1.7.8"
-    ethereumjs-wallet "^0.6.2"
-    export-files "^2.1.1"
-    keythereum "^1.0.4"
-    lodash "^4.17.11"
 
 "@endpass/utils@^1.2.1":
   version "1.2.1"
@@ -12057,7 +12045,12 @@ vue@2.5.22:
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.22.tgz#3bf88041af08b8539c37b268b70ca79245e9cc30"
   integrity sha512-pxY3ZHlXNJMFQbkjEgGVMaMMkSV1ONpz+4qB55kZuJzyJOhn6MSy/YZdzhdnumegNzVTL/Dn3Pp4UrVBYt1j/g==
 
-vue@^2.5.21, vue@^2.5.22:
+vue@^2.5.21:
+  version "2.6.10"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
+  integrity sha512-ImThpeNU9HbdZL3utgMCq0oiMzAkt1mcgy3/E6zWC/G6AaQoeuFdsl9nDhTDU3X1R6FK7nsIUuRACVcjI+A2GQ==
+
+vue@^2.5.22:
   version "2.6.6"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.6.tgz#dde41e483c11c46a7bf523909f4f2f816ab60d25"
   integrity sha512-Y2DdOZD8sxApS+iUlwv1v8U1qN41kq6Kw45lM6nVZKhygeWA49q7VCCXkjXqeDBXgurrKWkYQ9cJeEJwAq0b9Q==
