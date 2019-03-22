@@ -12,6 +12,10 @@ const identityConfig = {
   timeout: REQUEST_TIMEOUT_MSEC,
 };
 
+if (!ENV.isProduction) {
+  identityConfig.headers['x-connect-lib-host'] = window.location.host;
+}
+
 const createHandlerResponseError = storeInstance => error => {
   const { config, response } = error;
   const storeLink = storeInstance || store;
