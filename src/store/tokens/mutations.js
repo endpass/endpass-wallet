@@ -11,7 +11,7 @@ import {
 
 const addNetworkTokens = (state, tokens) => {
   // FIXME: potentially slow part. Fix it when tokens will have common index
-  Object.keys(tokens).forEach(key => {
+  Object.keys(tokens).forEach((key) => {
     if (!state.networkTokens[key]) {
       Object.assign(state.networkTokens, {
         [key]: Object.freeze(tokens[key]), // Freeze tokens for perfomance reasons

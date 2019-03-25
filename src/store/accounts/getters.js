@@ -5,16 +5,13 @@ import { keystore } from '@endpass/utils';
 
 const wallet = state => get(state.wallets, state.address);
 
-const accountAddresses = state =>
-  Object.keys(state.wallets).map(item => item.toLowerCase());
+const accountAddresses = state => Object.keys(state.wallets).map(item => item.toLowerCase());
 
-const addressBuffer = state =>
-  state.address && hexToBytes(state.address.toLowerCase());
+const addressBuffer = state => state.address && hexToBytes(state.address.toLowerCase());
 
 const isPublicAccount = (state, getters) => !!get(getters.wallet, 'isPublic');
 
-const isHardwareAccount = (state, getters) =>
-  !!get(getters.wallet, 'isHardware');
+const isHardwareAccount = (state, getters) => !!get(getters.wallet, 'isHardware');
 
 const balance = (state, getters, rootState, rootGetters) => {
   if (!state.balance) return null;
@@ -27,7 +24,7 @@ const balance = (state, getters, rootState, rootGetters) => {
   return fromWei(balanceWei);
 };
 
-const isHDv3WalletByType = state => walletType => {
+const isHDv3WalletByType = state => (walletType) => {
   const cache = state.hdCacheByType[walletType];
   if (!cache) return false;
   const { xpub, v3KeyStore } = cache;
@@ -37,12 +34,12 @@ const isHDv3WalletByType = state => walletType => {
   return isPublic && isV3;
 };
 
-const cachedXpubByType = state => walletType => {
+const cachedXpubByType = state => (walletType) => {
   const cache = state.hdCacheByType[walletType];
   return get(cache, 'xpub');
 };
 
-const cachedHdV3KeyStoreByType = state => walletType => {
+const cachedHdV3KeyStoreByType = state => (walletType) => {
   const cache = state.hdCacheByType[walletType];
   return get(cache, 'v3KeyStore');
 };

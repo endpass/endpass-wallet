@@ -3,7 +3,9 @@
     class="is-dark"
     @close="handleClose"
   >
-    <template slot="header">Are you sure?</template>
+    <template
+      slot="header"
+    >Are you sure?</template>
 
     <slot />
 

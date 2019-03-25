@@ -1,13 +1,13 @@
 import { web3 } from '@/class';
 
-const appStatus = state => {
+const appStatus = (state) => {
   if (!state.web3Connection) {
     return 'failed';
-  } else if (state.isSyncing) {
-    return 'syncing';
-  } else {
-    return 'ready';
   }
+  if (state.isSyncing) {
+    return 'syncing';
+  }
+  return 'ready';
 };
 
 // FIXME not currently reactive

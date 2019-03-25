@@ -3,7 +3,7 @@
     <div v-if="!privateKey">
       <p class="subtitle">Click the button below to display your private key</p>
       <a
-        :class="{'is-loading' : exportingKey }"
+        :class="{ 'is-loading': exportingKey }"
         class="button is-primary"
         data-test="export-button"
         @click="openPasswordModal"
@@ -11,29 +11,27 @@
     </div>
     <div v-else>
       <p class="subtitle">
-        Your private key is below. Do not share it with
-        anyone!
+        Your private key is below. Do not share it with anyone!
       </p>
-      <p 
-        class="code" 
+      <p
+        class="code"
         data-test="private-key-code"
       >{{ privateKey }}</p>
       <p>
-        <a 
-          class="button is-light" 
-          data-test="hide-button" 
-          @click="privateKey=null"
+        <a
+          class="button is-light"
+          data-test="hide-button"
+          @click="privateKey = null"
         >Close</a>
       </p>
     </div>
-    <password-modal 
-      v-if="passwordModalOpen" 
-      @close="closePasswordModal" 
+    <password-modal
+      v-if="passwordModalOpen"
+      @close="closePasswordModal"
       @confirm="getPrivateKey"
     />
   </div>
 </template>
-
 
 <script>
 import PasswordModal from '@/components/modal/PasswordModal';
@@ -85,6 +83,7 @@ export default {
           'Could not get private key with your wallet and password. Please try again.',
         type: 'is-danger',
       });
+      /* eslint-disable-next-line no-console */
       console.error(e);
     },
   },

@@ -7,7 +7,10 @@
             <h1 class="card-header-title">Transaction history</h1>
           </div>
           <div class="card-content">
-            <ul v-if="currentNetTransactions.length > 0" class="transactions">
+            <ul
+              v-if="currentNetTransactions.length > 0"
+              class="transactions"
+            >
               <li
                 v-for="transaction in currentNetTransactions"
                 :key="transaction.hash"

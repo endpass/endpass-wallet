@@ -1,5 +1,8 @@
 <template>
-  <div id="app" class="app-container">
+  <div
+    id="app"
+    class="app-container"
+  >
     <header class="app-header">
       <info-bar class="app-section" />
     </header>
@@ -36,11 +39,11 @@
 <script>
 import { mapState } from 'vuex';
 
-import NavSidebar from '@/components/NavSidebar.vue';
-import InfoBar from '@/components/bar/InfoBar.vue';
-import QuickActions from '@/components/QuickActions.vue';
+import NavSidebar from '@/components/NavSidebar';
+import InfoBar from '@/components/bar/InfoBar';
+import QuickActions from '@/components/QuickActions';
 import errorHandler from '@/mixins/errorHandler';
-import AppFooter from '@/components/AppFooter.vue';
+import AppFooter from '@/components/AppFooter';
 
 export default {
   name: 'App',

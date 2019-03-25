@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import HardwareChooser from './HardwareChooser';
+import HardwareChooser from './HardwareChooser.vue';
 import WalletsList from '../WalletsList';
 
 export default {
@@ -27,5 +27,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

@@ -1,9 +1,10 @@
 import secp256k1 from 'secp256k1';
+
 export default {
   getMessage(field, params, data) {
     return (data && data.message) || 'Something went wrong';
   },
-  validate(value, args) {
+  validate(value) {
     let isKey;
     try {
       isKey = secp256k1.privateKeyVerify(

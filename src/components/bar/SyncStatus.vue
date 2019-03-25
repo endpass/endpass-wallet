@@ -4,7 +4,9 @@
       :title="message"
       :class="statusClass"
       class="tag"
-    >{{ statusMessage }}</span>
+    >{{
+      statusMessage
+    }}</span>
   </div>
 </template>
 <script>

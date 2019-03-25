@@ -12,13 +12,13 @@ const identityConfig = {
   timeout: REQUEST_TIMEOUT_MSEC,
 };
 
-const createHandlerResponseError = storeInstance => error => {
+const createHandlerResponseError = storeInstance => (error) => {
   const { config, response } = error;
   const storeLink = storeInstance || store;
 
   if (
-    (!response || response.status === 401) &&
-    config.url.includes(ENV.identityAPIUrl)
+    (!response || response.status === 401)
+    && config.url.includes(ENV.identityAPIUrl)
   ) {
     const isLoggedIn = storeLink.getters['user/isLoggedIn'];
 
@@ -37,16 +37,16 @@ const createHandlerResponseError = storeInstance => error => {
   return Promise.reject(error);
 };
 
-const createHandleResponseSuccess = storeInstance => response => {
+const createHandleResponseSuccess = storeInstance => (response) => {
   const { config, status } = response;
   const storeLink = storeInstance || store;
 
   const ignorePaths = ['auth'];
   const ignorePath = ignorePaths.some(path => config.url.includes(path));
   if (
-    status === 200 &&
-    config.url.includes(ENV.identityAPIUrl) &&
-    !ignorePath
+    status === 200
+    && config.url.includes(ENV.identityAPIUrl)
+    && !ignorePath
   ) {
     storeLink.dispatch({
       type: 'user/setAuthorizationStatus',

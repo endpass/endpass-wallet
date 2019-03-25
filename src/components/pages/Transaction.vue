@@ -1,12 +1,14 @@
 <template>
   <base-page>
-    <template slot="title">Transaction</template>
+    <template
+      slot="title"
+    >Transaction</template>
     <div class="tabs">
       <ul>
         <li
           v-for="tab in tabs"
           :key="tab.id"
-          :class="{'is-active': isTabActive(tab.id)}"
+          :class="{ 'is-active': isTabActive(tab.id) }"
         >
           <a
             role="button"

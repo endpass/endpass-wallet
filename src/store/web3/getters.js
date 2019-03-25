@@ -1,6 +1,6 @@
 import { Network } from '@endpass/class';
 
-const networks = state => {
+const networks = (state) => {
   const networksList = [
     ...Object.values(Network.DEFAULT_NETWORKS),
     ...state.storedNetworks,
@@ -11,9 +11,8 @@ const networks = state => {
     : networksList;
 };
 
-const isCustomNetwork = () => network =>
-  network.id > 0 &&
-  !Object.values(Network.DEFAULT_NETWORKS).find(
+const isCustomNetwork = () => network => network.id > 0
+  && !Object.values(Network.DEFAULT_NETWORKS).find(
     defaultNetwork => defaultNetwork.url === network.url,
   );
 

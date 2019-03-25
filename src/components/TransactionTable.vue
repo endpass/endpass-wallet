@@ -12,7 +12,13 @@
       </tr>
       <tr>
         <th>Amount</th>
-        <th>{{ transaction.value }} {{ transaction.tokenInfo && transaction.tokenInfo.symbol || currency.name }}</th>
+        <th>
+          {{ transaction.value }}
+          {{
+            (transaction.tokenInfo && transaction.tokenInfo.symbol) ||
+              currency.name
+          }}
+        </th>
       </tr>
       <tr>
         <th>Gas price</th>

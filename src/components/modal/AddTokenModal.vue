@@ -3,24 +3,26 @@
     data-test="add-token-modal"
     @close="close"
   >
-    <template slot="header">Add custom token</template>
+    <template
+      slot="header"
+    >Add custom token</template>
 
     <v-form
       v-if="!addedToken"
       id="addToken"
       v-model="isFormValid"
+      :is-form-valid="isFormValid"
       @submit="addToken"
-      :isFormValid="isFormValid"
     >
       <v-input
         v-validate="'required|address'"
         id="address"
-        name="address"
-        data-vv-name="address"
         v-model="token.address"
         :disabled="loadingToken"
-        label="Address"
         :error="errors.first('address')"
+        name="address"
+        data-vv-name="address"
+        label="Address"
         aria-describedby="address"
         placeholder="Contract address"
         data-test="address-input"
@@ -33,10 +35,10 @@
         id="decimals"
         v-model.number="token.decimals"
         :disabled="!notFound.decimals"
+        :error="errors.first('decimals')"
         label="Decimals"
         name="decimals"
         data-vv-name="decimals"
-        :error="errors.first('decimals')"
         aria-describedby="decimal"
         placeholder="Token decimals"
         required
@@ -48,10 +50,10 @@
         id="name"
         v-model="token.name"
         :disabled="!notFound.name"
+        :error="errors.first('name')"
         label="Name"
         name="name"
         data-vv-name="name"
-        :error="errors.first('name')"
         aria-describedby="name"
         placeholder="Token name"
         required
@@ -63,10 +65,10 @@
         id="symbol"
         v-model="token.symbol"
         :disabled="!notFound.symbol"
+        :error="errors.first('symbol')"
         label="Symbol"
         name="symbol"
         data-vv-name="symbol"
-        :error="errors.first('symbol')"
         aria-describedby="symbol"
         placeholder="Token symbol"
         required
@@ -129,7 +131,6 @@
         </a>
       </div>
     </div>
-
   </v-modal>
 </template>
 
@@ -213,7 +214,7 @@ export default {
         symbol: tokenInfo.symbol,
       };
 
-      Object.keys(this.notFound).forEach(item => {
+      Object.keys(this.notFound).forEach((item) => {
         if (!this.token[item]) {
           this.notFound[item] = true;
         }
@@ -228,5 +229,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

@@ -19,12 +19,12 @@ const setSyncStatus = (state, status) => {
 };
 
 const addApiErrorId = (state, id) => {
-  var index = state.apiErrorsArray.indexOf(id);
+  const index = state.apiErrorsArray.indexOf(id);
   if (index === -1) state.apiErrorsArray.push(id);
 };
 
 const removeApiErrorId = (state, id) => {
-  var index = state.apiErrorsArray.indexOf(id);
+  const index = state.apiErrorsArray.indexOf(id);
   if (index !== -1) state.apiErrorsArray.splice(index, 1);
 };
 

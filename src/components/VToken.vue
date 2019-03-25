@@ -1,8 +1,15 @@
 <template>
-  <div class="media token" data-test="token-item">
+  <div
+    class="media token"
+    data-test="token-item"
+  >
     <div class="media-left">
       <p class="image token-logo is-32x32">
-        <img v-if="icon" :src="icon" :alt="token.name" />
+        <img
+          v-if="icon"
+          :src="icon"
+          :alt="token.name"
+        >
         <span
           v-else
           :alt="token.name"
@@ -13,14 +20,20 @@
     </div>
     <div class="media-content">
       <div class="content">
-        <p class="token-title" data-test="token-name">
+        <p
+          class="token-title"
+          data-test="token-name"
+        >
           {{ token.name }}
         </p>
         <slot />
       </div>
     </div>
     <div class="media-right">
-      <span v-if="!token.balance" class="token-symbol">
+      <span
+        v-if="!token.balance"
+        class="token-symbol"
+      >
         {{ token.symbol }}
       </span>
       <balance

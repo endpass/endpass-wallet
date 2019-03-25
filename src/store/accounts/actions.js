@@ -174,7 +174,9 @@ const addHdWallet = async ({ dispatch }, { key, password }) => {
 
 const addHdChildWallets = async (
   { dispatch, getters },
-  { type, password, address, index },
+  {
+    type, password, address, index,
+  },
 ) => {
   try {
     const v3KeyStore = getters.cachedHdV3KeyStoreByType(type);
@@ -234,9 +236,7 @@ const addHdPublicWallet = async ({ commit, dispatch }, { key, password }) => {
 const updateWallets = async ({ dispatch }, { wallets }) => {
   try {
     const { success } = await userService.updateAccounts(wallets);
-    const promises = Object.values(wallets).map(wallet =>
-      dispatch('commitWallet', { wallet }),
-    );
+    const promises = Object.values(wallets).map(wallet => dispatch('commitWallet', { wallet }));
 
     await Promise.all(promises);
 
@@ -315,12 +315,11 @@ const setUserWallets = async ({ commit, dispatch, rootState }) => {
     if (isEmpty(accounts)) return;
 
     const localSettings = localSettingsService.load(rootState.user.email);
-    const isAccountExist =
-      localSettings &&
-      localSettings.activeAccount &&
-      accounts.find(({ address }) => address === localSettings.activeAccount);
+    const isAccountExist = localSettings
+      && localSettings.activeAccount
+      && accounts.find(({ address }) => address === localSettings.activeAccount);
 
-    accounts.forEach(account => {
+    accounts.forEach((account) => {
       commit(ADD_WALLET, new Wallet(account));
     });
 
@@ -360,7 +359,8 @@ const getNextWalletsFromHd = async (
     default:
       throw new NotificationError({
         title: 'Access error',
-        text: `An error occurred while getting access to hardware device. Please, try again.`,
+        text:
+          'An error occurred while getting access to hardware device. Please, try again.',
         type: 'is-danger',
       });
   }
@@ -383,16 +383,13 @@ const decryptAccountHdWallet = async ({ state }, password) => {
   return keystore.decryptHDWallet(password, state.hdKey);
 };
 
-const decryptAccountWallets = async ({ state }, password) =>
-  Object.values(state.wallets)
-    .filter(item => !item.isPublic && !item.isHardware)
-    .map(item => keystore.decryptWallet(password, item.v3));
+const decryptAccountWallets = async ({ state }, password) => Object.values(state.wallets)
+  .filter(item => !item.isPublic && !item.isHardware)
+  .map(item => keystore.decryptWallet(password, item.v3));
 
-const encryptHdWallet = async (ctx, { password, hdWallet }) =>
-  hdWallet ? keystore.encryptHDWallet(password, hdWallet, ENV.kdfParams) : null;
+const encryptHdWallet = async (ctx, { password, hdWallet }) => (hdWallet ? keystore.encryptHDWallet(password, hdWallet, ENV.kdfParams) : null);
 
-const encryptWallets = async (ctx, { password, wallets = [] }) =>
-  wallets.map(item => keystore.encryptWallet(password, item, ENV.kdfParams));
+const encryptWallets = async (ctx, { password, wallets = [] }) => wallets.map(item => keystore.encryptWallet(password, item, ENV.kdfParams));
 
 const reencryptAllAccountWallets = async (
   { dispatch },

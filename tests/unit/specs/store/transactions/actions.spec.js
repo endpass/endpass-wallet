@@ -6,7 +6,6 @@ import {
   SET_TRANSACTION_HISTORY,
   SET_PENDING_TRANSACTIONS_FILTER_ID,
 } from '@/store/transactions/mutations-types';
-import ethplorerService from '@/services/ethplorer';
 import cryptoDataService from '@/services/cryptoData';
 import {
   EventEmitter,
@@ -506,7 +505,7 @@ describe('transactions actions', () => {
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toBeCalledWith('handleSendingError', {
-        transaction,
+        processdTransaction: transaction,
       });
     });
   });

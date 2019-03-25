@@ -10,15 +10,22 @@
         <span />
         <span />
       </a>
-      <router-link class="logo logo-icon" to="/" exact>
-        <img src="@/img/logo-light.png" alt="Endpass Wallet" />
+      <router-link
+        class="logo logo-icon"
+        to="/"
+        exact
+      >
+        <img
+          src="@/img/logo-light.png"
+          alt="Endpass Wallet"
+        >
       </router-link>
       <div class="login-control">
         <a
           v-if="!isLoggedIn"
           class="button is-success"
-          @click.prevent="handleLogin"
           data-test="button-login"
+          @click.prevent="handleLogin"
         >
           <span
             class="icon is-small"
@@ -26,7 +33,11 @@
           />
           Login
         </a>
-        <a v-else class="button" @click.prevent="handleLogout">
+        <a
+          v-else
+          class="button"
+          @click.prevent="handleLogout"
+        >
           <span
             class="icon is-small"
             v-html="require('@/img/account-logout.svg')"
@@ -60,17 +71,22 @@
           </div>
         </div>
       </div>
-      <div v-if="address" class="nav-sidebar-item section">
+      <div
+        v-if="address"
+        class="nav-sidebar-item section"
+      >
         <div class="columns is-mobile">
           <div class="column">
             <p class="menu-label">Accounts</p>
           </div>
-          <div v-if="!isCustomIdentity" class="column">
+          <div
+            v-if="!isCustomIdentity"
+            class="column"
+          >
             <a
               class="button is-outlined is-small is-info"
               @click="openNewAccountModal"
-              >&#43; Add Account</a
-            >
+            >&#43; Add Account</a>
           </div>
         </div>
         <account-chooser
@@ -86,11 +102,22 @@
         data-test="nav-sidebar-menu"
         @click="closeNavMenu"
       >
-        <p v-if="wallet" class="menu-label">Wallet</p>
+        <p
+          v-if="wallet"
+          class="menu-label"
+        >Wallet</p>
         <ul class="menu-list">
           <li>
-            <router-link active-class="is-active" class="nav-link" to="/" exact>
-              <span class="icon is-small" v-html="require('@/img/home.svg')" />
+            <router-link
+              active-class="is-active"
+              class="nav-link"
+              to="/"
+              exact
+            >
+              <span
+                class="icon is-small"
+                v-html="require('@/img/home.svg')"
+              />
               Home
             </router-link>
           </li>
@@ -101,7 +128,10 @@
               active-class="is-active"
               class="nav-link"
             >
-              <span class="icon is-small" v-html="require('@/img/clock.svg')" />
+              <span
+                class="icon is-small"
+                v-html="require('@/img/clock.svg')"
+              />
               History
             </router-link>
           </li>
@@ -154,7 +184,10 @@
               class="nav-link"
               active-class="is-active"
             >
-              <span class="icon is-small" v-html="require('@/img/cog.svg')" />
+              <span
+                class="icon is-small"
+                v-html="require('@/img/cog.svg')"
+              />
               Settings
             </router-link>
           </li>
@@ -164,25 +197,25 @@
           <p class="menu-label">Tools</p>
           <ul class="menu-list">
             <li>
-              <a :href="dappBrowserUrl" class="nav-link" target="_blank"
-                >Dapp</a
-              >
+              <a
+                :href="dappBrowserUrl"
+                class="nav-link"
+                target="_blank"
+              >Dapp</a>
             </li>
             <li>
               <router-link
                 :to="{ name: 'MessagePage' }"
                 class="nav-link"
                 active-class="is-active"
-                >Message</router-link
-              >
+              >Message</router-link>
             </li>
             <li>
               <router-link
                 :to="{ name: 'TransactionPage' }"
                 class="nav-link"
                 active-class="is-active"
-                >Transaction</router-link
-              >
+              >Transaction</router-link>
             </li>
           </ul>
         </template>
@@ -205,8 +238,8 @@
 
 <script>
 import { mapGetters, mapActions, mapState } from 'vuex';
-import ProviderSelect from '@/components/bar/ProviderSelect.vue';
-import CurrencySelect from '@/components/bar/CurrencySelect.vue';
+import ProviderSelect from '@/components/bar/ProviderSelect';
+import CurrencySelect from '@/components/bar/CurrencySelect';
 import AccountChooser from '@/components/AccountChooser';
 import ConfirmLogoutModal from '@/components/modal/ConfirmLogoutModal';
 import modalMixin from '@/mixins/modal';

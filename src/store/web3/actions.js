@@ -2,6 +2,7 @@ import Web3 from 'web3';
 
 import { userService } from '@/services';
 import { ProviderFactory, web3 } from '@/class';
+import { Network } from '@endpass/class';
 import {
   CHANGE_NETWORK,
   CHANGE_CURRENCY,
@@ -9,7 +10,6 @@ import {
   SET_BLOCK_NUMBER,
   SET_HANDLED_BLOCK_NUMBER,
 } from './mutations-types';
-import { Network } from '@endpass/class';
 
 const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
   const network = getters.networks.find(net => net.url === networkUrl);
@@ -32,7 +32,9 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
 };
 
 const changeCurrency = async (
-  { commit, dispatch, getters, state },
+  {
+    commit, dispatch, getters, state,
+  },
   { currencyId },
 ) => {
   const currency = Network.CURRENCIES.find(({ id }) => id === currencyId);
@@ -98,7 +100,9 @@ const updateNetwork = async (
 };
 
 const deleteNetwork = async (
-  { state, commit, dispatch, getters },
+  {
+    state, commit, dispatch, getters,
+  },
   { network },
 ) => {
   const networksToSave = state.storedNetworks.filter(
@@ -135,13 +139,16 @@ const subscribeOnBlockUpdates = async ({ commit, dispatch }) => {
       commit(SET_BLOCK_NUMBER, number);
       dispatch('handleLastBlock', { blockNumber: number });
     })
-    .on('error', error => {
+    .on('error', (error) => {
+      /* eslint-disable-next-line no-console */
       console.error('Web3 subscription error', error);
     });
 };
 
 const handleLastBlock = async (
-  { state, commit, dispatch, getters },
+  {
+    state, commit, dispatch, getters,
+  },
   { blockNumber },
 ) => {
   try {
@@ -149,27 +156,25 @@ const handleLastBlock = async (
     const getBlockPromises = [];
     let handledBlockNumber = state.handledBlockNumber || blockNumber - 1;
 
-    for (let i = handledBlockNumber; i < blockNumber; i++) {
+    for (let i = handledBlockNumber; i < blockNumber; i += 1) {
       getBlockPromises.push(web3.eth.getBlock(i + 1, true));
     }
 
     const blocks = await Promise.all(getBlockPromises);
 
-    for (let block of blocks) {
-      if (!block) {
-        continue;
+    for (const block of blocks) {
+      if (block) {
+        handledBlockNumber = block.number;
+
+        await dispatch(
+          'transactions/handleBlockTransactions',
+          {
+            transactions: block.transactions,
+            networkId,
+          },
+          { root: true },
+        );
       }
-
-      handledBlockNumber = block.number;
-
-      await dispatch(
-        'transactions/handleBlockTransactions',
-        {
-          transactions: block.transactions,
-          networkId,
-        },
-        { root: true },
-      );
     }
 
     commit(SET_HANDLED_BLOCK_NUMBER, handledBlockNumber);
@@ -185,9 +190,8 @@ const init = async ({ commit, dispatch, state }) => {
       ...Object.values(Network.DEFAULT_NETWORKS),
       ...networks,
     ].find(network => network.id === net);
-    const activeCurrency =
-      Network.CURRENCIES.find(currency => activeNet.currency === currency.id) ||
-      state.activeCurrency;
+    const activeCurrency = Network.CURRENCIES.find(currency => activeNet.currency === currency.id)
+      || state.activeCurrency;
 
     commit(SET_NETWORKS, networks);
     commit(CHANGE_NETWORK, activeNet);
