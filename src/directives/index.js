@@ -1,5 +1,5 @@
 import passEvents from './passEvents';
 
-export default Vue => {
+export default (Vue) => {
   passEvents(Vue);
 };

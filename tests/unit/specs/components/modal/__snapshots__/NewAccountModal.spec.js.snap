@@ -40,18 +40,24 @@ exports[`NewAccountModal render should render component 1`] = `
           <p
             class="subtitle"
           >
-            You currently have
-      
+            
+        You currently have
+        
             <strong>
               0
             </strong>
-             active addresses in your wallet.
+             active addresses in
+        your wallet.
+      
           </p>
            
           <p
             class="subtitle"
           >
-            Click the button below to create or import an additional address you can use to receive Ethereum and tokens.
+            
+        Click the button below to create or import an additional address you
+        can use to receive Ethereum and tokens.
+      
           </p>
         </div>
          

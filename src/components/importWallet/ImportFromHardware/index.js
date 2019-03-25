@@ -1,1 +1,1 @@
-export { default } from './ImportFromHardware';
+export { default } from './ImportFromHardware.vue';

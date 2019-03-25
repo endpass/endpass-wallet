@@ -1,17 +1,18 @@
 <template>
   <v-form
+    :is-form-valid="isFormValid"
     data-test="import-public-form"
     @submit="submitAddWallet"
-    :isFormValid="isFormValid">
+  >
     <v-input
+      v-validate="'required|address'"
       id="address"
       key="publicKeyUnique"
       v-model="address"
+      :error="errors.first('address')"
       label="Address"
       name="address"
       data-vv-name="address"
-      v-validate="'required|address'"
-      :error="errors.first('address')"
       data-vv-as="public key"
       aria-describedby="address"
       placeholder="0x...."
@@ -21,9 +22,9 @@
     />
     <v-button
       :loading="isCreating"
+      :disabled="!isFormValid"
       class-name="is-primary is-cta"
       data-test="submit-import"
-      :disabled="!isFormValid"
     >
       Import
     </v-button>
@@ -53,6 +54,7 @@ export default {
           msg: 'Address is invalid',
           id: 'wrongAddress',
         });
+        /* eslint-disable-next-line no-console */
         console.error(e);
       } finally {
         this.isCreating = false;
@@ -66,5 +68,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

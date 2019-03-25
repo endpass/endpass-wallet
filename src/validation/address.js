@@ -4,7 +4,7 @@ export default {
   getMessage(field, params, data) {
     return (data && data.message) || 'Something went wrong';
   },
-  validate(value, args) {
+  validate(value) {
     const zeroAddressRegex = /^0x0+$/;
     const isKey = isAddress(value);
     const isZeroKey = value.match(zeroAddressRegex);

@@ -14,9 +14,11 @@ export default {
         this.$notify({ title, text, type });
 
         if (err.log) {
+          /* eslint-disable-next-line no-console */
           console.error(err.message);
         }
       } else if (!(err.response && err.response.status === 401)) {
+        /* eslint-disable-next-line no-console */
         console.error(err);
       }
     },

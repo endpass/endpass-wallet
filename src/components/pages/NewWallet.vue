@@ -1,13 +1,14 @@
 <template>
   <base-page class="new-wallet">
-    <template slot="title">{{ hdKey ? "Wallet Created" : "Create Wallet" }}</template>
+    <template slot="title">{{
+      hdKey ? 'Wallet Created' : 'Create Wallet'
+    }}</template>
     <div
       v-if="hdKey"
       class="container has-text-centered is-narrow"
     >
       <p class="subtitle">
-        Your wallet has been created successfully.
-        Please
+        Your wallet has been created successfully. Please
         <strong>write down the 12 word recovery phrase below</strong>
         and store it in a safe place. You will not be able to recover your
         wallet without it.
@@ -27,22 +28,26 @@
     </div>
     <div
       v-else
-      class="container has-text-centered is-narrow">
-      <p class="subtitle">Just click the button below to create a new,
-      secure Ethereum Wallet. Your wallet can contain multiple addresses
-      for storing Ethereum and ERC20 compatible tokens.</p>
-      <v-form @submit="createWallet"
-      :isFormValid="isFormValid"
+      class="container has-text-centered is-narrow"
+    >
+      <p class="subtitle">
+        Just click the button below to create a new, secure Ethereum Wallet.
+        Your wallet can contain multiple addresses for storing Ethereum and
+        ERC20 compatible tokens.
+      </p>
+      <v-form
+        :is-form-valid="isFormValid"
+        @submit="createWallet"
       >
         <v-password
+          v-validate="'required|min:8'"
           id="jsonKeystorePassword"
           v-model="password"
+          :error="errors.first('password')"
           label="Wallet password"
           name="password"
-          v-validate="'required|min:8'"
           data-vv-as="password"
           data-vv-name="password"
-          :error="errors.first('password')"
           aria-describedby="jsonKeystorePassword"
           placeholder="wallet password"
           required
@@ -50,8 +55,8 @@
         />
         <v-button
           :loading="isCreating"
-          class-name="is-success is-cta"
           :disabled="!isFormValid"
+          class-name="is-success is-cta"
         >
           Create New Wallet
         </v-button>
@@ -112,14 +117,15 @@ export default {
           text: 'Could not create wallet. Please try again.',
           type: 'is-danger',
         });
+        /* eslint-disable-next-line no-console */
         console.error(e);
       }
 
       this.isCreating = false;
     },
     handleSeedPhraseTimer() {
-      this.remainingSeedPhraseTimeout -=
-        UPDATE_SEED_PHRASE_INTERVAL_MSEC / 1000;
+      this.remainingSeedPhraseTimeout
+        -= UPDATE_SEED_PHRASE_INTERVAL_MSEC / 1000;
 
       if (this.remainingSeedPhraseTimeout <= 0) {
         this.$timer.stop('seedPhrase');

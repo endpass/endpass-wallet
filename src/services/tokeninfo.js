@@ -3,9 +3,7 @@ import { isAddress } from 'web3-utils';
 
 export default {
   getTokensList() {
-    return this._getTokens().then(tokens =>
-      tokens.map(this._parseToken).filter(this._checkAddress),
-    );
+    return this._getTokens().then(tokens => tokens.map(this._parseToken).filter(this._checkAddress));
   },
 
   // Get list of all tokens with infos

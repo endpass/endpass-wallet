@@ -6,12 +6,14 @@
     <v-modal @close="close">
       <v-form
         id="sendEther"
+        :is-form-valid="isFormValid"
         @submit="confirmResend"
-        :isFormValid="isFormValid"
-        >
+      >
         <v-input
+          v-validate="`required|numeric|integer|between:${minimumGasPrice},100`"
           id="gasPrice"
           v-model="newTransaction.gasPrice"
+          :error="errors.first('gasPrice')"
           label="Gas price"
           name="gasPrice"
           data-vv-name="gasPrice"
@@ -19,8 +21,6 @@
           aria-describedby="gasPrice"
           placeholder="Gas price"
           data-test="gas-price-input"
-          v-validate="`required|numeric|integer|between:${minimumGasPrice},100`"
-          :error="errors.first('gasPrice')"
           autofocus
           required
         >
@@ -32,9 +32,11 @@
           </div>
         </v-input>
         <v-input
+          v-validate="
+            `required|numeric|integer|between:${transaction.gasLimit},1000000`
+          "
           id="gasLimit"
           v-model="newTransaction.gasLimit"
-          v-validate="`required|numeric|integer|between:${transaction.gasLimit},1000000`"
           :error="errors.first('gasLimit')"
           label="Gas limit"
           name="gasLimit"
@@ -45,17 +47,16 @@
           data-test="gas-limit-input"
           required
         />
-
       </v-form>
       <div
         slot="footer"
         class="buttons"
       >
         <v-button
+          :disabled="!isFormValid"
           form="sendEther"
           class-name="is-primary is-medium"
           data-test="submit-button"
-          :disabled="!isFormValid"
         >
           Send
         </v-button>
@@ -106,5 +107,4 @@ export default {
 };
 </script>
 
-<style lang="css">
-</style>
+<style lang="css"></style>

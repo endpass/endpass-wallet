@@ -58,6 +58,7 @@ export default {
             'An error occurred while recovering the transaction. Please try again.',
           type: 'is-danger',
         });
+        /* eslint-disable-next-line no-console */
         console.error(error);
       }
     },

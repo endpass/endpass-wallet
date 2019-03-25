@@ -2,7 +2,7 @@ export default {
   getMessage(field, params, data) {
     return (data && data.message) || 'Something went wrong';
   },
-  validate(value, args) {
+  validate(value) {
     let isSeed;
     try {
       isSeed = value.trim().split(/\s+/g).length >= 12;

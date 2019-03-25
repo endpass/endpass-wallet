@@ -3,8 +3,14 @@
     <div class="card-header">
       <h2 class="card-header-title">Receive ETH</h2>
     </div>
-    <div class="card-content" data-test="current-account">
-      <div v-if="isCurrentAccount" class="card-section">
+    <div
+      class="card-content"
+      data-test="current-account"
+    >
+      <div
+        v-if="isCurrentAccount"
+        class="card-section"
+      >
         Your Active Address:
       </div>
       <div class="card-section">
@@ -15,7 +21,10 @@
           :balance="accountBalance"
         />
       </div>
-      <div v-if="allowSend" class="card-section">
+      <div
+        v-if="allowSend"
+        class="card-section"
+      >
         <v-button
           type="button"
           name="button"
@@ -27,7 +36,10 @@
       </div>
       <div class="card-tokens">
         <v-spinner v-if="isLoading" />
-        <tokens-list v-if="!isLoading" :tokens="accountTokensList" />
+        <tokens-list
+          v-if="!isLoading"
+          :tokens="accountTokensList"
+        />
       </div>
     </div>
   </div>

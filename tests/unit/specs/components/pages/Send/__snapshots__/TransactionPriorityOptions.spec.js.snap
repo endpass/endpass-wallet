@@ -5,8 +5,7 @@ exports[`Send – TransactionPriorityOptions render should not render options if
   <div class="field-label"><label class="label">Priority</label></div>
   <div class="field-body">
     <p class="help is-danger">
-      Unable to load suggested gas price, please set gas price
-      manually.
+      Unable to load suggested gas price, please set gas price manually.
     </p>
   </div>
 </div>

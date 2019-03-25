@@ -5,11 +5,12 @@ import cryptoDataSchemas from './cryptoData';
 import v3KeystoreSchemas from './v3Keystore';
 import identitySchemas from './identity';
 
-const makeValidator = schema => {
+const makeValidator = (schema) => {
   const validator = ajv.compile(schema);
 
   return (data, isOnlyLog = ENV.isProduction) => {
     if (!validator(data)) {
+      /* eslint-disable-next-line no-console */
       console.warn('Schema validation error', {
         data,
         errors: validator.errors,
@@ -24,14 +25,12 @@ const makeValidator = schema => {
   };
 };
 
-const makeValidators = schemas =>
-  Object.keys(schemas).reduce(
-    (acc, key) =>
-      Object.assign(acc, {
-        [`validate${upperFirst(key)}`]: makeValidator(schemas[key]),
-      }),
-    {},
-  );
+const makeValidators = schemas => Object.keys(schemas).reduce(
+  (acc, key) => Object.assign(acc, {
+    [`validate${upperFirst(key)}`]: makeValidator(schemas[key]),
+  }),
+  {},
+);
 
 export const cryptoDataValidator = makeValidators(cryptoDataSchemas);
 

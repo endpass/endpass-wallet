@@ -51,7 +51,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import modalMixin from '@/mixins/modal';
 import PasswordModal from '@/components/modal/PasswordModal';
-import WalletItem from './WalletItem';
+import WalletItem from './WalletItem.vue';
 
 export default {
   name: 'WalletsList',
@@ -123,7 +123,12 @@ export default {
         }
 
         if (this.isHDv3WalletByType(type)) {
-          await this.addHdChildWallets({ address, index, password, type });
+          await this.addHdChildWallets({
+            address,
+            index,
+            password,
+            type,
+          });
         } else {
           const info = { type, index };
           await this.addPublicWallet({ address, info });
@@ -153,5 +158,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

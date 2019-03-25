@@ -12,17 +12,17 @@
         <p class="subtitle">Please enter your wallet password to continue.</p>
         <v-form
           id="password-form"
-          :isFormValid="isFormValid"
+          :is-form-valid="isFormValid"
         >
           <slot />
           <v-password
+            v-validate="'required|min:8'"
             v-model="jsonKeystorePassword"
+            :error="errors.first('jsonKeystorePassword')"
             name="jsonKeystorePassword"
             validator="required"
             data-vv-as="password"
             data-vv-name="jsonKeystorePassword"
-            v-validate="'required|min:8'"
-            :error="errors.first('jsonKeystorePassword')"
             placeholder="Your Wallet Password"
             required
             data-test="input-password"
@@ -37,10 +37,10 @@
       >
         <v-button
           :loading="processingConfirmation"
+          :disabled="!isFormValid"
           form="password-form"
           data-test="submit-password"
           class-name="is-primary is-medium"
-          :disabled="!isFormValid"
           @click="confirm"
         >
           Confirm

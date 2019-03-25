@@ -4,16 +4,16 @@ import {
   SET_SYNC_STATUS,
   ADD_API_ERROR_ID,
   REMOVE_API_ERROR_ID,
-} from './mutations-types.js';
+} from './mutations-types';
 
-//status - Boolean; false - api is not responding
+// status - Boolean; false - api is not responding
 const updateApiErrorStatus = ({ commit, state }, { id, status }) => {
   if (status) {
     commit(ADD_API_ERROR_ID, id);
     commit(SET_API_CONNECTION_STATUS, status);
   } else {
     commit(REMOVE_API_ERROR_ID, id);
-    //set connection status to true if no errors left
+    // set connection status to true if no errors left
     if (state.apiErrorsArray.length === 0) {
       commit(SET_API_CONNECTION_STATUS, status);
     }
@@ -24,7 +24,7 @@ const subscribeOnSyncStatus = async ({ getters, commit, dispatch }) => {
   const providerCache = getters.currentProvider;
   try {
     const status = await getters.eth.isSyncing();
-    //don't update anything if provider changed wile fetchied data
+    // don't update anything if provider changed wile fetchied data
     if (providerCache === getters.currentProvider) {
       commit(SET_SYNC_STATUS, status);
       commit(SET_WEB3_CONNECTION_STATUS, true);
@@ -43,9 +43,7 @@ const subscribeOnSyncStatus = async ({ getters, commit, dispatch }) => {
   }
 };
 
-const init = ({ dispatch }) => {
-  return dispatch('subscribeOnSyncStatus');
-};
+const init = ({ dispatch }) => dispatch('subscribeOnSyncStatus');
 
 export default {
   updateApiErrorStatus,

@@ -1,18 +1,19 @@
 <template>
   <div>
     <v-form
+      :is-form-valid="isFormValid"
       data-test="import-private-form"
       @submit="togglePasswordModal"
-      :isFormValid="isFormValid">
+    >
       <v-password
+        v-validate="'required|private_key'"
         id="privateKey"
         key="privateKeyUnique"
         v-model="privateKey"
+        :error="errors.first('privateKey')"
         label="Private key"
         name="privateKey"
         data-vv-name="privateKey"
-        v-validate="'required|private_key'"
-        :error="errors.first('privateKey')"
         data-vv-as="private key"
         aria-describedby="privateKey"
         placeholder="Private key"
@@ -23,9 +24,9 @@
 
       <v-button
         :loading="isCreating"
+        :disabled="!isFormValid"
         class-name="is-primary is-cta"
         data-test="submit-import"
-        :disabled="!isFormValid"
       >
         Import
       </v-button>
@@ -70,6 +71,7 @@ export default {
           msg: 'Private key is invalid',
           id: 'wrongPrivateKey',
         });
+        /* eslint-disable-next-line no-console */
         console.error(e);
       }
       this.isCreating = false;
@@ -85,5 +87,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

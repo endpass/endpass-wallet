@@ -1,7 +1,13 @@
 <template>
   <div class="home-page app-page">
-    <div v-if="address" class="auth-content">
-      <div class="section section-address" data-test="address-card">
+    <div
+      v-if="address"
+      class="auth-content"
+    >
+      <div
+        class="section section-address"
+        data-test="address-card"
+      >
         <div class="container">
           <div class="card">
             <div class="card-header">
@@ -21,10 +27,12 @@
                     :to="{ name: 'ExportWallet' }"
                     class="button is-warning"
                     data-test="export-wallet-button"
-                    >Export Private Key</router-link
-                  >
+                  >Export Private Key</router-link>
                 </div>
-                <div v-if="isFaucet" class="column">
+                <div
+                  v-if="isFaucet"
+                  class="column"
+                >
                   <v-faucet-button
                     :address="address"
                     :disabled="isFaucetDisable"
@@ -32,8 +40,7 @@
                     data-test="get-test-eth-button"
                     @donate="onDonate"
                     @donate-error="onDonateError"
-                    >{{ faucetTitle }}</v-faucet-button
-                  >
+                  >{{ faucetTitle }}</v-faucet-button>
                 </div>
               </div>
             </div>
@@ -54,8 +61,7 @@
                   :to="{ name: 'TokensPage' }"
                   class="button is-outlined is-info is-small"
                   data-test="edit-tokens-button"
-                  >Edit</router-link
-                >
+                >Edit</router-link>
               </div>
             </div>
             <div class="card-content">
@@ -95,8 +101,7 @@
                   <router-link
                     :to="{ name: 'NewWallet' }"
                     class="button is-success is-cta"
-                    >Create New Wallet</router-link
-                  >
+                  >Create New Wallet</router-link>
                 </div>
               </div>
               <div v-else>
@@ -126,6 +131,13 @@ const UPDATE_RESEND_TIMEOUT_SEC = 1000 * 60 * 2; // 2 mins
 
 export default {
   name: 'Home',
+
+  data() {
+    return {
+      isFaucetDisable: false,
+      faucetTitle: 'Get test 1 ETH',
+    };
+  },
 
   computed: {
     ...mapState({
@@ -159,13 +171,6 @@ export default {
     isFaucet() {
       return this.activeNet.id === Network.NET_ID.ROPSTEN;
     },
-  },
-
-  data() {
-    return {
-      isFaucetDisable: false,
-      faucetTitle: 'Get test 1 ETH',
-    };
   },
 
   methods: {

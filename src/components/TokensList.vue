@@ -1,11 +1,17 @@
 <template>
-  <div class="tokens-list" data-test="tokens-list">
-    <label v-if="collapsable && tokens.length > 0" class="tokens-list-toggler">
+  <div
+    class="tokens-list"
+    data-test="tokens-list"
+  >
+    <label
+      v-if="collapsable && tokens.length > 0"
+      class="tokens-list-toggler"
+    >
       <input
         v-model="isDustbinTokensVisible"
         type="checkbox"
         data-test="dustbin-toggler"
-      />
+      >
       <span>Show dust amount tokens</span>
     </label>
     <ul v-if="actualTokens.length > 0">
@@ -15,7 +21,10 @@
         :key="token.address"
         data-test="user-token"
       >
-        <v-token :token="token" :currency="currency">
+        <v-token
+          :token="token"
+          :currency="currency"
+        >
           <a
             v-if="isTokenCanBeDeleted(token)"
             slot="right"
@@ -32,7 +41,10 @@
         </v-token>
       </li>
     </ul>
-    <p v-if="tokens.length === 0" class="small">
+    <p
+      v-if="tokens.length === 0"
+      class="small"
+    >
       You have no tokens at this address.
     </p>
   </div>
@@ -85,9 +97,7 @@ export default {
         return this.tokens;
       }
 
-      return this.tokens.filter(token =>
-        this.getTokenAmountBN(token).gt('0.01'),
-      );
+      return this.tokens.filter(token => this.getTokenAmountBN(token).gt('0.01'));
     },
   },
 
@@ -105,9 +115,9 @@ export default {
       const { hasRemove, currentNetUserFullTokens } = this;
 
       return (
-        hasRemove &&
-        currentNetUserFullTokens[token.address] &&
-        get(token, 'balance', '0') === '0'
+        hasRemove
+        && currentNetUserFullTokens[token.address]
+        && get(token, 'balance', '0') === '0'
       );
     },
 

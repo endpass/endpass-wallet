@@ -25,17 +25,17 @@
         </div>
         <div class="field-body">
           <v-input
+            v-validate="'required|numeric|integer|between:1,100'"
             id="gasPrice"
             v-model="form.gasPrice"
             :disabled="isLoading"
+            :error="errors.first('gasPrice')"
             name="gasPrice"
             data-vv-name="gasPrice"
             type="number"
             min="1"
             max="100"
             step="1"
-            v-validate="'required|numeric|integer|between:1,100'"
-            :error="errors.first('gasPrice')"
             aria-describedby="gasPrice"
             placeholder="Gas price"
             data-test="transaction-gas-price-input"
@@ -57,17 +57,17 @@
         </div>
         <div class="field-body">
           <v-input
+            v-validate="'required|numeric|integer|between:21000,1000000'"
             id="gasLimit"
             v-model="form.gasLimit"
             :disabled="isLoading"
+            :error="errors.first('gasLimit')"
             data-vv-name="gasLimit"
             name="gasLimit"
             type="number"
             min="21000"
             max="1000000"
             step="1000"
-            v-validate="'required|numeric|integer|between:21000,1000000'"
-            :error="errors.first('gasLimit')"
             aria-describedby="gasLimit"
             placeholder="Gas limit"
             data-test="transaction-gas-limit-input"
@@ -82,9 +82,11 @@
         </div>
         <div class="field-body">
           <v-input
+            v-validate="
+              `required|numeric|integer|min_value:${nextNonceInBlock}`
+            "
             id="nonce"
             v-model="form.nonce"
-            v-validate="`required|numeric|integer|min_value:${nextNonceInBlock}`"
             :error="errors.first('nonce')"
             :disabled="isLoading"
             name="nonce"
@@ -108,13 +110,13 @@
         </div>
         <div class="field-body">
           <v-input
+            v-validate="'required|hex'"
             id="data"
             v-model="form.data"
             :disabled="isLoading"
+            :error="errors.first('data')"
             name="data"
             data-vv-name="data"
-            v-validate="'required|hex'"
-            :error="errors.first('data')"
             aria-describedby="data"
             placeholder="Data"
             required

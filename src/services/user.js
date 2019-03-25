@@ -181,17 +181,15 @@ export default {
   async getHDKey() {
     const accounts = await this.getAccounts();
 
-    const hdAddresses = accounts.filter(acc =>
-      keystore.isExtendedPublicKey(acc),
-    );
+    const hdAddresses = accounts.filter(acc => keystore.isExtendedPublicKey(acc));
 
     const hdAccounts = await Promise.all(
       hdAddresses.map(acc => this.getAccount(acc)),
     );
 
     return (
-      hdAccounts.find(({ info = {} }) => info.type === WALLET_TYPES.HD_MAIN) ||
-      hdAccounts[0]
+      hdAccounts.find(({ info = {} }) => info.type === WALLET_TYPES.HD_MAIN)
+      || hdAccounts[0]
     );
   },
 
@@ -202,7 +200,7 @@ export default {
     } catch (e) {
       throw new NotificationError({
         title: 'Error requesting two-factor authentication settings',
-        text: `Failed to get OTP settings.`,
+        text: 'Failed to get OTP settings.',
         type: 'is-danger',
       });
     }
@@ -224,7 +222,7 @@ export default {
         log: true,
         message: e.message,
         title: 'Error saving two-factor authentication settings',
-        text: `Failed to save OTP settings.`,
+        text: 'Failed to save OTP settings.',
         type: 'is-danger',
       });
     }
@@ -250,7 +248,7 @@ export default {
         log: true,
         message: e.message,
         title: 'Error removing two-factor authentication settings',
-        text: `Failed to remove OTP settings.`,
+        text: 'Failed to remove OTP settings.',
         type: 'is-danger',
       });
     }

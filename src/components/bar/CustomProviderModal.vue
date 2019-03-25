@@ -3,7 +3,10 @@
     <v-modal @close="close">
       <header slot="header">{{ headerText }}</header>
       <div v-if="!providerAdded">
-        <v-form :is-form-valid="isFormValid" @submit="handleButtonClick">
+        <v-form
+          :is-form-valid="isFormValid"
+          @submit="handleButtonClick"
+        >
           <v-input
             v-validate="'required'"
             id="name"

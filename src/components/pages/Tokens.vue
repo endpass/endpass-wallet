@@ -9,7 +9,10 @@
                 <p class="card-header-title">Your Tokens</p>
               </div>
               <div class="card-content is-narrow">
-                <nav v-if="isUserHasTokens" class="panel">
+                <nav
+                  v-if="isUserHasTokens"
+                  class="panel"
+                >
                   <div class="panel-block">
                     <search-input
                       v-model="userTokenQuery"
@@ -31,7 +34,11 @@
                     />
                   </div>
                 </nav>
-                <p v-else class="small" data-test="no-tokens-text">
+                <p
+                  v-else
+                  class="small"
+                  data-test="no-tokens-text"
+                >
                   You have no tokens on this network. Add some!
                 </p>
               </div>
@@ -81,7 +88,10 @@
         </div>
       </div>
     </div>
-    <add-token-modal v-if="addTokenModalOpen" @close="closeAddTokenModal" />
+    <add-token-modal
+      v-if="addTokenModalOpen"
+      @close="closeAddTokenModal"
+    />
   </div>
 </template>
 
@@ -92,7 +102,7 @@ import Multiselect from 'vue-multiselect';
 import Balance from '@/components/Balance';
 import VToken from '@/components/VToken';
 import TokensList from '@/components/TokensList';
-import SearchInput from '@/components/SearchInput.vue';
+import SearchInput from '@/components/SearchInput';
 import AddTokenModal from '@/components/modal/AddTokenModal';
 import { matchString } from '@endpass/utils/strings';
 import { Network } from '@endpass/class';
@@ -140,7 +150,7 @@ export default {
         allCurrentAccountFullTokens,
       );
 
-      return networkTokensList.filter(token => {
+      return networkTokensList.filter((token) => {
         const isUserHasToken = currentAccountTokensSymbols.includes(
           token.symbol,
         );
@@ -159,9 +169,7 @@ export default {
     userTokensList() {
       const { userTokenQuery, allCurrentAccountFullTokens } = this;
 
-      return Object.values(allCurrentAccountFullTokens).filter(token =>
-        this.matchTokenToQuery(token, userTokenQuery),
-      );
+      return Object.values(allCurrentAccountFullTokens).filter(token => this.matchTokenToQuery(token, userTokenQuery));
     },
   },
 

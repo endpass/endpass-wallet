@@ -1,14 +1,13 @@
 import { pick, pickBy, uniq } from 'lodash';
 
-const activeCurrencyName = (state, getters, rootState) =>
-  rootState.web3.activeCurrency.name;
+const activeCurrencyName = (state, getters, rootState) => rootState.web3.activeCurrency.name;
 
 const userTokenByAddress = (
   state,
   getters,
   rootState,
   rootGetters,
-) => tokenAddress => {
+) => (tokenAddress) => {
   const targetNetTokens = state.userTokens[rootGetters['web3/activeNetwork']];
 
   if (!targetNetTokens) {
@@ -18,7 +17,7 @@ const userTokenByAddress = (
   return targetNetTokens[tokenAddress] || null;
 };
 
-const tokensByAddress = state => address => {
+const tokensByAddress = state => (address) => {
   const tokensList = state.tokensByAddress[address];
 
   if (!tokensList) {
@@ -44,14 +43,11 @@ const fullTokens = (state, getters) => (address, tokens) => {
   }, {});
 };
 
-const balancesByAddress = state => address =>
-  state.balancesByAddress[address] || {};
+const balancesByAddress = state => address => state.balancesByAddress[address] || {};
 
-const currentNetUserTokens = (state, getters, rootState, rootGetters) =>
-  state.userTokens[rootGetters['web3/activeNetwork']] || {};
+const currentNetUserTokens = (state, getters, rootState, rootGetters) => state.userTokens[rootGetters['web3/activeNetwork']] || {};
 
-const currentAccountTokens = (state, getters, rootState) =>
-  getters.tokensByAddress(rootState.accounts.address);
+const currentAccountTokens = (state, getters, rootState) => getters.tokensByAddress(rootState.accounts.address);
 
 const currentNetUserFullTokens = (state, getters, rootState) => {
   const { address } = rootState.accounts;
@@ -60,15 +56,14 @@ const currentNetUserFullTokens = (state, getters, rootState) => {
   return getters.fullTokens(address, tokens);
 };
 
-const currentAccountFullTokens = (state, getters, rootState) =>
-  getters.fullTokensByAddress(rootState.accounts.address);
+const currentAccountFullTokens = (state, getters, rootState) => getters.fullTokensByAddress(rootState.accounts.address);
 
 const allCurrentAccountTokens = (state, getters) => ({
   ...getters.currentAccountTokens,
   ...getters.currentNetUserTokens,
 });
 
-const fullTokensByAddress = (state, getters) => address => {
+const fullTokensByAddress = (state, getters) => (address) => {
   const tokens = getters.tokensByAddress(address);
 
   return getters.fullTokens(address, tokens);
@@ -81,11 +76,7 @@ const allCurrentAccountFullTokens = (state, getters, rootState) => {
   return getters.fullTokens(address, tokens);
 };
 
-const allCurrentAccountTokensWithNonZeroBalance = (state, getters) => {
-  return pickBy(getters.allCurrentAccountFullTokens, ({ balance }) =>
-    Boolean(parseFloat(balance)),
-  );
-};
+const allCurrentAccountTokensWithNonZeroBalance = (state, getters) => pickBy(getters.allCurrentAccountFullTokens, ({ balance }) => Boolean(parseFloat(balance)));
 
 const userTokensWithToken = state => ({ net, token }) => {
   const { userTokens } = state;
@@ -144,7 +135,7 @@ const currentAccountTokensCurrencies = (state, getters, rootState) => {
   );
 };
 
-const currentAccountTokenBySymbol = (state, getters) => symbol => {
+const currentAccountTokenBySymbol = (state, getters) => (symbol) => {
   const token = Object.values(
     getters.allCurrentAccountTokensWithNonZeroBalance,
   ).find(accountToken => accountToken.symbol === symbol);
