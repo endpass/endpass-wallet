@@ -17,15 +17,23 @@
     "test": "yarn unit",
     "pre-commit": "lint-staged",
     "lint": "eslint '**/*.{js,vue,json}' --quiet",
-    "format": "prettier --write '**/*.{js,vue,json}'",
-    "format:templates": "eslint src/**/*.vue --fix"
+    "format:prettier:vue": "prettier --write '**/*.vue'",
+    "format:eslint": "eslint --ext .json,.js,.vue src/ --fix --quiet",
+    "format:prettier": "prettier --write '**/*.{js,json}'",
+    "format": "yarn format:prettier:vue && yarn format:eslint && yarn format:prettier"
   },
   "pre-commit": [
     "pre-commit"
   ],
   "lint-staged": {
-    "*.{js,vue,json}": [
+    "*.{js,json}": [
+      "eslint --fix --quiet",
       "prettier --write",
+      "git add"
+    ],
+    "*.vue": [
+      "prettier --write",
+      "eslint --fix --quiet",
       "git add"
     ]
   },
@@ -79,6 +87,7 @@
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-json": "^1.4.0",
     "eslint-plugin-prettier": "^2.6.2",
     "eslint-plugin-vue": "^4.5.0",
     "jest-canvas-mock": "^2.0.0-beta.1",
