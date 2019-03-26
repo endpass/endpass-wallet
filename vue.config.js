@@ -4,10 +4,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const getEnv = require('./env/getEnv');
 
-const { NODE_ENV } = process.env;
-const ENV = getEnv(NODE_ENV);
+const { NODE_ENV, LOCAL_MODE } = process.env;
+const ENV = getEnv(NODE_ENV, LOCAL_MODE);
 const gitCommitHash = utils.getCommitHash();
 const { mode } = process.VUE_CLI_SERVICE;
+
+console.log('ENV', ENV);
 
 module.exports = {
   lintOnSave: false,
