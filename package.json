@@ -6,7 +6,7 @@
   "homepage": "https://wallet.endpass.com",
   "license": "MIT",
   "scripts": {
-    "dev": "vue-cli-service serve",
+    "dev": "LOCAL_MODE=true vue-cli-service serve",
     "build": "vue-cli-service build",
     "dev-build": "vue-cli-service build --mode staging",
     "start": "yarn dev",
