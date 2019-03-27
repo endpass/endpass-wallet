@@ -2,12 +2,18 @@
   <div class="media account">
     <div class="media-left">
       <p class="image is-32x32">
-        <img :src="icon" class="identicon" />
+        <img
+          :src="icon"
+          class="identicon"
+        >
       </p>
     </div>
     <div class="media-content">
       <div class="content">
-        <h5 class="address" data-test="account-address">{{ addressFmt }}</h5>
+        <h5
+          class="address"
+          data-test="account-address"
+        >{{ addressFmt }}</h5>
         <slot />
       </div>
     </div>

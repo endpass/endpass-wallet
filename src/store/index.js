@@ -45,7 +45,7 @@ store.watch(
   () => Promise.all([
     store.dispatch('accounts/updateBalance'),
     store.dispatch('transactions/getPendingTransactions'),
-  ])  
+  ]),
 );
 
 // Enable hot reloading in development

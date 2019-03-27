@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TwoFactorAuthSettings render should render the initial state of the component 1`] = `
+<div>
+  <v-form-stub
+    isformvalid="true"
+  >
+    <label
+      class="label"
+    >
+      Two Factor Authentication
+    </label>
+     
+    <v-button-stub
+      classname="is-primary is-medium"
+      data-test="button-two-factor"
+      disabled="true"
+    >
+      
+      Disable Two Factor Auth
+    
+    </v-button-stub>
+  </v-form-stub>
+   
+  <!---->
+</div>
+`;
+
+exports[`TwoFactorAuthSettings render should show modal window for two factor auth 1`] = `
+<div>
+  <v-form-stub
+    isformvalid="true"
+  >
+    <label
+      class="label"
+    >
+      Two Factor Authentication
+    </label>
+     
+    <v-button-stub
+      classname="is-primary is-medium"
+      data-test="button-two-factor"
+      disabled="true"
+    >
+      
+      Disable Two Factor Auth
+    
+    </v-button-stub>
+  </v-form-stub>
+   
+  <two-factor-auth-modal-stub
+    email="email"
+  />
+</div>
+`;

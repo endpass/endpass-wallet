@@ -47,7 +47,7 @@
 <script>
 import VueMultiselect from 'vue-multiselect';
 import { mapActions, mapGetters, mapState } from 'vuex';
-import CustomProviderModal from '@/components/bar/CustomProviderModal.vue';
+import CustomProviderModal from '@/components/bar/CustomProviderModal';
 
 export default {
   name: 'ProviderSelect',
@@ -90,7 +90,6 @@ export default {
 };
 </script>
 
-
 <style lang="scss">
 .provider-select {
   .net-select {
@@ -107,5 +106,4 @@ export default {
 }
 </style>
 
-<style src="vue-multiselect/dist/vue-multiselect.min.css">
-</style>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

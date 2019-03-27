@@ -1,0 +1,27 @@
+const ENV = require('./env/test.env');
+
+module.exports = {
+  moduleFileExtensions: ['js', 'json', 'vue', 'ts', 'tsx', 'jsx', 'node'],
+  moduleNameMapper: {
+    '^fixtures/(.*)$': '<rootDir>/tests/unit/fixtures/$1',
+    '^mocks/(.*)$': '<rootDir>/tests/unit/mocks/$1',
+    '^@/testUtils$': '<rootDir>/tests/unit/testUtils.js',
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
+  testMatch: ['<rootDir>/(tests/unit/**/*.spec.js|**/__tests__/*.js)'],
+  transform: {
+    '^.+\\.js$': '<rootDir>/node_modules/babel-jest',
+    '.*\\.(vue)$': '<rootDir>/node_modules/vue-jest',
+    '.+\\.(css|styl|less|sass|scss|png|jpe?g|ttf|woff2?|svg)$':
+      'jest-transform-stub',
+  },
+  // globals as webpack DefinePlugin mocks
+  globals: {
+    ENV,
+  },
+  // TODO: check usage (@endpass/class) after update to vue-cli3
+  transformIgnorePatterns: ['node_modules/(?!(vue-timers|@endpass/class))'],
+  snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
+  setupFiles: ['<rootDir>/tests/unit/setup', 'jest-canvas-mock'],
+  setupTestFrameworkScriptFile: '<rootDir>/tests/unit/setupTests',
+};

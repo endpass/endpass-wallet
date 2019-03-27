@@ -7,7 +7,7 @@
       <div class="field">
         <p class="heading">Status</p>
         <div class="control is-expanded">
-          <sync-status/>
+          <sync-status />
         </div>
       </div>
     </div>
@@ -39,7 +39,7 @@
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
-import SyncStatus from '@/components/bar/SyncStatus.vue';
+import SyncStatus from '@/components/bar/SyncStatus';
 import Balance from '@/components/Balance';
 import net from '@/mixins/net';
 

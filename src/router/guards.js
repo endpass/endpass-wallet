@@ -1,5 +1,5 @@
-import store from '../store';
 import { asyncCheckProperty } from '@endpass/utils';
+import store from '../store';
 
 // Has a wallet with a private key capable of sending funds
 // Redirects to new wallet page if one does not exist

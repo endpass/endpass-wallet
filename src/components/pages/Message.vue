@@ -1,10 +1,12 @@
 <template>
   <base-page>
-    <template slot="title">Message</template>
+    <template
+      slot="title"
+    >Message</template>
 
     <div class="tabs">
       <ul>
-        <li :class="[ isSignTabActive ? 'is-active' : '']">
+        <li :class="[isSignTabActive ? 'is-active' : '']">
           <a
             data-test="sign-message-tab"
             @click="setSignTabActive"
@@ -12,7 +14,7 @@
             Sign
           </a>
         </li>
-        <li :class="[ isVerifyTabActive ? 'is-active' : '']">
+        <li :class="[isVerifyTabActive ? 'is-active' : '']">
           <a
             data-test="verify-message-tab"
             @click="setVerifyTabActive"
@@ -22,8 +24,8 @@
         </li>
       </ul>
     </div>
-    <sign-message v-show="isSignTabActive"/>
-    <verify-message v-show="isVerifyTabActive"/>
+    <sign-message v-show="isSignTabActive" />
+    <verify-message v-show="isVerifyTabActive" />
   </base-page>
 </template>
 

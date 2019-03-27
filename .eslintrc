@@ -10,16 +10,30 @@
     "cy": true,
     "ENV": true
   },
+  "plugins": [
+    "json"
+  ],
   "parserOptions": {
     "parser": "babel-eslint"
   },
   "extends": [
     "airbnb-base",
-    "plugin:prettier/recommended",
     "plugin:vue/recommended"
   ],
   "rules": {
     "func-names": 0,
+    'max-len': [
+      'warn',
+      80,
+      2,
+      {
+        ignoreUrls: true,
+        ignoreComments: false,
+        ignoreRegExpLiterals: true,
+        ignoreStrings: false,
+        ignoreTemplateLiterals: false,
+      },
+    ],
     "no-param-reassign": [
       "error",
       {
@@ -27,6 +41,9 @@
         "ignorePropertyModificationsFor": ["state"]
       }
     ],
+    'import/extensions': ['error', {
+      'js': 'never',
+    }],
     "import/no-unresolved": [
       "error",
       {

@@ -43,7 +43,6 @@
       @close="togglePasswordModal"
       @confirm="handlePasswordConfirm"
     />
-
   </div>
 </template>
 
@@ -102,5 +101,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

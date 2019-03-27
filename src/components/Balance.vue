@@ -1,6 +1,9 @@
 <template>
   <div class="balance has-spinner">
-    <div v-if="isLoading" class="balance-spinner">
+    <div
+      v-if="isLoading"
+      class="balance-spinner"
+    >
       <v-spinner class="is-transparent" />
     </div>
     <template v-else>
@@ -22,7 +25,10 @@
       class="button is-small"
       @click.prevent="update()"
     >
-      <span class="icon is-small" v-html="require('@/img/reload.svg')" />
+      <span
+        class="icon is-small"
+        v-html="require('@/img/reload.svg')"
+      />
     </a>
   </div>
 </template>

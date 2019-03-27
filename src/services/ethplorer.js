@@ -14,7 +14,7 @@ export default {
               apiKey: 'freekey',
             },
           })
-          .then(resp => {
+          .then((resp) => {
             res(
               (resp.data.tokens || [])
                 .filter(this.tokenIsNotSpam)

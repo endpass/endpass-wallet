@@ -1,5 +1,8 @@
 <template lang="html">
-  <div :class="statusClass" class="transaction">
+  <div
+    :class="statusClass"
+    class="transaction"
+  >
     <div class="transaction-header">
       <account
         v-if="txAddress"
@@ -46,7 +49,10 @@
                 data-test="transaction-cancel-button"
                 @click="cancel"
               >
-                <span class="icon is-small" v-html="require('@/img/ban.svg')" />
+                <span
+                  class="icon is-small"
+                  v-html="require('@/img/ban.svg')"
+                />
                 <span class="caption is-hidden-mobile">
                   Cancel
                 </span>
@@ -128,7 +134,6 @@
 
 <script>
 import get from 'lodash/get';
-import { hexToString } from 'web3-utils';
 import Account from '@/components/Account';
 import ResendModal from '@/components/modal/ResendModal';
 import PasswordModal from '@/components/modal/PasswordModal';
@@ -171,9 +176,9 @@ export default {
     },
     isError() {
       return (
-        this.transaction.state === TRANSACTION_STATUS.ERROR ||
-        this.state === TRANSACTION_STATUS.ERROR ||
-        this.state === TRANSACTION_STATUS.CANCELED
+        this.transaction.state === TRANSACTION_STATUS.ERROR
+        || this.state === TRANSACTION_STATUS.ERROR
+        || this.state === TRANSACTION_STATUS.CANCELED
       );
     },
     isPending() {
@@ -244,10 +249,9 @@ export default {
       this.resendModalOpen = false;
       this.passwordModalOpen = false;
 
-      const sendTransaction =
-        this.state === TRANSACTION_STATUS.CANCELED
-          ? this.cancelTransaction
-          : this.resendTransaction;
+      const sendTransaction = this.state === TRANSACTION_STATUS.CANCELED
+        ? this.cancelTransaction
+        : this.resendTransaction;
 
       this.transactionToSend = Transaction.applyProps(this.transactionToSend, {
         state: TRANSACTION_STATUS.PENDING,

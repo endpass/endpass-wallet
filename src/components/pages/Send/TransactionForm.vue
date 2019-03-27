@@ -24,7 +24,10 @@
       >
         Resolved ENS address: {{ transaction.to }}
       </p>
-      <p v-if="ensError && !isEnsAddressLoading" class="help is-danger">
+      <p
+        v-if="ensError && !isEnsAddressLoading"
+        class="help is-danger"
+      >
         {{ ensError }}
       </p>
     </div>
@@ -138,11 +141,11 @@ export default {
       } = this;
 
       return (
-        transaction.to &&
-        !isSyncing &&
-        !ensError &&
-        !isEnsAddressLoading &&
-        !isEstimationInProcess
+        transaction.to
+        && !isSyncing
+        && !ensError
+        && !isEnsAddressLoading
+        && !isEstimationInProcess
       );
     },
   },

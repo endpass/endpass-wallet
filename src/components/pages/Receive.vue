@@ -1,5 +1,8 @@
 <template>
-  <div v-if="address" class="app-page receive-page">
+  <div
+    v-if="address"
+    class="app-page receive-page"
+  >
     <div class="section">
       <div class="container">
         <account-wallet-card
@@ -35,7 +38,10 @@
             <h2 class="card-header-title">Incoming Payment History</h2>
           </div>
           <div class="card-content">
-            <ul v-if="incomingTransactions.length" class="transactions">
+            <ul
+              v-if="incomingTransactions.length"
+              class="transactions"
+            >
               <li
                 v-for="transaction in incomingTransactions"
                 :key="transaction.hash"

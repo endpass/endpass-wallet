@@ -1,12 +1,14 @@
 <template>
   <base-page class="settings-page">
-    <template slot="title">Settings</template>
+    <template
+      slot="title"
+    >Settings</template>
 
     <v-form
       id="save-settings"
+      :is-form-valid="isFormValid"
       class="save-settings"
       @submit="updateSettings"
-      :is-form-valid="isFormValid"
     >
       <v-input
         v-if="isDefaultIdentity"
@@ -29,7 +31,6 @@
         data-test="select-fiat"
         @input="updateSettings"
       />
-
     </v-form>
     <two-factor-auth-settings v-if="isDefaultIdentity" />
     <change-password-settings v-if="isDefaultIdentity" />

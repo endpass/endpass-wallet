@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Send render should not render any modals by default 1`] = `
+<div class="app-page send-page">
+  <div class="section is-narrow">
+    <div class="container is-narrow">
+      <div class="card app-card main-app-card">
+        <div class="card-header">
+          <h1 class="card-header-title">Send ETH</h1>
+        </div>
+        <div class="card-content">
+          <transaction-form-stub transaction="[object Object]"></transaction-form-stub>
+          <!---->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+  <!---->
+</div>
+`;
+
+exports[`Send render should render password modal if transaction confirmed 1`] = `
+<div class="app-page send-page">
+  <div class="section is-narrow">
+    <div class="container is-narrow">
+      <div class="card app-card main-app-card">
+        <div class="card-header">
+          <h1 class="card-header-title">Send ETH</h1>
+        </div>
+        <div class="card-content">
+          <transaction-form-stub transaction="[object Object]"></transaction-form-stub>
+          <!---->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+  <!---->
+</div>
+`;
+
+exports[`Send render should render transaction hash if it not empty 1`] = `
+<div class="app-page send-page">
+  <div class="section is-narrow">
+    <div class="container is-narrow">
+      <div class="card app-card main-app-card">
+        <div class="card-header">
+          <h1 class="card-header-title">Send ETH</h1>
+        </div>
+        <div class="card-content">
+          <transaction-form-stub transaction="[object Object]"></transaction-form-stub>
+          <div data-test="transaction-status" class="transaction-status message is-success">
+            <div class="message-header">
+              <p>Transaction Sent!</p>
+            </div>
+            <div class="message-body">
+              <p>
+                Your transaction has been broadcast to the network. It may
+                take a few minutes before the transaction is confirmed.
+              </p>
+              <p class="label">Transaction Id</p>
+              <p class="code">0x0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+  <!---->
+</div>
+`;
+
+exports[`Send render should render transaction modal if transaction waiting confirm 1`] = `
+<div class="app-page send-page">
+  <div class="section is-narrow">
+    <div class="container is-narrow">
+      <div class="card app-card main-app-card">
+        <div class="card-header">
+          <h1 class="card-header-title">Send ETH</h1>
+        </div>
+        <div class="card-content">
+          <transaction-form-stub transaction="[object Object]"></transaction-form-stub>
+          <!---->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+  <!---->
+</div>
+`;

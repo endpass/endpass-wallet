@@ -17,8 +17,7 @@
         v-else
         class="help is-danger"
       >
-        Unable to load suggested gas price, please set gas price
-        manually.
+        Unable to load suggested gas price, please set gas price manually.
       </p>
     </div>
   </div>

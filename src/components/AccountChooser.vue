@@ -1,5 +1,8 @@
 <template>
-  <div class="account-chooser" data-test="account-chooser">
+  <div
+    class="account-chooser"
+    data-test="account-chooser"
+  >
     <div class="field">
       <vue-multiselect
         ref="select"
@@ -17,11 +20,27 @@
         <span slot="noResult">
           {{ noResultLabel }}
         </span>
-        <span slot="singleLabel" slot-scope="props" class="multiselect-single">
-          <account :class="singleClass" :address="value" :size="width" />
+        <span
+          slot="singleLabel"
+          slot-scope="props"
+          class="multiselect-single"
+        >
+          <account
+            :class="singleClass"
+            :address="value"
+            :size="width"
+          />
         </span>
-        <span slot="option" slot-scope="props" class="multiselect-option">
-          <account :class="optionClass" :address="props.option" :size="width" />
+        <span
+          slot="option"
+          slot-scope="props"
+          class="multiselect-option"
+        >
+          <account
+            :class="optionClass"
+            :address="props.option"
+            :size="width"
+          />
         </span>
       </vue-multiselect>
     </div>

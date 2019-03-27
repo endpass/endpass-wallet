@@ -1,12 +1,20 @@
 <template lang="html">
   <div class="new-account-modal">
     <v-modal @close="close">
-      <template slot="header">Create New Address</template>
+      <template
+        slot="header"
+      >Create New Address</template>
 
       <div v-if="!isAccountCreated">
-        <p class="subtitle">You currently have
-        <strong>{{ Object.keys(wallets).length }}</strong> active addresses in your wallet.</p>
-        <p class="subtitle">Click the button below to create or import an additional address you can use to receive Ethereum and tokens.</p>
+        <p class="subtitle">
+          You currently have
+          <strong>{{ Object.keys(wallets).length }}</strong> active addresses in
+          your wallet.
+        </p>
+        <p class="subtitle">
+          Click the button below to create or import an additional address you
+          can use to receive Ethereum and tokens.
+        </p>
       </div>
       <div v-else>
         <p class="subtitle">New Address Created</p>
@@ -26,12 +34,12 @@
             <p>Private Key</p>
           </div>
           <div class="message-body">
-            <p class="bold">Save this for your records and DO NOT share it
-            with anyone!</p>
+            <p class="bold">
+              Save this for your records and DO NOT share it with anyone!
+            </p>
             <p class="code">{{ privateKey }}</p>
           </div>
         </div>
-
       </div>
 
       <div
@@ -45,10 +53,11 @@
             class-name="is-primary is-medium"
           >Create address</v-button>
         </v-form>
-        <v-form :isFormValid="true" @submit="importNewAccount">
-          <v-button
-            class-name="is-primary is-medium"
-          >Import address</v-button>
+        <v-form
+          :is-form-valid="true"
+          @submit="importNewAccount"
+        >
+          <v-button class-name="is-primary is-medium">Import address</v-button>
         </v-form>
       </div>
     </v-modal>
@@ -129,5 +138,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

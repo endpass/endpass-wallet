@@ -1,9 +1,9 @@
 <template>
   <div>
     <v-form
+      :is-form-valid="isFormValid"
       data-test="import-json-form"
       @submit="togglePasswordModal"
-      :isFormValid="isFormValid"
     >
       <div class="field">
         <div class="file">
@@ -33,18 +33,20 @@
         <p
           v-show="errors.has('fileName')"
           class="help is-danger"
-        >{{ errors.first('fileName') }}</p>
+        >
+          {{ errors.first('fileName') }}
+        </p>
       </div>
 
       <v-password
+        v-validate="'required|min:8'"
         id="jsonKeystorePassword"
         key="jsonKeystorePasswordUnique"
         v-model="jsonKeystorePassword"
+        :error="errors.first('jsonKeystorePassword')"
         label="V3 JSON keystore password"
         name="jsonKeystorePassword"
         data-vv-name="jsonKeystorePassword"
-        v-validate="'required|min:8'"
-        :error="errors.first('jsonKeystorePassword')"
         data-vv-as="password"
         aria-describedby="jsonKeystorePassword"
         placeholder="V3 JSON keystore password"
@@ -54,9 +56,9 @@
 
       <v-button
         :loading="isCreating"
+        :disabled="!isFormValid"
         class-name="is-primary is-cta"
         data-test="submit-import"
-        :disabled="!isFormValid"
       >
         Import
       </v-button>
@@ -66,7 +68,8 @@
       v-if="isPasswordModal"
       @close="togglePasswordModal"
       @confirm="handlePasswordConfirm"
-    >The wallet password will be used for operations on the imported wallet</password-modal>
+    >The wallet password will be used for operations on the imported
+    wallet</password-modal>
   </div>
 </template>
 
@@ -165,5 +168,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>
