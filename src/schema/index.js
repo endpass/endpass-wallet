@@ -8,7 +8,7 @@ import identitySchemas from './identity';
 const makeValidator = (schema) => {
   const validator = ajv.compile(schema);
 
-  return (data, isOnlyLog = ENV.isProduction) => {
+  return (data, isOnlyLog = ENV.VUE_APP_IS_PRODUCTION) => {
     if (!validator(data)) {
       /* eslint-disable-next-line no-console */
       console.warn('Schema validation error', {

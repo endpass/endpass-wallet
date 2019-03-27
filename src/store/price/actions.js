@@ -42,7 +42,7 @@ const updatePrice = async ({ commit, getters, dispatch }) => {
 const subscribeOnPriceUpdates = ({ commit, dispatch }) => {
   const intervalId = setInterval(() => {
     dispatch('updatePrice');
-  }, ENV.priceUpdateInterval);
+  }, ENV.VUE_APP_PRICE_UPDATE_INTERVAL);
   commit(SET_INTERVAL_ID, intervalId);
 };
 

@@ -251,7 +251,7 @@ export default {
   data: () => ({
     navMenuActive: false,
     newAccountModalOpen: false,
-    dappBrowserUrl: ENV.dappBrowserUrl,
+    dappBrowserUrl: ENV.VUE_APP_DAPP_BROWSER_URL,
   }),
 
   computed: {

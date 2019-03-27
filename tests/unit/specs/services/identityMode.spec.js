@@ -17,7 +17,7 @@ describe('Identity mode service', () => {
   });
 
   describe('setIdentityMode', () => {
-    const url = ENV.identityAPIUrl;
+    const url = ENV.VUE_APP_IDENTITY_API_URL;
     const type = IDENTITY_MODE.CUSTOM;
     const mode = { type, serverUrl: url };
 
@@ -108,7 +108,7 @@ describe('Identity mode service', () => {
     it('should make correct request', async () => {
       expect.assertions(1);
 
-      axiosMock.onGet(url).reply(config => {
+      axiosMock.onGet(url).reply((config) => {
         expect(config.url).toBe(url);
         return [200, successResp];
       });

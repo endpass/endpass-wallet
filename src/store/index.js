@@ -32,7 +32,7 @@ const store = new Vuex.Store({
     connectionStatus,
     user,
   },
-  strict: !ENV.isProduction,
+  strict: !ENV.VUE_APP_IS_PRODUCTION,
   mutations,
   actions,
   plugins: [web3Plugin],

@@ -142,7 +142,9 @@ describe('Accounts getters', () => {
       expect(Bip39.mnemonicToSeed).toHaveBeenCalledWith(mnemonic);
 
       expect(HDKey.derivePath).toHaveBeenCalledTimes(1);
-      expect(HDKey.derivePath).toHaveBeenCalledWith(ENV.hdKeyMnemonic.path);
+      expect(HDKey.derivePath).toHaveBeenCalledWith(
+        ENV.VUE_APP_HD_KEY_MNEMONIC_PATH,
+      );
 
       expect(hdWallet).toEqual(returnedWallet);
     });

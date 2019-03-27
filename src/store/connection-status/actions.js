@@ -30,7 +30,7 @@ const subscribeOnSyncStatus = async ({ getters, commit, dispatch }) => {
       commit(SET_WEB3_CONNECTION_STATUS, true);
       setTimeout(() => {
         dispatch('subscribeOnSyncStatus');
-      }, ENV.blockUpdateInterval);
+      }, ENV.VUE_APP_BLOCK_UPDATE_INTERVAL);
     } else {
       dispatch('subscribeOnSyncStatus');
     }
@@ -39,7 +39,7 @@ const subscribeOnSyncStatus = async ({ getters, commit, dispatch }) => {
     dispatch('errors/emitError', e, { root: true });
     setTimeout(() => {
       dispatch('subscribeOnSyncStatus');
-    }, ENV.blockUpdateInterval);
+    }, ENV.VUE_APP_BLOCK_UPDATE_INTERVAL);
   }
 };
 
