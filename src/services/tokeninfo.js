@@ -8,13 +8,13 @@ export default {
 
   // Get list of all tokens with infos
   _getTokens() {
-    return http.get(`${ENV.tokenInfoAPIUrl}/tokens`).then(resp => resp.data);
+    return http.get(`${ENV.VUE_APP_TOKEN_INFO_API_URL}/tokens`).then(resp => resp.data);
   },
   // formats a token
   _parseToken(token) {
     return {
       ...token,
-      logo: token.logo ? `${ENV.tokenImageUrl}${token.logo}` : '',
+      logo: token.logo ? `${ENV.VUE_APP_TOKEN_IMAGE_URL}${token.logo}` : '',
     };
   },
   _checkAddress(token) {

@@ -1,20 +1,19 @@
-const utils = require('@endpass/utils/build');
+const buildUtils = require('@endpass/utils/build');
+const objectUtils = require('@endpass/utils/objects');
+
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const getEnv = require('./env/getEnv');
-
-const { NODE_ENV, LOCAL_MODE } = process.env;
-const ENV = getEnv(NODE_ENV, LOCAL_MODE);
-const gitCommitHash = utils.getCommitHash();
+const gitCommitHash = buildUtils.getCommitHash();
 const { mode } = process.VUE_CLI_SERVICE;
 
-console.log('ENV', ENV);
+console.log('ENV', process.env);
+const ENV = objectUtils.parseObjectProperties(process.env, 'VUE_APP');
 
 module.exports = {
   lintOnSave: false,
 
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     const svgRule = config.module.rule('svg');
 
     svgRule.uses.clear();
@@ -25,7 +24,7 @@ module.exports = {
   css: {
     loaderOptions: {
       sass: {
-        data: `@import "./src/css/_settings.scss";`,
+        data: '@import "./src/css/_settings.scss";',
       },
     },
   },
@@ -34,9 +33,8 @@ module.exports = {
     const config = {
       plugins: [
         new webpack.DefinePlugin({
-          ENV: JSON.stringify(ENV),
           GIT_COMMIT_HASH: JSON.stringify(gitCommitHash),
-          'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
+          ENV: JSON.stringify(ENV),
         }),
         new HtmlWebpackPlugin({
           filename: './index.html',
@@ -67,17 +65,17 @@ module.exports = {
 
   devServer: {
     proxy: {
-      [ENV.tokenInfoAPIUrl]: {
+      [process.env.VUE_APP_TOKEN_INFO_API_URL]: {
         target: 'https://tokeninfo-dev.endpass.com',
         pathRewrite: {
-          [ENV.tokenInfoAPIUrl]: '/api/v1',
+          [process.env.VUE_APP_TOKEN_INFO_API_URL]: '/api/v1',
         },
         changeOrigin: true,
       },
-      [ENV.cryptoDataAPIUrl]: {
+      [process.env.VUE_APP_CRYPTODATA_API_URL]: {
         target: 'https://cryptodata-dev.endpass.com',
         pathRewrite: {
-          [ENV.cryptoDataAPIUrl]: '/api/v1.1',
+          [process.env.VUE_APP_CRYPTODATA_API_URL]: '/api/v1.1',
         },
         changeOrigin: true,
       },

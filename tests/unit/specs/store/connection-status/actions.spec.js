@@ -10,7 +10,8 @@ import {
 jest.useFakeTimers();
 
 describe('connection-status actions', () => {
-  let commit, dispatch, state, getters;
+  let commit; let dispatch; let state; let
+    getters;
   describe('updateApiErrorStatus', () => {
     const payload = {
       id: 1,
@@ -86,20 +87,20 @@ describe('connection-status actions', () => {
       expect(setTimeout).toHaveBeenCalledTimes(1);
       expect(setTimeout).toHaveBeenLastCalledWith(
         expect.any(Function),
-        ENV.blockUpdateInterval,
+        ENV.VUE_APP_BLOCK_UPDATE_INTERVAL,
       );
       jest.runAllTimers();
       expect(dispatch).toHaveBeenCalledWith('subscribeOnSyncStatus');
     });
-    //impossible to test with async/await ?
-    it("shouldn't set syncing status and web3 connection statuses if provider have changed and update subscribtion", done => {
+    // impossible to test with async/await ?
+    it("shouldn't set syncing status and web3 connection statuses if provider have changed and update subscribtion", (done) => {
       getters.eth.isSyncing.mockResolvedValueOnce(false);
       actions.subscribeOnSyncStatus({ commit, dispatch, getters }).then(() => {
         expect(commit).toHaveBeenCalledTimes(0);
         expect(setTimeout).toHaveBeenCalledTimes(1);
         expect(setTimeout).toHaveBeenLastCalledWith(
           expect.any(Function),
-          ENV.blockUpdateInterval,
+          ENV.VUE_APP_BLOCK_UPDATE_INTERVAL,
         );
         jest.runAllTimers();
         expect(dispatch).toHaveBeenCalledWith('subscribeOnSyncStatus');
@@ -116,7 +117,7 @@ describe('connection-status actions', () => {
       expect(commit).toHaveBeenCalledWith(SET_WEB3_CONNECTION_STATUS, false);
       expect(setTimeout).toHaveBeenLastCalledWith(
         expect.any(Function),
-        ENV.blockUpdateInterval,
+        ENV.VUE_APP_BLOCK_UPDATE_INTERVAL,
       );
       expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'errors/emitError', err, {

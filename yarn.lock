@@ -855,10 +855,10 @@
     lodash "^4.17.11"
     node-notifier "^5.4.0"
 
-"@endpass/utils@^1.2.3", "@endpass/utils@^1.3.3":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.3.3.tgz#dc81ad4eda39df6f26456e286bfaa7835dc377b9"
-  integrity sha512-YtgOPcvmT9w+ycLuZSPKBT7ptiEKVcs1vlinPDPAsJTimTz6ztnMEWmfJxfjzQicgVXNVufM2vT25UD0dVYyAQ==
+"@endpass/utils@^1.2.3", "@endpass/utils@^1.3.4":
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.3.4.tgz#f83cb2cd434f1c878e3c91f68ae4b90a47710416"
+  integrity sha512-EdHncOJKu0Ulufz9Fy9BtzT+ShOODOTb0l/dnIusuzM1IRLwugewNQlUtzIKEk/i+xnZ3elfHkGrt4Gwckvt3w==
   dependencies:
     bs58check "^2.1.2"
     dayjs "^1.7.8"

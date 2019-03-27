@@ -213,7 +213,9 @@ export default {
       });
 
       if (!success) {
-        throw new Error(`POST ${ENV.identityAPIUrl}/settings/otp: ${message}`);
+        throw new Error(
+          `POST ${ENV.VUE_APP_IDENTITY_API_URL}/settings/otp: ${message}`,
+        );
       }
 
       return { success };
@@ -238,7 +240,7 @@ export default {
 
       if (!success) {
         throw new Error(
-          `DELETE ${ENV.identityAPIUrl}/settings/otp: ${message}`,
+          `DELETE ${ENV.VUE_APP_IDENTITY_API_URL}/settings/otp: ${message}`,
         );
       }
 
@@ -262,7 +264,7 @@ export default {
 
       if (!success) {
         throw new Error(
-          `GET ${ENV.identityAPIUrl}/recovery-password: ${message}`,
+          `GET ${ENV.VUE_APP_IDENTITY_API_URL}/recovery-password: ${message}`,
         );
       }
 
@@ -290,7 +292,7 @@ export default {
 
       if (!success) {
         throw new Error(
-          `POST ${ENV.identityAPIUrl}/recovery-password: ${message}`,
+          `POST ${ENV.VUE_APP_IDENTITY_API_URL}/recovery-password: ${message}`,
         );
       }
 

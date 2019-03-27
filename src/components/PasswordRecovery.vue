@@ -2,8 +2,8 @@
   <div>
     <v-form
       :is-form-valid="isFormValid"
-      @submit="toggleConfirmModal"
       data-test="password-recovery-form"
+      @submit="toggleConfirmModal"
     >
       <label class="label">Password Recovery</label>
       <v-input

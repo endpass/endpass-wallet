@@ -18,7 +18,7 @@ const createHandlerResponseError = storeInstance => (error) => {
 
   if (
     (!response || response.status === 401)
-    && config.url.includes(ENV.identityAPIUrl)
+    && config.url.includes(ENV.VUE_APP_IDENTITY_API_URL)
   ) {
     const isLoggedIn = storeLink.getters['user/isLoggedIn'];
 
@@ -45,7 +45,7 @@ const createHandleResponseSuccess = storeInstance => (response) => {
   const ignorePath = ignorePaths.some(path => config.url.includes(path));
   if (
     status === 200
-    && config.url.includes(ENV.identityAPIUrl)
+    && config.url.includes(ENV.VUE_APP_IDENTITY_API_URL)
     && !ignorePath
   ) {
     storeLink.dispatch({

@@ -7,7 +7,7 @@ import {
   STOP_LOADING,
   SET_INTERVAL_ID,
 } from '@/store/price/mutations-types';
-import { price, priceMulti, fiatCurrency } from 'fixtures/price';
+import { priceMulti, fiatCurrency } from 'fixtures/price';
 
 jest.useFakeTimers();
 
@@ -79,7 +79,7 @@ describe('price actions', () => {
 
       expect(setInterval).toHaveBeenCalledWith(
         expect.any(Function),
-        ENV.priceUpdateInterval,
+        ENV.VUE_APP_PRICE_UPDATE_INTERVAL,
       );
       expect(dispatch).toHaveBeenCalledWith('updatePrice');
       expect(commit.mock.calls[0][0]).toBe(SET_INTERVAL_ID);
