@@ -53,7 +53,11 @@ jest.mock('web3', () => {
       getId: jest.fn().mockResolvedValue(3),
     },
     estimateGas: jest.fn(),
-    accounts: {},
+    accounts: {
+      sign: jest.fn().mockResolvedValue({
+        signature: 'signature',
+      }),
+    },
     Contract,
     sendSignedTransaction: jest.fn(() => sendEvent),
     getBalance: jest.fn().mockResolvedValue('1'),

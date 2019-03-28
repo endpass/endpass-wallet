@@ -4,16 +4,15 @@ import {
   userService,
   localSettingsService,
 } from '@/services';
-import Bip39 from 'bip39';
-import HDKey from 'ethereumjs-wallet/hdkey';
 import EthWallet from 'ethereumjs-wallet';
-import { toChecksumAddress } from 'web3-utils';
-import { Wallet, NotificationError } from '@/class';
+import { toChecksumAddress, bytesToHex } from 'web3-utils';
+import { Wallet, NotificationError, web3 } from '@/class';
 import { keystore } from '@endpass/utils';
 import {
   CHANGE_INIT_STATUS,
   SET_ADDRESS,
   ADD_WALLET,
+  REMOVE_WALLETS,
   SET_HD_KEY,
   SET_BALANCE,
   SET_HD_CACHE_BY_TYPE,
@@ -147,11 +146,9 @@ const saveWallet = async ({ dispatch }, { json, info = {} }) => {
   await dispatch('commitWallet', { wallet: json });
 };
 
-const addHdWallet = async ({ dispatch }, { key, password }) => {
+const addHdWallet = async ({ dispatch, getters }, { key, password }) => {
   try {
-    const seed = Bip39.mnemonicToSeed(key);
-    const hdKey = HDKey.fromMasterSeed(seed);
-    const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
+    const hdWallet = getters.getHdWalletBySeed(key);
     // Encrypt extended private key
     const v3KeyStore = keystore.encryptHDWallet(
       password,
@@ -174,9 +171,7 @@ const addHdWallet = async ({ dispatch }, { key, password }) => {
 
 const addHdChildWallets = async (
   { dispatch, getters },
-  {
-    type, password, address, index,
-  },
+  { type, password, address, index },
 ) => {
   try {
     const v3KeyStore = getters.cachedHdV3KeyStoreByType(type);
@@ -200,11 +195,12 @@ const addHdChildWallets = async (
   }
 };
 
-const addHdPublicWallet = async ({ commit, dispatch }, { key, password }) => {
+const addHdPublicWallet = async (
+  { commit, dispatch, getters },
+  { key, password },
+) => {
   try {
-    const seed = Bip39.mnemonicToSeed(key);
-    const hdKey = HDKey.fromMasterSeed(seed);
-    const hdWallet = hdKey.derivePath(ENV.hdKeyMnemonic.path);
+    const hdWallet = getters.getHdWalletBySeed(key);
 
     const v3KeyStore = keystore.encryptHDWallet(
       password,
@@ -236,7 +232,9 @@ const addHdPublicWallet = async ({ commit, dispatch }, { key, password }) => {
 const updateWallets = async ({ dispatch }, { wallets }) => {
   try {
     const { success } = await userService.updateAccounts(wallets);
-    const promises = Object.values(wallets).map(wallet => dispatch('commitWallet', { wallet }));
+    const promises = Object.values(wallets).map(wallet =>
+      dispatch('commitWallet', { wallet }),
+    );
 
     await Promise.all(promises);
 
@@ -315,11 +313,12 @@ const setUserWallets = async ({ commit, dispatch, rootState }) => {
     if (isEmpty(accounts)) return;
 
     const localSettings = localSettingsService.load(rootState.user.email);
-    const isAccountExist = localSettings
-      && localSettings.activeAccount
-      && accounts.find(({ address }) => address === localSettings.activeAccount);
+    const isAccountExist =
+      localSettings &&
+      localSettings.activeAccount &&
+      accounts.find(({ address }) => address === localSettings.activeAccount);
 
-    accounts.forEach((account) => {
+    accounts.forEach(account => {
       commit(ADD_WALLET, new Wallet(account));
     });
 
@@ -383,13 +382,16 @@ const decryptAccountHdWallet = async ({ state }, password) => {
   return keystore.decryptHDWallet(password, state.hdKey);
 };
 
-const decryptAccountWallets = async ({ state }, password) => Object.values(state.wallets)
-  .filter(item => !item.isPublic && !item.isHardware)
-  .map(item => keystore.decryptWallet(password, item.v3));
+const decryptAccountWallets = async ({ state }, password) =>
+  Object.values(state.wallets)
+    .filter(item => !item.isPublic && !item.isHardware)
+    .map(item => keystore.decryptWallet(password, item.v3));
 
-const encryptHdWallet = async (ctx, { password, hdWallet }) => (hdWallet ? keystore.encryptHDWallet(password, hdWallet, ENV.kdfParams) : null);
+const encryptHdWallet = async (ctx, { password, hdWallet }) =>
+  hdWallet ? keystore.encryptHDWallet(password, hdWallet, ENV.kdfParams) : null;
 
-const encryptWallets = async (ctx, { password, wallets = [] }) => wallets.map(item => keystore.encryptWallet(password, item, ENV.kdfParams));
+const encryptWallets = async (ctx, { password, wallets = [] }) =>
+  wallets.map(item => keystore.encryptWallet(password, item, ENV.kdfParams));
 
 const reencryptAllAccountWallets = async (
   { dispatch },
@@ -439,6 +441,74 @@ const updateWalletsWithNewPassword = async (
   });
 
   return res;
+};
+
+const recoverWalletsPassword = async (
+  { state, dispatch, commit, getters },
+  { seedPhrase, password },
+) => {
+  try {
+    if (!state.hdKey) {
+      throw new NotificationError({
+        title: 'Error recovering wallet password',
+        text: 'Main HD wallet not found.',
+        type: 'is-danger',
+      });
+    }
+
+    const hdWallet = getters.getHdWalletBySeed(seedPhrase);
+    const hdWalletAddress = hdWallet.publicExtendedKey();
+
+    if (state.hdKey.address !== hdWalletAddress) {
+      throw new NotificationError({
+        title: 'Error recovering wallet password',
+        text: 'Incorrect seed phrase.',
+        type: 'is-danger',
+      });
+    }
+
+    const passswordRecoveryIdentifier = await userService.getPasswortRecoveryIdentifier();
+    const wallet = hdWallet.deriveChild(0).getWallet();
+    const privateKey = bytesToHex(wallet.getPrivateKey());
+    const { signature } = await web3.eth.accounts.sign(
+      passswordRecoveryIdentifier,
+      privateKey,
+    );
+    const encryptedHdWallet = await dispatch('encryptHdWallet', {
+      hdWallet,
+      password,
+    });
+    const encryptedWallets = await dispatch('encryptWallets', {
+      wallets: [wallet],
+      password,
+    });
+    const { success } = await userService.recoverWalletsPassword({
+      signature,
+      main: {
+        address: hdWalletAddress,
+        keystore: encryptedHdWallet,
+      },
+      standart: {
+        address: toChecksumAddress(bytesToHex(wallet.getAddress())),
+        keystore: encryptedWallets[0],
+      },
+    });
+
+    if (success) {
+      const successMessage = new NotificationError({
+        title: 'The password is successfully recovered',
+        text:
+          'All keystore wallets have been deleted. They can be restored from a private key or seed phrase on the import page.',
+        type: 'is-success',
+      });
+
+      commit(REMOVE_WALLETS);
+      await Promise.all([dispatch('setUserHdKey'), dispatch('setUserWallets')]);
+      await dispatch('errors/emitError', successMessage, { root: true });
+    }
+  } catch (error) {
+    await dispatch('errors/emitError', error, { root: true });
+  }
 };
 
 const saveToCache = async ({ commit }, { xpub, walletType }) => {
@@ -513,6 +583,7 @@ export default {
   encryptWallets,
   reencryptAllAccountWallets,
   updateWalletsWithNewPassword,
+  recoverWalletsPassword,
   updateAccountSettings,
   init,
 };

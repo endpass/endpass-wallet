@@ -2,6 +2,10 @@ export const successResponse = {
   success: true,
 };
 
+export const errorResponse = {
+  success: false,
+};
+
 export const settings = {
   id: 'c23809bd-bb68-44a0-946c-40823dc4b80e',
   email: 'user@example.com',
@@ -48,7 +52,14 @@ export const networks = [
   },
 ];
 
+export const getPasswordRecoveryIdentifierResponse = {
+  ...successResponse,
+  message: '71d45eb3-480b-4034-9278-9a17eed20d49',
+};
+
 export default {
   successResponse,
+  errorResponse,
   settings,
+  getPasswordRecoveryIdentifierResponse,
 };

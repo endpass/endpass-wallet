@@ -316,5 +316,25 @@ describe('Schema validators', () => {
         );
       });
     });
+
+    describe('validatePasswordRecoveryIdentifier', () => {
+      it('should validate data', () => {
+        const data = 'password recovery identifier';
+
+        expect(
+          identityValidator.validatePasswordRecoveryIdentifier(data),
+        ).toEqual(data);
+      });
+
+      it('should throw error when data is invalid', () => {
+        const invalidDataArray = [true, null, 1, undefined, {}];
+
+        invalidDataArray.forEach(invalidData =>
+          expect(() =>
+            identityValidator.validateUserNetwork(invalidData),
+          ).toThrow(expect.any(Error)),
+        );
+      });
+    });
   });
 });

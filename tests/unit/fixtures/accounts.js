@@ -2,6 +2,28 @@
 export const address = '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c';
 export const addressHdChild = '0xC2013cAf34b224572B66F4d44313E73D437EB6E3';
 export const checksumAddress = '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c';
+export const addressBytes = [
+  177,
+  74,
+  181,
+  62,
+  56,
+  218,
+  28,
+  23,
+  47,
+  135,
+  125,
+  188,
+  109,
+  101,
+  228,
+  161,
+  176,
+  71,
+  76,
+  60,
+];
 
 // List of account addresses
 export const addresses = [

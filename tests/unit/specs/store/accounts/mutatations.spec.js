@@ -4,6 +4,7 @@ import {
   CHANGE_INIT_STATUS,
   SET_ADDRESS,
   ADD_WALLET,
+  REMOVE_WALLETS,
   SET_HD_KEY,
   SET_BALANCE,
   SET_HD_CACHE_BY_TYPE,
@@ -38,6 +39,24 @@ describe('Accounts mutations', () => {
 
       expect(state.wallets).toEqual({
         [v3.address]: v3,
+      });
+    });
+  });
+
+  describe(REMOVE_WALLETS, () => {
+    it('should remove all wallets', () => {
+      const state = {
+        wallets: {
+          '0xaddress': {},
+        },
+        hdKey: {},
+      };
+
+      mutations[REMOVE_WALLETS](state);
+
+      expect(state).toEqual({
+        wallets: {},
+        hdKey: null,
       });
     });
   });

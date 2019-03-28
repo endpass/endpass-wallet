@@ -664,4 +664,150 @@ describe('User service', () => {
       }
     });
   });
+
+  describe('getPasswortRecoveryIdentifier', () => {
+    const url = `${ENV.identityAPIUrl}/recovery-password`;
+    const passwordRecoveryIdentifier = 'password recovery identifier';
+    const successIdentifierResponse = {
+      ...successResponse,
+      message: passwordRecoveryIdentifier,
+    };
+    const expectedError = new NotificationError({
+      title: 'Error recovering wallet password',
+      text:
+        'An error occurred while recovering wallet password. Please try again.',
+      type: 'is-danger',
+    });
+    const errorMessage = 'server error';
+
+    it('should make correct request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onGet(url).reply(config => {
+        expect(config.url).toBe(url);
+
+        return [200, successIdentifierResponse];
+      });
+
+      await userService.getPasswortRecoveryIdentifier();
+    });
+
+    it('should handle successful GET /recovery-password request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onGet(url).reply(200, successIdentifierResponse);
+
+      const resp = await userService.getPasswortRecoveryIdentifier();
+
+      expect(resp).toEqual(successIdentifierResponse.message);
+    });
+
+    it('should handle failed GET /recovery-password request', async () => {
+      expect.assertions(1);
+
+      const error = new NotificationError({
+        ...expectedError,
+        message: `GET ${url}: ${errorMessage}`,
+      });
+
+      axiosMock
+        .onGet(url)
+        .reply(200, { success: false, message: errorMessage });
+
+      try {
+        await userService.getPasswortRecoveryIdentifier();
+      } catch (receivedError) {
+        expect(receivedError).toEqual(error);
+      }
+    });
+
+    it('should handle rejected GET /recovery-password request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onGet(url).reply(500, {});
+
+      try {
+        await userService.getPasswortRecoveryIdentifier();
+      } catch (receivedError) {
+        expect(receivedError.text).toEqual(expectedError.text);
+      }
+    });
+  });
+
+  describe('recoverWalletsPassword', () => {
+    const url = `${ENV.identityAPIUrl}/recovery-password`;
+    const passwordRecoveryIdentifier = 'password recovery identifier';
+    const signature = 'signature';
+    const main = {};
+    const standart = {};
+    const successIdentifierResponse = {
+      ...successResponse,
+      message: passwordRecoveryIdentifier,
+    };
+    const expectedError = new NotificationError({
+      title: 'Error recovering wallet password',
+      text:
+        'An error occurred while recovering wallet password. Please try again.',
+      type: 'is-danger',
+    });
+    const errorMessage = 'server error';
+
+    it('should make correct request', async () => {
+      expect.assertions(2);
+
+      axiosMock.onPost(url).reply(config => {
+        expect(config.url).toBe(url);
+        expect(config.data).toBe(JSON.stringify({ signature, main, standart }));
+
+        return [200, successResponse];
+      });
+
+      await userService.recoverWalletsPassword({ signature, main, standart });
+    });
+
+    it('should handle successful POST /recovery-password request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onPost(url).reply(200, successResponse);
+
+      const resp = await userService.recoverWalletsPassword({
+        signature,
+        main,
+        standart,
+      });
+
+      expect(resp).toEqual(successResponse);
+    });
+
+    it('should handle failed POST /recovery-password request', async () => {
+      expect.assertions(1);
+
+      const error = new NotificationError({
+        ...expectedError,
+        message: `POST ${url}: ${errorMessage}`,
+      });
+
+      axiosMock
+        .onPost(url)
+        .reply(200, { success: false, message: errorMessage });
+
+      try {
+        await userService.recoverWalletsPassword({ signature, main, standart });
+      } catch (receivedError) {
+        expect(receivedError).toEqual(error);
+      }
+    });
+
+    it('should handle rejected GET /recovery-password request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onPost(url).reply(500, {});
+
+      try {
+        await userService.recoverWalletsPassword({ signature, main, standart });
+      } catch (receivedError) {
+        expect(receivedError.text).toEqual(expectedError.text);
+      }
+    });
+  });
 });
