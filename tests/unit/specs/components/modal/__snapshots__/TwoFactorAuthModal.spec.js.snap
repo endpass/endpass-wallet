@@ -57,7 +57,9 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
           <label
             class="label"
           >
-            Verification Code
+            
+    Verification Code
+  
           </label>
            
           <div
@@ -174,7 +176,9 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
           <label
             class="label"
           >
-            Verification Code
+            
+    Verification Code
+  
           </label>
            
           <div
@@ -291,7 +295,9 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
           <label
             class="label"
           >
-            Verification Code
+            
+    Verification Code
+  
           </label>
            
           <div
@@ -408,7 +414,9 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 3`] 
           <label
             class="label"
           >
-            Verification Code
+            
+    Verification Code
+  
           </label>
            
           <div

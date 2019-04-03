@@ -794,12 +794,12 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@endpass/class@^0.9.4":
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.9.4.tgz#bd321f8518ebd4ae0fd535908bfab59d54c179c4"
-  integrity sha512-ReQ1ObeoSzRjt2c52Qlyd3CNBgbh/7zzwTFi3SKCqWJJAUFEqFFe7yWUyW3NGV92do/IdgjSSSngqZzmNjurrA==
+"@endpass/class@^0.10.3":
+  version "0.10.3"
+  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.10.3.tgz#d92c4d3d37dc1249ecfe815a1d657a7b1162e095"
+  integrity sha512-auJYa340yqY9g8nUPKEIvZ+fySda6R7rO7R4RNkqeSNDHrXEhCoLpjQHnvLhtEnvgQqwOllqIMSWWam95oSISQ==
   dependencies:
-    "@endpass/utils" "^1.2.1"
+    "@endpass/utils" "^1.2.3"
     "@ledgerhq/hw-app-eth" "^4.24.0"
     "@ledgerhq/hw-transport-u2f" "^4.24.0"
     bignumber.js "^7.2.1"
@@ -816,12 +816,12 @@
     web3-providers-ws "1.0.0-beta.33"
     web3-utils "1.0.0-beta.33"
 
-"@endpass/connect@0.16.0-beta":
-  version "0.16.0-beta"
-  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.16.0-beta.tgz#27f0cafe2a268e8c192a78e73e53aed9ffb57e4f"
-  integrity sha512-8M66OFP9TRRqSUpvwx1aQ5t8xgtAr1rg8w3KoQhOZ9IJ5SqHj0AstbAjA4kR46Cx19DPQCEkm2o1K5IB/8BJkQ==
+"@endpass/connect@0.17.4-beta":
+  version "0.17.4-beta"
+  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.17.4-beta.tgz#87e5aa5b2ddababf57575ba2f347d59aa726ebf6"
+  integrity sha512-lxIwkQBPVZtWlxO/vxxJbU+kUxXyEEzp5FW0SP/5MZfzwiOR2rz17vFWNgIhICD2s5Bo21gAUasN2wi33cMBMA==
   dependencies:
-    "@endpass/class" "^0.9.4"
+    "@endpass/class" "^0.10.3"
     lodash.get "^4.4.2"
     utility-types "^3.4.1"
     web3-providers-http "1.0.0-beta.33"
@@ -834,10 +834,10 @@
     axios "^0.18.0"
     vue "^2.5.22"
 
-"@endpass/ui@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@endpass/ui/-/ui-0.3.2.tgz#648a5dc5b2cd8559d0022c8c2bb26a08bde26d62"
-  integrity sha512-hJmGAkG8rWbaqyzTZs/lKSXS5NZ5wbChTv4hUj34nVrS34EKIsWfpCU3iMylS4lROAKqVop9m6A3byHW8CDGhg==
+"@endpass/ui@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@endpass/ui/-/ui-0.4.1.tgz#b161bf7f6f75d2fd440bc27d85c973b80026ea3b"
+  integrity sha512-yWovhgS9DBllYO5vIrjLh+PSDGxvJ49nLbj2tQhewGr1JxeEz74LRlu0kpl2+ojjk+9IGk2FM8+MV9g6Gs06Yw==
   dependencies:
     "@endpass/utils" "^1.2.1"
     vue "^2.5.21"
@@ -846,6 +846,19 @@
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.2.1.tgz#3f25df77fad9967b8bfdcbd185cdb1ebdaa78ddb"
   integrity sha512-RbLONPn+2yfT4O3Y9ilNRbFyxHL1bD3NX5zuiSOYFgaffzJwVU7zDWq4vrvw0hXQG6GP4fNRlaEBOQ+ZGQAX1A==
+  dependencies:
+    bs58check "^2.1.2"
+    dayjs "^1.7.8"
+    ethereumjs-wallet "^0.6.2"
+    export-files "^2.1.1"
+    keythereum "^1.0.4"
+    lodash "^4.17.11"
+    node-notifier "^5.4.0"
+
+"@endpass/utils@^1.2.3", "@endpass/utils@^1.3.3":
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.3.3.tgz#dc81ad4eda39df6f26456e286bfaa7835dc377b9"
+  integrity sha512-YtgOPcvmT9w+ycLuZSPKBT7ptiEKVcs1vlinPDPAsJTimTz6ztnMEWmfJxfjzQicgVXNVufM2vT25UD0dVYyAQ==
   dependencies:
     bs58check "^2.1.2"
     dayjs "^1.7.8"
