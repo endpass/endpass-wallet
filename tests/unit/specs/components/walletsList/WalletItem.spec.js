@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import UIComponents from '@endpass/ui';
 
-import WalletItem from '@/components/importWallet/WalletsList/WalletItem';
+import WalletItem from '@/components/walletsList/WalletItem';
 
 const localVue = createLocalVue();
 

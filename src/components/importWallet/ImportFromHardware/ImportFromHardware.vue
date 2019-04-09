@@ -13,7 +13,7 @@
 
 <script>
 import HardwareChooser from './HardwareChooser.vue';
-import WalletsList from '../WalletsList';
+import WalletsList from '@/components/walletsList';
 
 export default {
   name: 'ImportFromHardware',
