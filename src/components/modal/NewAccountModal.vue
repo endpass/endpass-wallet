@@ -66,21 +66,40 @@
       @confirm="confirmPassword"
       @close="togglePasswordModal"
     />
+    <v-modal
+      v-if="isWalletsListModal"
+      @close="closeWalletsListModal"
+    >
+      <template
+        slot="header"
+      >Select Your Address</template>
+      <wallets-list
+        :type="walletType"
+        :auto-load="true"
+        @select="onSelectWallet"
+      />
+    </v-modal>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
 import PasswordModal from '@/components/modal/PasswordModal';
+import WalletsList from '@/components/walletsList';
+import { Wallet } from '@/class';
+
+const WALLET_TYPES = Wallet.getTypes();
 
 export default {
   name: 'NewAccountModal',
   data() {
     return {
-      isAccountCreated: null,
+      isAccountCreated: false,
       isCreatingAccount: false,
       privateKey: '',
       isPasswordModal: false,
+      isWalletsListModal: false,
+      walletType: WALLET_TYPES.HD_MAIN,
     };
   },
   computed: {
@@ -110,6 +129,7 @@ export default {
     },
     async confirmPassword(password) {
       this.togglePasswordModal();
+      this.isWalletsListModal = true;
       this.isCreatingAccount = true;
 
       await new Promise(res => setTimeout(res, 20));
@@ -131,9 +151,15 @@ export default {
     close() {
       this.$emit('close');
     },
+    closeWalletsListModal() {
+      this.isWalletsListModal = false;
+      this.isCreatingAccount = false;
+    },
+    onSelectWallet() {},
   },
   components: {
     PasswordModal,
+    WalletsList,
   },
 };
 </script>

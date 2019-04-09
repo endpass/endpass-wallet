@@ -52,7 +52,7 @@ import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
 import { Wallet } from '@/class';
-import WalletsList from './WalletsList';
+import WalletsList from '@/components/walletsList';
 
 const WALLET_TYPES = Wallet.getTypes();
 

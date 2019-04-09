@@ -6,7 +6,7 @@ import VueRouter from 'vue-router';
 import UIComponents from '@endpass/ui';
 import { wrapShallowMountFactory } from '@/testUtils';
 
-import WalletsList from '@/components/importWallet/WalletsList/WalletsList';
+import WalletsList from '@/components/walletsList/WalletsList';
 import { Wallet } from '@/class';
 
 import { addresses, address } from 'fixtures/accounts';
@@ -228,6 +228,11 @@ describe('WalletsList', () => {
 
         spy.mockRestore();
       });
+    });
+
+    it('should set active address', () => {
+      wrapper.vm.setActiveAddress('foo');
+      expect(wrapper.vm.activeAddress).toBe('foo');
     });
   });
 });

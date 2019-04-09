@@ -75,5 +75,10 @@ describe('NewAccountModal', () => {
       expect(spy).toBeCalled();
       expect(push).toBeCalledWith('import');
     });
+
+    it('should switch modals state', () => {
+      expect(wrapper.vm.isPasswordModal).toBe(false);
+      expect(wrapper.vm.isWalletsListModal).toBe(false);
+    });
   });
 });

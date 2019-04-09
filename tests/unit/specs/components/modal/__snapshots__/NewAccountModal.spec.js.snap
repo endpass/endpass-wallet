@@ -110,5 +110,7 @@ exports[`NewAccountModal render should render component 1`] = `
   </div>
    
   <!---->
+   
+  <!---->
 </div>
 `;

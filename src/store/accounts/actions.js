@@ -156,14 +156,10 @@ const addHdWallet = async ({ dispatch, getters }, { key, password }) => {
   try {
     const hdWallet = getters.getHdWalletBySeed(key);
     // Encrypt extended private key
-    const v3KeyStore = keystore.encryptHDWallet(
-      password,
-      hdWallet,
-      {
-        kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-        n: ENV.VUE_APP_KDF_PARAMS_N,
-      },
-    );
+    const v3KeyStore = keystore.encryptHDWallet(password, hdWallet, {
+      kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
+      n: ENV.VUE_APP_KDF_PARAMS_N,
+    });
     const info = {
       address: v3KeyStore.address,
       type: WALLET_TYPES.HD_MAIN,
@@ -180,9 +176,7 @@ const addHdWallet = async ({ dispatch, getters }, { key, password }) => {
 
 const addHdChildWallets = async (
   { dispatch, getters },
-  {
-    type, password, address, index,
-  },
+  { type, password, address, index },
 ) => {
   try {
     const v3KeyStore = getters.cachedHdV3KeyStoreByType(type);
@@ -216,14 +210,10 @@ const addHdPublicWallet = async (
   try {
     const hdWallet = getters.getHdWalletBySeed(key);
 
-    const v3KeyStore = keystore.encryptHDWallet(
-      password,
-      hdWallet,
-      {
-        kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-        n: ENV.VUE_APP_KDF_PARAMS_N,
-      },
-    );
+    const v3KeyStore = keystore.encryptHDWallet(password, hdWallet, {
+      kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
+      n: ENV.VUE_APP_KDF_PARAMS_N,
+    });
 
     const info = {
       address: v3KeyStore.address,
@@ -249,7 +239,9 @@ const addHdPublicWallet = async (
 const updateWallets = async ({ dispatch }, { wallets }) => {
   try {
     const { success } = await userService.updateAccounts(wallets);
-    const promises = Object.values(wallets).map(wallet => dispatch('commitWallet', { wallet }));
+    const promises = Object.values(wallets).map(wallet =>
+      dispatch('commitWallet', { wallet }),
+    );
 
     await Promise.all(promises);
 
@@ -328,11 +320,12 @@ const setUserWallets = async ({ commit, dispatch, rootState }) => {
     if (isEmpty(accounts)) return;
 
     const localSettings = localSettingsService.load(rootState.user.email);
-    const isAccountExist = localSettings
-      && localSettings.activeAccount
-      && accounts.find(({ address }) => address === localSettings.activeAccount);
+    const isAccountExist =
+      localSettings &&
+      localSettings.activeAccount &&
+      accounts.find(({ address }) => address === localSettings.activeAccount);
 
-    accounts.forEach((account) => {
+    accounts.forEach(account => {
       commit(ADD_WALLET, new Wallet(account));
     });
 
@@ -347,7 +340,7 @@ const setUserWallets = async ({ commit, dispatch, rootState }) => {
 };
 
 const getNextWalletsFromHd = async (
-  { dispatch, getters },
+  { state, dispatch, getters },
   { walletType, ...selectParams },
 ) => {
   const savedXpub = getters.cachedXpubByType(walletType);
@@ -368,6 +361,10 @@ const getNextWalletsFromHd = async (
       break;
     case WALLET_TYPES.HD_PUBLIC:
       proxyWallet = await Wallet.loadProxy(WALLET_PROXY_TYPES.HDProxy);
+      break;
+    case WALLET_TYPES.HD_MAIN:
+      proxyWallet = await Wallet.loadProxy(WALLET_PROXY_TYPES.HDProxy);
+      params.xpub = state.hdKey.address;
       break;
     default:
       throw new NotificationError({
@@ -396,19 +393,26 @@ const decryptAccountHdWallet = async ({ state }, password) => {
   return keystore.decryptHDWallet(password, state.hdKey);
 };
 
-const decryptAccountWallets = async ({ state }, password) => Object.values(state.wallets)
-  .filter(item => !item.isPublic && !item.isHardware)
-  .map(item => keystore.decryptWallet(password, item.v3));
+const decryptAccountWallets = async ({ state }, password) =>
+  Object.values(state.wallets)
+    .filter(item => !item.isPublic && !item.isHardware)
+    .map(item => keystore.decryptWallet(password, item.v3));
 
-const encryptHdWallet = async (ctx, { password, hdWallet }) => (hdWallet ? keystore.encryptHDWallet(password, hdWallet, {
-  kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-  n: ENV.VUE_APP_KDF_PARAMS_N,
-}) : null);
+const encryptHdWallet = async (ctx, { password, hdWallet }) =>
+  hdWallet
+    ? keystore.encryptHDWallet(password, hdWallet, {
+        kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
+        n: ENV.VUE_APP_KDF_PARAMS_N,
+      })
+    : null;
 
-const encryptWallets = async (ctx, { password, wallets = [] }) => wallets.map(item => keystore.encryptWallet(password, item, {
-  kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-  n: ENV.VUE_APP_KDF_PARAMS_N,
-}));
+const encryptWallets = async (ctx, { password, wallets = [] }) =>
+  wallets.map(item =>
+    keystore.encryptWallet(password, item, {
+      kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
+      n: ENV.VUE_APP_KDF_PARAMS_N,
+    }),
+  );
 
 const reencryptAllAccountWallets = async (
   { dispatch },
@@ -461,9 +465,7 @@ const updateWalletsWithNewPassword = async (
 };
 
 const recoverWalletsPassword = async (
-  {
-    state, dispatch, commit, getters,
-  },
+  { state, dispatch, commit, getters },
   { seedPhrase, password },
 ) => {
   try {

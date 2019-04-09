@@ -24,7 +24,7 @@
         :key="address"
         :address="address"
         :is-active="address === activeAddress"
-        @click="activeAddress = address"
+        @click="setActiveAddress(address)"
       />
       <v-pagination @input="changePage" />
       <div class="buttons">
@@ -143,6 +143,10 @@ export default {
       } finally {
         this.isImporting = false;
       }
+    },
+    setActiveAddress(address) {
+      this.activeAddress = address;
+      this.$emit('select', address);
     },
   },
   mounted() {
