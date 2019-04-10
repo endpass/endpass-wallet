@@ -30,18 +30,19 @@ const setAuthorizationStatus = (
 };
 
 const login = async ({ commit, dispatch }) => {
-  const res = await connect.auth(window.location.origin);
-
-  const { type = IDENTITY_MODE.DEFAULT, serverUrl } = res || {};
-
   try {
+    const res = await connect.auth(window.location.origin);
+    const { type = IDENTITY_MODE.DEFAULT, serverUrl } = res || {};
+
     identityModeService.setIdentityMode(type, serverUrl);
     commit(SET_IDENTITY_TYPE, type);
     commit(SET_AUTHORIZATION_STATUS, true);
 
     return dispatch('init', null, { root: true });
-  } catch (e) {
-    return dispatch('errors/emitError', e, { root: true });
+  } catch (err) {
+    if (!err.message.includes('Auth was canceled by user')) {
+      return dispatch('errors/emitError', err, { root: true });
+    }
   }
 };
 
@@ -68,7 +69,8 @@ const logout = async ({ commit, dispatch, getters }) => {
   }
 };
 
-const validateCustomServer = (ctx, { serverUrl }) => identityModeService.validateIdentityServer(serverUrl);
+const validateCustomServer = (ctx, { serverUrl }) =>
+  identityModeService.validateIdentityServer(serverUrl);
 
 const getOtpSettings = async ({ commit, dispatch }) => {
   try {
@@ -119,8 +121,12 @@ const setUserSettings = async ({ commit, dispatch }) => {
     }
 
     if (tokens) {
-      const normalizedTokens = mapValues(tokens, netTokens => netTokens.map(token => Token.getConsistent(token)));
-      const mappedTokens = mapValues(normalizedTokens, netTokens => mapKeys(netTokens, 'symbol'));
+      const normalizedTokens = mapValues(tokens, netTokens =>
+        netTokens.map(token => Token.getConsistent(token)),
+      );
+      const mappedTokens = mapValues(normalizedTokens, netTokens =>
+        mapKeys(netTokens, 'symbol'),
+      );
 
       dispatch('tokens/setUserTokens', mappedTokens, { root: true });
     }
