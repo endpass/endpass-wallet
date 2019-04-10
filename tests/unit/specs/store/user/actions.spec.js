@@ -120,12 +120,12 @@ describe('user actions', () => {
       it('should handle error', async () => {
         expect.assertions(2);
 
-        const error = 'error';
-        commit = jest.fn(() => {
-          throw error;
-        });
+        const error = new Error('error');
+        // commit = jest.fn(() => {
+        //   throw error;
+        // });
 
-        connect.auth = jest.fn().mockResolvedValue(mode);
+        connect.auth = jest.fn().mockRejectedValue(error);
 
         await actions.login({ commit, dispatch });
 
@@ -133,6 +133,18 @@ describe('user actions', () => {
         expect(dispatch).toBeCalledWith('errors/emitError', error, {
           root: true,
         });
+      });
+
+      it('should skip athorization cancel error', async () => {
+        expect.assertions(1);
+
+        const error = new Error('Auth was canceled by user');
+
+        connect.auth = jest.fn().mockRejectedValue(error);
+
+        await actions.login({ commit, dispatch });
+
+        expect(dispatch).not.toBeCalled();
       });
     });
   });
