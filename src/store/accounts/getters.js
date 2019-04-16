@@ -2,6 +2,8 @@ import get from 'lodash/get';
 import { fromWei, hexToBytes } from 'web3-utils';
 import { BigNumber } from 'bignumber.js';
 import { keystore } from '@endpass/utils';
+import Bip39 from 'bip39';
+import HDKey from 'ethereumjs-wallet/hdkey';
 
 const wallet = state => get(state.wallets, state.address);
 
@@ -44,6 +46,13 @@ const cachedHdV3KeyStoreByType = state => (walletType) => {
   return get(cache, 'v3KeyStore');
 };
 
+const getHdWalletBySeed = () => (seedPhrase) => {
+  const seed = Bip39.mnemonicToSeed(seedPhrase);
+  const hdKey = HDKey.fromMasterSeed(seed);
+
+  return hdKey.derivePath(ENV.VUE_APP_HD_KEY_MNEMONIC_PATH);
+};
+
 export default {
   wallet,
   addressBuffer,
@@ -54,4 +63,5 @@ export default {
   isPublicAccount,
   isHardwareAccount,
   balance,
+  getHdWalletBySeed,
 };

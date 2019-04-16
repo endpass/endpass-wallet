@@ -41,8 +41,10 @@
         "ignorePropertyModificationsFor": ["state"]
       }
     ],
-    'import/extensions': ['error', {
-      'js': 'never',
+    "no-shadow": "warn",
+    "consistent-return": "warn",
+    "import/extensions": ["error", {
+      "js": "never"
     }],
     "import/no-unresolved": [
       "error",

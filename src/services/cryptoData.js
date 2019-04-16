@@ -6,7 +6,7 @@ import { NotificationError } from '@/class';
 import { http } from '@/class/singleton';
 import { cryptoDataValidator } from '@/schema';
 
-const throttle = throttledQueue(3, ENV.serviceThrottleTimeout);
+const throttle = throttledQueue(3, ENV.VUE_APP_SERVICE_THROTTLE_TIMEOUT);
 
 const cryptoDataService = {
   /**
@@ -15,7 +15,7 @@ const cryptoDataService = {
   async getGasPrice(network) {
     try {
       const { data } = await http.get(
-        `${ENV.cryptoDataAPIUrl}/${network}/gas/price`,
+        `${ENV.VUE_APP_CRYPTODATA_API_URL}/${network}/gas/price`,
       );
 
       return cryptoDataValidator.validateGasPrice(data);
@@ -54,7 +54,7 @@ const cryptoDataService = {
 
       throttle(async () => {
         try {
-          const res = await http.get(`${ENV.cryptoDataAPIUrl}/price`, {
+          const res = await http.get(`${ENV.VUE_APP_CRYPTODATA_API_URL}/price`, {
             params: {
               from: fromSymbolsArray.join(','),
               to: toSymbol,
@@ -89,7 +89,7 @@ const cryptoDataService = {
     return new Promise((resolve, reject) => throttle(async () => {
       try {
         const res = await http.get(
-          `${ENV.cryptoDataAPIUrl}/${network}/balance/${address}`,
+          `${ENV.VUE_APP_CRYPTODATA_API_URL}/${network}/balance/${address}`,
         );
         const { balance, tokens } = cryptoDataValidator.validateBalance(
           res.data,
@@ -123,7 +123,7 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `${ENV.cryptoDataAPIUrl}/${network}/transactions/${address}/token`,
+            `${ENV.VUE_APP_CRYPTODATA_API_URL}/${network}/transactions/${address}/token`,
             {
               params: {
                 page: 1,
@@ -153,7 +153,7 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `${ENV.cryptoDataAPIUrl}/${network}/transactions/${address}`,
+            `${ENV.VUE_APP_CRYPTODATA_API_URL}/${network}/transactions/${address}`,
             {
               params: {
                 page: 1,
@@ -201,7 +201,7 @@ const cryptoDataService = {
   async getPendingTransactions(network, fromAddress, filterId) {
     try {
       const { data } = await http.get(
-        `${ENV.cryptoDataAPIUrl}/${network}/transactions/pending`,
+        `${ENV.VUE_APP_CRYPTODATA_API_URL}/${network}/transactions/pending`,
         {
           params: {
             filterId,

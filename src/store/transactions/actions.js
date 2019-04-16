@@ -24,7 +24,6 @@ import {
 const getNonceInBlock = async ({ rootState }) => {
   const { address } = rootState.accounts;
   const nonce = await web3.eth.getTransactionCount(address);
-
   return nonce.toString();
 };
 

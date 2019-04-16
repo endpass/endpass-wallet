@@ -15,7 +15,7 @@ jest.mock('@/store', () => ({
 }));
 
 describe('httpIdentity', () => {
-  const checkUrl = `${ENV.identityAPIUrl}/check`;
+  const checkUrl = `${ENV.VUE_APP_IDENTITY_API_URL}/check`;
   const http = createAxiosInstance(store);
   let mock;
   beforeEach(() => {

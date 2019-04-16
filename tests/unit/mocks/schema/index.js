@@ -19,5 +19,6 @@ jest.mock('@/schema', () => ({
     validateUserNetwork: jest.fn(data => data),
     validateUserSettings: jest.fn(data => data),
     validateUserOtpSetting: jest.fn(data => data),
+    validatePasswordRecoveryIdentifier: jest.fn(data => data),
   },
 }));

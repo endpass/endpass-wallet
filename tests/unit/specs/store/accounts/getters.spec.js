@@ -1,5 +1,8 @@
+import HDKey from 'ethereumjs-wallet/hdkey';
+import Bip39 from 'bip39';
+
 import accountsGetters from '@/store/accounts/getters';
-import { v3, hdv3 } from 'fixtures/accounts';
+import { v3, hdv3, mnemonic } from 'fixtures/accounts';
 
 describe('Accounts getters', () => {
   describe('wallet', () => {
@@ -23,7 +26,7 @@ describe('Accounts getters', () => {
     });
 
     it('should return an array of addresses', () => {
-      const state = { wallets: { '123': '321', '234': '432' } };
+      const state = { wallets: { 123: '321', 234: '432' } };
 
       expect(accountsGetters.accountAddresses(state)).toEqual(['123', '234']);
     });
@@ -123,6 +126,27 @@ describe('Accounts getters', () => {
     it('should check stored keystore', () => {
       expect(accountsGetters.isHDv3WalletByType(state)(otherType)).toBe(false);
       expect(accountsGetters.isHDv3WalletByType(state)(type)).toBe(true);
+    });
+  });
+
+  describe('getHdWalletBySeed', () => {
+    it('should return hd wallet', () => {
+      const hdWallet = HDKey.derivePath();
+
+      HDKey.derivePath.mockClear();
+      HDKey.derivePath.mockReturnValueOnce(hdWallet);
+
+      const returnedWallet = accountsGetters.getHdWalletBySeed()(mnemonic);
+
+      expect(Bip39.mnemonicToSeed).toHaveBeenCalledTimes(1);
+      expect(Bip39.mnemonicToSeed).toHaveBeenCalledWith(mnemonic);
+
+      expect(HDKey.derivePath).toHaveBeenCalledTimes(1);
+      expect(HDKey.derivePath).toHaveBeenCalledWith(
+        ENV.VUE_APP_HD_KEY_MNEMONIC_PATH,
+      );
+
+      expect(hdWallet).toEqual(returnedWallet);
     });
   });
 });

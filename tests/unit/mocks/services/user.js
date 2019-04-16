@@ -9,6 +9,10 @@ jest.mock('@/services/user', () => {
     hdv3,
     otpSettings,
   } = require('fixtures/accounts');
+  const {
+    getPasswordRecoveryIdentifierResponse,
+    successResponse,
+  } = require('fixtures/identity');
 
   const getAccountByAddress = address => {
     if (/^(xpub)/.test(address)) {
@@ -76,6 +80,12 @@ jest.mock('@/services/user', () => {
     deleteOtpSettings: jest.fn().mockResolvedValue({
       success: true,
     }),
+
+    getPasswortRecoveryIdentifier: jest
+      .fn()
+      .mockResolvedValue(getPasswordRecoveryIdentifierResponse.message),
+
+    recoverWalletsPassword: jest.fn().mockResolvedValue(successResponse),
   };
 });
 

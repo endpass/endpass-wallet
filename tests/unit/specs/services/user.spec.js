@@ -16,7 +16,7 @@ describe('User service', () => {
   });
 
   describe('getSettings', () => {
-    const url = `${ENV.identityAPIUrl}/settings`;
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/settings`;
     const successResp = {
       fiatCurrency: 'USD',
     };
@@ -24,7 +24,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(url).reply(config => {
+      axiosMock.onGet(url).reply((config) => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
 
@@ -49,12 +49,12 @@ describe('User service', () => {
     const settings = {
       fiatCurrency: 'USD',
     };
-    const url = `${ENV.identityAPIUrl}/settings`;
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/settings`;
 
     it('should make correct request', async () => {
       expect.assertions(3);
 
-      axiosMock.onPost(url).reply(config => {
+      axiosMock.onPost(url).reply((config) => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify(settings));
@@ -80,13 +80,13 @@ describe('User service', () => {
     const net = 1;
     const address = 'address';
     const token = { address };
-    const url = `${ENV.identityAPIUrl}/tokens/${net}/${address}`;
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/tokens/${net}/${address}`;
 
     describe('addToken', () => {
       it('should make correct request', async () => {
         expect.assertions(2);
 
-        axiosMock.onPost(url).reply(config => {
+        axiosMock.onPost(url).reply((config) => {
           expect(config.url).toBe(url);
           expect(config.data).toBe(JSON.stringify(token));
 
@@ -121,7 +121,7 @@ describe('User service', () => {
       it('should make correct request', async () => {
         expect.assertions(1);
 
-        axiosMock.onDelete(url).reply(config => {
+        axiosMock.onDelete(url).reply((config) => {
           expect(config.url).toBe(url);
 
           return [200, successResponse];
@@ -155,13 +155,13 @@ describe('User service', () => {
   describe('Networks', () => {
     const netUrl = 'address';
     const network = { url: netUrl };
-    const url = `${ENV.identityAPIUrl}/networks/${netUrl}`;
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/networks/${netUrl}`;
 
     describe('addNetwork', () => {
       it('should make correct request', async () => {
         expect.assertions(2);
 
-        axiosMock.onPost(url).reply(config => {
+        axiosMock.onPost(url).reply((config) => {
           expect(config.url).toBe(url);
           expect(config.data).toBe(JSON.stringify(network));
 
@@ -194,12 +194,12 @@ describe('User service', () => {
 
     describe('updateNetwork', () => {
       const oldUrl = 'old';
-      const urlForUpdate = `${ENV.identityAPIUrl}/networks/${oldUrl}`;
+      const urlForUpdate = `${ENV.VUE_APP_IDENTITY_API_URL}/networks/${oldUrl}`;
 
       it('should make correct request', async () => {
         expect.assertions(2);
 
-        axiosMock.onPost(urlForUpdate).reply(config => {
+        axiosMock.onPost(urlForUpdate).reply((config) => {
           expect(config.url).toBe(urlForUpdate);
           expect(config.data).toBe(JSON.stringify(network));
 
@@ -234,7 +234,7 @@ describe('User service', () => {
       it('should make correct request', async () => {
         expect.assertions(1);
 
-        axiosMock.onDelete(url).reply(config => {
+        axiosMock.onDelete(url).reply((config) => {
           expect(config.url).toBe(url);
 
           return [200, successResponse];
@@ -266,13 +266,13 @@ describe('User service', () => {
   });
 
   describe('getAccounts', () => {
-    const url = `${ENV.identityAPIUrl}/accounts`;
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/accounts`;
     const successResp = ['0x123', 'xpub1234'];
 
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(url).reply(config => {
+      axiosMock.onGet(url).reply((config) => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
 
@@ -296,7 +296,7 @@ describe('User service', () => {
 
   describe('getAccount', () => {
     const address = '0x456';
-    const url = `${ENV.identityAPIUrl}/account/${address}`;
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/account/${address}`;
     const shortAcc = address.replace(/^(.{5}).+/, '$1…');
     const successResp = {};
     const expectedError = new NotificationError({
@@ -308,7 +308,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(url).reply(config => {
+      axiosMock.onGet(url).reply((config) => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
 
@@ -345,12 +345,12 @@ describe('User service', () => {
     const address = '0x123';
     // Account data can be anything
     const account = { version: 3, crypto: {} };
-    const url = `${ENV.identityAPIUrl}/account/${address}`;
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/account/${address}`;
 
     it('should make correct request', async () => {
       expect.assertions(3);
 
-      axiosMock.onPost(url).reply(config => {
+      axiosMock.onPost(url).reply((config) => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify(account));
@@ -365,13 +365,13 @@ describe('User service', () => {
   describe('setAccountInfo', () => {
     const address = '0x123';
     // Account data can be anything
-    const url = `${ENV.identityAPIUrl}/account/${address}/info`;
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/account/${address}/info`;
     const info = { one: 'two' };
 
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      axiosMock.onPost(url).reply(config => {
+      axiosMock.onPost(url).reply((config) => {
         expect(config.method).toBe('post');
         expect(config.data).toBe(JSON.stringify(info));
 
@@ -383,21 +383,21 @@ describe('User service', () => {
   });
 
   describe('updateAccounts', () => {
-    const url = `${ENV.identityAPIUrl}/accounts`;
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/accounts`;
     const accounts = {
       'address 1': {},
       'address 2': {},
     };
     const expectedError = new NotificationError({
       title: 'Error updating accounts',
-      text: `An error occurred updating accounts. Please try again later`,
+      text: 'An error occurred updating accounts. Please try again later',
       type: 'is-danger',
     });
 
     it('should make correct request', async () => {
       expect.assertions(3);
 
-      axiosMock.onAny(url).reply(config => {
+      axiosMock.onAny(url).reply((config) => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify(accounts));
@@ -437,9 +437,9 @@ describe('User service', () => {
     it('should return keystores for regular accounts only', async () => {
       expect.assertions(3);
 
-      axiosMock.onGet(`${ENV.identityAPIUrl}/accounts`).reply(200, addrs);
+      axiosMock.onGet(`${ENV.VUE_APP_IDENTITY_API_URL}/accounts`).reply(200, addrs);
       axiosMock
-        .onGet(new RegExp(`${ENV.identityAPIUrl}/account/.+`))
+        .onGet(new RegExp(`${ENV.VUE_APP_IDENTITY_API_URL}/account/.+`))
         .reply(200, {});
 
       const accounts = await userService.getV3Accounts();
@@ -453,9 +453,9 @@ describe('User service', () => {
     it('should return the HD key if it exists', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(`${ENV.identityAPIUrl}/accounts`).reply(200, addrs);
+      axiosMock.onGet(`${ENV.VUE_APP_IDENTITY_API_URL}/accounts`).reply(200, addrs);
       axiosMock
-        .onGet(new RegExp(`${ENV.identityAPIUrl}/account/.+`))
+        .onGet(new RegExp(`${ENV.VUE_APP_IDENTITY_API_URL}/account/.+`))
         .reply(200, {});
 
       const account = await userService.getHDKey();
@@ -470,12 +470,12 @@ describe('User service', () => {
       const mainAddress = 'xpub12345';
       const addresses = [...addrs, mainAddress];
 
-      axiosMock.onGet(`${ENV.identityAPIUrl}/accounts`).reply(200, addresses);
+      axiosMock.onGet(`${ENV.VUE_APP_IDENTITY_API_URL}/accounts`).reply(200, addresses);
       axiosMock
-        .onGet(`${ENV.identityAPIUrl}/account/${mainAddress}/info`)
+        .onGet(`${ENV.VUE_APP_IDENTITY_API_URL}/account/${mainAddress}/info`)
         .reply(200, { type: WALLET_TYPES.HD_MAIN });
       axiosMock
-        .onGet(new RegExp(`${ENV.identityAPIUrl}/account/.+`))
+        .onGet(new RegExp(`${ENV.VUE_APP_IDENTITY_API_URL}/account/.+`))
         .reply(200, {});
 
       const account = await userService.getHDKey();
@@ -486,20 +486,20 @@ describe('User service', () => {
   });
 
   describe('getOtpSettings', () => {
-    const url = `${ENV.identityAPIUrl}/settings/otp`;
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/settings/otp`;
     const successResp = {
       secret: 'abc',
     };
     const expectedError = new NotificationError({
       title: 'Error requesting two-factor authentication settings',
-      text: `Failed to get OTP settings.`,
+      text: 'Failed to get OTP settings.',
       type: 'is-danger',
     });
 
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(url).reply(config => {
+      axiosMock.onGet(url).reply((config) => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
 
@@ -533,12 +533,12 @@ describe('User service', () => {
   });
 
   describe('setOtpSettings', () => {
-    const url = `${ENV.identityAPIUrl}/settings/otp`;
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/settings/otp`;
     const secret = 'secret';
     const code = 'code';
     const expectedError = new NotificationError({
       title: 'Error saving two-factor authentication settings',
-      text: `Failed to save OTP settings.`,
+      text: 'Failed to save OTP settings.',
       type: 'is-danger',
     });
     const errorMessage = 'server error';
@@ -546,7 +546,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(3);
 
-      axiosMock.onPost(url).reply(config => {
+      axiosMock.onPost(url).reply((config) => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify({ secret, code }));
@@ -600,11 +600,11 @@ describe('User service', () => {
   });
 
   describe('deleteOtpSettings', () => {
-    const url = `${ENV.identityAPIUrl}/settings/otp`;
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/settings/otp`;
     const code = 'code';
     const expectedError = new NotificationError({
       title: 'Error removing two-factor authentication settings',
-      text: `Failed to remove OTP settings.`,
+      text: 'Failed to remove OTP settings.',
       type: 'is-danger',
     });
     const errorMessage = 'server error';
@@ -612,7 +612,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(3);
 
-      axiosMock.onDelete(url).reply(config => {
+      axiosMock.onDelete(url).reply((config) => {
         expect(config.method).toBe('delete');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify({ code }));
@@ -659,6 +659,152 @@ describe('User service', () => {
 
       try {
         await userService.deleteOtpSettings(code);
+      } catch (receivedError) {
+        expect(receivedError.text).toEqual(expectedError.text);
+      }
+    });
+  });
+
+  describe('getPasswortRecoveryIdentifier', () => {
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/recovery-password`;
+    const passwordRecoveryIdentifier = 'password recovery identifier';
+    const successIdentifierResponse = {
+      ...successResponse,
+      message: passwordRecoveryIdentifier,
+    };
+    const expectedError = new NotificationError({
+      title: 'Error recovering wallet password',
+      text:
+        'An error occurred while recovering wallet password. Please try again.',
+      type: 'is-danger',
+    });
+    const errorMessage = 'server error';
+
+    it('should make correct request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onGet(url).reply((config) => {
+        expect(config.url).toBe(url);
+
+        return [200, successIdentifierResponse];
+      });
+
+      await userService.getPasswortRecoveryIdentifier();
+    });
+
+    it('should handle successful GET /recovery-password request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onGet(url).reply(200, successIdentifierResponse);
+
+      const resp = await userService.getPasswortRecoveryIdentifier();
+
+      expect(resp).toEqual(successIdentifierResponse.message);
+    });
+
+    it('should handle failed GET /recovery-password request', async () => {
+      expect.assertions(1);
+
+      const error = new NotificationError({
+        ...expectedError,
+        message: `GET ${url}: ${errorMessage}`,
+      });
+
+      axiosMock
+        .onGet(url)
+        .reply(200, { success: false, message: errorMessage });
+
+      try {
+        await userService.getPasswortRecoveryIdentifier();
+      } catch (receivedError) {
+        expect(receivedError).toEqual(error);
+      }
+    });
+
+    it('should handle rejected GET /recovery-password request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onGet(url).reply(500, {});
+
+      try {
+        await userService.getPasswortRecoveryIdentifier();
+      } catch (receivedError) {
+        expect(receivedError.text).toEqual(expectedError.text);
+      }
+    });
+  });
+
+  describe('recoverWalletsPassword', () => {
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/recovery-password`;
+    const passwordRecoveryIdentifier = 'password recovery identifier';
+    const signature = 'signature';
+    const main = {};
+    const standart = {};
+    const successIdentifierResponse = {
+      ...successResponse,
+      message: passwordRecoveryIdentifier,
+    };
+    const expectedError = new NotificationError({
+      title: 'Error recovering wallet password',
+      text:
+        'An error occurred while recovering wallet password. Please try again.',
+      type: 'is-danger',
+    });
+    const errorMessage = 'server error';
+
+    it('should make correct request', async () => {
+      expect.assertions(2);
+
+      axiosMock.onPost(url).reply((config) => {
+        expect(config.url).toBe(url);
+        expect(config.data).toBe(JSON.stringify({ signature, main, standart }));
+
+        return [200, successResponse];
+      });
+
+      await userService.recoverWalletsPassword({ signature, main, standart });
+    });
+
+    it('should handle successful POST /recovery-password request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onPost(url).reply(200, successResponse);
+
+      const resp = await userService.recoverWalletsPassword({
+        signature,
+        main,
+        standart,
+      });
+
+      expect(resp).toEqual(successResponse);
+    });
+
+    it('should handle failed POST /recovery-password request', async () => {
+      expect.assertions(1);
+
+      const error = new NotificationError({
+        ...expectedError,
+        message: `POST ${url}: ${errorMessage}`,
+      });
+
+      axiosMock
+        .onPost(url)
+        .reply(200, { success: false, message: errorMessage });
+
+      try {
+        await userService.recoverWalletsPassword({ signature, main, standart });
+      } catch (receivedError) {
+        expect(receivedError).toEqual(error);
+      }
+    });
+
+    it('should handle rejected GET /recovery-password request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onPost(url).reply(500, {});
+
+      try {
+        await userService.recoverWalletsPassword({ signature, main, standart });
       } catch (receivedError) {
         expect(receivedError.text).toEqual(expectedError.text);
       }

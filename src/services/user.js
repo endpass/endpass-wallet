@@ -213,7 +213,9 @@ export default {
       });
 
       if (!success) {
-        throw new Error(`POST ${ENV.identityAPIUrl}/settings/otp: ${message}`);
+        throw new Error(
+          `POST ${ENV.VUE_APP_IDENTITY_API_URL}/settings/otp: ${message}`,
+        );
       }
 
       return { success };
@@ -238,7 +240,7 @@ export default {
 
       if (!success) {
         throw new Error(
-          `DELETE ${ENV.identityAPIUrl}/settings/otp: ${message}`,
+          `DELETE ${ENV.VUE_APP_IDENTITY_API_URL}/settings/otp: ${message}`,
         );
       }
 
@@ -249,6 +251,59 @@ export default {
         message: e.message,
         title: 'Error removing two-factor authentication settings',
         text: 'Failed to remove OTP settings.',
+        type: 'is-danger',
+      });
+    }
+  },
+
+  async getPasswortRecoveryIdentifier() {
+    try {
+      const { success, message } = await proxyRequest.read(
+        '/recovery-password',
+      );
+
+      if (!success) {
+        throw new Error(
+          `GET ${ENV.VUE_APP_IDENTITY_API_URL}/recovery-password: ${message}`,
+        );
+      }
+
+      return identityValidator.validatePasswordRecoveryIdentifier(message);
+    } catch (e) {
+      throw new NotificationError({
+        log: true,
+        message: e.message,
+        title: 'Error recovering wallet password',
+        text:
+          'An error occurred while recovering wallet password. Please try again.',
+        type: 'is-danger',
+      });
+    }
+  },
+
+  async recoverWalletsPassword({ signature, main, standart }) {
+    try {
+      const { success, message } = await proxyRequest.write(
+        '/recovery-password',
+        {
+          payload: { signature, main, standart },
+        },
+      );
+
+      if (!success) {
+        throw new Error(
+          `POST ${ENV.VUE_APP_IDENTITY_API_URL}/recovery-password: ${message}`,
+        );
+      }
+
+      return { success };
+    } catch (e) {
+      throw new NotificationError({
+        log: true,
+        message: e.message,
+        title: 'Error recovering wallet password',
+        text:
+          'An error occurred while recovering wallet password. Please try again.',
         type: 'is-danger',
       });
     }

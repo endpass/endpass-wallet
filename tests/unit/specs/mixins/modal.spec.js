@@ -9,6 +9,7 @@ describe('Modal mixin', () => {
         isTwoFactorAuthModal: false,
         isLoginModal: false,
         isConfirmLogoutModal: false,
+        isConfirmModal: false,
       };
 
       expect(data).toEqual(expected);
@@ -73,6 +74,21 @@ describe('Modal mixin', () => {
 
         toggleConfirmLogoutModal.call(context);
         expect(context.isConfirmLogoutModal).toBeFalsy();
+      });
+    });
+
+    describe('toggleConfirmModal', () => {
+      it('should toggle confirm modal window', () => {
+        const { toggleConfirmModal } = modalMixin.methods;
+        const context = {
+          isConfirmModal: false,
+        };
+
+        toggleConfirmModal.call(context);
+        expect(context.isConfirmModal).toBeTruthy();
+
+        toggleConfirmModal.call(context);
+        expect(context.isConfirmModal).toBeFalsy();
       });
     });
   });

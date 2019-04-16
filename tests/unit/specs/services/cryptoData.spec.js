@@ -17,7 +17,7 @@ describe('Crypto data service', () => {
 
   describe('getGasPrice', () => {
     const networkId = 1;
-    const requestUrl = `${ENV.cryptoDataAPIUrl}/${networkId}/gas/price`;
+    const requestUrl = `${ENV.VUE_APP_CRYPTODATA_API_URL}/${networkId}/gas/price`;
     const expectedError = new NotificationError({
       title: 'Failed to get suggested gas price',
       text:
@@ -28,7 +28,7 @@ describe('Crypto data service', () => {
     it('should make correct request', async () => {
       expect.assertions(1);
 
-      axiosMock.onGet(requestUrl).reply(config => {
+      axiosMock.onGet(requestUrl).reply((config) => {
         expect(config.url).toBe(requestUrl);
         return [200, gasPrice];
       });
@@ -71,7 +71,7 @@ describe('Crypto data service', () => {
   });
 
   describe('getSymbolsPrices', () => {
-    const requestUrl = `${ENV.cryptoDataAPIUrl}/price`;
+    const requestUrl = `${ENV.VUE_APP_CRYPTODATA_API_URL}/price`;
     const fromSymbols = ['ETH', 'BTC'];
     const toSymbol = 'USD';
     const priceMultiResponse = priceMulti;
@@ -121,7 +121,7 @@ describe('Crypto data service', () => {
     it('should make correct request for one symbol', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(requestUrl).reply(config => {
+      axiosMock.onGet(requestUrl).reply((config) => {
         expect(config.url).toBe(requestUrl);
         expect(config.params).toEqual({
           from: fromSymbols[0],
@@ -136,7 +136,7 @@ describe('Crypto data service', () => {
     it('should make correct request for many symbols', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(requestUrl).reply(config => {
+      axiosMock.onGet(requestUrl).reply((config) => {
         expect(config.url).toBe(requestUrl);
         expect(config.params).toEqual({
           from: fromSymbols.join(','),
@@ -209,7 +209,7 @@ describe('Crypto data service', () => {
   describe('getAccountBalance', () => {
     const networkId = 1;
     const requestUrl = `${
-      ENV.cryptoDataAPIUrl
+      ENV.VUE_APP_CRYPTODATA_API_URL
     }/${networkId}/balance/${address}`;
     const tokens = [
       {
@@ -233,7 +233,7 @@ describe('Crypto data service', () => {
     it('should request account balance and tokens with prices', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(requestUrl).reply(config => {
+      axiosMock.onGet(requestUrl).reply((config) => {
         expect(config.url).toBe(requestUrl);
 
         return [
@@ -311,7 +311,7 @@ describe('Crypto data service', () => {
     const address = 'address';
     const filterId = 1;
     const requestUrl = `${
-      ENV.cryptoDataAPIUrl
+      ENV.VUE_APP_CRYPTODATA_API_URL
     }/${network}/transactions/pending`;
     const expectedError = new Error(
       'Failed to get pending transactions. An error occurred while getting pending transactions.',
@@ -320,7 +320,7 @@ describe('Crypto data service', () => {
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(requestUrl).reply(config => {
+      axiosMock.onGet(requestUrl).reply((config) => {
         expect(config.url).toBe(requestUrl);
         expect(config.params).toEqual({
           filterId,
