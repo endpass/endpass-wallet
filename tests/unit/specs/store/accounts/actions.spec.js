@@ -861,12 +861,17 @@ describe('Accounts actions', () => {
 
   describe('setUserHdKey', () => {
     it('should set the hd key to the store', async () => {
-      expect.assertions(2);
+      expect.assertions(3);
 
       await actions.setUserHdKey({ commit, dispatch });
 
-      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toBeCalledWith(SET_HD_KEY, hdv3);
+      expect(commit).toBeCalledWith(SET_HD_CACHE_BY_TYPE, {
+        xpub: hdv3.address,
+        v3KeyStore: hdv3,
+        walletType: WALLET_TYPES.HD_MAIN,
+      });
     });
 
     it('should handle errors', async () => {

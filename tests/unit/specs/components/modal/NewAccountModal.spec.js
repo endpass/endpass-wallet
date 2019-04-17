@@ -77,8 +77,9 @@ describe('NewAccountModal', () => {
     });
 
     it('should switch modals state', () => {
-      expect(wrapper.vm.isPasswordModal).toBe(false);
       expect(wrapper.vm.isWalletsListModal).toBe(false);
+      wrapper.find('form[data-test="createNewAccount"]').vm.$emit('submit');
+      expect(wrapper.vm.isWalletsListModal).toBe(true);
     });
   });
 });

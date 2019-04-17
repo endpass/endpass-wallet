@@ -2,6 +2,7 @@ import { NotificationError, Wallet } from '@/class';
 import { proxyRequest } from '@/class/singleton';
 import { keystore } from '@endpass/utils';
 import { identityValidator, v3KeystoreValidator } from '@/schema';
+import get from 'lodash/get';
 
 const WALLET_TYPES = Wallet.getTypes();
 
@@ -181,16 +182,24 @@ export default {
   async getHDKey() {
     const accounts = await this.getAccounts();
 
-    const hdAddresses = accounts.filter(acc => keystore.isExtendedPublicKey(acc));
+    const hdAddresses = accounts.filter(acc =>
+      keystore.isExtendedPublicKey(acc),
+    );
+
+    if (hdAddresses.length === 0) {
+      return null;
+    }
 
     const hdAccounts = await Promise.all(
       hdAddresses.map(acc => this.getAccount(acc)),
     );
 
-    return (
-      hdAccounts.find(({ info = {} }) => info.type === WALLET_TYPES.HD_MAIN)
-      || hdAccounts[0]
-    );
+    const hdAccount =
+      hdAccounts.find(
+        account => get(account, 'info.type') === WALLET_TYPES.HD_MAIN,
+      ) || hdAccounts.find(acc => keystore.isV3(acc));
+
+    return v3KeystoreValidator.validateNonEmptyAccountWithInfo(hdAccount);
   },
 
   async getOtpSettings() {

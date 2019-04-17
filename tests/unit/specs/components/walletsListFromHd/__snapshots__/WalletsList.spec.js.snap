@@ -24,21 +24,6 @@ exports[`WalletsList render should render initial state of the component 1`] = `
      
     <v-pagination-stub />
      
-    <div
-      class="buttons"
-    >
-      <v-button-stub
-        classname="is-primary is-medium"
-        data-test="import-wallet-button"
-        disabled="true"
-      >
-        
-        Import
-      
-      </v-button-stub>
-    </div>
   </div>
-   
-  <!---->
 </div>
 `;
