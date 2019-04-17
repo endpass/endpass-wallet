@@ -816,6 +816,28 @@
     web3-providers-ws "1.0.0-beta.33"
     web3-utils "1.0.0-beta.33"
 
+"@endpass/class@^0.10.5":
+  version "0.10.5"
+  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.10.5.tgz#37fa767444475dfedae143bb7f1b56de55d08ba6"
+  integrity sha512-VXwl4TCOru++eTyiC5OMcKvZjDT3crQ4J40jgVGRpqpL1TDj7TvSrQHwnsxHwF3vfXi3+gwdWZbIowOZr8dXzA==
+  dependencies:
+    "@endpass/utils" "^1.3.5"
+    "@ledgerhq/hw-app-eth" "^4.24.0"
+    "@ledgerhq/hw-transport-u2f" "^4.24.0"
+    bignumber.js "^7.2.1"
+    dexie "^2.0.4"
+    eth-ens-namehash "^2.0.8"
+    ethereumjs-tx "^1.3.4"
+    ethereumjs-wallet "^0.6.0"
+    lodash "^4.17.11"
+    path-to-regexp "^2.4.0"
+    trezor-connect "^6.0.0"
+    web3 "1.0.0-beta.33"
+    web3-providers-http "1.0.0-beta.33"
+    web3-providers-ipc "1.0.0-beta.33"
+    web3-providers-ws "1.0.0-beta.33"
+    web3-utils "1.0.0-beta.33"
+
 "@endpass/connect@0.17.5-beta":
   version "0.17.5-beta"
   resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.17.5-beta.tgz#67139c9344c2ff1e72b21b3b9e3cced4ea0a3a99"
@@ -859,6 +881,19 @@
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.3.4.tgz#f83cb2cd434f1c878e3c91f68ae4b90a47710416"
   integrity sha512-EdHncOJKu0Ulufz9Fy9BtzT+ShOODOTb0l/dnIusuzM1IRLwugewNQlUtzIKEk/i+xnZ3elfHkGrt4Gwckvt3w==
+  dependencies:
+    bs58check "^2.1.2"
+    dayjs "^1.7.8"
+    ethereumjs-wallet "^0.6.2"
+    export-files "^2.1.1"
+    keythereum "^1.0.4"
+    lodash "^4.17.11"
+    node-notifier "^5.4.0"
+
+"@endpass/utils@^1.3.5":
+  version "1.3.5"
+  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.3.5.tgz#d1f51a734dc347a0d306877475302182c68bb505"
+  integrity sha512-2A+zQV1uk7Q8l2kmw41VZgB82FzWdjmAi2EC0RICHmUqLMj/0e8UdtaExyNOIVWha469u6y5DT6Ox19nmtDdow==
   dependencies:
     bs58check "^2.1.2"
     dayjs "^1.7.8"
