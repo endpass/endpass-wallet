@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletAddButton should be a Vue component 1`] = `
+<div
+  class="buttons"
+>
+  <!---->
+   
+  <v-button-stub
+    classname="is-primary is-medium"
+    data-test="import-wallet-button"
+  />
+</div>
+`;

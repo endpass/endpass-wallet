@@ -1,5 +1,5 @@
 import MockAdapter from 'axios-mock-adapter';
-
+import { hdv3 } from 'fixtures/accounts';
 import { NotificationError, Wallet } from '@/class';
 import { httpIdentity } from '@/class/singleton';
 import { successResponse } from 'fixtures/identity';
@@ -456,7 +456,7 @@ describe('User service', () => {
       axiosMock.onGet(`${ENV.VUE_APP_IDENTITY_API_URL}/accounts`).reply(200, addrs);
       axiosMock
         .onGet(new RegExp(`${ENV.VUE_APP_IDENTITY_API_URL}/account/.+`))
-        .reply(200, {});
+        .reply(200, hdv3);
 
       const account = await userService.getHDKey();
 

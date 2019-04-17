@@ -8,8 +8,8 @@
       <div v-if="!isAccountCreated">
         <p class="subtitle">
           You currently have
-          <strong>{{ Object.keys(wallets).length }}</strong> active addresses in
-          your wallet.
+          <strong>{{ walletsCount }}</strong>
+          active addresses in your wallet.
         </p>
         <p class="subtitle">
           Click the button below to create or import an additional address you
@@ -47,11 +47,11 @@
         slot="footer"
         class="buttons"
       >
-        <v-form @submit="createNewAccount">
-          <v-button
-            :loading="isCreatingAccount"
-            class-name="is-primary is-medium"
-          >Create address</v-button>
+        <v-form
+          data-test="createNewAccount"
+          @submit="createNewAccount"
+        >
+          <v-button class-name="is-primary is-medium">Create address</v-button>
         </v-form>
         <v-form
           :is-form-valid="true"
@@ -61,14 +61,9 @@
         </v-form>
       </div>
     </v-modal>
-    <password-modal
-      v-if="isPasswordModal"
-      @confirm="confirmPassword"
-      @close="togglePasswordModal"
-    />
     <v-modal
       v-if="isWalletsListModal"
-      @close="closeWalletsListModal"
+      @close="handleWalletsListModalClose"
     >
       <template
         slot="header"
@@ -76,28 +71,36 @@
       <wallets-list
         :type="walletType"
         :auto-load="true"
-        @select="onSelectWallet"
+        :is-importing="bridgeButtonListIsImporting"
+        v-model="bridgeButtonListIsLoading"
+        @select="setSelectedAddress"
       />
+      <wallet-add-button
+        v-show="!bridgeButtonListIsLoading"
+        slot="footer"
+        :type="walletType"
+        :selected-address="bridgeButtonListSelectedAddress"
+        v-model="bridgeButtonListIsImporting"
+        @success="successAddWallet"
+      >Add</wallet-add-button>
     </v-modal>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
-import PasswordModal from '@/components/modal/PasswordModal';
-import WalletsList from '@/components/walletsList';
+import { BridgeButtonListMixin } from '@/components/walletsListFromHd';
 import { Wallet } from '@/class';
 
+/** @type {{HD_MAIN,getTypes}} */
 const WALLET_TYPES = Wallet.getTypes();
 
 export default {
   name: 'NewAccountModal',
   data() {
     return {
-      isAccountCreated: false,
-      isCreatingAccount: false,
       privateKey: '',
-      isPasswordModal: false,
+      isAccountCreated: false,
       isWalletsListModal: false,
       walletType: WALLET_TYPES.HD_MAIN,
     };
@@ -108,6 +111,9 @@ export default {
       address: state => state.accounts.address,
     }),
     ...mapGetters('accounts', ['wallet']),
+    walletsCount() {
+      return Object.keys(this.wallets).length;
+    },
   },
   methods: {
     ...mapActions('accounts', ['generateWallet', 'validatePassword']),
@@ -118,50 +124,47 @@ export default {
     // Create the next account derived from the HD wallet seed
     // TODO consider gap limit if multiple hd accounts are already used
     createNewAccount() {
-      this.togglePasswordModal();
+      this.isWalletsListModal = true;
       this.$ga.event({
         eventCategory: 'onboarding',
         eventAction: 'create_new_account',
       });
     },
-    togglePasswordModal() {
-      this.isPasswordModal = !this.isPasswordModal;
-    },
     async confirmPassword(password) {
-      this.togglePasswordModal();
       this.isWalletsListModal = true;
-      this.isCreatingAccount = true;
 
       await new Promise(res => setTimeout(res, 20));
 
       try {
         await this.generateWallet(password);
         this.privateKey = await this.wallet.getPrivateKeyString(password);
-        this.isCreatingAccount = false;
         this.isAccountCreated = true;
       } catch (e) {
-        this.isCreatingAccount = false;
         this.$notify({
+          type: 'is-danger',
           title: 'Something went wrong',
           text: 'Сould not create account. Please try again.',
-          type: 'is-danger',
         });
       }
     },
     close() {
       this.$emit('close');
     },
-    closeWalletsListModal() {
+
+    /**
+     * @param {string} password
+     * @returns {Promise<void>}
+     */
+    async successAddWallet(password) {
+      this.isAccountCreated = true;
       this.isWalletsListModal = false;
-      this.isCreatingAccount = false;
+      this.privateKey = await this.wallet.getPrivateKeyString(password);
     },
-    onSelectWallet() {},
+
+    handleWalletsListModalClose() {
+      this.isWalletsListModal = false;
+    },
   },
-  components: {
-    PasswordModal,
-    WalletsList,
-  },
+  mixins: [BridgeButtonListMixin],
 };
 </script>
-
-<style lang="scss"></style>

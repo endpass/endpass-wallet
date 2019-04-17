@@ -10,7 +10,7 @@ import mutations from './mutations';
  * @property {Object} hadrwareXpub The user's hardware xpub, keyed by wallet type
  * @property {Object} wallets The user's wallets, mapped by address
  * @property {String} address Current wallet address
- * @property {String} balance Currect account balance
+ * @property {String} balance Current account balance
  */
 const state = {
   isInited: false,

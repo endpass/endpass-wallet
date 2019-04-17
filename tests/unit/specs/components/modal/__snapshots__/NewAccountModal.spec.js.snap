@@ -46,8 +46,8 @@ exports[`NewAccountModal render should render component 1`] = `
             <strong>
               0
             </strong>
-             active addresses in
-        your wallet.
+            
+        active addresses in your wallet.
       
           </p>
            
@@ -71,6 +71,7 @@ exports[`NewAccountModal render should render component 1`] = `
         >
           <form
             class="control"
+            data-test="createNewAccount"
           >
             <div
               class="field"
@@ -108,8 +109,6 @@ exports[`NewAccountModal render should render component 1`] = `
       </div>
     </div>
   </div>
-   
-  <!---->
    
   <!---->
 </div>
