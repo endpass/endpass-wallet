@@ -2,7 +2,6 @@ import { createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
-import VueRouter from 'vue-router';
 import UIComponents from '@endpass/ui';
 import { wrapShallowMountFactory } from '@/testUtils';
 
@@ -14,7 +13,6 @@ const WALLET_TYPES = Wallet.getTypes();
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
-localVue.use(VueRouter);
 localVue.use(VeeValidate);
 localVue.use(Notifications);
 localVue.use(UIComponents);
@@ -25,7 +23,6 @@ describe('WalletsList', () => {
   let wrapper;
   let wrapperFactory;
   let actions;
-  let router;
 
   beforeEach(() => {
     actions = {
@@ -44,12 +41,10 @@ describe('WalletsList', () => {
         },
       },
     };
-    router = new VueRouter();
     const store = new Vuex.Store(storeOptions);
     wrapperFactory = wrapShallowMountFactory(WalletsList, {
       localVue,
       store,
-      router,
       // sync: false,
       propsData: {
         type: WALLET_TYPES.HD_PUBLIC,
@@ -107,6 +102,28 @@ describe('WalletsList', () => {
           offset: 20,
           limit: 10,
           walletType: WALLET_TYPES.HD_PUBLIC,
+        });
+      });
+    });
+
+    describe('updateSelectedAddress', () => {
+      it('should emit correct address and index', () => {
+        const addresses = ['a', 'b', 'c'];
+        wrapper.setData({
+          addresses,
+        });
+
+        addresses.forEach((address, index) => {
+          wrapper.setData({
+            offset: 10 * index,
+          });
+          wrapper
+            .findAll('wallet-item-stub')
+            .at(index)
+            .vm.$emit('click');
+          expect(wrapper.vm.selectedAddress).toBe(address);
+          const payload = { address, index: index + wrapper.vm.offset };
+          expect(wrapper.emitted('select')[index]).toEqual([payload]);
         });
       });
     });
