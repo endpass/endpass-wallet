@@ -7,6 +7,7 @@ import { wrapShallowMountFactory } from '@/testUtils';
 
 import WalletsList from '@/components/walletsListFromHd/WalletsList';
 import { Wallet } from '@/class';
+import { v3 } from 'fixtures/accounts';
 
 const WALLET_TYPES = Wallet.getTypes();
 
@@ -21,6 +22,7 @@ jest.useFakeTimers();
 
 describe('WalletsList', () => {
   let wrapper;
+  let wallets;
   let wrapperFactory;
   let actions;
 
@@ -42,12 +44,22 @@ describe('WalletsList', () => {
       },
     };
     const store = new Vuex.Store(storeOptions);
+    wallets = {
+      [v3.address]: {
+        ...v3,
+        isPublic: false,
+        isHardware: false,
+      },
+    };
     wrapperFactory = wrapShallowMountFactory(WalletsList, {
       localVue,
       store,
       // sync: false,
       propsData: {
         type: WALLET_TYPES.HD_PUBLIC,
+      },
+      computed: {
+        wallets,
       },
     });
     wrapper = wrapperFactory();
@@ -125,6 +137,20 @@ describe('WalletsList', () => {
           const payload = { address, index: index + wrapper.vm.offset };
           expect(wrapper.emitted('select')[index]).toEqual([payload]);
         });
+      });
+    });
+
+    describe('usedWallet', () => {
+      it('should check if wallet already added', () => {
+        expect(wrapper.vm.isUsedWallet('foo')).toBeFalsy();
+        expect(wrapper.vm.isUsedWallet(v3.address)).toBeTruthy();
+        wallets[v3.address].isPublic = true;
+        expect(wrapper.vm.isUsedWallet(v3.address)).toBeFalsy();
+        wallets[v3.address].isPublic = false;
+        wallets[v3.address].isHardware = true;
+        expect(wrapper.vm.isUsedWallet(v3.address)).toBeFalsy();
+        wallets[v3.address].isPublic = true;
+        expect(wrapper.vm.isUsedWallet(v3.address)).toBeFalsy();
       });
     });
   });

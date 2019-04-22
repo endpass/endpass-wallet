@@ -23,6 +23,7 @@
         v-for="(address, index) in addresses"
         :key="address"
         :address="address"
+        :is-used="isUsedWallet(address)"
         :is-active="address === selectedAddress"
         @click="updateSelectedAddress(address, index)"
       />
@@ -33,7 +34,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import WalletItem from './WalletItem.vue';
 
 export default {
@@ -66,6 +67,7 @@ export default {
     isEmptyAddresses() {
       return this.addresses.length === 0;
     },
+    ...mapState('accounts', ['wallets']),
   },
   methods: {
     ...mapActions('accounts', ['getNextWalletsFromHd']),
@@ -98,6 +100,15 @@ export default {
     updateSelectedAddress(address, index) {
       this.selectedAddress = address;
       this.$emit('select', { address, index: index + this.offset });
+    },
+
+    /**
+     * @param {string} address
+     * @returns {boolean}
+     */
+    isUsedWallet(address) {
+      const account = this.wallets[address];
+      return account ? !account.isPublic && !account.isHardware : false;
     },
   },
   mounted() {

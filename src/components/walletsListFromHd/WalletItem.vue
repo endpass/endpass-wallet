@@ -9,6 +9,8 @@
           <account
             :key="address"
             :address="address"
+            :is-muted="isUsed"
+            :has-background="isActive"
             :size="10"
           >
             <template slot="balance">
@@ -28,6 +30,10 @@
                 @update="getBalance"
               />
             </template>
+            <v-badge
+              v-if="isUsed"
+              class="has-background-primary has-text-white"
+            >used</v-badge>
           </account>
         </a>
       </li>
@@ -49,6 +55,10 @@ export default {
       required: true,
     },
     isActive: {
+      type: Boolean,
+      default: false,
+    },
+    isUsed: {
       type: Boolean,
       default: false,
     },
