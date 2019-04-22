@@ -101,6 +101,7 @@ export default {
 @import './css/layout.scss';
 @import './css/notifications.scss';
 @import './css/typography.scss';
+@import './css/badge.scss';
 
 .main {
   background: $light-grey;

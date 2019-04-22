@@ -25,6 +25,8 @@ exports[`WalletItem render should render initial state of the component 1`] = `
               round="4"
             />
           </template>
+           
+          <!---->
         </account-stub>
       </a>
     </li>
