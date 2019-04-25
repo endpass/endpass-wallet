@@ -117,3 +117,7 @@ browserslist   text eol=lf
 Makefile       text eol=lf
 makefile       text eol=lf
 
+## IMAGES
+
+*.png binady
+*.jpg binary
