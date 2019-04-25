@@ -3,9 +3,7 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import Notifications from 'vue-notification';
 import UIComponents from '@endpass/ui';
-
 import PasswordRecovery from '@/components/PasswordRecovery';
-import { mnemonic } from 'fixtures/accounts';
 
 describe('PasswordRecovery', () => {
   let accountsActions;

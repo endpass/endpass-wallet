@@ -21,10 +21,10 @@ import './commands';
 
 // Global Server Configuration
 Cypress.Server.defaults({
-  whitelist: xhr => {
-    return xhr.method === 'GET' && /\.(jsx?|html|css)(\?.*)?$/.test(xhr.url);
-  },
+  whitelist: xhr =>
+    xhr.method === 'GET' && /\.(jsx?|html|css)(\?.*)?$/.test(xhr.url),
 });
 
 // Return the Vuex store
+// eslint-disable-next-line no-unused-vars
 const store = () => cy.window().its('app.$store');

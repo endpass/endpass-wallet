@@ -11,8 +11,9 @@ localVue.use(Vuex);
 describe('SyncStatus', () => {
   let wrapper;
   let wrapperFactory;
-  let apiConnection = true;
+  const apiConnection = true;
   let state;
+
   beforeEach(() => {
     state = {
       modules: {

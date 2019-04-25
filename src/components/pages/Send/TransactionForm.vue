@@ -141,11 +141,11 @@ export default {
       } = this;
 
       return (
-        transaction.to
-        && !isSyncing
-        && !ensError
-        && !isEnsAddressLoading
-        && !isEstimationInProcess
+        transaction.to &&
+        !isSyncing &&
+        !ensError &&
+        !isEnsAddressLoading &&
+        !isEstimationInProcess
       );
     },
   },

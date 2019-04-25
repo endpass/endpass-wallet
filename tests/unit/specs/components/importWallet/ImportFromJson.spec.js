@@ -120,7 +120,7 @@ describe('ImportFromJson', () => {
 
         wrapper.find('password-modal-stub').vm.$emit('confirm');
 
-        await flushPromises();
+        await global.flushPromises();
 
         expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith('/');
@@ -129,7 +129,7 @@ describe('ImportFromJson', () => {
       it('should handle errors', async () => {
         expect.assertions(2);
 
-        const spyErrorsAdd = spyOn(wrapper.vm.errors, 'add');
+        const spyErrorsAdd = jest.spyOn(wrapper.vm.errors, 'add');
 
         wrapper.setMethods({
           addWalletWithV3: jest.fn().mockRejectedValue(),
@@ -137,14 +137,16 @@ describe('ImportFromJson', () => {
 
         wrapper.find('password-modal-stub').vm.$emit('confirm');
 
-        await flushPromises();
+        await global.flushPromises();
 
         expect(spyErrorsAdd).toHaveBeenCalledTimes(1);
-        expect(spyErrorsAdd).toHaveBeenCalledWith({
-          field: 'jsonKeystorePassword',
-          msg: 'JSON password is invalid',
-          id: 'wrongPass',
-        });
+        expect(spyErrorsAdd).toHaveBeenCalledWith(
+          expect.objectContaining({
+            field: 'jsonKeystorePassword',
+            msg: 'JSON password is invalid',
+            id: 'wrongPass',
+          }),
+        );
       });
     });
   });

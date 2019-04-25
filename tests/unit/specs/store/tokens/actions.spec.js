@@ -32,7 +32,6 @@ describe('tokens actions', () => {
   let dispatch;
   let getters;
   let rootGetters;
-  let rootState;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -43,11 +42,6 @@ describe('tokens actions', () => {
     commit = jest.fn();
     rootGetters = {
       'web3/activeNetwork': Network.NET_ID.MAIN,
-    };
-    rootState = {
-      accounts: {
-        address,
-      },
     };
   });
 

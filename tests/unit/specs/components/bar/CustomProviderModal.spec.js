@@ -256,7 +256,7 @@ describe('CustomProviderModal', () => {
           wrapper.setMethods({
             validateNetwork: jest.fn().mockRejectedValue(),
           });
-          spyOn(wrapper.vm.errors, 'add');
+          jest.spyOn(wrapper.vm.errors, 'add');
 
           await wrapper.vm.handleButtonClick();
 
@@ -266,7 +266,9 @@ describe('CustomProviderModal', () => {
           });
           expect(wrapper.vm.isLoading).toBeFalsy();
           expect(wrapper.vm.errors.add).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.errors.add).toHaveBeenCalledWith(error);
+          expect(wrapper.vm.errors.add).toHaveBeenCalledWith(
+            expect.objectContaining(error),
+          );
         });
       });
 
@@ -321,7 +323,7 @@ describe('CustomProviderModal', () => {
           wrapper.setMethods({
             validateNetwork: jest.fn().mockRejectedValue(),
           });
-          spyOn(wrapper.vm.errors, 'add');
+          jest.spyOn(wrapper.vm.errors, 'add');
 
           await wrapper.vm.handleButtonClick();
 
@@ -331,7 +333,9 @@ describe('CustomProviderModal', () => {
           });
           expect(wrapper.vm.isLoading).toBeFalsy();
           expect(wrapper.vm.errors.add).toHaveBeenCalledTimes(1);
-          expect(wrapper.vm.errors.add).toHaveBeenCalledWith(error);
+          expect(wrapper.vm.errors.add).toHaveBeenCalledWith(
+            expect.objectContaining(error),
+          );
         });
       });
     });

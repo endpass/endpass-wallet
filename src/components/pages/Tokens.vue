@@ -150,7 +150,7 @@ export default {
         allCurrentAccountFullTokens,
       );
 
-      return networkTokensList.filter((token) => {
+      return networkTokensList.filter(token => {
         const isUserHasToken = currentAccountTokensSymbols.includes(
           token.symbol,
         );
@@ -169,7 +169,9 @@ export default {
     userTokensList() {
       const { userTokenQuery, allCurrentAccountFullTokens } = this;
 
-      return Object.values(allCurrentAccountFullTokens).filter(token => this.matchTokenToQuery(token, userTokenQuery));
+      return Object.values(allCurrentAccountFullTokens).filter(token =>
+        this.matchTokenToQuery(token, userTokenQuery),
+      );
     },
   },
 

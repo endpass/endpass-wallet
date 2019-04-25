@@ -1,10 +1,10 @@
 import { START_PAGE_LOADING, STOP_PAGE_LOADING } from './mutations-types';
 
-const startPageLoading = (state) => {
+const startPageLoading = state => {
   state.isPageLoading = true;
 };
 
-const stopPageLoading = (state) => {
+const stopPageLoading = state => {
   state.isPageLoading = false;
 };
 

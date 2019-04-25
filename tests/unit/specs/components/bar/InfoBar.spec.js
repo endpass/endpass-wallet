@@ -1,16 +1,16 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils';
-
 import Vuex from 'vuex';
-const localVue = createLocalVue();
-
-localVue.use(Vuex);
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import InfoBar from '@/components/bar/InfoBar';
+
+const localVue = createLocalVue();
+localVue.use(Vuex);
 
 describe('InfoBar', () => {
   describe('render', () => {
     let wrapper;
+
     beforeEach(() => {
-      let storeOptions = {
+      const storeOptions = {
         state: {
           web3: {
             activeNet: 1,

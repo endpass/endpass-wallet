@@ -108,7 +108,7 @@ describe('Identity mode service', () => {
     it('should make correct request', async () => {
       expect.assertions(1);
 
-      axiosMock.onGet(url).reply((config) => {
+      axiosMock.onGet(url).reply(config => {
         expect(config.url).toBe(url);
         return [200, successResp];
       });

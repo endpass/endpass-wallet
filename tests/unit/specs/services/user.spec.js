@@ -24,7 +24,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(url).reply((config) => {
+      axiosMock.onGet(url).reply(config => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
 
@@ -54,7 +54,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(3);
 
-      axiosMock.onPost(url).reply((config) => {
+      axiosMock.onPost(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify(settings));
@@ -86,7 +86,7 @@ describe('User service', () => {
       it('should make correct request', async () => {
         expect.assertions(2);
 
-        axiosMock.onPost(url).reply((config) => {
+        axiosMock.onPost(url).reply(config => {
           expect(config.url).toBe(url);
           expect(config.data).toBe(JSON.stringify(token));
 
@@ -121,7 +121,7 @@ describe('User service', () => {
       it('should make correct request', async () => {
         expect.assertions(1);
 
-        axiosMock.onDelete(url).reply((config) => {
+        axiosMock.onDelete(url).reply(config => {
           expect(config.url).toBe(url);
 
           return [200, successResponse];
@@ -161,7 +161,7 @@ describe('User service', () => {
       it('should make correct request', async () => {
         expect.assertions(2);
 
-        axiosMock.onPost(url).reply((config) => {
+        axiosMock.onPost(url).reply(config => {
           expect(config.url).toBe(url);
           expect(config.data).toBe(JSON.stringify(network));
 
@@ -199,7 +199,7 @@ describe('User service', () => {
       it('should make correct request', async () => {
         expect.assertions(2);
 
-        axiosMock.onPost(urlForUpdate).reply((config) => {
+        axiosMock.onPost(urlForUpdate).reply(config => {
           expect(config.url).toBe(urlForUpdate);
           expect(config.data).toBe(JSON.stringify(network));
 
@@ -234,7 +234,7 @@ describe('User service', () => {
       it('should make correct request', async () => {
         expect.assertions(1);
 
-        axiosMock.onDelete(url).reply((config) => {
+        axiosMock.onDelete(url).reply(config => {
           expect(config.url).toBe(url);
 
           return [200, successResponse];
@@ -272,7 +272,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(url).reply((config) => {
+      axiosMock.onGet(url).reply(config => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
 
@@ -308,7 +308,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(url).reply((config) => {
+      axiosMock.onGet(url).reply(config => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
 
@@ -350,7 +350,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(3);
 
-      axiosMock.onPost(url).reply((config) => {
+      axiosMock.onPost(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify(account));
@@ -371,7 +371,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      axiosMock.onPost(url).reply((config) => {
+      axiosMock.onPost(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.data).toBe(JSON.stringify(info));
 
@@ -397,7 +397,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(3);
 
-      axiosMock.onAny(url).reply((config) => {
+      axiosMock.onAny(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify(accounts));
@@ -437,7 +437,9 @@ describe('User service', () => {
     it('should return keystores for regular accounts only', async () => {
       expect.assertions(3);
 
-      axiosMock.onGet(`${ENV.VUE_APP_IDENTITY_API_URL}/accounts`).reply(200, addrs);
+      axiosMock
+        .onGet(`${ENV.VUE_APP_IDENTITY_API_URL}/accounts`)
+        .reply(200, addrs);
       axiosMock
         .onGet(new RegExp(`${ENV.VUE_APP_IDENTITY_API_URL}/account/.+`))
         .reply(200, {});
@@ -453,7 +455,9 @@ describe('User service', () => {
     it('should return the HD key if it exists', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(`${ENV.VUE_APP_IDENTITY_API_URL}/accounts`).reply(200, addrs);
+      axiosMock
+        .onGet(`${ENV.VUE_APP_IDENTITY_API_URL}/accounts`)
+        .reply(200, addrs);
       axiosMock
         .onGet(new RegExp(`${ENV.VUE_APP_IDENTITY_API_URL}/account/.+`))
         .reply(200, hdv3);
@@ -470,7 +474,9 @@ describe('User service', () => {
       const mainAddress = 'xpub12345';
       const addresses = [...addrs, mainAddress];
 
-      axiosMock.onGet(`${ENV.VUE_APP_IDENTITY_API_URL}/accounts`).reply(200, addresses);
+      axiosMock
+        .onGet(`${ENV.VUE_APP_IDENTITY_API_URL}/accounts`)
+        .reply(200, addresses);
       axiosMock
         .onGet(`${ENV.VUE_APP_IDENTITY_API_URL}/account/${mainAddress}/info`)
         .reply(200, { type: WALLET_TYPES.HD_MAIN });
@@ -499,7 +505,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      axiosMock.onGet(url).reply((config) => {
+      axiosMock.onGet(url).reply(config => {
         expect(config.method).toBe('get');
         expect(config.url).toBe(url);
 
@@ -546,7 +552,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(3);
 
-      axiosMock.onPost(url).reply((config) => {
+      axiosMock.onPost(url).reply(config => {
         expect(config.method).toBe('post');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify({ secret, code }));
@@ -612,7 +618,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(3);
 
-      axiosMock.onDelete(url).reply((config) => {
+      axiosMock.onDelete(url).reply(config => {
         expect(config.method).toBe('delete');
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify({ code }));
@@ -683,7 +689,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(1);
 
-      axiosMock.onGet(url).reply((config) => {
+      axiosMock.onGet(url).reply(config => {
         expect(config.url).toBe(url);
 
         return [200, successIdentifierResponse];
@@ -736,14 +742,9 @@ describe('User service', () => {
 
   describe('recoverWalletsPassword', () => {
     const url = `${ENV.VUE_APP_IDENTITY_API_URL}/recovery-password`;
-    const passwordRecoveryIdentifier = 'password recovery identifier';
     const signature = 'signature';
     const main = {};
     const standart = {};
-    const successIdentifierResponse = {
-      ...successResponse,
-      message: passwordRecoveryIdentifier,
-    };
     const expectedError = new NotificationError({
       title: 'Error recovering wallet password',
       text:
@@ -755,7 +756,7 @@ describe('User service', () => {
     it('should make correct request', async () => {
       expect.assertions(2);
 
-      axiosMock.onPost(url).reply((config) => {
+      axiosMock.onPost(url).reply(config => {
         expect(config.url).toBe(url);
         expect(config.data).toBe(JSON.stringify({ signature, main, standart }));
 

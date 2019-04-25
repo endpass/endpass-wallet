@@ -14,11 +14,11 @@ const setUpdateTime = (state, updateTime) => {
   state.updateTime = updateTime;
 };
 
-const startLoading = (state) => {
+const startLoading = state => {
   state.isLoading = true;
 };
 
-const stopLoading = (state) => {
+const stopLoading = state => {
   state.isLoading = false;
 };
 

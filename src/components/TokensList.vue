@@ -97,7 +97,9 @@ export default {
         return this.tokens;
       }
 
-      return this.tokens.filter(token => this.getTokenAmountBN(token).gt('0.01'));
+      return this.tokens.filter(token =>
+        this.getTokenAmountBN(token).gt('0.01'),
+      );
     },
   },
 
@@ -115,9 +117,9 @@ export default {
       const { hasRemove, currentNetUserFullTokens } = this;
 
       return (
-        hasRemove
-        && currentNetUserFullTokens[token.address]
-        && get(token, 'balance', '0') === '0'
+        hasRemove &&
+        currentNetUserFullTokens[token.address] &&
+        get(token, 'balance', '0') === '0'
       );
     },
 

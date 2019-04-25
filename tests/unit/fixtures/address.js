@@ -34,7 +34,7 @@ export class AddressMock {
   }
 
   async getBalance() {
-    return await web3.eth.getBalance(this.getAddressString());
+    await web3.eth.getBalance(this.getAddressString());
   }
 
   getChecksumAddressString() {

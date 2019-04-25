@@ -52,7 +52,7 @@ describe('RecoverTransaction', () => {
 
   describe('methods', () => {
     beforeEach(() => {
-      spyOn(wrapper.vm, '$notify');
+      jest.spyOn(wrapper.vm, '$notify');
     });
 
     describe('verifyTransaction', () => {

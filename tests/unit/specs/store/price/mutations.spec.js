@@ -5,7 +5,7 @@ import {
   START_LOADING,
   STOP_LOADING,
   SET_INTERVAL_ID,
-} from '@/store/price/mutations-types.js';
+} from '@/store/price/mutations-types';
 
 describe('price mutations', () => {
   const state = {};
@@ -26,7 +26,6 @@ describe('price mutations', () => {
 
   describe(START_LOADING, () => {
     it('should set loading to true', () => {
-      const updateTime = 0;
       mutations[START_LOADING](state);
       expect(state.isLoading).toBe(true);
     });
@@ -34,7 +33,6 @@ describe('price mutations', () => {
 
   describe(STOP_LOADING, () => {
     it('should set loading to false', () => {
-      const updateTime = 0;
       mutations[STOP_LOADING](state);
       expect(state.isLoading).toBe(false);
     });

@@ -164,7 +164,7 @@ describe('TwoFactorAuthSettings', () => {
           },
         });
 
-        spyOn(wrapper.vm, 'toggleTwoFactorAuthModal');
+        jest.spyOn(wrapper.vm, 'toggleTwoFactorAuthModal');
 
         wrapper.vm.handleFormSubmit();
 
@@ -178,7 +178,7 @@ describe('TwoFactorAuthSettings', () => {
           },
         });
 
-        spyOn(wrapper.vm, 'toggleTwoFactorAuthModal');
+        jest.spyOn(wrapper.vm, 'toggleTwoFactorAuthModal');
         wrapper.vm.handleFormSubmit();
 
         expect(wrapper.vm.toggleTwoFactorAuthModal).toHaveBeenCalledTimes(1);
