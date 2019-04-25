@@ -32,9 +32,7 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
 };
 
 const changeCurrency = async (
-  {
-    commit, dispatch, getters, state,
-  },
+  { commit, dispatch, getters, state },
   { currencyId },
 ) => {
   const currency = Network.CURRENCIES.find(({ id }) => id === currencyId);
@@ -100,9 +98,7 @@ const updateNetwork = async (
 };
 
 const deleteNetwork = async (
-  {
-    state, commit, dispatch, getters,
-  },
+  { state, commit, dispatch, getters },
   { network },
 ) => {
   const networksToSave = state.storedNetworks.filter(
@@ -139,16 +135,14 @@ const subscribeOnBlockUpdates = async ({ commit, dispatch }) => {
       commit(SET_BLOCK_NUMBER, number);
       dispatch('handleLastBlock', { blockNumber: number });
     })
-    .on('error', (error) => {
+    .on('error', error => {
       /* eslint-disable-next-line no-console */
       console.error('Web3 subscription error', error);
     });
 };
 
 const handleLastBlock = async (
-  {
-    state, commit, dispatch, getters,
-  },
+  { state, commit, dispatch, getters },
   { blockNumber },
 ) => {
   try {
@@ -162,10 +156,12 @@ const handleLastBlock = async (
 
     const blocks = await Promise.all(getBlockPromises);
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const block of blocks) {
       if (block) {
         handledBlockNumber = block.number;
 
+        // eslint-disable-next-line no-await-in-loop
         await dispatch(
           'transactions/handleBlockTransactions',
           {
@@ -190,8 +186,9 @@ const init = async ({ commit, dispatch, state }) => {
       ...Object.values(Network.DEFAULT_NETWORKS),
       ...networks,
     ].find(network => network.id === net);
-    const activeCurrency = Network.CURRENCIES.find(currency => activeNet.currency === currency.id)
-      || state.activeCurrency;
+    const activeCurrency =
+      Network.CURRENCIES.find(currency => activeNet.currency === currency.id) ||
+      state.activeCurrency;
 
     commit(SET_NETWORKS, networks);
     commit(CHANGE_NETWORK, activeNet);

@@ -4,6 +4,7 @@ import { shallowMount, mount } from '@vue/test-utils';
 
 function createComputed(options = {}) {
   const computed = Object.keys(options).reduce((map, key) => {
+    // eslint-disable-next-line no-param-reassign
     map[key] = function() {
       return options[key];
     };

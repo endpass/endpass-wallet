@@ -43,5 +43,5 @@ global.console.warn = jest.fn(e => {
 });
 
 // Function to immediately flush all pending promises
-// Usage: await flushPromises()
+// Usage: await global.flushPromises()
 global.flushPromises = () => new Promise(resolve => setImmediate(resolve));

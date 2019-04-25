@@ -10,9 +10,7 @@ const ERC20Token = createERC20TokenClass(web3);
 const ENSResolver = createENSClass(web3);
 const Wallet = createWalletClass(web3);
 
-export {
-  web3, ERC20Token, ENSResolver, Wallet,
-};
+export { web3, ERC20Token, ENSResolver, Wallet };
 
 export { default as ajv } from './singleton/ajv';
 export { default as http } from './singleton/http';

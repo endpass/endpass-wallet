@@ -94,7 +94,7 @@ describe('NewWallet page', () => {
     //       mixins: [VueTimers]
     //     })
     //     wrapper.vm.createWallet();
-    //     let spy = spyOn(wrapper.vm.$timer, 'start');
+    //     let spy = jest.spyOn(wrapper.vm.$timer, 'start');
     //   });
 
     // it('should start seed phrase timer', (done) => {
@@ -196,7 +196,7 @@ describe('NewWallet page', () => {
       });
 
       it('should call handleSeedPhraseTimer', () => {
-        spyOn(wrapper.vm, 'handleSeedPhraseTimer');
+        jest.spyOn(wrapper.vm, 'handleSeedPhraseTimer');
 
         wrapper.vm.$timer.start('seedPhrase');
         jest.runOnlyPendingTimers();

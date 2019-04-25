@@ -1,4 +1,4 @@
-import token from './tokens';
+import { token } from './tokens';
 
 export const transaction = {
   type: 'object',
@@ -23,7 +23,9 @@ export const transaction = {
       type: 'string',
       pattern: '^0x[a-zA-Z0-9]{40,}',
     },
-    token,
+    token: {
+      oneOf: [{ type: 'null' }, token],
+    },
     value: {
       type: 'string',
       pattern: '^[0-9]*(.[0-9]{1,18})?',

@@ -159,7 +159,7 @@ class EthereumWalletMock {
   }
 
   async getBalance() {
-    return await web3.eth.getBalance(this.getChecksumAddressString());
+    await web3.eth.getBalance(this.getChecksumAddressString());
   }
 
   getPublicKeyString() {

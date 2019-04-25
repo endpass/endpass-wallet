@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/prefer-default-export
 export const userNetwork = {
   type: 'object',
   required: ['id', 'name', 'url', 'currency'],
@@ -15,8 +16,4 @@ export const userNetwork = {
       type: 'integer',
     },
   },
-};
-
-export default {
-  userNetwork,
 };

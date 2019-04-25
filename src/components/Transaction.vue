@@ -176,9 +176,9 @@ export default {
     },
     isError() {
       return (
-        this.transaction.state === TRANSACTION_STATUS.ERROR
-        || this.state === TRANSACTION_STATUS.ERROR
-        || this.state === TRANSACTION_STATUS.CANCELED
+        this.transaction.state === TRANSACTION_STATUS.ERROR ||
+        this.state === TRANSACTION_STATUS.ERROR ||
+        this.state === TRANSACTION_STATUS.CANCELED
       );
     },
     isPending() {
@@ -249,9 +249,10 @@ export default {
       this.resendModalOpen = false;
       this.passwordModalOpen = false;
 
-      const sendTransaction = this.state === TRANSACTION_STATUS.CANCELED
-        ? this.cancelTransaction
-        : this.resendTransaction;
+      const sendTransaction =
+        this.state === TRANSACTION_STATUS.CANCELED
+          ? this.cancelTransaction
+          : this.resendTransaction;
 
       this.transactionToSend = Transaction.applyProps(this.transactionToSend, {
         state: TRANSACTION_STATUS.PENDING,

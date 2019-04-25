@@ -20,7 +20,7 @@ describe('token info service', () => {
 
   it('should make correct request', async () => {
     expect.assertions(1);
-    mock.onGet(tokensURL).reply((config) => {
+    mock.onGet(tokensURL).reply(config => {
       expect(config.method).toBe('get');
       return [200, tokens];
     });
@@ -37,7 +37,9 @@ describe('token info service', () => {
   it('should parse token object', () => {
     let parsedToken = tokenInfo._parseToken(tokens[0]);
     // Also make sure it does not mutate the original tokens list
-    expect(parsedToken.logo).toBe(`${ENV.VUE_APP_TOKEN_IMAGE_URL}${tokens[0].logo}`);
+    expect(parsedToken.logo).toBe(
+      `${ENV.VUE_APP_TOKEN_IMAGE_URL}${tokens[0].logo}`,
+    );
 
     // This one does not have a logo
     parsedToken = tokenInfo._parseToken(tokens[1]);

@@ -5,13 +5,9 @@ function mockERC20Token() {}
 mockERC20Token.prototype.getToken = jest.fn().mockResolvedValue(tokens[0]);
 mockERC20Token.prototype.getContract = jest.fn().mockReturnValue({
   methods: {
-    transfer: function() {
-      return {
-        encodeABI: function() {
-          return;
-        },
-      };
-    },
+    transfer: () => ({
+      encodeABI: () => {},
+    }),
   },
 });
 mockERC20Token.getBalance = jest

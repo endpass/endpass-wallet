@@ -17,9 +17,7 @@ const init = async ({ dispatch }) => {
 };
 
 const addUserToken = async (
-  {
-    commit, dispatch, getters, rootGetters,
-  },
+  { commit, dispatch, getters, rootGetters },
   { token },
 ) => {
   try {
@@ -42,9 +40,7 @@ const addUserToken = async (
 };
 
 const removeUserToken = async (
-  {
-    commit, getters, dispatch, rootGetters,
-  },
+  { commit, getters, dispatch, rootGetters },
   { token },
 ) => {
   try {
@@ -67,7 +63,8 @@ const removeUserToken = async (
 };
 
 const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
-  const isMainNetwork = rootGetters['web3/activeNetwork'] === Network.NET_ID.MAIN;
+  const isMainNetwork =
+    rootGetters['web3/activeNetwork'] === Network.NET_ID.MAIN;
 
   if (!isMainNetwork) return;
 
@@ -107,21 +104,24 @@ const getTokensPrices = async ({ commit, getters }, { tokensSymbols }) => {
 
 const setTokensInfoByAddress = async ({ commit }, { address, tokens }) => {
   const tokensBalances = tokens.reduce(
-    (acc, token) => Object.assign(acc, {
-      [token.symbol]: token.balance || '0',
-    }),
+    (acc, token) =>
+      Object.assign(acc, {
+        [token.symbol]: token.balance || '0',
+      }),
     {},
   );
   const tokensPrices = tokens.reduce(
-    (acc, token) => Object.assign(acc, {
-      [token.symbol]: token.price || {},
-    }),
+    (acc, token) =>
+      Object.assign(acc, {
+        [token.symbol]: token.price || {},
+      }),
     {},
   );
   const networkTokens = tokens.reduce(
-    (acc, token) => Object.assign(acc, {
-      [token.address]: omit(token, ['price', 'balance']),
-    }),
+    (acc, token) =>
+      Object.assign(acc, {
+        [token.address]: omit(token, ['price', 'balance']),
+      }),
     {},
   );
 
@@ -143,9 +143,10 @@ const setUserTokens = async ({ commit, rootGetters }, tokens) => {
   if (get(tokens, currentNetwork)) {
     const fiatCurrency = rootGetters['price/fiatCurrency'];
     const tokensMappedByNetworksAndAddresses = Object.keys(tokens).reduce(
-      (acc, key) => Object.assign(acc, {
-        [key]: mapKeys(tokens[key], 'address'),
-      }),
+      (acc, key) =>
+        Object.assign(acc, {
+          [key]: mapKeys(tokens[key], 'address'),
+        }),
       {},
     );
     const currentNetworkTokens = get(

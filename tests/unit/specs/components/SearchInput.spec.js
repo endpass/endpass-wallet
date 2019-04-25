@@ -35,7 +35,6 @@ describe('SearchInput', () => {
     });
 
     it('should emit event with empty value when clicked on clear', () => {
-      const value = '11';
       wrapper.find('.button').trigger('click');
       expect(wrapper.emitted('input')).toBeTruthy();
       expect(wrapper.emitted().input[0]).toEqual(['']);

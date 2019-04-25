@@ -214,7 +214,7 @@ export default {
         symbol: tokenInfo.symbol,
       };
 
-      Object.keys(this.notFound).forEach((item) => {
+      Object.keys(this.notFound).forEach(item => {
         if (!this.token[item]) {
           this.notFound[item] = true;
         }

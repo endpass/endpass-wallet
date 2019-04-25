@@ -9,26 +9,29 @@ export default (
   let musationsCount = 0;
   let actionsCount = 0;
 
-  const commit = (type, payload) => {
+  const commit = type => {
     const mutation = expectedMutations[musationsCount];
     expect(type).toBe(mutation.type);
-    musationsCount++;
+    musationsCount += 1;
   };
 
-  const dispatch = (type, payload) => {
+  // eslint-disable-next-line consistent-return
+  const dispatch = type => {
     const action = expectedActions[actionsCount];
     expect(type).toBe(action.type);
     if (expectedActions[actionsCount].async) {
-      return new Promise((res, rej) => {
+      return new Promise(res => {
         res();
       });
     }
-    actionsCount++;
+    actionsCount += 1;
   };
 
+  // eslint-disable-next-line no-param-reassign
   context.commit = commit;
+  // eslint-disable-next-line no-param-reassign
   context.dispatch = dispatch;
-  let res = action(context, payload);
+  const res = action(context, payload);
   if (res instanceof Promise) {
     res.then(() => {
       setTimeout(() => {

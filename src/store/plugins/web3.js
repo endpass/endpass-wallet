@@ -47,7 +47,7 @@ const getProvider = (store, url) => {
   return newProvider;
 };
 
-export default (store) => {
+export default store => {
   store.subscribe(({ type, payload }) => {
     if (type === 'web3/CHANGE_NETWORK') {
       setProvider(store, getProvider(store, payload.url));

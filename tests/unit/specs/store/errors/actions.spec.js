@@ -1,14 +1,13 @@
 import actions from '@/store/errors/actions';
-import { EventEmitter } from '@/class';
 
 describe('errors store actions', () => {
-  let state = {
+  const state = {
     errorEmitter: {
       emit: jest.fn(),
     },
   };
-  let dispatch = jest.fn();
-  let commit = jest.fn();
+  const dispatch = jest.fn();
+
   describe('emitError', () => {
     it('should emit error', () => {
       const err = {};

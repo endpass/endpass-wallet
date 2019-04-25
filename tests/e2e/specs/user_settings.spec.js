@@ -1,9 +1,4 @@
-import {
-  checksumAddress,
-  v3password,
-  privateKey,
-  mnemonic,
-} from '../fixtures/accounts';
+import { v3password } from '../fixtures/accounts';
 import user from '../fixtures/identity/user';
 
 describe('Settings Page', () => {

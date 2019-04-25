@@ -1,6 +1,6 @@
 import { web3 } from '@/class';
 
-const appStatus = (state) => {
+const appStatus = state => {
   if (!state.web3Connection) {
     return 'failed';
   }

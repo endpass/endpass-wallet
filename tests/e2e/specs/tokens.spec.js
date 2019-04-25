@@ -135,7 +135,7 @@ describe('Tokens Page', () => {
         cy.makeStoreAlias();
         cy.get('@store').then(store => {
           store.commit('tokens/SET_USER_TOKENS', {
-            '1': tokensMappedByAddress,
+            1: tokensMappedByAddress,
           });
         });
       });

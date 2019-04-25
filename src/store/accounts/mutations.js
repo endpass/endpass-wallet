@@ -23,7 +23,7 @@ const addWallet = (state, wallet) => {
   };
 };
 
-const removeWallets = (state) => {
+const removeWallets = state => {
   state.wallets = {};
   state.hdKey = null;
 };

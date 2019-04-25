@@ -15,6 +15,6 @@ Validator.extend('public_key', publicKey);
 Validator.extend('seed_phrase', seedPhrase);
 Validator.extend('hex', hex);
 
-export default (Vue) => {
+export default Vue => {
   Vue.use(VeeValidate, { inject: false });
 };

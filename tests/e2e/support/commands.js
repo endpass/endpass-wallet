@@ -223,13 +223,13 @@ Cypress.Commands.add('getTokensPrices', () => {
 Cypress.Commands.add('mockEthplorerRequests', () => {
   cy.route({
     method: 'GET',
-    url: `${cryptodataAPIUrl}/**/transactions/*/*`,
+    url: `${cryptodataAPIUrl}/**/transactions/*`,
     response: ethTransactions,
     status: 200,
   }).as('addressHistoryRequest');
   cy.route({
     method: 'GET',
-    url: `${cryptodataAPIUrl}/**/transactions/*`,
+    url: `${cryptodataAPIUrl}/**/transactions/*/token*`,
     response: tokenTransactions,
     status: 200,
   }).as('addressTransactionsRequest');
@@ -270,12 +270,14 @@ Cypress.Commands.add('inputInvalidPassword', () => {
  * @return {Promise} Resolves with blob containing fixture contents
  */
 function getFixtureBlob(fileUrl, type) {
-  return type === 'application/json' || path.extname(fileUrl) === 'json'
-    ? cy
-        .fixture(fileUrl)
-        .then(JSON.stringify)
-        .then(jsonStr => new Blob([jsonStr], { type: 'application/json' }))
-    : cy.fixture(fileUrl, 'base64').then(Cypress.Blob.base64StringToBlob);
+  if (type === 'application/json' || path.extname(fileUrl) === 'json') {
+    return cy
+      .fixture(fileUrl)
+      .then(JSON.stringify)
+      .then(jsonStr => new Blob([jsonStr], { type: 'application/json' }));
+  }
+
+  return cy.fixture(fileUrl, 'base64').then(Cypress.Blob.base64StringToBlob);
 }
 
 /**
@@ -338,6 +340,7 @@ Cypress.Commands.add('mockWeb3Requests', () => {
     .as('mockWeb3Provider')
     .then(provider => {
       if (!provider.mockResolvedValue) {
+        // eslint-disable-next-line no-console
         console.warn(
           'cy.mockWeb3Provider: Use web3 MockProvider to mock requests to Ethereum nodes',
         );

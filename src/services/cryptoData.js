@@ -1,6 +1,4 @@
-import {
-  get, uniqBy, mapKeys, mapValues, identity,
-} from 'lodash';
+import { get, uniqBy, mapKeys, mapValues, identity } from 'lodash';
 import throttledQueue from 'throttled-queue';
 import { NotificationError } from '@/class';
 import { http } from '@/class/singleton';
@@ -54,12 +52,15 @@ const cryptoDataService = {
 
       throttle(async () => {
         try {
-          const res = await http.get(`${ENV.VUE_APP_CRYPTODATA_API_URL}/price`, {
-            params: {
-              from: fromSymbolsArray.join(','),
-              to: toSymbol,
+          const res = await http.get(
+            `${ENV.VUE_APP_CRYPTODATA_API_URL}/price`,
+            {
+              params: {
+                from: fromSymbolsArray.join(','),
+                to: toSymbol,
+              },
             },
-          });
+          );
           const data = cryptoDataValidator.validateSymbolsPrices(res.data);
 
           if (fromSymbolsArray.length > 1) {
@@ -86,31 +87,33 @@ const cryptoDataService = {
    * @returns {Promise<Object>}
    */
   getAccountBalance({ network, address, toSymbol }) {
-    return new Promise((resolve, reject) => throttle(async () => {
-      try {
-        const res = await http.get(
-          `${ENV.VUE_APP_CRYPTODATA_API_URL}/${network}/balance/${address}`,
-        );
-        const { balance, tokens } = cryptoDataValidator.validateBalance(
-          res.data,
-        );
-        const actualTokens = tokens.filter(token => !!token.price);
-        const tokensPrices = await cryptoDataService.getSymbolsPrices(
-          actualTokens.map(({ symbol }) => symbol),
-          toSymbol,
-        );
+    return new Promise((resolve, reject) =>
+      throttle(async () => {
+        try {
+          const res = await http.get(
+            `${ENV.VUE_APP_CRYPTODATA_API_URL}/${network}/balance/${address}`,
+          );
+          const { balance, tokens } = cryptoDataValidator.validateBalance(
+            res.data,
+          );
+          const actualTokens = tokens.filter(token => !!token.price);
+          const tokensPrices = await cryptoDataService.getSymbolsPrices(
+            actualTokens.map(({ symbol }) => symbol),
+            toSymbol,
+          );
 
-        return resolve({
-          tokens: actualTokens.map(token => ({
-            ...token,
-            price: tokensPrices[token.symbol] || {},
-          })),
-          balance,
-        });
-      } catch (err) {
-        return reject(err);
-      }
-    }));
+          return resolve({
+            tokens: actualTokens.map(token => ({
+              ...token,
+              price: tokensPrices[token.symbol] || {},
+            })),
+            balance,
+          });
+        } catch (err) {
+          return reject(err);
+        }
+      }),
+    );
   },
 
   /**
@@ -123,7 +126,9 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `${ENV.VUE_APP_CRYPTODATA_API_URL}/${network}/transactions/${address}/token`,
+            `${
+              ENV.VUE_APP_CRYPTODATA_API_URL
+            }/${network}/transactions/${address}/token`,
             {
               params: {
                 page: 1,
@@ -153,7 +158,9 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `${ENV.VUE_APP_CRYPTODATA_API_URL}/${network}/transactions/${address}`,
+            `${
+              ENV.VUE_APP_CRYPTODATA_API_URL
+            }/${network}/transactions/${address}`,
             {
               params: {
                 page: 1,

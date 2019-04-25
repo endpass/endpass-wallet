@@ -10,8 +10,10 @@ import {
 jest.useFakeTimers();
 
 describe('connection-status actions', () => {
-  let commit; let dispatch; let state; let
-    getters;
+  let commit;
+  let dispatch;
+  let state;
+  let getters;
   describe('updateApiErrorStatus', () => {
     const payload = {
       id: 1,
@@ -93,7 +95,7 @@ describe('connection-status actions', () => {
       expect(dispatch).toHaveBeenCalledWith('subscribeOnSyncStatus');
     });
     // impossible to test with async/await ?
-    it("shouldn't set syncing status and web3 connection statuses if provider have changed and update subscribtion", (done) => {
+    it("shouldn't set syncing status and web3 connection statuses if provider have changed and update subscribtion", done => {
       getters.eth.isSyncing.mockResolvedValueOnce(false);
       actions.subscribeOnSyncStatus({ commit, dispatch, getters }).then(() => {
         expect(commit).toHaveBeenCalledTimes(0);

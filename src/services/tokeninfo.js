@@ -3,12 +3,16 @@ import { isAddress } from 'web3-utils';
 
 export default {
   getTokensList() {
-    return this._getTokens().then(tokens => tokens.map(this._parseToken).filter(this._checkAddress));
+    return this._getTokens().then(tokens =>
+      tokens.map(this._parseToken).filter(this._checkAddress),
+    );
   },
 
   // Get list of all tokens with infos
   _getTokens() {
-    return http.get(`${ENV.VUE_APP_TOKEN_INFO_API_URL}/tokens`).then(resp => resp.data);
+    return http
+      .get(`${ENV.VUE_APP_TOKEN_INFO_API_URL}/tokens`)
+      .then(resp => resp.data);
   },
   // formats a token
   _parseToken(token) {

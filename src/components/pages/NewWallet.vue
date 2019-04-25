@@ -124,8 +124,8 @@ export default {
       this.isCreating = false;
     },
     handleSeedPhraseTimer() {
-      this.remainingSeedPhraseTimeout
-        -= UPDATE_SEED_PHRASE_INTERVAL_MSEC / 1000;
+      this.remainingSeedPhraseTimeout -=
+        UPDATE_SEED_PHRASE_INTERVAL_MSEC / 1000;
 
       if (this.remainingSeedPhraseTimeout <= 0) {
         this.$timer.stop('seedPhrase');

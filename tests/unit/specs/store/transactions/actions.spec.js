@@ -13,7 +13,6 @@ import {
   TransactionFactory,
   NotificationError,
   web3,
-  Wallet,
 } from '@/class';
 import { TRANSACTION_STATUS } from '@/constants';
 import { address } from 'fixtures/accounts';
@@ -21,7 +20,6 @@ import {
   transactionHash,
   shortTransactionHash,
   blockTransactions,
-  ethplorerHistory,
   ethplorerTransactions,
 } from 'fixtures/transactions';
 import {
@@ -126,7 +124,7 @@ describe('transactions actions', () => {
   describe('handleSendingError', () => {
     const defaultErrorParams = {
       title: 'Error sending transaction',
-      text: `Transaction was not sent`,
+      text: 'Transaction was not sent',
       type: 'is-danger',
     };
 
@@ -637,7 +635,6 @@ describe('transactions actions', () => {
 
   describe('handleTransactionCancelingHash', () => {
     let sendEvent;
-    const newHash = '0x0';
 
     beforeEach(() => {
       sendEvent = {

@@ -2,12 +2,15 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 import { Network } from '@endpass/class';
 import CurrencySelect from '@/components/bar/CurrencySelect';
 import Vuex from 'vuex';
+
 const localVue = createLocalVue();
 
 localVue.use(Vuex);
 
 describe('CurrencySelect', () => {
-  let wrapper, actions;
+  let wrapper;
+  let actions;
+
   beforeEach(() => {
     actions = {
       changeCurrency: jest.fn(),
