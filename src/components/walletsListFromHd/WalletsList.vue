@@ -27,7 +27,11 @@
         :is-active="address === selectedAddress"
         @click="updateSelectedAddress(address, index)"
       />
-      <v-pagination @input="changePage" />
+      <v-pagination
+        :offset="offset"
+        :limit="limit"
+        @offset="changeOffset"
+      />
       <slot name="buttons" />
     </div>
   </div>
@@ -88,8 +92,8 @@ export default {
       }
     },
 
-    async changePage(page) {
-      this.offset = this.limit * (page - 1);
+    async changeOffset(newOffset) {
+      this.offset = newOffset;
       await this.getNextAddressess();
     },
 

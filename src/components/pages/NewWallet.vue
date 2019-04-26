@@ -24,6 +24,7 @@
         :disabled="!!remainingSeedPhraseTimeout"
         to="/"
         class="button is-success is-cta"
+        @click.native="onContinue"
       >Continue {{ getRemainingSeedPhraseTimeout }}</router-link>
     </div>
     <div
@@ -81,6 +82,7 @@ export default {
       password: '',
       key: null,
       isCreating: false,
+      isCloseAfterCreate: false,
       remainingSeedPhraseTimeout: SEED_PHRASE_TIMEOUT_SEC,
     };
   },
@@ -131,7 +133,18 @@ export default {
         this.$timer.stop('seedPhrase');
       }
     },
+
+    onContinue() {
+      if (this.isCloseAfterCreate) {
+        window.close();
+      }
+    },
   },
+
+  mounted() {
+    this.isCloseAfterCreate = !!this.$route.query.closeAfterCreateWallet;
+  },
+
   mixins: [VueTimers, formMixin],
   timers: {
     seedPhrase: {

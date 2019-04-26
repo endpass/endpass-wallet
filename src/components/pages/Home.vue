@@ -99,7 +99,7 @@
                 </p>
                 <div class="is-centered">
                   <router-link
-                    :to="{ name: 'NewWallet' }"
+                    :to="{ name: 'NewWallet', query: $route.query }"
                     class="button is-success is-cta"
                   >Create New Wallet</router-link>
                 </div>
