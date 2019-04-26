@@ -87,7 +87,7 @@ describe('WalletsList', () => {
           getNextWalletsFromHd: jest.fn().mockResolvedValue([]),
         });
 
-        wrapper.find('v-pagination-stub').vm.$emit('input', 1);
+        wrapper.find('v-pagination-stub').vm.$emit('offset', 0);
         await global.flushPromises();
 
         expect(wrapper.vm.addresses).toEqual(emptyArray);
@@ -106,7 +106,7 @@ describe('WalletsList', () => {
           getNextWalletsFromHd: jest.fn().mockResolvedValue([]),
         });
 
-        wrapper.find('v-pagination-stub').vm.$emit('input', 3);
+        wrapper.find('v-pagination-stub').vm.$emit('offset', 20);
         await global.flushPromises();
         expect(wrapper.vm.addresses).toEqual(emptyArray);
         expect(wrapper.vm.getNextWalletsFromHd).toHaveBeenCalledTimes(1);

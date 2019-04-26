@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import Notifications from 'vue-notification';
 import VueTimers from 'vue-timers/mixin';
 import VeeValidate from 'vee-validate';
+import VueRouter from 'vue-router';
 import UIComponents from '@endpass/ui';
 
 import NewWallet from '@/components/pages/NewWallet.vue';
@@ -15,14 +16,15 @@ localVue.use(Vuex);
 localVue.use(validation);
 localVue.use(VeeValidate);
 localVue.use(UIComponents);
+localVue.use(VueRouter);
 
 jest.useFakeTimers();
 
 describe('NewWallet page', () => {
+  let wrapper;
+  let router;
   describe('computed', () => {
     describe('getRemainingSeedPhraseTimeout', () => {
-      let wrapper;
-
       beforeAll(() => {
         const actions = {
           'accounts/addHdWallet': jest.fn(),
@@ -36,9 +38,12 @@ describe('NewWallet page', () => {
           actions,
         });
 
+        router = new VueRouter();
+
         wrapper = mount(NewWallet, {
           localVue,
           store,
+          router,
           sync: false,
           mixins: [VueTimers],
         });
@@ -106,8 +111,6 @@ describe('NewWallet page', () => {
     // });
 
     describe('handleSeedPhraseTimer', () => {
-      let wrapper;
-
       beforeEach(() => {
         const actions = {
           'accounts/addHdWallet': jest.fn(),
@@ -122,10 +125,13 @@ describe('NewWallet page', () => {
         });
         const $ga = { event: jest.fn() };
 
+        router = new VueRouter();
+
         wrapper = mount(NewWallet, {
           localVue,
           store,
           sync: false,
+          router,
           mocks: {
             $ga,
           },
@@ -162,8 +168,6 @@ describe('NewWallet page', () => {
   });
 
   describe('timers', () => {
-    let wrapper;
-
     beforeAll(() => {
       const actions = {
         'accounts/addHdWallet': jest.fn(),
@@ -178,9 +182,12 @@ describe('NewWallet page', () => {
       });
 
       localVue.use(VeeValidate);
+      router = new VueRouter();
+
       wrapper = shallowMount(NewWallet, {
         localVue,
         store,
+        router,
         sync: false,
         mixins: [VueTimers],
       });

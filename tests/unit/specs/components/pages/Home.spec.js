@@ -15,6 +15,7 @@ localVue.use(VueRouter);
 describe('Home page', () => {
   let wrapper;
   let wrapperFactory;
+  let router;
 
   beforeEach(() => {
     const store = new Vuex.Store({
@@ -51,10 +52,13 @@ describe('Home page', () => {
         },
       },
     });
+    router = new VueRouter();
+
     wrapperFactory = wrapShallowMountFactory(Home, {
       store,
       localVue,
       sync: false,
+      router,
     });
 
     wrapper = wrapperFactory();

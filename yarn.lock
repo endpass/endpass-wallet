@@ -987,10 +987,10 @@
     axios "^0.18.0"
     vue "^2.5.22"
 
-"@endpass/ui@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@endpass/ui/-/ui-0.5.0.tgz#1ccfaebeb949978f2cf32d9eefc0debf00f2d619"
-  integrity sha512-KWsmDJjJDC2Dv3KAM/RfycW+/oYD2GV2e2HwAA278C9h2JJU4im8Aj5N1004opgIod7L8gL3yZQAfI4BoWlrCw==
+"@endpass/ui@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@endpass/ui/-/ui-0.6.0.tgz#db6aa2aca950cb31cd5afb409592284ed0ff1312"
+  integrity sha512-zreCYmDOA/23d//0pjRjesphs2teScB6nbB5Zi9s38dX7b+qRm9Fie8n4riVvTqprpoXIOg67WXiy6K4xoVzCg==
   dependencies:
     "@endpass/utils" "^1.3.5"
     vue "^2.5.21"
