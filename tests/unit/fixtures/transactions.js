@@ -16,6 +16,22 @@ export const transaction = {
   data: '0x',
 };
 
+export const cryptoDataPendingTransaction = {
+  nonce: '0x1',
+  gasPrice: '0x77359400',
+  gas: '0x5208',
+  to: '0x2fa2ba4f5f1af76ce8d7e53f9b28117250026a1d',
+  from: '0xdfba554258abdc41f35e03bd529eef6f2aaf80da',
+  value: '0xa4d88ddd94000',
+  input: '0x',
+  v: '0x1c',
+  r: '0x28d75db9f28a3ad6d4c89469792a69d9af65f0dedcfc6103d0250523d8360a0a',
+  s: '0x64dc213a020bb96046693cdc6f88ada82b6995e7de6d4873750f6f96cc79aac4',
+  hash: '0x6aa586d5132ac17b66a8b5526e045afaae966ce47b205290d9925aa514954725',
+  chainId: '0x1',
+  timestamp: '0x5cc1776b',
+};
+
 export const metamaskTransaction = {
   blockHash:
     '0x3ab5a03331eb5301f8562ab05aab7503ca692216e16e7dea27d8117eb1a3add1',
@@ -233,4 +249,5 @@ export default {
   ethplorerHistory,
   ethplorerTransactions,
   pendingTransactions,
+  cryptoDataPendingTransaction,
 };

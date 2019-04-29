@@ -1,6 +1,7 @@
 import { v3, address } from 'fixtures/accounts';
 import { settings, networks } from 'fixtures/identity';
 import { tokens, token } from 'fixtures/tokens';
+import { cryptoDataPendingTransaction } from 'fixtures/transactions';
 
 const {
   cryptoDataValidator,
@@ -88,18 +89,11 @@ describe('Schema validators', () => {
     });
 
     describe('validatePendingTransactions', () => {
-      const transaction = {
-        hash: '',
-        from: '',
-        to: '',
-        value: '',
-        gas: '',
-        input: '',
-      };
+      const transaction = { ...cryptoDataPendingTransaction };
 
       it('should validate data', () => {
         const validData = {
-          filterId: 1,
+          filterId: '0x1',
           transactions: [transaction, transaction],
         };
 
