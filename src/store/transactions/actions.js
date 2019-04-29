@@ -148,7 +148,7 @@ const updateTransactionHistory = async ({ commit, dispatch, rootState }) => {
       network: networkId,
     });
     const transactions = res.map(trx =>
-      TransactionFactory.fromCryptoDataHistory(trx),
+      TransactionFactory.fromCryptoDataHistory({ ...trx, networkId }),
     );
 
     commit(SET_TRANSACTION_HISTORY, transactions);
@@ -434,7 +434,7 @@ const getPendingTransactions = async ({
 
     transactions.forEach(transaction => {
       const trx = Transaction.applyProps(
-        TransactionFactory.fromCryptoData(transaction),
+        TransactionFactory.fromCryptoData({ ...transaction, networkId }),
         {
           state: TRANSACTION_STATUS.PENDING,
         },
