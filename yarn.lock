@@ -925,12 +925,12 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@endpass/class@^0.10.3":
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.10.3.tgz#d92c4d3d37dc1249ecfe815a1d657a7b1162e095"
-  integrity sha512-auJYa340yqY9g8nUPKEIvZ+fySda6R7rO7R4RNkqeSNDHrXEhCoLpjQHnvLhtEnvgQqwOllqIMSWWam95oSISQ==
+"@endpass/class@^0.12.1":
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.12.1.tgz#8dc0ef15fc1e2729f500a8d0836789da3ff2ef25"
+  integrity sha512-6xld/zEw7uXQeO/ExnUCgMspjXQuoiuxU2/rf+jVuNifqLIDU47b6oKFVtCRLOBU8bYUijNhVFiC4l/7BXJojA==
   dependencies:
-    "@endpass/utils" "^1.2.3"
+    "@endpass/utils" "^1.3.5"
     "@ledgerhq/hw-app-eth" "^4.24.0"
     "@ledgerhq/hw-transport-u2f" "^4.24.0"
     bignumber.js "^7.2.1"
@@ -969,12 +969,12 @@
     web3-providers-ws "1.0.0-beta.33"
     web3-utils "1.0.0-beta.33"
 
-"@endpass/connect@0.17.5-beta":
-  version "0.17.5-beta"
-  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.17.5-beta.tgz#67139c9344c2ff1e72b21b3b9e3cced4ea0a3a99"
-  integrity sha512-Dfn3qkHxtInRd7Kj2Kb8vbKuRzLNU4e92Fl2jcGNDand3XiKRhatxjpuEvR8fJcheBm0aqoPH5tlC8LlDZaE5g==
+"@endpass/connect@0.19.3-beta":
+  version "0.19.3-beta"
+  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.19.3-beta.tgz#0c31499620332599acc79996f706b7f1168a222c"
+  integrity sha512-VmGOOZ2OI+2bEqCnsGFZJZUvPo5rT5sBENguUGTCloMj63hEwOQ7k50f7UGne/QlacW4vViIRbVwtjOiDJNbsg==
   dependencies:
-    "@endpass/class" "^0.10.3"
+    "@endpass/class" "^0.12.1"
     lodash.get "^4.4.2"
     utility-types "^3.4.1"
     web3-providers-http "1.0.0-beta.33"
@@ -995,7 +995,7 @@
     "@endpass/utils" "^1.3.5"
     vue "^2.5.21"
 
-"@endpass/utils@^1.2.3", "@endpass/utils@^1.3.4":
+"@endpass/utils@^1.3.4":
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.3.4.tgz#f83cb2cd434f1c878e3c91f68ae4b90a47710416"
   integrity sha512-EdHncOJKu0Ulufz9Fy9BtzT+ShOODOTb0l/dnIusuzM1IRLwugewNQlUtzIKEk/i+xnZ3elfHkGrt4Gwckvt3w==
