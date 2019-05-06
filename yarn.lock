@@ -925,10 +925,10 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@endpass/class@^0.12.1":
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.12.1.tgz#8dc0ef15fc1e2729f500a8d0836789da3ff2ef25"
-  integrity sha512-6xld/zEw7uXQeO/ExnUCgMspjXQuoiuxU2/rf+jVuNifqLIDU47b6oKFVtCRLOBU8bYUijNhVFiC4l/7BXJojA==
+"@endpass/class@^0.13.3":
+  version "0.13.3"
+  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.13.3.tgz#117819d277df242fb7fdd46c0d0b60e5d762e0be"
+  integrity sha512-NojM6cJFkHLJ9LdPnFYhBWOE5u9sPrDk9kAWtn7IN0dWEULGHWCOCGNCoU4RMZUx7tvooca6/a62mjL96x+QoA==
   dependencies:
     "@endpass/utils" "^1.3.5"
     "@ledgerhq/hw-app-eth" "^4.24.0"
@@ -947,34 +947,12 @@
     web3-providers-ws "1.0.0-beta.33"
     web3-utils "1.0.0-beta.33"
 
-"@endpass/class@^0.13.2":
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.13.2.tgz#df1bfb1fbf5cad578f2b56dba0b5b91016b5aaf3"
-  integrity sha512-95Z32SOqS8tLOyB1DqM4aSR3U2kUFQJtliBr/EhmDsIdcTms53cJ/QO2UH3nLllxNHphsN3FKCaSnATz+zVWJA==
+"@endpass/connect@0.19.5-beta":
+  version "0.19.5-beta"
+  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.19.5-beta.tgz#ac13b74c7018bd32d9b9e69a76313f78700d3d88"
+  integrity sha512-lD+2XzG5SBEJvRKwsp6rCb6ghaLcynnySsmRRcaG+vpb6Uiat69LQt688W1oWIeQn4w+/jhPDI9vgVIDG7fuUg==
   dependencies:
-    "@endpass/utils" "^1.3.5"
-    "@ledgerhq/hw-app-eth" "^4.24.0"
-    "@ledgerhq/hw-transport-u2f" "^4.24.0"
-    bignumber.js "^7.2.1"
-    dexie "^2.0.4"
-    eth-ens-namehash "^2.0.8"
-    ethereumjs-tx "^1.3.4"
-    ethereumjs-wallet "^0.6.0"
-    lodash "^4.17.11"
-    path-to-regexp "^2.4.0"
-    trezor-connect "^6.0.0"
-    web3 "1.0.0-beta.33"
-    web3-providers-http "1.0.0-beta.33"
-    web3-providers-ipc "1.0.0-beta.33"
-    web3-providers-ws "1.0.0-beta.33"
-    web3-utils "1.0.0-beta.33"
-
-"@endpass/connect@0.19.4-beta":
-  version "0.19.4-beta"
-  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.19.4-beta.tgz#aef7b9d85d55ba3fe4b109e47fc6d11625b8e733"
-  integrity sha512-t+gDQkZqR75xAbhEn5agpBqkJkdz5pW/b5ejBL04NEajx2e7wdfy0MOsa/QXShsfpIalwIf4ncRhHHaVTGyULA==
-  dependencies:
-    "@endpass/class" "^0.12.1"
+    "@endpass/class" "^0.13.3"
     lodash.get "^4.4.2"
     utility-types "^3.4.1"
     web3-providers-http "1.0.0-beta.33"
