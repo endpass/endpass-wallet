@@ -60,7 +60,7 @@ const addNetwork = async ({ state, commit, dispatch }, { network }) => {
 
     return success;
   } catch (error) {
-    await dispatch('errors/emitError', error, { root: true });
+    return dispatch('errors/emitError', error, { root: true });
   }
 };
 
@@ -73,9 +73,7 @@ const updateNetwork = async (
     item => item.url === oldNetwork.url,
   );
 
-  if (oldNetworkIndex === -1) {
-    return;
-  }
+  if (oldNetworkIndex === -1) return false;
 
   networksToSave.splice(oldNetworkIndex, 1, network);
 
@@ -93,7 +91,7 @@ const updateNetwork = async (
 
     return success;
   } catch (error) {
-    await dispatch('errors/emitError', error, { root: true });
+    return dispatch('errors/emitError', error, { root: true });
   }
 };
 

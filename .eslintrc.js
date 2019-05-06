@@ -30,7 +30,7 @@ module.exports = {
     },
     'arrow-parens': ['error', 'as-needed'],
     'no-shadow': ['warn'],
-    'consistent-return': ['warn'],
+    'consistent-return': 'error',
     'operator-linebreak': 'off',
     'space-before-function-paren': 'off',
     'function-paren-newline': 'off',

@@ -43,6 +43,7 @@ jest.mock('web3', () => {
 
       subscriptions[type].forEach(callback => callback(data));
 
+      /* eslint-disable-next-line */
       return subscriptionEventEmiter;
     }),
   };

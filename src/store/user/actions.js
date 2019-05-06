@@ -38,10 +38,10 @@ const login = async ({ commit, dispatch }) => {
     commit(SET_IDENTITY_TYPE, type);
     commit(SET_AUTHORIZATION_STATUS, true);
 
-    return dispatch('init', null, { root: true });
+    await dispatch('init', null, { root: true });
   } catch (err) {
     if (!err.message.includes('Auth was canceled by user')) {
-      return dispatch('errors/emitError', err, { root: true });
+      await dispatch('errors/emitError', err, { root: true });
     }
   }
 };
