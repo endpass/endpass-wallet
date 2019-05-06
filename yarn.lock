@@ -969,10 +969,10 @@
     web3-providers-ws "1.0.0-beta.33"
     web3-utils "1.0.0-beta.33"
 
-"@endpass/connect@0.19.3-beta":
-  version "0.19.3-beta"
-  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.19.3-beta.tgz#0c31499620332599acc79996f706b7f1168a222c"
-  integrity sha512-VmGOOZ2OI+2bEqCnsGFZJZUvPo5rT5sBENguUGTCloMj63hEwOQ7k50f7UGne/QlacW4vViIRbVwtjOiDJNbsg==
+"@endpass/connect@0.19.4-beta":
+  version "0.19.4-beta"
+  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.19.4-beta.tgz#aef7b9d85d55ba3fe4b109e47fc6d11625b8e733"
+  integrity sha512-t+gDQkZqR75xAbhEn5agpBqkJkdz5pW/b5ejBL04NEajx2e7wdfy0MOsa/QXShsfpIalwIf4ncRhHHaVTGyULA==
   dependencies:
     "@endpass/class" "^0.12.1"
     lodash.get "^4.4.2"
@@ -994,19 +994,6 @@
   dependencies:
     "@endpass/utils" "^1.3.5"
     vue "^2.5.21"
-
-"@endpass/utils@^1.3.4":
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/@endpass/utils/-/utils-1.3.4.tgz#f83cb2cd434f1c878e3c91f68ae4b90a47710416"
-  integrity sha512-EdHncOJKu0Ulufz9Fy9BtzT+ShOODOTb0l/dnIusuzM1IRLwugewNQlUtzIKEk/i+xnZ3elfHkGrt4Gwckvt3w==
-  dependencies:
-    bs58check "^2.1.2"
-    dayjs "^1.7.8"
-    ethereumjs-wallet "^0.6.2"
-    export-files "^2.1.1"
-    keythereum "^1.0.4"
-    lodash "^4.17.11"
-    node-notifier "^5.4.0"
 
 "@endpass/utils@^1.3.5":
   version "1.3.5"
