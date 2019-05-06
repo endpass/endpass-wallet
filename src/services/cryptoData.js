@@ -50,7 +50,7 @@ const cryptoDataService = {
         return resolve({ [toSymbol]: 0 });
       }
 
-      throttle(async () => {
+      return throttle(async () => {
         try {
           const res = await http.get(
             `${ENV.VUE_APP_CRYPTODATA_API_URL}/price`,

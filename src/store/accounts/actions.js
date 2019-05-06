@@ -56,7 +56,7 @@ const addPublicWallet = async (
 
     await dispatch('addWalletAndSelect', { info, address });
   } catch (e) {
-    return dispatch('errors/emitError', e, { root: true });
+    await dispatch('errors/emitError', e, { root: true });
   }
 };
 
@@ -209,12 +209,10 @@ const addHdPublicWallet = async (
 ) => {
   try {
     const hdWallet = getters.getHdWalletBySeed(key);
-
     const v3KeyStore = keystore.encryptHDWallet(password, hdWallet, {
       kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
       n: ENV.VUE_APP_KDF_PARAMS_N,
     });
-
     const info = {
       address: v3KeyStore.address,
       type: WALLET_TYPES.HD_PUBLIC,
@@ -232,7 +230,7 @@ const addHdPublicWallet = async (
       walletType: WALLET_TYPES.HD_PUBLIC,
     });
   } catch (e) {
-    return dispatch('errors/emitError', e, { root: true });
+    await dispatch('errors/emitError', e, { root: true });
   }
 };
 
@@ -247,7 +245,7 @@ const updateWallets = async ({ dispatch }, { wallets }) => {
 
     return success;
   } catch (error) {
-    await dispatch('errors/emitError', error, { root: true });
+    return dispatch('errors/emitError', error, { root: true });
   }
 };
 
