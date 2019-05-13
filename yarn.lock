@@ -947,12 +947,15 @@
     web3-providers-ws "1.0.0-beta.33"
     web3-utils "1.0.0-beta.33"
 
-"@endpass/connect@0.19.5-beta":
-  version "0.19.5-beta"
-  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.19.5-beta.tgz#ac13b74c7018bd32d9b9e69a76313f78700d3d88"
-  integrity sha512-lD+2XzG5SBEJvRKwsp6rCb6ghaLcynnySsmRRcaG+vpb6Uiat69LQt688W1oWIeQn4w+/jhPDI9vgVIDG7fuUg==
+"@endpass/connect@0.21.3-beta":
+  version "0.21.3-beta"
+  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.21.3-beta.tgz#b4e6c92114d460e93ec8991b3780a11cd76ef069"
+  integrity sha512-hDnK2ysNJBO73s2ywGqLfeCidvI50nxq4hXdsK5f2n1JCUT2+CbOaVENtZUVSmCWdkuesaDU9lepDs323C6yNA==
   dependencies:
     "@endpass/class" "^0.13.3"
+    "@endpass/utils" "^1.3.5"
+    axios "^0.18.0"
+    axios-token-interceptor "^0.1.0"
     lodash.get "^4.4.2"
     utility-types "^3.4.1"
     web3-providers-http "1.0.0-beta.33"
@@ -2195,6 +2198,13 @@ axios-mock-adapter@^1.15.0:
   integrity sha512-m2D8ngMTQ5p4zZNBsPKoENgwz5rDfd0pZmXI/spdE2eeeKIcR3jquk+NRiBVFtb9UJlciBYplNzSUmgQ6X385Q==
   dependencies:
     deep-equal "^1.0.1"
+
+axios-token-interceptor@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/axios-token-interceptor/-/axios-token-interceptor-0.1.0.tgz#e848bbc57fa694ddb83e4ad0982db3304b88a926"
+  integrity sha1-6Ei7xX+mlN24PkrQmC2zMEuIqSY=
+  dependencies:
+    lock "^0.1.4"
 
 axios@^0.18.0:
   version "0.18.0"
@@ -8219,6 +8229,11 @@ locate-path@^3.0.0:
   dependencies:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
+
+lock@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/lock/-/lock-0.1.4.tgz#fec7deaef17e7c3a0a55e1da042803e25d91745d"
+  integrity sha1-/sfervF+fDoKVeHaBCgD4l2RdF0=
 
 lodash._reinterpolate@~3.0.0:
   version "3.0.0"
