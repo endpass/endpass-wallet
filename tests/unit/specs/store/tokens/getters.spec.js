@@ -51,7 +51,7 @@ describe('tokens getters', () => {
     });
   });
 
-  describe('tokensByAddress', () => {
+  describe('tokensByAddressBlock', () => {
     it('should return tokens by given address', () => {
       const state = {
         networkTokens,
@@ -59,7 +59,7 @@ describe('tokens getters', () => {
           '0x0': ['0x1', '0x2'],
         },
       };
-      expect(tokensGetters.tokensByAddress(state)('0x0')).toEqual(
+      expect(tokensGetters.tokensByAddressBlock(state)('0x0')).toEqual(
         networkTokens,
       );
     });
@@ -69,7 +69,7 @@ describe('tokens getters', () => {
         tokensByAddress: {},
       };
 
-      expect(tokensGetters.tokensByAddress(state)('0x0')).toMatchObject({});
+      expect(tokensGetters.tokensByAddressBlock(state)('0x0')).toMatchObject({});
     });
   });
 
@@ -128,7 +128,7 @@ describe('tokens getters', () => {
   describe('currentAccountTokens', () => {
     it('should returns current account tokens by tokensByAddress getter', () => {
       const getters = {
-        tokensByAddress: jest.fn(() => tokensMappedByAddresses),
+        tokensByAddressBlock: jest.fn(() => tokensMappedByAddresses),
       };
       const rootGetters = {
         'accounts/currentAddressString': address,
@@ -147,8 +147,8 @@ describe('tokens getters', () => {
           rootGetters,
         ),
       ).toEqual(tokensMappedByAddresses);
-      expect(getters.tokensByAddress).toBeCalledTimes(1);
-      expect(getters.tokensByAddress).toBeCalledWith(address);
+      expect(getters.tokensByAddressBlock).toBeCalledTimes(1);
+      expect(getters.tokensByAddressBlock).toBeCalledWith(address);
     });
   });
 
@@ -233,15 +233,15 @@ describe('tokens getters', () => {
   describe('fullTokensByAddress', () => {
     it('should return tokens by address with fullTokens getter', () => {
       const getters = {
-        tokensByAddress: jest.fn(() => tokensMappedByAddresses),
+        tokensByAddressBlock: jest.fn(() => tokensMappedByAddresses),
         fullTokens: jest.fn(() => fullTokensMappedByAddresses),
       };
 
       expect(tokensGetters.fullTokensByAddress(null, getters)(address)).toEqual(
         fullTokensMappedByAddresses,
       );
-      expect(getters.tokensByAddress).toBeCalledTimes(1);
-      expect(getters.tokensByAddress).toBeCalledWith(address);
+      expect(getters.tokensByAddressBlock).toBeCalledTimes(1);
+      expect(getters.tokensByAddressBlock).toBeCalledWith(address);
       expect(getters.fullTokens).toBeCalledTimes(1);
       expect(getters.fullTokens).toBeCalledWith(
         address,

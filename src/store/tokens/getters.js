@@ -18,7 +18,7 @@ const userTokenByAddress = (
   return targetNetTokens[tokenAddress] || null;
 };
 
-const tokensByAddress = state => address => {
+const tokensByAddressBlock = state => address => {
   const tokensList = state.tokensByAddress[address];
 
   if (!tokensList) {
@@ -51,7 +51,7 @@ const currentNetUserTokens = (state, getters, rootState, rootGetters) =>
   state.userTokens[rootGetters['web3/activeNetwork']] || {};
 
 const currentAccountTokens = (state, getters, rootState) =>
-  getters.tokensByAddress(rootState.accounts.address);
+  getters.tokensByAddressBlock(rootState.accounts.address);
 
 const currentNetUserFullTokens = (state, getters, rootState) => {
   const { address } = rootState.accounts;
@@ -69,7 +69,7 @@ const allCurrentAccountTokens = (state, getters) => ({
 });
 
 const fullTokensByAddress = (state, getters) => address => {
-  const tokens = getters.tokensByAddress(address);
+  const tokens = getters.tokensByAddressBlock(address);
 
   return getters.fullTokens(address, tokens);
 };
@@ -160,7 +160,7 @@ export default {
   currentNetUserFullTokens,
   currentAccountFullTokens,
   fullTokens,
-  tokensByAddress,
+  tokensByAddressBlock,
   balancesByAddress,
   userTokenByAddress,
   fullTokensByAddress,
