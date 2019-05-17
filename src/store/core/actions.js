@@ -1,4 +1,7 @@
-import { START_PAGE_LOADING, STOP_PAGE_LOADING } from './mutations-types';
+import {
+  START_PAGE_LOADING,
+  STOP_PAGE_LOADING,
+} from '@/store/core/mutations-types';
 
 // Dispatch all Vuex init() actions
 const init = async ({ dispatch, commit, getters }, initModeParams) => {

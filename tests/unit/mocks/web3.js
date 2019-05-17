@@ -73,6 +73,7 @@ jest.mock('web3', () => {
     subscribe,
     clearSubscriptions,
     subscriptionEventEmiter,
+    isSyncing: jest.fn().mockResolvedValue(false),
   };
   const { utils } = originalWeb3;
   const mockWeb3 = jest.fn(() => ({

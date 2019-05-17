@@ -19,7 +19,7 @@ module.exports = {
       'jest-transform-stub',
   },
   // TODO: check usage (@endpass/class) after update to vue-cli3
-  transformIgnorePatterns: ['node_modules/(?!(vue-timers|@endpass/class))'],
+  transformIgnorePatterns: ['node_modules/(?!(vue-timers|vuex-class-modules|@endpass/class))'],
   snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
   setupFiles: ['<rootDir>/tests/unit/setup', 'jest-canvas-mock'],
   setupTestFrameworkScriptFile: '<rootDir>/tests/unit/setupTests',
