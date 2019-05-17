@@ -62,16 +62,16 @@ export default {
     async handleRecoveryConfirm(password) {
       this.isLoading = true;
 
-      try {
-        const res = await this.recoverSeed(password);
+      const res = await this.recoverSeed(password);
 
-        this.isPasswordModalVisible = false;
-        this.recoveredSeed = res;
-      } catch (err) {
+      if (!res) {
         this.$emit('lock');
-      } finally {
-        this.isLoading = false;
+      } else {
+        this.recoveredSeed = res;
       }
+
+      this.isPasswordModalVisible = false;
+      this.isLoading = false;
     },
 
     handleSeedClose() {
