@@ -117,6 +117,12 @@ export const settings = {
   },
 };
 
+export const encryptedMessage =
+  'efca4cdd31923b50f4214af5d2ae10e7ac45a5019e9431cc195482d707485378';
+
 export const otpSettings = {
   otp: true,
 };
+
+export const seed =
+  'pseudomania bedchair withdrawingness squawberry ipseand anacoluthon ungangrened ballet recomplicate pessulus trisome unsuffocative plaintile rosland preperceive soupspoon outback subchela dovefoot beltmaker piaculum dragonhood Pristipomatidae arrowheaded';

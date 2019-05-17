@@ -1,5 +1,5 @@
 import MockAdapter from 'axios-mock-adapter';
-import { hdv3 } from 'fixtures/accounts';
+import { hdv3, encryptedMessage } from 'fixtures/accounts';
 import { NotificationError, Wallet } from '@/class';
 import { httpIdentity } from '@/class/singleton';
 import { successResponse } from 'fixtures/identity';
@@ -808,6 +808,80 @@ describe('User service', () => {
         await userService.recoverWalletsPassword({ signature, main, standart });
       } catch (receivedError) {
         expect(receivedError.text).toEqual(expectedError.text);
+      }
+    });
+  });
+
+  describe('backupSeed', () => {
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/user/seed`;
+
+    it('should request backuped seed', async () => {
+      expect.assertions(2);
+      axiosMock.onPost(url).reply(config => {
+        expect(config.url).toBe(url);
+        expect(config.data).toBe(
+          JSON.stringify({
+            seed: encryptedMessage,
+          }),
+        );
+        return [200];
+      });
+      await userService.backupSeed(encryptedMessage);
+    });
+
+    it('should throw notificaton error if request failed', async done => {
+      expect.assertions(1);
+      axiosMock.onPost(url).reply(() => [500]);
+      try {
+        await userService.backupSeed(encryptedMessage);
+      } catch (err) {
+        expect(err.text).toBe(
+          'An error occurred during account seed backuping. Please try again.',
+        );
+        done();
+      }
+    });
+  });
+
+  describe('recoverSeed', () => {
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/user/seed`;
+
+    it('should request user backuped seed', async () => {
+      expect.assertions(2);
+      const response = {
+        seed: encryptedMessage,
+      };
+      axiosMock.onGet(url).reply(config => {
+        expect(config.url).toBe(url);
+        return [200, response];
+      });
+      const res = await userService.recoverSeed();
+      expect(res).toEqual(response.seed);
+    });
+
+    it('should throw notificaton error if seed is not backuped', async done => {
+      expect.assertions(1);
+      axiosMock.onGet(url).reply(() => [404]);
+      try {
+        await userService.recoverSeed();
+      } catch (err) {
+        expect(err.text).toBe(
+          "You can't restore seed because it was not backuped.",
+        );
+        done();
+      }
+    });
+
+    it('should throw notificaton on unexpected error', async done => {
+      expect.assertions(1);
+      axiosMock.onGet(url).reply(() => [500]);
+      try {
+        await userService.recoverSeed();
+      } catch (err) {
+        expect(err.text).toBe(
+          'An error occurred while recovering account seed. Please try again.',
+        );
+        done();
       }
     });
   });

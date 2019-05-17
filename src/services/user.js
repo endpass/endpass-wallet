@@ -329,7 +329,6 @@ export default {
       return res;
     } catch (e) {
       throw new NotificationError({
-        log: true,
         message: e.message,
         title: 'Error backuping seed',
         text:
@@ -346,7 +345,6 @@ export default {
       return seed;
     } catch (e) {
       throw new NotificationError({
-        log: true,
         message: e.message,
         title: 'Error recovering seed backup',
         text: e.message.includes('404')
