@@ -8,6 +8,7 @@ jest.mock('@/services/user', () => {
     v3,
     hdv3,
     otpSettings,
+    encryptedMessage,
   } = require('fixtures/accounts');
   const {
     getPasswordRecoveryIdentifierResponse,
@@ -86,6 +87,12 @@ jest.mock('@/services/user', () => {
       .mockResolvedValue(getPasswordRecoveryIdentifierResponse.message),
 
     recoverWalletsPassword: jest.fn().mockResolvedValue(successResponse),
+
+    backupSeed: jest.fn().mockResolvedValue({}),
+
+    recoverSeed: jest.fn().mockResolvedValue({
+      seed: encryptedMessage,
+    }),
   };
 });
 

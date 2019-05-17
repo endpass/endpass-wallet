@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InfoModal render should render given props 1`] = `
+<div data-test="info-modal" class="info-modal">
+  <v-modal-stub><template></template>
+    <div>
+      <div class="message is-success">
+        <div class="message-header">
+          <p>
+            bar
+          </p>
+        </div>
+        <div class="message-body"></div>
+      </div>
+    </div>
+    <div class="buttons">
+      <v-button-stub classname="is-primary is-medium">
+        Close
+      </v-button-stub>
+    </div>
+  </v-modal-stub>
+</div>
+`;
+
+exports[`InfoModal render should render initial state of the component 1`] = `
+<div
+  class="info-modal"
+  data-test="info-modal"
+>
+  <v-modal-stub>
+    <template>
+      
+      
+    
+    </template>
+     
+    <div>
+      <div
+        class="message is-success"
+      >
+        <!---->
+         
+        <div
+          class="message-body"
+        />
+      </div>
+    </div>
+     
+    <div
+      class="buttons"
+    >
+      <v-button-stub
+        classname="is-primary is-medium"
+      >
+        
+        Close
+      
+      </v-button-stub>
+    </div>
+  </v-modal-stub>
+</div>
+`;

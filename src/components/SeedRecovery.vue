@@ -17,12 +17,14 @@
     />
     <info-modal
       v-if="recoveredSeed"
-      :is-success="true"
       title="Seed recovering"
       sub-title="You successfully recovered seed phrase! Do not show it to anyone else!"
       @close="handleSeedClose"
     >
-      <p class="code">{{ recoveredSeed }}</p>
+      <p
+        class="code"
+        data-test="recovered-seed-phrase"
+      >{{ recoveredSeed }}</p>
     </info-modal>
   </div>
 </template>

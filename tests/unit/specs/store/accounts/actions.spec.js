@@ -14,6 +14,8 @@ import {
   privateKey,
   privateKeyString,
   checksumAddress,
+  seed,
+  encryptedMessage,
 } from 'fixtures/accounts';
 import {
   getPasswordRecoveryIdentifierResponse,
@@ -1604,6 +1606,80 @@ describe('Accounts actions', () => {
       expect(localSettingsService.save).toBeCalledWith(email, {
         activeAccount: state.address,
       });
+    });
+  });
+
+  describe('backupSeed', () => {
+    let getters;
+
+    beforeEach(() => {
+      getters = {
+        wallet: {
+          encryptMessageWithPublicKey: jest.fn(),
+        },
+      };
+    });
+
+    it('should backup seed with user service', async () => {
+      expect.assertions(2);
+      await actions.backupSeed(
+        { getters, dispatch },
+        { password: v3password, seed },
+      );
+      expect(dispatch).not.toBeCalled();
+      expect(getters.wallet.encryptMessageWithPublicKey).toBeCalledWith(
+        seed,
+        v3password,
+      );
+    });
+
+    it('should emit error if user service rejects seed backup request', async () => {
+      expect.assertions(1);
+      const error = new Error('foo');
+      getters.wallet.encryptMessageWithPublicKey.mockRejectedValueOnce(error);
+      await actions.backupSeed(
+        { getters, dispatch },
+        { password: v3password, seed },
+      );
+      expect(dispatch).toBeCalledWith('errors/emitError', error, {
+        root: true,
+      });
+    });
+  });
+
+  describe('recoverSeed', () => {
+    let getters;
+
+    beforeEach(() => {
+      getters = {
+        wallet: {
+          decryptMessageWithPrivateKey: jest.fn(),
+        },
+      };
+    });
+
+    it('should recover seed with given password', async () => {
+      expect.assertions(3);
+      getters.wallet.decryptMessageWithPrivateKey.mockResolvedValueOnce(seed);
+      userService.recoverSeed.mockResolvedValueOnce(encryptedMessage);
+      const res = await actions.recoverSeed({ getters, dispatch }, v3password);
+      expect(getters.wallet.decryptMessageWithPrivateKey).toBeCalledWith(
+        encryptedMessage,
+        v3password,
+      );
+      expect(dispatch).not.toBeCalled();
+      expect(res).toBe(seed);
+    });
+
+    it('should emit error if user service rejects seed recovery request', async () => {
+      expect.assertions(2);
+      const error = new Error('foo');
+      userService.recoverSeed.mockRejectedValueOnce(error);
+      const res = await actions.recoverSeed({ getters, dispatch }, v3password);
+      expect(dispatch).toBeCalledWith('errors/emitError', error, {
+        root: true,
+      });
+      expect(res).toBeNull();
     });
   });
 });

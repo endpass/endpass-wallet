@@ -53,11 +53,6 @@ export default {
       type: String,
       default: null,
     },
-
-    isSuccess: {
-      type: Boolean,
-      default: false,
-    },
   },
 
   methods: {

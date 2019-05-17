@@ -28,6 +28,7 @@ describe('NewWallet page', () => {
       beforeAll(() => {
         const actions = {
           'accounts/addHdWallet': jest.fn(),
+          'accounts/backupSeed': jest.fn(),
         };
         const store = new Vuex.Store({
           state: {
@@ -80,7 +81,8 @@ describe('NewWallet page', () => {
     //
     //   beforeAll(() => {
     //     const actions = {
-    //       'addHdWallet': jest.fn()
+    //       'addHdWallet': jest.fn(),
+    //       'accounts/backupSeed': jest.fn(),
     //     };
     //     const store = new Vuex.Store({
     //       modules:{
@@ -114,6 +116,7 @@ describe('NewWallet page', () => {
       beforeEach(() => {
         const actions = {
           'accounts/addHdWallet': jest.fn(),
+          'accounts/backupSeed': jest.fn(),
         };
         const store = new Vuex.Store({
           state: {
