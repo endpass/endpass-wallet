@@ -583,14 +583,20 @@ const backupSeed = async ({ getters, dispatch }, { seed, password }) => {
   }
 };
 
-const recoverSeed = async ({ getters }, password) => {
-  const encryptedSeed = await userService.recoverSeed();
-  const recoveredSeed = await getters.wallet.decryptMessageWithPrivateKey(
-    encryptedSeed,
-    password,
-  );
+const recoverSeed = async ({ getters, dispatch }, password) => {
+  try {
+    const encryptedSeed = await userService.recoverSeed();
+    const recoveredSeed = await getters.wallet.decryptMessageWithPrivateKey(
+      encryptedSeed,
+      password,
+    );
 
-  return recoveredSeed;
+    return recoveredSeed;
+  } catch (e) {
+    await dispatch('errors/emitError', e, { root: true });
+
+    return null;
+  }
 };
 
 const init = async ({ commit, dispatch }) => {

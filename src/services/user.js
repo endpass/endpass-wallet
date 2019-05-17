@@ -349,8 +349,9 @@ export default {
         log: true,
         message: e.message,
         title: 'Error recovering seed backup',
-        text:
-          'An error occurred while recovering account seed. Please try again.',
+        text: e.message.includes('404')
+          ? "You can't restore seed because it was not backuped."
+          : 'An error occurred while recovering account seed. Please try again.',
         type: 'is-danger',
       });
     }

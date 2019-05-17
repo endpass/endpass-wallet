@@ -3,7 +3,7 @@
     class="info-modal"
     data-test="info-modal"
   >
-    <v-modal @close="close">
+    <v-modal @close="handleCancel">
       <template slot="header">
         {{ title }}
       </template>
@@ -41,7 +41,7 @@
 
 <script>
 export default {
-  name: 'InfpModal',
+  name: 'InfoModal',
 
   props: {
     title: {
