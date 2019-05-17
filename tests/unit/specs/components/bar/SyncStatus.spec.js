@@ -11,7 +11,7 @@ localVue.use(Vuex);
 describe('SyncStatus', () => {
   let wrapper;
   let wrapperFactory;
-  const apiConnection = true;
+  const isApiConnecting = true;
   let state;
 
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe('SyncStatus', () => {
             appStatus: () => 'failed',
           },
           state: {
-            apiConnection,
+            isApiConnecting,
           },
         },
       },
@@ -71,7 +71,7 @@ describe('SyncStatus', () => {
           },
         });
         expect(wrapper.vm.statusClass).toBe('is-success');
-        state.modules.connectionStatus.state.apiConnection = false;
+        state.modules.connectionStatus.state.isApiConnecting = false;
         state.modules.connectionStatus.getters.appStatus = () => 'ready';
         const store = new Vuex.Store(state);
         wrapper = shallowMount(SyncStatus, {
