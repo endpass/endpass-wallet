@@ -22,7 +22,6 @@
         readonly
         data-test="input-email"
       />
-
       <v-select
         v-model="newSettings.fiatCurrency"
         :options="availableCurrencies"
@@ -35,6 +34,10 @@
     <two-factor-auth-settings v-if="isDefaultIdentity" />
     <change-password-settings v-if="isDefaultIdentity" />
     <password-recovery v-if="isDefaultIdentity" />
+    <seed-recovery
+      :locked="isSeedRecoveryLocked"
+      @lock="handleSeedRecoveryLock"
+    />
   </base-page>
 </template>
 
@@ -46,18 +49,23 @@ import BasePage from '@/components/pages/Base';
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
 import ChangePasswordSettings from '@/components/ChangePasswordSettings';
 import PasswordRecovery from '@/components/PasswordRecovery';
+import SeedRecovery from '@/components/SeedRecovery';
 
 export default {
   name: 'SettingsPage',
+
   data: () => ({
+    isSeedRecoveryLocked: false,
     newSettings: {
       fiatCurrency: 'USD',
     },
   }),
+
   computed: {
     ...mapState('user', ['settings', 'availableCurrencies', 'email']),
     ...mapGetters('user', ['isDefaultIdentity']),
   },
+
   watch: {
     settings: {
       handler(settings) {
@@ -71,10 +79,13 @@ export default {
       deep: true,
     },
   },
+
   methods: {
     ...mapActions('user', {
       updateSettingsInStore: 'updateSettings',
     }),
+    ...mapActions('accounts', ['recoverSeed', 'backupSeed']),
+
     async updateSettings() {
       await this.updateSettingsInStore({ ...this.newSettings });
       this.$notify({
@@ -83,13 +94,20 @@ export default {
         type: 'is-info',
       });
     },
+
+    handleSeedRecoveryLock() {
+      this.isSeedRecoveryLocked = true;
+    },
   },
+
   mixins: [error, form],
+
   components: {
     BasePage,
     TwoFactorAuthSettings,
     ChangePasswordSettings,
     PasswordRecovery,
+    SeedRecovery,
   },
 };
 </script>
