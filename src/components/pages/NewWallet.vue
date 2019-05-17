@@ -86,10 +86,12 @@ export default {
       remainingSeedPhraseTimeout: SEED_PHRASE_TIMEOUT_SEC,
     };
   },
+
   computed: {
     ...mapState({
       hdKey: state => state.accounts.hdKey,
     }),
+
     getRemainingSeedPhraseTimeout() {
       return this.remainingSeedPhraseTimeout > 0
         ? `(${this.remainingSeedPhraseTimeout})`
@@ -97,7 +99,8 @@ export default {
     },
   },
   methods: {
-    ...mapActions('accounts', ['addHdWallet']),
+    ...mapActions('accounts', ['addHdWallet', 'backupSeed']),
+
     // Generate a new HD wallet node
     // TODO encrypt seed in memory
     async createWallet() {
@@ -110,7 +113,9 @@ export default {
 
       try {
         const key = Bip39.generateMnemonic();
+
         await this.addHdWallet({ key, password: this.password });
+        await this.backupSeed({ seed: key, password: this.password });
         this.key = key;
         this.$timer.start('seedPhrase');
       } catch (e) {
@@ -125,6 +130,7 @@ export default {
 
       this.isCreating = false;
     },
+
     handleSeedPhraseTimer() {
       this.remainingSeedPhraseTimeout -=
         UPDATE_SEED_PHRASE_INTERVAL_MSEC / 1000;
@@ -146,6 +152,7 @@ export default {
   },
 
   mixins: [VueTimers, formMixin],
+
   timers: {
     seedPhrase: {
       repeat: true,
@@ -155,6 +162,7 @@ export default {
       },
     },
   },
+
   components: {
     BasePage,
   },

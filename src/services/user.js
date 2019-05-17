@@ -317,4 +317,42 @@ export default {
       });
     }
   },
+
+  async backupSeed(encryptedSeed) {
+    try {
+      const res = await proxyRequest.write('/user/seed', {
+        payload: {
+          seed: encryptedSeed,
+        },
+      });
+
+      return res;
+    } catch (e) {
+      throw new NotificationError({
+        log: true,
+        message: e.message,
+        title: 'Error backuping seed',
+        text:
+          'An error occurred during account seed backuping. Please try again.',
+        type: 'is-danger',
+      });
+    }
+  },
+
+  async recoverSeed() {
+    try {
+      const { seed } = await proxyRequest.read('/user/seed');
+
+      return seed;
+    } catch (e) {
+      throw new NotificationError({
+        log: true,
+        message: e.message,
+        title: 'Error recovering seed backup',
+        text:
+          'An error occurred while recovering account seed. Please try again.',
+        type: 'is-danger',
+      });
+    }
+  },
 };

@@ -570,6 +570,29 @@ const updateAccountSettings = async ({
   });
 };
 
+const backupSeed = async ({ getters, dispatch }, { seed, password }) => {
+  try {
+    const encryptedSeed = await getters.wallet.encryptMessageWithPublicKey(
+      seed,
+      password,
+    );
+
+    await userService.backupSeed(encryptedSeed);
+  } catch (e) {
+    await dispatch('errors/emitError', e, { root: true });
+  }
+};
+
+const recoverSeed = async ({ getters }, password) => {
+  const encryptedSeed = await userService.recoverSeed();
+  const recoveredSeed = await getters.wallet.decryptMessageWithPrivateKey(
+    encryptedSeed,
+    password,
+  );
+
+  return recoveredSeed;
+};
+
 const init = async ({ commit, dispatch }) => {
   try {
     await Promise.all([dispatch('setUserHdKey'), dispatch('setUserWallets')]);
@@ -610,5 +633,7 @@ export default {
   updateWalletsWithNewPassword,
   recoverWalletsPassword,
   updateAccountSettings,
+  backupSeed,
+  recoverSeed,
   init,
 };
