@@ -888,4 +888,49 @@ describe('User service', () => {
       }
     });
   });
+  describe('updateEmail', () => {
+    const url = `${ENV.VUE_APP_IDENTITY_API_URL}/user/email`;
+    const successfulResponse = {
+      success: true,
+    };
+    const payload = {
+      signature: 'kek',
+      email: 'chpok',
+    };
+    it('should make correct request', async () => {
+      expect.assertions(3);
+
+      axiosMock.onAny(url).reply(config => {
+        expect(config.method).toBe('post');
+        expect(config.url).toBe(url);
+        expect(config.data).toBe(JSON.stringify(payload));
+
+        return [200, successResponse];
+      });
+
+      await userService.updateEmail(payload);
+    });
+
+    it('should handle successful POST /user/email request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onPost(url).reply(200, successfulResponse);
+
+      const response = await userService.updateEmail();
+
+      expect(response).toEqual(successfulResponse);
+    });
+
+    it('should handle rejected POST /user/email request', async () => {
+      expect.assertions(1);
+
+      axiosMock.onPost(url).reply(404);
+
+      try {
+        await userService.updateEmail();
+      } catch (receivedError) {
+        expect(receivedError).toBeInstanceOf(NotificationError);
+      }
+    });
+  });
 });

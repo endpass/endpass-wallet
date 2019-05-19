@@ -38,6 +38,7 @@
       :is-locked="isSeedRecoveryLocked"
       @lock="handleSeedRecoveryLock"
     />
+    <email-update v-if="isDefaultIdentity" />
   </base-page>
 </template>
 
@@ -50,6 +51,7 @@ import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
 import ChangePasswordSettings from '@/components/ChangePasswordSettings';
 import PasswordRecovery from '@/components/PasswordRecovery';
 import SeedRecovery from '@/components/SeedRecovery';
+import EmailUpdate from '@/components/EmailUpdate';
 
 export default {
   name: 'SettingsPage',
@@ -108,6 +110,7 @@ export default {
     ChangePasswordSettings,
     PasswordRecovery,
     SeedRecovery,
+    EmailUpdate,
   },
 };
 </script>

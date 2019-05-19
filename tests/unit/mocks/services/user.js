@@ -82,6 +82,10 @@ jest.mock('@/services/user', () => {
       success: true,
     }),
 
+    updateEmail: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+
     getPasswortRecoveryIdentifier: jest
       .fn()
       .mockResolvedValue(getPasswordRecoveryIdentifierResponse.message),
