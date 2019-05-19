@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EmailUpdate render should render the initial state of the component 1`] = `
+<div>
+  <v-form-stub
+    data-test="update-email-form"
+  >
+    <label
+      class="label"
+    >
+      Update email
+    </label>
+     
+    <v-input-stub
+      aria-invalid="false"
+      aria-required="false"
+      classname=""
+      data-test="input-new-email"
+      name="email"
+      placeholder="New email"
+      value=""
+    />
+     
+    <v-input-stub
+      aria-invalid="false"
+      aria-required="true"
+      classname=""
+      data-test="input-confirm-new-email"
+      name="emailConfirm"
+      placeholder="Confirm email"
+      value=""
+    />
+     
+    <v-button-stub
+      classname="is-primary is-medium"
+      data-test="update-email-button"
+      disabled="true"
+    >
+      
+      Update
+    
+    </v-button-stub>
+  </v-form-stub>
+   
+  <!---->
+</div>
+`;

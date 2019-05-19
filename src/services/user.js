@@ -355,4 +355,27 @@ export default {
       });
     }
   },
+
+  async updateEmail(payload) {
+    try {
+      const { success, message } = await proxyRequest.write('/user/email', {
+        payload,
+      });
+      if (!success) {
+        throw new Error(
+          `POST ${ENV.VUE_APP_IDENTITY_API_URL}/user/email: ${message}`,
+        );
+      }
+
+      return { success };
+    } catch (e) {
+      throw new NotificationError({
+        log: true,
+        message: e.message,
+        title: 'Error updating email',
+        text: 'An error occurred while updating email. Please try again.',
+        type: 'is-danger',
+      });
+    }
+  },
 };
