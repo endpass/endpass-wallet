@@ -329,6 +329,7 @@ export default {
       return res;
     } catch (e) {
       throw new NotificationError({
+        log: true,
         message: e.message,
         title: 'Error backuping seed',
         text:

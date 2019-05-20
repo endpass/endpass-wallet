@@ -35,7 +35,7 @@
     <change-password-settings v-if="isDefaultIdentity" />
     <password-recovery v-if="isDefaultIdentity" />
     <seed-recovery
-      :locked="isSeedRecoveryLocked"
+      :is-locked="isSeedRecoveryLocked"
       @lock="handleSeedRecoveryLock"
     />
   </base-page>

@@ -2,7 +2,7 @@
   <div>
     <label class="label">Seed Phrase Recovery</label>
     <v-button
-      :disabled="locked || isLoading"
+      :disabled="isLocked || isLoading"
       class-name="is-primary is-medium"
       data-test="recover-seed-button"
       @click="handleRecoverButtonClick"
@@ -11,14 +11,14 @@
     </v-button>
     <password-modal
       v-if="isPasswordModalVisible"
-      :disabled="recoveredSeed || locked"
+      :disabled="recoveredSeed || isLocked"
       @confirm="handleRecoveryConfirm"
-      @cancel="handleRecoveryCancel"
+      @close="handleRecoveryClose"
     />
     <info-modal
       v-if="recoveredSeed"
       title="Seed recovering"
-      sub-title="You successfully recovered seed phrase! Do not show it to anyone else!"
+      description="You successfully recovered seed phrase! Do not show it to anyone else!"
       @close="handleSeedClose"
     >
       <p
@@ -38,7 +38,7 @@ export default {
   name: 'SeedRecovery',
 
   props: {
-    locked: {
+    isLocked: {
       type: Boolean,
       default: false,
     },
@@ -57,23 +57,23 @@ export default {
       this.isPasswordModalVisible = true;
     },
 
-    handleRecoveryCancel() {
+    handleRecoveryClose() {
       this.isPasswordModalVisible = false;
     },
 
     async handleRecoveryConfirm(password) {
       this.isLoading = true;
 
-      const res = await this.recoverSeed(password);
+      try {
+        const res = await this.recoverSeed(password);
 
-      if (!res) {
-        this.$emit('lock');
-      } else {
         this.recoveredSeed = res;
+      } catch (err) {
+        this.$emit('lock');
+      } finally {
+        this.isPasswordModalVisible = false;
+        this.isLoading = false;
       }
-
-      this.isPasswordModalVisible = false;
-      this.isLoading = false;
     },
 
     handleSeedClose() {
