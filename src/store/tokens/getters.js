@@ -29,7 +29,7 @@ const tokensByAddressBlock = state => address => {
 };
 
 const fullTokens = (state, getters) => (address, tokens) => {
-  const balances = getters.balancesByAddress(address);
+  const balances = getters.balancesByAddressBlock(address);
 
   return Object.keys(tokens).reduce((acc, key) => {
     const token = tokens[key];
@@ -44,7 +44,7 @@ const fullTokens = (state, getters) => (address, tokens) => {
   }, {});
 };
 
-const balancesByAddress = state => address =>
+const balancesByAddressBlock = state => address =>
   state.balancesByAddress[address] || {};
 
 const currentNetUserTokens = (state, getters, rootState, rootGetters) =>
@@ -161,7 +161,7 @@ export default {
   currentAccountFullTokens,
   fullTokens,
   tokensByAddressBlock,
-  balancesByAddress,
+  balancesByAddressBlock,
   userTokenByAddress,
   fullTokensByAddress,
   allCurrentAccountTokens,

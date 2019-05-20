@@ -4,6 +4,7 @@ import ModuleRegister from '@/store/class/ModuleRegister';
 import ConnectionStatusModule from './modules/ConnectionStatusModule';
 import ErrorsModule from './modules/ErrorsModule';
 import PriceModule from './modules/PriceModule';
+import TokensModule from './modules/TokensModule';
 
 export default function(store) {
   // new way
@@ -13,6 +14,7 @@ export default function(store) {
     errors: ErrorsModule,
     connectionStatus: ConnectionStatusModule,
     price: PriceModule,
+    tokens: TokensModule,
   });
 
   // old way

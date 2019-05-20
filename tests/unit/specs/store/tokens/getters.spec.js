@@ -69,17 +69,19 @@ describe('tokens getters', () => {
         tokensByAddress: {},
       };
 
-      expect(tokensGetters.tokensByAddressBlock(state)('0x0')).toMatchObject({});
+      expect(tokensGetters.tokensByAddressBlock(state)('0x0')).toMatchObject(
+        {},
+      );
     });
   });
 
-  describe('balancesByAddress', () => {
+  describe('balancesByAddressBlock', () => {
     it('should return balances by given address', () => {
       const state = {
         balancesByAddress,
       };
 
-      expect(tokensGetters.balancesByAddress(state)('0x0')).toEqual(
+      expect(tokensGetters.balancesByAddressBlock(state)('0x0')).toEqual(
         balancesByAddress['0x0'],
       );
     });
@@ -89,7 +91,9 @@ describe('tokens getters', () => {
         balancesByAddress: {},
       };
 
-      expect(tokensGetters.balancesByAddress(state)('0x0')).toMatchObject({});
+      expect(tokensGetters.balancesByAddressBlock(state)('0x0')).toMatchObject(
+        {},
+      );
     });
   });
 
@@ -216,7 +220,7 @@ describe('tokens getters', () => {
         prices: tokensPricesBySymbols,
       };
       const getters = {
-        balancesByAddress: jest.fn(() => tokensBalances),
+        balancesByAddressBlock: jest.fn(() => tokensBalances),
       };
 
       expect(
@@ -225,8 +229,8 @@ describe('tokens getters', () => {
           tokensMappedByAddresses,
         ),
       ).toEqual(tokensWithBalancesMappedByAddresses);
-      expect(getters.balancesByAddress).toBeCalledTimes(1);
-      expect(getters.balancesByAddress).toBeCalledWith(address);
+      expect(getters.balancesByAddressBlock).toBeCalledTimes(1);
+      expect(getters.balancesByAddressBlock).toBeCalledWith(address);
     });
   });
 

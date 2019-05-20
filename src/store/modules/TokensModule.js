@@ -4,7 +4,7 @@ import { Network } from '@endpass/class';
 import { cryptoDataService, tokenInfoService, userService } from '@/services';
 import { mapArrayByProp } from '@endpass/utils/arrays';
 import { NotificationError, Token } from '@/class';
-import { get, mapKeys, omit, pick, pickBy } from 'lodash';
+import { get, mapKeys, omit, pick, pickBy, uniq } from 'lodash';
 import Vue from 'vue';
 
 @Module
@@ -23,16 +23,20 @@ class TokensModule extends VuexModuleWithRoot {
 
   isLoading = false;
 
-  getActiveNetwork() {
-    return this.store.get().state.web3.activeNetwork;
+  _getActiveNetwork() {
+    return this.store.get().state.web3.activeNet.id;
   }
 
-  activeCurrencyName() {
+  _activeCurrencyName() {
     return this.store.get().state.web3.activeCurrency.name;
   }
 
-  userTokenByAddress(tokenAddress) {
-    const targetNetTokens = this.userTokens[this.getActiveNetwork()];
+  _getAccountAddress() {
+    return this.store.get().state.accounts.address;
+  }
+
+  _userTokenByAddress(tokenAddress) {
+    const targetNetTokens = this.userTokens[this._getActiveNetwork()];
 
     if (!targetNetTokens) {
       return null;
@@ -41,7 +45,7 @@ class TokensModule extends VuexModuleWithRoot {
     return targetNetTokens[tokenAddress] || null;
   }
 
-  tokensByAddressBlock(address) {
+  _tokensByAddressBlock(address) {
     const tokensList = this.tokensByAddress[address];
 
     if (!tokensList) {
@@ -51,8 +55,8 @@ class TokensModule extends VuexModuleWithRoot {
     return pick(this.networkTokens, tokensList);
   }
 
-  fullTokens (address, tokens) {
-    const balances = getters.balancesByAddress(address);
+  _fullTokens(address, tokens) {
+    const balances = this._balancesByAddressBlock(address);
 
     return Object.keys(tokens).reduce((acc, key) => {
       const token = tokens[key];
@@ -67,7 +71,19 @@ class TokensModule extends VuexModuleWithRoot {
     }, {});
   }
 
-  userTokensWithToken({ net, token }) {
+  _balancesByAddressBlock(address) {
+    return this.balancesByAddress[address] || {};
+  }
+
+  _currentNetUserTokens() {
+    return this.userTokens[this._getActiveNetwork()] || {};
+  }
+
+  _currentAccountTokens() {
+    return this._tokensByAddressBlock(this._getAccountAddress());
+  }
+
+  _userTokensWithToken({ net, token }) {
     const { userTokens } = this;
     const targetNet = userTokens[net] || null;
 
@@ -89,7 +105,7 @@ class TokensModule extends VuexModuleWithRoot {
     };
   }
 
-  userTokensWithoutToken({ net, token }) {
+  _userTokensWithoutToken({ net, token }) {
     const { userTokens } = this;
     const targetNet = userTokens[net];
 
@@ -105,12 +121,71 @@ class TokensModule extends VuexModuleWithRoot {
     return userTokens;
   }
 
-  allCurrentAccountTokensWithNonZeroBalance () {
+  _allCurrentAccountTokensWithNonZeroBalance() {
     return pickBy(this.allCurrentAccountFullTokens, ({ balance }) =>
       Boolean(parseFloat(balance)),
     );
   }
 
+  _allCurrentAccountTokens() {
+    return {
+      ...this._currentAccountTokens(),
+      ...this._currentNetUserTokens(),
+    };
+  }
+
+  _fullTokensByAddress(address) {
+    const tokens = this._tokensByAddressBlock(address);
+
+    return this._fullTokens(address, tokens);
+  }
+
+  get currentNetUserFullTokens() {
+    const address = this._getAccountAddress();
+    const tokens = this._currentNetUserTokens();
+
+    return this._fullTokens(address, tokens);
+  }
+
+  get currentAccountFullTokens() {
+    return this._fullTokensByAddress(this._getAccountAddress());
+  }
+
+  get allCurrentAccountFullTokens() {
+    const address = this._getAccountAddress();
+    const tokens = this._allCurrentAccountTokens();
+
+    return this._fullTokens(address, tokens);
+  }
+
+  get currentAccountTokensCurrencies() {
+    const _activeCurrencyName = this._activeCurrencyName();
+    const currencies = [
+      {
+        val: null,
+        key: _activeCurrencyName,
+        text: _activeCurrencyName,
+      },
+    ];
+
+    return uniq(
+      currencies.concat(
+        Object.values(this._allCurrentAccountTokensWithNonZeroBalance()).map(
+          ({ symbol }) => symbol,
+        ),
+      ),
+    );
+  }
+
+  currentAccountTokenBySymbol(symbol) {
+    const token = Object.values(
+      this._allCurrentAccountTokensWithNonZeroBalance(),
+    ).find(accountToken => accountToken.symbol === symbol);
+
+    if (!token) return null;
+
+    return token;
+  }
 
   @Mutation
   setLoading(val) {
@@ -164,10 +239,10 @@ class TokensModule extends VuexModuleWithRoot {
     try {
       const consistentToken = Token.getConsistent(token);
 
-      if (this.userTokenByAddress(consistentToken.address)) return;
+      if (this._userTokenByAddress(consistentToken.address)) return;
 
-      const net = this.getActiveNetwork();
-      const updatedTokens = this.userTokensWithToken({
+      const net = this._getActiveNetwork();
+      const updatedTokens = this._userTokensWithToken({
         token: consistentToken,
         net,
       });
@@ -185,12 +260,12 @@ class TokensModule extends VuexModuleWithRoot {
     try {
       const consistentToken = Token.getConsistent(token);
 
-      const currentNet = this.getActiveNetwork();
+      const currentNet = this._getActiveNetwork();
       const currentTokens = this.userTokens[currentNet] || {};
       if (!currentTokens[token.address]) return;
 
       const netId = currentNet;
-      const updatedTokens = this.userTokensWithoutToken({
+      const updatedTokens = this._userTokensWithoutToken({
         net: netId,
         token: consistentToken,
       });
@@ -205,7 +280,7 @@ class TokensModule extends VuexModuleWithRoot {
 
   @Action
   async getNetworkTokens() {
-    const isMainNetwork = this.getActiveNetwork() === Network.NET_ID.MAIN;
+    const isMainNetwork = this._getActiveNetwork() === Network.NET_ID.MAIN;
 
     if (!isMainNetwork) return;
 
@@ -235,7 +310,7 @@ class TokensModule extends VuexModuleWithRoot {
     try {
       const prices = await cryptoDataService.getSymbolsPrices(
         tokensSymbols,
-        this.activeCurrencyName(),
+        this._activeCurrencyName(),
       );
 
       this.setTokenPrices(prices);
@@ -280,8 +355,9 @@ class TokensModule extends VuexModuleWithRoot {
     this.addNetworkTokens(networkTokens);
   }
 
+  @Action
   async setUserTokens(tokens) {
-    const currentNetwork = this.getActiveNetwork();
+    const currentNetwork = this._getActiveNetwork();
 
     if (get(tokens, currentNetwork)) {
       const { fiatCurrency } = this.modules.price;
