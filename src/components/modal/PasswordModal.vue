@@ -9,15 +9,17 @@
       </template>
 
       <div>
-        <p class="subtitle">Please enter your wallet password to continue.</p>
+        <p class="subtitle">
+          Please enter your wallet password to continue.
+        </p>
         <v-form
           id="password-form"
           :is-form-valid="isFormValid"
         >
           <slot />
           <v-password
-            v-validate="'required|min:8'"
             v-model="jsonKeystorePassword"
+            v-validate="'required|min:8'"
             :error="errors.first('jsonKeystorePassword')"
             name="jsonKeystorePassword"
             validator="required"

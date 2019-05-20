@@ -2,7 +2,9 @@
   <table class="table">
     <thead>
       <tr>
-        <th colspan="2">Transaction</th>
+        <th colspan="2">
+          Transaction
+        </th>
       </tr>
     </thead>
     <tbody>

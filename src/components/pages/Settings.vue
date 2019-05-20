@@ -1,8 +1,8 @@
 <template>
   <base-page class="settings-page">
-    <template
-      slot="title"
-    >Settings</template>
+    <template slot="title">
+      Settings
+    </template>
 
     <v-form
       id="save-settings"

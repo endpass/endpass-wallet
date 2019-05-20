@@ -6,7 +6,9 @@
           <div class="column is-half">
             <div class="card app-card">
               <div class="card-header">
-                <p class="card-header-title">Your Tokens</p>
+                <p class="card-header-title">
+                  Your Tokens
+                </p>
               </div>
               <div class="card-content is-narrow">
                 <nav
@@ -99,7 +101,6 @@
 import { isEmpty } from 'lodash';
 import { mapState, mapActions, mapGetters } from 'vuex';
 import Multiselect from 'vue-multiselect';
-import Balance from '@/components/Balance';
 import VToken from '@/components/VToken';
 import TokensList from '@/components/TokensList';
 import SearchInput from '@/components/SearchInput';
@@ -202,7 +203,6 @@ export default {
 
   components: {
     SearchInput,
-    Balance,
     AddTokenModal,
     Multiselect,
     VToken,

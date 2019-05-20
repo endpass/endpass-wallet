@@ -11,7 +11,9 @@
         <div class="container">
           <div class="card">
             <div class="card-header">
-              <p class="card-header-title">Your Address</p>
+              <p class="card-header-title">
+                Your Address
+              </p>
             </div>
             <div class="card-content">
               <div class="columns">
@@ -27,7 +29,9 @@
                     :to="{ name: 'ExportWallet' }"
                     class="button is-warning"
                     data-test="export-wallet-button"
-                  >Export Private Key</router-link>
+                  >
+                    Export Private Key
+                  </router-link>
                 </div>
                 <div
                   v-if="isFaucet"
@@ -40,7 +44,9 @@
                     data-test="get-test-eth-button"
                     @donate="onDonate"
                     @donate-error="onDonateError"
-                  >{{ faucetTitle }}</v-faucet-button>
+                  >
+                    {{ faucetTitle }}
+                  </v-faucet-button>
                 </div>
               </div>
             </div>
@@ -55,13 +61,17 @@
         <div class="container">
           <div class="card">
             <div class="card-header">
-              <p class="card-header-title">Your Tokens</p>
+              <p class="card-header-title">
+                Your Tokens
+              </p>
               <div class="card-header-icon">
                 <router-link
                   :to="{ name: 'TokensPage' }"
                   class="button is-outlined is-info is-small"
                   data-test="edit-tokens-button"
-                >Edit</router-link>
+                >
+                  Edit
+                </router-link>
               </div>
             </div>
             <div class="card-content">
@@ -93,7 +103,9 @@
           <div class="card app-card main-app-card">
             <div class="card-content">
               <div v-if="isLoggedIn">
-                <h1 class="title">Welcome</h1>
+                <h1 class="title">
+                  Welcome
+                </h1>
                 <p class="subtitle">
                   Get started by generating an Ethereum wallet.
                 </p>
@@ -101,11 +113,15 @@
                   <router-link
                     :to="{ name: 'NewWallet', query: $route.query }"
                     class="button is-success is-cta"
-                  >Create New Wallet</router-link>
+                  >
+                    Create New Wallet
+                  </router-link>
                 </div>
               </div>
               <div v-else>
-                <p class="subtitle">Please log in to continue.</p>
+                <p class="subtitle">
+                  Please log in to continue.
+                </p>
               </div>
             </div>
           </div>
@@ -121,8 +137,6 @@ import VueTimers from 'vue-timers/mixin';
 import get from 'lodash/get';
 import { fromTo } from '@endpass/utils/date';
 import { VFaucetButton } from '@endpass/faucet';
-
-import Balance from '@/components/Balance';
 import Account from '@/components/Account';
 import TokensList from '@/components/TokensList';
 import { Network } from '@endpass/class';
@@ -219,7 +233,6 @@ export default {
 
   components: {
     Account,
-    Balance,
     TokensList,
     VFaucetButton,
   },

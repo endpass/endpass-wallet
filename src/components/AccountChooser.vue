@@ -22,7 +22,6 @@
         </span>
         <span
           slot="singleLabel"
-          slot-scope="props"
           class="multiselect-single"
         >
           <account

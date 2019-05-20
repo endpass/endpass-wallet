@@ -5,7 +5,9 @@ exports[`ConfirmModal render should render component 1`] = `
   class="is-dark"
 >
   <template>
+    
     Are you sure?
+  
   </template>
     
   <div

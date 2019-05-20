@@ -12,7 +12,9 @@
       :disabled="!signedMessage"
       class-name="is-primary is-medium"
       data-test="verify-button"
-    >Verify message</v-button>
+    >
+      Verify message
+    </v-button>
     <div
       v-if="address"
       class="field"

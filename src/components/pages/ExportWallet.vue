@@ -1,15 +1,17 @@
 <template>
   <base-page class="export-wallet">
-    <template
-      slot="title"
-    >Export Wallet</template>
+    <template slot="title">
+      Export Wallet
+    </template>
     <p class="subtitle">
       Exporting account <strong>{{ address }}</strong>
     </p>
     <div class="columns">
       <div class="column is-one-third">
         <div class="menu">
-          <p class="menu-label">Export Type</p>
+          <p class="menu-label">
+            Export Type
+          </p>
           <ul class="menu-list">
             <li>
               <a

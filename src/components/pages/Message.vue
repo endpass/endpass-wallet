@@ -1,8 +1,8 @@
 <template>
   <base-page>
-    <template
-      slot="title"
-    >Message</template>
+    <template slot="title">
+      Message
+    </template>
 
     <div class="tabs">
       <ul>

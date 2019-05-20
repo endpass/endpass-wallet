@@ -6,18 +6,20 @@
     />
     <wallets-list
       v-else
+      v-model="bridgeButtonListIsLoading"
       :type="hardwareType"
       :is-importing="bridgeButtonListIsImporting"
-      v-model="bridgeButtonListIsLoading"
       @select="setSelectedAddress"
     >
       <wallet-add-button
         slot="buttons"
+        v-model="bridgeButtonListIsImporting"
         :type="hardwareType"
         :selected-address="bridgeButtonListSelectedAddress"
-        v-model="bridgeButtonListIsImporting"
         @success="$router.push('/')"
-      >Import</wallet-add-button>
+      >
+        Import
+      </wallet-add-button>
     </wallets-list>
   </div>
 </template>

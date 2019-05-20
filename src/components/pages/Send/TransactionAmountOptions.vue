@@ -14,8 +14,8 @@
       </div>
       <div class="field-body">
         <v-input
-          v-validate="`required|decimal:${decimal}|between:0,${maxAmount}`"
           id="value"
+          v-validate="`required|decimal:${decimal}|between:0,${maxAmount}`"
           :value="value"
           :error="errors.first('value')"
           :disabled="isLoading || disabled"
@@ -54,8 +54,8 @@
         </v-input>
 
         <v-input
-          v-validate="`required|decimal:2|between:0,${maxPrice}`"
           id="price"
+          v-validate="`required|decimal:2|between:0,${maxPrice}`"
           :value="price"
           :error="errors.first('price')"
           :disabled="!ethPrice || disabled"

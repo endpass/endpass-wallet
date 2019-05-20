@@ -4,7 +4,9 @@
       <div class="container is-narrow">
         <div class="card app-card main-app-card">
           <div class="card-header">
-            <h1 class="card-header-title">Send ETH</h1>
+            <h1 class="card-header-title">
+              Send ETH
+            </h1>
           </div>
           <div class="card-content">
             <transaction-form
@@ -24,8 +26,12 @@
                   Your transaction has been broadcast to the network. It may
                   take a few minutes before the transaction is confirmed.
                 </p>
-                <p class="label">Transaction Id</p>
-                <p class="code">{{ transactionHash }}</p>
+                <p class="label">
+                  Transaction Id
+                </p>
+                <p class="code">
+                  {{ transactionHash }}
+                </p>
               </div>
             </div>
           </div>
@@ -49,7 +55,6 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import { TransactionFactory } from '@/class';
-import AccountChooser from '@/components/AccountChooser';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import privatePage from '@/mixins/privatePage';
@@ -182,7 +187,6 @@ export default {
   mixins: [privatePage],
 
   components: {
-    AccountChooser,
     TransactionModal,
     PasswordModal,
     TransactionForm,

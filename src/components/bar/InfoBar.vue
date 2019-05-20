@@ -5,7 +5,9 @@
   >
     <div class="info-item">
       <div class="field">
-        <p class="heading">Status</p>
+        <p class="heading">
+          Status
+        </p>
         <div class="control is-expanded">
           <sync-status />
         </div>
@@ -13,7 +15,9 @@
     </div>
 
     <div class="info-item">
-      <p class="heading">Balance</p>
+      <p class="heading">
+        Balance
+      </p>
       <balance
         :amount="balance || 0"
         :currency="activeCurrency.name"
@@ -22,7 +26,9 @@
       />
     </div>
     <div class="info-item">
-      <p class="heading">Value</p>
+      <p class="heading">
+        Value
+      </p>
       <balance
         :is-loading="priceLoading"
         :amount="balance || 0"

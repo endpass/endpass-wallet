@@ -24,7 +24,9 @@ exports[`NewAccountModal render should render component 1`] = `
         <h3
           class="modal-card-title"
         >
-          Create New Address
+          
+      Create New Address
+    
         </h3>
          
         <button
@@ -82,7 +84,9 @@ exports[`NewAccountModal render should render component 1`] = `
                 <button
                   class="button is-primary is-medium"
                 >
-                  Create address
+                  
+          Create address
+        
                 </button>
               </div>
             </div>
@@ -100,7 +104,9 @@ exports[`NewAccountModal render should render component 1`] = `
                 <button
                   class="button is-primary is-medium"
                 >
-                  Import address
+                  
+          Import address
+        
                 </button>
               </div>
             </div>

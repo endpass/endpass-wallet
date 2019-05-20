@@ -13,7 +13,9 @@ exports[`InfoBar render should render initial state of the component 1`] = `
       <p
         class="heading"
       >
+        
         Status
+      
       </p>
        
       <div
@@ -30,7 +32,9 @@ exports[`InfoBar render should render initial state of the component 1`] = `
     <p
       class="heading"
     >
+      
       Balance
+    
     </p>
      
     <balance-stub
@@ -49,7 +53,9 @@ exports[`InfoBar render should render initial state of the component 1`] = `
     <p
       class="heading"
     >
+      
       Value
+    
     </p>
      
     <balance-stub

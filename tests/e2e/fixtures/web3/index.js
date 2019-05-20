@@ -1,8 +1,8 @@
 import { toWei } from 'web3-utils';
 // eslint-disable-next-line camelcase
-import addressInfo_b14ab from '../addressinfo/b14ab';
+import addressInfo_b14ab from '../addressinfo/b14ab.json';
 // eslint-disable-next-line camelcase
-import addressInfo_31ea8 from '../addressinfo/31ea8';
+import addressInfo_31ea8 from '../addressinfo/31ea8.json';
 import { address } from '../accounts';
 
 const BLOCK_NUMBER = '0x4051fb';

@@ -2,19 +2,21 @@
   <div>
     <wallets-list
       v-if="isListVisible"
+      v-model="bridgeButtonListIsLoading"
       :type="walletType"
       :is-importing="bridgeButtonListIsImporting"
       :auto-load="true"
-      v-model="bridgeButtonListIsLoading"
       @select="setSelectedAddress"
     >
       <template slot="buttons">
         <wallet-add-button
+          v-model="bridgeButtonListIsImporting"
           :type="walletType"
           :selected-address="bridgeButtonListSelectedAddress"
-          v-model="bridgeButtonListIsImporting"
           @success="$router.push('/')"
-        >Import</wallet-add-button>
+        >
+          Import
+        </wallet-add-button>
       </template>
     </wallets-list>
     <v-form
@@ -24,10 +26,10 @@
       @submit="togglePasswordModal"
     >
       <v-input
-        v-validate="'required|seed_phrase'"
         id="hdkeySeed"
         key="hdkeyPhraseUnique"
         v-model="key"
+        v-validate="'required|seed_phrase'"
         :error="errors.first('hdkeyPhrase')"
         label="Seed phrase"
         name="hdkeyPhrase"

@@ -17,8 +17,8 @@
     <ul v-if="actualTokens.length > 0">
       <li
         v-for="token in actualTokens"
-        :class="itemClass"
         :key="token.address"
+        :class="itemClass"
         data-test="user-token"
       >
         <v-token

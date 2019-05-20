@@ -84,7 +84,9 @@
     >
       <div v-if="transaction.hash.length">
         <span class="text-label">Txid</span>
-        <p class="code">{{ transaction.hash }}</p>
+        <p class="code">
+          {{ transaction.hash }}
+        </p>
       </div>
       <div>
         <span class="heading status-text">{{ transaction.state }}</span>
@@ -92,17 +94,23 @@
 
       <div v-if="transaction.date">
         <span class="text-label">Date</span>
-        <p class="date">{{ transactionFormatedDate }}</p>
+        <p class="date">
+          {{ transactionFormatedDate }}
+        </p>
       </div>
 
       <div v-if="recieve">
         <span class="text-label">From</span>
-        <p class="code address">{{ transaction.from }}</p>
+        <p class="code address">
+          {{ transaction.from }}
+        </p>
       </div>
 
       <div v-else>
         <span class="text-label">To</span>
-        <p class="code address">{{ transaction.to }}</p>
+        <p class="code address">
+          {{ transaction.to }}
+        </p>
       </div>
 
       <div>

@@ -4,9 +4,9 @@
     data-test="transaction-modal"
   >
     <v-modal @close="close">
-      <template
-        slot="header"
-      >Are you sure?</template>
+      <template slot="header">
+        Are you sure?
+      </template>
 
       <div>
         <transaction-table

@@ -10,7 +10,9 @@
       >
         {{ label }}
       </label>
-      <p class="code">{{ code }}</p>
+      <p class="code">
+        {{ code }}
+      </p>
     </div>
   </password-modal>
 </template>
