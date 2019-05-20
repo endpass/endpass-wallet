@@ -1,6 +1,6 @@
 import { address } from '../accounts';
-import activeAccount from '../keystore/account_1';
-import gasPrice from '../cryptodata/gasprice';
+import activeAccount from '../keystore/account_1.json';
+import gasPrice from '../cryptodata/gasprice.json';
 
 export const ethplorerHistory = [
   {

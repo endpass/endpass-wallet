@@ -3,7 +3,9 @@
 exports[`Message page render should render the initial state of the page 1`] = `
 <base-page-stub>
   <template>
+    
     Message
+  
   </template>
    
   <div
@@ -47,7 +49,9 @@ exports[`Message page render should render the initial state of the page 1`] = `
 exports[`Message page render should set Sign tab 1`] = `
 <base-page-stub>
   <template>
+    
     Message
+  
   </template>
    
   <div
@@ -91,7 +95,9 @@ exports[`Message page render should set Sign tab 1`] = `
 exports[`Message page render should set Verify tab 1`] = `
 <base-page-stub>
   <template>
+    
     Message
+  
   </template>
    
   <div

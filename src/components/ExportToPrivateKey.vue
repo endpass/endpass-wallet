@@ -1,7 +1,9 @@
 <template>
   <div class="export-private-key">
     <div v-if="!privateKey">
-      <p class="subtitle">Click the button below to display your private key</p>
+      <p class="subtitle">
+        Click the button below to display your private key
+      </p>
       <a
         :class="{ 'is-loading': exportingKey }"
         class="button is-primary"
@@ -16,7 +18,9 @@
       <p
         class="code"
         data-test="private-key-code"
-      >{{ privateKey }}</p>
+      >
+        {{ privateKey }}
+      </p>
       <p>
         <a
           class="button is-light"

@@ -39,10 +39,10 @@
       </div>
 
       <v-password
-        v-validate="'required|min:8'"
         id="jsonKeystorePassword"
         key="jsonKeystorePasswordUnique"
         v-model="jsonKeystorePassword"
+        v-validate="'required|min:8'"
         :error="errors.first('jsonKeystorePassword')"
         label="V3 JSON keystore password"
         name="jsonKeystorePassword"
@@ -68,8 +68,9 @@
       v-if="isPasswordModal"
       @close="togglePasswordModal"
       @confirm="handlePasswordConfirm"
-    >The wallet password will be used for operations on the imported
-    wallet</password-modal>
+    >
+      The wallet password will be used for operations on the imported wallet
+    </password-modal>
   </div>
 </template>
 

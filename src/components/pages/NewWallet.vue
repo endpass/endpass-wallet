@@ -1,8 +1,8 @@
 <template>
   <base-page class="new-wallet">
-    <template slot="title">{{
-      hdKey ? 'Wallet Created' : 'Create Wallet'
-    }}</template>
+    <template slot="title">
+      {{ hdKey ? 'Wallet Created' : 'Create Wallet' }}
+    </template>
     <div
       v-if="hdKey"
       class="container has-text-centered is-narrow"
@@ -18,14 +18,18 @@
         <p
           class="code"
           data-test="seed-phrase"
-        >{{ key }}</p>
+        >
+          {{ key }}
+        </p>
       </div>
       <router-link
         :disabled="!!remainingSeedPhraseTimeout"
         to="/"
         class="button is-success is-cta"
         @click.native="onContinue"
-      >Continue {{ getRemainingSeedPhraseTimeout }}</router-link>
+      >
+        Continue {{ getRemainingSeedPhraseTimeout }}
+      </router-link>
     </div>
     <div
       v-else
@@ -41,9 +45,9 @@
         @submit="createWallet"
       >
         <v-password
-          v-validate="'required|min:8'"
           id="jsonKeystorePassword"
           v-model="password"
+          v-validate="'required|min:8'"
           :error="errors.first('password')"
           label="Wallet password"
           name="password"

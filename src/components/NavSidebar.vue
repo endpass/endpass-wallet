@@ -55,7 +55,9 @@
         <div class="level is-mobile">
           <div class="level-item">
             <div class="field">
-              <p class="heading">Chain</p>
+              <p class="heading">
+                Chain
+              </p>
               <div class="control is-expanded">
                 <currency-select />
               </div>
@@ -63,7 +65,9 @@
           </div>
           <div class="level-item">
             <div class="field">
-              <p class="heading">Network</p>
+              <p class="heading">
+                Network
+              </p>
               <div class="control is-expanded">
                 <provider-select />
               </div>
@@ -77,7 +81,9 @@
       >
         <div class="columns is-mobile">
           <div class="column">
-            <p class="menu-label">Accounts</p>
+            <p class="menu-label">
+              Accounts
+            </p>
           </div>
           <div
             v-if="!isCustomIdentity"
@@ -105,7 +111,9 @@
         <p
           v-if="wallet"
           class="menu-label"
-        >Wallet</p>
+        >
+          Wallet
+        </p>
         <ul class="menu-list">
           <li>
             <router-link
@@ -194,7 +202,9 @@
         </ul>
 
         <template v-if="wallet && !isPublicAccount">
-          <p class="menu-label">Tools</p>
+          <p class="menu-label">
+            Tools
+          </p>
           <ul class="menu-list">
             <li>
               <a
@@ -208,14 +218,18 @@
                 :to="{ name: 'MessagePage' }"
                 class="nav-link"
                 active-class="is-active"
-              >Message</router-link>
+              >
+                Message
+              </router-link>
             </li>
             <li>
               <router-link
                 :to="{ name: 'TransactionPage' }"
                 class="nav-link"
                 active-class="is-active"
-              >Transaction</router-link>
+              >
+                Transaction
+              </router-link>
             </li>
           </ul>
         </template>

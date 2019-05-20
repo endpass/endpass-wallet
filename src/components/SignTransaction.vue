@@ -12,13 +12,17 @@
       <v-button
         :disabled="!transaction"
         class-name="is-primary is-medium"
-      >Sign transaction</v-button>
+      >
+        Sign transaction
+      </v-button>
       <div
         v-if="signedTransaction"
         class="field"
       >
         <label class="label">RLP encoded transaction</label>
-        <p class="code">{{ signedTransaction }}</p>
+        <p class="code">
+          {{ signedTransaction }}
+        </p>
       </div>
     </v-form>
     <code-password-modal

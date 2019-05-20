@@ -5,8 +5,8 @@
   >
     <label class="label">Change Password</label>
     <v-password
-      v-validate="'required|min:8'"
       v-model="oldPassword"
+      v-validate="'required|min:8'"
       :disabled="isLoading"
       :error="errors.first('oldPassword')"
       name="oldPassword"
@@ -16,8 +16,8 @@
       data-test="input-old-password"
     />
     <v-password
-      v-validate="'required|min:8'"
       v-model="newPassword"
+      v-validate="'required|min:8'"
       :disabled="isLoading"
       :error="errors.first('newPassword')"
       name="newPassword"

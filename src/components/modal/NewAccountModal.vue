@@ -1,9 +1,9 @@
 <template lang="html">
   <div class="new-account-modal">
     <v-modal @close="close">
-      <template
-        slot="header"
-      >Create New Address</template>
+      <template slot="header">
+        Create New Address
+      </template>
 
       <div v-if="!isAccountCreated">
         <p class="subtitle">
@@ -17,7 +17,9 @@
         </p>
       </div>
       <div v-else>
-        <p class="subtitle">New Address Created</p>
+        <p class="subtitle">
+          New Address Created
+        </p>
 
         <div class="message">
           <div class="message-header">
@@ -25,7 +27,9 @@
           </div>
           <div class="message-body">
             <p>Use this address to receive Ether and tokens.</p>
-            <p class="code address">{{ address }}</p>
+            <p class="code address">
+              {{ address }}
+            </p>
           </div>
         </div>
 
@@ -37,7 +41,9 @@
             <p class="bold">
               Save this for your records and DO NOT share it with anyone!
             </p>
-            <p class="code">{{ privateKey }}</p>
+            <p class="code">
+              {{ privateKey }}
+            </p>
           </div>
         </div>
       </div>
@@ -51,13 +57,17 @@
           data-test="createNewAccount"
           @submit="createNewAccount"
         >
-          <v-button class-name="is-primary is-medium">Create address</v-button>
+          <v-button class-name="is-primary is-medium">
+            Create address
+          </v-button>
         </v-form>
         <v-form
           :is-form-valid="true"
           @submit="importNewAccount"
         >
-          <v-button class-name="is-primary is-medium">Import address</v-button>
+          <v-button class-name="is-primary is-medium">
+            Import address
+          </v-button>
         </v-form>
       </div>
     </v-modal>
@@ -65,24 +75,26 @@
       v-if="isWalletsListModal"
       @close="handleWalletsListModalClose"
     >
-      <template
-        slot="header"
-      >Select Your Address</template>
+      <template slot="header">
+        Select Your Address
+      </template>
       <wallets-list
+        v-model="bridgeButtonListIsLoading"
         :type="walletType"
         :auto-load="true"
         :is-importing="bridgeButtonListIsImporting"
-        v-model="bridgeButtonListIsLoading"
         @select="setSelectedAddress"
       />
       <wallet-add-button
         v-show="!bridgeButtonListIsLoading"
         slot="footer"
+        v-model="bridgeButtonListIsImporting"
         :type="walletType"
         :selected-address="bridgeButtonListSelectedAddress"
-        v-model="bridgeButtonListIsImporting"
         @success="successAddWallet"
-      >Add</wallet-add-button>
+      >
+        Add
+      </wallet-add-button>
     </v-modal>
   </div>
 </template>

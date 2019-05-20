@@ -6,10 +6,10 @@
       @submit="togglePasswordModal"
     >
       <v-password
-        v-validate="'required|private_key'"
         id="privateKey"
         key="privateKeyUnique"
         v-model="privateKey"
+        v-validate="'required|private_key'"
         :error="errors.first('privateKey')"
         label="Private key"
         name="privateKey"

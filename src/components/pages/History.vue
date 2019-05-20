@@ -4,7 +4,9 @@
       <div class="container">
         <div class="card app-card">
           <div class="card-header">
-            <h1 class="card-header-title">Transaction history</h1>
+            <h1 class="card-header-title">
+              Transaction history
+            </h1>
           </div>
           <div class="card-content">
             <ul
@@ -23,7 +25,9 @@
               Transaction history is only supported on the main network.
             </p>
             <v-spinner v-else-if="isLoading" />
-            <p v-else>This account has no transactions.</p>
+            <p v-else>
+              This account has no transactions.
+            </p>
           </div>
         </div>
       </div>

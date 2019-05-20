@@ -65,7 +65,9 @@ exports[`NavSidebar render should not render items for private account if curren
             <p
               class="heading"
             >
+              
               Chain
+            
             </p>
              
             <div
@@ -85,7 +87,9 @@ exports[`NavSidebar render should not render items for private account if curren
             <p
               class="heading"
             >
+              
               Network
+            
             </p>
              
             <div
@@ -227,7 +231,9 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
             <p
               class="heading"
             >
+              
               Chain
+            
             </p>
              
             <div
@@ -247,7 +253,9 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
             <p
               class="heading"
             >
+              
               Network
+            
             </p>
              
             <div

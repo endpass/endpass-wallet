@@ -5,7 +5,9 @@ exports[`AddTokenModal render should render component 1`] = `
   data-test="add-token-modal"
 >
   <template>
+    
     Add custom token
+  
   </template>
    
   <v-form-stub

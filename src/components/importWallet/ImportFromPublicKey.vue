@@ -5,10 +5,10 @@
     @submit="submitAddWallet"
   >
     <v-input
-      v-validate="'required|address'"
       id="address"
       key="publicKeyUnique"
       v-model="address"
+      v-validate="'required|address'"
       :error="errors.first('address')"
       label="Address"
       name="address"
