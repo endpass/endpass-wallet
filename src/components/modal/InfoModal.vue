@@ -11,11 +11,11 @@
       <div>
         <div class="message is-success">
           <div
-            v-if="subTitle"
+            v-if="description"
             class="message-header"
           >
             <p>
-              {{ subTitle }}
+              {{ description }}
             </p>
           </div>
           <div class="message-body">
@@ -49,7 +49,7 @@ export default {
       default: null,
     },
 
-    subTitle: {
+    description: {
       type: String,
       default: null,
     },
@@ -62,8 +62,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.passsword-modal {
-}
-</style>

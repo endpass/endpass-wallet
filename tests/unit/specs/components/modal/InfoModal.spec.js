@@ -29,7 +29,7 @@ describe('InfoModal', () => {
       wrapper = shallowMount(InfoModal, {
         propsData: {
           title: 'foo',
-          subTitle: 'bar',
+          description: 'bar',
         },
         localVue,
       });

@@ -1,5 +1,7 @@
 import { v3password } from '../fixtures/accounts';
 import user from '../fixtures/identity/user';
+import seed from '../fixtures/identity/seed';
+import recoveredSeed from '../fixtures/identity/recovered_seed';
 
 describe('Settings Page', () => {
   beforeEach(() => {
@@ -63,5 +65,45 @@ describe('Settings Page', () => {
     cy.contains(
       'You entered incorrect password, try using a different one.',
     ).should('be.visible');
+  });
+
+  describe('seed restoration', () => {
+    it('should restore seed with wallet password', () => {
+      cy.route({
+        method: 'GET',
+        url: 'https://identity-dev.endpass.com/api/v1.1/user/seed',
+        status: 200,
+        response: seed,
+      }).as('userSeed');
+      cy.get('[data-test=recover-seed-button]').click();
+      cy.get('[data-test=password-modal]').within(() => {
+        cy.inputPassword();
+      });
+      cy.wait('@userSeed');
+      cy.get('[data-test=password-modal]').should('not.be.visible');
+      cy.get('[data-test=info-modal]').within(() => {
+        cy.get('[data-test=recovered-seed-phrase]').contains(
+          recoveredSeed.seed,
+        );
+      });
+    });
+
+    it('should lock seed restoration if it is not available', () => {
+      cy.route({
+        method: 'GET',
+        url: 'https://identity-dev.endpass.com/api/v1.1/user/seed',
+        status: 404,
+        response: {},
+      }).as('userSeed');
+      cy.get('[data-test=recover-seed-button]').click();
+      cy.get('[data-test=password-modal]').within(() => {
+        cy.inputPassword();
+      });
+      cy.wait('@userSeed');
+      cy.get('[data-test=password-modal]').should('not.be.visible');
+      cy.get('[data-test=info-modal]').should('not.be.visible');
+      cy.get('[data-test=recover-seed-button]').should('be.disabled');
+      cy.contains("You can't restore seed because it was not backuped.");
+    });
   });
 });

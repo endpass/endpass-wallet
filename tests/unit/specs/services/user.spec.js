@@ -817,6 +817,7 @@ describe('User service', () => {
 
     it('should request backuped seed', async () => {
       expect.assertions(2);
+
       axiosMock.onPost(url).reply(config => {
         expect(config.url).toBe(url);
         expect(config.data).toBe(
@@ -824,21 +825,21 @@ describe('User service', () => {
             seed: encryptedMessage,
           }),
         );
+
         return [200];
       });
       await userService.backupSeed(encryptedMessage);
     });
 
-    it('should throw notificaton error if request failed', async done => {
+    it('should throw notificaton error if request failed', async () => {
       expect.assertions(1);
+
       axiosMock.onPost(url).reply(() => [500]);
+
       try {
         await userService.backupSeed(encryptedMessage);
       } catch (err) {
-        expect(err.text).toBe(
-          'An error occurred during account seed backuping. Please try again.',
-        );
-        done();
+        expect(err).toBeInstanceOf(NotificationError);
       }
     });
   });
@@ -848,40 +849,42 @@ describe('User service', () => {
 
     it('should request user backuped seed', async () => {
       expect.assertions(2);
+
       const response = {
         seed: encryptedMessage,
       };
+
       axiosMock.onGet(url).reply(config => {
         expect(config.url).toBe(url);
         return [200, response];
       });
+
       const res = await userService.recoverSeed();
+
       expect(res).toEqual(response.seed);
     });
 
-    it('should throw notificaton error if seed is not backuped', async done => {
+    it('should throw notificaton error if seed is not backuped', async () => {
       expect.assertions(1);
+
       axiosMock.onGet(url).reply(() => [404]);
+
       try {
         await userService.recoverSeed();
       } catch (err) {
-        expect(err.text).toBe(
-          "You can't restore seed because it was not backuped.",
-        );
-        done();
+        expect(err).toBeInstanceOf(NotificationError);
       }
     });
 
-    it('should throw notificaton on unexpected error', async done => {
+    it('should throw notificaton on unexpected error', async () => {
       expect.assertions(1);
+
       axiosMock.onGet(url).reply(() => [500]);
+
       try {
         await userService.recoverSeed();
       } catch (err) {
-        expect(err.text).toBe(
-          'An error occurred while recovering account seed. Please try again.',
-        );
-        done();
+        expect(err).toBeInstanceOf(NotificationError);
       }
     });
   });

@@ -592,10 +592,10 @@ const recoverSeed = async ({ getters, dispatch }, password) => {
     );
 
     return recoveredSeed;
-  } catch (e) {
-    await dispatch('errors/emitError', e, { root: true });
+  } catch (err) {
+    await dispatch('errors/emitError', err, { root: true });
 
-    return null;
+    throw err;
   }
 };
 
