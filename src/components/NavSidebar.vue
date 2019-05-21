@@ -21,18 +21,37 @@
         >
       </router-link>
       <div class="login-control">
-        <a
+        <div
           v-if="!isLoggedIn"
-          class="button is-success"
-          data-test="button-login"
-          @click.prevent="handleLogin"
+          class="field is-grouped"
         >
-          <span
-            class="icon is-small"
-            v-html="require('@/img/account-login.svg')"
-          />
-          Login
-        </a>
+          <p class="control">
+            <a
+              class="button is-success"
+              data-test="button-login"
+              @click.prevent="handleLogin"
+            >
+              <span
+                class="icon is-small"
+                v-html="require('@/img/account-login.svg')"
+              />
+              Login
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-success"
+              data-test="button-login"
+              @click.prevent="handleLogin"
+            >
+              <span
+                class="icon is-small"
+                v-html="require('@/img/account-register.svg')"
+              />
+              Register
+            </a>
+          </p>
+        </div>
         <a
           v-else
           class="button"
@@ -385,9 +404,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    a:last-child {
-      margin-right: 1em;
-    }
+    padding-right: 1em;
     .logo {
       flex: 1;
     }

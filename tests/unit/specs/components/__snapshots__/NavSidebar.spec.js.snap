@@ -33,17 +33,41 @@ exports[`NavSidebar render should not render items for private account if curren
     <div
       class="login-control"
     >
-      <a
-        class="button is-success"
-        data-test="button-login"
+      <div
+        class="field is-grouped"
       >
-        <span
-          class="icon is-small"
-        />
-        
-        Login
-      
-      </a>
+        <p
+          class="control"
+        >
+          <a
+            class="button is-success"
+            data-test="button-login"
+          >
+            <span
+              class="icon is-small"
+            />
+            
+            Login
+          
+          </a>
+        </p>
+         
+        <p
+          class="control"
+        >
+          <a
+            class="button is-success"
+            data-test="button-login"
+          >
+            <span
+              class="icon is-small"
+            />
+            
+            Register
+          
+          </a>
+        </p>
+      </div>
     </div>
   </div>
    
@@ -199,17 +223,41 @@ exports[`NavSidebar render should render initial state of the component 1`] = `
     <div
       class="login-control"
     >
-      <a
-        class="button is-success"
-        data-test="button-login"
+      <div
+        class="field is-grouped"
       >
-        <span
-          class="icon is-small"
-        />
-        
-        Login
-      
-      </a>
+        <p
+          class="control"
+        >
+          <a
+            class="button is-success"
+            data-test="button-login"
+          >
+            <span
+              class="icon is-small"
+            />
+            
+            Login
+          
+          </a>
+        </p>
+         
+        <p
+          class="control"
+        >
+          <a
+            class="button is-success"
+            data-test="button-login"
+          >
+            <span
+              class="icon is-small"
+            />
+            
+            Register
+          
+          </a>
+        </p>
+      </div>
     </div>
   </div>
    
