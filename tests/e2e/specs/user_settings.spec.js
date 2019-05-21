@@ -106,4 +106,37 @@ describe('Settings Page', () => {
       cy.contains("You can't restore seed because it was not backuped.");
     });
   });
+
+  describe('email reset', () => {
+    it('should reset email with wallet password', () => {
+      cy.route({
+        method: 'POST',
+        url: 'https://identity-dev.endpass.com/api/v1.1/user/email',
+        status: 200,
+        response: { success: true },
+      }).as('userEmail');
+
+      cy.get('[data-test=input-new-email]').type('kek@gmail.com');
+      cy.get('[data-test=input-confirm-new-email]').type('kek@gmail.com');
+      cy.get('[data-test=update-email-button]').click();
+      cy.get('[data-test=password-modal]').within(() => {
+        cy.inputPassword();
+      });
+      cy.wait('@userEmail');
+      cy.get('[data-test=password-modal]').should('not.be.visible');
+      cy.get('[data-test=app-notification]').contains('kek@gmail.com');
+    });
+
+    it('should validate email correctly', () => {
+      cy.get('[data-test=input-new-email]').type('kek');
+      cy.get('[data-test=input-new-email]')
+        .parentsUntil('form')
+        .should('contain', 'must be a valid email');
+      cy.get('[data-test=input-new-email]').type('kek@gmail.com');
+      cy.get('[data-test=input-confirm-new-email]').type('notkek@gmail.com');
+      cy.get('[data-test=input-confirm-new-email]')
+        .parentsUntil('form')
+        .should('contain', 'does not match');
+    });
+  });
 });

@@ -14,6 +14,7 @@
         :disabled="isLoading"
         name="email"
         placeholder="New email"
+        data-vv-as="email"
         data-test="input-new-email"
       />
       <v-input
@@ -23,6 +24,7 @@
         :disabled="isLoading"
         name="emailConfirm"
         placeholder="Confirm email"
+        data-vv-as="confirm email"
         data-test="input-confirm-new-email"
       />
       <v-button
@@ -70,6 +72,7 @@ export default {
       this.togglePasswordModal();
       this.email = null;
       this.emailConfirm = null;
+      this.$validator.reset();
       this.isLoading = false;
     },
   },
