@@ -153,7 +153,7 @@ const saveWallet = async ({ dispatch }, { json, info = {} }) => {
   await dispatch('commitWallet', { wallet: json });
 };
 
-const addHdWallet = ({ state, dispatch, getters }, { key, password }) => {
+const addHdWallet = async ({ state, dispatch, getters }, { key, password }) => {
   try {
     const hdWallet = getters.getHdWalletBySeed(key);
     // Encrypt extended private key
@@ -168,8 +168,8 @@ const addHdWallet = ({ state, dispatch, getters }, { key, password }) => {
     };
 
     // Save HD keys and generate the first child wallet
-    // await dispatch('saveWallet', { json: v3KeyStore, info });
-    // await dispatch('generateWallet', password);
+    await dispatch('saveWallet', { json: v3KeyStore, info });
+    await dispatch('generateWallet', password);
     console.log(state);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
@@ -589,15 +589,13 @@ const recoverSeed = async ({ state, dispatch }, password) => {
   if (!state.hdKey) {
     throw new Error('hdKey doesn`t exist');
   }
-
   const hdWallet = await dispatch('decryptAccountHdWallet', password);
   const decryptedWallet = hdWallet.deriveChild(0).getWallet();
-  const wallet = new Wallet(
-    decryptedWallet.toV3(Buffer.from(password), {
-      kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-      n: ENV.VUE_APP_KDF_PARAMS_N,
-    }),
-  );
+  const v3KeyStore = decryptedWallet.toV3(Buffer.from(password), {
+    kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
+    n: ENV.VUE_APP_KDF_PARAMS_N,
+  });
+  const wallet = new Wallet(v3KeyStore);
 
   try {
     const encryptedSeed = await userService.recoverSeed();

@@ -25,7 +25,8 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import path from 'path';
-import { v3password } from '../fixtures/accounts';
+import seed from '../fixtures/identity/seed';
+import { mnemonic, v3password, hdv3, hdv3Info } from '../fixtures/accounts';
 import {
   syncing,
   blockNumber,
@@ -71,6 +72,7 @@ Cypress.Commands.add('login', () => {
     `${identityAPIUrl}/accounts`,
     'fixture:keystore/accounts.json',
   ).as('keystoreAccounts');
+  cy.route('GET', /\/account\/(\w+)\/info$/, {}).as('accountInfo');
   // Regular account
   cy.route(
     'GET',
@@ -88,6 +90,20 @@ Cypress.Commands.add('login', () => {
     `${identityAPIUrl}/account/xpub*/info`,
     'fixture:identity/success.json',
   ).as('saveKeystoreHdAccountInfo');
+  cy.route('GET', `${identityAPIUrl}/account/${hdv3.address}`, hdv3).as(
+    'keystoreHdAccountMain',
+  );
+  cy.route(
+    'GET',
+    `${identityAPIUrl}/account/${hdv3.address}/info`,
+    hdv3Info,
+  ).as('keystoreHdAccountMainInfo');
+  cy.route({
+    method: 'GET',
+    url: `${identityAPIUrl}/user/seed`,
+    status: 200,
+    response: seed,
+  }).as('userSeed');
   // Read only account
   cy.route(
     'GET',
@@ -151,7 +167,6 @@ Cypress.Commands.add('login', () => {
     `${identityAPIUrl}/networks/*`,
     'fixture:identity/success.json',
   ).as('identityDeleteNetwork');
-  cy.route('GET', /\/account\/(\w+)\/info$/, {}).as('accountInfo');
 });
 
 // Sets up server and routes for an unauthorized user.
