@@ -529,29 +529,34 @@ describe('user actions', () => {
   describe('updateEmail', () => {
     const email = 'kek';
     const password = 'tram';
-    const signature = 'chpok'
+    const signature = 'chpok';
     const rootGetters = {
       'accounts/wallet': {
-        sign: jest.fn().mockReturnValue({signature}),
-      }
+        sign: jest.fn().mockReturnValue({ signature }),
+      },
     };
     it('should set email', async () => {
       expect.assertions(2);
 
-      await actions.updateEmail({ commit, dispatch, rootGetters }, { email, password });
+      await actions.updateEmail(
+        { commit, dispatch, rootGetters },
+        { email, password },
+      );
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toBeCalledWith(SET_EMAIL, email);
     });
 
-
     it('should set email through the user service', async () => {
       expect.assertions(2);
 
-      await actions.updateEmail({ commit, dispatch, rootGetters }, { email, password });
+      await actions.updateEmail(
+        { commit, dispatch, rootGetters },
+        { email, password },
+      );
 
       expect(userService.updateEmail).toHaveBeenCalledTimes(1);
-      expect(userService.updateEmail).toBeCalledWith({email, signature});
+      expect(userService.updateEmail).toBeCalledWith({ email, signature });
     });
 
     it('should handle error', async () => {
@@ -560,7 +565,10 @@ describe('user actions', () => {
       const error = 'error';
       userService.updateEmail.mockRejectedValueOnce(error);
 
-      await actions.updateEmail({ commit, dispatch, rootGetters }, { email, password });
+      await actions.updateEmail(
+        { commit, dispatch, rootGetters },
+        { email, password },
+      );
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toBeCalledWith('errors/emitError', error, {

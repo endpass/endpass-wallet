@@ -7,9 +7,9 @@
     >
       <label class="label">Update email</label>
       <v-input
-        v-validate="'required|email'"
         ref="email"
         v-model="email"
+        v-validate="'required|email'"
         :error="errors.first('email')"
         :disabled="isLoading"
         name="email"
@@ -18,8 +18,8 @@
         data-test="input-new-email"
       />
       <v-input
-        v-validate="'required|email|confirmed:email'"
         v-model="emailConfirm"
+        v-validate="'required|email|confirmed:email'"
         :error="errors.first('emailConfirm')"
         :disabled="isLoading"
         name="emailConfirm"
