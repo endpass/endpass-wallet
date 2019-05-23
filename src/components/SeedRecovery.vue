@@ -21,7 +21,12 @@
       description="You successfully recovered seed phrase! Do not show it to anyone else!"
       @close="handleSeedClose"
     >
-      <p class="code" data-test="recovered-seed-phrase">{{ recoveredSeed }}</p>
+      <p
+        class="code"
+        data-test="recovered-seed-phrase"
+      >
+        {{ recoveredSeed }}
+      </p>
     </info-modal>
   </div>
 </template>
