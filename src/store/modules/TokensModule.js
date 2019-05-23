@@ -107,18 +107,24 @@ class TokensModule extends VuexModuleWithRoot {
 
   _userTokensWithoutToken({ net, token }) {
     const { userTokens } = this;
-    const targetNet = userTokens[net];
+    const targetNetTokens = userTokens[net];
 
-    if (targetNet) {
-      const { [token.address]: removedToken, ...updatedTokens } = targetNet;
-
-      return {
-        ...userTokens,
-        [net]: updatedTokens,
-      };
+    if (!targetNetTokens) {
+      return userTokens;
     }
 
-    return userTokens;
+    const filtered = Object
+      .keys(targetNetTokens)
+      .filter(address => address.toLowerCase() !== token.address)
+      .reduce((obj, key) => ({
+        ...obj,
+        [key]: targetNetTokens[key],
+      }), {});
+
+    return {
+      ...userTokens,
+      [net]: filtered,
+    };
   }
 
   _allCurrentAccountTokensWithNonZeroBalance() {
@@ -288,7 +294,6 @@ class TokensModule extends VuexModuleWithRoot {
       this.setLoading(true);
 
       const networkTokens = await tokenInfoService.getTokensList();
-      console.log('networkTokens', networkTokens);
 
       this.addNetworkTokens(mapArrayByProp(networkTokens, 'address'));
     } catch (e) {

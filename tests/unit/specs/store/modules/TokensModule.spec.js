@@ -7,6 +7,7 @@ import PriceModule from '@/store/modules/PriceModule';
 import { Network } from '@endpass/class';
 import cryptoDataService from '@/services/cryptoData';
 import tokenInfoService from '@/services/tokeninfo';
+import userService from '@/services/user';
 
 import { address } from 'fixtures/accounts';
 import {
@@ -25,6 +26,7 @@ import {
   tokensNetByAddress,
   allTokens,
 } from 'fixtures/tokens';
+import { Token } from '@/class';
 
 describe('PriceModule', () => {
   let store;
@@ -76,8 +78,6 @@ describe('PriceModule', () => {
       expect(tokensModule.isLoading).toBe(false);
 
       await tokensModule.init();
-
-      console.log('fullTokensMappedByAddresses', fullTokensMappedByAddresses);
 
       expect(tokensModule.prices).toEqual({});
       expect(tokensModule.networkTokens).toEqual(fullTokensMappedByAddresses);
@@ -222,6 +222,77 @@ describe('PriceModule', () => {
 
       expect(tokensModule.networkTokens)
         .toEqual(tokensMappedByAddresses);
+    });
+  });
+
+  describe('removeUserToken', () => {
+    it('should handle error', async () => {
+      expect.assertions(1);
+
+      const error = new Error();
+      userService.removeToken.mockRejectedValueOnce(error);
+      const mock = jest.fn();
+      errorsModule.errorEmitter.once('error', mock);
+      await tokensModule.setUserTokens(tokensNetBySymbols);
+
+      await tokensModule.removeUserToken(
+        { token: tokens[0] },
+      );
+
+      expect(mock).toBeCalled();
+    });
+
+    it('should not call remove, if no tokens', async () => {
+      expect.assertions(2);
+
+      expect(tokensModule.userTokens).toEqual({});
+
+      await tokensModule.removeUserToken(
+        { token: tokens[0] },
+      );
+
+      expect(userService.removeToken).not.toBeCalled();
+    });
+
+    it('should not do anything if target token is not exist in state', async() => {
+      expect.assertions(3);
+
+      await tokensModule.setUserTokens(tokensNetBySymbols);
+
+      expect(tokensModule.userTokens).toEqual(tokensNetByAddress);
+
+      await tokensModule.removeUserToken({
+        token: {
+          address: '0x123',
+        },
+      });
+
+      expect(tokensModule.userTokens).toEqual(tokensNetByAddress);
+      expect(userService.removeToken).not.toBeCalled();
+    });
+
+    it('should remove user token if it is exist in state', async () => {
+      expect.assertions(3);
+
+      await tokensModule.setUserTokens(tokensNetBySymbols);
+
+      expect(tokensModule.userTokens).toEqual(tokensNetByAddress);
+
+      await tokensModule.removeUserToken(
+        { token: tokens[0] },
+      );
+
+      const passedToken = tokens[1];
+
+      expect(tokensModule.userTokens).toEqual({
+        1: {
+          [passedToken.address]: passedToken,
+        },
+      });
+      expect(userService.removeToken).toBeCalledWith(
+        Network.NET_ID.MAIN,
+        Token.getConsistent(tokens[0]).address,
+      );
     });
   });
 });
