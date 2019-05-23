@@ -1,13 +1,14 @@
-import { v3password } from '../fixtures/accounts';
 import user from '../fixtures/identity/user';
-import seed from '../fixtures/identity/seed';
-import recoveredSeed from '../fixtures/identity/recovered_seed';
+import { mnemonic, v3password } from '../fixtures/accounts';
+
+const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1.1';
 
 describe('Settings Page', () => {
   beforeEach(() => {
     cy.getInitialData();
     cy.visit('#/settings');
     cy.mockWeb3Requests();
+    cy.makeStoreAlias();
     cy.waitPageLoad();
   });
 
@@ -69,12 +70,6 @@ describe('Settings Page', () => {
 
   describe('seed restoration', () => {
     it('should restore seed with wallet password', () => {
-      cy.route({
-        method: 'GET',
-        url: 'https://identity-dev.endpass.com/api/v1.1/user/seed',
-        status: 200,
-        response: seed,
-      }).as('userSeed');
       cy.get('[data-test=recover-seed-button]').click();
       cy.get('[data-test=password-modal]').within(() => {
         cy.inputPassword();
@@ -82,16 +77,14 @@ describe('Settings Page', () => {
       cy.wait('@userSeed');
       cy.get('[data-test=password-modal]').should('not.be.visible');
       cy.get('[data-test=info-modal]').within(() => {
-        cy.get('[data-test=recovered-seed-phrase]').contains(
-          recoveredSeed.seed,
-        );
+        cy.get('[data-test=recovered-seed-phrase]').contains(mnemonic);
       });
     });
 
     it('should lock seed restoration if it is not available', () => {
       cy.route({
         method: 'GET',
-        url: 'https://identity-dev.endpass.com/api/v1.1/user/seed',
+        url: `${identityAPIUrl}/user/seed`,
         status: 404,
         response: {},
       }).as('userSeed');

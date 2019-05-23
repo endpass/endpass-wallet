@@ -1610,83 +1610,91 @@ describe('Accounts actions', () => {
   });
 
   describe('backupSeed', () => {
-    let getters;
+    let decryptedHDWallet;
+    let decryptedWallet;
 
     beforeEach(() => {
-      getters = {
-        wallet: {
-          encryptMessageWithPublicKey: jest.fn(),
-        },
+      decryptedWallet = {
+        toV3: jest.fn(() => v3),
       };
+      decryptedHDWallet = {
+        deriveChild: () => ({
+          getWallet: jest.fn(() => decryptedWallet),
+        }),
+      };
+      dispatch.mockResolvedValueOnce(decryptedHDWallet);
     });
 
     it('should backup seed with user service', async () => {
       expect.assertions(2);
 
-      await actions.backupSeed(
-        { getters, dispatch },
-        { password: v3password, seed },
-      );
+      Wallet.prototype.encryptMessageWithPublicKey = jest
+        .fn()
+        .mockReturnValue(encryptedMessage);
 
-      expect(dispatch).not.toBeCalled();
-      expect(getters.wallet.encryptMessageWithPublicKey).toBeCalledWith(
-        seed,
-        v3password,
-      );
+      await actions.backupSeed({ dispatch }, { password: v3password, seed });
+
+      expect(dispatch).toBeCalledTimes(1);
+      expect(userService.backupSeed).toBeCalledWith(encryptedMessage);
     });
 
     it('should emit error if user service rejects seed backup request', async () => {
       expect.assertions(1);
 
       const error = new Error('foo');
-      getters.wallet.encryptMessageWithPublicKey.mockRejectedValueOnce(error);
-      await actions.backupSeed(
-        { getters, dispatch },
-        { password: v3password, seed },
-      );
+      Wallet.prototype.encryptMessageWithPublicKey = jest
+        .fn()
+        .mockRejectedValueOnce(error);
 
-      expect(dispatch).toBeCalledWith('errors/emitError', error, {
+      await actions.backupSeed({ dispatch }, { password: v3password, seed });
+
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'errors/emitError', error, {
         root: true,
       });
     });
   });
 
   describe('recoverSeed', () => {
-    let getters;
+    let decryptedHDWallet;
+    let decryptedWallet;
 
     beforeEach(() => {
-      getters = {
-        wallet: {
-          decryptMessageWithPrivateKey: jest.fn(),
-        },
+      decryptedWallet = {
+        toV3: jest.fn(() => v3),
       };
+      decryptedHDWallet = {
+        deriveChild: () => ({
+          getWallet: jest.fn(() => decryptedWallet),
+        }),
+      };
+      dispatch.mockResolvedValueOnce(decryptedHDWallet);
     });
 
     it('should recover seed with given password', async () => {
-      expect.assertions(3);
+      expect.assertions(1);
 
-      getters.wallet.decryptMessageWithPrivateKey.mockResolvedValueOnce(seed);
+      Wallet.prototype.decryptMessageWithPrivateKey = jest
+        .fn()
+        .mockReturnValue(seed);
+      dispatch.mockResolvedValueOnce(decryptedHDWallet);
       userService.recoverSeed.mockResolvedValueOnce(encryptedMessage);
-      const res = await actions.recoverSeed({ getters, dispatch }, v3password);
 
-      expect(getters.wallet.decryptMessageWithPrivateKey).toBeCalledWith(
-        encryptedMessage,
-        v3password,
-      );
-      expect(dispatch).not.toBeCalled();
+      const res = await actions.recoverSeed({ dispatch }, v3password);
+
       expect(res).toBe(seed);
     });
 
     it('should emit error if user service rejects seed recovery request', async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       const error = new Error('foo');
       userService.recoverSeed.mockRejectedValueOnce(error);
 
       try {
-        await actions.recoverSeed({ getters, dispatch }, v3password);
+        await actions.recoverSeed({ dispatch }, v3password);
       } catch (err) {
-        expect(dispatch).toBeCalledWith('errors/emitError', error, {
+        expect(dispatch).toBeCalledTimes(2);
+        expect(dispatch).toHaveBeenNthCalledWith(2, 'errors/emitError', error, {
           root: true,
         });
       }
