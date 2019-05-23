@@ -251,7 +251,7 @@ class TokensModule extends VuexModuleWithRoot {
 
       this.updateUserTokens(updatedTokens);
     } catch (err) {
-      this.modules.error.emitError(err);
+      this.modules.errors.emitError(err);
     }
   }
 
@@ -274,12 +274,12 @@ class TokensModule extends VuexModuleWithRoot {
 
       this.updateUserTokens(updatedTokens);
     } catch (err) {
-      this.modules.error.emitError(err);
+      this.modules.errors.emitError(err);
     }
   }
 
   @Action
-  async getNetworkTokens() {
+  async loadNetworkTokens() {
     const isMainNetwork = this._getActiveNetwork() === Network.NET_ID.MAIN;
 
     if (!isMainNetwork) return;
@@ -288,6 +288,7 @@ class TokensModule extends VuexModuleWithRoot {
       this.setLoading(true);
 
       const networkTokens = await tokenInfoService.getTokensList();
+      console.log('networkTokens', networkTokens);
 
       this.addNetworkTokens(mapArrayByProp(networkTokens, 'address'));
     } catch (e) {
@@ -297,14 +298,14 @@ class TokensModule extends VuexModuleWithRoot {
           'An error occurred while retrieving the list of tokens. Please try again.',
         type: 'is-warning',
       });
-      this.modules.error.emitError(error);
+      this.modules.errors.emitError(error);
     } finally {
       this.setLoading(false);
     }
   }
 
   @Action
-  async getTokensPrices({ tokensSymbols }) {
+  async loadTokenPrices({ tokensSymbols }) {
     if (tokensSymbols.length === 0) return;
 
     try {
@@ -376,10 +377,6 @@ class TokensModule extends VuexModuleWithRoot {
     );
 
     this.updateUserTokens(tokensMappedByNetworksAndAddresses);
-    console.log(
-      'tokensMappedByNetworksAndAddresses',
-      tokensMappedByNetworksAndAddresses,
-    );
 
     const tokensPrices = await cryptoDataService.getSymbolsPrices(
       Object.keys(currentNetworkTokens).map(
@@ -389,12 +386,11 @@ class TokensModule extends VuexModuleWithRoot {
     );
 
     this.setTokenPrices(tokensPrices);
-    console.log('tokensPrices', tokensPrices);
   }
 
   @Action
   async init() {
-    await this.getNetworkTokens();
+    await this.loadNetworkTokens();
   }
 }
 

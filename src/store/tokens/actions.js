@@ -13,7 +13,7 @@ import {
 } from './mutations-types';
 
 const init = async ({ dispatch }) => {
-  await dispatch('getNetworkTokens');
+  await dispatch('loadNetworkTokens');
 };
 
 const addUserToken = async (
@@ -62,7 +62,7 @@ const removeUserToken = async (
   }
 };
 
-const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
+const loadNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
   const isMainNetwork =
     rootGetters['web3/activeNetwork'] === Network.NET_ID.MAIN;
 
@@ -87,7 +87,7 @@ const getNetworkTokens = async ({ commit, dispatch, rootGetters }) => {
   }
 };
 
-const getTokensPrices = async ({ commit, getters }, { tokensSymbols }) => {
+const loadTokenPrices = async ({ commit, getters }, { tokensSymbols }) => {
   if (tokensSymbols.length === 0) return;
 
   try {
@@ -172,7 +172,7 @@ export default {
   setUserTokens,
   addUserToken,
   removeUserToken,
-  getNetworkTokens,
-  getTokensPrices,
+  loadNetworkTokens,
+  loadTokenPrices,
   setTokensInfoByAddress,
 };

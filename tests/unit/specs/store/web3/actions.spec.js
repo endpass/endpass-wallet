@@ -82,7 +82,7 @@ describe('web3 actions', () => {
       expect(dispatch.mock.calls).toEqual([
         ['price/updatePrice', {}, { root: true }],
         ['accounts/updateBalance', {}, { root: true }],
-        ['tokens/getNetworkTokens', {}, { root: true }],
+        ['tokens/loadNetworkTokens', {}, { root: true }],
         ['transactions/updatePendingTransactionsStatus', {}, { root: true }],
       ]);
     });

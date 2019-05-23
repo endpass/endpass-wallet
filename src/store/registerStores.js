@@ -21,7 +21,7 @@ export default function(store) {
         './core/actions',
         './accounts',
         './web3',
-        './tokens',
+        // './tokens',
         './gas-price',
         './transactions',
         './user',

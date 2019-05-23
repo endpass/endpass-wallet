@@ -22,7 +22,7 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
     userService.setSettings({ net: network.id }),
     dispatch('price/updatePrice', {}, { root: true }),
     dispatch('accounts/updateBalance', {}, { root: true }),
-    dispatch('tokens/getNetworkTokens', {}, { root: true }),
+    dispatch('tokens/loadNetworkTokens', {}, { root: true }),
     dispatch(
       'transactions/updatePendingTransactionsStatus',
       {},

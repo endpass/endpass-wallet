@@ -238,7 +238,7 @@ Cypress.Commands.add('getAccountBalance', () => {
   }).as('accountBalance');
 });
 
-Cypress.Commands.add('getTokensPrices', () => {
+Cypress.Commands.add('loadTokenPrices', () => {
   cy.route({
     method: 'GET',
     url: `${cryptodataAPIUrl}/price`,

@@ -51,7 +51,7 @@ describe('tokens actions', () => {
 
       await actions.init({ dispatch });
 
-      expect(dispatch).toHaveBeenCalledWith('getNetworkTokens');
+      expect(dispatch).toHaveBeenCalledWith('loadNetworkTokens');
     });
   });
 
@@ -198,7 +198,7 @@ describe('tokens actions', () => {
     });
   });
 
-  describe('getNetworkTokens', () => {
+  describe('loadNetworkTokens', () => {
     beforeEach(() => {
       state = {
         networkTokens: {},
@@ -210,7 +210,7 @@ describe('tokens actions', () => {
 
       tokenInfoService.getTokensList.mockResolvedValueOnce(tokens);
 
-      await actions.getNetworkTokens({ state, commit, dispatch, rootGetters });
+      await actions.loadNetworkTokens({ state, commit, dispatch, rootGetters });
 
       expect(commit).toHaveBeenCalledTimes(3);
       expect(commit).toHaveBeenNthCalledWith(1, SET_LOADING, true);
@@ -229,7 +229,7 @@ describe('tokens actions', () => {
         'web3/activeNetwork': 0,
       };
 
-      await actions.getNetworkTokens({ state, commit, dispatch, rootGetters });
+      await actions.loadNetworkTokens({ state, commit, dispatch, rootGetters });
 
       expect(commit).not.toBeCalled();
       expect(dispatch).not.toBeCalled();
@@ -241,7 +241,7 @@ describe('tokens actions', () => {
 
       tokenInfoService.getTokensList.mockRejectedValueOnce();
 
-      await actions.getNetworkTokens({ state, commit, dispatch, rootGetters });
+      await actions.loadNetworkTokens({ state, commit, dispatch, rootGetters });
 
       expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toHaveBeenNthCalledWith(1, SET_LOADING, true);
@@ -254,7 +254,7 @@ describe('tokens actions', () => {
     });
   });
 
-  describe('getTokensPrices', () => {
+  describe('loadTokenPrices', () => {
     it('should request and set tokens prices', async () => {
       expect.assertions(2);
 
@@ -263,7 +263,7 @@ describe('tokens actions', () => {
       };
       cryptoDataService.getSymbolsPrices.mockResolvedValueOnce(tokensPrices);
 
-      await actions.getTokensPrices(
+      await actions.loadTokenPrices(
         { commit, getters },
         { tokensSymbols: tokens },
       );
@@ -273,13 +273,14 @@ describe('tokens actions', () => {
         tokens,
         'ETH',
       );
+      console.log('tokensPrices', tokensPrices);
       expect(commit).toHaveBeenCalledWith(SET_TOKENS_PRICES, tokensPrices);
     });
 
     it('should not do anything if given tokens symbols are empty', async () => {
       expect.assertions(2);
 
-      await actions.getTokensPrices({ commit, getters }, { tokensSymbols: [] });
+      await actions.loadTokenPrices({ commit, getters }, { tokensSymbols: [] });
       await global.flushPromises();
 
       expect(cryptoDataService.getSymbolsPrices).not.toBeCalled();
