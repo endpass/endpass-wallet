@@ -358,32 +358,38 @@ class TokensModule extends VuexModuleWithRoot {
   @Action
   async setUserTokens(tokens) {
     const currentNetwork = this._getActiveNetwork();
-
-    if (get(tokens, currentNetwork)) {
-      const { fiatCurrency } = this.modules.price;
-      const tokensMappedByNetworksAndAddresses = Object.keys(tokens).reduce(
-        (acc, key) =>
-          Object.assign(acc, {
-            [key]: mapKeys(tokens[key], 'address'),
-          }),
-        {},
-      );
-      const currentNetworkTokens = get(
-        tokensMappedByNetworksAndAddresses,
-        currentNetwork,
-      );
-
-      this.updateUserTokens(tokensMappedByNetworksAndAddresses);
-
-      const tokensPrices = await cryptoDataService.getSymbolsPrices(
-        Object.keys(currentNetworkTokens).map(
-          key => currentNetworkTokens[key].symbol,
-        ),
-        fiatCurrency,
-      );
-
-      this.setTokenPrices(tokensPrices);
+    if (!get(tokens, currentNetwork)) {
+      return;
     }
+
+    const { fiatCurrency } = this.modules.price;
+    const tokensMappedByNetworksAndAddresses = Object.keys(tokens).reduce(
+      (acc, key) =>
+        Object.assign(acc, {
+          [key]: mapKeys(tokens[key], 'address'),
+        }),
+      {},
+    );
+    const currentNetworkTokens = get(
+      tokensMappedByNetworksAndAddresses,
+      currentNetwork,
+    );
+
+    this.updateUserTokens(tokensMappedByNetworksAndAddresses);
+    console.log(
+      'tokensMappedByNetworksAndAddresses',
+      tokensMappedByNetworksAndAddresses,
+    );
+
+    const tokensPrices = await cryptoDataService.getSymbolsPrices(
+      Object.keys(currentNetworkTokens).map(
+        key => currentNetworkTokens[key].symbol,
+      ),
+      fiatCurrency,
+    );
+
+    this.setTokenPrices(tokensPrices);
+    console.log('tokensPrices', tokensPrices);
   }
 
   @Action
