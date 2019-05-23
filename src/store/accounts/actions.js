@@ -127,10 +127,11 @@ const generateWallet = async ({ dispatch, state }, password) => {
   if (!state.hdKey) {
     throw new Error('hdKey doesn`t exist');
   }
+  console.log(JSON.stringify(state.hdKey, null, 2));
 
-  const decryptedHdWallet = await dispatch('decryptAccountHdWallet', password);
+  const hdWallet = await dispatch('decryptAccountHdWallet', password);
   const i = Object.keys(state.wallets).length;
-  const wallet = decryptedHdWallet.deriveChild(i).getWallet();
+  const wallet = hdWallet.deriveChild(i).getWallet();
   const v3KeyStore = keystore.encryptWallet(password, wallet, {
     kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
     n: ENV.VUE_APP_KDF_PARAMS_N,
@@ -152,7 +153,7 @@ const saveWallet = async ({ dispatch }, { json, info = {} }) => {
   await dispatch('commitWallet', { wallet: json });
 };
 
-const addHdWallet = async ({ dispatch, getters }, { key, password }) => {
+const addHdWallet = ({ state, dispatch, getters }, { key, password }) => {
   try {
     const hdWallet = getters.getHdWalletBySeed(key);
     // Encrypt extended private key
@@ -167,8 +168,9 @@ const addHdWallet = async ({ dispatch, getters }, { key, password }) => {
     };
 
     // Save HD keys and generate the first child wallet
-    await dispatch('saveWallet', { json: v3KeyStore, info });
-    await dispatch('generateWallet', password);
+    // await dispatch('saveWallet', { json: v3KeyStore, info });
+    // await dispatch('generateWallet', password);
+    console.log(state);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
   }
@@ -422,13 +424,13 @@ const reencryptAllAccountWallets = async (
   { dispatch },
   { password, newPassword },
 ) => {
-  const [decryptedHdWallet, decryptedWallets] = await Promise.all([
+  const [hdWallet, decryptedWallets] = await Promise.all([
     dispatch('decryptAccountHdWallet', password),
     dispatch('decryptAccountWallets', password),
   ]);
   const encryptedHdWallet = await dispatch('encryptHdWallet', {
-    hdWallet: decryptedHdWallet,
     password: newPassword,
+    hdWallet,
   });
   const encryptedWallets = await dispatch('encryptWallets', {
     wallets: decryptedWallets,
@@ -583,10 +585,23 @@ const backupSeed = async ({ getters, dispatch }, { seed, password }) => {
   }
 };
 
-const recoverSeed = async ({ getters, dispatch }, password) => {
+const recoverSeed = async ({ state, dispatch }, password) => {
+  if (!state.hdKey) {
+    throw new Error('hdKey doesn`t exist');
+  }
+
+  const hdWallet = await dispatch('decryptAccountHdWallet', password);
+  const decryptedWallet = hdWallet.deriveChild(0).getWallet();
+  const wallet = new Wallet(
+    decryptedWallet.toV3(Buffer.from(password), {
+      kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
+      n: ENV.VUE_APP_KDF_PARAMS_N,
+    }),
+  );
+
   try {
     const encryptedSeed = await userService.recoverSeed();
-    const recoveredSeed = await getters.wallet.decryptMessageWithPrivateKey(
+    const recoveredSeed = await wallet.decryptMessageWithPrivateKey(
       encryptedSeed,
       password,
     );

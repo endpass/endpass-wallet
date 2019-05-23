@@ -1,13 +1,17 @@
-import { v3password } from '../fixtures/accounts';
 import user from '../fixtures/identity/user';
 import seed from '../fixtures/identity/seed';
 import recoveredSeed from '../fixtures/identity/recovered_seed';
+import account from '../fixtures/keystore/account_0.json';
+import { mnemonic, v3password, hdv3, hdv3Info } from '../fixtures/accounts';
+
+const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1.1';
 
 describe('Settings Page', () => {
   beforeEach(() => {
     cy.getInitialData();
     cy.visit('#/settings');
     cy.mockWeb3Requests();
+    cy.makeStoreAlias();
     cy.waitPageLoad();
   });
 
@@ -69,6 +73,14 @@ describe('Settings Page', () => {
 
   describe('seed restoration', () => {
     it('should restore seed with wallet password', () => {
+      cy.route('GET', `${identityAPIUrl}/account/${hdv3.address}`, hdv3).as(
+        'вотЗамоканныйЗапросАккаунта',
+      );
+      cy.route(
+        'GET',
+        `${identityAPIUrl}/account/${hdv3.address}/info`,
+        hdv3Info,
+      ).as('вотЗамоканныйЗапросИнфоАккаунта');
       cy.route({
         method: 'GET',
         url: 'https://identity-dev.endpass.com/api/v1.1/user/seed',

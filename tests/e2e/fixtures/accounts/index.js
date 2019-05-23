@@ -54,6 +54,15 @@ export const hdv3 = {
   version: 3,
 };
 
+export const hdv3Info = {
+  address:
+    'xpub6DojZ5fC8cSLRwc95PFfzUDWUSRod2jSWSbhGKEWFJhoTDiJgRva4am9m7ex1Fm1Ege8MDQ7PNEFqkzdgsRS6UooRfDZpgHkD8vNHiMP3zq',
+  hidden: false,
+  type: 'HDMainAccount',
+  index: 0,
+  label: '',
+};
+
 // Private key buffer for v3
 export const privateKey =
   '0x070dc3117300011918e26b02176945cc15c3d548cf49fd8418d97f93af699e46';
