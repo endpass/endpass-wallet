@@ -572,9 +572,16 @@ const updateAccountSettings = async ({
   });
 };
 
-const backupSeed = async ({ getters, dispatch }, { seed, password }) => {
+const backupSeed = async ({ dispatch }, { seed, password }) => {
   try {
-    const encryptedSeed = await getters.wallet.encryptMessageWithPublicKey(
+    const hdWallet = await dispatch('decryptAccountHdWallet', password);
+    const decryptedWallet = hdWallet.deriveChild(0).getWallet();
+    const v3KeyStore = decryptedWallet.toV3(Buffer.from(password), {
+      kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
+      n: ENV.VUE_APP_KDF_PARAMS_N,
+    });
+    const wallet = new Wallet(v3KeyStore);
+    const encryptedSeed = await wallet.encryptMessageWithPublicKey(
       seed,
       password,
     );
@@ -585,10 +592,7 @@ const backupSeed = async ({ getters, dispatch }, { seed, password }) => {
   }
 };
 
-const recoverSeed = async ({ state, dispatch }, password) => {
-  if (!state.hdKey) {
-    throw new Error('hdKey doesn`t exist');
-  }
+const recoverSeed = async ({ dispatch }, password) => {
   const hdWallet = await dispatch('decryptAccountHdWallet', password);
   const decryptedWallet = hdWallet.deriveChild(0).getWallet();
   const v3KeyStore = decryptedWallet.toV3(Buffer.from(password), {
