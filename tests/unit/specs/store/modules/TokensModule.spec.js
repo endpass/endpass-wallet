@@ -334,4 +334,15 @@ describe('PriceModule', () => {
       expect(mock).toBeCalled();
     });
   });
+
+  describe('getters', () => {
+    it('should returns current account tokens by fullTokensByAddress', async () => {
+      expect.assertions(1);
+
+      await tokensModule.setUserTokens(tokensNetBySymbols);
+
+      expect(tokensModule.currentNetUserFullTokens)
+        .toEqual(tokensMappedByAddresses);
+    });
+  });
 });
