@@ -12,19 +12,12 @@ import userService from '@/services/user';
 import { address } from 'fixtures/accounts';
 import {
   tokens,
-  token,
   tokensMappedByAddresses,
   networkTokensMappedByAddresses,
-  tokensMappedByNetworks,
-  expandedTokensMappedByNetworks,
-  cuttedTokensMappedByNetworks,
-  tokensPrices,
-
   tokensPricesBySymbols,
   fullTokensMappedByAddresses,
   tokensNetBySymbols,
   tokensNetByAddress,
-  allTokens,
 } from 'fixtures/tokens';
 import { Token } from '@/class';
 
@@ -115,12 +108,15 @@ describe('PriceModule', () => {
       await tokensModule.setTokensInfoByAddress({ address, tokens });
 
       expect(tokensModule.prices).toEqual(tokensPricesBySymbols);
-      expect(tokensModule.balancesByAddress).toEqual({ [address]: { FST: '0', SCDT: '0' } });
+      expect(tokensModule.balancesByAddress).toEqual({
+        [address]: { FST: '0', SCDT: '0' },
+      });
       expect(tokensModule.tokensByAddress).toEqual({
         [address]: tokens.map(item => item.address),
       });
-      expect(tokensModule.networkTokens)
-        .toEqual(networkTokensMappedByAddresses);
+      expect(tokensModule.networkTokens).toEqual(
+        networkTokensMappedByAddresses,
+      );
     });
   });
 
@@ -163,8 +159,7 @@ describe('PriceModule', () => {
     it('should set network tokens', async () => {
       expect.assertions(5);
 
-      expect(tokensModule.networkTokens)
-        .toEqual({});
+      expect(tokensModule.networkTokens).toEqual({});
       expect(tokensModule.isLoading).toBe(false);
 
       const mock = jest.fn();
@@ -173,16 +168,14 @@ describe('PriceModule', () => {
       await tokensModule.loadNetworkTokens();
 
       expect(tokensModule.isLoading).toBe(false);
-      expect(tokensModule.networkTokens)
-        .toEqual(tokensMappedByAddresses);
+      expect(tokensModule.networkTokens).toEqual(tokensMappedByAddresses);
       expect(mock).not.toBeCalled();
     });
 
     it('should handle error and set empty object as network tokens', async () => {
       expect.assertions(5);
 
-      expect(tokensModule.networkTokens)
-        .toEqual({});
+      expect(tokensModule.networkTokens).toEqual({});
       expect(tokensModule.isLoading).toBe(false);
 
       const mock = jest.fn();
@@ -192,8 +185,7 @@ describe('PriceModule', () => {
       await tokensModule.loadNetworkTokens();
 
       expect(tokensModule.isLoading).toBe(false);
-      expect(tokensModule.networkTokens)
-        .toEqual({});
+      expect(tokensModule.networkTokens).toEqual({});
       expect(mock).toBeCalled();
     });
 
@@ -215,13 +207,11 @@ describe('PriceModule', () => {
       // TODO: add switch current network, when web3 module will be implement and update test flow
       expect.assertions(2);
 
-      expect(tokensModule.networkTokens)
-        .toEqual({});
+      expect(tokensModule.networkTokens).toEqual({});
 
       await tokensModule.loadNetworkTokens();
 
-      expect(tokensModule.networkTokens)
-        .toEqual(tokensMappedByAddresses);
+      expect(tokensModule.networkTokens).toEqual(tokensMappedByAddresses);
     });
   });
 
@@ -235,9 +225,7 @@ describe('PriceModule', () => {
       errorsModule.errorEmitter.once('error', mock);
       await tokensModule.setUserTokens(tokensNetBySymbols);
 
-      await tokensModule.removeUserToken(
-        { token: tokens[0] },
-      );
+      await tokensModule.removeUserToken({ token: tokens[0] });
 
       expect(mock).toBeCalled();
     });
@@ -247,14 +235,12 @@ describe('PriceModule', () => {
 
       expect(tokensModule.userTokens).toEqual({});
 
-      await tokensModule.removeUserToken(
-        { token: tokens[0] },
-      );
+      await tokensModule.removeUserToken({ token: tokens[0] });
 
       expect(userService.removeToken).not.toBeCalled();
     });
 
-    it('should not do anything if target token is not exist in state', async() => {
+    it('should not do anything if target token is not exist in state', async () => {
       expect.assertions(3);
 
       await tokensModule.setUserTokens(tokensNetBySymbols);
@@ -278,9 +264,7 @@ describe('PriceModule', () => {
 
       expect(tokensModule.userTokens).toEqual(tokensNetByAddress);
 
-      await tokensModule.removeUserToken(
-        { token: tokens[0] },
-      );
+      await tokensModule.removeUserToken({ token: tokens[0] });
 
       const passedToken = tokens[1];
 
@@ -293,6 +277,61 @@ describe('PriceModule', () => {
         Network.NET_ID.MAIN,
         Token.getConsistent(tokens[0]).address,
       );
+    });
+  });
+
+  describe('addUserToken', () => {
+    it('should add user token if it is not exist in state', async () => {
+      expect.assertions(3);
+
+      expect(tokensModule.userTokens).toEqual({});
+
+      const passedToken = Token.getConsistent(tokens[0]);
+      await tokensModule.addUserToken({
+        token: passedToken,
+      });
+
+      expect(tokensModule.userTokens).toEqual({
+        1: {
+          [passedToken.address]: passedToken,
+        },
+      });
+      expect(userService.addToken).toBeCalledWith(
+        Network.NET_ID.MAIN,
+        passedToken,
+      );
+    });
+
+    it('should not add user token if it is exist in state ', async () => {
+      expect.assertions(3);
+
+      await tokensModule.setUserTokens(tokensNetBySymbols);
+
+      expect(tokensModule.userTokens).toEqual(tokensNetByAddress);
+
+      const passedToken = Token.getConsistent(tokens[0]);
+      await tokensModule.addUserToken({
+        token: passedToken,
+      });
+
+      expect(userService.addToken).not.toBeCalled();
+      expect(tokensModule.userTokens).toEqual(tokensNetByAddress);
+    });
+
+    it('should handle error ', async () => {
+      expect.assertions(3);
+
+      expect(tokensModule.userTokens).toEqual({});
+
+      const error = new Error();
+      userService.addToken.mockRejectedValueOnce(error);
+      const mock = jest.fn();
+      errorsModule.errorEmitter.once('error', mock);
+
+      await tokensModule.addUserToken({ token: tokens[0] });
+
+      expect(tokensModule.userTokens).toEqual({});
+      expect(mock).toBeCalled();
     });
   });
 });

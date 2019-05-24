@@ -35,14 +35,19 @@ class TokensModule extends VuexModuleWithRoot {
     return this.store.get().state.accounts.address;
   }
 
-  _userTokenByAddress(tokenAddress) {
+  _isTokenExistByAddress(tokenAddress) {
     const targetNetTokens = this.userTokens[this._getActiveNetwork()];
 
     if (!targetNetTokens) {
       return null;
     }
 
-    return targetNetTokens[tokenAddress] || null;
+    const existTokenAddress =
+      Object.keys(targetNetTokens).find(
+        address => address.toLowerCase() === tokenAddress,
+      ) || null;
+
+    return !!existTokenAddress;
   }
 
   _tokensByAddressBlock(address) {
@@ -113,13 +118,15 @@ class TokensModule extends VuexModuleWithRoot {
       return userTokens;
     }
 
-    const filtered = Object
-      .keys(targetNetTokens)
+    const filtered = Object.keys(targetNetTokens)
       .filter(address => address.toLowerCase() !== token.address)
-      .reduce((obj, key) => ({
-        ...obj,
-        [key]: targetNetTokens[key],
-      }), {});
+      .reduce(
+        (obj, key) => ({
+          ...obj,
+          [key]: targetNetTokens[key],
+        }),
+        {},
+      );
 
     return {
       ...userTokens,
@@ -245,15 +252,16 @@ class TokensModule extends VuexModuleWithRoot {
     try {
       const consistentToken = Token.getConsistent(token);
 
-      if (this._userTokenByAddress(consistentToken.address)) return;
+      if (this._isTokenExistByAddress(consistentToken.address)) return;
 
       const net = this._getActiveNetwork();
+
+      await userService.addToken(net, consistentToken);
+
       const updatedTokens = this._userTokensWithToken({
         token: consistentToken,
         net,
       });
-
-      await userService.addToken(net, consistentToken);
 
       this.updateUserTokens(updatedTokens);
     } catch (err) {
@@ -271,12 +279,13 @@ class TokensModule extends VuexModuleWithRoot {
       if (!currentTokens[token.address]) return;
 
       const netId = currentNet;
+
+      await userService.removeToken(netId, consistentToken.address);
+
       const updatedTokens = this._userTokensWithoutToken({
         net: netId,
         token: consistentToken,
       });
-
-      await userService.removeToken(netId, consistentToken.address);
 
       this.updateUserTokens(updatedTokens);
     } catch (err) {
