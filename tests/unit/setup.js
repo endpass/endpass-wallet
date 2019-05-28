@@ -29,7 +29,6 @@ import 'mocks/schema';
 import 'mocks/validation';
 
 import 'mocks/ethereumjs-wallet/hdkey';
-import 'mocks/bip39';
 
 Vue.config.productionTip = false;
 

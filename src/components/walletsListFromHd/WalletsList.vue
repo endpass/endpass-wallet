@@ -1,6 +1,9 @@
 <template>
   <div class="column">
-    <div v-if="!isGettingAddresses && isEmptyAddresses" class="buttons">
+    <div
+      v-if="!isGettingAddresses && isEmptyAddresses"
+      class="buttons"
+    >
       <v-button
         :loading="isImporting"
         class-name="is-primary is-medium"
@@ -24,7 +27,11 @@
         :is-active="address === selectedAddress"
         @click="updateSelectedAddress(address, index)"
       />
-      <v-pagination :offset="offset" :limit="limit" @offset="changeOffset" />
+      <v-pagination
+        :offset="offset"
+        :limit="limit"
+        @offset="changeOffset"
+      />
       <slot name="buttons" />
     </div>
   </div>

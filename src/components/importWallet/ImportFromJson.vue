@@ -79,7 +79,7 @@ import { mapActions } from 'vuex';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
-import { keystore } from '@endpass/utils';
+import isV3 from '@endpass/utils/isV3';
 
 export default {
   name: 'ImportFromJson',
@@ -147,7 +147,7 @@ export default {
         try {
           const fileData = JSON.parse(result);
 
-          if (keystore.isV3(fileData)) {
+          if (isV3(fileData)) {
             this.fileData = fileData;
           } else {
             this.errors.add(fileReaderError);
