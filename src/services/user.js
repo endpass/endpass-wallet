@@ -1,6 +1,7 @@
 import { NotificationError, Wallet } from '@/class';
 import { proxyRequest } from '@/class/singleton';
-import { keystore } from '@endpass/utils';
+import keystoreHDKeyVerify from '@endpass/utils/keystoreHDKeyVerify';
+import isV3 from '@endpass/utils/isV3';
 import { identityValidator, v3KeystoreValidator } from '@/schema';
 import get from 'lodash/get';
 
@@ -160,7 +161,7 @@ export default {
     try {
       const accounts = await this.getAccounts();
       const allAcc = accounts
-        .filter(acc => !keystore.isExtendedPublicKey(acc))
+        .filter(acc => !keystoreHDKeyVerify.isExtendedPublicKey(acc))
         .map(this.getAccount);
 
       return await Promise.all(allAcc);
@@ -183,7 +184,7 @@ export default {
     const accounts = await this.getAccounts();
 
     const hdAddresses = accounts.filter(acc =>
-      keystore.isExtendedPublicKey(acc),
+      keystoreHDKeyVerify.isExtendedPublicKey(acc),
     );
 
     if (hdAddresses.length === 0) {
@@ -197,7 +198,7 @@ export default {
     const hdAccount =
       hdAccounts.find(
         account => get(account, 'info.type') === WALLET_TYPES.HD_MAIN,
-      ) || hdAccounts.find(acc => keystore.isV3(acc));
+      ) || hdAccounts.find(acc => isV3(acc));
 
     return v3KeystoreValidator.validateNonEmptyAccountWithInfo(hdAccount);
   },
@@ -265,7 +266,7 @@ export default {
     }
   },
 
-  async getPasswortRecoveryIdentifier() {
+  async getPasswordRecoveryIdentifier() {
     try {
       const { success, message } = await proxyRequest.read(
         '/recovery-password',

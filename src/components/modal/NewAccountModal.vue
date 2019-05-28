@@ -128,7 +128,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('accounts', ['generateWallet', 'validatePassword']),
+    ...mapActions('accounts', ['validatePassword']),
     importNewAccount() {
       this.$router.push('import');
       this.close();
@@ -141,23 +141,6 @@ export default {
         eventCategory: 'onboarding',
         eventAction: 'create_new_account',
       });
-    },
-    async confirmPassword(password) {
-      this.isWalletsListModal = true;
-
-      await new Promise(res => setTimeout(res, 20));
-
-      try {
-        await this.generateWallet(password);
-        this.privateKey = await this.wallet.getPrivateKeyString(password);
-        this.isAccountCreated = true;
-      } catch (e) {
-        this.$notify({
-          type: 'is-danger',
-          title: 'Something went wrong',
-          text: 'Сould not create account. Please try again.',
-        });
-      }
     },
     close() {
       this.$emit('close');

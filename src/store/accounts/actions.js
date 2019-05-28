@@ -1,13 +1,18 @@
+import EthWallet from 'ethereumjs-wallet';
+import { toChecksumAddress, bytesToHex } from 'web3-utils';
 import { get, mapKeys, isEmpty } from 'lodash';
+import keystoreHDKeyVerify from '@endpass/utils/keystoreHDKeyVerify';
+import keystoreHDWallet from '@endpass/utils/keystoreHDWallet';
+import keystoreWallet from '@endpass/utils/keystoreWallet';
+import walletGen from '@endpass/utils/walletGen';
 import {
   cryptoDataService,
   userService,
   localSettingsService,
 } from '@/services';
-import EthWallet from 'ethereumjs-wallet';
-import { toChecksumAddress, bytesToHex } from 'web3-utils';
 import { Wallet, NotificationError, web3 } from '@/class';
-import { keystore } from '@endpass/utils';
+import { ENCRYPT_OPTIONS } from '@/constants';
+
 import {
   CHANGE_INIT_STATUS,
   SET_ADDRESS,
@@ -99,10 +104,11 @@ const addWalletWithPrivateKey = async (
     const wallet = EthWallet.fromPrivateKey(
       Buffer.from(privateKey.replace(/^0x/, ''), 'hex'),
     );
-    const v3KeyStore = keystore.encryptWallet(password, wallet, {
-      kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-      n: ENV.VUE_APP_KDF_PARAMS_N,
-    });
+    const v3KeyStore = keystoreWallet.encryptWallet(
+      password,
+      wallet,
+      ENCRYPT_OPTIONS,
+    );
 
     return dispatch('addWalletAndSelect', v3KeyStore);
   } catch (e) {
@@ -123,25 +129,8 @@ const addWalletWithPublicKey = async ({ dispatch }, publicKeyOrAddress) => {
   }
 };
 
-const generateWallet = async ({ dispatch, state }, password) => {
-  if (!state.hdKey) {
-    throw new Error('hdKey doesn`t exist');
-  }
-  console.log(JSON.stringify(state.hdKey, null, 2));
-
-  const hdWallet = await dispatch('decryptAccountHdWallet', password);
-  const i = Object.keys(state.wallets).length;
-  const wallet = hdWallet.deriveChild(i).getWallet();
-  const v3KeyStore = keystore.encryptWallet(password, wallet, {
-    kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-    n: ENV.VUE_APP_KDF_PARAMS_N,
-  });
-
-  await dispatch('addWalletAndSelect', v3KeyStore);
-};
-
 const commitWallet = async ({ commit }, { wallet }) => {
-  if (keystore.isExtendedPublicKey(wallet.address)) {
+  if (keystoreHDKeyVerify.isExtendedPublicKey(wallet.address)) {
     commit(SET_HD_KEY, wallet);
   } else {
     commit(ADD_WALLET, new Wallet(wallet));
@@ -153,26 +142,31 @@ const saveWallet = async ({ dispatch }, { json, info = {} }) => {
   await dispatch('commitWallet', { wallet: json });
 };
 
-const addHdWallet = async ({ state, dispatch, getters }, { key, password }) => {
+const createNewWallet = async ({ dispatch }, { password }) => {
   try {
-    const hdWallet = getters.getHdWalletBySeed(key);
-    // Encrypt extended private key
-    const v3KeyStore = keystore.encryptHDWallet(password, hdWallet, {
-      kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-      n: ENV.VUE_APP_KDF_PARAMS_N,
-    });
-    const info = {
-      address: v3KeyStore.address,
-      type: WALLET_TYPES.HD_MAIN,
-      hidden: false,
-    };
+    const {
+      seedKey,
+      encryptedSeed,
+      v3KeystoreHdWallet,
+      v3KeystoreChildWallet,
+    } = await walletGen.createComplex(password, ENCRYPT_OPTIONS);
 
-    // Save HD keys and generate the first child wallet
-    await dispatch('saveWallet', { json: v3KeyStore, info });
-    await dispatch('generateWallet', password);
-    console.log(state);
+    // save data
+    await dispatch('saveWallet', {
+      json: v3KeystoreHdWallet,
+      info: {
+        address: v3KeystoreHdWallet.address,
+        type: WALLET_TYPES.HD_MAIN,
+        hidden: false,
+      },
+    });
+    await userService.backupSeed(encryptedSeed);
+    await dispatch('addWalletAndSelect', v3KeystoreChildWallet);
+
+    return seedKey;
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
+    throw new Error("Can't create new wallet");
   }
 };
 
@@ -183,7 +177,7 @@ const addHdChildWallets = async (
   try {
     const v3KeyStore = getters.cachedHdV3KeyStoreByType(type);
 
-    const hdWallet = keystore.decryptHDWallet(password, v3KeyStore);
+    const hdWallet = keystoreHDWallet.decryptHDWallet(password, v3KeyStore);
     const wallet = hdWallet.deriveChild(index).getWallet();
 
     if (address !== wallet.getChecksumAddressString()) {
@@ -195,10 +189,7 @@ const addHdChildWallets = async (
       });
     }
 
-    const v3KeyStoreChild = wallet.toV3(Buffer.from(password), {
-      kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-      n: ENV.VUE_APP_KDF_PARAMS_N,
-    });
+    const v3KeyStoreChild = wallet.toV3(Buffer.from(password), ENCRYPT_OPTIONS);
     dispatch('addWalletAndSelect', v3KeyStoreChild);
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
@@ -211,10 +202,11 @@ const addHdPublicWallet = async (
 ) => {
   try {
     const hdWallet = getters.getHdWalletBySeed(key);
-    const v3KeyStore = keystore.encryptHDWallet(password, hdWallet, {
-      kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-      n: ENV.VUE_APP_KDF_PARAMS_N,
-    });
+    const v3KeyStore = keystoreHDWallet.encryptHDWallet(
+      password,
+      hdWallet,
+      ENCRYPT_OPTIONS,
+    );
     const info = {
       address: v3KeyStore.address,
       type: WALLET_TYPES.HD_PUBLIC,
@@ -395,29 +387,23 @@ const decryptAccountHdWallet = async ({ state }, password) => {
     return null;
   }
 
-  return keystore.decryptHDWallet(password, state.hdKey);
+  return keystoreHDWallet.decryptHDWallet(password, state.hdKey);
 };
 
 const decryptAccountWallets = async ({ state }, password) =>
   Object.values(state.wallets)
     .filter(item => !item.isPublic && !item.isHardware)
-    .map(item => keystore.decryptWallet(password, item.v3));
+    .map(item => keystoreWallet.decryptWallet(password, item.v3));
 
 const encryptHdWallet = async (ctx, { password, hdWallet }) => {
   if (!hdWallet) return null;
 
-  return keystore.encryptHDWallet(password, hdWallet, {
-    kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-    n: ENV.VUE_APP_KDF_PARAMS_N,
-  });
+  return keystoreHDWallet.encryptHDWallet(password, hdWallet, ENCRYPT_OPTIONS);
 };
 
 const encryptWallets = async (ctx, { password, wallets = [] }) =>
   wallets.map(item =>
-    keystore.encryptWallet(password, item, {
-      kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-      n: ENV.VUE_APP_KDF_PARAMS_N,
-    }),
+    keystoreWallet.encryptWallet(password, item, ENCRYPT_OPTIONS),
   );
 
 const reencryptAllAccountWallets = async (
@@ -494,11 +480,12 @@ const recoverWalletsPassword = async (
       });
     }
 
-    const passswordRecoveryIdentifier = await userService.getPasswortRecoveryIdentifier();
+    const passwordRecoveryIdentifier = await userService.getPasswordRecoveryIdentifier();
+
     const wallet = hdWallet.deriveChild(0).getWallet();
     const privateKey = bytesToHex(wallet.getPrivateKey());
     const { signature } = await web3.eth.accounts.sign(
-      passswordRecoveryIdentifier,
+      passwordRecoveryIdentifier,
       privateKey,
     );
     const encryptedHdWallet = await dispatch('encryptHdWallet', {
@@ -576,10 +563,10 @@ const backupSeed = async ({ dispatch }, { seed, password }) => {
   try {
     const hdWallet = await dispatch('decryptAccountHdWallet', password);
     const decryptedWallet = hdWallet.deriveChild(0).getWallet();
-    const v3KeyStore = decryptedWallet.toV3(Buffer.from(password), {
-      kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-      n: ENV.VUE_APP_KDF_PARAMS_N,
-    });
+    const v3KeyStore = decryptedWallet.toV3(
+      Buffer.from(password),
+      ENCRYPT_OPTIONS,
+    );
     const wallet = new Wallet(v3KeyStore);
     const encryptedSeed = await wallet.encryptMessageWithPublicKey(
       seed,
@@ -595,10 +582,10 @@ const backupSeed = async ({ dispatch }, { seed, password }) => {
 const recoverSeed = async ({ dispatch }, password) => {
   const hdWallet = await dispatch('decryptAccountHdWallet', password);
   const decryptedWallet = hdWallet.deriveChild(0).getWallet();
-  const v3KeyStore = decryptedWallet.toV3(Buffer.from(password), {
-    kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-    n: ENV.VUE_APP_KDF_PARAMS_N,
-  });
+  const v3KeyStore = decryptedWallet.toV3(
+    Buffer.from(password),
+    ENCRYPT_OPTIONS,
+  );
   const wallet = new Wallet(v3KeyStore);
 
   try {
@@ -636,10 +623,9 @@ export default {
   addPublicWallet,
   commitWallet,
   saveWallet,
-  generateWallet,
   setUserHdKey,
   setUserWallets,
-  addHdWallet,
+  createNewWallet,
   addHdPublicWallet,
   addHdChildWallets,
   updateWallets,

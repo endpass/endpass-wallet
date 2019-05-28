@@ -28,6 +28,11 @@ export const REQUEST_TIMEOUT_MSEC = 30000;
 
 export const STORAGE_USER_META_KEY = 'endpass-user-meta';
 
+export const ENCRYPT_OPTIONS = {
+  kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
+  n: ENV.VUE_APP_KDF_PARAMS_N,
+};
+
 export default {
   REQUEST_TIMEOUT_MSEC,
   STORAGE_USER_META_KEY,
@@ -35,4 +40,5 @@ export default {
   IDENTITY_MODE,
   DAPP_WHITELISTED_METHODS,
   TRANSACTION_STATUS,
+  ENCRYPT_OPTIONS,
 };

@@ -15,18 +15,22 @@
 //
 //
 // -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
+// Cypress
+// .Commands
+// .add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
 //
 //
 // -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
+// Cypress
+// .Commands
+// .add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
 //
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import path from 'path';
 import seed from '../fixtures/identity/seed';
-import { mnemonic, v3password, hdv3, hdv3Info } from '../fixtures/accounts';
+import { v3password, hdv3, hdv3Info } from '../fixtures/accounts';
 import {
   syncing,
   blockNumber,
@@ -104,6 +108,13 @@ Cypress.Commands.add('login', () => {
     status: 200,
     response: seed,
   }).as('userSeed');
+  cy.route({
+    method: 'POST',
+    url: `${identityAPIUrl}/user/seed`,
+    status: 200,
+    response: { success: true },
+  }).as('saveUserSeed');
+
   // Read only account
   cy.route(
     'GET',

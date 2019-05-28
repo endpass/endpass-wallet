@@ -72,7 +72,6 @@
 
 <script>
 import BasePage from '@/components/pages/Base';
-import Bip39 from 'bip39';
 import VueTimers from 'vue-timers/mixin';
 import { mapActions, mapState } from 'vuex';
 import formMixin from '@/mixins/form';
@@ -103,7 +102,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('accounts', ['addHdWallet', 'backupSeed']),
+    ...mapActions('accounts', ['createNewWallet']),
 
     // Generate a new HD wallet node
     // TODO encrypt seed in memory
@@ -116,11 +115,10 @@ export default {
       await new Promise(res => setTimeout(res, 20));
 
       try {
-        const key = Bip39.generateMnemonic();
-
-        await this.addHdWallet({ key, password: this.password });
-        await this.backupSeed({ seed: key, password: this.password });
-        this.key = key;
+        const seedKey = await this.createNewWallet({
+          password: this.password,
+        });
+        this.key = seedKey;
         this.$timer.start('seedPhrase');
       } catch (e) {
         this.$notify({

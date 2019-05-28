@@ -671,7 +671,7 @@ describe('User service', () => {
     });
   });
 
-  describe('getPasswortRecoveryIdentifier', () => {
+  describe('getPasswordRecoveryIdentifier', () => {
     const url = `${ENV.VUE_APP_IDENTITY_API_URL}/recovery-password`;
     const passwordRecoveryIdentifier = 'password recovery identifier';
     const successIdentifierResponse = {
@@ -695,7 +695,7 @@ describe('User service', () => {
         return [200, successIdentifierResponse];
       });
 
-      await userService.getPasswortRecoveryIdentifier();
+      await userService.getPasswordRecoveryIdentifier();
     });
 
     it('should handle successful GET /recovery-password request', async () => {
@@ -703,7 +703,7 @@ describe('User service', () => {
 
       axiosMock.onGet(url).reply(200, successIdentifierResponse);
 
-      const resp = await userService.getPasswortRecoveryIdentifier();
+      const resp = await userService.getPasswordRecoveryIdentifier();
 
       expect(resp).toEqual(successIdentifierResponse.message);
     });
@@ -721,7 +721,7 @@ describe('User service', () => {
         .reply(200, { success: false, message: errorMessage });
 
       try {
-        await userService.getPasswortRecoveryIdentifier();
+        await userService.getPasswordRecoveryIdentifier();
       } catch (receivedError) {
         expect(receivedError).toEqual(error);
       }
@@ -733,7 +733,7 @@ describe('User service', () => {
       axiosMock.onGet(url).reply(500, {});
 
       try {
-        await userService.getPasswortRecoveryIdentifier();
+        await userService.getPasswordRecoveryIdentifier();
       } catch (receivedError) {
         expect(receivedError.text).toEqual(expectedError.text);
       }
