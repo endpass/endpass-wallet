@@ -5,7 +5,6 @@ import ErrorsModule from '@/store/modules/ErrorsModule';
 import TokensModule from '@/store/modules/TokensModule';
 import PriceModule from '@/store/modules/PriceModule';
 import { Network } from '@endpass/class';
-import cryptoDataService from '@/services/cryptoData';
 import tokenInfoService from '@/services/tokeninfo';
 import userService from '@/services/user';
 
@@ -21,12 +20,11 @@ import {
 } from 'fixtures/tokens';
 import { Token } from '@/class';
 
-describe('PriceModule', () => {
+describe('TokensModule', () => {
   let store;
   let moduleRegister;
   let errorsModule;
   let tokensModule;
-  let priceModule;
 
   beforeAll(() => {
     jest.useFakeTimers();
@@ -57,11 +55,7 @@ describe('PriceModule', () => {
       price: PriceModule,
     });
 
-    ({
-      errors: errorsModule,
-      price: priceModule,
-      tokens: tokensModule,
-    } = modules);
+    ({ errors: errorsModule, tokens: tokensModule } = modules);
   });
 
   describe('initial', () => {
@@ -117,41 +111,6 @@ describe('PriceModule', () => {
       expect(tokensModule.networkTokens).toEqual(
         networkTokensMappedByAddresses,
       );
-    });
-  });
-
-  describe('loadTokenPrices', () => {
-    it('should update token prices', async () => {
-      expect.assertions(2);
-
-      expect(tokensModule.prices).toEqual({});
-
-      await tokensModule.loadTokenPrices({ tokensSymbols: tokens });
-
-      expect(tokensModule.prices).toEqual({ ETH: { USD: 10 } });
-    });
-
-    it('should drop token prices', async () => {
-      expect.assertions(2);
-
-      expect(tokensModule.prices).toEqual({});
-
-      const err = new Error();
-      cryptoDataService.getSymbolsPrices.mockRejectedValueOnce(err);
-      await tokensModule.loadTokenPrices({ tokensSymbols: tokens });
-
-      expect(tokensModule.prices).toEqual({});
-    });
-
-    it('should not to do anything, if tokens is empty', async () => {
-      expect.assertions(3);
-
-      expect(tokensModule.prices).toEqual({});
-
-      await tokensModule.loadTokenPrices({ tokensSymbols: [] });
-
-      expect(tokensModule.prices).toEqual({});
-      expect(cryptoDataService.getSymbolsPrices).not.toBeCalled();
     });
   });
 
@@ -341,8 +300,98 @@ describe('PriceModule', () => {
 
       await tokensModule.setUserTokens(tokensNetBySymbols);
 
-      expect(tokensModule.currentNetUserFullTokens)
-        .toEqual(tokensMappedByAddresses);
+      expect(tokensModule.currentNetUserFullTokens).toEqual({
+        '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144': {
+          address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+          balance: '0',
+          decimals: 18,
+          logo: 'http://images.com/img/FST.png',
+          name: 'First Token',
+          price: '0',
+          symbol: 'FST',
+        },
+        '0xE41d2489571d322189246DaFA5ebDe1F4699F498': {
+          address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
+          balance: '0',
+          decimals: 8,
+          logo: '',
+          name: 'second token',
+          price: '0',
+          symbol: 'SCDT',
+        },
+      });
+    });
+
+    it('should returns current account tokens by currentAccountFullTokens', async () => {
+      expect.assertions(1);
+
+      await tokensModule.setTokensInfoByAddress({ address, tokens });
+
+      expect(tokensModule.currentAccountFullTokens).toEqual({
+        '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144': {
+          address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+          balance: '0',
+          decimals: 18,
+          logo: 'http://images.com/img/FST.png',
+          name: 'First Token',
+          price: {
+            USD: '1',
+          },
+          symbol: 'FST',
+        },
+        '0xE41d2489571d322189246DaFA5ebDe1F4699F498': {
+          address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
+          balance: '0',
+          decimals: 8,
+          logo: '',
+          name: 'second token',
+          price: {
+            USD: '0.01',
+          },
+          symbol: 'SCDT',
+        },
+      });
+    });
+
+    it('should return allCurrentAccountFullTokens', async () => {
+      await tokensModule.setTokensInfoByAddress({ address, tokens });
+
+      expect(tokensModule.allCurrentAccountFullTokens).toEqual({
+        '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144': {
+          address: '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+          balance: '0',
+          decimals: 18,
+          logo: 'http://images.com/img/FST.png',
+          name: 'First Token',
+          price: {
+            USD: '1',
+          },
+          symbol: 'FST',
+        },
+        '0xE41d2489571d322189246DaFA5ebDe1F4699F498': {
+          address: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
+          balance: '0',
+          decimals: 8,
+          logo: '',
+          name: 'second token',
+          price: {
+            USD: '0.01',
+          },
+          symbol: 'SCDT',
+        },
+      });
+    });
+
+    it('should return currentAccountTokensCurrencies', async () => {
+      await tokensModule.setTokensInfoByAddress({ address, tokens });
+
+      expect(tokensModule.currentAccountTokensCurrencies).toEqual([
+        {
+          key: 'ETH',
+          text: 'ETH',
+          val: null,
+        },
+      ]);
     });
   });
 });

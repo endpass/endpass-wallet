@@ -273,7 +273,6 @@ describe('tokens actions', () => {
         tokens,
         'ETH',
       );
-      console.log('tokensPrices', tokensPrices);
       expect(commit).toHaveBeenCalledWith(SET_TOKENS_PRICES, tokensPrices);
     });
 

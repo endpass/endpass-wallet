@@ -190,16 +190,6 @@ class TokensModule extends VuexModuleWithRoot {
     );
   }
 
-  currentAccountTokenBySymbol(symbol) {
-    const token = Object.values(
-      this._allCurrentAccountTokensWithNonZeroBalance(),
-    ).find(accountToken => accountToken.symbol === symbol);
-
-    if (!token) return null;
-
-    return token;
-  }
-
   @Mutation
   setLoading(val) {
     this.isLoading = val;
@@ -245,6 +235,20 @@ class TokensModule extends VuexModuleWithRoot {
   @Mutation
   setTokensByAddress({ address, tokens }) {
     Vue.set(this.tokensByAddress, address, tokens);
+  }
+
+  // TODO: move from @Action after implement store in components
+
+  get currentAccountTokenBySymbol() {
+    return symbol => {
+      const token = Object.values(
+        this._allCurrentAccountTokensWithNonZeroBalance(),
+      ).find(accountToken => accountToken.symbol === symbol);
+
+      if (!token) return null;
+
+      return token;
+    };
   }
 
   @Action
@@ -315,22 +319,6 @@ class TokensModule extends VuexModuleWithRoot {
       this.modules.errors.emitError(error);
     } finally {
       this.setLoading(false);
-    }
-  }
-
-  @Action
-  async loadTokenPrices({ tokensSymbols }) {
-    if (tokensSymbols.length === 0) return;
-
-    try {
-      const prices = await cryptoDataService.getSymbolsPrices(
-        tokensSymbols,
-        this._activeCurrencyName(),
-      );
-
-      this.setTokenPrices(prices);
-    } catch (err) {
-      this.setTokenPrices({});
     }
   }
 
