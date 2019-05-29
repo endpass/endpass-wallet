@@ -55,9 +55,15 @@ describe('Transactions History Page', () => {
 
       cy.inputPassword();
 
-      cy.get('[data-test=app-notification] .is-info').contains(
-        'Transaction was canceled',
+      cy.get('[data-test=transaction-details-button]:first').click();
+
+      cy.get('[data-test=transaction-details] .status-text').contains(
+        'canceled',
       );
+
+      cy.get('.app-notification.is-info')
+        .contains('Transaction was canceled')
+        .should('be.visible');
     });
 
     it('should send requests to resend transaction', () => {
@@ -72,9 +78,9 @@ describe('Transactions History Page', () => {
 
       cy.inputPassword();
 
-      cy.get('[data-test=app-notification] .is-info').contains(
-        'Transaction was resent',
-      );
+      cy.get('.app-notification.is-info')
+        .contains('Transaction was resent')
+        .should('be.visible');
     });
 
     it('should change state of transaction from pending to success', () => {
