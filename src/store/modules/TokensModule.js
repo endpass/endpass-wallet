@@ -7,18 +7,116 @@ import { NotificationError, Token } from '@/class';
 import { get, mapKeys, omit, pick, pickBy, uniq } from 'lodash';
 import Vue from 'vue';
 
+/**
+ * @typedef {string} tokenSymbol
+ */
+
+/**
+ * @typedef {Object<string, number>} price
+ */
+
+/**
+ * @typedef {string} tokenAddress
+ *
+ * @example
+ * const addr = "0x0000000000085d4780B73119b644AE5ecd22b376";
+ */
+
+/**
+ * @typedef {string} accountAddress
+ */
+
 @Module
 class TokensModule extends VuexModuleWithRoot {
-  // TODO: add JSDoc for state fields
-
+  /**
+   * @type {Object<tokenSymbol, price>}
+   *
+   * @example
+   *
+   * const prices = {
+   *   '0xBTC': {"USD":0.01244}
+   * }
+   *
+   */
   prices = {};
 
+  /**
+   * @type {Object<tokenAddress, {
+   *   address: tokenAddress,
+   *   decimals: number,
+   *   logo: string,
+   *   name: string,
+   *   symbol: tokenSymbol
+   * }>}
+   *
+   * @example
+   * const tokens = {
+   *   "0x0000000000085d4780B73119b644AE5ecd22b376": {
+   *     address:"0x0000000000085d4780B73119b644AE5ecd22b376"
+   *     decimals:18
+   *     logo:"https://tokeninfo-dev.endpass.com/img/0x0000000000085d4780b73119b644ae5ecd22b376.png"
+   *     name:"TrueUSD"
+   *     symbol:"TUSD"
+   *   }
+   * }
+   */
   networkTokens = {};
 
+  /**
+   * {
+   * @type {Object<Network.NET_ID, Object<tokenAddress,{
+   *     address: tokenAddress
+   *     decimals: number
+   *     logo: string
+   *     name: string
+   *     symbol: tokenSymbol
+   * }>>}
+   *
+   * @example
+   *
+   * const tokens = {
+   *   [Network.NET_ID.MAIN]: {
+   *     "0x4e84e9e5fb0a972628cf4568c403167ef1d40431": {
+   *       address: "0x4e84e9e5fb0a972628cf4568c403167ef1d40431"
+   *       decimals:18
+   *       hidden:false
+   *       logo:""
+   *       manuallyAdded:false
+   *       name:"$Fluzcoin"
+   *       symbol:"$FFC"
+   *     }
+   *   }
+   * }
+   */
   userTokens = {};
 
+  /**
+   *
+   * @type {Object<accountAddress, Array[tokenAddress]>}
+   *
+   * @example
+   *
+   * const tokens = {
+   *   "0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c": [
+   *    '0x4Ce2109f8DB1190cd44BC6554E35642214FbE144',
+   *    '0xE41d2489571d322189246DaFA5ebDe1F4699F498'
+   *   ]
+   * }
+   */
   tokensByAddress = {};
 
+  /**
+   * @type {Object<tokenAddress, Object<tokenSymbol, number>>}
+   *
+   * @example
+   *
+   * const balances = {
+   *  "0x4e84e9e5fb0a972628cf4568c403167ef1d40431": {
+   *    FST: '0',
+   *    SCDT: '0'
+   *  }
+   * }
+   */
   balancesByAddress = {};
 
   isLoading = false;
@@ -236,8 +334,6 @@ class TokensModule extends VuexModuleWithRoot {
   setTokensByAddress({ address, tokens }) {
     Vue.set(this.tokensByAddress, address, tokens);
   }
-
-  // TODO: move from @Action after implement store in components
 
   get currentAccountTokenBySymbol() {
     return symbol => {
