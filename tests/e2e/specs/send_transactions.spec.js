@@ -137,7 +137,7 @@ describe('Send Transactions Page', () => {
 
       cy.getBalanceTokenElement().contains('0.9999');
 
-      cy.get('[data-test=app-notification] .is-info').contains(
+      cy.get('.app-notification.is-info').contains(
         'Transaction 0x63...42a7 sent',
       );
 
