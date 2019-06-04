@@ -24,7 +24,7 @@ describe('TokensList', () => {
 
   beforeEach(() => {
     actions = {
-      getTokensPrices: jest.fn(),
+      loadTokenPrices: jest.fn(),
       removeUserToken: jest.fn(),
     };
 
