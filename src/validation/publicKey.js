@@ -1,4 +1,4 @@
-import secp256k1 from 'secp256k1';
+import keystoreKeyVerify from '@endpass/utils/keystoreKeyVerify';
 
 export default {
   getMessage(field, params, data) {
@@ -7,9 +7,7 @@ export default {
   validate(value) {
     let isKey;
     try {
-      isKey = secp256k1.publicKeyVerify(
-        Buffer.from(value.replace(/^0x/, ''), 'hex'),
-      );
+      isKey = keystoreKeyVerify.verifyPublicKey(value);
     } catch (e) {
       return {
         valid: false,

@@ -152,5 +152,11 @@ describe('SettingsPage', () => {
 
       expect(wrapper.vm.errors.any()).toBeFalsy();
     });
+
+    it('should change lock status on seed recovery lock event', () => {
+      expect.assertions(1);
+      wrapper.find('seed-recovery-stub').vm.$emit('lock');
+      expect(wrapper.vm.isSeedRecoveryLocked).toBe(true);
+    });
   });
 });

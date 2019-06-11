@@ -15,7 +15,9 @@
         :disabled="!message"
         class-name="is-primary is-medium"
         data-test="sign-button"
-      >Sign message</v-button>
+      >
+        Sign message
+      </v-button>
       <v-textarea
         v-if="signedMessage"
         v-model="getSignedMessage"

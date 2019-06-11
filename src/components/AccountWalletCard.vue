@@ -1,7 +1,9 @@
 <template>
   <div class="card app-card">
     <div class="card-header">
-      <h2 class="card-header-title">Receive ETH</h2>
+      <h2 class="card-header-title">
+        Receive ETH
+      </h2>
     </div>
     <div
       class="card-content"

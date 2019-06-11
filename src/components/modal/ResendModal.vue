@@ -10,9 +10,9 @@
         @submit="confirmResend"
       >
         <v-input
-          v-validate="`required|numeric|integer|between:${minimumGasPrice},100`"
           id="gasPrice"
           v-model="newTransaction.gasPrice"
+          v-validate="`required|numeric|integer|between:${minimumGasPrice},100`"
           :error="errors.first('gasPrice')"
           label="Gas price"
           name="gasPrice"
@@ -32,11 +32,11 @@
           </div>
         </v-input>
         <v-input
+          id="gasLimit"
+          v-model="newTransaction.gasLimit"
           v-validate="
             `required|numeric|integer|between:${transaction.gasLimit},1000000`
           "
-          id="gasLimit"
-          v-model="newTransaction.gasLimit"
           :error="errors.first('gasLimit')"
           label="Gas limit"
           name="gasLimit"

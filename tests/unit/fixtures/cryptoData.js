@@ -1,5 +1,5 @@
 export const pendingTransactions = {
-  filterId: 1,
+  filterId: '0x1',
   transactions: [
     {
       from: '0x3a0118a93c1d9b2bcadd2440ab5a245864772f58',
@@ -21,13 +21,13 @@ export const pendingTransactions = {
 };
 
 export const emptyPendingTransactions = {
-  filterId: 1,
+  filterId: '0x1',
   transactions: [],
 };
 
 export const cryptoDataHistory = [
   {
-    timestamp: 1535036970,
+    timestamp: '0x5b7ece2a',
     hash: '0x631cf7bb186019649920b09a7d5394c206cfe8aec55b3c1e8f0cc876def942a7',
     token: {
       address: '0x2aec18c5500f21359ce1bea5dc1777344df4c0dc',
@@ -42,7 +42,7 @@ export const cryptoDataHistory = [
     to: '0xc761c758f10c84bb2af14ec728780372af840ce7',
   },
   {
-    timestamp: 1535036944,
+    timestamp: '0x5b7ece10',
     hash: '0xe03f54be853b798e40ebc12b96050ab9624fd95d6750e043f306f247132998a7',
     token: {
       address: '0x2aec18c5500f21359ce1bea5dc1777344df4c0dc',

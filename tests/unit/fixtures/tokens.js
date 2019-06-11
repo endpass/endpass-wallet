@@ -22,6 +22,26 @@ export const tokens = [
   },
 ];
 
+export const tokensNetBySymbols = {
+  1: tokens.reduce(
+    (map, item) =>
+      Object.assign(map, {
+        [item.symbol]: item,
+      }),
+    {},
+  ),
+};
+
+export const tokensNetByAddress = {
+  1: tokens.reduce(
+    (map, item) =>
+      Object.assign(map, {
+        [item.address]: item,
+      }),
+    {},
+  ),
+};
+
 export const zeroBalancedTokens = [
   {
     name: 'First Token',
@@ -274,4 +294,7 @@ export default {
   tokensBalances,
   balances,
   allTokens,
+
+  tokensNetBySymbols,
+  tokensNetByAddress,
 };

@@ -26,7 +26,6 @@ exports[`ReceivePage render should render component 1`] = `
     <div
       class="container"
     >
-      <!---->
       <account-wallet-card-stub
         activecurrencyname="KEK"
         activenetid="1"
@@ -52,7 +51,9 @@ exports[`ReceivePage render should render component 1`] = `
           <h2
             class="card-header-title"
           >
+            
             Incoming Payment History
+          
           </h2>
         </div>
          

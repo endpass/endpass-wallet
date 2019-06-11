@@ -13,6 +13,7 @@ jest.mock('@/schema', () => ({
   v3KeystoreValidator: {
     validateAddresses: jest.fn(data => data),
     validateAccount: jest.fn(data => data),
+    validateNonEmptyAccountWithInfo: jest.fn(data => data),
   },
   identityValidator: {
     validateUserToken: jest.fn(data => data),

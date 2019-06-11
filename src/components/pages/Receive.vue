@@ -18,8 +18,7 @@
     <div class="section">
       <div class="container">
         <account-wallet-card
-          v-for="(wallet, walletAddress) in wallets"
-          v-if="walletAddress !== address"
+          v-for="(wallet, walletAddress) in filteredWallets"
           :key="walletAddress"
           :address="walletAddress"
           :active-currency-name="activeCurrency.name"
@@ -35,7 +34,9 @@
       <div class="container">
         <div class="card app-card">
           <div class="card-header">
-            <h2 class="card-header-title">Incoming Payment History</h2>
+            <h2 class="card-header-title">
+              Incoming Payment History
+            </h2>
           </div>
           <div class="card-content">
             <ul
@@ -50,7 +51,9 @@
               </li>
             </ul>
             <v-spinner v-else-if="isLoading" />
-            <p v-else>This account has no transactions.</p>
+            <p v-else>
+              This account has no transactions.
+            </p>
           </div>
         </div>
       </div>
@@ -59,9 +62,9 @@
 </template>
 
 <script>
+import omit from 'lodash/omit';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import AppTransaction from '@/components/Transaction';
-import Account from '@/components/Account';
 import AccountWalletCard from '@/components/AccountWalletCard';
 
 export default {
@@ -80,6 +83,10 @@ export default {
     }),
     ...mapGetters('accounts', ['wallet', 'balance', 'isPublicAccount']),
     ...mapGetters('transactions', ['incomingTransactions']),
+
+    filteredWallets() {
+      return omit(this.wallets, this.address);
+    },
   },
 
   watch: {
@@ -120,7 +127,6 @@ export default {
   },
 
   components: {
-    Account,
     AppTransaction,
     AccountWalletCard,
   },

@@ -5,7 +5,9 @@ exports[`ExportWallet page render should render initial state of the component 1
   class="export-wallet"
 >
   <template>
+    
     Export Wallet
+  
   </template>
    
   <p
@@ -30,7 +32,9 @@ exports[`ExportWallet page render should render initial state of the component 1
         <p
           class="menu-label"
         >
+          
           Export Type
+        
         </p>
          
         <ul

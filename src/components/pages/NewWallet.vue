@@ -1,8 +1,8 @@
 <template>
   <base-page class="new-wallet">
-    <template slot="title">{{
-      hdKey ? 'Wallet Created' : 'Create Wallet'
-    }}</template>
+    <template slot="title">
+      {{ hdKey ? 'Wallet Created' : 'Create Wallet' }}
+    </template>
     <div
       v-if="hdKey"
       class="container has-text-centered is-narrow"
@@ -18,13 +18,18 @@
         <p
           class="code"
           data-test="seed-phrase"
-        >{{ key }}</p>
+        >
+          {{ key }}
+        </p>
       </div>
       <router-link
         :disabled="!!remainingSeedPhraseTimeout"
         to="/"
         class="button is-success is-cta"
-      >Continue {{ getRemainingSeedPhraseTimeout }}</router-link>
+        @click.native="onContinue"
+      >
+        Continue {{ getRemainingSeedPhraseTimeout }}
+      </router-link>
     </div>
     <div
       v-else
@@ -40,9 +45,9 @@
         @submit="createWallet"
       >
         <v-password
-          v-validate="'required|min:8'"
           id="jsonKeystorePassword"
           v-model="password"
+          v-validate="'required|min:8'"
           :error="errors.first('password')"
           label="Wallet password"
           name="password"
@@ -67,7 +72,6 @@
 
 <script>
 import BasePage from '@/components/pages/Base';
-import Bip39 from 'bip39';
 import VueTimers from 'vue-timers/mixin';
 import { mapActions, mapState } from 'vuex';
 import formMixin from '@/mixins/form';
@@ -81,13 +85,16 @@ export default {
       password: '',
       key: null,
       isCreating: false,
+      isCloseAfterCreate: false,
       remainingSeedPhraseTimeout: SEED_PHRASE_TIMEOUT_SEC,
     };
   },
+
   computed: {
     ...mapState({
       hdKey: state => state.accounts.hdKey,
     }),
+
     getRemainingSeedPhraseTimeout() {
       return this.remainingSeedPhraseTimeout > 0
         ? `(${this.remainingSeedPhraseTimeout})`
@@ -95,7 +102,8 @@ export default {
     },
   },
   methods: {
-    ...mapActions('accounts', ['addHdWallet']),
+    ...mapActions('accounts', ['createNewWallet']),
+
     // Generate a new HD wallet node
     // TODO encrypt seed in memory
     async createWallet() {
@@ -107,9 +115,10 @@ export default {
       await new Promise(res => setTimeout(res, 20));
 
       try {
-        const key = Bip39.generateMnemonic();
-        await this.addHdWallet({ key, password: this.password });
-        this.key = key;
+        const seedKey = await this.createNewWallet({
+          password: this.password,
+        });
+        this.key = seedKey;
         this.$timer.start('seedPhrase');
       } catch (e) {
         this.$notify({
@@ -123,16 +132,29 @@ export default {
 
       this.isCreating = false;
     },
+
     handleSeedPhraseTimer() {
-      this.remainingSeedPhraseTimeout
-        -= UPDATE_SEED_PHRASE_INTERVAL_MSEC / 1000;
+      this.remainingSeedPhraseTimeout -=
+        UPDATE_SEED_PHRASE_INTERVAL_MSEC / 1000;
 
       if (this.remainingSeedPhraseTimeout <= 0) {
         this.$timer.stop('seedPhrase');
       }
     },
+
+    onContinue() {
+      if (this.isCloseAfterCreate) {
+        window.close();
+      }
+    },
   },
+
+  mounted() {
+    this.isCloseAfterCreate = !!this.$route.query.closeAfterCreateWallet;
+  },
+
   mixins: [VueTimers, formMixin],
+
   timers: {
     seedPhrase: {
       repeat: true,
@@ -142,6 +164,7 @@ export default {
       },
     },
   },
+
   components: {
     BasePage,
   },

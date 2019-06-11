@@ -38,10 +38,10 @@ const login = async ({ commit, dispatch }) => {
     commit(SET_IDENTITY_TYPE, type);
     commit(SET_AUTHORIZATION_STATUS, true);
 
-    return dispatch('init', null, { root: true });
+    await dispatch('init', null, { root: true });
   } catch (err) {
     if (!err.message.includes('Auth was canceled by user')) {
-      return dispatch('errors/emitError', err, { root: true });
+      await dispatch('errors/emitError', err, { root: true });
     }
   }
 };
@@ -149,6 +149,25 @@ const initIdentityMode = async ({ commit, dispatch }, mode) => {
   }
 };
 
+const updateEmail = async (
+  { rootGetters, dispatch, commit },
+  { email, password },
+) => {
+  const wallet = rootGetters['accounts/wallet'];
+  const { signature } = await wallet.sign(email, password);
+  try {
+    await userService.updateEmail({ email, signature });
+    commit(SET_EMAIL, email);
+    throw new NotificationError({
+      title: 'The email is successfully updated',
+      text: `Your new email is ${email}.`,
+      type: 'is-success',
+    });
+  } catch (error) {
+    await dispatch('errors/emitError', error, { root: true });
+  }
+};
+
 const init = async ({ dispatch }) => {
   try {
     await dispatch('setUserSettings');
@@ -167,6 +186,7 @@ export default {
   setUserSettings,
   deleteOtpSettings,
   validateCustomServer,
+  updateEmail,
   initIdentityMode,
   init,
 };

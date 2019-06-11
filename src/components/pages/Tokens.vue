@@ -6,7 +6,9 @@
           <div class="column is-half">
             <div class="card app-card">
               <div class="card-header">
-                <p class="card-header-title">Your Tokens</p>
+                <p class="card-header-title">
+                  Your Tokens
+                </p>
               </div>
               <div class="card-content is-narrow">
                 <nav
@@ -99,7 +101,6 @@
 import { isEmpty } from 'lodash';
 import { mapState, mapActions, mapGetters } from 'vuex';
 import Multiselect from 'vue-multiselect';
-import Balance from '@/components/Balance';
 import VToken from '@/components/VToken';
 import TokensList from '@/components/TokensList';
 import SearchInput from '@/components/SearchInput';
@@ -150,7 +151,7 @@ export default {
         allCurrentAccountFullTokens,
       );
 
-      return networkTokensList.filter((token) => {
+      return networkTokensList.filter(token => {
         const isUserHasToken = currentAccountTokensSymbols.includes(
           token.symbol,
         );
@@ -169,7 +170,9 @@ export default {
     userTokensList() {
       const { userTokenQuery, allCurrentAccountFullTokens } = this;
 
-      return Object.values(allCurrentAccountFullTokens).filter(token => this.matchTokenToQuery(token, userTokenQuery));
+      return Object.values(allCurrentAccountFullTokens).filter(token =>
+        this.matchTokenToQuery(token, userTokenQuery),
+      );
     },
   },
 
@@ -200,7 +203,6 @@ export default {
 
   components: {
     SearchInput,
-    Balance,
     AddTokenModal,
     Multiselect,
     VToken,

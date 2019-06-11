@@ -5,7 +5,7 @@ import cryptoDataSchemas from './cryptoData';
 import v3KeystoreSchemas from './v3Keystore';
 import identitySchemas from './identity';
 
-const makeValidator = (schema) => {
+const makeValidator = schema => {
   const validator = ajv.compile(schema);
 
   return (data, isOnlyLog = ENV.VUE_APP_IS_PRODUCTION) => {
@@ -25,12 +25,14 @@ const makeValidator = (schema) => {
   };
 };
 
-const makeValidators = schemas => Object.keys(schemas).reduce(
-  (acc, key) => Object.assign(acc, {
-    [`validate${upperFirst(key)}`]: makeValidator(schemas[key]),
-  }),
-  {},
-);
+const makeValidators = schemas =>
+  Object.keys(schemas).reduce(
+    (acc, key) =>
+      Object.assign(acc, {
+        [`validate${upperFirst(key)}`]: makeValidator(schemas[key]),
+      }),
+    {},
+  );
 
 export const cryptoDataValidator = makeValidators(cryptoDataSchemas);
 

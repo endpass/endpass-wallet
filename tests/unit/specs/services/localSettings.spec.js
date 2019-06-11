@@ -1,5 +1,6 @@
 import { LocalStorage } from '@/class';
 import { STORAGE_USER_META_KEY } from '@/constants';
+
 const localSettings = require.requireActual('@/services/localSettings').default;
 
 describe('localSettings', () => {

@@ -2,9 +2,23 @@
   <div>
     <wallets-list
       v-if="isListVisible"
+      v-model="bridgeButtonListIsLoading"
       :type="walletType"
+      :is-importing="bridgeButtonListIsImporting"
       :auto-load="true"
-    />
+      @select="setSelectedAddress"
+    >
+      <template slot="buttons">
+        <wallet-add-button
+          v-model="bridgeButtonListIsImporting"
+          :type="walletType"
+          :selected-address="bridgeButtonListSelectedAddress"
+          @success="$router.push('/')"
+        >
+          Import
+        </wallet-add-button>
+      </template>
+    </wallets-list>
     <v-form
       v-else
       :is-form-valid="isFormValid"
@@ -12,10 +26,10 @@
       @submit="togglePasswordModal"
     >
       <v-input
-        v-validate="'required|seed_phrase'"
         id="hdkeySeed"
         key="hdkeyPhraseUnique"
         v-model="key"
+        v-validate="'required|seed_phrase'"
         :error="errors.first('hdkeyPhrase')"
         label="Seed phrase"
         name="hdkeyPhrase"
@@ -27,7 +41,6 @@
         data-test="input-seed-phrase"
         @input="handleInput"
       />
-
       <v-button
         :loading="isCreating"
         :disabled="!isFormValid"
@@ -37,7 +50,6 @@
         Import
       </v-button>
     </v-form>
-
     <password-modal
       v-if="isPasswordModal"
       @close="togglePasswordModal"
@@ -52,17 +64,18 @@ import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
 import { Wallet } from '@/class';
-import WalletsList from './WalletsList';
+import { BridgeButtonListMixin } from '@/components/walletsListFromHd';
 
+/** @type {{HD_PUBLIC,getTypes}} */
 const WALLET_TYPES = Wallet.getTypes();
 
 export default {
   name: 'ImportFromSeed',
   data: () => ({
-    isListVisible: false,
-    isCreating: false,
-    isPasswordModal: false,
     key: '',
+    isCreating: false,
+    isListVisible: false,
+    isPasswordModal: false,
     walletType: WALLET_TYPES.HD_PUBLIC,
   }),
   methods: {
@@ -93,11 +106,8 @@ export default {
       this.errors.removeById('wrongPhrase');
     },
   },
-  mixins: [modalMixin, formMixin],
-  components: {
-    PasswordModal,
-    WalletsList,
-  },
+  mixins: [modalMixin, formMixin, BridgeButtonListMixin],
+  components: { PasswordModal },
 };
 </script>
 

@@ -12,7 +12,7 @@ export const settings = {
   fiatCurrency: 'USD',
   otpEnabled: false,
   tokens: {
-    '1': [
+    1: [
       {
         address: '0x4E84E9e5fb0A972628Cf4568c403167EF1D40431',
         decimals: 18,

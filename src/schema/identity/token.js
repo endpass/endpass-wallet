@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/prefer-default-export
 export const userToken = {
   type: 'object',
   required: ['address', 'decimals', 'logo', 'name', 'symbol'],
@@ -30,8 +31,4 @@ export const userToken = {
       type: 'boolean',
     },
   },
-};
-
-export default {
-  userToken,
 };

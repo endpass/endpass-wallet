@@ -25,9 +25,9 @@
         </div>
         <div class="field-body">
           <v-input
-            v-validate="'required|numeric|integer|between:1,100'"
             id="gasPrice"
             v-model="form.gasPrice"
+            v-validate="'required|numeric|integer|between:1,100'"
             :disabled="isLoading"
             :error="errors.first('gasPrice')"
             name="gasPrice"
@@ -57,9 +57,9 @@
         </div>
         <div class="field-body">
           <v-input
-            v-validate="'required|numeric|integer|between:21000,1000000'"
             id="gasLimit"
             v-model="form.gasLimit"
+            v-validate="'required|numeric|integer|between:21000,1000000'"
             :disabled="isLoading"
             :error="errors.first('gasLimit')"
             data-vv-name="gasLimit"
@@ -82,11 +82,11 @@
         </div>
         <div class="field-body">
           <v-input
+            id="nonce"
+            v-model="form.nonce"
             v-validate="
               `required|numeric|integer|min_value:${nextNonceInBlock}`
             "
-            id="nonce"
-            v-model="form.nonce"
             :error="errors.first('nonce')"
             :disabled="isLoading"
             name="nonce"
@@ -110,9 +110,9 @@
         </div>
         <div class="field-body">
           <v-input
-            v-validate="'required|hex'"
             id="data"
             v-model="form.data"
+            v-validate="'required|hex'"
             :disabled="isLoading"
             :error="errors.first('data')"
             name="data"

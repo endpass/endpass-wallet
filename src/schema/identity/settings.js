@@ -1,7 +1,8 @@
 import { userNetwork } from './network';
 import { userToken } from './token';
 
-const userSettings = {
+// eslint-disable-next-line import/prefer-default-export
+export const userSettings = {
   type: 'object',
   required: ['email', 'fiatCurrency', 'otpEnabled'],
   properties: {
@@ -33,8 +34,4 @@ const userSettings = {
       },
     },
   },
-};
-
-export default {
-  userSettings,
 };

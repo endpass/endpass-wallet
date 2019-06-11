@@ -6,25 +6,34 @@
     />
     <wallets-list
       v-else
+      v-model="bridgeButtonListIsLoading"
       :type="hardwareType"
-    />
+      :is-importing="bridgeButtonListIsImporting"
+      @select="setSelectedAddress"
+    >
+      <wallet-add-button
+        slot="buttons"
+        v-model="bridgeButtonListIsImporting"
+        :type="hardwareType"
+        :selected-address="bridgeButtonListSelectedAddress"
+        @success="$router.push('/')"
+      >
+        Import
+      </wallet-add-button>
+    </wallets-list>
   </div>
 </template>
 
 <script>
 import HardwareChooser from './HardwareChooser.vue';
-import WalletsList from '../WalletsList';
+import { BridgeButtonListMixin } from '@/components/walletsListFromHd';
 
 export default {
   name: 'ImportFromHardware',
   data: () => ({
     hardwareType: null,
   }),
-  components: {
-    HardwareChooser,
-    WalletsList,
-  },
+  mixins: [BridgeButtonListMixin],
+  components: { HardwareChooser },
 };
 </script>
-
-<style lang="scss"></style>

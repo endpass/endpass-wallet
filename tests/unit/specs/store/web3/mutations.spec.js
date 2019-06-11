@@ -1,5 +1,3 @@
-import Web3 from 'web3';
-
 import mutations from '@/store/web3/mutations';
 import * as mutationsTypes from '@/store/web3/mutations-types';
 

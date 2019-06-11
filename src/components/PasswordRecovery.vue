@@ -7,8 +7,8 @@
     >
       <label class="label">Password Recovery</label>
       <v-input
-        v-validate="'required|seed_phrase'"
         v-model="seedPhrase"
+        v-validate="'required|seed_phrase'"
         :error="errors.first('seedPhrase')"
         :disabled="isLoading"
         name="seedPhrase"
@@ -16,8 +16,8 @@
         data-test="input-seed-phrase"
       />
       <v-password
-        v-validate="'required|min:8'"
         v-model="password"
+        v-validate="'required|min:8'"
         :error="errors.first('password')"
         :disabled="isLoading"
         name="password"

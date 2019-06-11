@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import Notifications from 'vue-notification';
 import VueTimers from 'vue-timers/mixin';
 import VeeValidate from 'vee-validate';
+import VueRouter from 'vue-router';
 import UIComponents from '@endpass/ui';
 
 import NewWallet from '@/components/pages/NewWallet.vue';
@@ -15,17 +16,19 @@ localVue.use(Vuex);
 localVue.use(validation);
 localVue.use(VeeValidate);
 localVue.use(UIComponents);
+localVue.use(VueRouter);
 
 jest.useFakeTimers();
 
 describe('NewWallet page', () => {
+  let wrapper;
+  let router;
   describe('computed', () => {
     describe('getRemainingSeedPhraseTimeout', () => {
-      let wrapper;
-
       beforeAll(() => {
         const actions = {
           'accounts/addHdWallet': jest.fn(),
+          'accounts/backupSeed': jest.fn(),
         };
         const store = new Vuex.Store({
           state: {
@@ -36,9 +39,12 @@ describe('NewWallet page', () => {
           actions,
         });
 
+        router = new VueRouter();
+
         wrapper = mount(NewWallet, {
           localVue,
           store,
+          router,
           sync: false,
           mixins: [VueTimers],
         });
@@ -75,7 +81,8 @@ describe('NewWallet page', () => {
     //
     //   beforeAll(() => {
     //     const actions = {
-    //       'addHdWallet': jest.fn()
+    //       'addHdWallet': jest.fn(),
+    //       'accounts/backupSeed': jest.fn(),
     //     };
     //     const store = new Vuex.Store({
     //       modules:{
@@ -94,7 +101,7 @@ describe('NewWallet page', () => {
     //       mixins: [VueTimers]
     //     })
     //     wrapper.vm.createWallet();
-    //     let spy = spyOn(wrapper.vm.$timer, 'start');
+    //     let spy = jest.spyOn(wrapper.vm.$timer, 'start');
     //   });
 
     // it('should start seed phrase timer', (done) => {
@@ -106,11 +113,10 @@ describe('NewWallet page', () => {
     // });
 
     describe('handleSeedPhraseTimer', () => {
-      let wrapper;
-
       beforeEach(() => {
         const actions = {
           'accounts/addHdWallet': jest.fn(),
+          'accounts/backupSeed': jest.fn(),
         };
         const store = new Vuex.Store({
           state: {
@@ -122,10 +128,13 @@ describe('NewWallet page', () => {
         });
         const $ga = { event: jest.fn() };
 
+        router = new VueRouter();
+
         wrapper = mount(NewWallet, {
           localVue,
           store,
           sync: false,
+          router,
           mocks: {
             $ga,
           },
@@ -162,8 +171,6 @@ describe('NewWallet page', () => {
   });
 
   describe('timers', () => {
-    let wrapper;
-
     beforeAll(() => {
       const actions = {
         'accounts/addHdWallet': jest.fn(),
@@ -178,9 +185,12 @@ describe('NewWallet page', () => {
       });
 
       localVue.use(VeeValidate);
+      router = new VueRouter();
+
       wrapper = shallowMount(NewWallet, {
         localVue,
         store,
+        router,
         sync: false,
         mixins: [VueTimers],
       });
@@ -196,7 +206,7 @@ describe('NewWallet page', () => {
       });
 
       it('should call handleSeedPhraseTimer', () => {
-        spyOn(wrapper.vm, 'handleSeedPhraseTimer');
+        jest.spyOn(wrapper.vm, 'handleSeedPhraseTimer');
 
         wrapper.vm.$timer.start('seedPhrase');
         jest.runOnlyPendingTimers();

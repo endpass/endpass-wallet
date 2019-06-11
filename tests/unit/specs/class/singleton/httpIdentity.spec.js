@@ -47,6 +47,7 @@ describe('httpIdentity', () => {
     mock.onGet(notLogoutUrl).reply(401);
     try {
       await http.get(notLogoutUrl);
+      // eslint-disable-next-line no-empty
     } catch (e) {}
 
     expect(store.dispatch).not.toBeCalled();
@@ -61,6 +62,7 @@ describe('httpIdentity', () => {
       mock.onGet(checkUrl).reply(401);
       try {
         await http.get(checkUrl);
+        // eslint-disable-next-line no-empty
       } catch (e) {}
 
       expect(store.dispatch).toBeCalledWith({
@@ -81,6 +83,7 @@ describe('httpIdentity', () => {
       mock.onGet(checkUrl).reply(401);
       try {
         await http.get(checkUrl);
+        // eslint-disable-next-line no-empty
       } catch (e) {}
 
       expect(store.dispatch).toBeCalledTimes(1);

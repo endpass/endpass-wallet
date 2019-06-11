@@ -3,7 +3,9 @@
 exports[`AccountWalletCard render should correctly render component with current account 1`] = `
 <div class="card app-card" balance="20">
   <div class="card-header">
-    <h2 class="card-header-title">Receive ETH</h2>
+    <h2 class="card-header-title">
+      Receive ETH
+    </h2>
   </div>
   <div data-test="current-account" class="card-content">
     <div class="card-section">
@@ -24,7 +26,9 @@ exports[`AccountWalletCard render should correctly render component with current
 exports[`AccountWalletCard render should correctly render component with send button 1`] = `
 <div class="card app-card" balance="20">
   <div class="card-header">
-    <h2 class="card-header-title">Receive ETH</h2>
+    <h2 class="card-header-title">
+      Receive ETH
+    </h2>
   </div>
   <div data-test="current-account" class="card-content">
     <!---->
@@ -47,7 +51,9 @@ exports[`AccountWalletCard render should correctly render component with send bu
 exports[`AccountWalletCard render should render currenct account balance and tokens if isCurrentAccount flag is truthy 1`] = `
 <div class="card app-card" balance="20">
   <div class="card-header">
-    <h2 class="card-header-title">Receive ETH</h2>
+    <h2 class="card-header-title">
+      Receive ETH
+    </h2>
   </div>
   <div data-test="current-account" class="card-content">
     <div class="card-section">
@@ -68,7 +74,9 @@ exports[`AccountWalletCard render should render currenct account balance and tok
 exports[`AccountWalletCard render should render initial state of the component 1`] = `
 <div class="card app-card" balance="20">
   <div class="card-header">
-    <h2 class="card-header-title">Receive ETH</h2>
+    <h2 class="card-header-title">
+      Receive ETH
+    </h2>
   </div>
   <div data-test="current-account" class="card-content">
     <!---->

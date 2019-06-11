@@ -13,7 +13,6 @@ import {
   TransactionFactory,
   NotificationError,
   web3,
-  Wallet,
 } from '@/class';
 import { TRANSACTION_STATUS } from '@/constants';
 import { address } from 'fixtures/accounts';
@@ -21,7 +20,6 @@ import {
   transactionHash,
   shortTransactionHash,
   blockTransactions,
-  ethplorerHistory,
   ethplorerTransactions,
 } from 'fixtures/transactions';
 import {
@@ -63,6 +61,7 @@ describe('transactions actions', () => {
         nonce: 1,
       }),
     };
+    const networkId = 3;
     rootState = {
       accounts: {
         address,
@@ -71,7 +70,7 @@ describe('transactions actions', () => {
         },
       },
       web3: {
-        activeNet: { id: 2 },
+        activeNet: { id: networkId },
       },
     };
     rootGetters = {
@@ -81,7 +80,7 @@ describe('transactions actions', () => {
       'transactions/pendingBalance': 0,
       'accounts/accountAddresses': [address.toLowerCase()],
       'web3/isMainNetwork': false,
-      'web3/activeNetwork': 3,
+      'web3/activeNetwork': networkId,
     };
   });
 
@@ -126,7 +125,7 @@ describe('transactions actions', () => {
   describe('handleSendingError', () => {
     const defaultErrorParams = {
       title: 'Error sending transaction',
-      text: `Transaction was not sent`,
+      text: 'Transaction was not sent',
       type: 'is-danger',
     };
 
@@ -262,8 +261,9 @@ describe('transactions actions', () => {
     it('should recieve transaction history', async () => {
       expect.assertions(2);
 
+      const { id: networkId } = rootState.web3.activeNet;
       const expectedHistory = cryptoDataHistory.map(trx =>
-        TransactionFactory.fromSendForm(trx),
+        TransactionFactory.fromCryptoDataHistory({ ...trx, networkId }),
       );
 
       await actions.updateTransactionHistory({
@@ -637,7 +637,6 @@ describe('transactions actions', () => {
 
   describe('handleTransactionCancelingHash', () => {
     let sendEvent;
-    const newHash = '0x0';
 
     beforeEach(() => {
       sendEvent = {

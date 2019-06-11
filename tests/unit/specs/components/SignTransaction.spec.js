@@ -91,7 +91,7 @@ describe('SignTransaction', () => {
       const password = 'password';
 
       beforeEach(() => {
-        spyOn(wrapper.vm, '$notify');
+        jest.spyOn(wrapper.vm, '$notify');
       });
 
       it('should sign transaction', async () => {

@@ -29,7 +29,6 @@ import 'mocks/schema';
 import 'mocks/validation';
 
 import 'mocks/ethereumjs-wallet/hdkey';
-import 'mocks/bip39';
 
 Vue.config.productionTip = false;
 
@@ -43,5 +42,5 @@ global.console.warn = jest.fn(e => {
 });
 
 // Function to immediately flush all pending promises
-// Usage: await flushPromises()
+// Usage: await global.flushPromises()
 global.flushPromises = () => new Promise(resolve => setImmediate(resolve));

@@ -8,7 +8,9 @@
       </p>
       <div class="footer-links level is-mobile">
         <div class="level-left">
-          <p class="level-item">&copy; 2018 Endpass, Inc</p>
+          <p class="level-item">
+            &copy; 2018 Endpass, Inc
+          </p>
           <p class="level-item">
             <a
               target="_blank"

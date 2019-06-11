@@ -72,6 +72,34 @@ const nonEmptyAccount = {
   },
 };
 
+export const nonEmptyAccountWithInfo = {
+  ...nonEmptyAccount,
+  properties: {
+    ...nonEmptyAccount.properties,
+    info: {
+      type: 'object',
+      required: ['address', 'type', 'index', 'label', 'hidden'],
+      properties: {
+        address: {
+          type: 'string',
+        },
+        type: {
+          type: 'string',
+        },
+        index: {
+          type: 'integer',
+        },
+        label: {
+          type: 'string',
+        },
+        hidden: {
+          type: 'boolean',
+        },
+      },
+    },
+  },
+};
+
 export const account = {
   oneOf: [
     { ...nonEmptyAccount },
@@ -96,5 +124,6 @@ export default {
   address,
   nonEmptyAccount,
   account,
+  nonEmptyAccountWithInfo,
   addresses,
 };

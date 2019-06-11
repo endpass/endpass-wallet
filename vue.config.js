@@ -7,13 +7,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const gitCommitHash = buildUtils.getCommitHash();
 const { mode } = process.VUE_CLI_SERVICE;
 
-console.log('ENV', process.env);
 const ENV = objectUtils.parseObjectProperties(process.env, 'VUE_APP');
+// eslint-disable-next-line no-console
+console.log('ENV', ENV);
 
 module.exports = {
   lintOnSave: false,
 
-  chainWebpack: (config) => {
+  chainWebpack: config => {
     const svgRule = config.module.rule('svg');
 
     svgRule.uses.clear();

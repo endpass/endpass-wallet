@@ -84,7 +84,9 @@
     >
       <div v-if="transaction.hash.length">
         <span class="text-label">Txid</span>
-        <p class="code">{{ transaction.hash }}</p>
+        <p class="code">
+          {{ transaction.hash }}
+        </p>
       </div>
       <div>
         <span class="heading status-text">{{ transaction.state }}</span>
@@ -92,17 +94,23 @@
 
       <div v-if="transaction.date">
         <span class="text-label">Date</span>
-        <p class="date">{{ transactionFormatedDate }}</p>
+        <p class="date">
+          {{ transactionFormatedDate }}
+        </p>
       </div>
 
       <div v-if="recieve">
         <span class="text-label">From</span>
-        <p class="code address">{{ transaction.from }}</p>
+        <p class="code address">
+          {{ transaction.from }}
+        </p>
       </div>
 
       <div v-else>
         <span class="text-label">To</span>
-        <p class="code address">{{ transaction.to }}</p>
+        <p class="code address">
+          {{ transaction.to }}
+        </p>
       </div>
 
       <div>
@@ -176,9 +184,9 @@ export default {
     },
     isError() {
       return (
-        this.transaction.state === TRANSACTION_STATUS.ERROR
-        || this.state === TRANSACTION_STATUS.ERROR
-        || this.state === TRANSACTION_STATUS.CANCELED
+        this.transaction.state === TRANSACTION_STATUS.ERROR ||
+        this.state === TRANSACTION_STATUS.ERROR ||
+        this.state === TRANSACTION_STATUS.CANCELED
       );
     },
     isPending() {
@@ -249,9 +257,10 @@ export default {
       this.resendModalOpen = false;
       this.passwordModalOpen = false;
 
-      const sendTransaction = this.state === TRANSACTION_STATUS.CANCELED
-        ? this.cancelTransaction
-        : this.resendTransaction;
+      const sendTransaction =
+        this.state === TRANSACTION_STATUS.CANCELED
+          ? this.cancelTransaction
+          : this.resendTransaction;
 
       this.transactionToSend = Transaction.applyProps(this.transactionToSend, {
         state: TRANSACTION_STATUS.PENDING,

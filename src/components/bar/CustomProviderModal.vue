@@ -1,16 +1,18 @@
 <template>
   <div class="new-account-modal">
     <v-modal @close="close">
-      <header slot="header">{{ headerText }}</header>
+      <header slot="header">
+        {{ headerText }}
+      </header>
       <div v-if="!providerAdded">
         <v-form
           :is-form-valid="isFormValid"
           @submit="handleButtonClick"
         >
           <v-input
-            v-validate="'required'"
             id="name"
             v-model="innerProvider.name"
+            v-validate="'required'"
             :disabled="isLoading"
             :error="errors.first('name')"
             name="name"
@@ -24,11 +26,11 @@
           />
 
           <v-input
+            id="url"
+            v-model="innerProvider.url"
             v-validate="
               `required|url:require_protocol:true|not_in:${providersLinks}`
             "
-            id="url"
-            v-model="innerProvider.url"
             :disabled="isLoading"
             :error="errors.first('url')"
             data-vv-name="url"
@@ -41,10 +43,10 @@
           />
 
           <v-select
-            v-validate="'required'"
             id="currency"
-            :error="errors.first('currency')"
             v-model="innerProvider.currency"
+            v-validate="'required'"
+            :error="errors.first('currency')"
             :options="currencies"
             data-vv-name="currency"
             name="currency"
@@ -57,7 +59,9 @@
         </v-form>
       </div>
       <div v-else>
-        <p class="subtitle">{{ headerTextAfterAction }}</p>
+        <p class="subtitle">
+          {{ headerTextAfterAction }}
+        </p>
 
         <div class="message">
           <div class="message-header">
@@ -65,7 +69,9 @@
           </div>
           <div class="message-body">
             <p>{{ innerProvider.name }}</p>
-            <p class="code address">{{ innerProvider.url }}</p>
+            <p class="code address">
+              {{ innerProvider.url }}
+            </p>
           </div>
         </div>
       </div>

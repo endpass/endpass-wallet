@@ -1,16 +1,14 @@
-import {
-  checksumAddress,
-  v3password,
-  privateKey,
-  mnemonic,
-} from '../fixtures/accounts';
 import user from '../fixtures/identity/user';
+import { mnemonic, v3password } from '../fixtures/accounts';
+
+const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1.1';
 
 describe('Settings Page', () => {
   beforeEach(() => {
     cy.getInitialData();
     cy.visit('#/settings');
     cy.mockWeb3Requests();
+    cy.makeStoreAlias();
     cy.waitPageLoad();
   });
 
@@ -68,5 +66,70 @@ describe('Settings Page', () => {
     cy.contains(
       'You entered incorrect password, try using a different one.',
     ).should('be.visible');
+  });
+
+  describe('seed restoration', () => {
+    it('should restore seed with wallet password', () => {
+      cy.get('[data-test=recover-seed-button]').click();
+      cy.get('[data-test=password-modal]').within(() => {
+        cy.inputPassword();
+      });
+      cy.wait('@userSeed');
+      cy.get('[data-test=password-modal]').should('not.be.visible');
+      cy.get('[data-test=info-modal]').within(() => {
+        cy.get('[data-test=recovered-seed-phrase]').contains(mnemonic);
+      });
+    });
+
+    it('should lock seed restoration if it is not available', () => {
+      cy.route({
+        method: 'GET',
+        url: `${identityAPIUrl}/user/seed`,
+        status: 404,
+        response: {},
+      }).as('userSeed');
+      cy.get('[data-test=recover-seed-button]').click();
+      cy.get('[data-test=password-modal]').within(() => {
+        cy.inputPassword();
+      });
+      cy.wait('@userSeed');
+      cy.get('[data-test=password-modal]').should('not.be.visible');
+      cy.get('[data-test=info-modal]').should('not.be.visible');
+      cy.get('[data-test=recover-seed-button]').should('be.disabled');
+      cy.contains("You can't restore seed because it was not backuped.");
+    });
+  });
+
+  describe('email reset', () => {
+    it('should reset email with wallet password', () => {
+      cy.route({
+        method: 'POST',
+        url: 'https://identity-dev.endpass.com/api/v1.1/user/email',
+        status: 200,
+        response: { success: true },
+      }).as('userEmail');
+
+      cy.get('[data-test=input-new-email]').type('kek@gmail.com');
+      cy.get('[data-test=input-confirm-new-email]').type('kek@gmail.com');
+      cy.get('[data-test=update-email-button]').click();
+      cy.get('[data-test=password-modal]').within(() => {
+        cy.inputPassword();
+      });
+      cy.wait('@userEmail');
+      cy.get('[data-test=password-modal]').should('not.be.visible');
+      cy.get('[data-test=app-notification]').contains('kek@gmail.com');
+    });
+
+    it('should validate email correctly', () => {
+      cy.get('[data-test=input-new-email]').type('kek');
+      cy.get('[data-test=input-new-email]')
+        .parentsUntil('form')
+        .should('contain', 'must be a valid email');
+      cy.get('[data-test=input-new-email]').type('kek@gmail.com');
+      cy.get('[data-test=input-confirm-new-email]').type('notkek@gmail.com');
+      cy.get('[data-test=input-confirm-new-email]')
+        .parentsUntil('form')
+        .should('contain', 'does not match');
+    });
   });
 });

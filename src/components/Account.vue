@@ -11,9 +11,15 @@
     <div class="media-content">
       <div class="content">
         <h5
+          :class="{
+            'has-text-grey': isMuted,
+            'has-text-white': hasBackground,
+          }"
           class="address"
           data-test="account-address"
-        >{{ addressFmt }}</h5>
+        >
+          {{ addressFmt }}
+        </h5>
         <slot />
       </div>
     </div>
@@ -42,6 +48,10 @@ export default {
       type: String,
       required: true,
     },
+    addressCssClasses: {
+      type: Object,
+      default: null,
+    },
     currency: {
       type: String,
       default: 'ETH',
@@ -54,6 +64,14 @@ export default {
     size: {
       type: Number,
       default: 50,
+    },
+    isMuted: {
+      type: Boolean,
+      default: false,
+    },
+    hasBackground: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

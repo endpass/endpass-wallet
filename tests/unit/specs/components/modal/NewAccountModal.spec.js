@@ -75,5 +75,11 @@ describe('NewAccountModal', () => {
       expect(spy).toBeCalled();
       expect(push).toBeCalledWith('import');
     });
+
+    it('should switch modals state', () => {
+      expect(wrapper.vm.isWalletsListModal).toBe(false);
+      wrapper.find('form[data-test="createNewAccount"]').vm.$emit('submit');
+      expect(wrapper.vm.isWalletsListModal).toBe(true);
+    });
   });
 });

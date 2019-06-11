@@ -22,7 +22,7 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
     userService.setSettings({ net: network.id }),
     dispatch('price/updatePrice', {}, { root: true }),
     dispatch('accounts/updateBalance', {}, { root: true }),
-    dispatch('tokens/getNetworkTokens', {}, { root: true }),
+    dispatch('tokens/loadNetworkTokens', {}, { root: true }),
     dispatch(
       'transactions/updatePendingTransactionsStatus',
       {},
@@ -32,9 +32,7 @@ const changeNetwork = async ({ commit, dispatch, getters }, { networkUrl }) => {
 };
 
 const changeCurrency = async (
-  {
-    commit, dispatch, getters, state,
-  },
+  { commit, dispatch, getters, state },
   { currencyId },
 ) => {
   const currency = Network.CURRENCIES.find(({ id }) => id === currencyId);
@@ -62,7 +60,7 @@ const addNetwork = async ({ state, commit, dispatch }, { network }) => {
 
     return success;
   } catch (error) {
-    await dispatch('errors/emitError', error, { root: true });
+    return dispatch('errors/emitError', error, { root: true });
   }
 };
 
@@ -75,9 +73,7 @@ const updateNetwork = async (
     item => item.url === oldNetwork.url,
   );
 
-  if (oldNetworkIndex === -1) {
-    return;
-  }
+  if (oldNetworkIndex === -1) return false;
 
   networksToSave.splice(oldNetworkIndex, 1, network);
 
@@ -95,14 +91,12 @@ const updateNetwork = async (
 
     return success;
   } catch (error) {
-    await dispatch('errors/emitError', error, { root: true });
+    return dispatch('errors/emitError', error, { root: true });
   }
 };
 
 const deleteNetwork = async (
-  {
-    state, commit, dispatch, getters,
-  },
+  { state, commit, dispatch, getters },
   { network },
 ) => {
   const networksToSave = state.storedNetworks.filter(
@@ -139,16 +133,14 @@ const subscribeOnBlockUpdates = async ({ commit, dispatch }) => {
       commit(SET_BLOCK_NUMBER, number);
       dispatch('handleLastBlock', { blockNumber: number });
     })
-    .on('error', (error) => {
+    .on('error', error => {
       /* eslint-disable-next-line no-console */
       console.error('Web3 subscription error', error);
     });
 };
 
 const handleLastBlock = async (
-  {
-    state, commit, dispatch, getters,
-  },
+  { state, commit, dispatch, getters },
   { blockNumber },
 ) => {
   try {
@@ -162,10 +154,12 @@ const handleLastBlock = async (
 
     const blocks = await Promise.all(getBlockPromises);
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const block of blocks) {
       if (block) {
         handledBlockNumber = block.number;
 
+        // eslint-disable-next-line no-await-in-loop
         await dispatch(
           'transactions/handleBlockTransactions',
           {
@@ -190,8 +184,9 @@ const init = async ({ commit, dispatch, state }) => {
       ...Object.values(Network.DEFAULT_NETWORKS),
       ...networks,
     ].find(network => network.id === net);
-    const activeCurrency = Network.CURRENCIES.find(currency => activeNet.currency === currency.id)
-      || state.activeCurrency;
+    const activeCurrency =
+      Network.CURRENCIES.find(currency => activeNet.currency === currency.id) ||
+      state.activeCurrency;
 
     commit(SET_NETWORKS, networks);
     commit(CHANGE_NETWORK, activeNet);

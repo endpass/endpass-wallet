@@ -21,7 +21,9 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
       <h3
         class="modal-card-title"
       >
-        Two Factor Authentication
+        
+    Two Factor Authentication
+  
       </h3>
        
       <button
@@ -140,7 +142,9 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
       <h3
         class="modal-card-title"
       >
-        Two Factor Authentication
+        
+    Two Factor Authentication
+  
       </h3>
        
       <button
@@ -259,7 +263,9 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
       <h3
         class="modal-card-title"
       >
-        Two Factor Authentication
+        
+    Two Factor Authentication
+  
       </h3>
        
       <button
@@ -378,7 +384,9 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 3`] 
       <h3
         class="modal-card-title"
       >
-        Two Factor Authentication
+        
+    Two Factor Authentication
+  
       </h3>
        
       <button

@@ -1,9 +1,11 @@
 <template>
   <base-page class="import-wallet">
-    <template
-      slot="title"
-    >Import Existing Wallet</template>
-    <p class="subtitle">Select the type of wallet you would like to import.</p>
+    <template slot="title">
+      Import Existing Wallet
+    </template>
+    <p class="subtitle">
+      Select the type of wallet you would like to import.
+    </p>
     <div class="columns">
       <div class="column is-one-third">
         <v-list

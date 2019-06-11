@@ -14,8 +14,8 @@
       </div>
       <div class="field-body">
         <v-input
-          v-validate="`required|decimal:${decimal}|between:0,${maxAmount}`"
           id="value"
+          v-validate="`required|decimal:${decimal}|between:0,${maxAmount}`"
           :value="value"
           :error="errors.first('value')"
           :disabled="isLoading || disabled"
@@ -54,8 +54,8 @@
         </v-input>
 
         <v-input
-          v-validate="`required|decimal:2|between:0,${maxPrice}`"
           id="price"
+          v-validate="`required|decimal:2|between:0,${maxPrice}`"
           :value="price"
           :error="errors.first('price')"
           :disabled="!ethPrice || disabled"
@@ -215,9 +215,7 @@ export default {
     },
 
     maxPrice() {
-      const {
-        currentToken, ethPrice, maxAmount, fiatCurrency,
-      } = this;
+      const { currentToken, ethPrice, maxAmount, fiatCurrency } = this;
 
       if (currentToken) {
         // TODO: change ETH price getting logic
@@ -289,9 +287,7 @@ export default {
     },
 
     getAmountFromPrice() {
-      const {
-        price, fiatCurrency, currentToken, ethPrice,
-      } = this;
+      const { price, fiatCurrency, currentToken, ethPrice } = this;
 
       if (currentToken) {
         const tokenPrice = get(currentToken, `price.${fiatCurrency}`, 0);
@@ -310,9 +306,7 @@ export default {
     },
 
     getPriceFromAmount() {
-      const {
-        value, currentToken, ethPrice, fiatCurrency,
-      } = this;
+      const { value, currentToken, ethPrice, fiatCurrency } = this;
 
       if (currentToken) {
         const tokenPrice = get(currentToken, `price.${fiatCurrency}`) || 0;

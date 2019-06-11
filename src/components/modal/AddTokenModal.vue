@@ -3,9 +3,9 @@
     data-test="add-token-modal"
     @close="close"
   >
-    <template
-      slot="header"
-    >Add custom token</template>
+    <template slot="header">
+      Add custom token
+    </template>
 
     <v-form
       v-if="!addedToken"
@@ -15,9 +15,9 @@
       @submit="addToken"
     >
       <v-input
-        v-validate="'required|address'"
         id="address"
         v-model="token.address"
+        v-validate="'required|address'"
         :disabled="loadingToken"
         :error="errors.first('address')"
         name="address"
@@ -30,10 +30,10 @@
         autofocus
       />
       <v-input
-        v-validate="'required|numeric|integer|between:0,18'"
         v-if="notFound.decimals"
         id="decimals"
         v-model.number="token.decimals"
+        v-validate="'required|numeric|integer|between:0,18'"
         :disabled="!notFound.decimals"
         :error="errors.first('decimals')"
         label="Decimals"
@@ -45,10 +45,10 @@
         data-test="token-decimals-input"
       />
       <v-input
-        v-validate="'required'"
         v-if="notFound.name"
         id="name"
         v-model="token.name"
+        v-validate="'required'"
         :disabled="!notFound.name"
         :error="errors.first('name')"
         label="Name"
@@ -60,10 +60,10 @@
         data-test="token-name-input"
       />
       <v-input
-        v-validate="'required'"
         v-if="notFound.symbol"
         id="symbol"
         v-model="token.symbol"
+        v-validate="'required'"
         :disabled="!notFound.symbol"
         :error="errors.first('symbol')"
         label="Symbol"
@@ -76,13 +76,17 @@
       />
     </v-form>
     <div v-else>
-      <p class="subtitle">New token added</p>
+      <p class="subtitle">
+        New token added
+      </p>
       <div class="message">
         <div class="message-header">
           <p>{{ token.name }} ({{ token.symbol }})</p>
         </div>
         <div class="message-body">
-          <p class="code address">{{ token.address }}</p>
+          <p class="code address">
+            {{ token.address }}
+          </p>
         </div>
       </div>
     </div>
@@ -214,7 +218,7 @@ export default {
         symbol: tokenInfo.symbol,
       };
 
-      Object.keys(this.notFound).forEach((item) => {
+      Object.keys(this.notFound).forEach(item => {
         if (!this.token[item]) {
           this.notFound[item] = true;
         }

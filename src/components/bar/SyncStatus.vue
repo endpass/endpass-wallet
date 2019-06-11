@@ -20,7 +20,7 @@ export default {
   computed: {
     ...mapState({
       blockNumber: state => state.web3.blockNumber,
-      apiStatus: state => state.connectionStatus.apiConnection,
+      apiStatus: state => state.connectionStatus.isApiConnecting,
     }),
     ...mapGetters('connectionStatus', ['appStatus']),
     statusClass() {

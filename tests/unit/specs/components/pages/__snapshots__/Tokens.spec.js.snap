@@ -25,7 +25,9 @@ exports[`TokensPage render should render component 1`] = `
               <p
                 class="card-header-title"
               >
+                
                 Your Tokens
+              
               </p>
             </div>
              

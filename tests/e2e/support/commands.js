@@ -15,17 +15,22 @@
 //
 //
 // -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
+// Cypress
+// .Commands
+// .add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
 //
 //
 // -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
+// Cypress
+// .Commands
+// .add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
 //
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import path from 'path';
-import { v3password } from '../fixtures/accounts';
+import seed from '../fixtures/identity/seed';
+import { v3password, hdv3, hdv3Info } from '../fixtures/accounts';
 import {
   syncing,
   blockNumber,
@@ -71,6 +76,7 @@ Cypress.Commands.add('login', () => {
     `${identityAPIUrl}/accounts`,
     'fixture:keystore/accounts.json',
   ).as('keystoreAccounts');
+  cy.route('GET', /\/account\/(\w+)\/info$/, {}).as('accountInfo');
   // Regular account
   cy.route(
     'GET',
@@ -88,6 +94,27 @@ Cypress.Commands.add('login', () => {
     `${identityAPIUrl}/account/xpub*/info`,
     'fixture:identity/success.json',
   ).as('saveKeystoreHdAccountInfo');
+  cy.route('GET', `${identityAPIUrl}/account/${hdv3.address}`, hdv3).as(
+    'keystoreHdAccountMain',
+  );
+  cy.route(
+    'GET',
+    `${identityAPIUrl}/account/${hdv3.address}/info`,
+    hdv3Info,
+  ).as('keystoreHdAccountMainInfo');
+  cy.route({
+    method: 'GET',
+    url: `${identityAPIUrl}/user/seed`,
+    status: 200,
+    response: seed,
+  }).as('userSeed');
+  cy.route({
+    method: 'POST',
+    url: `${identityAPIUrl}/user/seed`,
+    status: 200,
+    response: { success: true },
+  }).as('saveUserSeed');
+
   // Read only account
   cy.route(
     'GET',
@@ -151,7 +178,6 @@ Cypress.Commands.add('login', () => {
     `${identityAPIUrl}/networks/*`,
     'fixture:identity/success.json',
   ).as('identityDeleteNetwork');
-  cy.route('GET', /\/account\/(\w+)\/info$/, {}).as('accountInfo');
 });
 
 // Sets up server and routes for an unauthorized user.
@@ -212,7 +238,7 @@ Cypress.Commands.add('getAccountBalance', () => {
   }).as('accountBalance');
 });
 
-Cypress.Commands.add('getTokensPrices', () => {
+Cypress.Commands.add('loadTokenPrices', () => {
   cy.route({
     method: 'GET',
     url: `${cryptodataAPIUrl}/price`,
@@ -223,13 +249,13 @@ Cypress.Commands.add('getTokensPrices', () => {
 Cypress.Commands.add('mockEthplorerRequests', () => {
   cy.route({
     method: 'GET',
-    url: `${cryptodataAPIUrl}/**/transactions/*/*`,
+    url: `${cryptodataAPIUrl}/**/transactions/*`,
     response: ethTransactions,
     status: 200,
   }).as('addressHistoryRequest');
   cy.route({
     method: 'GET',
-    url: `${cryptodataAPIUrl}/**/transactions/*`,
+    url: `${cryptodataAPIUrl}/**/transactions/*/token*`,
     response: tokenTransactions,
     status: 200,
   }).as('addressTransactionsRequest');
@@ -270,12 +296,14 @@ Cypress.Commands.add('inputInvalidPassword', () => {
  * @return {Promise} Resolves with blob containing fixture contents
  */
 function getFixtureBlob(fileUrl, type) {
-  return type === 'application/json' || path.extname(fileUrl) === 'json'
-    ? cy
-        .fixture(fileUrl)
-        .then(JSON.stringify)
-        .then(jsonStr => new Blob([jsonStr], { type: 'application/json' }))
-    : cy.fixture(fileUrl, 'base64').then(Cypress.Blob.base64StringToBlob);
+  if (type === 'application/json' || path.extname(fileUrl) === 'json') {
+    return cy
+      .fixture(fileUrl)
+      .then(JSON.stringify)
+      .then(jsonStr => new Blob([jsonStr], { type: 'application/json' }));
+  }
+
+  return cy.fixture(fileUrl, 'base64').then(Cypress.Blob.base64StringToBlob);
 }
 
 /**
@@ -338,6 +366,7 @@ Cypress.Commands.add('mockWeb3Requests', () => {
     .as('mockWeb3Provider')
     .then(provider => {
       if (!provider.mockResolvedValue) {
+        // eslint-disable-next-line no-console
         console.warn(
           'cy.mockWeb3Provider: Use web3 MockProvider to mock requests to Ethereum nodes',
         );

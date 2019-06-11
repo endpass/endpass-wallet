@@ -1,6 +1,8 @@
 import { toWei } from 'web3-utils';
-import addressInfo_b14ab from '../addressinfo/b14ab';
-import addressInfo_31ea8 from '../addressinfo/31ea8';
+// eslint-disable-next-line camelcase
+import addressInfo_b14ab from '../addressinfo/b14ab.json';
+// eslint-disable-next-line camelcase
+import addressInfo_31ea8 from '../addressinfo/31ea8.json';
 import { address } from '../accounts';
 
 const BLOCK_NUMBER = '0x4051fb';
@@ -37,6 +39,7 @@ export const getBlockByNumber = {
   },
 };
 
+// eslint-disable-next-line camelcase
 export const getBalance_b14ab = {
   payload: {
     method: 'eth_getBalance',
@@ -45,6 +48,7 @@ export const getBalance_b14ab = {
   result: toWei(String(addressInfo_b14ab.ETH.balance), 'ether'),
 };
 
+// eslint-disable-next-line camelcase
 export const getBalance_31ea8 = {
   payload: {
     method: 'eth_getBalance',
@@ -53,6 +57,7 @@ export const getBalance_31ea8 = {
   result: toWei('1', 'ether'),
 };
 
+// eslint-disable-next-line camelcase
 export const getBalance_6bbf1 = {
   payload: {
     method: 'eth_getBalance',
@@ -61,6 +66,7 @@ export const getBalance_6bbf1 = {
   result: toWei('2', 'ether'),
 };
 
+// eslint-disable-next-line camelcase
 export const getTransactionCount_b14ab = {
   payload: {
     method: 'eth_getTransactionCount',
@@ -69,6 +75,7 @@ export const getTransactionCount_b14ab = {
   result: addressInfo_b14ab.countTxs,
 };
 
+// eslint-disable-next-line camelcase
 export const call_b14ab = {
   payload: {
     method: 'eth_call',
@@ -84,6 +91,7 @@ export const call_b14ab = {
   result: '0x0000000000000000000000000000000000000000000000000000000000000000',
 };
 
+// eslint-disable-next-line camelcase
 export const call_31ea8 = {
   payload: {
     method: 'eth_call',
@@ -99,6 +107,7 @@ export const call_31ea8 = {
   result: '0x0000000000000000000000000000000000000000000000000000000000000000',
 };
 
+// eslint-disable-next-line camelcase
 export const call_custom_token_1 = {
   payload: {
     method: 'eth_call',
@@ -114,6 +123,7 @@ export const call_custom_token_1 = {
     '0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000084f4d47546f6b656e000000000000000000000000000000000000000000000000',
 };
 
+// eslint-disable-next-line camelcase
 export const call_custom_token_2 = {
   payload: {
     method: 'eth_call',
@@ -128,6 +138,7 @@ export const call_custom_token_2 = {
   result: '0x0000000000000000000000000000000000000000000000000000000000000012',
 };
 
+// eslint-disable-next-line camelcase
 export const call_custom_token_3 = {
   payload: {
     method: 'eth_call',
@@ -143,6 +154,7 @@ export const call_custom_token_3 = {
     '0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000034f4d470000000000000000000000000000000000000000000000000000000000',
 };
 
+// eslint-disable-next-line camelcase
 export const call_custom_token_4 = {
   payload: {
     method: 'eth_call',
@@ -157,6 +169,7 @@ export const call_custom_token_4 = {
   result: '0x00000000000000000000000000000000000000000074021e45de4e977a570f4f',
 };
 
+// eslint-disable-next-line camelcase
 export const call_custom_token_5 = {
   payload: {
     method: 'eth_call',
@@ -184,6 +197,7 @@ export const estimateGas = {
   result: '0xcf08',
 };
 
+// eslint-disable-next-line camelcase
 export const estimateGas_31ea8 = {
   payload: {
     method: 'eth_estimateGas',
@@ -197,6 +211,7 @@ export const estimateGas_31ea8 = {
   result: '0x5208',
 };
 
+// eslint-disable-next-line camelcase
 export const sendRawTransaction_b14ab_31ea8 = {
   payload: {
     method: 'eth_sendRawTransaction',
@@ -207,6 +222,7 @@ export const sendRawTransaction_b14ab_31ea8 = {
   result: TRANSACTION_HASH,
 };
 
+// eslint-disable-next-line camelcase
 export const getTransactionReceipt_b14ab_31ea8 = {
   payload: {
     method: 'eth_getTransactionReceipt',
@@ -224,6 +240,7 @@ export const getTransactionReceipt_b14ab_31ea8 = {
   },
 };
 
+// eslint-disable-next-line camelcase
 export const sendRawTransaction_b14ab_31ea8_cancel = {
   payload: {
     method: 'eth_sendRawTransaction',
@@ -234,6 +251,7 @@ export const sendRawTransaction_b14ab_31ea8_cancel = {
   result: CANCEL_TRANSACTION_HASH,
 };
 
+// eslint-disable-next-line camelcase
 export const getTransactionReceipt_b14ab_31ea8_cancel = {
   payload: {
     method: 'eth_getTransactionReceipt',
@@ -251,6 +269,7 @@ export const getTransactionReceipt_b14ab_31ea8_cancel = {
   },
 };
 
+// eslint-disable-next-line camelcase
 export const sendRawTransaction_b14ab_31ea8_resend = {
   payload: {
     method: 'eth_sendRawTransaction',
@@ -261,6 +280,7 @@ export const sendRawTransaction_b14ab_31ea8_resend = {
   result: RESEND_TRANSACTION_HASH,
 };
 
+// eslint-disable-next-line camelcase
 export const getTransactionReceipt_b14ab_31ea8_resend = {
   payload: {
     method: 'eth_getTransactionReceipt',

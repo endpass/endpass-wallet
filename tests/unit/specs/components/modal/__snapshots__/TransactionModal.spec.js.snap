@@ -7,7 +7,9 @@ exports[`TransactionModal render should render initial state of the component 1`
 >
   <v-modal-stub>
     <template>
+      
       Are you sure?
+    
     </template>
      
     <div>

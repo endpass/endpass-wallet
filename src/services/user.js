@@ -1,7 +1,9 @@
 import { NotificationError, Wallet } from '@/class';
 import { proxyRequest } from '@/class/singleton';
-import { keystore } from '@endpass/utils';
+import keystoreHDKeyVerify from '@endpass/utils/keystoreHDKeyVerify';
+import isV3 from '@endpass/utils/isV3';
 import { identityValidator, v3KeystoreValidator } from '@/schema';
+import get from 'lodash/get';
 
 const WALLET_TYPES = Wallet.getTypes();
 
@@ -159,7 +161,7 @@ export default {
     try {
       const accounts = await this.getAccounts();
       const allAcc = accounts
-        .filter(acc => !keystore.isExtendedPublicKey(acc))
+        .filter(acc => !keystoreHDKeyVerify.isExtendedPublicKey(acc))
         .map(this.getAccount);
 
       return await Promise.all(allAcc);
@@ -181,16 +183,24 @@ export default {
   async getHDKey() {
     const accounts = await this.getAccounts();
 
-    const hdAddresses = accounts.filter(acc => keystore.isExtendedPublicKey(acc));
+    const hdAddresses = accounts.filter(acc =>
+      keystoreHDKeyVerify.isExtendedPublicKey(acc),
+    );
+
+    if (hdAddresses.length === 0) {
+      return null;
+    }
 
     const hdAccounts = await Promise.all(
       hdAddresses.map(acc => this.getAccount(acc)),
     );
 
-    return (
-      hdAccounts.find(({ info = {} }) => info.type === WALLET_TYPES.HD_MAIN)
-      || hdAccounts[0]
-    );
+    const hdAccount =
+      hdAccounts.find(
+        account => get(account, 'info.type') === WALLET_TYPES.HD_MAIN,
+      ) || hdAccounts.find(acc => isV3(acc));
+
+    return v3KeystoreValidator.validateNonEmptyAccountWithInfo(hdAccount);
   },
 
   async getOtpSettings() {
@@ -256,7 +266,7 @@ export default {
     }
   },
 
-  async getPasswortRecoveryIdentifier() {
+  async getPasswordRecoveryIdentifier() {
     try {
       const { success, message } = await proxyRequest.read(
         '/recovery-password',
@@ -304,6 +314,67 @@ export default {
         title: 'Error recovering wallet password',
         text:
           'An error occurred while recovering wallet password. Please try again.',
+        type: 'is-danger',
+      });
+    }
+  },
+
+  async backupSeed(encryptedSeed) {
+    try {
+      const res = await proxyRequest.write('/user/seed', {
+        payload: {
+          seed: encryptedSeed,
+        },
+      });
+
+      return res;
+    } catch (e) {
+      throw new NotificationError({
+        log: true,
+        message: e.message,
+        title: 'Error backuping seed',
+        text:
+          'An error occurred during account seed backuping. Please try again.',
+        type: 'is-danger',
+      });
+    }
+  },
+
+  async recoverSeed() {
+    try {
+      const { seed } = await proxyRequest.read('/user/seed');
+
+      return seed;
+    } catch (e) {
+      throw new NotificationError({
+        message: e.message,
+        title: 'Error recovering seed backup',
+        text: e.message.includes('404')
+          ? "You can't restore seed because it was not backuped."
+          : 'An error occurred while recovering account seed. Please try again.',
+        type: 'is-danger',
+      });
+    }
+  },
+
+  async updateEmail(payload) {
+    try {
+      const { success, message } = await proxyRequest.write('/user/email', {
+        payload,
+      });
+      if (!success) {
+        throw new Error(
+          `POST ${ENV.VUE_APP_IDENTITY_API_URL}/user/email: ${message}`,
+        );
+      }
+
+      return { success };
+    } catch (e) {
+      throw new NotificationError({
+        log: true,
+        message: e.message,
+        title: 'Error updating email',
+        text: 'An error occurred while updating email. Please try again.',
         type: 'is-danger',
       });
     }

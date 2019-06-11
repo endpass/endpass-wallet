@@ -1,8 +1,8 @@
-import actions from '@/store/actions';
+import actions from '@/store/core/actions';
 import {
   START_PAGE_LOADING,
   STOP_PAGE_LOADING,
-} from '@/store/mutations-types.js';
+} from '@/store/core/mutations-types';
 
 // Mock mutations
 const mutations = {

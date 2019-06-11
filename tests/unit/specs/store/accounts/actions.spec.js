@@ -2,7 +2,7 @@ import HDKey from 'ethereumjs-wallet/hdkey';
 import Web3 from 'web3';
 
 import {
-  address,
+  address as addressAcc,
   addressBytes,
   addressHdChild,
   addresses,
@@ -14,6 +14,8 @@ import {
   privateKey,
   privateKeyString,
   checksumAddress,
+  seed,
+  encryptedMessage,
 } from 'fixtures/accounts';
 import {
   getPasswordRecoveryIdentifierResponse,
@@ -31,11 +33,14 @@ import {
   CHANGE_INIT_STATUS,
   SET_HD_CACHE_BY_TYPE,
 } from '@/store/accounts/mutations-types';
-import { keystore } from '@endpass/utils';
+import keystoreHDWallet from '@endpass/utils/keystoreHDWallet';
+import keystoreWallet from '@endpass/utils/keystoreWallet';
+import walletGen from '@endpass/utils/walletGen';
 import userService from '@/services/user';
 import localSettingsService from '@/services/localSettings';
 
 import proxies from 'mocks/class/proxies';
+import { ENCRYPT_OPTIONS } from '@/constants';
 
 const WALLET_TYPES = Wallet.getTypes();
 
@@ -295,7 +300,7 @@ describe('Accounts actions', () => {
 
       const error = new Error('error');
       const spy = jest
-        .spyOn(keystore, 'encryptWallet')
+        .spyOn(keystoreWallet, 'encryptWallet')
         .mockImplementation(() => {
           throw error;
         });
@@ -362,49 +367,6 @@ describe('Accounts actions', () => {
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
         root: true,
       });
-    });
-  });
-
-  describe('generateWallet', () => {
-    it('should generate wallet from hd key', async () => {
-      expect.assertions(3);
-
-      const hdWallet = keystore.decryptHDWallet(v3password, hdv3);
-      const state = { hdKey: {}, wallets: {} };
-
-      dispatch.mockResolvedValueOnce(hdWallet);
-      keystore.encryptWallet = jest.fn(() => ({ address }));
-
-      await actions.generateWallet({ state, dispatch }, v3password);
-
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenNthCalledWith(
-        1,
-        'decryptAccountHdWallet',
-        v3password,
-      );
-      expect(dispatch).toHaveBeenNthCalledWith(
-        2,
-        'addWalletAndSelect',
-        expect.objectContaining({
-          address: expect.any(String),
-        }),
-      );
-    });
-
-    it('should throw error when hdKey doesn`t exist', async () => {
-      expect.assertions(2);
-
-      const state = { hdKey: null };
-      const getters = {};
-
-      try {
-        await actions.generateWallet({ state, dispatch, getters });
-      } catch (e) {
-        expect(e).toBeTruthy();
-      }
-
-      expect(dispatch).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -502,54 +464,62 @@ describe('Accounts actions', () => {
     });
   });
 
-  describe('addHdWallet', () => {
-    const { address } = hdv3;
+  describe('createNewWallet', () => {
     const getters = {
       getHdWalletBySeed: jest.fn(),
     };
 
     beforeEach(() => {
-      keystore.encryptHDWallet = jest.fn().mockReturnValueOnce({
-        address,
+      walletGen.createComplex = jest.fn().mockReturnValueOnce({
+        seedKey: mnemonic,
+        encryptedSeed: encryptedMessage,
+        v3KeystoreHdWallet: hdv3,
+        v3KeystoreChildWallet: v3,
       });
     });
 
-    it('should generate and save wallet', async () => {
-      expect.assertions(3);
+    it('should create and save wallet', async () => {
+      expect.assertions(5);
 
       const expectedJson = expect.objectContaining({
-        address,
+        address: hdv3.address,
       });
       const expectedInfo = {
-        address,
+        address: hdv3.address,
         type: WALLET_TYPES.HD_MAIN,
         hidden: false,
       };
 
-      await actions.addHdWallet(
-        { dispatch, getters },
-        { password: v3password, key: mnemonic },
+      const seedKey = await actions.createNewWallet(
+        { dispatch },
+        { password: v3password },
       );
 
+      expect(seedKey).toBe(mnemonic);
       expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'saveWallet', {
         json: expectedJson,
         info: expectedInfo,
       });
-      expect(dispatch).toHaveBeenNthCalledWith(2, 'generateWallet', v3password);
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'addWalletAndSelect', v3);
+      expect(userService.backupSeed).toBeCalledWith(encryptedMessage);
     });
 
     it('should handle errors', async () => {
-      expect.assertions(2);
+      expect.assertions(3);
 
-      const error = new Error('error');
+      const error = new Error('internal error');
 
       dispatch.mockRejectedValueOnce(error);
 
-      await actions.addHdWallet(
-        { dispatch, getters },
-        { password: v3password, key: mnemonic },
-      );
+      try {
+        await actions.createNewWallet(
+          { dispatch, getters },
+          { password: v3password },
+        );
+      } catch (e) {
+        expect(e).toEqual(new Error("Can't create new wallet"));
+      }
 
       expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenLastCalledWith('errors/emitError', error, {
@@ -639,7 +609,7 @@ describe('Accounts actions', () => {
   });
 
   describe('addHdPublicWallet', () => {
-    const { address } = hdv3;
+    const { address: hdAddress } = hdv3;
     const getters = {
       getHdWalletBySeed: jest.fn(),
     };
@@ -648,8 +618,8 @@ describe('Accounts actions', () => {
       web3.eth.getBalance = jest.fn().mockResolvedValueOnce('5');
       web3.eth.getBalance.mockResolvedValueOnce('0');
 
-      keystore.encryptHDWallet = jest.fn().mockReturnValueOnce({
-        address,
+      keystoreHDWallet.encryptHDWallet = jest.fn().mockReturnValueOnce({
+        address: hdAddress,
       });
     });
 
@@ -764,7 +734,7 @@ describe('Accounts actions', () => {
         'tokens/setTokensInfoByAddress',
         {
           tokens: [],
-          address,
+          address: addressAcc,
         },
         { root: true },
       );
@@ -828,9 +798,8 @@ describe('Accounts actions', () => {
     it('should validate the password through the hdKey when the public account', async () => {
       expect.assertions(3);
 
-      keystore.decrypt = jest.fn().mockResolvedValueOnce();
       Wallet.prototype.validatePassword = jest.fn().mockResolvedValueOnce(true);
-      Wallet.getAddressFromXpub = jest.fn(() => address);
+      Wallet.getAddressFromXpub = jest.fn(() => addressAcc);
 
       getters = { ...getters, isPublicAccount: true };
 
@@ -861,12 +830,17 @@ describe('Accounts actions', () => {
 
   describe('setUserHdKey', () => {
     it('should set the hd key to the store', async () => {
-      expect.assertions(2);
+      expect.assertions(3);
 
       await actions.setUserHdKey({ commit, dispatch });
 
-      expect(commit).toHaveBeenCalledTimes(1);
+      expect(commit).toHaveBeenCalledTimes(2);
       expect(commit).toBeCalledWith(SET_HD_KEY, hdv3);
+      expect(commit).toBeCalledWith(SET_HD_CACHE_BY_TYPE, {
+        xpub: hdv3.address,
+        v3KeyStore: hdv3,
+        walletType: WALLET_TYPES.HD_MAIN,
+      });
     });
 
     it('should handle errors', async () => {
@@ -921,8 +895,6 @@ describe('Accounts actions', () => {
 
     it('should request user accounts and save it to the store', async () => {
       expect.assertions(5);
-
-      keystore.isV3 = jest.fn().mockReturnValueOnce(true);
 
       await actions.setUserWallets({ commit, dispatch, rootState });
 
@@ -1057,14 +1029,17 @@ describe('Accounts actions', () => {
     it('should decrypt current account hd wallet with keystore and return it', async () => {
       expect.assertions(2);
 
-      keystore.decryptHDWallet = jest.fn().mockReturnValueOnce('foo');
+      keystoreHDWallet.decryptHDWallet = jest.fn().mockReturnValueOnce('foo');
 
       const state = {
         hdKey: '0x0',
       };
       const res = await actions.decryptAccountHdWallet({ state }, 'password');
 
-      expect(keystore.decryptHDWallet).toBeCalledWith('password', '0x0');
+      expect(keystoreHDWallet.decryptHDWallet).toBeCalledWith(
+        'password',
+        '0x0',
+      );
       expect(res).toBe('foo');
     });
 
@@ -1076,7 +1051,7 @@ describe('Accounts actions', () => {
       };
       const res = await actions.decryptAccountHdWallet({ state }, 'password');
 
-      expect(keystore.decryptHDWallet).not.toBeCalled();
+      expect(keystoreHDWallet.decryptHDWallet).not.toBeCalled();
       expect(res).toBe(null);
     });
   });
@@ -1100,12 +1075,12 @@ describe('Accounts actions', () => {
         ],
       };
 
-      keystore.decryptWallet = jest.fn();
+      keystoreWallet.decryptWallet = jest.fn();
 
       await actions.decryptAccountWallets({ state }, 'password');
 
-      expect(keystore.decryptWallet).toBeCalledTimes(1);
-      expect(keystore.decryptWallet).toBeCalledWith('password', '0x1');
+      expect(keystoreWallet.decryptWallet).toBeCalledTimes(1);
+      expect(keystoreWallet.decryptWallet).toBeCalledWith('password', '0x1');
     });
   });
 
@@ -1122,13 +1097,10 @@ describe('Accounts actions', () => {
 
       await actions.encryptHdWallet(null, payload);
 
-      expect(keystore.encryptHDWallet).toBeCalledWith(
+      expect(keystoreHDWallet.encryptHDWallet).toBeCalledWith(
         payload.password,
         payload.hdWallet,
-        {
-          kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-          n: ENV.VUE_APP_KDF_PARAMS_N,
-        },
+        ENCRYPT_OPTIONS,
       );
     });
 
@@ -1137,7 +1109,7 @@ describe('Accounts actions', () => {
 
       const res = await actions.encryptHdWallet(null, {});
 
-      expect(keystore.encryptHDWallet).not.toBeCalled();
+      expect(keystoreHDWallet.encryptHDWallet).not.toBeCalled();
       expect(res).toBe(null);
     });
   });
@@ -1146,7 +1118,7 @@ describe('Accounts actions', () => {
     it('should encrypt and returns given wallets', async () => {
       expect.assertions(2);
 
-      keystore.encryptWallet = jest
+      keystoreWallet.encryptWallet = jest
         .fn()
         .mockImplementationOnce((pass, obj) => obj);
 
@@ -1159,18 +1131,12 @@ describe('Accounts actions', () => {
         ],
       };
 
-      const res = await actions.encryptWallets(null, payload, {
-        kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-        n: ENV.VUE_APP_KDF_PARAMS_N,
-      });
+      const res = await actions.encryptWallets(null, payload, ENCRYPT_OPTIONS);
 
-      expect(keystore.encryptWallet).toBeCalledWith(
+      expect(keystoreWallet.encryptWallet).toBeCalledWith(
         payload.password,
         payload.wallets[0],
-        {
-          kdf: ENV.VUE_APP_KDF_PARAMS_KDF,
-          n: ENV.VUE_APP_KDF_PARAMS_N,
-        },
+        ENCRYPT_OPTIONS,
       );
       expect(res).toEqual(payload.wallets);
     });
@@ -1411,10 +1377,10 @@ describe('Accounts actions', () => {
       expect(getters.getHdWalletBySeed).toHaveBeenCalledTimes(1);
       expect(getters.getHdWalletBySeed).toHaveBeenCalledWith(mnemonic);
 
-      expect(userService.getPasswortRecoveryIdentifier).toHaveBeenCalledTimes(
+      expect(userService.getPasswordRecoveryIdentifier).toHaveBeenCalledTimes(
         1,
       );
-      expect(userService.getPasswortRecoveryIdentifier).toHaveBeenCalledWith();
+      expect(userService.getPasswordRecoveryIdentifier).toHaveBeenCalledWith();
 
       expect(Web3.eth.accounts.sign).toHaveBeenCalledTimes(1);
       expect(Web3.eth.accounts.sign).toHaveBeenCalledWith(
@@ -1488,10 +1454,10 @@ describe('Accounts actions', () => {
       expect(getters.getHdWalletBySeed).toHaveBeenCalledTimes(1);
       expect(getters.getHdWalletBySeed).toHaveBeenCalledWith(mnemonic);
 
-      expect(userService.getPasswortRecoveryIdentifier).toHaveBeenCalledTimes(
+      expect(userService.getPasswordRecoveryIdentifier).toHaveBeenCalledTimes(
         1,
       );
-      expect(userService.getPasswortRecoveryIdentifier).toHaveBeenCalledWith();
+      expect(userService.getPasswordRecoveryIdentifier).toHaveBeenCalledWith();
 
       expect(Web3.eth.accounts.sign).toHaveBeenCalledTimes(1);
       expect(Web3.eth.accounts.sign).toHaveBeenCalledWith(
@@ -1599,6 +1565,98 @@ describe('Accounts actions', () => {
       expect(localSettingsService.save).toBeCalledWith(email, {
         activeAccount: state.address,
       });
+    });
+  });
+
+  describe('backupSeed', () => {
+    let decryptedHDWallet;
+    let decryptedWallet;
+
+    beforeEach(() => {
+      decryptedWallet = {
+        toV3: jest.fn(() => v3),
+      };
+      decryptedHDWallet = {
+        deriveChild: () => ({
+          getWallet: jest.fn(() => decryptedWallet),
+        }),
+      };
+      dispatch.mockResolvedValueOnce(decryptedHDWallet);
+    });
+
+    it('should backup seed with user service', async () => {
+      expect.assertions(2);
+
+      Wallet.prototype.encryptMessageWithPublicKey = jest
+        .fn()
+        .mockReturnValue(encryptedMessage);
+
+      await actions.backupSeed({ dispatch }, { password: v3password, seed });
+
+      expect(dispatch).toBeCalledTimes(1);
+      expect(userService.backupSeed).toBeCalledWith(encryptedMessage);
+    });
+
+    it('should emit error if user service rejects seed backup request', async () => {
+      expect.assertions(1);
+
+      const error = new Error('foo');
+      Wallet.prototype.encryptMessageWithPublicKey = jest
+        .fn()
+        .mockRejectedValueOnce(error);
+
+      await actions.backupSeed({ dispatch }, { password: v3password, seed });
+
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'errors/emitError', error, {
+        root: true,
+      });
+    });
+  });
+
+  describe('recoverSeed', () => {
+    let decryptedHDWallet;
+    let decryptedWallet;
+
+    beforeEach(() => {
+      decryptedWallet = {
+        toV3: jest.fn(() => v3),
+      };
+      decryptedHDWallet = {
+        deriveChild: () => ({
+          getWallet: jest.fn(() => decryptedWallet),
+        }),
+      };
+      dispatch.mockResolvedValueOnce(decryptedHDWallet);
+    });
+
+    it('should recover seed with given password', async () => {
+      expect.assertions(1);
+
+      Wallet.prototype.decryptMessageWithPrivateKey = jest
+        .fn()
+        .mockReturnValue(seed);
+      dispatch.mockResolvedValueOnce(decryptedHDWallet);
+      userService.recoverSeed.mockResolvedValueOnce(encryptedMessage);
+
+      const res = await actions.recoverSeed({ dispatch }, v3password);
+
+      expect(res).toBe(seed);
+    });
+
+    it('should emit error if user service rejects seed recovery request', async () => {
+      expect.assertions(2);
+
+      const error = new Error('foo');
+      userService.recoverSeed.mockRejectedValueOnce(error);
+
+      try {
+        await actions.recoverSeed({ dispatch }, v3password);
+      } catch (err) {
+        expect(dispatch).toBeCalledTimes(2);
+        expect(dispatch).toHaveBeenNthCalledWith(2, 'errors/emitError', error, {
+          root: true,
+        });
+      }
     });
   });
 });

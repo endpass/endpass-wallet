@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/prefer-default-export
 export const userOtpSetting = {
   oneOf: [
     {
@@ -20,8 +21,4 @@ export const userOtpSetting = {
       },
     },
   ],
-};
-
-export default {
-  userOtpSetting,
 };

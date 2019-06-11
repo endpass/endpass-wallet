@@ -5,7 +5,9 @@ exports[`SettingsPage render should not render email and otp settings when not d
   class="settings-page"
 >
   <template>
+    
     Settings
+  
   </template>
    
   <v-form-stub
@@ -29,6 +31,10 @@ exports[`SettingsPage render should not render email and otp settings when not d
   <!---->
    
   <!---->
+   
+  <seed-recovery-stub />
+   
+  <!---->
 </base-page-stub>
 `;
 
@@ -37,7 +43,9 @@ exports[`SettingsPage render should render the initial state of the component 1`
   class="settings-page"
 >
   <template>
+    
     Settings
+  
   </template>
    
   <v-form-stub
@@ -70,5 +78,9 @@ exports[`SettingsPage render should render the initial state of the component 1`
   <change-password-settings-stub />
    
   <password-recovery-stub />
+   
+  <seed-recovery-stub />
+   
+  <email-update-stub />
 </base-page-stub>
 `;

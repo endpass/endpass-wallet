@@ -9,6 +9,7 @@ jest.mock('web3', () => {
   }
 
   const originalWeb3 = require.requireActual('web3');
+  // eslint-disable-next-line global-require
   const { transactionHash } = require('fixtures/transactions');
   const setProvider = jest.fn(() => true);
   const currentProvider = {
@@ -42,11 +43,14 @@ jest.mock('web3', () => {
 
       subscriptions[type].forEach(callback => callback(data));
 
+      /* eslint-disable-next-line */
       return subscriptionEventEmiter;
     }),
   };
   const subscribe = jest.fn(() => subscriptionEventEmiter);
-  const clearSubscriptions = jest.fn(() => (subscriptions = {}));
+  const clearSubscriptions = jest.fn(() => {
+    subscriptions = {};
+  });
   const eth = {
     net: {
       getNetworkType: jest.fn().mockResolvedValue('ropsten'),
@@ -69,6 +73,7 @@ jest.mock('web3', () => {
     subscribe,
     clearSubscriptions,
     subscriptionEventEmiter,
+    isSyncing: jest.fn().mockResolvedValue(false),
   };
   const { utils } = originalWeb3;
   const mockWeb3 = jest.fn(() => ({

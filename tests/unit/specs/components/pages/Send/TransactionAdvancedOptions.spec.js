@@ -1,4 +1,4 @@
-import { default as VeeValidate, Validator } from 'vee-validate';
+import VeeValidate, { Validator } from 'vee-validate';
 import { createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
 import validation from '@/validation';
