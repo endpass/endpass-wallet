@@ -25,6 +25,7 @@ exports[`WalletsList render should render initial state of the component 1`] = `
     <v-pagination-stub
       limit="10"
       offset="0"
+      pagesvisible="0"
       total="0"
     />
      
