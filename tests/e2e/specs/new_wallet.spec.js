@@ -16,9 +16,8 @@ describe('New Wallet Page', () => {
     cy.contains('New Wallet').click();
 
     cy.wait(['@keystoreAddAccount']);
-    // temp workaround for wallet generation wait
-    cy.get('[data-test=seed-phrase]').contains(/(\w+\s*){12}/, {
-      timeout: 30000,
-    }); // 12 word seed phrase
+    cy.contains('[data-test=seed-phrase]', /(\w+\s*){12}/); // 12 word seed phrase
+    cy.wait(10000);
+    cy.get('[data-test=seed-phrase]').should('contain', '');
   });
 });
