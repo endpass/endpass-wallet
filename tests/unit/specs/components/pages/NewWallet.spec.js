@@ -213,6 +213,17 @@ describe('NewWallet page', () => {
 
         expect(wrapper.vm.handleSeedPhraseTimer).toHaveBeenCalledTimes(1);
       });
+
+      it('should reset seedPhrase', () => {
+        jest.spyOn(wrapper.vm.$timer, 'stop');
+        wrapper.vm.key = 'xxx';
+        wrapper.vm.remainingSeedPhraseTimeout = 0;
+
+        wrapper.vm.handleSeedPhraseTimer();
+
+        expect(wrapper.vm.$timer.stop).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.key).toBeNull();
+      });
     });
   });
 });

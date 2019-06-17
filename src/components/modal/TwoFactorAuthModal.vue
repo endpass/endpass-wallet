@@ -97,11 +97,13 @@ export default {
   },
   computed: {
     qrCodeSrc() {
-      const otpAuthUri = `otpauth://totp/Endpass:${this.email}?secret=${
-        this.secret
-      }`;
+      const otpAuthUri = `otpauth://totp/Endpass:${
+        this.email
+      }?issuer=Endpass&secret=${this.secret}`;
 
-      return `https://chart.googleapis.com/chart?chs=166x166&chld=L|0&cht=qr&chl=${otpAuthUri}`;
+      return `https://chart.googleapis.com/chart?chs=166x166&chld=L|0&cht=qr&chl=${encodeURIComponent(
+        otpAuthUri,
+      )}`;
     },
   },
   methods: {

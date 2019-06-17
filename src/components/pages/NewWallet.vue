@@ -139,6 +139,7 @@ export default {
 
       if (this.remainingSeedPhraseTimeout <= 0) {
         this.$timer.stop('seedPhrase');
+        this.key = null;
       }
     },
 
