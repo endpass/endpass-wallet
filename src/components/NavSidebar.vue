@@ -226,13 +226,6 @@
           </p>
           <ul class="menu-list">
             <li>
-              <a
-                :href="dappBrowserUrl"
-                class="nav-link"
-                target="_blank"
-              >Dapp</a>
-            </li>
-            <li>
               <router-link
                 :to="{ name: 'MessagePage' }"
                 class="nav-link"
