@@ -23,12 +23,11 @@
         </p>
       </div>
       <router-link
-        :disabled="!!remainingSeedPhraseTimeout"
         to="/"
         class="button is-success is-cta"
         @click.native="onContinue"
       >
-        Continue {{ getRemainingSeedPhraseTimeout }}
+        Continue
       </router-link>
     </div>
     <div
@@ -72,12 +71,8 @@
 
 <script>
 import BasePage from '@/components/pages/Base';
-import VueTimers from 'vue-timers/mixin';
 import { mapActions, mapState } from 'vuex';
 import formMixin from '@/mixins/form';
-
-const SEED_PHRASE_TIMEOUT_SEC = 10;
-const UPDATE_SEED_PHRASE_INTERVAL_MSEC = 1000;
 
 export default {
   data() {
@@ -86,7 +81,6 @@ export default {
       key: null,
       isCreating: false,
       isCloseAfterCreate: false,
-      remainingSeedPhraseTimeout: SEED_PHRASE_TIMEOUT_SEC,
     };
   },
 
@@ -94,12 +88,6 @@ export default {
     ...mapState({
       hdKey: state => state.accounts.hdKey,
     }),
-
-    getRemainingSeedPhraseTimeout() {
-      return this.remainingSeedPhraseTimeout > 0
-        ? `(${this.remainingSeedPhraseTimeout})`
-        : '';
-    },
   },
   methods: {
     ...mapActions('accounts', ['createNewWallet']),
@@ -119,7 +107,6 @@ export default {
           password: this.password,
         });
         this.key = seedKey;
-        this.$timer.start('seedPhrase');
       } catch (e) {
         this.$notify({
           title: 'Error creating wallet',
@@ -133,16 +120,6 @@ export default {
       this.isCreating = false;
     },
 
-    handleSeedPhraseTimer() {
-      this.remainingSeedPhraseTimeout -=
-        UPDATE_SEED_PHRASE_INTERVAL_MSEC / 1000;
-
-      if (this.remainingSeedPhraseTimeout <= 0) {
-        this.$timer.stop('seedPhrase');
-        this.key = null;
-      }
-    },
-
     onContinue() {
       if (this.isCloseAfterCreate) {
         window.close();
@@ -154,18 +131,7 @@ export default {
     this.isCloseAfterCreate = !!this.$route.query.closeAfterCreateWallet;
   },
 
-  mixins: [VueTimers, formMixin],
-
-  timers: {
-    seedPhrase: {
-      repeat: true,
-      time: UPDATE_SEED_PHRASE_INTERVAL_MSEC,
-      callback() {
-        this.handleSeedPhraseTimer();
-      },
-    },
-  },
-
+  mixins: [formMixin],
   components: {
     BasePage,
   },
