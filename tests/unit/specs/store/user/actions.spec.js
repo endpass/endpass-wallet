@@ -10,6 +10,7 @@ import {
   SET_EMAIL,
 } from '@/store/user/mutations-types';
 import { connect } from '@/class';
+import ConnectError from '@endpass/class/ConnectError';
 import { settings, otpSettings } from 'fixtures/accounts';
 
 describe('user actions', () => {
@@ -138,9 +139,9 @@ describe('user actions', () => {
       it('should skip athorization cancel error', async () => {
         expect.assertions(1);
 
-        const error = new Error('Auth was canceled by user');
-
-        connect.auth = jest.fn().mockRejectedValue(error);
+        connect.auth = jest.fn().mockRejectedValue({
+          code: ConnectError.ERRORS.AUTH_CANCELED_BY_USER,
+        });
 
         await actions.login({ commit, dispatch });
 
