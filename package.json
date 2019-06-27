@@ -1,6 +1,6 @@
 {
   "name": "endpass-wallet",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lightweight, easy to use Ethereum wallet",
   "author": "Endpass, Inc",
   "homepage": "https://wallet.endpass.com",
@@ -46,8 +46,8 @@
     ]
   },
   "dependencies": {
-    "@endpass/class": "^0.14.5",
-    "@endpass/connect": "0.22.1-beta",
+    "@endpass/class": "^0.14.6",
+    "@endpass/connect": "^0.24.3-beta",
     "@endpass/eslint-plugin-endpass": "^0.1.0",
     "@endpass/faucet": "^0.1.2",
     "@endpass/ui": "^0.10.2",
