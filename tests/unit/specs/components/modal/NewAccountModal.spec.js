@@ -66,20 +66,21 @@ describe('NewAccountModal', () => {
 
   describe('behavior', () => {
     it('should redirect and close the modal for import', () => {
-      const spy = jest.spyOn(wrapper.vm, 'close');
-      const push = jest.fn();
-      wrapper.vm.$router = { push };
+      jest.spyOn(wrapper.vm, 'close');
 
+      const push = jest.fn();
+
+      wrapper.vm.$router = { push };
       wrapper.vm.importNewAccount();
 
-      expect(spy).toBeCalled();
+      expect(wrapper.vm.close).toBeCalled();
       expect(push).toBeCalledWith('import');
     });
 
     it('should switch modals state', () => {
-      expect(wrapper.vm.isWalletsListModal).toBe(false);
+      expect(wrapper.vm.isAwaitingPassword).toBe(false);
       wrapper.find('form[data-test="createNewAccount"]').vm.$emit('submit');
-      expect(wrapper.vm.isWalletsListModal).toBe(true);
+      expect(wrapper.vm.isAwaitingPassword).toBe(true);
     });
   });
 });

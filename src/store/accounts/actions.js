@@ -173,7 +173,7 @@ const addNextWalletFromHd = async (
   { dispatch, getters },
   { password, walletType },
 ) => {
-  const existAddresses = getters.accountStandardWalletsAddresses;
+  const existAddresses = getters.accountV3WalletsAddresses;
   const nextAddresses = await dispatch('getNextWalletsFromHd', {
     offset: existAddresses.length,
     walletType,

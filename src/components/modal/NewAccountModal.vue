@@ -105,9 +105,9 @@ export default {
   data() {
     return {
       privateKey: '',
+      walletType: WALLET_TYPES.HD_MAIN,
       isAccountCreated: false,
       isAwaitingPassword: false,
-      walletType: WALLET_TYPES.HD_MAIN,
     };
   },
 
