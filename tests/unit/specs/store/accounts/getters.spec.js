@@ -1,5 +1,8 @@
+import { Wallet } from '@/class';
 import accountsGetters from '@/store/accounts/getters';
-import { v3, hdv3 } from 'fixtures/accounts';
+import { address, addressHdChild, v3, hdv3 } from 'fixtures/accounts';
+
+const WALLET_TYPES = Wallet.getTypes();
 
 describe('Accounts getters', () => {
   describe('wallet', () => {
@@ -123,6 +126,30 @@ describe('Accounts getters', () => {
     it('should check stored keystore', () => {
       expect(accountsGetters.isHDv3WalletByType(state)(otherType)).toBe(false);
       expect(accountsGetters.isHDv3WalletByType(state)(type)).toBe(true);
+    });
+  });
+
+  describe('accountV3WalletsAddresses', () => {
+    it('should return only v3 accounts from user wallets', () => {
+      const wallets = {
+        [address]: {
+          v3: {
+            crypto: {
+              ciphertext: 'foo',
+            },
+          },
+          address,
+        },
+        [addressHdChild]: {
+          address: addressHdChild,
+        },
+      };
+
+      expect(
+        accountsGetters.accountV3WalletsAddresses({
+          wallets,
+        }),
+      ).toEqual([address]);
     });
   });
 });
