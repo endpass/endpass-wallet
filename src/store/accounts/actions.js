@@ -12,7 +12,6 @@ import {
 } from '@/services';
 import { Wallet, NotificationError, web3 } from '@/class';
 import { ENCRYPT_OPTIONS } from '@/constants';
-
 import {
   CHANGE_INIT_STATUS,
   SET_ADDRESS,
@@ -170,13 +169,35 @@ const createNewWallet = async ({ dispatch }, { password }) => {
   }
 };
 
+const addNextWalletFromHd = async (
+  { dispatch, getters },
+  { password, walletType },
+) => {
+  const existAddresses = getters.accountStandardWalletsAddresses;
+  const nextAddresses = await dispatch('getNextWalletsFromHd', {
+    offset: existAddresses.length,
+    walletType,
+  });
+  const nextAddress = nextAddresses.find(
+    address => !existAddresses.includes(address),
+  );
+  const nextAddressIdx =
+    existAddresses.length + nextAddresses.indexOf(nextAddress);
+
+  await dispatch('addHdChildWallets', {
+    address: nextAddress,
+    index: nextAddressIdx,
+    type: walletType,
+    password,
+  });
+};
+
 const addHdChildWallets = async (
   { dispatch, getters },
   { type, password, address, index },
 ) => {
   try {
     const v3KeyStore = getters.cachedHdV3KeyStoreByType(type);
-
     const hdWallet = keystoreHDWallet.decryptHDWallet(password, v3KeyStore);
     const wallet = hdWallet.deriveChild(index).getWallet();
 
@@ -338,17 +359,17 @@ const setUserWallets = async ({ commit, dispatch, rootState }) => {
 
 const getNextWalletsFromHd = async (
   { state, dispatch, getters },
-  { walletType, ...selectParams },
+  { offset = 0, limit = 10, walletType },
 ) => {
   const savedXpub = getters.cachedXpubByType(walletType);
-
   const params = {
-    walletType,
-    ...selectParams,
     xpub: savedXpub,
+    walletType,
+    offset,
+    limit,
   };
-
   let proxyWallet;
+
   switch (walletType) {
     case WALLET_TYPES.TREZOR:
       proxyWallet = await Wallet.loadProxy(WALLET_PROXY_TYPES.TrezorProxy);
@@ -627,6 +648,7 @@ export default {
   setUserWallets,
   createNewWallet,
   addHdPublicWallet,
+  addNextWalletFromHd,
   addHdChildWallets,
   updateWallets,
   updateBalance,

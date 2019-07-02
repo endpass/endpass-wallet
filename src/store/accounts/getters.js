@@ -1,11 +1,19 @@
 import get from 'lodash/get';
 import { fromWei, hexToBytes } from 'web3-utils';
 import { BigNumber } from 'bignumber.js';
+import { Wallet } from '@/class';
 import keystoreHDKeyVerify from '@endpass/utils/keystoreHDKeyVerify';
 import keystoreHDWallet from '@endpass/utils/keystoreHDWallet';
 import isV3 from '@endpass/utils/isV3';
 
+const WALLET_TYPES = Wallet.getTypes();
+
 const wallet = state => get(state.wallets, state.address);
+
+const accountStandardWalletsAddresses = state =>
+  Object.keys(state.wallets).filter(
+    address => state.wallets[address].type === WALLET_TYPES.STANDARD,
+  );
 
 const accountAddresses = state =>
   Object.keys(state.wallets).map(item => item.toLowerCase());
@@ -54,6 +62,7 @@ const getHdWalletBySeed = () => seedPhrase =>
 
 export default {
   wallet,
+  accountStandardWalletsAddresses,
   addressBuffer,
   isHDv3WalletByType,
   cachedXpubByType,
