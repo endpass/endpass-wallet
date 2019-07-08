@@ -7,6 +7,9 @@ import isV3 from '@endpass/utils/isV3';
 
 const wallet = state => get(state.wallets, state.address);
 
+const accountV3WalletsAddresses = state =>
+  Object.keys(state.wallets).filter(address => isV3(state.wallets[address].v3));
+
 const accountAddresses = state =>
   Object.keys(state.wallets).map(item => item.toLowerCase());
 
@@ -54,6 +57,7 @@ const getHdWalletBySeed = () => seedPhrase =>
 
 export default {
   wallet,
+  accountV3WalletsAddresses,
   addressBuffer,
   isHDv3WalletByType,
   cachedXpubByType,

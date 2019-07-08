@@ -1,6 +1,7 @@
 import { mapKeys, mapValues } from 'lodash';
 import { userService, identityModeService } from '@/services';
 import { NotificationError, Token, connect } from '@/class';
+import ConnectError from '@endpass/class/ConnectError';
 import { IDENTITY_MODE } from '@/constants';
 import {
   SET_AUTHORIZATION_STATUS,
@@ -40,7 +41,7 @@ const login = async ({ commit, dispatch }) => {
 
     await dispatch('init', null, { root: true });
   } catch (err) {
-    if (!err.message.includes('Auth was canceled by user')) {
+    if (err.code !== ConnectError.ERRORS.AUTH_CANCELED_BY_USER) {
       await dispatch('errors/emitError', err, { root: true });
     }
   }

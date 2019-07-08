@@ -1160,10 +1160,10 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@endpass/class@^0.14.4":
-  version "0.14.4"
-  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.14.4.tgz#9b82f4bd838e9fe75c19e42ad5a846d3caea0079"
-  integrity sha512-cjtzFjjljSE/rhQ53EOi1TEUKggc8nM3bHThHchqNxIkA4k7jt/CnE+s5SWsBjbwrpGuiPs0GuknCcKVXFSBpA==
+"@endpass/class@^0.14.6":
+  version "0.14.6"
+  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.14.6.tgz#11ed4f1c9b561897a06efbdb7bdfdc52941d3018"
+  integrity sha512-PeQhLrJzdpQU81BZyoGtAdHmhiGKCuOhi3sHOBrdvZAkSbC6xgwcKAckRRysfkGRsutOBhjpvr0GeUWSsf5bkA==
   dependencies:
     "@endpass/utils" "^1.4.2"
     "@ledgerhq/hw-app-eth" "^4.24.0"
@@ -1182,35 +1182,13 @@
     web3-providers-ws "1.0.0-beta.33"
     web3-utils "1.0.0-beta.33"
 
-"@endpass/class@^0.14.5":
-  version "0.14.5"
-  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.14.5.tgz#66b4940c8f5a9bb9063c5e51b69f32a4fdf9e6e1"
-  integrity sha512-Yfr+3PMeUXiW1OYSYHalxvx5mZK0gYtsq2BzfnHnxew17FdOROmZHCVbdq/Ihkrf08XjxmjBv2Jz7BQZeCD7ww==
+"@endpass/connect@^0.24.3-beta":
+  version "0.24.3-beta"
+  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.24.3-beta.tgz#469da6aac40e44d970bd8df32dafc5d7ac27a1f0"
+  integrity sha512-fHdRAgkPdw4S6H7bdJLZYOmKgn3evMtGDQFGFFd56rgxsqtUbnlKyRgsongNdMl2lFKTQOGI5YBRNv6ZnkHtrg==
   dependencies:
-    "@endpass/utils" "^1.4.2"
-    "@ledgerhq/hw-app-eth" "^4.24.0"
-    "@ledgerhq/hw-transport-u2f" "^4.24.0"
-    bignumber.js "^7.2.1"
-    dexie "^2.0.4"
-    eth-ens-namehash "^2.0.8"
-    ethereumjs-tx "^1.3.4"
-    ethereumjs-wallet "^0.6.0"
-    lodash "^4.17.11"
-    path-to-regexp "^2.4.0"
-    trezor-connect "^6.0.0"
-    web3 "1.0.0-beta.33"
-    web3-providers-http "1.0.0-beta.33"
-    web3-providers-ipc "1.0.0-beta.33"
-    web3-providers-ws "1.0.0-beta.33"
-    web3-utils "1.0.0-beta.33"
-
-"@endpass/connect@0.22.1-beta":
-  version "0.22.1-beta"
-  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.22.1-beta.tgz#43042c9340ff58d854301c7b7734cd5c35bd41fb"
-  integrity sha512-hw+0ESBckljHUiwobU4Jb73SiRSPi2xcHUWVin9VGiRcKwQv6OW5CFVBux6OcMK79lSsVQZyRvnmaN6akqWckQ==
-  dependencies:
-    "@endpass/class" "^0.14.4"
-    "@endpass/utils" "^1.4.2"
+    "@endpass/class" "^0.14.6"
+    "@endpass/utils" "^1.7.0"
     axios "^0.19.0"
     axios-token-interceptor "^0.1.0"
     lodash.get "^4.4.2"

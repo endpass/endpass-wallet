@@ -3,6 +3,7 @@ import Web3 from 'web3';
 
 import {
   address as addressAcc,
+  nextAddresses,
   addressBytes,
   addressHdChild,
   addresses,
@@ -1657,6 +1658,47 @@ describe('Accounts actions', () => {
           root: true,
         });
       }
+    });
+  });
+
+  describe('addNextWalletFromHd', () => {
+    let getters;
+
+    beforeEach(() => {
+      getters = {
+        accountV3WalletsAddresses: [addressAcc],
+      };
+      dispatch.mockResolvedValueOnce(nextAddresses);
+    });
+
+    it('should request next addresses list and create new wallet with new one', async () => {
+      expect.assertions(1);
+
+      await actions.addNextWalletFromHd(
+        { dispatch, getters },
+        { walletType: WALLET_TYPES.STANDART, password: v3password },
+      );
+
+      expect(dispatch).toBeCalledWith('addHdChildWallets', {
+        address: nextAddresses[1],
+        index: 2,
+        type: WALLET_TYPES.STANDART,
+        password: v3password,
+      });
+    });
+
+    it('should request next addresses with offset equals to exist standart wallets count', async () => {
+      expect.assertions(1);
+
+      await actions.addNextWalletFromHd(
+        { dispatch, getters },
+        { walletType: WALLET_TYPES.STANDART, password: v3password },
+      );
+
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'getNextWalletsFromHd', {
+        offset: 1,
+        walletType: WALLET_TYPES.STANDART,
+      });
     });
   });
 });

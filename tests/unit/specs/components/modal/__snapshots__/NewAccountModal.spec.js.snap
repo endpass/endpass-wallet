@@ -85,8 +85,8 @@ exports[`NewAccountModal render should render component 1`] = `
                   class="button is-primary is-medium"
                 >
                   
-          Create address
-        
+            Create address
+          
                 </button>
               </div>
             </div>
@@ -105,8 +105,8 @@ exports[`NewAccountModal render should render component 1`] = `
                   class="button is-primary is-medium"
                 >
                   
-          Import address
-        
+            Import address
+          
                 </button>
               </div>
             </div>

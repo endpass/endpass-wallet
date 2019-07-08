@@ -16,6 +16,7 @@
           can use to receive Ethereum and tokens.
         </p>
       </div>
+
       <div v-else>
         <p class="subtitle">
           New Address Created
@@ -49,59 +50,50 @@
       </div>
 
       <div
-        v-if="!isAccountCreated"
         slot="footer"
         class="buttons"
       >
-        <v-form
-          data-test="createNewAccount"
-          @submit="createNewAccount"
+        <template v-if="!isAccountCreated">
+          <v-form
+            data-test="createNewAccount"
+            @submit="createNewAccount"
+          >
+            <v-button class-name="is-primary is-medium">
+              Create address
+            </v-button>
+          </v-form>
+          <v-form
+            :is-form-valid="true"
+            @submit="importNewAccount"
+          >
+            <v-button class-name="is-primary is-medium">
+              Import address
+            </v-button>
+          </v-form>
+        </template>
+        <v-button
+          v-else
+          class-name="is-primary is-medium"
+          data-test="account-modal-close-button"
+          @click="close"
         >
-          <v-button class-name="is-primary is-medium">
-            Create address
-          </v-button>
-        </v-form>
-        <v-form
-          :is-form-valid="true"
-          @submit="importNewAccount"
-        >
-          <v-button class-name="is-primary is-medium">
-            Import address
-          </v-button>
-        </v-form>
+          Close
+        </v-button>
       </div>
     </v-modal>
-    <v-modal
-      v-if="isWalletsListModal"
-      @close="handleWalletsListModalClose"
-    >
-      <template slot="header">
-        Select Your Address
-      </template>
-      <wallets-list
-        v-model="bridgeButtonListIsLoading"
-        :type="walletType"
-        :auto-load="true"
-        :is-importing="bridgeButtonListIsImporting"
-        @select="setSelectedAddress"
-      />
-      <wallet-add-button
-        v-show="!bridgeButtonListIsLoading"
-        slot="footer"
-        v-model="bridgeButtonListIsImporting"
-        :type="walletType"
-        :selected-address="bridgeButtonListSelectedAddress"
-        @success="successAddWallet"
-      >
-        Add
-      </wallet-add-button>
-    </v-modal>
+
+    <password-modal
+      v-if="isAwaitingPassword"
+      @confirm="handleCreateWalletConfirm"
+      @close="handleCreateWalletCancel"
+    />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex';
 import { BridgeButtonListMixin } from '@/components/walletsListFromHd';
+import PasswordModal from '@/components/modal/PasswordModal';
 import { Wallet } from '@/class';
 
 /** @type {{HD_MAIN,getTypes}} */
@@ -109,57 +101,71 @@ const WALLET_TYPES = Wallet.getTypes();
 
 export default {
   name: 'NewAccountModal',
+
   data() {
     return {
       privateKey: '',
-      isAccountCreated: false,
-      isWalletsListModal: false,
       walletType: WALLET_TYPES.HD_MAIN,
+      isAccountCreated: false,
+      isAwaitingPassword: false,
     };
   },
+
   computed: {
     ...mapState({
       wallets: state => state.accounts.wallets,
       address: state => state.accounts.address,
     }),
-    ...mapGetters('accounts', ['wallet']),
+    ...mapGetters('accounts', ['wallet', 'walletsCount']),
+
+    address() {
+      return this.wallet.address;
+    },
+
     walletsCount() {
       return Object.keys(this.wallets).length;
     },
   },
+
   methods: {
-    ...mapActions('accounts', ['validatePassword']),
+    ...mapActions('accounts', ['addNextWalletFromHd']),
+
+    async handleCreateWalletConfirm(password) {
+      await this.addNextWalletFromHd({
+        walletType: this.walletType,
+        password,
+      });
+      this.privateKey = await this.wallet.getPrivateKeyString(password);
+      this.isAccountCreated = true;
+      this.isAwaitingPassword = false;
+    },
+
+    handleCreateWalletCancel() {
+      this.isAwaitingPassword = false;
+    },
+
     importNewAccount() {
       this.$router.push('import');
       this.close();
     },
-    // Create the next account derived from the HD wallet seed
-    // TODO consider gap limit if multiple hd accounts are already used
+
     createNewAccount() {
-      this.isWalletsListModal = true;
       this.$ga.event({
         eventCategory: 'onboarding',
         eventAction: 'create_new_account',
       });
+      this.isAwaitingPassword = true;
     },
+
     close() {
       this.$emit('close');
     },
-
-    /**
-     * @param {string} password
-     * @returns {Promise<void>}
-     */
-    async successAddWallet(password) {
-      this.isAccountCreated = true;
-      this.isWalletsListModal = false;
-      this.privateKey = await this.wallet.getPrivateKeyString(password);
-    },
-
-    handleWalletsListModalClose() {
-      this.isWalletsListModal = false;
-    },
   },
+
   mixins: [BridgeButtonListMixin],
+
+  components: {
+    PasswordModal,
+  },
 };
 </script>
