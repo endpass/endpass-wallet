@@ -104,9 +104,14 @@ export default {
       payload: account,
     });
 
-    if (Object.keys(info).length) {
-      await this.setAccountInfo(address, info);
-    }
+    const infoForSave = {
+      address,
+      type: WALLET_TYPES.STANDARD,
+      hidden: false,
+      ...info,
+    };
+
+    await this.setAccountInfo(address, infoForSave);
   },
 
   // Save the info for an account
