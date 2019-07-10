@@ -348,7 +348,11 @@ describe('User service', () => {
     const url = `${ENV.VUE_APP_IDENTITY_API_URL}/account/${address}`;
 
     it('should make correct request', async () => {
-      expect.assertions(3);
+      expect.assertions(5);
+
+      const spy = jest
+        .spyOn(userService, 'setAccountInfo')
+        .mockImplementationOnce(() => Promise.resolve());
 
       axiosMock.onPost(url).reply(config => {
         expect(config.method).toBe('post');
@@ -359,6 +363,17 @@ describe('User service', () => {
       });
 
       await userService.setAccount(address, account);
+
+      const defaultAccountInfo = {
+        address,
+        type: WALLET_TYPES.STANDARD,
+        hidden: false,
+      };
+
+      expect(spy).toBeCalledTimes(1);
+      expect(spy).toBeCalledWith(address, defaultAccountInfo);
+
+      spy.mockRestore();
     });
   });
 
