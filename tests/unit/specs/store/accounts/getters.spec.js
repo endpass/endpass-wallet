@@ -1,8 +1,5 @@
-import { Wallet } from '@/class';
 import accountsGetters from '@/store/accounts/getters';
 import { address, addressHdChild, v3, hdv3 } from 'fixtures/accounts';
-
-const WALLET_TYPES = Wallet.getTypes();
 
 describe('Accounts getters', () => {
   describe('wallet', () => {
