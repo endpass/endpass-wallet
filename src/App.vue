@@ -15,12 +15,23 @@
       <div class>
         <div class="notify-container">
           <notifications
+            group="test"
             :speed="500"
             :duration="5000"
             width="auto"
             position="top center"
             data-test="app-notification"
             classes="notification app-notification"
+          />
+          <notifications
+            group="persistent"
+            :speed="500"
+            :duration="-1"
+            :close-on-click="false"
+            width="auto"
+            position="top center"
+            data-test="app-notification"
+            classes="notification app-notification app-notification-persist"
           />
         </div>
 

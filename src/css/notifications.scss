@@ -49,3 +49,7 @@ $notify-width: 600px;
     font-size: 1rem;
   }
 }
+
+.app-notification-persist .notification-title:after {
+  display: none;
+}

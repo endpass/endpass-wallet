@@ -110,9 +110,20 @@ const setUserSettings = async ({ commit, dispatch }) => {
       email,
       tokens,
       lastActiveAccount,
+      emailConfirmed,
     } = await userService.getSettings();
 
     if (email) {
+      if (!emailConfirmed) {
+        throw new NotificationError({
+          group: 'persistent',
+          title: 'You have not confirmed your email',
+          text: `Please click the link in the email sent 
+            to ${email} to activate your account`,
+          type: 'is-warning',
+        });
+      }
+
       commit(SET_EMAIL, email);
       await userService.setSettings({ email });
     }

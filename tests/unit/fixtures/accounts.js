@@ -101,6 +101,7 @@ export const email = 'user@example.com';
 export const settings = {
   id: 'abcd-1234',
   email: 'user@example.com',
+  emailConfirmed: true,
   net: 3,
   fiatCurrency: 'USD',
   networks: [

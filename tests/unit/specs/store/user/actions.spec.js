@@ -413,6 +413,7 @@ describe('user actions', () => {
       expect.assertions(1);
 
       userService.getSettings.mockResolvedValueOnce({
+        emailConfirmed: true,
         fiatCurrency: '',
       });
 
