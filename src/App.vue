@@ -15,7 +15,6 @@
       <div class>
         <div class="notify-container">
           <notifications
-            group="test"
             :speed="500"
             :duration="5000"
             width="auto"

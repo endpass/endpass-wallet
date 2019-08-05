@@ -1,5 +1,8 @@
 <template>
-  <div class="account-chooser" data-test="account-chooser">
+  <div
+    class="account-chooser"
+    data-test="account-chooser"
+  >
     <div class="field">
       <vue-multiselect
         ref="select"
@@ -17,11 +20,26 @@
         <span slot="noResult">
           {{ noResultLabel }}
         </span>
-        <span slot="singleLabel" class="multiselect-single">
-          <account :class="singleClass" :address="value" :size="width" />
+        <span
+          slot="singleLabel"
+          class="multiselect-single"
+        >
+          <account
+            :class="singleClass"
+            :address="value"
+            :size="width"
+          />
         </span>
-        <span slot="option" slot-scope="props" class="multiselect-option">
-          <account :class="optionClass" :address="props.option" :size="width" />
+        <span
+          slot="option"
+          slot-scope="props"
+          class="multiselect-option"
+        >
+          <account
+            :class="optionClass"
+            :address="props.option"
+            :size="width"
+          />
         </span>
       </vue-multiselect>
     </div>
@@ -148,9 +166,11 @@ export default {
 
     /**
      * Emits input event
-     * Contains logic for detect origin vue-multiselect select event and programmicialy generated
+     * Contains logic for detect origin vue-multiselect
+     * select event and programmicialy generated
      * @param {*} value Emmiting value
-     * @param {Boolean} isSelect Flag for marking original event of vue-multiselect select handler
+     * @param {Boolean} isSelect Flag for marking original event
+     * of vue-multiselect select handler
      */
     emitInput(value, isSelect = false) {
       this.ignoreNextBlur = isSelect;
