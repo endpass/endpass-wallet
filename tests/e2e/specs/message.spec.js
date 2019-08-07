@@ -15,7 +15,7 @@ describe('Message Page', () => {
 
   describe('the user is authorized', () => {
     beforeEach(() => {
-      cy.getInitialData();
+      cy.mockInitialData();
       cy.visit('#/message');
       cy.mockWeb3Requests();
       cy.waitPageLoad();

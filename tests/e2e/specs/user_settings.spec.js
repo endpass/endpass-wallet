@@ -5,7 +5,7 @@ const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1.1';
 
 describe('Settings Page', () => {
   beforeEach(() => {
-    cy.getInitialData();
+    cy.mockInitialData();
     cy.visit('#/settings');
     cy.mockWeb3Requests();
     cy.makeStoreAlias();

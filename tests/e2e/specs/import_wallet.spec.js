@@ -8,7 +8,7 @@ import {
 
 describe('Import Wallet Page', () => {
   beforeEach(() => {
-    cy.getInitialData();
+    cy.mockInitialData();
     cy.visit('#/import');
     cy.mockWeb3Requests();
     cy.waitPageLoad();

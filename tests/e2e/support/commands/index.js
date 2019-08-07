@@ -1,4 +1,8 @@
 import './account';
-import './mockWeb3Requests';
-import './login';
+import './user';
+import './balance';
 import './prices';
+import './transaction';
+import './mockWeb3Requests';
+import './interaction';
+import './composition';

@@ -1,21 +1,23 @@
-import { cryptodataAPIUrl } from './config';
+import { cryptodataAPIUrl, mainNetworkId } from './config';
 
-Cypress.Commands.add('mockTokenPriceFFC', () => {
+Cypress.Commands.add('mockTokenPrices', () => {
   cy.route({
     method: 'GET',
-    url: `${cryptodataAPIUrl}/price?from=$FFC&**`,
-    response: {},
-    status: 404,
-  }).as('mockTokenPriceFFC');
-});
-
-Cypress.Commands.add('mockTokenPriceUSD', () => {
-  cy.route({
-    method: 'GET',
-    url: `${cryptodataAPIUrl}/price?from=ETH&to=USD`,
+    url: `${cryptodataAPIUrl}/price?**`,
     response: {
-      USD: 200,
+      BNB: { USD: 0 },
+      ZRX: { USD: 0 },
+      $FFC: { USD: 0 },
+      ETH: { USD: 200 },
     },
     status: 200,
-  }).as('mockTokenPriceUSD');
+  }).as('mockTokenPrices');
+});
+
+Cypress.Commands.add('mockGasPrice', () => {
+  cy.route(
+    'GET',
+    `${cryptodataAPIUrl}/${mainNetworkId}/gas/price`,
+    'fixture:cryptodata/gasprice',
+  ).as('gasPriceMain');
 });

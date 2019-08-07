@@ -1,7 +1,7 @@
 describe('Home Page', () => {
   beforeEach(() => {
-    cy.getInitialData();
-    // cy.getAccountBalance();
+    cy.mockInitialData();
+    // cy.mockPositiveBalance();
     cy.visit('#/');
     cy.mockWeb3Requests();
     cy.makeStoreAlias();

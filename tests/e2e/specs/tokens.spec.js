@@ -20,11 +20,11 @@ describe('Tokens Page', () => {
   describe('the user is authorized', () => {
     describe('add a token', () => {
       beforeEach(() => {
-        cy.getInitialData();
-        cy.getAccountBalance();
+        cy.mockInitialData();
+        cy.mockPositiveBalance();
         cy.visit('#/tokens');
         cy.mockWeb3Requests();
-        cy.wait('@accountBalance');
+        cy.wait('@mockPositiveBalance');
         cy.waitPageLoad();
       });
 
@@ -69,7 +69,7 @@ describe('Tokens Page', () => {
 
     describe('add custom token', () => {
       beforeEach(() => {
-        cy.getInitialData();
+        cy.mockInitialData();
         cy.visit('#/tokens');
         cy.mockWeb3Requests();
         cy.waitPageLoad();
@@ -128,7 +128,7 @@ describe('Tokens Page', () => {
       const [token1] = tokens;
 
       beforeEach(() => {
-        cy.getInitialData();
+        cy.mockInitialData();
         cy.visit('#/tokens');
         cy.mockWeb3Requests();
         cy.waitPageLoad();

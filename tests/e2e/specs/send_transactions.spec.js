@@ -1,5 +1,6 @@
 import { transactionToSend } from '../fixtures/transactions';
 import { tokens } from '../fixtures/tokeninfo';
+import { cryptodataAPIUrl } from '../support/commands/config';
 
 describe('Send Transactions Page', () => {
   describe('the user is not authorized', () => {
@@ -13,12 +14,12 @@ describe('Send Transactions Page', () => {
 
   describe('the user is authorized', () => {
     beforeEach(() => {
-      cy.getInitialData();
-      cy.getAccountBalance();
+      cy.mockInitialData();
+      cy.mockPositiveBalance();
       cy.visit('#/send');
       cy.mockWeb3Requests();
       cy.waitPageLoad();
-      cy.wait('@accountBalance');
+      cy.wait('@mockPositiveBalance');
     });
 
     it('should validate form', () => {
@@ -117,7 +118,6 @@ describe('Send Transactions Page', () => {
         cy.get('[data-test=confirm-button]').click();
       });
 
-      const cryptodataAPIUrl = '/cryptodata/api/v1.1';
       cy.route({
         method: 'GET',
         url: `${cryptodataAPIUrl}/*/balance/**`,
