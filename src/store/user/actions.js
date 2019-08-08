@@ -135,6 +135,7 @@ const setUserSettings = async ({ commit, dispatch, getters }) => {
     }
 
     if (getters.isLoggedIn && !getters.isEmailConfirmed(emailConfirmed)) {
+      commit(SET_EMAIL_CONFIRMED_STATUS, true);
       const error = new NotificationError({
         group: 'persistent',
         title: 'You have not confirmed your email',
@@ -143,7 +144,6 @@ const setUserSettings = async ({ commit, dispatch, getters }) => {
         type: 'is-warning',
       });
       await dispatch('errors/emitError', error, { root: true });
-      commit(SET_EMAIL_CONFIRMED_STATUS, true);
     }
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });
