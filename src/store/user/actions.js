@@ -9,6 +9,7 @@ import {
   SET_EMAIL,
   SET_SETTINGS,
   SET_OTP_SETTINGS,
+  SET_EMAIL_CONFIRMED_STATUS,
 } from './mutations-types';
 
 const setAuthorizationStatus = (
@@ -103,7 +104,7 @@ const updateSettings = async ({ commit, dispatch }, settings) => {
   }
 };
 
-const setUserSettings = async ({ commit, dispatch }) => {
+const setUserSettings = async ({ commit, dispatch, getters }) => {
   try {
     const {
       fiatCurrency,
@@ -114,16 +115,6 @@ const setUserSettings = async ({ commit, dispatch }) => {
     } = await userService.getSettings();
 
     if (email) {
-      if (!emailConfirmed) {
-        throw new NotificationError({
-          group: 'persistent',
-          title: 'You have not confirmed your email',
-          text: `Please click the link in the email sent 
-            to ${email} to activate your account`,
-          type: 'is-warning',
-        });
-      }
-
       commit(SET_EMAIL, email);
       await userService.setSettings({ email });
     }
@@ -141,6 +132,18 @@ const setUserSettings = async ({ commit, dispatch }) => {
       );
 
       dispatch('tokens/setUserTokens', mappedTokens, { root: true });
+    }
+
+    if (getters.isLoggedIn && !getters.isEmailConfirmed(emailConfirmed)) {
+      const error = new NotificationError({
+        group: 'persistent',
+        title: 'You have not confirmed your email',
+        text: `Please click the link in the email sent 
+            to ${email} to activate your account`,
+        type: 'is-warning',
+      });
+      await dispatch('errors/emitError', error, { root: true });
+      commit(SET_EMAIL_CONFIRMED_STATUS, true);
     }
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });

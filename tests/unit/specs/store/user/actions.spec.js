@@ -417,7 +417,7 @@ describe('user actions', () => {
         fiatCurrency: '',
       });
 
-      await actions.setUserSettings({ commit });
+      await actions.setUserSettings({ commit, dispatch });
 
       expect(commit).not.toBeCalled();
     });
