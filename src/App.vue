@@ -22,6 +22,16 @@
             data-test="app-notification"
             classes="notification app-notification"
           />
+          <notifications
+            group="persistent"
+            :speed="500"
+            :duration="-1"
+            :close-on-click="false"
+            width="auto"
+            position="top center"
+            data-test="app-notification"
+            classes="notification app-notification app-notification-persist"
+          />
         </div>
 
         <div class="main app-content app-section">

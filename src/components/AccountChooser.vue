@@ -136,7 +136,8 @@ export default {
 
     handleSearchBlur() {
       /**
-       * This condition needs because after click vue-multiselect option search input blur also
+       * This condition needs because after click
+       * vue-multiselect option search input blur also
        * calls and emmited value always empty
        */
       if (this.ignoreNextBlur) {
@@ -165,9 +166,11 @@ export default {
 
     /**
      * Emits input event
-     * Contains logic for detect origin vue-multiselect select event and programmicialy generated
+     * Contains logic for detect origin vue-multiselect
+     * select event and programmicialy generated
      * @param {*} value Emmiting value
-     * @param {Boolean} isSelect Flag for marking original event of vue-multiselect select handler
+     * @param {Boolean} isSelect Flag for marking original event
+     * of vue-multiselect select handler
      */
     emitInput(value, isSelect = false) {
       this.ignoreNextBlur = isSelect;

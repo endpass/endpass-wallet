@@ -9,6 +9,7 @@ import {
   SET_EMAIL,
   SET_SETTINGS,
   SET_OTP_SETTINGS,
+  SET_EMAIL_CONFIRMED_STATUS,
 } from './mutations-types';
 
 const setAuthorizationStatus = (
@@ -103,13 +104,14 @@ const updateSettings = async ({ commit, dispatch }, settings) => {
   }
 };
 
-const setUserSettings = async ({ commit, dispatch }) => {
+const setUserSettings = async ({ commit, dispatch, getters }) => {
   try {
     const {
       fiatCurrency,
       email,
       tokens,
       lastActiveAccount,
+      emailConfirmed,
     } = await userService.getSettings();
 
     if (email) {
@@ -130,6 +132,18 @@ const setUserSettings = async ({ commit, dispatch }) => {
       );
 
       dispatch('tokens/setUserTokens', mappedTokens, { root: true });
+    }
+
+    if (getters.isLoggedIn && !getters.isEmailConfirmed(emailConfirmed)) {
+      commit(SET_EMAIL_CONFIRMED_STATUS, true);
+      const error = new NotificationError({
+        group: 'persistent',
+        title: 'You have not confirmed your email',
+        text: `Please click the link in the email sent 
+            to ${email} to activate your account`,
+        type: 'is-warning',
+      });
+      await dispatch('errors/emitError', error, { root: true });
     }
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });
