@@ -23,9 +23,3 @@ Cypress.Commands.add('mockInitialData', () => {
   cy.mockEmptyTransactionHistory();
   cy.mockPrices();
 });
-
-Cypress.Commands.add('makeStoreAlias', () => {
-  cy.window()
-    .its('app.$store')
-    .as('store');
-});

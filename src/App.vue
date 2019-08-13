@@ -65,7 +65,13 @@ export default {
   },
 
   methods: {
-    initMode() {
+    async initMode() {
+      if (window.Cypress) {
+        // eslint-disable-next-line
+        console.log('Wait cypress start test (App.vue)...');
+        await window.cypressTestResolver;
+      }
+
       const lines = (window.location.search || '').slice(1).split('&');
       const query = lines.reduce((map, line) => {
         const values = line.split('=');

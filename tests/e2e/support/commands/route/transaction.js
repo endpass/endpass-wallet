@@ -1,5 +1,8 @@
-import { tokenTransactions, ethTransactions } from '../../fixtures/cryptodata';
-import { cryptodataAPIUrl } from './config';
+import {
+  tokenTransactions,
+  ethTransactions,
+} from '../../../fixtures/cryptodata';
+import { cryptodataAPIUrl } from '../config';
 
 Cypress.Commands.add('mockTransactionHistory', () => {
   cy.route({

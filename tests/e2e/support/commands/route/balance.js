@@ -1,5 +1,5 @@
-import { cryptodataAPIUrl } from './config';
-import { tokens } from '../../fixtures/tokeninfo';
+import { cryptodataAPIUrl } from '../config';
+import { tokens } from '../../../fixtures/tokeninfo';
 
 Cypress.Commands.add('mockZeroBalance', () => {
   cy.route({
@@ -10,7 +10,7 @@ Cypress.Commands.add('mockZeroBalance', () => {
       tokens: [],
     },
     status: 200,
-  }).as('mockZeroBalance');
+  }).as('zeroBalance');
 });
 
 Cypress.Commands.add('mockPositiveBalance', () => {
@@ -21,5 +21,5 @@ Cypress.Commands.add('mockPositiveBalance', () => {
       balance: '2000000000000000000',
       tokens,
     },
-  }).as('mockPositiveBalance');
+  }).as('positiveBalance');
 });

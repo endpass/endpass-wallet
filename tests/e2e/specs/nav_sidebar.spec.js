@@ -1,8 +1,8 @@
 describe('Navigation sidebar', () => {
   beforeEach(() => {
-    cy.login();
+    cy.mockInitialData();
     cy.visit('#/');
-    cy.mockWeb3Requests();
+    cy.waitPageLoad();
   });
 
   it('should show sidebar controls', () => {

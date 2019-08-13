@@ -1,14 +1,8 @@
 <template>
   <div class="send-amount ">
-    <div
-      class="field is-horizontal"
-      data-test="transaction-amount-group-field"
-    >
+    <div class="field is-horizontal" data-test="transaction-amount-group-field">
       <div class="field-label is-normal">
-        <label
-          class="label"
-          for="amount"
-        >
+        <label class="label" for="amount">
           Amount
         </label>
       </div>
@@ -31,10 +25,7 @@
           data-test="transaction-amount-input"
           @input="handleAmountInput"
         >
-          <span
-            slot="addon"
-            class="select"
-          >
+          <span slot="addon" class="select">
             <v-select
               :value="currentTokenSymbol"
               :options="tokensCurrencies"
@@ -69,19 +60,13 @@
           required
           @input="handlePriceInput"
         >
-          <div
-            slot="addon"
-            class="amount-fiat-currency control"
-          >
+          <div slot="addon" class="amount-fiat-currency control">
             {{ fiatCurrency }}
           </div>
         </v-input>
       </div>
     </div>
-    <div
-      v-show="showFee"
-      class="field is-horizontal"
-    >
+    <div v-show="showFee" class="field is-horizontal">
       <div class="field-label">
         <label class="label">Gas Fee</label>
       </div>
@@ -187,7 +172,9 @@ export default {
     },
 
     gasFeeBN() {
-      return BigNumber(toWei(this.gasPrice, 'gwei')).times(this.gasLimit);
+      return BigNumber(toWei(this.gasPrice || '0', 'gwei')).times(
+        this.gasLimit || '0',
+      );
     },
 
     gasFee() {

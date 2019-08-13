@@ -1,4 +1,4 @@
-import { cryptodataAPIUrl, mainNetworkId } from './config';
+import { cryptodataAPIUrl, mainNetworkId } from '../config';
 
 Cypress.Commands.add('mockTokenPrices', () => {
   cy.route({
@@ -11,7 +11,7 @@ Cypress.Commands.add('mockTokenPrices', () => {
       ETH: { USD: 200 },
     },
     status: 200,
-  }).as('mockTokenPrices');
+  }).as('tokenPrices');
 });
 
 Cypress.Commands.add('mockGasPrice', () => {

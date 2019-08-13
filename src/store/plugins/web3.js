@@ -49,7 +49,7 @@ const getProvider = (store, url) => {
 
 export default store => {
   store.subscribe(({ type, payload }) => {
-    if (type === 'web3/CHANGE_NETWORK') {
+    if (type === 'web3/CHANGE_NETWORK' && !window.Cypress) {
       setProvider(store, getProvider(store, payload.url));
     }
   });

@@ -5,7 +5,7 @@ describe('Message Page', () => {
     it('should redirect to root', () => {
       cy.preventLogin();
       cy.visit('#/message');
-      cy.mockWeb3Requests();
+      cy.waitPageLoad();
       cy.url().should(
         'eq',
         `${Cypress.config().baseUrl}/#/?redirect_uri=%2Fmessage`,
@@ -17,7 +17,6 @@ describe('Message Page', () => {
     beforeEach(() => {
       cy.mockInitialData();
       cy.visit('#/message');
-      cy.mockWeb3Requests();
       cy.waitPageLoad();
     });
 
