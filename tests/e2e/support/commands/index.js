@@ -1,8 +1,9 @@
-import './account';
-import './user';
-import './balance';
-import './prices';
-import './transaction';
-import './mockWeb3Requests';
+import './route/account';
+import './route/user';
+import './route/balance';
+import './route/prices';
+import './route/token';
+import './route/transaction';
+import './web3';
 import './interaction';
 import './composition';

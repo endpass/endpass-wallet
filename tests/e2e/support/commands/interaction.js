@@ -77,7 +77,16 @@ Cypress.Commands.add('getBalanceTokenElement', () =>
   cy.get('.info-item:nth-child(2) [data-test=balance-value]'),
 );
 
+Cypress.Commands.add('makeStoreAlias', () => {
+  cy.window()
+    .its('app.$store')
+    .as('store');
+});
+
 Cypress.Commands.add('waitPageLoad', () => {
+  cy.mockWeb3Requests();
+  cy.makeStoreAlias();
+  cy.window().then(win => win.startCypressTest());
   cy.get('main').should('be.visible');
   cy.wait(1000);
   cy.get('[data-test=page-loader]', {

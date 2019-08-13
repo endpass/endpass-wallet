@@ -12,7 +12,7 @@ describe('Tokens Page', () => {
     it('should redirect to root', () => {
       cy.preventLogin();
       cy.visit('#/tokens');
-      cy.mockWeb3Requests();
+      cy.waitPageLoad();
       cy.url().should('include', '/#/?redirect_uri=%2Ftokens');
     });
   });
@@ -23,9 +23,8 @@ describe('Tokens Page', () => {
         cy.mockInitialData();
         cy.mockPositiveBalance();
         cy.visit('#/tokens');
-        cy.mockWeb3Requests();
-        cy.wait('@mockPositiveBalance');
         cy.waitPageLoad();
+        cy.wait('@positiveBalance');
       });
 
       it('should add a custom token', () => {
@@ -71,7 +70,6 @@ describe('Tokens Page', () => {
       beforeEach(() => {
         cy.mockInitialData();
         cy.visit('#/tokens');
-        cy.mockWeb3Requests();
         cy.waitPageLoad();
       });
 
@@ -130,9 +128,7 @@ describe('Tokens Page', () => {
       beforeEach(() => {
         cy.mockInitialData();
         cy.visit('#/tokens');
-        cy.mockWeb3Requests();
         cy.waitPageLoad();
-        cy.makeStoreAlias();
         cy.get('@store').then(store => {
           store.commit('tokens/updateUserTokens', {
             1: tokensMappedByAddress,

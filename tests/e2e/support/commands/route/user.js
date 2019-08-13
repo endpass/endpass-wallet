@@ -1,5 +1,5 @@
-import { identityAPIUrl } from './config';
-import seed from '../../fixtures/identity/seed';
+import { identityAPIUrl } from '../config';
+import seed from '../../../fixtures/identity/seed';
 
 Cypress.Commands.add('mockUserSettings', () => {
   cy.route({

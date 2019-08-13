@@ -7,7 +7,7 @@ describe('Send Transactions Page', () => {
     it('should redirect to root', () => {
       cy.preventLogin();
       cy.visit('#/send');
-      cy.mockWeb3Requests();
+      cy.waitPageLoad();
       cy.url().should('include', '/#/?redirect_uri=%2Fsend');
     });
   });
@@ -17,9 +17,8 @@ describe('Send Transactions Page', () => {
       cy.mockInitialData();
       cy.mockPositiveBalance();
       cy.visit('#/send');
-      cy.mockWeb3Requests();
       cy.waitPageLoad();
-      cy.wait('@mockPositiveBalance');
+      cy.wait('@positiveBalance');
     });
 
     it('should validate form', () => {
@@ -94,8 +93,6 @@ describe('Send Transactions Page', () => {
     });
 
     it('should send transaction', () => {
-      cy.makeStoreAlias();
-
       cy.getBalanceTokenElement().contains('2');
 
       cy.get('[data-test=transaction-send-form]').within(() => {

@@ -7,8 +7,6 @@ describe('Settings Page', () => {
   beforeEach(() => {
     cy.mockInitialData();
     cy.visit('#/settings');
-    cy.mockWeb3Requests();
-    cy.makeStoreAlias();
     cy.waitPageLoad();
   });
 

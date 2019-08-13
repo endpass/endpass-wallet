@@ -12,8 +12,6 @@ describe('Transactions History Page', () => {
       cy.mockInitialData();
       cy.mockTransactionHistory();
       cy.visit('#/history');
-      cy.mockWeb3Requests();
-      cy.makeStoreAlias();
       cy.waitPageLoad();
 
       cy.wait(['@tokenTransactionsHistory', '@addressTransactionsHistory'], {
@@ -48,8 +46,6 @@ describe('Transactions History Page', () => {
     beforeEach(() => {
       cy.mockInitialData();
       cy.visit('#/history');
-      cy.mockWeb3Requests();
-      cy.makeStoreAlias();
       cy.waitPageLoad();
 
       cy.wait(['@tokenTransactionsHistory', '@addressTransactionsHistory'], {

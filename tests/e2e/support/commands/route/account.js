@@ -28,8 +28,8 @@
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-import { identityAPIUrl } from './config';
-import { hdv3, hdv3Info } from '../../fixtures/accounts';
+import { identityAPIUrl } from '../config';
+import { hdv3, hdv3Info } from '../../../fixtures/accounts';
 
 // Sets up server and routes to stub logged in user with fixtures.
 
@@ -44,40 +44,38 @@ Cypress.Commands.add('mockAccountsDataFailed', () => {
     url: `${identityAPIUrl}/settings`,
     response: {},
     status: 401,
-  }).as('identityUserNotLogin');
+  }).as('userSettingsNotLogin');
 
   cy.route({
     url: `${identityAPIUrl}/auth/check`,
     response: {},
     status: 401,
-  }).as('mockAuthCheckFail');
-});
-
-Cypress.Commands.add('mockAuthCheckSuccess', () => {
-  cy.route({
-    url: `${identityAPIUrl}/auth/check`,
-    response: {},
-    status: 200,
-  }).as('mockAuthCheckSuccess');
+  }).as('authCheckFail');
 });
 
 Cypress.Commands.add('mockAccountKeystores', () => {
   // Keystore server
   cy.route('GET', `${identityAPIUrl}/info`, 'fixture:keystore/info.json').as(
-    'keystoreInfo',
+    'keystoreServerInfo',
   );
+
+  // Accounts list
   cy.route(
     'GET',
     `${identityAPIUrl}/accounts`,
     'fixture:keystore/accounts.json',
   ).as('keystoreAccounts');
+
+  // All account info
   cy.route('GET', /\/account\/(\w+)\/info$/, {}).as('accountInfo');
+
   // Regular account
   cy.route(
     'GET',
     `${identityAPIUrl}/account/0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c`,
     'fixture:keystore/account_1.json',
   ).as('keystoreAccount');
+
   // HD account
   cy.route(
     'GET',
@@ -104,6 +102,8 @@ Cypress.Commands.add('mockAccountKeystores', () => {
     `${identityAPIUrl}/account/0x6bBf1DEa0d21eaFd232e281A196E6f11906054df`,
     {},
   ).as('publicAccount');
+
+  // Account modification
   cy.route(
     'POST',
     `${identityAPIUrl}/account/*`,
@@ -114,20 +114,4 @@ Cypress.Commands.add('mockAccountKeystores', () => {
     `${identityAPIUrl}/accounts`,
     'fixture:identity/success.json',
   ).as('keystoreUpdateAccounts');
-});
-
-Cypress.Commands.add('mockTokensInfo', () => {
-  // Token info server
-  cy.route(
-    'GET',
-    '/tokeninfo/api/v1/tokens',
-    'fixture:tokeninfo/networkTokens.json',
-  ).as('mockTokenInfo');
-
-  cy.route({
-    method: 'GET',
-    url: 'https://tokeninfo-dev.endpass.com/img/**',
-    response: {},
-    status: 404,
-  }).as('mockTokenInfoImage');
 });
