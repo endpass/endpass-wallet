@@ -4,7 +4,7 @@ import {
   v3password,
   privateKey,
   mnemonic,
-} from '../fixtures/accounts';
+} from '@fixtures/accounts';
 
 describe('Import Wallet Page', () => {
   beforeEach(() => {

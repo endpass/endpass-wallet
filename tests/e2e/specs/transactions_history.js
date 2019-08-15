@@ -1,4 +1,4 @@
-import { blockTransactions, transactionToSend } from '../fixtures/transactions';
+import { blockTransactions, transactionToSend } from '@fixtures/transactions';
 
 const historyTransaction = Object.freeze({
   ...transactionToSend,
