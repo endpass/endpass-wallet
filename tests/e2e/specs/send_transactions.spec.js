@@ -1,6 +1,6 @@
-import { transactionToSend } from '../fixtures/transactions';
-import { tokens } from '../fixtures/tokeninfo';
-import { cryptodataAPIUrl } from '../support/commands/config';
+import { transactionToSend } from '@fixtures/transactions';
+import { tokens } from '@fixtures/tokeninfo';
+import { cryptodataAPIUrl } from '@config';
 
 describe('Send Transactions Page', () => {
   describe('the user is not authorized', () => {

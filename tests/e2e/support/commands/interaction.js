@@ -1,5 +1,5 @@
 import path from 'path';
-import { v3password } from '../../fixtures/accounts';
+import { v3password } from '@fixtures/accounts';
 
 Cypress.Commands.add('inputPassword', () => {
   cy.get('[data-test=input-password]').type(v3password);

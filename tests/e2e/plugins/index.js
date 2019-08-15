@@ -12,12 +12,19 @@
 // the project's config changing)
 
 const webpack = require('@cypress/webpack-preprocessor');
+const path = require('path');
 
 module.exports = on => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
-
   const options = webpack.defaultOptions;
+
+  options.webpackOptions.resolve = {
+    alias: {
+      '@fixtures': path.resolve(__dirname, '../fixtures'),
+      '@config': path.resolve(__dirname, '../support/commands/config'),
+    },
+  };
 
   options.webpackOptions.module.rules[0].use[0].options.presets = ['@vue/app'];
 

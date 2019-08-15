@@ -1,4 +1,4 @@
-import { message, signedMessage, address } from '../fixtures/message';
+import { message, signedMessage, address } from '@fixtures/message';
 
 describe('Message Page', () => {
   describe('the user is not authorized', () => {

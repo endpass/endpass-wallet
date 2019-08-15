@@ -4,8 +4,8 @@ import {
   tokens,
   token,
   tokensMappedByAddress,
-} from '../fixtures/tokeninfo';
-import { call_custom_token_1, call_custom_token_3 } from '../fixtures/web3';
+} from '@fixtures/tokeninfo';
+import { call_custom_token_1, call_custom_token_3 } from '@fixtures/web3';
 
 describe('Tokens Page', () => {
   describe('the user is not authorized', () => {

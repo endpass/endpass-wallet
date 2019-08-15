@@ -1,4 +1,4 @@
-import { cryptodataAPIUrl, mainNetworkId } from '../config';
+import { cryptodataAPIUrl, mainNetworkId } from '@config';
 
 Cypress.Commands.add('mockTokenPrices', () => {
   cy.route({
