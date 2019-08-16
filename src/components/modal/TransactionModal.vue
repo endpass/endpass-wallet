@@ -5,7 +5,7 @@
   >
     <v-modal @close="close">
       <template slot="header">
-        Are you sure?
+        {{$t('components.transactionModal.header')}}
       </template>
 
       <div>
@@ -24,13 +24,13 @@
           data-test="confirm-button"
           @click="confirm"
         >
-          Confirm
+          {{$t('global.confirm')}}
         </a>
         <a
           class="button"
           @click="close"
         >
-          Cancel
+          {{$t('global.cancel')}}
         </a>
       </div>
     </v-modal>

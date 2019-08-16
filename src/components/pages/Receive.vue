@@ -35,7 +35,7 @@
         <div class="card app-card">
           <div class="card-header">
             <h2 class="card-header-title">
-              Incoming Payment History
+              {{$t('components.receive.IncomingHistory')}}
             </h2>
           </div>
           <div class="card-content">
@@ -52,7 +52,7 @@
             </ul>
             <v-spinner v-else-if="isLoading" />
             <p v-else>
-              This account has no transactions.
+              {{$t('components.receive.noTransactions')}}
             </p>
           </div>
         </div>

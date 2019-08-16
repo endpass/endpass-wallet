@@ -1,16 +1,16 @@
 <template>
   <base-page class="export-wallet">
     <template slot="title">
-      Export Wallet
+      {{$t('components.exportWallet.header')}}
     </template>
     <p class="subtitle">
-      Exporting account <strong>{{ address }}</strong>
+    {{$t('components.exportWallet.exportAccount')}} <strong>{{ address }}</strong>
     </p>
     <div class="columns">
       <div class="column is-one-third">
         <div class="menu">
           <p class="menu-label">
-            Export Type
+            {{$t('components.exportWallet.exportType')}}
           </p>
           <ul class="menu-list">
             <li>
@@ -19,7 +19,7 @@
                 data-test="export-private-key-button"
                 @click="exportType = 'privateKey'"
               >
-                Private Key
+                {{$t('components.exportWallet.privateKey')}}
               </a>
             </li>
             <li>
@@ -28,7 +28,7 @@
                 data-test="export-seed-phrase-button"
                 @click="exportType = 'seedPhrase'"
               >
-                Seed Phrase
+                {{$t('components.exportWallet.seedPhrase')}}
               </a>
             </li>
             <li>
@@ -37,7 +37,7 @@
                 data-test="export-json-button"
                 @click="exportType = 'json'"
               >
-                JSON Keystore
+                {{$t('components.exportWallet.json')}}
               </a>
             </li>
           </ul>
@@ -53,7 +53,7 @@
         </div>
         <div v-else>
           <p class="subtitle">
-            This export type is not supported on this device.
+            {{$t('components.exportWallet.exportNotSupported')}}
           </p>
         </div>
       </div>

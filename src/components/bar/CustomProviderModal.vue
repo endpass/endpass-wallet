@@ -17,10 +17,10 @@
             :error="errors.first('name')"
             name="name"
             data-vv-name="name"
-            label="Network name"
+            :label="$t('components.customProviderModal.networkName')"
             aria-describedby="name"
-            placeholder="Network name"
-            data-vv-as="Network name"
+            :placeholder="$t('components.customProviderModal.networkName')"
+            :data-vv-as="$t('components.customProviderModal.networkName')"
             autofocus
             required
           />
@@ -35,10 +35,10 @@
             :error="errors.first('url')"
             data-vv-name="url"
             name="url"
-            label="Provider url"
+            :label="$t('components.customProviderModal.providerUrl')"
             aria-describedby="url"
-            placeholder="Provider url"
-            data-vv-as="Provider url"
+            placeholder="$t('components.customProviderModal.providerUrl')"
+            data-vv-as="$t('components.customProviderModal.providerUrl')"
             @input="handleInput"
           />
 
@@ -50,10 +50,10 @@
             :options="currencies"
             data-vv-name="currency"
             name="currency"
-            label="Provider currency"
+            :label="$t('components.customProviderModal.providerCurrenct')"
             aria-describedby="currency"
-            placeholder="Provider currency"
-            data-vv-as="Provider currency"
+            :placeholder="$t('components.customProviderModal.providerCurrenct')"
+            :data-vv-as="$t('components.customProviderModal.providerCurrenct')"
             required
           />
         </v-form>
@@ -65,7 +65,7 @@
 
         <div class="message">
           <div class="message-header">
-            <p>Provider Address</p>
+            <p>{{$t('components.customProviderModal.providerAddress')}}</p>
           </div>
           <div class="message-body">
             <p>{{ innerProvider.name }}</p>
@@ -136,17 +136,17 @@ export default {
       return !Object.is(this.$props.provider, defaultProvider);
     },
     headerText() {
-      return this.needUpdateProvider ? 'Update Provider' : 'Add New Provider';
+      return this.needUpdateProvider ? this.$t('components.customProviderModal.updateProvider') : this.$t('components.customProviderModal.addNewProvider');
     },
     buttonText() {
       return this.needUpdateProvider
-        ? 'Update Provider'
-        : 'Create New Provider';
+        ? this.$t('components.customProviderModal.updateProvider')
+        : this.$t('components.customProviderModal.createNewProvider');
     },
     headerTextAfterAction() {
       return this.needUpdateProvider
-        ? 'Provider Updated'
-        : 'New Provider Added';
+        ? this.$t('components.customProviderModal.providerUpdated')
+        : this.$t('components.customProviderModal.newProviderAdded');
     },
   },
   methods: {
@@ -182,7 +182,7 @@ export default {
       } catch (error) {
         this.errors.add({
           field: 'url',
-          msg: 'Provider is invalid',
+          msg: this.$t('components.customProviderModal.providerIsInvalid'),
           id: 'wrongUrl',
         });
       } finally {

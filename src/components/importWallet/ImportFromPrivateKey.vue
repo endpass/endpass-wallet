@@ -11,12 +11,12 @@
         v-model="privateKey"
         v-validate="'required|private_key'"
         :error="errors.first('privateKey')"
-        label="Private key"
+        :label="$t('components.importFromPrivateKey.privateKey')"
         name="privateKey"
         data-vv-name="privateKey"
-        data-vv-as="private key"
+        :data-vv-as="$t('components.importFromPrivateKey.privateKey')"
         aria-describedby="privateKey"
-        placeholder="Private key"
+        :placeholder="$t('components.importFromPrivateKey.privateKey')"
         required
         data-test="input-private-key"
         @input="handleInput"
@@ -28,7 +28,7 @@
         class-name="is-primary is-cta"
         data-test="submit-import"
       >
-        Import
+        {{$t('global.import')}}
       </v-button>
     </v-form>
 
@@ -68,7 +68,7 @@ export default {
       } catch (e) {
         this.errors.add({
           field: 'privateKey',
-          msg: 'Private key is invalid',
+          msg: this.$t('components.importFromPrivateKey.privateKeyInvalid'),
           id: 'wrongPrivateKey',
         });
         /* eslint-disable-next-line no-console */

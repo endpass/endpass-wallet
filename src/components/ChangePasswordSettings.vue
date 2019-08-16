@@ -3,7 +3,7 @@
     :is-form-valid="isFormValid"
     @submit="handleFormSubmit"
   >
-    <label class="label">Change Password</label>
+    <label class="label">{{$t('components.changePassword.header')}}</label>
     <v-password
       v-model="oldPassword"
       v-validate="'required|min:8'"
@@ -11,8 +11,8 @@
       :error="errors.first('oldPassword')"
       name="oldPassword"
       data-vv-name="oldPassword"
-      data-vv-as="Old Password"
-      placeholder="Old Password"
+      :data-vv-as="$t('components.changePassword.oldPassword')"
+      :placeholder="$t('components.changePassword.oldPassword')"
       data-test="input-old-password"
     />
     <v-password
@@ -22,8 +22,8 @@
       :error="errors.first('newPassword')"
       name="newPassword"
       data-vv-name="newPassword"
-      data-vv-as="New Password"
-      placeholder="New Password"
+      :data-vv-as="$t('components.changePassword.newPassword')"
+      :placeholder="$t('components.changePassword.newPassword')"
       data-test="input-new-password"
     />
     <v-button
@@ -32,7 +32,7 @@
       class-name="is-primary is-medium"
       data-test="submit-change-password"
     >
-      Change Password
+      {{$t('components.changePassword.changePassword')}}
     </v-button>
   </v-form>
 </template>
@@ -70,7 +70,7 @@ export default {
           this.handleSubmitError();
         } else {
           this.$notify({
-            title: 'Password changed successfully',
+            title: this.$t('components.changePassword.changerSuccess'),
             type: 'is-success',
           });
           this.oldPassword = null;
@@ -91,8 +91,8 @@ export default {
 
       this.$notify({
         title: isIncorrentPasswordError
-          ? 'You entered incorrect password, try using a different one.'
-          : 'Password was not changed.',
+          ? $t('components.changePassword.incorrectPassword')
+          : $t('components.changePassword.passwordNotChanged'),
         type: 'is-danger',
       });
     },

@@ -8,7 +8,7 @@
         :value="activeNet"
         track-by="url"
         label="name"
-        placeholder="Select network"
+        :placeholder="$t('components.providerSelect.selectNetwork')"
         @select="selectNet"
       >
         <template
@@ -62,7 +62,7 @@ export default {
     ...mapGetters('web3', ['networks', 'isCustomNetwork']),
     networkOptions() {
       // Options that dispatch methods
-      const actions = [{ name: 'Add Custom Network' }];
+      const actions = [{ name: this.$t('components.providerSelect.addCustomNetwork')}];
       return this.networks.concat(actions);
     },
   },

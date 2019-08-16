@@ -32,7 +32,7 @@
           class-name="is-primary is-medium"
           @click="handleCancel"
         >
-          Close
+          {{$t("global.close")}}
         </v-button>
       </div>
     </v-modal>

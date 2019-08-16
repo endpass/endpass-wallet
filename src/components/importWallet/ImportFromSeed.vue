@@ -15,7 +15,7 @@
           :selected-address="bridgeButtonListSelectedAddress"
           @success="$router.push('/')"
         >
-          Import
+          {{$t("global.import")}}
         </wallet-add-button>
       </template>
     </wallets-list>
@@ -31,12 +31,12 @@
         v-model="key"
         v-validate="'required|seed_phrase'"
         :error="errors.first('hdkeyPhrase')"
-        label="Seed phrase"
+        :label="$t('components.importFromSeed.seedPhrase')"
         name="hdkeyPhrase"
         data-vv-name="hdkeyPhrase"
-        data-vv-as="seed phrase"
+        :data-vv-as="$t('components.importFromSeed.seedPhrase')"
         aria-describedby="hdkeyPhrase"
-        placeholder="Seed phrase"
+        :placeholder="$t('components.importFromSeed.seedPhrase')"
         required
         data-test="input-seed-phrase"
         @input="handleInput"
@@ -47,7 +47,7 @@
         class-name="is-primary is-cta"
         data-test="submit-import"
       >
-        Import
+        {{$t('global.import')}}
       </v-button>
     </v-form>
     <password-modal
@@ -95,7 +95,7 @@ export default {
       } catch (e) {
         this.errors.add({
           field: 'hdkeyPhrase',
-          msg: 'Seed phrase is invalid',
+          msg: $t('components.importFromSeed.seedPhraseInvalid'),
           id: 'wrongPhrase',
         });
       } finally {

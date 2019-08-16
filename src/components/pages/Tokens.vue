@@ -7,7 +7,7 @@
             <div class="card app-card">
               <div class="card-header">
                 <p class="card-header-title">
-                  Your Tokens
+                  {{$t('components.tokens.header')}}
                 </p>
               </div>
               <div class="card-content is-narrow">
@@ -41,7 +41,7 @@
                   class="small"
                   data-test="no-tokens-text"
                 >
-                  You have no tokens on this network. Add some!
+                  {{$t('components.tokens.noTokens')}}
                 </p>
               </div>
             </div>
@@ -50,7 +50,7 @@
             <div class="card">
               <div class="card-header">
                 <div class="card-header-title">
-                  Add Token
+                  {{$t('components.tokens.addToken')}}
                 </div>
                 <div class="card-header-icon">
                   <a
@@ -58,7 +58,7 @@
                     data-test="add-custom-token-button"
                     @click.prevent="openAddTokenModal()"
                   >
-                    Add Custom Token
+                    {{$t('components.tokens.addCustomToken')}}
                   </a>
                 </div>
               </div>
@@ -71,7 +71,7 @@
                   :show-labels="false"
                   track-by="address"
                   label="name"
-                  placeholder="Type to search tokens..."
+                  :placeholder="$t('components.tokens.typeToSearchToken')"
                   data-test="tokens-select"
                   @search-change="setNetworkTokenQuery"
                   @select="addToken"

@@ -1,7 +1,7 @@
 <template>
   <div class="priority-options field is-horizontal">
     <div class="field-label">
-      <label class="label">Priority</label>
+      <label class="label">{{$t('components.transactionPriorityOptions.priority')}}</label>
     </div>
     <div class="field-body">
       <v-radio
@@ -17,7 +17,7 @@
         v-else
         class="help is-danger"
       >
-        Unable to load suggested gas price, please set gas price manually.
+        {{$t('components.transactionPriorityOptions.loadError')}}
       </p>
     </div>
   </div>

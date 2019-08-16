@@ -33,7 +33,7 @@
             <v-badge
               v-if="isUsed"
               class="has-background-primary has-text-white"
-            >used</v-badge>
+            >{{$t('components.walletItem.used')}}</v-badge>
           </account>
         </a>
       </li>

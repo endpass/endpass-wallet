@@ -2,7 +2,7 @@
   <div class="card app-card">
     <div class="card-header">
       <h2 class="card-header-title">
-        Receive ETH
+        {{$t('components.accountWalletCard.header')}}
       </h2>
     </div>
     <div
@@ -13,7 +13,7 @@
         v-if="isCurrentAccount"
         class="card-section"
       >
-        Your Active Address:
+        {{$t('components.accountWalletCard.activeAdress')}}
       </div>
       <div class="card-section">
         <account
@@ -33,7 +33,7 @@
           data-test="send-button"
           @click="emitSend"
         >
-          Send ethereum
+          {{$t('components.accountWalletCard.sendEth')}}
         </v-button>
       </div>
       <div class="card-tokens">

@@ -1,7 +1,7 @@
 <template>
   <base-page>
     <template slot="title">
-      Transaction
+      {{$t('components.transaction.header')}}
     </template>
     <div class="tabs">
       <ul>

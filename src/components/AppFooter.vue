@@ -2,14 +2,12 @@
   <footer class="app-footer section is-narrow">
     <div class="container">
       <p class="small disclaimer">
-        Endpass Wallet is non-custodial software for managing blockchain
-        transactions. We never hold your funds. We never have access to your
-        funds or private keys.
+        {{$t('components.appFooter.disclaimer')}}
       </p>
       <div class="footer-links level is-mobile">
         <div class="level-left">
           <p class="level-item">
-            &copy; 2018 Endpass, Inc
+            &copy; {{$t('components.appFooter.copyright')}}
           </p>
           <p class="level-item">
             <a
@@ -21,7 +19,7 @@
                 class="icon is-small"
                 v-html="require('@/img/github.svg')"
               />
-              100% Open Source
+              {{$t('components.appFooter.openSource')}}
             </a>
           </p>
           <p class="level-item">
@@ -29,7 +27,7 @@
               target="_blank"
               href="https://help.endpass.com"
             >
-              Support
+              {{$t('components.appFooter.support')}}
             </a>
           </p>
         </div>

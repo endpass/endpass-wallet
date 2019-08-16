@@ -4,7 +4,7 @@
     @close="handleClose"
   >
     <p class="subtitle">
-      This will DELETE all data in local storage permanently.
+      {{$t('components.confirmLogoutModal.message')}}
     </p>
   </confirm-modal>
 </template>

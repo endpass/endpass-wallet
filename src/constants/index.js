@@ -33,6 +33,8 @@ export const ENCRYPT_OPTIONS = {
   n: ENV.VUE_APP_KDF_PARAMS_N,
 };
 
+export const LOCALES = ['en'];
+
 export default {
   REQUEST_TIMEOUT_MSEC,
   STORAGE_USER_META_KEY,
@@ -41,4 +43,5 @@ export default {
   DAPP_WHITELISTED_METHODS,
   TRANSACTION_STATUS,
   ENCRYPT_OPTIONS,
+  LOCALES
 };

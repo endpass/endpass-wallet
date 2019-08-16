@@ -9,7 +9,7 @@
         class-name="is-primary is-medium"
         @click="getNextAddressess"
       >
-        Load wallets
+        {{$t('components.walletsList.loadWallets')}}
       </v-button>
     </div>
     <v-spinner

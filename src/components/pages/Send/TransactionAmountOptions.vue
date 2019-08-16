@@ -3,7 +3,7 @@
     <div class="field is-horizontal" data-test="transaction-amount-group-field">
       <div class="field-label is-normal">
         <label class="label" for="amount">
-          Amount
+          {{$t('components.transactionAmountOptions.amount')}}
         </label>
       </div>
       <div class="field-body">
@@ -20,7 +20,7 @@
           name="value"
           data-vv-name="value"
           aria-describedby="value"
-          placeholder="Amount"
+          :placeholder="{{$t('components.transactionAmountOptions.amount')}}"
           required
           data-test="transaction-amount-input"
           @input="handleAmountInput"
@@ -56,7 +56,7 @@
           name="price"
           data-vv-name="price"
           aria-describedby="price"
-          placeholder="Price"
+          :placeholder="{{$t('components.transactionAmountOptions.price')}}"
           required
           @input="handlePriceInput"
         >
@@ -68,7 +68,7 @@
     </div>
     <div v-show="showFee" class="field is-horizontal">
       <div class="field-label">
-        <label class="label">Gas Fee</label>
+        <label class="label">{{$t('components.transactionAmountOptions.gasFee')}}</label>
       </div>
       <div class="field-body">
         <v-input
@@ -324,7 +324,7 @@ export default {
       if (gasFeeBN.gt(balance)) {
         this.errors.add({
           field: 'value',
-          msg: 'Insufficient funds',
+          msg: this.$t('components.transactionAmountOptions.insufficientFunds'),
           id: 'insufficientBalance',
         });
       } else {

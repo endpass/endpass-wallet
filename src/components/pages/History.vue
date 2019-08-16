@@ -5,7 +5,7 @@
         <div class="card app-card">
           <div class="card-header">
             <h1 class="card-header-title">
-              Transaction history
+              {{$t('components.history.header')}}
             </h1>
           </div>
           <div class="card-content">
@@ -22,11 +22,11 @@
               </li>
             </ul>
             <p v-else-if="!isHistoryAvailable">
-              Transaction history is only supported on the main network.
+              {{$t('components.history.notSupported')}}
             </p>
             <v-spinner v-else-if="isLoading" />
             <p v-else>
-              This account has no transactions.
+              {{$t('components.history.noTransactions')}}
             </p>
           </div>
         </div>

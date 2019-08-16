@@ -6,7 +6,7 @@
         class-name="is-primary is-cta"
         data-test="export-button"
       >
-        Export
+        {{$t('components.exportToJson.export')}}
       </v-button>
     </v-form>
     <password-modal
@@ -89,8 +89,8 @@ export default {
 
     exportError() {
       this.$notify({
-        title: 'Error exporting to JSON',
-        text: 'Could not create file with your wallet. Please try again.',
+        title: $t('components.exportToJson.exportError'),
+        text: $t('components.exportToJson.exportErrorText'),
         type: 'is-danger',
       });
     },

@@ -4,7 +4,7 @@
       v-model="hardwareType"
       :has-default-active="false"
       :list="hardwareList"
-      label="Choose Hardware type"
+      :label="$t('components.hardwareChooser.chooseHardwareType')"
     />
   </div>
 </template>
@@ -15,16 +15,17 @@ import { Wallet } from '@/class';
 const WALLET_TYPES = Wallet.getTypes();
 
 const hardwareList = {
-  [WALLET_TYPES.LEDGER]: 'Ledger wallet',
-  [WALLET_TYPES.TREZOR]: 'Trezor wallet',
 };
 
 export default {
   name: 'HardwareChooser',
-  data: () => ({
+  data: function () {
     hardwareType: null,
-    hardwareList,
-  }),
+    hardwareList: {
+      [WALLET_TYPES.LEDGER]: thiss.$t('components.hardwareChooser.ledgerWallet'),
+      [WALLET_TYPES.TREZOR]: thiss.$t('components.hardwareChooser.trezorWallet'),
+    },
+  },
   watch: {
     hardwareType(type) {
       this.$emit('input', type);

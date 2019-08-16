@@ -10,6 +10,7 @@ import store from './store';
 import App from './App.vue';
 import validation from './validation';
 import directives from './directives';
+import i18n from '@/locales/i18n';
 
 Vue.config.productionTip = false;
 Vue.config.performance = true;
@@ -41,6 +42,7 @@ const app = new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   render: h => h(App),
 });
 
