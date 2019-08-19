@@ -1,4 +1,5 @@
 import { cryptodataAPIUrl, mainNetworkId } from '@config';
+import { gasPrice } from '@fixtures/cryptodata';
 
 Cypress.Commands.add('mockTokenPrices', () => {
   cy.route({
@@ -18,6 +19,6 @@ Cypress.Commands.add('mockGasPrice', () => {
   cy.route(
     'GET',
     `${cryptodataAPIUrl}/${mainNetworkId}/gas/price`,
-    'fixture:cryptodata/gasprice',
+    gasPrice,
   ).as('gasPriceMain');
 });

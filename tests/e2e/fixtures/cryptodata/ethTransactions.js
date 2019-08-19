@@ -1,0 +1,15 @@
+import { v3 } from '@fixtures/accounts';
+
+export default [
+  {
+    contractAddress: '',
+    data:
+      '0x23b872dd0000000000000000000000007aa56476b98f9957483087ba370ec63e3ec03558000000000000000000000000303380902822c5068b0f2e0ed1aac746c38f655a0000000000000000000000000000000000000000000000000000003db33b1a00',
+    from: v3.address,
+    hash: '0x3d4e836ee0b8ad066ab2c084ce8b352fda77d6896f0853fc2211260a85941c31',
+    timestamp: '0x5c7cdb0c',
+    to: '0xc761c758f10c84bb2af14ec728780372af840ce7',
+    token: null,
+    value: '0',
+  },
+];

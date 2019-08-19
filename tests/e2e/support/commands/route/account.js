@@ -29,7 +29,8 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import { identityAPIUrl } from '@config';
-import { hdv3, hdv3Info } from '@fixtures/accounts';
+import { hdv3, hdv3Info, accountsList, v3, v3Info } from '@fixtures/accounts';
+import { successResp, identityServerInfo } from '@fixtures/identity';
 
 // Sets up server and routes to stub logged in user with fixtures.
 
@@ -55,38 +56,29 @@ Cypress.Commands.add('mockAccountsDataFailed', () => {
 
 Cypress.Commands.add('mockAccountKeystores', () => {
   // Keystore server
-  cy.route('GET', `${identityAPIUrl}/info`, 'fixture:keystore/info.json').as(
+  cy.route('GET', `${identityAPIUrl}/info`, identityServerInfo).as(
     'keystoreServerInfo',
   );
 
   // Accounts list
-  cy.route(
-    'GET',
-    `${identityAPIUrl}/accounts`,
-    'fixture:keystore/accounts.json',
-  ).as('keystoreAccounts');
+  cy.route('GET', `${identityAPIUrl}/accounts`, accountsList).as(
+    'keystoreAccounts',
+  );
 
   // All account info
-  cy.route('GET', /\/account\/(\w+)\/info$/, {}).as('accountInfo');
+  cy.route('GET', `${identityAPIUrl}/account/*/info`, {}).as(
+    'accountEmptyInfo',
+  );
 
   // Regular account
-  cy.route(
-    'GET',
-    `${identityAPIUrl}/account/0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c`,
-    'fixture:keystore/account_1.json',
-  ).as('keystoreAccount');
+  cy.route('GET', `${identityAPIUrl}/account/${v3.address}`, v3).as(
+    'keystoreAccount',
+  );
+  cy.route('GET', `${identityAPIUrl}/account/${v3.address}/info`, v3Info).as(
+    'keystoreAccountInfo',
+  );
 
   // HD account
-  cy.route(
-    'GET',
-    `${identityAPIUrl}/account/xpub*`,
-    'fixture:keystore/account_0.json',
-  ).as('keystoreHdAccount');
-  cy.route(
-    'POST',
-    `${identityAPIUrl}/account/*/info`,
-    'fixture:identity/success.json',
-  ).as('saveKeystoreHdAccountInfo');
   cy.route('GET', `${identityAPIUrl}/account/${hdv3.address}`, hdv3).as(
     'keystoreHdAccountMain',
   );
@@ -104,14 +96,13 @@ Cypress.Commands.add('mockAccountKeystores', () => {
   ).as('publicAccount');
 
   // Account modification
-  cy.route(
-    'POST',
-    `${identityAPIUrl}/account/*`,
-    'fixture:identity/success.json',
-  ).as('keystoreAddAccount');
-  cy.route(
-    'POST',
-    `${identityAPIUrl}/accounts`,
-    'fixture:identity/success.json',
-  ).as('keystoreUpdateAccounts');
+  cy.route('POST', `${identityAPIUrl}/account/*/info`, successResp).as(
+    'saveKeystoreAccountInfo',
+  );
+  cy.route('POST', `${identityAPIUrl}/account/*`, successResp).as(
+    'keystoreAddAccount',
+  );
+  cy.route('POST', `${identityAPIUrl}/accounts`, successResp).as(
+    'keystoreUpdateAccounts',
+  );
 });

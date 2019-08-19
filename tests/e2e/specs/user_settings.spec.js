@@ -1,4 +1,4 @@
-import user from '@fixtures/identity/user';
+import { user } from '@fixtures/identity';
 import { mnemonic, v3password } from '@fixtures/accounts';
 import { identityAPIUrl } from '@config';
 
