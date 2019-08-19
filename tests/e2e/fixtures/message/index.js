@@ -10,5 +10,3 @@ export const signedMessage = {
   signature:
     '0x27c1921efe91de9e65cdd1f5ca4ec6f021256dc5bd7f965fef4de795c09c12ae11717595b3a92262330904f75f8385b1071bbb603ad838e07b962b3b2d1e38201b',
 };
-
-export const address = '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c';

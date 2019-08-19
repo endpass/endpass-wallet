@@ -1,4 +1,5 @@
-import { message, signedMessage, address } from '@fixtures/message';
+import { message, signedMessage } from '@fixtures/message';
+import { v3 } from '@fixtures/accounts';
 
 describe('Message Page', () => {
   describe('the user is not authorized', () => {
@@ -66,7 +67,7 @@ describe('Message Page', () => {
           );
           cy.get('[data-test=verify-button]').click();
 
-          cy.get('[data-test=address-field]').contains(address);
+          cy.get('[data-test=address-field]').contains(v3.address);
         });
       });
 

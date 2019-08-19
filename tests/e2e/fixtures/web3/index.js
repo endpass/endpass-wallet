@@ -1,8 +1,6 @@
 /* eslint-disable camelcase */
 import { toWei } from 'web3-utils';
-import addressInfo_b14ab from '../addressinfo/b14ab.json';
-import addressInfo_31ea8 from '../addressinfo/31ea8.json';
-import { address } from '../accounts';
+import { v3ExtraInfo, v3ImportExtraInfo } from '@fixtures/accounts';
 
 const BLOCK_NUMBER = '0x4051fb';
 const BLOCK_HASH =
@@ -46,15 +44,15 @@ export const getBlockByNumber = {
 export const getBalance_b14ab = {
   payload: {
     method: 'eth_getBalance',
-    params: [addressInfo_b14ab.address, 'latest'],
+    params: [v3ExtraInfo.address, 'latest'],
   },
-  result: toWei(String(addressInfo_b14ab.ETH.balance), 'ether'),
+  result: toWei(String(v3ExtraInfo.ETH.balance), 'ether'),
 };
 
 export const getBalance_31ea8 = {
   payload: {
     method: 'eth_getBalance',
-    params: [address, 'latest'],
+    params: [v3ImportExtraInfo.address, 'latest'],
   },
   result: toWei('1', 'ether'),
 };
@@ -70,9 +68,9 @@ export const getBalance_6bbf1 = {
 export const getTransactionCount_b14ab = {
   payload: {
     method: 'eth_getTransactionCount',
-    params: [addressInfo_b14ab.address, 'latest'],
+    params: [v3ExtraInfo.address, 'latest'],
   },
-  result: addressInfo_b14ab.countTxs,
+  result: v3ExtraInfo.countTxs,
 };
 
 export const call_b14ab = {
@@ -196,7 +194,7 @@ export const estimateGas_31ea8 = {
     params: [
       {
         data: '0x',
-        to: addressInfo_31ea8.address,
+        to: v3ImportExtraInfo.address,
       },
     ],
   },
@@ -220,7 +218,7 @@ export const getTransactionReceipt_b14ab_31ea8 = {
   },
   result: {
     transactionHash: TRANSACTION_HASH,
-    transactionIndex: addressInfo_b14ab.countTxs,
+    transactionIndex: v3ExtraInfo.countTxs,
     blockNumber: BLOCK_NUMBER,
     blockHash: BLOCK_HASH,
     cumulativeGasUsed: '0x33bc',
@@ -247,7 +245,7 @@ export const getTransactionReceipt_b14ab_31ea8_cancel = {
   },
   result: {
     transactionHash: CANCEL_TRANSACTION_HASH,
-    transactionIndex: addressInfo_b14ab.countTxs,
+    transactionIndex: v3ExtraInfo.countTxs,
     blockNumber: BLOCK_NUMBER,
     blockHash: BLOCK_HASH,
     cumulativeGasUsed: '0x33bc',
@@ -274,7 +272,7 @@ export const getTransactionReceipt_b14ab_31ea8_resend = {
   },
   result: {
     transactionHash: RESEND_TRANSACTION_HASH,
-    transactionIndex: addressInfo_b14ab.countTxs,
+    transactionIndex: v3ExtraInfo.countTxs,
     blockNumber: BLOCK_NUMBER,
     blockHash: BLOCK_HASH,
     cumulativeGasUsed: '0x33bc',

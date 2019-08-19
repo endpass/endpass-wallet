@@ -1,5 +1,5 @@
 import { identityAPIUrl } from '@config';
-import seed from '@fixtures/identity/seed';
+import { successResp, user, otp, seed } from '@fixtures/identity';
 
 Cypress.Commands.add('mockUserSettings', () => {
   cy.route({
@@ -12,53 +12,31 @@ Cypress.Commands.add('mockUserSettings', () => {
     method: 'POST',
     url: `${identityAPIUrl}/user/seed`,
     status: 200,
-    response: { success: true },
+    response: successResp,
   }).as('saveUserSeed');
 
   // Identity server
-  cy.route(
-    'GET',
-    `${identityAPIUrl}/settings`,
-    'fixture:identity/user.json',
-  ).as('identityUser');
-  cy.route(
-    'POST',
-    `${identityAPIUrl}/settings`,
-    'fixture:identity/success.json',
-  ).as('identityPostSettings');
-  cy.route(
-    'GET',
-    `${identityAPIUrl}/settings/otp`,
-    'fixture:identity/otp.json',
-  ).as('identityOtp');
-  cy.route(
-    'POST',
-    `${identityAPIUrl}/settings/otp`,
-    'fixture:identity/success.json',
-  ).as('identitySetOtp');
-  cy.route(
-    'DELETE',
-    `${identityAPIUrl}/settings/otp`,
-    'fixture:identity/success.json',
-  ).as('identityDeleteOtp');
-  cy.route(
-    'POST',
-    `${identityAPIUrl}/tokens/**`,
-    'fixture:identity/success.json',
-  ).as('identityAddToken');
-  cy.route(
-    'DELETE',
-    `${identityAPIUrl}/tokens/**`,
-    'fixture:identity/success.json',
-  ).as('identityDeleteToken');
-  cy.route(
-    'POST',
-    `${identityAPIUrl}/networks/*`,
-    'fixture:identity/success.json',
-  ).as('identityAddNetwork');
-  cy.route(
-    'DELETE',
-    `${identityAPIUrl}/networks/*`,
-    'fixture:identity/success.json',
-  ).as('identityDeleteNetwork');
+  cy.route('GET', `${identityAPIUrl}/settings`, user).as('identityUser');
+  cy.route('POST', `${identityAPIUrl}/settings`, successResp).as(
+    'identityPostSettings',
+  );
+  cy.route('GET', `${identityAPIUrl}/settings/otp`, otp).as('identityOtp');
+  cy.route('POST', `${identityAPIUrl}/settings/otp`, successResp).as(
+    'identitySetOtp',
+  );
+  cy.route('DELETE', `${identityAPIUrl}/settings/otp`, successResp).as(
+    'identityDeleteOtp',
+  );
+  cy.route('POST', `${identityAPIUrl}/tokens/**`, successResp).as(
+    'identityAddToken',
+  );
+  cy.route('DELETE', `${identityAPIUrl}/tokens/**`, successResp).as(
+    'identityDeleteToken',
+  );
+  cy.route('POST', `${identityAPIUrl}/networks/*`, successResp).as(
+    'identityAddNetwork',
+  );
+  cy.route('DELETE', `${identityAPIUrl}/networks/*`, successResp).as(
+    'identityDeleteNetwork',
+  );
 });

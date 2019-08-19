@@ -1,4 +1,4 @@
-import { privateKey } from '@fixtures/wallet';
+import { privateKey } from '@fixtures/accounts';
 
 describe('Export wallet page', () => {
   beforeEach(() => {
