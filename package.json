@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "LOCAL_MODE=true vue-cli-service serve",
     "build": "vue-cli-service build",
-    "dev-build": "vue-cli-service build --mode staging",
+    "build:dev": "yarn build --mode development",
+    "build:staging": "NODE_ENV=production yarn build --mode staging",
     "start": "yarn dev",
     "unit": "vue-cli-service test:unit",
     "unit:watch": "yarn unit --watch",

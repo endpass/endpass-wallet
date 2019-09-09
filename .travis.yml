@@ -18,7 +18,7 @@ before_script:
 - sleep 5
 script:
 - yarn $TEST_SUITE
-- yarn dev-build
+- yarn build:dev
 before_deploy:
 - pip install --user awscli
 deploy:
