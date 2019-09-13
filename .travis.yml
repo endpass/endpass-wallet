@@ -22,6 +22,7 @@ jobs:
   include:
   - stage: test
     env:
+      matrix:
       - TEST_SUITE=unit
       - TEST_SUITE=e2e
     before_script:
