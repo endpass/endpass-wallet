@@ -5,10 +5,6 @@ addons:
   apt:
     packages:
     - libgconf-2-4
-env:
-  matrix:
-  - TEST_SUITE=unit
-  - TEST_SUITE=e2e
 cache:
   directories:
   - "~/.cache"
@@ -25,6 +21,9 @@ stages:
 jobs:
   include:
   - stage: test
+    env:
+      - TEST_SUITE=unit
+      - TEST_SUITE=e2e
     before_script:
       - yarn dev &
       - sleep 5
