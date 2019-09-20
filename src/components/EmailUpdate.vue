@@ -5,7 +5,7 @@
       data-test="update-email-form"
       @submit="togglePasswordModal"
     >
-      <label class="label">Update email</label>
+      <label class="label">{{ $t('components.emailUpdate.header') }}</label>
       <v-input
         ref="email"
         v-model="email"
@@ -13,8 +13,8 @@
         :error="errors.first('email')"
         :disabled="isLoading"
         name="email"
-        placeholder="New email"
-        data-vv-as="email"
+        :placeholder="$t('components.emailUpdate.newEmail')"
+        :data-vv-as="$t('components.emailUpdate.newEmail')"
         data-test="input-new-email"
       />
       <v-input
@@ -23,8 +23,8 @@
         :error="errors.first('emailConfirm')"
         :disabled="isLoading"
         name="emailConfirm"
-        placeholder="Confirm email"
-        data-vv-as="confirm email"
+        :placeholder="$t('components.emailUpdate.confirmEmail')"
+        :data-vv-as="$t('components.emailUpdate.confirmEmail')"
         data-test="input-confirm-new-email"
       />
       <v-button
@@ -34,7 +34,7 @@
         class-name="is-primary is-medium"
         data-test="update-email-button"
       >
-        Update
+        {{ $t('global.update') }}Update
       </v-button>
     </v-form>
     <password-modal
@@ -43,7 +43,9 @@
       @close="togglePasswordModal"
     >
       <div class="field">
-        <label class="label">Your email will be updated to</label>
+        <label
+          class="label"
+        >{{$t('components.emailUpdate.emailWillBeUpdatedTo')}</label>
         <p>{{ email }}</p>
       </div>
     </password-modal>

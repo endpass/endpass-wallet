@@ -1,7 +1,7 @@
 <template>
   <base-page class="settings-page">
     <template slot="title">
-      Settings
+      {{ $t('components.settings.header') }}
     </template>
 
     <v-form
@@ -14,18 +14,17 @@
         v-if="isDefaultIdentity"
         :value="email"
         name="input-email"
-        label="Email Address"
+        :label="$t('components.settings.emailAddress')"
         class-name="is-static"
         type="email"
-        help="Contact support if you need to change your email
-        address."
+        :help="$t('components.settings.emailAddressHelp')"
         readonly
         data-test="input-email"
       />
       <v-select
         v-model="newSettings.fiatCurrency"
         :options="availableCurrencies"
-        label="Fiat Currency"
+        :label="$t('components.settings.fiatCurrency')"
         name="fiatCurrency"
         data-test="select-fiat"
         @input="updateSettings"
@@ -91,8 +90,8 @@ export default {
     async updateSettings() {
       await this.updateSettingsInStore({ ...this.newSettings });
       this.$notify({
-        title: 'Settings Saved',
-        text: 'Your settings have been saved.',
+        title: this.$t('components.settings.settingsSaved'),
+        text: this.$t('components.settings.settingsSavedText'),
         type: 'is-info',
       });
     },

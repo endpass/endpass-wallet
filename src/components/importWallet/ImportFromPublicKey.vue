@@ -10,12 +10,12 @@
       v-model="address"
       v-validate="'required|address'"
       :error="errors.first('address')"
-      label="Address"
+      :label="$t('components.importFromPublicKey.address')"
       name="address"
       data-vv-name="address"
-      data-vv-as="public key"
+      :data-vv-as="$t('components.importFromPublicKey.address')"
       aria-describedby="address"
-      placeholder="0x...."
+      :placeholder="$t('components.importFromPublicKey.address')"
       required
       data-test="input-public-key"
       @input="handleInput"
@@ -26,7 +26,7 @@
       class-name="is-primary is-cta"
       data-test="submit-import"
     >
-      Import
+      {{ $t('global.import') }}
     </v-button>
   </v-form>
 </template>
@@ -51,7 +51,7 @@ export default {
       } catch (e) {
         this.errors.add({
           field: 'address',
-          msg: 'Address is invalid',
+          msg: this.$t('components.importFromPublicKey.addressInvalid'),
           id: 'wrongAddress',
         });
         /* eslint-disable-next-line no-console */

@@ -44,12 +44,12 @@
         v-model="jsonKeystorePassword"
         v-validate="'required|min:8'"
         :error="errors.first('jsonKeystorePassword')"
-        label="V3 JSON keystore password"
+        :label="$t('components.importFromJson.v3JsonkeystorePassword')"
         name="jsonKeystorePassword"
         data-vv-name="jsonKeystorePassword"
         data-vv-as="password"
         aria-describedby="jsonKeystorePassword"
-        placeholder="V3 JSON keystore password"
+        :placeholder="$t('components.importFromJson.v3JsonkeystorePassword')"
         required
         data-test="input-json-file-password"
       />
@@ -60,7 +60,7 @@
         class-name="is-primary is-cta"
         data-test="submit-import"
       >
-        Import
+        {{ $t('global.import') }}
       </v-button>
     </v-form>
 
@@ -69,7 +69,7 @@
       @close="togglePasswordModal"
       @confirm="handlePasswordConfirm"
     >
-      The wallet password will be used for operations on the imported wallet
+      {{ $t('components.importFromJson.passwordModalText') }}
     </password-modal>
   </div>
 </template>
@@ -93,7 +93,9 @@ export default {
     fileName() {
       const { file } = this;
 
-      return file ? file.name : 'V3 JSON keystore file';
+      return file
+        ? file.name
+        : this.$t('components.importFromJson.V3JsonFrile');
     },
   },
   watch: {
@@ -118,7 +120,7 @@ export default {
       } catch (e) {
         this.errors.add({
           field: 'jsonKeystorePassword',
-          msg: 'JSON password is invalid',
+          msg: this.$t('components.importFromJson.V3Invalid'),
           id: 'wrongPass',
         });
       }
@@ -139,7 +141,7 @@ export default {
       const reader = new FileReader();
       const fileReaderError = {
         field: 'fileName',
-        msg: 'File is invalid',
+        msg: this.$t('components.importFromJson.fileInvalid'),
         id: 'wrongFile',
       };
 

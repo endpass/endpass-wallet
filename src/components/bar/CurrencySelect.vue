@@ -7,8 +7,8 @@
         :allow-empty="true"
         :value="activeCurrency"
         track-by="id"
-        label="name"
-        placeholder="Select currency"
+        :label="$t('components.currencySelect.label')"
+        :placeholder="$t('components.currencySelect.placeholder')"
         data-test="currency-select"
         @select="selectCurrency"
       />

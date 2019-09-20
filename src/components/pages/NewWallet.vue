@@ -1,20 +1,19 @@
 <template>
   <base-page class="new-wallet">
     <template slot="title">
-      {{ hdKey ? 'Wallet Created' : 'Create Wallet' }}
+      {{ componentTitle }}
     </template>
     <div
       v-if="hdKey"
       class="container has-text-centered is-narrow"
     >
       <p class="subtitle">
-        Your wallet has been created successfully. Please
-        <strong>write down the 12 word recovery phrase below</strong>
-        and store it in a safe place. You will not be able to recover your
-        wallet without it.
+        {{ $t('component.newWallet.paragaph1') }}
+        <strong>{{ $t('component.newWallet.paragaph2') }}</strong>
+        {{ $t('component.newWallet.paragaph3') }}
       </p>
       <div class="box">
-        <p>Your wallet recovery phrase</p>
+        <p>{{ $t('component.newWallet.yourSeedPhrase') }}</p>
         <p
           class="code"
           data-test="seed-phrase"
@@ -27,7 +26,7 @@
         class="button is-success is-cta"
         @click.native="onContinue"
       >
-        Continue
+        {{ $t('global.continue') }}
       </router-link>
     </div>
     <div
@@ -35,9 +34,7 @@
       class="container has-text-centered is-narrow"
     >
       <p class="subtitle">
-        Just click the button below to create a new, secure Ethereum Wallet.
-        Your wallet can contain multiple addresses for storing Ethereum and
-        ERC20 compatible tokens.
+        {{ $t('component.newWallet.paragaph4') }}
       </p>
       <v-form
         :is-form-valid="isFormValid"
@@ -48,12 +45,12 @@
           v-model="password"
           v-validate="'required|min:8'"
           :error="errors.first('password')"
-          label="Wallet password"
+          :label="$t('component.newWallet.walletPassword')"
           name="password"
           data-vv-as="password"
           data-vv-name="password"
           aria-describedby="jsonKeystorePassword"
-          placeholder="wallet password"
+          :placeholder="$t('component.newWallet.walletPassword')"
           required
           data-test="input-new-wallet-password"
         />
@@ -62,7 +59,7 @@
           :disabled="!isFormValid"
           class-name="is-success is-cta"
         >
-          Create New Wallet
+          {{ $t('component.newWallet.createNewWallet') }}
         </v-button>
       </v-form>
     </div>
@@ -70,8 +67,8 @@
 </template>
 
 <script>
-import BasePage from '@/components/pages/Base';
 import { mapActions, mapState } from 'vuex';
+import BasePage from '@/components/pages/Base';
 import formMixin from '@/mixins/form';
 
 export default {
@@ -88,7 +85,14 @@ export default {
     ...mapState({
       hdKey: state => state.accounts.hdKey,
     }),
+
+    componentTitle() {
+      return this.hdKey
+        ? this.$t('component.newWallet.walletCreated')
+        : this.$t('component.newWallet.createWallet');
+    },
   },
+
   methods: {
     ...mapActions('accounts', ['createNewWallet']),
 
@@ -109,8 +113,8 @@ export default {
         this.key = seedKey;
       } catch (e) {
         this.$notify({
-          title: 'Error creating wallet',
-          text: 'Could not create wallet. Please try again.',
+          title: this.$t('component.newWallet.errorCreatingWallet'),
+          text: this.$t('component.newWallet.couldNotCreateWallet'),
           type: 'is-danger',
         });
         /* eslint-disable-next-line no-console */
@@ -132,6 +136,7 @@ export default {
   },
 
   mixins: [formMixin],
+
   components: {
     BasePage,
   },
