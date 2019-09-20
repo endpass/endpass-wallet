@@ -4,9 +4,11 @@ import Vuex from 'vuex';
 import UIComponents from '@endpass/ui';
 import validation from '@/validation';
 
+import setupI18n from '@/locales/i18nSetup';
 import TransactionModal from '@/components/modal/TransactionModal';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 localVue.use(validation);
@@ -33,6 +35,7 @@ describe('TransactionModal', () => {
       wrapper = shallowMount(TransactionModal, {
         store,
         localVue,
+        i18n,
         propsData: {
           transaction,
         },

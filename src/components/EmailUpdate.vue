@@ -34,7 +34,7 @@
         class-name="is-primary is-medium"
         data-test="update-email-button"
       >
-        {{ $t('global.update') }}Update
+        {{ $t('global.update') }}
       </v-button>
     </v-form>
     <password-modal

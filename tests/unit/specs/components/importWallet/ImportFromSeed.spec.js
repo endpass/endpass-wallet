@@ -4,10 +4,12 @@ import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
 import UIComponents from '@endpass/ui';
 import validation from '@/validation';
+import setupI18n from '@/locales/i18nSetup';
 
 import ImportFromSeed from '@/components/importWallet/ImportFromSeed';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(validation);
 localVue.use(Vuex);
@@ -37,6 +39,7 @@ describe('ImportFromSeed', () => {
     router = new VueRouter();
     const store = new Vuex.Store(storeOptions);
     wrapper = shallowMount(ImportFromSeed, {
+      i18n,
       localVue,
       store,
       router,

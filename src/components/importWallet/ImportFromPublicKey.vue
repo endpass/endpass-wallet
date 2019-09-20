@@ -15,7 +15,7 @@
       data-vv-name="address"
       :data-vv-as="$t('components.importFromPublicKey.publicKey')"
       aria-describedby="address"
-      :placeholder="$t('components.importFromPublicKey.address')"
+      placeholder="0x..."
       required
       data-test="input-public-key"
       @input="handleInput"

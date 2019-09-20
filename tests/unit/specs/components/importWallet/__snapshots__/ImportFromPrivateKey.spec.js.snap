@@ -10,7 +10,7 @@ exports[`ImportFromPrivateKey render should render initial state of the componen
       aria-invalid="false"
       aria-required="true"
       data-test="input-private-key"
-      data-vv-as="private key"
+      data-vv-as="Private key"
       data-vv-name="privateKey"
       id="privateKey"
       label="Private key"

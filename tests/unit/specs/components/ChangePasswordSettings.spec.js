@@ -4,6 +4,7 @@ import VeeValidate from 'vee-validate';
 import Notifications from 'vue-notification';
 import UIComponents from '@endpass/ui';
 
+import setupI18n from '@/locales/i18nSetup';
 import ChangePasswordSettings from '@/components/ChangePasswordSettings';
 
 describe('ChangePasswordSettings', () => {
@@ -31,6 +32,7 @@ describe('ChangePasswordSettings', () => {
       },
     };
     const localVue = createLocalVue();
+    const i18n = setupI18n(localVue);
 
     localVue.use(Vuex);
     localVue.use(Notifications);
@@ -40,6 +42,7 @@ describe('ChangePasswordSettings', () => {
     const store = new Vuex.Store(storeOptions);
 
     wrapper = shallowMount(ChangePasswordSettings, {
+      i18n,
       store,
       localVue,
       sync: false,

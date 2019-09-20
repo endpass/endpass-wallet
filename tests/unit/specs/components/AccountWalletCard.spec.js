@@ -6,8 +6,11 @@ import AccountWalletCard from '@/components/AccountWalletCard';
 
 import { address } from 'fixtures/accounts';
 import { tokensMappedByAddresses } from 'fixtures/tokens';
+import setupI18n from '@/locales/i18nSetup';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
+
 localVue.use(Vuex);
 localVue.use(UIComponents);
 
@@ -57,6 +60,7 @@ describe('AccountWalletCard', () => {
       },
       store,
       localVue,
+      i18n,
     };
 
     jest.clearAllMocks();

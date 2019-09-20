@@ -37,8 +37,8 @@
             name="url"
             :label="$t('components.customProviderModal.providerUrl')"
             aria-describedby="url"
-            placeholder="$t('components.customProviderModal.providerUrl')"
-            data-vv-as="$t('components.customProviderModal.providerUrl')"
+            :placeholder="$t('components.customProviderModal.providerUrl')"
+            :data-vv-as="$t('components.customProviderModal.providerUrl')"
             @input="handleInput"
           />
 

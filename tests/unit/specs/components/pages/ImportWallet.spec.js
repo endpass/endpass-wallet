@@ -5,10 +5,12 @@ import UIComponents from '@endpass/ui';
 import ImportWallet from '@/components/pages/ImportWallet.vue';
 import validation from '@/validation';
 
+import setupI18n from '@/locales/i18nSetup';
 import ImportFromPrivateKey from '@/components/importWallet/ImportFromPrivateKey';
 import ImportFromSeed from '@/components/importWallet/ImportFromSeed';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 localVue.use(validation);
@@ -30,6 +32,7 @@ describe('ImportWallet', () => {
     wrapper = mount(ImportWallet, {
       store,
       localVue,
+      i18n,
       sync: false,
     });
   });

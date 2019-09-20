@@ -7,8 +7,10 @@ import UIComponents from '@endpass/ui';
 
 import NewWallet from '@/components/pages/NewWallet.vue';
 import validation from '@/validation';
+import setupI18n from '@/locales/i18nSetup';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Notifications);
 localVue.use(Vuex);
@@ -44,6 +46,7 @@ describe('NewWallet page', () => {
         localVue,
         store,
         router,
+        i18n,
         mocks: {
           $ga: {
             event: () => {},

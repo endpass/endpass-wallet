@@ -14,7 +14,8 @@ exports[`ExportWallet page render should render initial state of the component 1
     class="subtitle"
   >
     
-    Exporting account 
+    Exporting account
+    
     <strong>
       
     </strong>

@@ -1,8 +1,10 @@
 import Vuex from 'vuex';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Transaction from '@/components/pages/Transaction';
+import setupI18n from '@/locales/i18nSetup';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 
@@ -22,6 +24,7 @@ describe('Transaction page', () => {
       },
     });
     wrapper = shallowMount(Transaction, {
+      i18n,
       localVue,
       store,
     });

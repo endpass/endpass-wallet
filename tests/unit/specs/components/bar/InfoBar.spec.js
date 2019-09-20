@@ -1,8 +1,11 @@
 import Vuex from 'vuex';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import InfoBar from '@/components/bar/InfoBar';
+import setupI18n from '@/locales/i18nSetup';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
+
 localVue.use(Vuex);
 
 describe('InfoBar', () => {
@@ -55,6 +58,7 @@ describe('InfoBar', () => {
       };
       const store = new Vuex.Store(storeOptions);
       wrapper = shallowMount(InfoBar, {
+        i18n,
         localVue,
         store,
         mixins,

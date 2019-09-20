@@ -6,6 +6,7 @@ import UIComponents from '@endpass/ui';
 import { ENSResolver } from '@/class';
 import validation from '@/validation';
 import { wrapShallowMountFactory } from '@/testUtils';
+import setupI18n from '@/locales/i18nSetup';
 
 import TransactionForm from '@/components/pages/Send/TransactionForm.vue';
 import { transaction } from 'fixtures/transactions';
@@ -14,6 +15,7 @@ import { token, tokens } from 'fixtures/tokens';
 import { gasPrice } from 'fixtures/gasPrice';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 localVue.use(validation);
@@ -92,6 +94,7 @@ describe('Send – TransactionForm', () => {
     store = new Vuex.Store(Object.assign({}, defaultStore));
 
     wrapperFactory = wrapShallowMountFactory(TransactionForm, {
+      i18n,
       store,
       localVue,
       sync: false,

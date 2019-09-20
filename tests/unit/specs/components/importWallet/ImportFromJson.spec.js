@@ -2,9 +2,11 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 import VeeValidate from 'vee-validate';
 import UIComponents from '@endpass/ui';
 
+import setupI18n from '@/locales/i18nSetup';
 import ImportFromJson from '@/components/importWallet/ImportFromJson';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(VeeValidate);
 localVue.use(UIComponents);
@@ -19,6 +21,7 @@ describe('ImportFromJson', () => {
 
     wrapper = shallowMount(ImportFromJson, {
       localVue,
+      i18n,
       mocks: { $router },
       sync: false,
     });

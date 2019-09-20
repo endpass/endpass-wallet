@@ -8,12 +8,12 @@
       class="container has-text-centered is-narrow"
     >
       <p class="subtitle">
-        {{ $t('component.newWallet.paragaph1') }}
-        <strong>{{ $t('component.newWallet.paragaph2') }}</strong>
-        {{ $t('component.newWallet.paragaph3') }}
+        {{ $t('components.newWallet.paragaph1') }}
+        <strong>{{ $t('components.newWallet.paragaph2') }}</strong>
+        {{ $t('components.newWallet.paragaph3') }}
       </p>
       <div class="box">
-        <p>{{ $t('component.newWallet.yourSeedPhrase') }}</p>
+        <p>{{ $t('components.newWallet.yourSeedPhrase') }}</p>
         <p
           class="code"
           data-test="seed-phrase"
@@ -34,7 +34,7 @@
       class="container has-text-centered is-narrow"
     >
       <p class="subtitle">
-        {{ $t('component.newWallet.paragaph4') }}
+        {{ $t('components.newWallet.paragaph4') }}
       </p>
       <v-form
         :is-form-valid="isFormValid"
@@ -45,12 +45,12 @@
           v-model="password"
           v-validate="'required|min:8'"
           :error="errors.first('password')"
-          :label="$t('component.newWallet.walletPassword')"
+          :label="$t('components.newWallet.walletPassword')"
           name="password"
           data-vv-as="password"
           data-vv-name="password"
           aria-describedby="jsonKeystorePassword"
-          :placeholder="$t('component.newWallet.walletPassword')"
+          :placeholder="$t('components.newWallet.walletPassword')"
           required
           data-test="input-new-wallet-password"
         />
@@ -59,7 +59,7 @@
           :disabled="!isFormValid"
           class-name="is-success is-cta"
         >
-          {{ $t('component.newWallet.createNewWallet') }}
+          {{ $t('components.newWallet.createNewWallet') }}
         </v-button>
       </v-form>
     </div>
@@ -88,8 +88,8 @@ export default {
 
     componentTitle() {
       return this.hdKey
-        ? this.$t('component.newWallet.walletCreated')
-        : this.$t('component.newWallet.createWallet');
+        ? this.$t('components.newWallet.walletCreated')
+        : this.$t('components.newWallet.createWallet');
     },
   },
 
@@ -113,8 +113,8 @@ export default {
         this.key = seedKey;
       } catch (e) {
         this.$notify({
-          title: this.$t('component.newWallet.errorCreatingWallet'),
-          text: this.$t('component.newWallet.couldNotCreateWallet'),
+          title: this.$t('components.newWallet.errorCreatingWallet'),
+          text: this.$t('components.newWallet.couldNotCreateWallet'),
           type: 'is-danger',
         });
         /* eslint-disable-next-line no-console */

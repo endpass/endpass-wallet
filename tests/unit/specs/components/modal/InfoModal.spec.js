@@ -1,8 +1,10 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
 import InfoModal from '@/components/modal/InfoModal';
+import setupI18n from '@/locales/i18nSetup';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(UIComponents);
 
@@ -11,6 +13,7 @@ describe('InfoModal', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(InfoModal, {
+      i18n,
       localVue,
     });
   });
@@ -31,6 +34,7 @@ describe('InfoModal', () => {
           title: 'foo',
           description: 'bar',
         },
+        i18n,
         localVue,
       });
       expect(wrapper.html()).toMatchSnapshot();

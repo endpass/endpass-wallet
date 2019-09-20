@@ -6,10 +6,14 @@ import { wrapShallowMountFactory } from '@/testUtils';
 
 import TransactionAdvancedOptions from '@/components/pages/Send/TransactionAdvancedOptions.vue';
 
+import setupI18n from '@/locales/i18nSetup';
 import { transaction } from 'fixtures/transactions';
 
 Validator.extend('hex', () => true);
+
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
+
 localVue.use(VeeValidate);
 localVue.use(validation);
 localVue.use(UIComponents);
@@ -24,6 +28,7 @@ describe('Send – TransactionAdvancedOptions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     wrapperFactory = wrapShallowMountFactory(TransactionAdvancedOptions, {
+      i18n,
       propsData: mountProps,
       provide: () => ({
         $validator: new VeeValidate.Validator(),

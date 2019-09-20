@@ -10,7 +10,9 @@
     "send": "Send",
     "verify": "Verify",
     "sign": "Sign",
-    "gwei": "Gwei"
+    "gwei": "Gwei",
+    "update": "Update",
+    "continue": "Continue"
   },
   "components": {
     "currencySelect": {
@@ -65,7 +67,8 @@
       "publicKey": "public key"
     },
     "importFromSeed": {
-      "seedPhrase": "Seed phrase",
+      "seedPhrase": "seed phrase",
+      "seedPhrasePlaceholder": "Seed phrase",
       "seedPhraseInvalid": "Seed phrase is invalid"
     },
     "addTokenModal": {
@@ -86,7 +89,7 @@
     },
     "newAccountModal": {
       "header": "Create New Address",
-      "youCurrentlyHave": "You have {count} active addresses",
+      "youCurrentlyHave": "You have {count} active addresses in your wallet.",
       "activeAddreessesInWallets": "active addresses in your wallet.",
       "clickButtonToImportAddress": "Click the button below to create or import an additional address you can use to receive Ethereum and tokens.",
       "newAddressCreates": "New Address Created",
@@ -132,7 +135,8 @@
     "transactionAmountOptions": {
       "amount": "Amount",
       "gasFee": "Gas Fee",
-      "insufficientFunds": "Insufficient funds"
+      "insufficientFunds": "Insufficient funds",
+      "price": "Price"
     },
     "transactionForm": {
       "to": "To",
@@ -249,7 +253,7 @@
       "oldPassword": "Old Password",
       "newPassword": "New Password",
       "changePassword": "Change Password",
-      "changerSuccess": "Password changed successfully'",
+      "changerSuccess": "Password changed successfully",
       "incorrectPassword": "You entered incorrect password, try using a different one.",
       "passwordNotChanged": "Password was not changed."
     },

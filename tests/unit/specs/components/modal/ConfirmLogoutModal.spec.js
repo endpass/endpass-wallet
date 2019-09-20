@@ -1,15 +1,18 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import ConfirmLogoutModal from '@/components/modal/ConfirmLogoutModal';
+import setupI18n from '@/locales/i18nSetup';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
-describe('ConfirmModal', () => {
+describe('ConfirmLogoutModal', () => {
   let wrapper;
 
   describe('render', () => {
     beforeEach(() => {
       wrapper = shallowMount(ConfirmLogoutModal, {
         localVue,
+        i18n,
       });
     });
 
@@ -27,6 +30,7 @@ describe('ConfirmModal', () => {
     beforeEach(() => {
       wrapper = shallowMount(ConfirmLogoutModal, {
         localVue,
+        i18n,
       });
     });
 
