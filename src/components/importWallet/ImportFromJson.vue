@@ -93,9 +93,7 @@ export default {
     fileName() {
       const { file } = this;
 
-      return file
-        ? file.name
-        : this.$t('components.importFromJson.V3JsonFrile');
+      return file ? file.name : this.$t('components.importFromJson.V3JsonFile');
     },
   },
   watch: {

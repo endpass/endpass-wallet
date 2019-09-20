@@ -13,7 +13,7 @@
       :label="$t('components.importFromPublicKey.address')"
       name="address"
       data-vv-name="address"
-      :data-vv-as="$t('components.importFromPublicKey.address')"
+      :data-vv-as="$t('components.importFromPublicKey.publicKey')"
       aria-describedby="address"
       :placeholder="$t('components.importFromPublicKey.address')"
       required

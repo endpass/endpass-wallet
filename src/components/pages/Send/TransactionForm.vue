@@ -22,7 +22,11 @@
         v-if="isEnsTransaction && !ensError && !isEnsAddressLoading"
         class="help ellipsis"
       >
-        {{ $t('components.transactionForm.resolvedAddress') }}
+        {{
+          $t('components.transactionForm.resolvedAddress', {
+            address: transaction.to,
+          })
+        }}
       </p>
       <p
         v-if="ensError && !isEnsAddressLoading"

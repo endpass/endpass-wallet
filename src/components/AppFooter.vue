@@ -7,7 +7,12 @@
       <div class="footer-links level is-mobile">
         <div class="level-left">
           <p class="level-item">
-            &copy; {{ $t('components.appFooter.copyright') }}
+            &copy;
+            {{
+              $t('components.appFooter.copyright', {
+                year: new Date().getFullYear(),
+              })
+            }}
           </p>
           <p class="level-item">
             <a

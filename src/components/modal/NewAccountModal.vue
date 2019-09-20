@@ -2,31 +2,33 @@
   <div class="new-account-modal">
     <v-modal @close="close">
       <template slot="header">
-        {{ $t('components.newAccountModel.header') }}
+        {{ $t('components.newAccountModal.header') }}
       </template>
 
       <div v-if="!isAccountCreated">
         <p class="subtitle">
-          {{ $t('components.newAccountModel.youCurrentlyHave') }}
-          <strong>{{ walletsCount }}</strong>
-          {{ $t('components.newAccountModel.activeAddreessesInWallets') }}
+          {{
+            $t('components.newAccountModal.youCurrentlyHave', {
+              count: walletsCount,
+            })
+          }}
         </p>
         <p class="subtitle">
-          {{ $t('components.newAccountModel.clickButtonToImportAddress') }}
+          {{ $t('components.newAccountModal.clickButtonToImportAddress') }}
         </p>
       </div>
 
       <div v-else>
         <p class="subtitle">
-          {{ $t('components.newAccountModel.newAddressCreates') }}
+          {{ $t('components.newAccountModal.newAddressCreates') }}
         </p>
 
         <div class="message">
           <div class="message-header">
-            <p>{{ $t('components.newAccountModel.publicAdress') }}</p>
+            <p>{{ $t('components.newAccountModal.publicAdress') }}</p>
           </div>
           <div class="message-body">
-            <p>{{ $t('components.newAccountModel.useAddressToReceive') }}</p>
+            <p>{{ $t('components.newAccountModal.useAddressToReceive') }}</p>
             <p class="code address">
               {{ address }}
             </p>
@@ -35,11 +37,11 @@
 
         <div class="message is-warning">
           <div class="message-header">
-            <p>{{ $t('components.newAccountModel.privateKey') }}</p>
+            <p>{{ $t('components.newAccountModal.privateKey') }}</p>
           </div>
           <div class="message-body">
             <p class="bold">
-              {{ $t('components.newAccountModel.privateKeyDisclamer') }}
+              {{ $t('components.newAccountModal.privateKeyDisclamer') }}
             </p>
             <p class="code">
               {{ privateKey }}
@@ -58,7 +60,7 @@
             @submit="createNewAccount"
           >
             <v-button class-name="is-primary is-medium">
-              {{ $t('components.newAccountModel.createAdress') }}
+              {{ $t('components.newAccountModal.createAdress') }}
             </v-button>
           </v-form>
           <v-form
@@ -66,7 +68,7 @@
             @submit="importNewAccount"
           >
             <v-button class-name="is-primary is-medium">
-              {{ $t('components.newAccountModel.importAddress') }}
+              {{ $t('components.newAccountModal.importAddress') }}
             </v-button>
           </v-form>
         </template>

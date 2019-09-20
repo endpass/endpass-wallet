@@ -36,11 +36,13 @@
   },
   "lint-staged": {
     "*.{js,json}": [
+      "vue-i18n-translate-checker",
       "vue-cli-service lint --fix --quiet",
       "prettier --write",
       "git add"
     ],
     "*.vue": [
+      "vue-i18n-translate-checker",
       "prettier --write",
       "vue-cli-service lint --fix --quiet",
       "git add"
@@ -87,6 +89,7 @@
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",
     "@cypress/webpack-preprocessor": "^4.1.0",
+    "@endpass/vue-i18n-translate-checker": "^0.0.2",
     "@vue/cli-plugin-babel": "^3.5.1",
     "@vue/cli-plugin-eslint": "^3.5.1",
     "@vue/cli-plugin-unit-jest": "^3.5.3",

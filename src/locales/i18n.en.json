@@ -40,7 +40,7 @@
     },
     "syncStatus": {
       "apiConnectionError": "API connection error",
-      "syncedToBlock": "Synced to block {this.blockNumber}",
+      "syncedToBlock": "Synced to block {blockNumber}",
       "awaitingBlockNumber": "Awaiting block number"
     },
     "hardwareChooser": {
@@ -51,7 +51,7 @@
     "importFromJson": {
       "v3JsonkeystorePassword": "V3 JSON keystore password",
       "passwordModalText": "The wallet password will be used for operations on the imported wallet",
-      "V3JsonFrile": "V3 JSON keystore file",
+      "V3JsonFile": "V3 JSON keystore file",
       "V3Invalid": "JSON password is invalid",
       "fileInvalid": "File is invalid"
     },
@@ -61,7 +61,8 @@
     },
     "importFromPublicKey": {
       "address": "address",
-      "addressInvalid": "Address is invalid"
+      "addressInvalid": "Address is invalid",
+      "publicKey": "public key"
     },
     "importFromSeed": {
       "seedPhrase": "Seed phrase",
@@ -85,7 +86,7 @@
     },
     "newAccountModal": {
       "header": "Create New Address",
-      "youCurrentlyHave": "You currently have",
+      "youCurrentlyHave": "You have {count} active addresses",
       "activeAddreessesInWallets": "active addresses in your wallet.",
       "clickButtonToImportAddress": "Click the button below to create or import an additional address you can use to receive Ethereum and tokens.",
       "newAddressCreates": "New Address Created",
@@ -136,7 +137,7 @@
     "transactionForm": {
       "to": "To",
       "ens": "0x... or ENS",
-      "resolvedAddress": "Resolved ENS address: ",
+      "resolvedAddress": "Resolved ENS address: {address}",
       "send": "Send",
       "cantBeResolved": "ENS {address} can not be resolved."
     },
@@ -239,7 +240,7 @@
     },
     "appFooter": {
       "disclaimer": "Endpass Wallet is non-custodial software for managing blockchain transactions. We never hold your funds. We never have access to your funds or private keys.",
-      "copyright": "2018 Endpass, Inc",
+      "copyright": "{year} Endpass, Inc",
       "openSource": "100% Open Source",
       "support": "Support"
     },
@@ -265,6 +266,5 @@
     }
   },
   "constants": {},
-  "global": {},
   "store": {}
 }
