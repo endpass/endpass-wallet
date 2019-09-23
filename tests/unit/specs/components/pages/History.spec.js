@@ -2,10 +2,12 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import UIComponents from '@endpass/ui';
 import { wrapShallowMountFactory } from '@/testUtils';
+import setupI18n from '@/locales/i18nSetup';
 
 import HistoryPage from '@/components/pages/History.vue';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 localVue.use(UIComponents);
@@ -91,6 +93,7 @@ describe('HistoryPage', () => {
     wrapperFactory = wrapShallowMountFactory(HistoryPage, {
       store,
       localVue,
+      i18n,
     });
     wrapper = wrapperFactory();
   });
@@ -157,6 +160,7 @@ describe('HistoryPage', () => {
     it('should download transaction history', () => {
       const getHistory = jest.fn();
       wrapper = shallowMount(HistoryPage, {
+        i18n,
         store,
         localVue,
         methods: {

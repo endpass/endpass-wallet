@@ -4,7 +4,7 @@
     @close="close"
   >
     <template slot="header">
-      Add custom token
+      {{ $t('components.addTokenModal.header') }}
     </template>
 
     <v-form
@@ -22,9 +22,9 @@
         :error="errors.first('address')"
         name="address"
         data-vv-name="address"
-        label="Address"
+        :label="$t('components.addTokenModal.contractAddress')"
         aria-describedby="address"
-        placeholder="Contract address"
+        :placeholder="$t('components.addTokenModal.contractAddress')"
         data-test="address-input"
         required
         autofocus
@@ -36,11 +36,11 @@
         v-validate="'required|numeric|integer|between:0,18'"
         :disabled="!notFound.decimals"
         :error="errors.first('decimals')"
-        label="Decimals"
+        :label="$t('components.addTokenModal.tokenDecimals')"
         name="decimals"
-        data-vv-name="decimals"
+        :data-vv-name="$t('components.addTokenModal.tokenDecimals')"
         aria-describedby="decimal"
-        placeholder="Token decimals"
+        :placeholder="$t('components.addTokenModal.tokenDecimals')"
         required
         data-test="token-decimals-input"
       />
@@ -51,11 +51,11 @@
         v-validate="'required'"
         :disabled="!notFound.name"
         :error="errors.first('name')"
-        label="Name"
+        label="$t('components.addTokenModal.tokenName')"
         name="name"
         data-vv-name="name"
         aria-describedby="name"
-        placeholder="Token name"
+        placeholder="$t('components.addTokenModal.tokenName')"
         required
         data-test="token-name-input"
       />
@@ -66,18 +66,18 @@
         v-validate="'required'"
         :disabled="!notFound.symbol"
         :error="errors.first('symbol')"
-        label="Symbol"
+        :label="$t('components.addTokenModal.tokenSymbol')"
         name="symbol"
         data-vv-name="symbol"
         aria-describedby="symbol"
-        placeholder="Token symbol"
+        :placeholder="$t('components.addTokenModal.tokenSymbol')"
         required
         data-test="token-symbol-input"
       />
     </v-form>
     <div v-else>
       <p class="subtitle">
-        New token added
+        {{ $t('components.addTokenModal.newTokenAdded') }}
       </p>
       <div class="message">
         <div class="message-header">
@@ -102,7 +102,7 @@
           data-test="find-button"
           @click.prevent="addToken"
         >
-          Find
+          {{ $t('global.find') }}
         </v-button>
         <v-button
           v-else-if="loadedToken && !addedToken"
@@ -112,7 +112,7 @@
           data-test="add-button"
           @click.prevent="addToken"
         >
-          Add
+          {{ $t('global.add') }}
         </v-button>
         <v-button
           v-else-if="addedToken"
@@ -121,7 +121,7 @@
           type="button"
           @click.prevent="resetForm"
         >
-          Add more
+          {{ $t('global.addMore') }}
         </v-button>
       </div>
       <div class="is-pulled-right">
@@ -131,7 +131,7 @@
           data-test="close-button"
           @click="close"
         >
-          Close
+          {{ $t('global.close') }}
         </a>
       </div>
     </div>
@@ -200,8 +200,8 @@ export default {
       } catch (e) {
         this.loadingToken = false;
         this.$notify({
-          title: 'Not a valid erc20 token',
-          text: 'Please ensure token matches standard, and check address.',
+          title: this.$t('components.addTokenModal.tokenNotValid'),
+          text: this.$t('components.addTokenModal.checkAddress'),
           type: 'is-warning',
         });
       }

@@ -5,6 +5,7 @@ import VeeValidate from 'vee-validate';
 import UIComponents from '@endpass/ui';
 import { wrapShallowMountFactory } from '@/testUtils';
 
+import setupI18n from '@/locales/i18nSetup';
 import WalletsList from '@/components/walletsListFromHd/WalletsList';
 import { Wallet } from '@/class';
 import { v3 } from 'fixtures/accounts';
@@ -12,6 +13,7 @@ import { v3 } from 'fixtures/accounts';
 const WALLET_TYPES = Wallet.getTypes();
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 localVue.use(VeeValidate);
@@ -52,6 +54,7 @@ describe('WalletsList', () => {
       },
     };
     wrapperFactory = wrapShallowMountFactory(WalletsList, {
+      i18n,
       localVue,
       store,
       // sync: false,

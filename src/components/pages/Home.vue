@@ -12,7 +12,7 @@
           <div class="card">
             <div class="card-header">
               <p class="card-header-title">
-                Your Address
+                {{ $t('components.home.address') }}
               </p>
             </div>
             <div class="card-content">
@@ -30,7 +30,7 @@
                     class="button is-warning"
                     data-test="export-wallet-button"
                   >
-                    Export Private Key
+                    {{ $t('components.home.exportKey') }}
                   </router-link>
                 </div>
                 <div
@@ -62,7 +62,7 @@
           <div class="card">
             <div class="card-header">
               <p class="card-header-title">
-                Your Tokens
+                {{ $t('components.home.tokens') }}
               </p>
               <div class="card-header-icon">
                 <router-link
@@ -70,7 +70,7 @@
                   class="button is-outlined is-info is-small"
                   data-test="edit-tokens-button"
                 >
-                  Edit
+                  {{ $t('components.home.edit') }}
                 </router-link>
               </div>
             </div>
@@ -86,7 +86,7 @@
           <div class="card">
             <div class="card-header">
               <p class="card-header-title">
-                Current Account Tokens ({{ address }})
+                {{ $t('components.home.accountTokens') }} ({{ address }})
               </p>
             </div>
             <div class="card-content">
@@ -104,23 +104,23 @@
             <div class="card-content">
               <div v-if="isLoggedIn">
                 <h1 class="title">
-                  Welcome
+                  {{ $t('components.home.welcome') }}
                 </h1>
                 <p class="subtitle">
-                  Get started by generating an Ethereum wallet.
+                  {{ $t('components.home.generateWallet') }}
                 </p>
                 <div class="is-centered">
                   <router-link
                     :to="{ name: 'NewWallet', query: $route.query }"
                     class="button is-success is-cta"
                   >
-                    Create New Wallet
+                    {{ $t('components.home.createNewWallet') }}
                   </router-link>
                 </div>
               </div>
               <div v-else>
                 <p class="subtitle">
-                  Please log in to continue.
+                  {{ $t('components.home.login') }}
                 </p>
               </div>
             </div>
@@ -190,31 +190,33 @@ export default {
   methods: {
     onDonate() {
       this.$notify({
-        title: 'Ropsten faucet ETH',
-        text: 'Please wait couple of minutes for receive ETH',
+        title: this.$t('components.home.faucetEth'),
+        text: this.$t('components.home.faucetEthWait'),
         type: 'is-info',
       });
 
       this.$timer.start('startCountdown');
-      this.faucetTitle = 'Next try after 2 mins';
+      this.faucetTitle = this.$t('components.home.faucetEthNoTrys');
       this.isFaucetDisable = true;
     },
 
     onDonateError(err) {
       const duration = get(err, 'response.data.duration', 0);
-      const timeTitle = duration ? fromTo(0, duration) : 'in time';
+      const timeTitle = duration
+        ? fromTo(0, duration)
+        : this.$t('components.home.inTime');
 
       this.$notify({
-        title: 'Too many attempts',
-        text: `Your wallet address is banned ${timeTitle}. Please try later.`,
+        title: this.$t('components.home.manyAttempts'),
+        text: this.$t('components.home.walletBanned', { timeTitle }),
         type: 'is-warning',
       });
 
-      this.faucetTitle = 'Too many attempts';
+      this.faucetTitle = this.$t('components.home.manyAttempts');
       this.isFaucetDisable = true;
     },
     onFaucetTimer() {
-      this.faucetTitle = 'Get test 1 ETH';
+      this.faucetTitle = this.$t('components.home.getEth');
       this.isFaucetDisable = false;
     },
   },

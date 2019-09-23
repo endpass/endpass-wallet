@@ -1,6 +1,10 @@
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import VeeValidate from 'vee-validate';
+import setupI18n from '@/locales/i18nSetup';
 import BasePage from '@/components/pages/Base';
+
+const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 describe('Base page', () => {
   let wrapper;
@@ -11,6 +15,8 @@ describe('Base page', () => {
       provide: () => ({
         $validator: new VeeValidate.Validator(),
       }),
+      localVue,
+      i18n,
     };
 
     wrapper = shallowMount(BasePage, options);

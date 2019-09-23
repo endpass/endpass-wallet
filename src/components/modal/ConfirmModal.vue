@@ -4,7 +4,7 @@
     @close="handleClose"
   >
     <template slot="header">
-      Are you sure?
+      {{ $t('components.confirmModal.header') }}
     </template>
 
     <slot />
@@ -18,14 +18,14 @@
         data-test="submit-logout"
         @click="handleConfirm"
       >
-        Confirm
+        {{ $t('global.confirm') }}
       </v-button>
       <v-button
         class-name="is-medium"
         data-test="submit-logout"
         @click="handleClose"
       >
-        Cancel
+        {{ $t('global.cancel') }}
       </v-button>
     </div>
   </v-modal>

@@ -15,7 +15,7 @@
               class="card-header-icon"
               @click="$router.back()"
             >
-              &lt; Back
+              &lt; {{ $t('components.base.back') }}
             </a>
           </div>
           <div class="card-content">

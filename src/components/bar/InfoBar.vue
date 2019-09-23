@@ -6,7 +6,7 @@
     <div class="info-item">
       <div class="field">
         <p class="heading">
-          Status
+          {{ $t('components.infoBar.status') }}
         </p>
         <div class="control is-expanded">
           <sync-status />
@@ -16,7 +16,7 @@
 
     <div class="info-item">
       <p class="heading">
-        Balance
+        {{ $t('components.infoBar.balance') }}
       </p>
       <balance
         :amount="balance || 0"
@@ -27,7 +27,7 @@
     </div>
     <div class="info-item">
       <p class="heading">
-        Value
+        {{ $t('components.infoBar.value') }}
       </p>
       <balance
         :is-loading="priceLoading"

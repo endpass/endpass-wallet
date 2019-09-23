@@ -1,10 +1,11 @@
 import Vuex from 'vuex';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import { wrapShallowMountFactory } from '@/testUtils';
-
 import SyncStatus from '@/components/bar/SyncStatus';
+import setupI18n from '@/locales/i18nSetup';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 
@@ -37,6 +38,7 @@ describe('SyncStatus', () => {
     const store = new Vuex.Store(state);
 
     wrapperFactory = wrapShallowMountFactory(SyncStatus, {
+      i18n,
       localVue,
       store,
     });
@@ -77,6 +79,7 @@ describe('SyncStatus', () => {
         wrapper = shallowMount(SyncStatus, {
           localVue,
           store,
+          i18n,
         });
         expect(wrapper.vm.statusClass).toBe('is-warning');
       });

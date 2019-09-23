@@ -4,26 +4,25 @@
       v-model="hardwareType"
       :has-default-active="false"
       :list="hardwareList"
-      label="Choose Hardware type"
+      :label="$t('components.hardwareChooser.chooseHardwareType')"
     />
   </div>
 </template>
 
 <script>
 import { Wallet } from '@/class';
+import i18n from '@/locales/i18n';
 
 const WALLET_TYPES = Wallet.getTypes();
-
-const hardwareList = {
-  [WALLET_TYPES.LEDGER]: 'Ledger wallet',
-  [WALLET_TYPES.TREZOR]: 'Trezor wallet',
-};
 
 export default {
   name: 'HardwareChooser',
   data: () => ({
     hardwareType: null,
-    hardwareList,
+    hardwareList: {
+      [WALLET_TYPES.LEDGER]: i18n.$t('components.hardwareChooser.ledgerWallet'),
+      [WALLET_TYPES.TREZOR]: i18n.$t('components.hardwareChooser.trezorWallet'),
+    },
   }),
   watch: {
     hardwareType(type) {

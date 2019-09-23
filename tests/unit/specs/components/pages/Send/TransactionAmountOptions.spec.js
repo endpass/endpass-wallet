@@ -5,9 +5,11 @@ import UIComponents from '@endpass/ui';
 import validation from '@/validation';
 import { wrapShallowMountFactory } from '@/testUtils';
 import TransactionAmountOptions from '@/components/pages/Send/TransactionAmountOptions.vue';
+import setupI18n from '@/locales/i18nSetup';
 import { token } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(validation);
 localVue.use(VeeValidate);
@@ -29,6 +31,7 @@ describe('Send – TransactionAmountOptions', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     wrapperFactory = wrapShallowMountFactory(TransactionAmountOptions, {
+      i18n,
       propsData: mountProps,
       provide: () => ({
         $validator: new VeeValidate.Validator(),

@@ -3,10 +3,12 @@ import { TransactionFactory } from '@/class';
 import VeeValidate from 'vee-validate';
 import UIComponents from '@endpass/ui';
 
+import setupI18n from '@/locales/i18nSetup';
 import ResendModal from '@/components/modal/ResendModal';
 import validation from '@/validation';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(VeeValidate);
 localVue.use(validation);
@@ -22,6 +24,7 @@ describe('ResendModal', () => {
       gasPrice: 90,
     });
     wrapper = shallowMount(ResendModal, {
+      i18n,
       localVue,
       propsData: {
         transaction,

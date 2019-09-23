@@ -13,9 +13,9 @@ exports[`ImportFromPublicKey render should render initial state of the component
     data-vv-as="public key"
     data-vv-name="address"
     id="address"
-    label="Address"
+    label="address"
     name="address"
-    placeholder="0x...."
+    placeholder="0x..."
     required=""
     value=""
   />

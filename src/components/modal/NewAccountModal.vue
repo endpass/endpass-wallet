@@ -2,32 +2,33 @@
   <div class="new-account-modal">
     <v-modal @close="close">
       <template slot="header">
-        Create New Address
+        {{ $t('components.newAccountModal.header') }}
       </template>
 
       <div v-if="!isAccountCreated">
         <p class="subtitle">
-          You currently have
-          <strong>{{ walletsCount }}</strong>
-          active addresses in your wallet.
+          {{
+            $t('components.newAccountModal.youCurrentlyHave', {
+              count: walletsCount,
+            })
+          }}
         </p>
         <p class="subtitle">
-          Click the button below to create or import an additional address you
-          can use to receive Ethereum and tokens.
+          {{ $t('components.newAccountModal.clickButtonToImportAddress') }}
         </p>
       </div>
 
       <div v-else>
         <p class="subtitle">
-          New Address Created
+          {{ $t('components.newAccountModal.newAddressCreates') }}
         </p>
 
         <div class="message">
           <div class="message-header">
-            <p>Public Address</p>
+            <p>{{ $t('components.newAccountModal.publicAdress') }}</p>
           </div>
           <div class="message-body">
-            <p>Use this address to receive Ether and tokens.</p>
+            <p>{{ $t('components.newAccountModal.useAddressToReceive') }}</p>
             <p class="code address">
               {{ address }}
             </p>
@@ -36,11 +37,11 @@
 
         <div class="message is-warning">
           <div class="message-header">
-            <p>Private Key</p>
+            <p>{{ $t('components.newAccountModal.privateKey') }}</p>
           </div>
           <div class="message-body">
             <p class="bold">
-              Save this for your records and DO NOT share it with anyone!
+              {{ $t('components.newAccountModal.privateKeyDisclamer') }}
             </p>
             <p class="code">
               {{ privateKey }}
@@ -59,7 +60,7 @@
             @submit="createNewAccount"
           >
             <v-button class-name="is-primary is-medium">
-              Create address
+              {{ $t('components.newAccountModal.createAdress') }}
             </v-button>
           </v-form>
           <v-form
@@ -67,7 +68,7 @@
             @submit="importNewAccount"
           >
             <v-button class-name="is-primary is-medium">
-              Import address
+              {{ $t('components.newAccountModal.importAddress') }}
             </v-button>
           </v-form>
         </template>
@@ -77,7 +78,7 @@
           data-test="account-modal-close-button"
           @click="close"
         >
-          Close
+          {{ $t('global.close') }}
         </v-button>
       </div>
     </v-modal>

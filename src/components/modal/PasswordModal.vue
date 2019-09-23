@@ -10,7 +10,7 @@
 
       <div>
         <p class="subtitle">
-          Please enter your wallet password to continue.
+          {{ $t('components.passwordModal.enterWalletPassword') }}
         </p>
         <v-form
           id="password-form"
@@ -25,7 +25,7 @@
             validator="required"
             data-vv-as="password"
             data-vv-name="jsonKeystorePassword"
-            placeholder="Your Wallet Password"
+            :placeholder="$t('components.passwordModal.walletPassword')"
             required
             data-test="input-password"
             autofocus
@@ -45,7 +45,7 @@
           class-name="is-primary is-medium"
           @click="confirm"
         >
-          Confirm
+          {{ $t('global.confirm') }}
         </v-button>
       </div>
     </v-modal>
@@ -55,6 +55,7 @@
 <script>
 import { mapActions } from 'vuex';
 import formMixin from '@/mixins/form';
+import i18n from '@/locales/i18n';
 
 export default {
   name: 'PasswordModal',
@@ -62,7 +63,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Please enter your wallet password to continue',
+      default: i18n.t('components.passwordModal.enterWalletPassword'),
     },
   },
 
@@ -87,7 +88,7 @@ export default {
       } catch (err) {
         this.errors.add({
           field: 'jsonKeystorePassword',
-          msg: 'Password is invalid',
+          msg: this.$t('components.passwordModal.passwordInvalid'),
           id: 'wrongPassword',
         });
       } finally {

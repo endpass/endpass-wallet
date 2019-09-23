@@ -30,6 +30,13 @@ import 'mocks/validation';
 
 import 'mocks/ethereumjs-wallet/hdkey';
 
+/**
+ * locales mocks
+ */
+import 'mocks/locale/i18n';
+
+import 'mocks/locale/i18nSetup';
+
 Vue.config.productionTip = false;
 
 // console.error and console.warn throws errors and fails tests

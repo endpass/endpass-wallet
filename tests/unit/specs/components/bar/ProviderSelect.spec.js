@@ -2,6 +2,7 @@ import Vuex from 'vuex';
 import { createLocalVue } from '@vue/test-utils';
 import { wrapShallowMountFactory } from '@/testUtils';
 
+import setupI18n from '@/locales/i18nSetup';
 import ProviderSelect from '@/components/bar/ProviderSelect';
 
 describe('ProviderSelect', () => {
@@ -23,6 +24,7 @@ describe('ProviderSelect', () => {
 
   beforeEach(() => {
     const localVue = createLocalVue();
+    const i18n = setupI18n(localVue);
 
     localVue.use(Vuex);
 
@@ -42,6 +44,7 @@ describe('ProviderSelect', () => {
     componentOptions = {
       store,
       localVue,
+      i18n,
     };
     wrapperFactory = wrapShallowMountFactory(ProviderSelect, componentOptions);
   });

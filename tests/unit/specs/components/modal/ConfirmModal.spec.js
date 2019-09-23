@@ -1,9 +1,10 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
-
+import setupI18n from '@/locales/i18nSetup';
 import ConfirmModal from '@/components/modal/ConfirmModal';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(UIComponents);
 
@@ -14,6 +15,7 @@ describe('ConfirmModal', () => {
     beforeEach(() => {
       wrapper = shallowMount(ConfirmModal, {
         localVue,
+        i18n,
       });
     });
 
@@ -31,6 +33,7 @@ describe('ConfirmModal', () => {
     beforeEach(() => {
       wrapper = shallowMount(ConfirmModal, {
         localVue,
+        i18n,
       });
     });
 

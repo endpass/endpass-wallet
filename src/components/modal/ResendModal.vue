@@ -14,12 +14,12 @@
           v-model="newTransaction.gasPrice"
           v-validate="`required|numeric|integer|between:${minimumGasPrice},100`"
           :error="errors.first('gasPrice')"
-          label="Gas price"
+          :label="$t('components.resendModal.gasPrice')"
           name="gasPrice"
           data-vv-name="gasPrice"
           type="number"
           aria-describedby="gasPrice"
-          placeholder="Gas price"
+          :placeholder="$t('components.resendModal.gasPrice')"
           data-test="gas-price-input"
           autofocus
           required
@@ -28,7 +28,7 @@
             slot="addon"
             class="control"
           >
-            <a class="button is-static">Gwei</a>
+            <a class="button is-static">{{ $t('global.gwei') }}</a>
           </div>
         </v-input>
         <v-input
@@ -38,12 +38,12 @@
             `required|numeric|integer|between:${transaction.gasLimit},1000000`
           "
           :error="errors.first('gasLimit')"
-          label="Gas limit"
+          :label="$t('components.resendModal.gasLimit')"
           name="gasLimit"
           data-vv-name="gasLimit"
           type="number"
           aria-describedby="gasLimit"
-          placeholder="Gas limit"
+          :placeholder="$t('components.resendModal.gasLimit')"
           data-test="gas-limit-input"
           required
         />
@@ -58,7 +58,7 @@
           class-name="is-primary is-medium"
           data-test="submit-button"
         >
-          Send
+          {{ $t('global.send') }}
         </v-button>
       </div>
     </v-modal>
