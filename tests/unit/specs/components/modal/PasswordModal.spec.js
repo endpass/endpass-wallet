@@ -6,8 +6,10 @@ import UIComponents from '@endpass/ui';
 
 import PasswordModal from '@/components/modal/PasswordModal';
 import validation from '@/validation';
+import setupI18n from '@/locales/i18nSetup';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 localVue.use(validation);
@@ -30,6 +32,7 @@ describe('PasswordModal', () => {
     options = {
       store,
       localVue,
+      i18n,
       methods: {
         validatePassword: () => null,
       },

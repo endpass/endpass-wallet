@@ -22,6 +22,16 @@
             data-test="app-notification"
             classes="notification app-notification"
           />
+          <notifications
+            group="persistent"
+            :speed="500"
+            :duration="-1"
+            :close-on-click="false"
+            width="auto"
+            position="top center"
+            data-test="app-notification"
+            classes="notification app-notification app-notification-persist"
+          />
         </div>
 
         <div class="main app-content app-section">
@@ -55,7 +65,13 @@ export default {
   },
 
   methods: {
-    initMode() {
+    async initMode() {
+      if (window.Cypress) {
+        // eslint-disable-next-line
+        console.log('Wait cypress start test (App.vue)...');
+        await window.cypressTestResolver;
+      }
+
       const lines = (window.location.search || '').slice(1).split('&');
       const query = lines.reduce((map, line) => {
         const values = line.split('=');

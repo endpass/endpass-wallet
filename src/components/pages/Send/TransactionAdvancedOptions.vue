@@ -21,7 +21,9 @@
     >
       <div class="field is-horizontal">
         <div class="field-label">
-          <label class="label">Gas Price</label>
+          <label class="label">{{
+            $t('components.advancedTransactionOptions.gasPrice')
+          }}</label>
         </div>
         <div class="field-body">
           <v-input
@@ -37,7 +39,7 @@
             max="100"
             step="1"
             aria-describedby="gasPrice"
-            placeholder="Gas price"
+            :placeholder="$t('components.advancedTransactionOptions.gasPrice')"
             data-test="transaction-gas-price-input"
             required
           >
@@ -45,7 +47,7 @@
               slot="addon"
               class="control"
             >
-              <a class="button is-static">Gwei</a>
+              <a class="button is-static">{{ $t('global.gwei') }}</a>
             </div>
           </v-input>
         </div>
@@ -53,7 +55,9 @@
 
       <div class="field is-horizontal">
         <div class="field-label">
-          <label class="label">Gas Limit</label>
+          <label class="label">{{
+            $t('components.advancedTransactionOptions.gasLimit')
+          }}</label>
         </div>
         <div class="field-body">
           <v-input
@@ -69,7 +73,7 @@
             max="1000000"
             step="1000"
             aria-describedby="gasLimit"
-            placeholder="Gas limit"
+            :placeholder="$t('components.advancedTransactionOptions.gasLimit')"
             data-test="transaction-gas-limit-input"
             required
           />
@@ -78,7 +82,9 @@
 
       <div class="field is-horizontal">
         <div class="field-label">
-          <label class="label">Nonce</label>
+          <label class="label">{{
+            $t('components.advancedTransactionOptions.nonce')
+          }}</label>
         </div>
         <div class="field-body">
           <v-input
@@ -94,7 +100,7 @@
             type="number"
             step="1"
             aria-describedby="nonce"
-            placeholder="Nonce"
+            :placeholder="$t('components.advancedTransactionOptions.nonce')"
             required
             data-test="transaction-nonce-input"
           />
@@ -106,7 +112,9 @@
         class="field is-horizontal"
       >
         <div class="field-label">
-          <label class="label">Data</label>
+          <label class="label">{{
+            $t('components.advancedTransactionOptions.data')
+          }}</label>
         </div>
         <div class="field-body">
           <v-input
@@ -118,7 +126,7 @@
             name="data"
             data-vv-name="data"
             aria-describedby="data"
-            placeholder="Data"
+            :placeholder="$t('components.advancedTransactionOptions.data')"
             required
             data-test="transaction-data-input"
           />
@@ -175,10 +183,10 @@ export default {
   computed: {
     togglerText() {
       if (this.isCollapsed) {
-        return 'Show advanced options';
+        return this.$t('components.advancedTransactionOptions.showOptions');
       }
 
-      return 'Hide advanced options';
+      return this.$t('components.advancedTransactionOptions.hideOptions');
     },
   },
 

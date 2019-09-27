@@ -7,10 +7,11 @@ import validation from '@/validation';
 import { ERC20Token } from '@/class';
 
 import AddTokenModal from '@/components/modal/AddTokenModal';
-
+import setupI18n from '@/locales/i18nSetup';
 import { tokens } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(validation);
 localVue.use(Vuex);
@@ -39,6 +40,7 @@ describe('AddTokenModal', () => {
       },
     });
     wrapper = shallowMount(AddTokenModal, {
+      i18n,
       store,
       localVue,
       sync: false,

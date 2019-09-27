@@ -6,10 +6,12 @@ import UIComponents from '@endpass/ui';
 import validation from '@/validation';
 import { wrapShallowMountFactory } from '@/testUtils';
 
+import setupI18n from '@/locales/i18nSetup';
 import { IDENTITY_MODE } from '@/constants';
 import SettingsPage from '@/components/pages/Settings.vue';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 localVue.use(validation);
@@ -63,6 +65,7 @@ describe('SettingsPage', () => {
     store = new Vuex.Store(storeOptions);
 
     options = {
+      i18n,
       store,
       localVue,
       sync: false,
@@ -127,6 +130,7 @@ describe('SettingsPage', () => {
       wrapper = mount(SettingsPage, {
         store,
         localVue,
+        i18n,
         sync: false,
       });
 

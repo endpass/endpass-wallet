@@ -10,8 +10,8 @@ export default {
   methods: {
     handleError(err) {
       if (err instanceof NotificationError) {
-        const { title, text, type } = err;
-        this.$notify({ title, text, type });
+        const { title, text, type, group } = err;
+        this.$notify({ title, text, type, group });
 
         if (err.log) {
           /* eslint-disable-next-line no-console */

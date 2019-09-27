@@ -4,15 +4,15 @@ import {
   tokens,
   token,
   tokensMappedByAddress,
-} from '../fixtures/tokeninfo';
-import { call_custom_token_1, call_custom_token_3 } from '../fixtures/web3';
+} from '@fixtures/tokeninfo';
+import { call_custom_token_1, call_custom_token_3 } from '@fixtures/web3';
 
 describe('Tokens Page', () => {
   describe('the user is not authorized', () => {
     it('should redirect to root', () => {
       cy.preventLogin();
       cy.visit('#/tokens');
-      cy.mockWeb3Requests();
+      cy.waitPageLoad();
       cy.url().should('include', '/#/?redirect_uri=%2Ftokens');
     });
   });
@@ -20,12 +20,11 @@ describe('Tokens Page', () => {
   describe('the user is authorized', () => {
     describe('add a token', () => {
       beforeEach(() => {
-        cy.getInitialData();
-        cy.getAccountBalance();
+        cy.mockInitialData();
+        cy.mockPositiveBalance();
         cy.visit('#/tokens');
-        cy.mockWeb3Requests();
-        cy.wait('@accountBalance');
         cy.waitPageLoad();
+        cy.wait('@positiveBalance');
       });
 
       it('should add a custom token', () => {
@@ -69,9 +68,8 @@ describe('Tokens Page', () => {
 
     describe('add custom token', () => {
       beforeEach(() => {
-        cy.getInitialData();
+        cy.mockInitialData();
         cy.visit('#/tokens');
-        cy.mockWeb3Requests();
         cy.waitPageLoad();
       });
 
@@ -128,11 +126,9 @@ describe('Tokens Page', () => {
       const [token1] = tokens;
 
       beforeEach(() => {
-        cy.getInitialData();
+        cy.mockInitialData();
         cy.visit('#/tokens');
-        cy.mockWeb3Requests();
         cy.waitPageLoad();
-        cy.makeStoreAlias();
         cy.get('@store').then(store => {
           store.commit('tokens/updateUserTokens', {
             1: tokensMappedByAddress,

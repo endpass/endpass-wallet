@@ -7,7 +7,7 @@
   >
     <div class="field">
       <label class="label">
-        To
+        {{ $t('components.transactionForm.to') }}
       </label>
       <account-chooser
         v-model="address"
@@ -15,14 +15,18 @@
         :creatable="true"
         :width="35"
         :accounts="allowedToSendAddresses"
-        placeholder="0x... or ENS"
+        :placeholder="$t('components.transactionForm.ens')"
         data-test="transaction-address-select"
       />
       <p
         v-if="isEnsTransaction && !ensError && !isEnsAddressLoading"
         class="help ellipsis"
       >
-        Resolved ENS address: {{ transaction.to }}
+        {{
+          $t('components.transactionForm.resolvedAddress', {
+            address: transaction.to,
+          })
+        }}
       </p>
       <p
         v-if="ensError && !isEnsAddressLoading"
@@ -73,7 +77,7 @@
           class-name="is-success is-medium is-cta"
           data-test="transaction-send-button"
         >
-          Send
+          {{ $t('components.transactionForm.send') }}
         </v-button>
       </div>
     </div>
@@ -203,7 +207,9 @@ export default {
 
         return ensAddress;
       } catch (err) {
-        this.ensError = `ENS ${this.address} can not be resolved.`;
+        this.ensError = this.$t('components.transactionForm.cantBeResolved', {
+          address: this.address,
+        });
 
         return '';
       } finally {

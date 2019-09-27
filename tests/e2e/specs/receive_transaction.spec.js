@@ -1,10 +1,8 @@
 describe('Receive Page', () => {
   beforeEach(() => {
-    cy.getInitialData();
+    cy.mockInitialData();
     cy.visit('#/receive');
-    cy.mockWeb3Requests();
     cy.waitPageLoad();
-    cy.makeStoreAlias();
   });
 
   it('Should contain section with current user wallet public address and balance', () => {

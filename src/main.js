@@ -10,6 +10,7 @@ import store from './store';
 import App from './App.vue';
 import validation from './validation';
 import directives from './directives';
+import i18n from '@/locales/i18n';
 
 Vue.config.productionTip = false;
 Vue.config.performance = true;
@@ -29,11 +30,19 @@ Vue.use(VueAnalytics, {
 Vue.use(Intercom, { appId: ENV.VUE_APP_INTERCOM_APP_ID });
 Vue.use(UIComponents);
 
+// Make web3 global for integration tests
+if (window.Cypress) {
+  window.cypressTestResolver = new Promise(resolve => {
+    window.startCypressTest = resolve;
+  });
+}
+
 /* eslint-disable no-new */
 const app = new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   render: h => h(App),
 });
 

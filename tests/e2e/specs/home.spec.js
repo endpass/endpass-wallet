@@ -1,10 +1,7 @@
 describe('Home Page', () => {
   beforeEach(() => {
-    cy.getInitialData();
-    // cy.getAccountBalance();
+    cy.mockInitialData();
     cy.visit('#/');
-    cy.mockWeb3Requests();
-    cy.makeStoreAlias();
     cy.waitPageLoad();
     cy.wait('@identityUser');
   });

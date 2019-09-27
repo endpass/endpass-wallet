@@ -1,6 +1,5 @@
-import { address } from '../accounts';
-import activeAccount from '../keystore/account_1.json';
-import gasPrice from '../cryptodata/gasprice.json';
+import { v3Import, v3 } from '@fixtures/accounts';
+import { gasPrice } from '@fixtures/cryptodata';
 
 export const ethplorerHistory = [
   {
@@ -26,7 +25,7 @@ export const ethplorerHistory = [
     },
     type: 'transfer',
     value: '50000000000000000000',
-    from: '0xb14ab53e38da1c172f877dbc6d65e4a1b0474c3c',
+    from: v3.address,
     to: '0xc761c758f10c84bb2af14ec728780372af840ce7',
   },
   {
@@ -53,14 +52,14 @@ export const ethplorerHistory = [
     type: 'transfer',
     value: '50000000000000000000',
     from: '0x490976966cea5e2403532f17e9dc531536734a2f',
-    to: '0xb14ab53e38da1c172f877dbc6d65e4a1b0474c3c',
+    to: v3.address,
   },
 ];
 
 export const ethplorerTransactions = [
   {
     timestamp: 1535035155,
-    from: '0xb14ab53e38da1c172f877dbc6d65e4a1b0474c3c',
+    from: v3.address,
     to: '0xb41e54248facd542165a4fcb53fb980e4ac88db5',
     hash: '0x53d26efcde07f1b2b68f3e1de93b730deabd1094970d9a68efb799e048e00892',
     value: 0.048671,
@@ -73,7 +72,7 @@ export const ethplorerTransactions = [
   {
     timestamp: 1534823940,
     from: '0xb2930b35844a230f00e51431acae96fe543a0347',
-    to: '0xb14ab53e38da1c172f877dbc6d65e4a1b0474c3c',
+    to: v3.address,
     hash: '0x1cfa3ef1695ab8035ff9abbee0637a8948af3c787b28341cc12a9a5bbb894555',
     value: 0.04952236,
     input: '0x',
@@ -89,8 +88,8 @@ export const transactionToSend = {
   gasLimit: '22000',
   value: '1',
   tokenInfo: undefined,
-  from: activeAccount.address,
-  to: address,
+  from: v3.address,
+  to: v3Import.address,
   data: '0x',
   networkId: 1,
   nonce: null,
@@ -121,7 +120,7 @@ export const blockTransactions = [
     hash: '0x376d2f6b2e0a0bf6956c94a02c4db6fd6442f1d2b6f536140328483278c99dab',
     input: '0x',
     nonce: 594,
-    to: '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c',
+    to: v3.address,
     transactionIndex: 1,
     value: '1000000000000000',
     chainId: '0x3',
@@ -136,7 +135,7 @@ export const blockTransactions = [
     hash: '0x376d2f6b2e0a0bf6956c94a02c4db6fd6442f1d2b6f536140328483278c99dab',
     input: '0x',
     nonce: 594,
-    to: '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c',
+    to: v3.address,
     transactionIndex: 1,
     value: '1000000000000000',
     chainId: '0x1',

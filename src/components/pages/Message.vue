@@ -1,7 +1,7 @@
 <template>
   <base-page>
     <template slot="title">
-      Message
+      {{ $t('components.message.header') }}
     </template>
 
     <div class="tabs">
@@ -11,7 +11,7 @@
             data-test="sign-message-tab"
             @click="setSignTabActive"
           >
-            Sign
+            {{ $t('global.sign') }}
           </a>
         </li>
         <li :class="[isVerifyTabActive ? 'is-active' : '']">
@@ -19,7 +19,7 @@
             data-test="verify-message-tab"
             @click="setVerifyTabActive"
           >
-            Verify
+            {{ $t('global.verify') }}
           </a>
         </li>
       </ul>

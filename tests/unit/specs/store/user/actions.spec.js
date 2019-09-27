@@ -413,10 +413,11 @@ describe('user actions', () => {
       expect.assertions(1);
 
       userService.getSettings.mockResolvedValueOnce({
+        emailConfirmed: true,
         fiatCurrency: '',
       });
 
-      await actions.setUserSettings({ commit });
+      await actions.setUserSettings({ commit, dispatch });
 
       expect(commit).not.toBeCalled();
     });

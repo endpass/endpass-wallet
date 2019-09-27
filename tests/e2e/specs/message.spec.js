@@ -1,11 +1,12 @@
-import { message, signedMessage, address } from '../fixtures/message';
+import { message, signedMessage } from '@fixtures/message';
+import { v3 } from '@fixtures/accounts';
 
 describe('Message Page', () => {
   describe('the user is not authorized', () => {
     it('should redirect to root', () => {
       cy.preventLogin();
       cy.visit('#/message');
-      cy.mockWeb3Requests();
+      cy.waitPageLoad();
       cy.url().should(
         'eq',
         `${Cypress.config().baseUrl}/#/?redirect_uri=%2Fmessage`,
@@ -15,9 +16,8 @@ describe('Message Page', () => {
 
   describe('the user is authorized', () => {
     beforeEach(() => {
-      cy.getInitialData();
+      cy.mockInitialData();
       cy.visit('#/message');
-      cy.mockWeb3Requests();
       cy.waitPageLoad();
     });
 
@@ -67,7 +67,7 @@ describe('Message Page', () => {
           );
           cy.get('[data-test=verify-button]').click();
 
-          cy.get('[data-test=address-field]').contains(address);
+          cy.get('[data-test=address-field]').contains(v3.address);
         });
       });
 

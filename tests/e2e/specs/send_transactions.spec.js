@@ -1,24 +1,24 @@
-import { transactionToSend } from '../fixtures/transactions';
-import { tokens } from '../fixtures/tokeninfo';
+import { transactionToSend } from '@fixtures/transactions';
+import { tokens } from '@fixtures/tokeninfo';
+import { cryptodataAPIUrl } from '@config';
 
 describe('Send Transactions Page', () => {
   describe('the user is not authorized', () => {
     it('should redirect to root', () => {
       cy.preventLogin();
       cy.visit('#/send');
-      cy.mockWeb3Requests();
+      cy.waitPageLoad();
       cy.url().should('include', '/#/?redirect_uri=%2Fsend');
     });
   });
 
   describe('the user is authorized', () => {
     beforeEach(() => {
-      cy.getInitialData();
-      cy.getAccountBalance();
+      cy.mockInitialData();
+      cy.mockPositiveBalance();
       cy.visit('#/send');
-      cy.mockWeb3Requests();
       cy.waitPageLoad();
-      cy.wait('@accountBalance');
+      cy.wait('@positiveBalance');
     });
 
     it('should validate form', () => {
@@ -93,8 +93,6 @@ describe('Send Transactions Page', () => {
     });
 
     it('should send transaction', () => {
-      cy.makeStoreAlias();
-
       cy.getBalanceTokenElement().contains('2');
 
       cy.get('[data-test=transaction-send-form]').within(() => {
@@ -117,7 +115,6 @@ describe('Send Transactions Page', () => {
         cy.get('[data-test=confirm-button]').click();
       });
 
-      const cryptodataAPIUrl = '/cryptodata/api/v1.1';
       cy.route({
         method: 'GET',
         url: `${cryptodataAPIUrl}/*/balance/**`,

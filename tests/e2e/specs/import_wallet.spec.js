@@ -1,28 +1,26 @@
 import {
-  checksumAddress,
-  addressHdChild,
+  v3Import,
   v3password,
-  privateKey,
+  privateKeyImport,
   mnemonic,
-} from '../fixtures/accounts';
+} from '@fixtures/accounts';
 
 describe('Import Wallet Page', () => {
   beforeEach(() => {
-    cy.getInitialData();
+    cy.mockInitialData();
     cy.visit('#/import');
-    cy.mockWeb3Requests();
     cy.waitPageLoad();
   });
 
   it('should import wallet from private key', () => {
     cy.contains('Private Key').click();
-    cy.get('[data-test=input-private-key]').type(privateKey);
+    cy.get('[data-test=input-private-key]').type(privateKeyImport);
     cy.get('[data-test=submit-import]').click();
     cy.inputPassword();
     cy.get('[data-test=address-card]', {
       timeout: 15000,
     })
-      .contains(checksumAddress)
+      .contains(v3Import.address)
       .should('exist');
     cy.get('[data-test=nav-sidebar-menu]')
       .contains('Send')
@@ -31,12 +29,12 @@ describe('Import Wallet Page', () => {
 
   it('should import wallet from public key', () => {
     cy.contains('Address').click();
-    cy.get('[data-test=input-public-key]').type(checksumAddress);
+    cy.get('[data-test=input-public-key]').type(v3Import.address);
     cy.get('[data-test=submit-import]').click();
     cy.get('[data-test=address-card]', {
       timeout: 15000,
     })
-      .contains(checksumAddress)
+      .contains(v3Import.address)
       .should('exist');
     cy.get('[data-test=nav-sidebar-menu]')
       .contains('Send')
@@ -57,7 +55,7 @@ describe('Import Wallet Page', () => {
     cy.get('[data-test=account-address]', {
       timeout: 15000,
     })
-      .contains(addressHdChild.substr(-5))
+      .contains(v3Import.address.substr(-5))
       .click();
 
     cy.get('[data-test=import-wallet-button]').click();
@@ -67,7 +65,7 @@ describe('Import Wallet Page', () => {
     cy.get('[data-test=address-card]', {
       timeout: 15000,
     })
-      .contains(addressHdChild)
+      .contains(v3Import.address)
       .should('exist');
     cy.get('[data-test=nav-sidebar-menu]')
       .contains('Send')
@@ -87,7 +85,7 @@ describe('Import Wallet Page', () => {
     cy.get('[data-test=address-card]', {
       timeout: 15000,
     })
-      .contains(checksumAddress)
+      .contains(v3Import.address)
       .should('exist');
     cy.get('[data-test=nav-sidebar-menu]')
       .contains('Send')
@@ -108,7 +106,7 @@ describe('Import Wallet Page', () => {
     // With bad file
     cy.uploadFile(
       '[data-test=input-file]',
-      'keystore/accounts.json',
+      'keystore/account_import_bad_file.json',
       'application/json',
     );
     cy.get('[data-test=import-json-form]')
@@ -141,7 +139,7 @@ describe('Import Wallet Page', () => {
     // Wrong private key
     cy.contains('Private Key').click();
 
-    cy.get('[data-test=input-private-key]').type(privateKey.slice(0, 10));
+    cy.get('[data-test=input-private-key]').type(privateKeyImport.slice(0, 10));
 
     cy.get('[data-test=import-private-form]')
       .contains('not a valid private key')
@@ -153,7 +151,7 @@ describe('Import Wallet Page', () => {
     // Wrong public key
     cy.contains('Address').click();
 
-    cy.get('[data-test=input-public-key]').type(checksumAddress.slice(0, 10));
+    cy.get('[data-test=input-public-key]').type(v3Import.address.slice(0, 10));
 
     cy.get('[data-test=import-public-form]')
       .contains('not a valid address')

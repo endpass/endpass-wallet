@@ -18,7 +18,7 @@
         :selected-address="bridgeButtonListSelectedAddress"
         @success="$router.push('/')"
       >
-        Import
+        {{ $t('global.import') }}
       </wallet-add-button>
     </wallets-list>
   </div>

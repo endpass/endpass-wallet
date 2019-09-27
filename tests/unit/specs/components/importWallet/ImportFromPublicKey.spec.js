@@ -4,12 +4,14 @@ import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
 import UIComponents from '@endpass/ui';
 import validation from '@/validation';
+import setupI18n from '@/locales/i18nSetup';
 
 import { address } from 'fixtures/accounts';
 
 import ImportFromPublicKey from '@/components/importWallet/ImportFromPublicKey';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(validation);
 localVue.use(Vuex);
@@ -38,6 +40,7 @@ describe('ImportFromPublicKey', () => {
     wrapper = shallowMount(ImportFromPublicKey, {
       localVue,
       store,
+      i18n,
       router,
       sync: false,
     });

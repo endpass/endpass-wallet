@@ -1,10 +1,10 @@
 <template>
   <base-page class="import-wallet">
     <template slot="title">
-      Import Existing Wallet
+      {{ $t('components.importWallet.header') }}
     </template>
     <p class="subtitle">
-      Select the type of wallet you would like to import.
+      {{ $t('components.importWallet.paragaph') }}
     </p>
     <div class="columns">
       <div class="column is-one-third">

@@ -24,7 +24,7 @@ import {
   sendRawTransaction_b14ab_31ea8_resend,
   syncing,
   ethSubscribe,
-} from '../../fixtures/web3';
+} from '@fixtures/web3';
 
 Cypress.Commands.add('mockWeb3Requests', () => {
   cy.window()

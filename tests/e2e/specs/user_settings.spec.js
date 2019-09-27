@@ -1,14 +1,11 @@
-import user from '../fixtures/identity/user';
-import { mnemonic, v3password } from '../fixtures/accounts';
-
-const identityAPIUrl = 'https://identity-dev.endpass.com/api/v1.1';
+import { user } from '@fixtures/identity';
+import { mnemonic, v3password } from '@fixtures/accounts';
+import { identityAPIUrl } from '@config';
 
 describe('Settings Page', () => {
   beforeEach(() => {
-    cy.getInitialData();
+    cy.mockInitialData();
     cy.visit('#/settings');
-    cy.mockWeb3Requests();
-    cy.makeStoreAlias();
     cy.waitPageLoad();
   });
 

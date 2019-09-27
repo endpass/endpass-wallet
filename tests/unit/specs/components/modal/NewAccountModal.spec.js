@@ -3,10 +3,12 @@ import VeeValidate from 'vee-validate';
 import { mount, createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
 
+import setupI18n from '@/locales/i18nSetup';
 import NewAccountModal from '@/components/modal/NewAccountModal';
 import validation from '@/validation';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(VeeValidate);
 localVue.use(validation);
@@ -41,6 +43,7 @@ describe('NewAccountModal', () => {
     const $ga = { event: jest.fn() };
 
     options = {
+      i18n,
       store,
       localVue,
       mocks: {

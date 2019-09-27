@@ -4,10 +4,11 @@ import Vuex from 'vuex';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import Home from '@/components/pages/Home';
-
+import setupI18n from '@/locales/i18nSetup';
 import { checksumAddress } from 'fixtures/accounts';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 localVue.use(VueRouter);
@@ -55,6 +56,7 @@ describe('Home page', () => {
     router = new VueRouter();
 
     wrapperFactory = wrapShallowMountFactory(Home, {
+      i18n,
       store,
       localVue,
       sync: false,

@@ -5,11 +5,13 @@ import VueRouter from 'vue-router';
 
 import ReceivePage from '@/components/pages/Receive.vue';
 
+import setupI18n from '@/locales/i18nSetup';
 import ethereumWalletMock from 'fixtures/wallet';
 import ethereumAddressWalletMock from 'fixtures/address';
 import transactions from 'fixtures/transactions';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 localVue.use(VueRouter);
@@ -86,6 +88,7 @@ describe('ReceivePage', () => {
       localVue,
       store,
       router,
+      i18n,
       sync: false,
     });
   });

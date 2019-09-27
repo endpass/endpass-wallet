@@ -5,6 +5,7 @@ import {
   SET_SETTINGS,
   SET_OTP_SETTINGS,
   SET_IDENTITY_TYPE,
+  SET_EMAIL_CONFIRMED_STATUS,
 } from './mutations-types';
 
 const setAuthorizationStatus = (state, authorizationStatus) => {
@@ -28,10 +29,15 @@ const setIdentityType = (state, type = IDENTITY_MODE.DEFAULT) => {
   state.identityType = type;
 };
 
+const setEmailConfirmedStatus = (state, isConfirmed) => {
+  state.isShownEmailConfirmedNotification = isConfirmed;
+};
+
 export default {
   [SET_AUTHORIZATION_STATUS]: setAuthorizationStatus,
   [SET_EMAIL]: setEmail,
   [SET_SETTINGS]: setSettings,
   [SET_OTP_SETTINGS]: setOtpSettings,
   [SET_IDENTITY_TYPE]: setIdentityType,
+  [SET_EMAIL_CONFIRMED_STATUS]: setEmailConfirmedStatus,
 };

@@ -4,6 +4,7 @@ import UIComponents from '@endpass/ui';
 import { createLocalVue } from '@vue/test-utils';
 import { wrapShallowMountFactory } from '@/testUtils';
 
+import setupI18n from '@/locales/i18nSetup';
 import CustomProviderModal from '@/components/bar/CustomProviderModal';
 import { Network } from '@endpass/class';
 
@@ -22,6 +23,7 @@ describe('CustomProviderModal', () => {
 
   beforeEach(() => {
     const localVue = createLocalVue();
+    const i18n = setupI18n(localVue);
 
     localVue.use(Vuex);
     localVue.use(VeeValidate);
@@ -43,6 +45,7 @@ describe('CustomProviderModal', () => {
     componentOptions = {
       store,
       localVue,
+      i18n,
       sync: false,
     };
 

@@ -1,31 +1,17 @@
 describe('Log In To an Existing Account', () => {
   it('should show log in modal on home page', () => {
-    cy.server();
-    // Not logged in
-    cy.route({
-      method: 'GET',
-      url: 'https://identity-dev.endpass.com/api/v1.1*',
-      response: {},
-      status: 401,
-    });
-
-    cy.route(
-      'POST',
-      'https://identity-dev.endpass.com/api/v1.1/auth',
-      'fixture:identity/auth',
-    );
-
+    cy.preventLogin();
     cy.visit('#/');
-    cy.mockWeb3Requests();
+    cy.waitPageLoad();
 
     cy.get('iframe[data-endpass=frame]').should('exist');
   });
 
   it('should not show login modal if already logged in', () => {
-    cy.login();
-
+    cy.mockInitialData();
     cy.visit('#/');
-    cy.mockWeb3Requests();
+    cy.waitPageLoad();
+
     cy.get('[data-test=login-modal]').should('not.exist');
   });
 });

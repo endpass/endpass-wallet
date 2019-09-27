@@ -73,8 +73,8 @@ export default {
         this.$emit('success', password);
       } catch (e) {
         this.$notify({
-          title: 'Importing error',
-          text: 'An error occurred while importing wallet. Please try again.',
+          title: this.$t('components.walletAddButton.importErrorTitle'),
+          text: this.$t('components.walletAddButton.importErrorText'),
           type: 'is-danger',
         });
       } finally {

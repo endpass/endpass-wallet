@@ -38,14 +38,16 @@ export default {
     statusMessage() {
       let message = `${this.appStatus}`;
       if (!this.apiStatus && message === 'ready') {
-        message = 'API connection error';
+        message = this.$t('components.syncStatus.apiConnectionError');
       }
       return message;
     },
     message() {
       return this.blockNumber
-        ? `Synced to block ${this.blockNumber}`
-        : 'Awaiting block number';
+        ? this.$t('components.syncStatus.syncedToBlock', {
+          blockNumber: this.blockNumber,
+        })
+        : this.$t('components.syncStatus.awaitingBlockNumber');
     },
   },
 };

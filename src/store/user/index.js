@@ -17,6 +17,7 @@ const state = {
     status: null,
   },
   availableCurrencies: AVAILABLE_FIAT_CURRENCIES,
+  isShownEmailConfirmedNotification: false,
 };
 
 export default {

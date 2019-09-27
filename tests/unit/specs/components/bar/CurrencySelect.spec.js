@@ -2,8 +2,10 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 import { Network } from '@endpass/class';
 import CurrencySelect from '@/components/bar/CurrencySelect';
 import Vuex from 'vuex';
+import setupI18n from '@/locales/i18nSetup';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 
@@ -28,6 +30,7 @@ describe('CurrencySelect', () => {
     });
 
     wrapper = shallowMount(CurrencySelect, {
+      i18n,
       localVue,
       store,
     });

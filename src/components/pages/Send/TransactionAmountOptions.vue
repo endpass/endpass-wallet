@@ -9,7 +9,7 @@
           class="label"
           for="amount"
         >
-          Amount
+          {{ $t('components.transactionAmountOptions.amount') }}
         </label>
       </div>
       <div class="field-body">
@@ -26,7 +26,7 @@
           name="value"
           data-vv-name="value"
           aria-describedby="value"
-          placeholder="Amount"
+          :placeholder="$t('components.transactionAmountOptions.amount')"
           required
           data-test="transaction-amount-input"
           @input="handleAmountInput"
@@ -65,7 +65,7 @@
           name="price"
           data-vv-name="price"
           aria-describedby="price"
-          placeholder="Price"
+          :placeholder="$t('components.transactionAmountOptions.price')"
           required
           @input="handlePriceInput"
         >
@@ -83,7 +83,9 @@
       class="field is-horizontal"
     >
       <div class="field-label">
-        <label class="label">Gas Fee</label>
+        <label class="label">{{
+          $t('components.transactionAmountOptions.gasFee')
+        }}</label>
       </div>
       <div class="field-body">
         <v-input
@@ -187,7 +189,9 @@ export default {
     },
 
     gasFeeBN() {
-      return BigNumber(toWei(this.gasPrice, 'gwei')).times(this.gasLimit);
+      return BigNumber(toWei(this.gasPrice || '0', 'gwei')).times(
+        this.gasLimit || '0',
+      );
     },
 
     gasFee() {
@@ -337,7 +341,7 @@ export default {
       if (gasFeeBN.gt(balance)) {
         this.errors.add({
           field: 'value',
-          msg: 'Insufficient funds',
+          msg: this.$t('components.transactionAmountOptions.insufficientFunds'),
           id: 'insufficientBalance',
         });
       } else {

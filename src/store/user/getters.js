@@ -16,6 +16,9 @@ const isLocalIdentity = state => state.identityType === IDENTITY_MODE.LOCAL;
 
 const lastActiveAccount = state => get(state, 'settings.lastActiveAccount');
 
+const isEmailConfirmed = state => isConfirmed =>
+  isConfirmed || state.isShownEmailConfirmedNotification;
+
 export default {
   isLoggedIn,
   isLoggedOut,
@@ -23,4 +26,5 @@ export default {
   isDefaultIdentity,
   isLocalIdentity,
   lastActiveAccount,
+  isEmailConfirmed,
 };

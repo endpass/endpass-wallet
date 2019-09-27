@@ -8,9 +8,11 @@ import { wrapShallowMountFactory } from '@/testUtils';
 
 import TokensPage from '@/components/pages/Tokens.vue';
 
+import setupI18n from '@/locales/i18nSetup';
 import { allTokens, tokens, tokensMappedByAddresses } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 localVue.use(Notifications);
@@ -79,6 +81,7 @@ describe('TokensPage', () => {
     options = {
       store,
       localVue,
+      i18n,
     };
     wrapperFactory = wrapShallowMountFactory(TokensPage, options);
   });

@@ -8,5 +8,6 @@
   "video": false,
   "videosFolder": "tests/e2e/videos",
   "viewportWidth": 1200,
-  "viewportHeight": 1000
+  "viewportHeight": 1000,
+  "chromeWebSecurity": false
 }

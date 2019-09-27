@@ -1,15 +1,17 @@
+import { identityAPIUrl } from '@config';
+
 describe('New Wallet Page', () => {
   it('should generate a new wallet and display seed phrase', () => {
-    cy.login();
+    cy.mockInitialData();
     cy.route({
       method: 'GET',
-      url: 'https://identity-dev.endpass.com/api/v1.1/accounts',
+      url: `${identityAPIUrl}/accounts`,
       response: [],
       status: 200,
     }).as('keystoreGetEmptyAccounts');
 
     cy.visit('#/new');
-    cy.mockWeb3Requests();
+    cy.waitPageLoad();
     cy.wait(['@keystoreGetEmptyAccounts']);
 
     cy.get('[data-test=input-new-wallet-password]').type('12341234');

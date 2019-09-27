@@ -4,10 +4,12 @@ import UIComponents from '@endpass/ui';
 
 import ExportToJson from '@/components/ExportToJson';
 import { Wallet } from '@/class';
+import setupI18n from '@/locales/i18nSetup';
 
 import { v3, v3password } from 'fixtures/accounts';
 
 const localVue = createLocalVue();
+const i18n = setupI18n(localVue);
 
 localVue.use(Vuex);
 localVue.use(UIComponents);
@@ -27,7 +29,11 @@ describe('ExportToJson', () => {
         },
       },
     });
-    wrapper = shallowMount(ExportToJson, { store, localVue });
+    wrapper = shallowMount(ExportToJson, {
+      i18n,
+      store,
+      localVue,
+    });
   });
 
   describe('render', () => {
