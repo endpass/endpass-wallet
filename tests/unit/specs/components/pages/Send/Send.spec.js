@@ -2,13 +2,13 @@ import Vuex from 'vuex';
 import Web3 from 'web3';
 import { createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
+import { checksumAddress, v3password } from 'fixtures/accounts';
+import { transactionHash, shortTransactionHash } from 'fixtures/transactions';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import Send from '@/components/pages/Send/index.vue';
 import { TransactionFactory } from '@/class';
 
-import { checksumAddress, v3password } from 'fixtures/accounts';
-import { transactionHash, shortTransactionHash } from 'fixtures/transactions';
 
 const localVue = createLocalVue();
 

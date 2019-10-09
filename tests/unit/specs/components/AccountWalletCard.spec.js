@@ -2,10 +2,10 @@ import Vuex from 'vuex';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
 
-import AccountWalletCard from '@/components/AccountWalletCard';
 
 import { address } from 'fixtures/accounts';
 import { tokensMappedByAddresses } from 'fixtures/tokens';
+import AccountWalletCard from '@/components/AccountWalletCard';
 import setupI18n from '@/locales/i18nSetup';
 
 const localVue = createLocalVue();

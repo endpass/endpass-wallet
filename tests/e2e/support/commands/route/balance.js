@@ -1,5 +1,5 @@
-import { cryptodataAPIUrl } from '@config';
 import { tokens } from '@fixtures/tokeninfo';
+import { cryptodataAPIUrl } from '@config';
 
 Cypress.Commands.add('mockZeroBalance', () => {
   cy.route({

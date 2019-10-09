@@ -54,11 +54,11 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import { getShortStringWithEllipsis } from '@endpass/utils/strings';
 import { TransactionFactory } from '@/class';
 import TransactionModal from '@/components/modal/TransactionModal';
 import PasswordModal from '@/components/modal/PasswordModal';
 import privatePage from '@/mixins/privatePage';
-import { getShortStringWithEllipsis } from '@endpass/utils/strings';
 import TransactionForm from './TransactionForm.vue';
 
 const defaultTx = {

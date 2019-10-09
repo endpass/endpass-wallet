@@ -47,9 +47,11 @@ Cypress.Commands.add('uploadFile', (selector, fileUrl, type = '') =>
         const testFile = new win.File([blob], name, { type: blob.type });
         const dataTransfer = new win.DataTransfer();
         const el = subject[0];
+        const changeEvent = new Event('change');
 
         dataTransfer.items.add(testFile);
         el.files = dataTransfer.files;
+        el.dispatchEvent(changeEvent);
 
         return subject;
       }),

@@ -1,7 +1,7 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils';
-import { TransactionFactory } from '@/class';
 import Vuex from 'vuex';
 import UIComponents from '@endpass/ui';
+import { TransactionFactory } from '@/class';
 import validation from '@/validation';
 
 import setupI18n from '@/locales/i18nSetup';

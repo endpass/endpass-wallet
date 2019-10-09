@@ -1,9 +1,9 @@
 import MockAdapter from 'axios-mock-adapter';
-import { NotificationError, http } from '@/class';
-import { cryptoDataValidator } from '@/schema';
 import { gasPrice } from 'fixtures/gasPrice';
 import { price, priceMulti } from 'fixtures/price';
 import { address } from 'fixtures/accounts';
+import { cryptoDataValidator } from '@/schema';
+import { NotificationError, http } from '@/class';
 
 const cryptoDataService = require.requireActual('@/services/cryptoData')
   .default;

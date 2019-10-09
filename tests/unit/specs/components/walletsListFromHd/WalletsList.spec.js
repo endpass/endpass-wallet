@@ -3,12 +3,12 @@ import Notifications from 'vue-notification';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import UIComponents from '@endpass/ui';
+import { v3 } from 'fixtures/accounts';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import setupI18n from '@/locales/i18nSetup';
 import WalletsList from '@/components/walletsListFromHd/WalletsList';
 import { Wallet } from '@/class';
-import { v3 } from 'fixtures/accounts';
 
 const WALLET_TYPES = Wallet.getTypes();
 

@@ -142,12 +142,12 @@
 
 <script>
 import get from 'lodash/get';
-import Account from '@/components/Account';
-import ResendModal from '@/components/modal/ResendModal';
-import PasswordModal from '@/components/modal/PasswordModal';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import { addToDate, formateDate, fromNow } from '@endpass/utils/date';
 import { getShortStringWithEllipsis } from '@endpass/utils/strings';
+import Account from '@/components/Account';
+import ResendModal from '@/components/modal/ResendModal';
+import PasswordModal from '@/components/modal/PasswordModal';
 import { Transaction } from '@/class';
 import { TRANSACTION_STATUS } from '@/constants';
 

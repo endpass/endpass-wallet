@@ -38,8 +38,8 @@
 </template>
 
 <script>
-import PasswordModal from '@/components/modal/PasswordModal';
 import { mapGetters } from 'vuex';
+import PasswordModal from '@/components/modal/PasswordModal';
 
 export default {
   name: 'ExportToPrivateKey',

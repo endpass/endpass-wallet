@@ -1,8 +1,8 @@
 import Web3 from 'web3';
 
+import { Network } from '@endpass/class';
 import { userService } from '@/services';
 import { ProviderFactory, web3 } from '@/class';
-import { Network } from '@endpass/class';
 import {
   CHANGE_NETWORK,
   CHANGE_CURRENCY,

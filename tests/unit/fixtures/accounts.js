@@ -133,7 +133,7 @@ export const otpSettings = {
 };
 
 export const otpPayload = {
-  otpCode: '123456',
+  code: '123456',
   verificationCode: '123456',
   secret: 'SECRET',
 };

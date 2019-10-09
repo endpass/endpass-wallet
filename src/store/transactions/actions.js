@@ -2,6 +2,10 @@ import get from 'lodash/get';
 import { BigNumber } from 'bignumber.js';
 import { toChecksumAddress } from 'web3-utils';
 import {
+  getShortStringWithEllipsis,
+  matchString,
+} from '@endpass/utils/strings';
+import {
   EventEmitter,
   NotificationError,
   TransactionFactory,
@@ -10,10 +14,6 @@ import {
 } from '@/class';
 import { TRANSACTION_STATUS } from '@/constants';
 import cryptoDataService from '@/services/cryptoData';
-import {
-  getShortStringWithEllipsis,
-  matchString,
-} from '@endpass/utils/strings';
 import {
   ADD_TRANSACTION,
   UPDATE_TRANSACTION,

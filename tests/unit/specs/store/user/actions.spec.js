@@ -1,3 +1,5 @@
+import ConnectError from '@endpass/class/ConnectError';
+import { settings, otpSettings, otpPayload } from 'fixtures/accounts';
 import userService from '@/services/user';
 import otpService from '@/services/otp';
 import identityModeService from '@/services/identityMode';
@@ -11,8 +13,6 @@ import {
   SET_EMAIL,
 } from '@/store/user/mutations-types';
 import { connect } from '@/class';
-import ConnectError from '@endpass/class/ConnectError';
-import { settings, otpSettings, otpPayload } from 'fixtures/accounts';
 
 describe('user actions', () => {
   let commit;
@@ -333,8 +333,7 @@ describe('user actions', () => {
 
       expect(otpService.deleteOtpSettings).toHaveBeenCalledTimes(1);
       expect(otpService.deleteOtpSettings).toBeCalledWith({
-        otpCode: otpPayload.otpCode,
-        verificationCode: otpPayload.verificationCode,
+        code: otpPayload.code,
       });
     });
 

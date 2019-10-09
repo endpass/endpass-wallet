@@ -116,7 +116,7 @@ export default {
     return {
       providerAdded: false,
       isLoading: false,
-      innerProvider: Object.assign({}, this.provider),
+      innerProvider: { ...this.provider},
       currencies: Network.CURRENCIES.map(currency => ({
         val: currency.id,
         text: currency.name,

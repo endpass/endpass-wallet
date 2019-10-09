@@ -23,6 +23,10 @@ import {
   successResponse,
   errorResponse,
 } from 'fixtures/identity';
+import keystoreHDWallet from '@endpass/utils/keystoreHDWallet';
+import keystoreWallet from '@endpass/utils/keystoreWallet';
+import walletGen from '@endpass/utils/walletGen';
+import proxies from 'mocks/class/proxies';
 import { Wallet, NotificationError, web3 } from '@/class';
 import actions from '@/store/accounts/actions';
 import {
@@ -34,13 +38,9 @@ import {
   CHANGE_INIT_STATUS,
   SET_HD_CACHE_BY_TYPE,
 } from '@/store/accounts/mutations-types';
-import keystoreHDWallet from '@endpass/utils/keystoreHDWallet';
-import keystoreWallet from '@endpass/utils/keystoreWallet';
-import walletGen from '@endpass/utils/walletGen';
 import userService from '@/services/user';
 import localSettingsService from '@/services/localSettings';
 
-import proxies from 'mocks/class/proxies';
 import { ENCRYPT_OPTIONS } from '@/constants';
 
 const WALLET_TYPES = Wallet.getTypes();

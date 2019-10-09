@@ -1,3 +1,4 @@
+import { ethplorerTransactions } from 'fixtures/transactions';
 import state from '@/store/transactions';
 import {
   ADD_TRANSACTION,
@@ -5,7 +6,6 @@ import {
   SET_TRANSACTION_HISTORY,
   SET_PENDING_TRANSACTIONS_FILTER_ID,
 } from '@/store/transactions/mutations-types';
-import { ethplorerTransactions } from 'fixtures/transactions';
 
 const { mutations } = state;
 

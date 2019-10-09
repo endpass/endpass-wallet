@@ -1,11 +1,11 @@
 import VueRouter from 'vue-router';
 import { createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
+import { checksumAddress } from 'fixtures/accounts';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import Home from '@/components/pages/Home';
 import setupI18n from '@/locales/i18nSetup';
-import { checksumAddress } from 'fixtures/accounts';
 
 const localVue = createLocalVue();
 const i18n = setupI18n(localVue);

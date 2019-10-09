@@ -3,16 +3,16 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import { createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
+import { transaction } from 'fixtures/transactions';
+import { address } from 'fixtures/accounts';
+import { token, tokens } from 'fixtures/tokens';
+import { gasPrice } from 'fixtures/gasPrice';
 import { ENSResolver } from '@/class';
 import validation from '@/validation';
 import { wrapShallowMountFactory } from '@/testUtils';
 import setupI18n from '@/locales/i18nSetup';
 
 import TransactionForm from '@/components/pages/Send/TransactionForm.vue';
-import { transaction } from 'fixtures/transactions';
-import { address } from 'fixtures/accounts';
-import { token, tokens } from 'fixtures/tokens';
-import { gasPrice } from 'fixtures/gasPrice';
 
 const localVue = createLocalVue();
 const i18n = setupI18n(localVue);
@@ -91,7 +91,7 @@ describe('Send – TransactionForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    store = new Vuex.Store(Object.assign({}, defaultStore));
+    store = new Vuex.Store({ ...defaultStore});
 
     wrapperFactory = wrapShallowMountFactory(TransactionForm, {
       i18n,
@@ -210,7 +210,7 @@ describe('Send – TransactionForm', () => {
 
         beforeEach(() => {
           store = new Vuex.Store(
-            set(Object.assign({}, defaultStore), 'modules.tokens.getters', {
+            set({ ...defaultStore}, 'modules.tokens.getters', {
               ...tokensGetters,
               currentAccountTokenBySymbol: () => tokenBySymbolGetterMock,
             }),

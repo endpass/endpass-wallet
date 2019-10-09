@@ -19,6 +19,7 @@ Cypress.Commands.add('mockPrices', () => {
 
 Cypress.Commands.add('mockInitialData', () => {
   cy.login();
+  cy.mockVerificationCode();
   cy.mockTokensInfo();
   cy.mockEmptyTransactionHistory();
   cy.mockPrices();

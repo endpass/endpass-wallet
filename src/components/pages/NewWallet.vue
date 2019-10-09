@@ -8,9 +8,9 @@
       class="container has-text-centered is-narrow"
     >
       <p class="subtitle">
-        {{ $t('components.newWallet.paragaph1') }}
-        <strong>{{ $t('components.newWallet.paragaph2') }}</strong>
-        {{ $t('components.newWallet.paragaph3') }}
+        {{ $t('components.newWallet.paragraph1') }}
+        <strong>{{ $t('components.newWallet.paragraph2') }}</strong>
+        {{ $t('components.newWallet.paragraph3') }}
       </p>
       <div class="box">
         <p>{{ $t('components.newWallet.yourSeedPhrase') }}</p>
@@ -34,7 +34,7 @@
       class="container has-text-centered is-narrow"
     >
       <p class="subtitle">
-        {{ $t('components.newWallet.paragaph4') }}
+        {{ $t('components.newWallet.paragraph4') }}
       </p>
       <v-form
         :is-form-valid="isFormValid"

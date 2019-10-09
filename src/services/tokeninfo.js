@@ -1,5 +1,5 @@
-import { http } from '@/class';
 import { isAddress } from 'web3-utils';
+import { http } from '@/class';
 
 export default {
   getTokensList() {

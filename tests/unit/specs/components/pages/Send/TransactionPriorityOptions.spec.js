@@ -1,9 +1,9 @@
 import VeeValidate from 'vee-validate';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
+import { gasPrice } from 'fixtures/gasPrice';
 import setupI18n from '@/locales/i18nSetup';
 import TransactionPriorityOptions from '@/components/pages/Send/TransactionPriorityOptions.vue';
-import { gasPrice } from 'fixtures/gasPrice';
 
 const localVue = createLocalVue();
 const i18n = setupI18n(localVue);

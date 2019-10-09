@@ -1,5 +1,5 @@
-import { http } from '@/class';
 import throttledQueue from 'throttled-queue';
+import { http } from '@/class';
 
 const throttle = throttledQueue(1, 5000);
 
