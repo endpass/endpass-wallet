@@ -132,5 +132,11 @@ export const otpSettings = {
   otp: true,
 };
 
+export const otpPayload = {
+  otpCode: '123456',
+  verificationCode: '123456',
+  secret: 'SECRET',
+};
+
 export const seed =
   'pseudomania bedchair withdrawingness squawberry ipseand anacoluthon ungangrened ballet recomplicate pessulus trisome unsuffocative plaintile rosland preperceive soupspoon outback subchela dovefoot beltmaker piaculum dragonhood Pristipomatidae arrowheaded';

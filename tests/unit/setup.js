@@ -7,6 +7,7 @@ import 'mocks/web3';
  * Services mocks
  */
 import 'mocks/services/user';
+import 'mocks/services/otp';
 import 'mocks/services/identityMode';
 import 'mocks/services/ethplorer';
 import 'mocks/services/cryptoData';

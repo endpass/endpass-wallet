@@ -15,6 +15,8 @@
       v-if="isTwoFactorAuthModal"
       :secret="otpSettings.secret"
       :email="email"
+      :is-loading="isLoading"
+      @request-code="hanleCodeRequest"
       @close="toggleTwoFactorAuthModal"
       @confirm="handleConfirmTwoFactorAuthModal"
     />
@@ -28,32 +30,43 @@ import modalMixin from '@/mixins/modal';
 
 export default {
   name: 'TwoFactorAuthSettings',
+
   data: () => ({
     isLoading: false,
   }),
+
   computed: {
     ...mapState('user', ['email', 'otpSettings']),
+
     isButtonDisabled() {
       return !this.otpSettings.secret && !this.otpSettings.status;
     },
+
+    isOtpEnabled() {
+      return !!this.otpSettings.status;
+    },
   },
+
   methods: {
     ...mapActions('user', [
       'getOtpSettings',
       'setOtpSettings',
       'deleteOtpSettings',
+      'requestCode',
     ]),
     ...mapActions('errors', ['emitError']),
-    async handleConfirmTwoFactorAuthModal(code) {
+
+    async handleConfirmTwoFactorAuthModal({ otpCode, verificationCode }) {
       const { secret } = this.otpSettings;
 
       this.toggleTwoFactorAuthModal();
       this.isLoading = true;
+
       try {
         if (secret) {
-          await this.setOtpSettings({ secret, code });
+          await this.setOtpSettings({ secret, otpCode, verificationCode });
         } else {
-          await this.deleteOtpSettings({ code });
+          await this.deleteOtpSettings({ otpCode, verificationCode });
         }
 
         this.$notify({
@@ -67,16 +80,29 @@ export default {
 
       this.isLoading = false;
     },
+
+    async hanleCodeRequest() {
+      this.isLoading = true;
+
+      await this.requestCode(this.email);
+
+      this.isLoading = false;
+    },
+
     handleFormSubmit() {
       if (!this.isButtonDisabled) {
         this.toggleTwoFactorAuthModal();
       }
     },
   },
+
   mounted() {
     this.getOtpSettings();
+    this.hanleCodeRequest();
   },
+
   mixins: [modalMixin],
+
   components: {
     TwoFactorAuthModal,
   },

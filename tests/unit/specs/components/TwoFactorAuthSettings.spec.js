@@ -2,6 +2,7 @@ import { createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
 import UIComponents from '@endpass/ui';
+import { otpPayload } from 'fixtures/accounts';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
@@ -189,12 +190,15 @@ describe('TwoFactorAuthSettings', () => {
       const code = '123456';
 
       it('should call deleteOtpSettings', () => {
-        wrapper.vm.handleConfirmTwoFactorAuthModal(code);
+        wrapper.vm.handleConfirmTwoFactorAuthModal(otpPayload);
 
         expect(userActions.deleteOtpSettings).toHaveBeenCalledTimes(1);
         expect(userActions.deleteOtpSettings).toHaveBeenCalledWith(
           expect.any(Object),
-          { code },
+          {
+            otpCode: otpPayload.otpCode,
+            verificationCode: otpPayload.verificationCode,
+          },
           undefined,
         );
       });
@@ -229,23 +233,21 @@ describe('TwoFactorAuthSettings', () => {
       });
 
       it('should call setOtpSettings', () => {
-        const secret = 'secret';
-
         wrapper = wrapFactory({
           computed: {
-            otpSettings: { secret },
+            otpSettings: { secret: otpPayload.secret },
           },
         });
 
-        wrapper.vm.handleConfirmTwoFactorAuthModal(code);
+        wrapper.vm.handleConfirmTwoFactorAuthModal({
+          otpCode: otpPayload.otpCode,
+          verificationCode: otpPayload.verificationCode,
+        });
 
         expect(userActions.setOtpSettings).toHaveBeenCalledTimes(1);
         expect(userActions.setOtpSettings).toHaveBeenCalledWith(
           expect.any(Object),
-          {
-            code,
-            secret,
-          },
+          otpPayload,
           undefined,
         );
       });

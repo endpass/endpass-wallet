@@ -1,54 +1,56 @@
 <template>
-  <div
-    id="app"
-    class="app-container"
-  >
-    <header class="app-header">
-      <info-bar class="app-section" />
-    </header>
+  <theme-provider>
+    <div
+      id="app"
+      class="app-container"
+    >
+      <header class="app-header">
+        <info-bar class="app-section" />
+      </header>
 
-    <nav class="app-nav">
-      <nav-sidebar />
-    </nav>
+      <nav class="app-nav">
+        <nav-sidebar />
+      </nav>
 
-    <main class="app-content">
-      <div class>
-        <div class="notify-container">
-          <notifications
-            :speed="500"
-            :duration="5000"
-            width="auto"
-            position="top center"
-            data-test="app-notification"
-            classes="notification app-notification"
-          />
-          <notifications
-            group="persistent"
-            :speed="500"
-            :duration="-1"
-            :close-on-click="false"
-            width="auto"
-            position="top center"
-            data-test="app-notification"
-            classes="notification app-notification app-notification-persist"
-          />
+      <main class="app-content">
+        <div class>
+          <div class="notify-container">
+            <notifications
+              :speed="500"
+              :duration="5000"
+              width="auto"
+              position="top center"
+              data-test="app-notification"
+              classes="notification app-notification"
+            />
+            <notifications
+              group="persistent"
+              :speed="500"
+              :duration="-1"
+              :close-on-click="false"
+              width="auto"
+              position="top center"
+              data-test="app-notification"
+              classes="notification app-notification app-notification-persist"
+            />
+          </div>
+
+          <div class="main app-content app-section">
+            <router-view />
+          </div>
         </div>
+      </main>
 
-        <div class="main app-content app-section">
-          <router-view />
-        </div>
-      </div>
-    </main>
-
-    <quick-actions class="is-hidden-desktop" />
-    <app-footer class="is-hidden-touch" />
-    <v-page-loader :is-loading="isLoading" />
-  </div>
+      <quick-actions class="is-hidden-desktop" />
+      <app-footer class="is-hidden-touch" />
+      <v-page-loader :is-loading="isLoading" />
+    </div>
+  </theme-provider>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-
+import ThemeProvider from '@endpass/ui/kit/ThemeProvider';
 import NavSidebar from '@/components/NavSidebar';
 import InfoBar from '@/components/bar/InfoBar';
 import QuickActions from '@/components/QuickActions';
@@ -107,6 +109,7 @@ export default {
     InfoBar,
     QuickActions,
     AppFooter,
+    ThemeProvider,
   },
 };
 </script>

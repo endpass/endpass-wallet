@@ -2,7 +2,7 @@
 
 exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
 <div
-  class="modal is-active is-dark"
+  class="modal is-active is-dark two-factor-auth-modal"
 >
   <div
     class="modal-background"
@@ -60,6 +60,51 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
             class="label"
           >
             
+    Authenticator Code
+  
+          </label>
+           
+          <div
+            class="field"
+          >
+            <div
+              class="control"
+            >
+              <input
+                autofocus="autofocus"
+                class="input"
+                data-test="input-two-auth-code"
+                data-vv-name="otpCode"
+                name="otpCode"
+                size="6"
+                type="number"
+              />
+               
+            </div>
+             
+            <!---->
+          </div>
+           
+          <!---->
+        </div>
+         
+        <p
+          class="subtitle"
+        >
+          
+      Check your email address for code and enter it in the field below.
+    
+        </p>
+         
+        <div
+          aria-invalid="false"
+          aria-required="true"
+          class="field"
+        >
+          <label
+            class="label"
+          >
+            
     Verification Code
   
           </label>
@@ -86,6 +131,18 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
           </div>
            
           <!---->
+        </div>
+         
+        <div
+          class="two-factor-auth-modal-code-link v-text-center"
+        >
+          <a
+            class="v-link theme-theme() {
+          return 'default';
+        }"
+          >
+            Request another code
+          </a>
         </div>
       </form>
        
@@ -123,7 +180,7 @@ exports[`TwoFactorAuthModal render should render with secret and QR code 1`] = `
 
 exports[`TwoFactorAuthModal render should render without secret and QR code 1`] = `
 <div
-  class="modal is-active is-dark"
+  class="modal is-active is-dark two-factor-auth-modal"
 >
   <div
     class="modal-background"
@@ -181,6 +238,51 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
             class="label"
           >
             
+    Authenticator Code
+  
+          </label>
+           
+          <div
+            class="field"
+          >
+            <div
+              class="control"
+            >
+              <input
+                autofocus="autofocus"
+                class="input"
+                data-test="input-two-auth-code"
+                data-vv-name="otpCode"
+                name="otpCode"
+                size="6"
+                type="number"
+              />
+               
+            </div>
+             
+            <!---->
+          </div>
+           
+          <!---->
+        </div>
+         
+        <p
+          class="subtitle"
+        >
+          
+      Check your email address for code and enter it in the field below.
+    
+        </p>
+         
+        <div
+          aria-invalid="false"
+          aria-required="true"
+          class="field"
+        >
+          <label
+            class="label"
+          >
+            
     Verification Code
   
           </label>
@@ -207,6 +309,18 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
           </div>
            
           <!---->
+        </div>
+         
+        <div
+          class="two-factor-auth-modal-code-link v-text-center"
+        >
+          <a
+            class="v-link theme-theme() {
+          return 'default';
+        }"
+          >
+            Request another code
+          </a>
         </div>
       </form>
        
@@ -244,7 +358,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 1`] 
 
 exports[`TwoFactorAuthModal render should render without secret and QR code 2`] = `
 <div
-  class="modal is-active is-dark"
+  class="modal is-active is-dark two-factor-auth-modal"
 >
   <div
     class="modal-background"
@@ -302,6 +416,51 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
             class="label"
           >
             
+    Authenticator Code
+  
+          </label>
+           
+          <div
+            class="field"
+          >
+            <div
+              class="control"
+            >
+              <input
+                autofocus="autofocus"
+                class="input"
+                data-test="input-two-auth-code"
+                data-vv-name="otpCode"
+                name="otpCode"
+                size="6"
+                type="number"
+              />
+               
+            </div>
+             
+            <!---->
+          </div>
+           
+          <!---->
+        </div>
+         
+        <p
+          class="subtitle"
+        >
+          
+      Check your email address for code and enter it in the field below.
+    
+        </p>
+         
+        <div
+          aria-invalid="false"
+          aria-required="true"
+          class="field"
+        >
+          <label
+            class="label"
+          >
+            
     Verification Code
   
           </label>
@@ -328,6 +487,18 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
           </div>
            
           <!---->
+        </div>
+         
+        <div
+          class="two-factor-auth-modal-code-link v-text-center"
+        >
+          <a
+            class="v-link theme-theme() {
+          return 'default';
+        }"
+          >
+            Request another code
+          </a>
         </div>
       </form>
        
@@ -365,7 +536,7 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 2`] 
 
 exports[`TwoFactorAuthModal render should render without secret and QR code 3`] = `
 <div
-  class="modal is-active is-dark"
+  class="modal is-active is-dark two-factor-auth-modal"
 >
   <div
     class="modal-background"
@@ -423,6 +594,51 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 3`] 
             class="label"
           >
             
+    Authenticator Code
+  
+          </label>
+           
+          <div
+            class="field"
+          >
+            <div
+              class="control"
+            >
+              <input
+                autofocus="autofocus"
+                class="input"
+                data-test="input-two-auth-code"
+                data-vv-name="otpCode"
+                name="otpCode"
+                size="6"
+                type="number"
+              />
+               
+            </div>
+             
+            <!---->
+          </div>
+           
+          <!---->
+        </div>
+         
+        <p
+          class="subtitle"
+        >
+          
+      Check your email address for code and enter it in the field below.
+    
+        </p>
+         
+        <div
+          aria-invalid="false"
+          aria-required="true"
+          class="field"
+        >
+          <label
+            class="label"
+          >
+            
     Verification Code
   
           </label>
@@ -449,6 +665,18 @@ exports[`TwoFactorAuthModal render should render without secret and QR code 3`] 
           </div>
            
           <!---->
+        </div>
+         
+        <div
+          class="two-factor-auth-modal-code-link v-text-center"
+        >
+          <a
+            class="v-link theme-theme() {
+          return 'default';
+        }"
+          >
+            Request another code
+          </a>
         </div>
       </form>
        
