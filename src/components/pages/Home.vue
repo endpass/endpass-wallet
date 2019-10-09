@@ -39,13 +39,19 @@
                 >
                   <v-faucet-button
                     :address="address"
-                    :disabled="isFaucetDisable"
                     class="button is-warning"
-                    data-test="get-test-eth-button"
                     @donate="onDonate"
                     @donate-error="onDonateError"
                   >
-                    {{ faucetTitle }}
+                    <div
+                      slot-scope="{ sendRequest, isLoading }"
+                      class="button is-warning"
+                      data-test="get-test-eth-button"
+                      :disabled="isFaucetDisable || isLoading"
+                      @click="sendRequest"
+                    >
+                      {{ faucetTitle }}
+                    </div>
                   </v-faucet-button>
                 </div>
               </div>
@@ -137,7 +143,7 @@ import VueTimers from 'vue-timers/mixin';
 import get from 'lodash/get';
 import { fromTo } from '@endpass/utils/date';
 import { VFaucetButton } from '@endpass/faucet';
-import { Network } from '@endpass/class';
+import Network from '@endpass/class/Network';
 import Account from '@/components/Account';
 import TokensList from '@/components/TokensList';
 

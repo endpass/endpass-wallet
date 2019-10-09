@@ -2,7 +2,7 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import UIComponents from '@endpass/ui';
 import { createLocalVue } from '@vue/test-utils';
-import { Network } from '@endpass/class';
+import Network from '@endpass/class/Network';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import setupI18n from '@/locales/i18nSetup';

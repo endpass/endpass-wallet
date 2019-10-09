@@ -1,5 +1,5 @@
 import { Module, Mutation, Action } from 'vuex-class-modules';
-import { Network } from '@endpass/class';
+import Network from '@endpass/class/Network';
 import { mapArrayByProp } from '@endpass/utils/arrays';
 import { get, mapKeys, omit, pick, pickBy, uniq } from 'lodash';
 import Vue from 'vue';
