@@ -1,4 +1,5 @@
 import userService from '@/services/user';
+import otpService from '@/services/otp';
 import identityModeService from '@/services/identityMode';
 import actions from '@/store/user/actions';
 import { IDENTITY_MODE } from '@/constants';
@@ -11,7 +12,7 @@ import {
 } from '@/store/user/mutations-types';
 import { connect } from '@/class';
 import ConnectError from '@endpass/class/ConnectError';
-import { settings, otpSettings } from 'fixtures/accounts';
+import { settings, otpSettings, otpPayload } from 'fixtures/accounts';
 
 describe('user actions', () => {
   let commit;
@@ -270,7 +271,7 @@ describe('user actions', () => {
 
       await actions.getOtpSettings({ commit, dispatch });
 
-      expect(userService.getOtpSettings).toHaveBeenCalledTimes(1);
+      expect(otpService.getOtpSettings).toHaveBeenCalledTimes(1);
       expect(commit).toBeCalledWith(SET_OTP_SETTINGS, otpSettings);
     });
 
@@ -287,7 +288,7 @@ describe('user actions', () => {
       expect.assertions(2);
 
       const error = new Error('error');
-      userService.getOtpSettings.mockRejectedValueOnce(error);
+      otpService.getOtpSettings.mockRejectedValueOnce(error);
 
       await actions.getOtpSettings({ commit, dispatch });
 
@@ -306,16 +307,16 @@ describe('user actions', () => {
     it('should save the otp settings through the user service', async () => {
       expect.assertions(2);
 
-      await actions.setOtpSettings({ commit, dispatch }, otpSettings);
+      await actions.setOtpSettings({ commit, dispatch }, otpPayload);
 
-      expect(userService.setOtpSettings).toHaveBeenCalledTimes(1);
-      expect(userService.setOtpSettings).toBeCalledWith(secret, code);
+      expect(otpService.setOtpSettings).toHaveBeenCalledTimes(1);
+      expect(otpService.setOtpSettings).toBeCalledWith(otpPayload);
     });
 
     it('should enable the otp settings in the store', async () => {
       expect.assertions(2);
 
-      await actions.setOtpSettings({ commit, dispatch }, otpSettings);
+      await actions.setOtpSettings({ commit, dispatch }, otpPayload);
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toBeCalledWith(SET_OTP_SETTINGS, { status: 'enabled' });
@@ -328,16 +329,19 @@ describe('user actions', () => {
     it('should delete the otp settings through the user service', async () => {
       expect.assertions(2);
 
-      await actions.deleteOtpSettings({ commit, dispatch }, otpSettings);
+      await actions.deleteOtpSettings({ commit, dispatch }, otpPayload);
 
-      expect(userService.deleteOtpSettings).toHaveBeenCalledTimes(1);
-      expect(userService.deleteOtpSettings).toBeCalledWith(otpSettings.code);
+      expect(otpService.deleteOtpSettings).toHaveBeenCalledTimes(1);
+      expect(otpService.deleteOtpSettings).toBeCalledWith({
+        otpCode: otpPayload.otpCode,
+        verificationCode: otpPayload.verificationCode,
+      });
     });
 
     it('should reset the otp settings in the store', async () => {
       expect.assertions(2);
 
-      await actions.deleteOtpSettings({ commit, dispatch }, otpSettings);
+      await actions.deleteOtpSettings({ commit, dispatch }, otpPayload);
 
       expect(commit).toHaveBeenCalledTimes(1);
       expect(commit).toBeCalledWith(SET_OTP_SETTINGS, {});
@@ -346,7 +350,7 @@ describe('user actions', () => {
     it('should get the otp settings through the user service', async () => {
       expect.assertions(2);
 
-      await actions.deleteOtpSettings({ commit, dispatch }, otpSettings);
+      await actions.deleteOtpSettings({ commit, dispatch }, otpPayload);
 
       expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toBeCalledWith('getOtpSettings');

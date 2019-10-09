@@ -1,7 +1,7 @@
 import { mapKeys, mapValues } from 'lodash';
-import { userService, identityModeService } from '@/services';
-import { NotificationError, Token, connect } from '@/class';
 import ConnectError from '@endpass/class/ConnectError';
+import { userService, identityModeService, otpService } from '@/services';
+import { NotificationError, Token, connect } from '@/class';
 import { IDENTITY_MODE } from '@/constants';
 import {
   SET_AUTHORIZATION_STATUS,
@@ -9,7 +9,6 @@ import {
   SET_EMAIL,
   SET_SETTINGS,
   SET_OTP_SETTINGS,
-  SET_EMAIL_CONFIRMED_STATUS,
 } from './mutations-types';
 
 const setAuthorizationStatus = (
@@ -76,7 +75,7 @@ const validateCustomServer = (ctx, { serverUrl }) =>
 
 const getOtpSettings = async ({ commit, dispatch }) => {
   try {
-    const otpSettings = await userService.getOtpSettings();
+    const otpSettings = await otpService.getOtpSettings();
 
     commit(SET_OTP_SETTINGS, otpSettings);
   } catch (e) {
@@ -84,13 +83,19 @@ const getOtpSettings = async ({ commit, dispatch }) => {
   }
 };
 
-const setOtpSettings = async ({ commit }, { secret, code }) => {
-  await userService.setOtpSettings(secret, code);
+const setOtpSettings = async (
+  { commit },
+  { secret, otpCode, verificationCode },
+) => {
+  await otpService.setOtpSettings({ secret, otpCode, verificationCode });
   commit(SET_OTP_SETTINGS, { status: 'enabled' });
 };
 
-const deleteOtpSettings = async ({ commit, dispatch }, { code }) => {
-  await userService.deleteOtpSettings(code);
+const deleteOtpSettings = async (
+  { commit, dispatch },
+  { otpCode, verificationCode },
+) => {
+  await otpService.deleteOtpSettings({ otpCode, verificationCode });
   commit(SET_OTP_SETTINGS, {});
   await dispatch('getOtpSettings');
 };
@@ -104,14 +109,13 @@ const updateSettings = async ({ commit, dispatch }, settings) => {
   }
 };
 
-const setUserSettings = async ({ commit, dispatch, getters }) => {
+const setUserSettings = async ({ commit, dispatch }) => {
   try {
     const {
       fiatCurrency,
       email,
       tokens,
       lastActiveAccount,
-      emailConfirmed,
     } = await userService.getSettings();
 
     if (email) {
@@ -132,18 +136,6 @@ const setUserSettings = async ({ commit, dispatch, getters }) => {
       );
 
       dispatch('tokens/setUserTokens', mappedTokens, { root: true });
-    }
-
-    if (getters.isLoggedIn && !getters.isEmailConfirmed(emailConfirmed)) {
-      commit(SET_EMAIL_CONFIRMED_STATUS, true);
-      const error = new NotificationError({
-        group: 'persistent',
-        title: 'You have not confirmed your email',
-        text: `Please click the link in the email sent 
-            to ${email} to activate your account`,
-        type: 'is-warning',
-      });
-      await dispatch('errors/emitError', error, { root: true });
     }
   } catch (e) {
     await dispatch('errors/emitError', e, { root: true });
@@ -183,6 +175,18 @@ const updateEmail = async (
   }
 };
 
+const requestCode = async (ctx, email) => {
+  try {
+    await otpService.requestCode(email);
+  } catch (err) {
+    throw new NotificationError({
+      title: 'Verification code was not requested',
+      text: 'Try to request another one',
+      type: 'is-danger',
+    });
+  }
+};
+
 const init = async ({ dispatch }) => {
   try {
     await dispatch('setUserSettings');
@@ -203,5 +207,6 @@ export default {
   validateCustomServer,
   updateEmail,
   initIdentityMode,
+  requestCode,
   init,
 };

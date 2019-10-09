@@ -21,6 +21,11 @@ describe('TwoFactorAuthModal', () => {
       localVue,
       i18n,
       sync: false,
+      provide: {
+        theme() {
+          return 'default';
+        },
+      },
     });
   });
 
