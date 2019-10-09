@@ -1,11 +1,11 @@
 import { Module, Mutation, Action } from 'vuex-class-modules';
-import VuexModuleWithRoot from '@/store/class/VuexModuleWithRoot';
 import { Network } from '@endpass/class';
-import { cryptoDataService, tokenInfoService, userService } from '@/services';
 import { mapArrayByProp } from '@endpass/utils/arrays';
-import { NotificationError, Token } from '@/class';
 import { get, mapKeys, omit, pick, pickBy, uniq } from 'lodash';
 import Vue from 'vue';
+import { NotificationError, Token } from '@/class';
+import { cryptoDataService, tokenInfoService, userService } from '@/services';
+import VuexModuleWithRoot from '@/store/class/VuexModuleWithRoot';
 
 /**
  * @typedef {string} tokenSymbol

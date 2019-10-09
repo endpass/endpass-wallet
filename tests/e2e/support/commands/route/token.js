@@ -1,5 +1,5 @@
-import { tokeninfoAPIUrl, tokenImageAPIUrl } from '@config';
 import { networkTokens } from '@fixtures/tokeninfo';
+import { tokeninfoAPIUrl, tokenImageAPIUrl } from '@config';
 
 Cypress.Commands.add('mockTokensInfo', () => {
   // Token info server

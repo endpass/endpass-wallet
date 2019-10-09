@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-form @submit="handleFormSubmit">
+    <v-form @submit="onFormSubmit">
       <label class="label">Two Factor Authentication</label>
       <v-button
         :disabled="isButtonDisabled"
@@ -16,9 +16,9 @@
       :secret="otpSettings.secret"
       :email="email"
       :is-loading="isLoading"
-      @request-code="hanleCodeRequest"
+      @request-code="sendVerificationCode"
       @close="toggleTwoFactorAuthModal"
-      @confirm="handleConfirmTwoFactorAuthModal"
+      @confirm="onConfirmTwoFactorAuthModal"
     />
   </div>
 </template>
@@ -52,11 +52,11 @@ export default {
       'getOtpSettings',
       'setOtpSettings',
       'deleteOtpSettings',
-      'requestCode',
+      'sendCode',
     ]),
     ...mapActions('errors', ['emitError']),
 
-    async handleConfirmTwoFactorAuthModal({ otpCode, verificationCode }) {
+    async onConfirmTwoFactorAuthModal({ code, verificationCode }) {
       const { secret } = this.otpSettings;
 
       this.toggleTwoFactorAuthModal();
@@ -64,9 +64,9 @@ export default {
 
       try {
         if (secret) {
-          await this.setOtpSettings({ secret, otpCode, verificationCode });
+          await this.setOtpSettings({ secret, code, verificationCode });
         } else {
-          await this.deleteOtpSettings({ otpCode, verificationCode });
+          await this.deleteOtpSettings({ code });
         }
 
         this.$notify({
@@ -81,24 +81,24 @@ export default {
       this.isLoading = false;
     },
 
-    async hanleCodeRequest() {
+    async sendVerificationCode() {
       this.isLoading = true;
 
-      await this.requestCode(this.email);
+      await this.sendCode(this.email);
 
       this.isLoading = false;
     },
 
-    handleFormSubmit() {
+    onFormSubmit() {
       if (!this.isButtonDisabled) {
         this.toggleTwoFactorAuthModal();
       }
     },
   },
 
-  mounted() {
-    this.getOtpSettings();
-    this.hanleCodeRequest();
+  async mounted() {
+    await this.getOtpSettings();
+    await this.sendVerificationCode();
   },
 
   mixins: [modalMixin],

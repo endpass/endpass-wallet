@@ -1,13 +1,13 @@
 import VeeValidate, { Validator } from 'vee-validate';
 import { createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
+import { transaction } from 'fixtures/transactions';
 import validation from '@/validation';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import TransactionAdvancedOptions from '@/components/pages/Send/TransactionAdvancedOptions.vue';
 
 import setupI18n from '@/locales/i18nSetup';
-import { transaction } from 'fixtures/transactions';
 
 Validator.extend('hex', () => true);
 

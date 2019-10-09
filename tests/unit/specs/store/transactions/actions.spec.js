@@ -1,4 +1,16 @@
 import Web3 from 'web3';
+import { address } from 'fixtures/accounts';
+import {
+  transactionHash,
+  shortTransactionHash,
+  blockTransactions,
+  ethplorerTransactions,
+} from 'fixtures/transactions';
+import {
+  pendingTransactions,
+  emptyPendingTransactions,
+  cryptoDataHistory,
+} from 'fixtures/cryptoData';
 import state from '@/store/transactions';
 import {
   ADD_TRANSACTION,
@@ -15,18 +27,6 @@ import {
   web3,
 } from '@/class';
 import { TRANSACTION_STATUS } from '@/constants';
-import { address } from 'fixtures/accounts';
-import {
-  transactionHash,
-  shortTransactionHash,
-  blockTransactions,
-  ethplorerTransactions,
-} from 'fixtures/transactions';
-import {
-  pendingTransactions,
-  emptyPendingTransactions,
-  cryptoDataHistory,
-} from 'fixtures/cryptoData';
 
 const { state: transactionsState, actions } = state;
 

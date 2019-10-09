@@ -3,9 +3,9 @@ import Notifications from 'vue-notification';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
 
+import { ethplorerTransactions } from 'fixtures/transactions';
 import SignTransaction from '@/components/SignTransaction';
 
-import { ethplorerTransactions } from 'fixtures/transactions';
 
 describe('SignTransaction', () => {
   let wrapper;

@@ -157,7 +157,7 @@ describe('TwoFactorAuthSettings', () => {
   });
 
   describe('methods', () => {
-    describe('handleFormSubmit', () => {
+    describe('onFormSubmit', () => {
       it('should not call toggleTwoFactorAuthModal', () => {
         wrapper = wrapFactory({
           computed: {
@@ -167,7 +167,7 @@ describe('TwoFactorAuthSettings', () => {
 
         jest.spyOn(wrapper.vm, 'toggleTwoFactorAuthModal');
 
-        wrapper.vm.handleFormSubmit();
+        wrapper.vm.onFormSubmit();
 
         expect(wrapper.vm.toggleTwoFactorAuthModal).toHaveBeenCalledTimes(0);
       });
@@ -180,24 +180,23 @@ describe('TwoFactorAuthSettings', () => {
         });
 
         jest.spyOn(wrapper.vm, 'toggleTwoFactorAuthModal');
-        wrapper.vm.handleFormSubmit();
+        wrapper.vm.onFormSubmit();
 
         expect(wrapper.vm.toggleTwoFactorAuthModal).toHaveBeenCalledTimes(1);
       });
     });
 
-    describe('handleConfirmTwoFactorAuthModal', () => {
+    describe('onConfirmTwoFactorAuthModal', () => {
       const code = '123456';
 
       it('should call deleteOtpSettings', () => {
-        wrapper.vm.handleConfirmTwoFactorAuthModal(otpPayload);
+        wrapper.vm.onConfirmTwoFactorAuthModal(otpPayload);
 
         expect(userActions.deleteOtpSettings).toHaveBeenCalledTimes(1);
         expect(userActions.deleteOtpSettings).toHaveBeenCalledWith(
           expect.any(Object),
           {
-            otpCode: otpPayload.otpCode,
-            verificationCode: otpPayload.verificationCode,
+            code: otpPayload.code,
           },
           undefined,
         );
@@ -208,7 +207,7 @@ describe('TwoFactorAuthSettings', () => {
 
         jest.spyOn(wrapper.vm, '$notify');
 
-        await wrapper.vm.handleConfirmTwoFactorAuthModal(code);
+        await wrapper.vm.onConfirmTwoFactorAuthModal(code);
 
         expect(wrapper.vm.$notify).toHaveBeenCalledWith({
           title: 'Settings Saved',
@@ -222,7 +221,7 @@ describe('TwoFactorAuthSettings', () => {
 
         const error = new Error();
         userActions.deleteOtpSettings.mockRejectedValueOnce(error);
-        await wrapper.vm.handleConfirmTwoFactorAuthModal(code);
+        await wrapper.vm.onConfirmTwoFactorAuthModal(code);
 
         expect(errorsActions.emitError).toHaveBeenCalledTimes(1);
         expect(errorsActions.emitError).toHaveBeenCalledWith(
@@ -239,8 +238,8 @@ describe('TwoFactorAuthSettings', () => {
           },
         });
 
-        wrapper.vm.handleConfirmTwoFactorAuthModal({
-          otpCode: otpPayload.otpCode,
+        wrapper.vm.onConfirmTwoFactorAuthModal({
+          code: otpPayload.code,
           verificationCode: otpPayload.verificationCode,
         });
 

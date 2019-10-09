@@ -2,9 +2,9 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import UIComponents from '@endpass/ui';
 
+import { ethplorerTransactions } from 'fixtures/transactions';
 import RecoverTransaction from '@/components/RecoverTransaction';
 
-import { ethplorerTransactions } from 'fixtures/transactions';
 
 describe('RecoverTransaction', () => {
   let wrapper;

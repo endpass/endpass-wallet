@@ -2,11 +2,11 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import UIComponents from '@endpass/ui';
 
+import { v3, v3password } from 'fixtures/accounts';
 import ExportToJson from '@/components/ExportToJson';
 import { Wallet } from '@/class';
 import setupI18n from '@/locales/i18nSetup';
 
-import { v3, v3password } from 'fixtures/accounts';
 
 const localVue = createLocalVue();
 const i18n = setupI18n(localVue);

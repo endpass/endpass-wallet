@@ -5,6 +5,7 @@ import keystoreHDKeyVerify from '@endpass/utils/keystoreHDKeyVerify';
 import keystoreHDWallet from '@endpass/utils/keystoreHDWallet';
 import keystoreWallet from '@endpass/utils/keystoreWallet';
 import walletGen from '@endpass/utils/walletGen';
+import Signer from '@endpass/class/Signer';
 import {
   cryptoDataService,
   userService,
@@ -100,8 +101,12 @@ const addWalletWithPrivateKey = async (
   { privateKey, password },
 ) => {
   try {
+    const privateKeyString = Signer.privateKeyToStr(privateKey).replace(
+      /^0x/,
+      '',
+    );
     const wallet = EthWallet.fromPrivateKey(
-      Buffer.from(privateKey.replace(/^0x/, ''), 'hex'),
+      Buffer.from(privateKeyString, 'hex'),
     );
     const v3KeyStore = keystoreWallet.encryptWallet(
       password,

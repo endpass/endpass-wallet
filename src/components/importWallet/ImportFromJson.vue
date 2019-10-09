@@ -76,10 +76,10 @@
 
 <script>
 import { mapActions } from 'vuex';
+import isV3 from '@endpass/utils/isV3';
 import PasswordModal from '@/components/modal/PasswordModal';
 import modalMixin from '@/mixins/modal';
 import formMixin from '@/mixins/form';
-import isV3 from '@endpass/utils/isV3';
 
 export default {
   name: 'ImportFromJson',
@@ -103,6 +103,7 @@ export default {
   },
   methods: {
     ...mapActions('accounts', ['addWalletWithV3']),
+
     async handlePasswordConfirm(walletPassword) {
       this.isCreating = true;
       this.togglePasswordModal();
@@ -125,16 +126,14 @@ export default {
 
       this.isCreating = false;
     },
-    setFile({ target: { files } }) {
-      const [file] = files;
+    setFile({ target }) {
+      const [file] = target.files;
 
       this.errors.removeById('wrongFile');
       this.fileData = null;
       this.file = file;
 
-      if (!this.file) {
-        return;
-      }
+      if (!this.file) return;
 
       const reader = new FileReader();
       const fileReaderError = {

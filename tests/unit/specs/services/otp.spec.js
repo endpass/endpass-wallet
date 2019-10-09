@@ -77,7 +77,7 @@ describe('OTP Service', () => {
         expect(config.url).toBe(url);
         expect(config.data).toBe(
           JSON.stringify({
-            code: otpPayload.otpCode,
+            code: otpPayload.code,
             secret: otpPayload.secret,
           }),
         );
@@ -135,7 +135,7 @@ describe('OTP Service', () => {
 
   describe('deleteOtpSettings', () => {
     const requestBaseUrl = `${ENV.VUE_APP_IDENTITY_API_URL}/settings/otp`;
-    const url = `${requestBaseUrl}?code=${otpPayload.otpCode}`;
+    const url = `${requestBaseUrl}?code=${otpPayload.code}`;
     const expectedError = new NotificationError({
       title: 'Error removing two-factor authentication settings',
       text: 'Failed to remove OTP settings.',
@@ -144,14 +144,11 @@ describe('OTP Service', () => {
     const errorMessage = 'server error';
 
     it('should make correct request', async () => {
-      expect.assertions(3);
+      expect.assertions(2);
 
       axiosMock.onDelete(url).reply(config => {
         expect(config.method).toBe('delete');
         expect(config.url).toBe(url);
-        expect(config.headers['X-Request-Code']).toBe(
-          otpPayload.verificationCode,
-        );
 
         return [200, successResponse];
       });

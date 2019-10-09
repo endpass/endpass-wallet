@@ -1,7 +1,7 @@
 import MockAdapter from 'axios-mock-adapter';
 
-import { http } from '@/class';
 import tokensFixture from 'fixtures/tokens';
+import { http } from '@/class';
 
 const tokenInfo = require.requireActual('@/services/tokeninfo').default;
 

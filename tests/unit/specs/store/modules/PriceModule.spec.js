@@ -1,10 +1,10 @@
+import { Network } from '@endpass/class';
 import ModuleRegister from '@/store/class/ModuleRegister';
 import createStore from '@/store/createStore';
 
 import ErrorsModule from '@/store/modules/ErrorsModule';
 import ConnectionStatusModule from '@/store/modules/ConnectionStatusModule';
 import PriceModule from '@/store/modules/PriceModule';
-import { Network } from '@endpass/class';
 import cryptoDataService from '@/services/cryptoData';
 
 describe('PriceModule', () => {

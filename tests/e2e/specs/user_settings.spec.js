@@ -20,28 +20,40 @@ describe('Settings Page', () => {
     cy.contains('Settings Saved').should('be.visible');
   });
 
-  it('should save otp settings', () => {
-    // Enable otp
-    cy.get('[data-test=button-two-factor]').click();
-    cy.focused().should('have.attr', 'data-test', 'input-two-auth-code');
-    cy.get('[data-test=input-two-auth-code]').type('1234');
-    cy.get('[data-test=input-two-auth-code]')
-      .parentsUntil('form')
-      .should('contain', 'contain 6 digits');
-    cy.get('[data-test=submit-two-auth-modal]').should('be.disabled');
-    cy.get('[data-test=input-two-auth-code]').type('56');
-    cy.get('[data-test=submit-two-auth-modal]').click();
-    cy.get('[data-test=button-two-factor]').should('contain', 'Disable');
-    cy.get(
-      '[data-test=app-notification] .is-info .notification-content',
-    ).contains('Your settings have been saved.');
-    // Disable otp
-    cy.get('[data-test=button-two-factor]').click();
-    cy.get('[data-test=input-two-auth-code]').type('123456{enter}');
-    cy.get('[data-test=button-two-factor]').should('contain', 'Enable');
-    cy.get(
-      '[data-test=app-notification] .is-info .notification-content',
-    ).contains('Your settings have been saved.');
+  describe('enable and disable otp settings', () => {
+    it('should save otp settings', () => {
+      // Enable OTP
+      cy.get('[data-test=button-two-factor]').click();
+      cy.get('[data-test=input-two-auth-code]').type('123456');
+      cy.get('[data-test=input-two-auth-verification-code]').type('123456');
+      cy.get('[data-test=submit-two-auth-modal]').click();
+      cy.get('[data-test=button-two-factor]').should('contain', 'Disable');
+      cy.get(
+        '[data-test=app-notification] .is-info .notification-content',
+      ).contains('Your settings have been saved.');
+
+      // Disable OTP
+      cy.get('[data-test=button-two-factor]').click();
+      cy.get('[data-test=input-two-auth-code]').type('123456');
+      cy.get('[data-test=submit-two-auth-modal]').click();
+      cy.get('[data-test=button-two-factor]').should('contain', 'Enable');
+      cy.get(
+        '[data-test=app-notification] .is-info .notification-content',
+      ).contains('Your settings have been saved.');
+    });
+
+    it('should validate otp settings form', () => {
+      cy.get('[data-test=button-two-factor]').click();
+      cy.get('[data-test=input-two-auth-code]').type('1234');
+      cy.get('[data-test=input-two-auth-code]')
+        .parentsUntil('form')
+        .should('contain', 'contain 6 digits');
+      cy.get('[data-test=input-two-auth-verification-code]').type('1234');
+      cy.get('[data-test=input-two-auth-verification-code]')
+        .parentsUntil('form')
+        .should('contain', 'contain 6 digits');
+      cy.get('[data-test=submit-two-auth-modal]').should('be.disabled');
+    });
   });
 
   it('should change the password', () => {

@@ -1,11 +1,11 @@
-import state from '@/store/transactions';
-import { TransactionFactory } from '@/class';
-
 import {
   ethplorerTransactions,
   pendingTransactions as rawPendingTransaction,
 } from 'fixtures/transactions';
 import { checksumAddress } from 'fixtures/accounts';
+import state from '@/store/transactions';
+import { TransactionFactory } from '@/class';
+
 
 const pendingTransactions = rawPendingTransaction.map(item =>
   TransactionFactory.fromSendForm(item),

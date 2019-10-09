@@ -137,9 +137,9 @@ import VueTimers from 'vue-timers/mixin';
 import get from 'lodash/get';
 import { fromTo } from '@endpass/utils/date';
 import { VFaucetButton } from '@endpass/faucet';
+import { Network } from '@endpass/class';
 import Account from '@/components/Account';
 import TokensList from '@/components/TokensList';
-import { Network } from '@endpass/class';
 
 const UPDATE_RESEND_TIMEOUT_SEC = 1000 * 60 * 2; // 2 mins
 

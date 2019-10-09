@@ -1,7 +1,7 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils';
-import { TransactionFactory } from '@/class';
 import VeeValidate from 'vee-validate';
 import UIComponents from '@endpass/ui';
+import { TransactionFactory } from '@/class';
 
 import setupI18n from '@/locales/i18nSetup';
 import ResendModal from '@/components/modal/ResendModal';

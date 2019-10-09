@@ -10,6 +10,7 @@ import {
   SET_SETTINGS,
   SET_OTP_SETTINGS,
 } from './mutations-types';
+import i18n from '@/locales/i18n';
 
 const setAuthorizationStatus = (
   { commit, getters },
@@ -85,17 +86,14 @@ const getOtpSettings = async ({ commit, dispatch }) => {
 
 const setOtpSettings = async (
   { commit },
-  { secret, otpCode, verificationCode },
+  { secret, code, verificationCode },
 ) => {
-  await otpService.setOtpSettings({ secret, otpCode, verificationCode });
+  await otpService.setOtpSettings({ secret, code, verificationCode });
   commit(SET_OTP_SETTINGS, { status: 'enabled' });
 };
 
-const deleteOtpSettings = async (
-  { commit, dispatch },
-  { otpCode, verificationCode },
-) => {
-  await otpService.deleteOtpSettings({ otpCode, verificationCode });
+const deleteOtpSettings = async ({ commit, dispatch }, { code }) => {
+  await otpService.deleteOtpSettings({ code });
   commit(SET_OTP_SETTINGS, {});
   await dispatch('getOtpSettings');
 };
@@ -175,13 +173,13 @@ const updateEmail = async (
   }
 };
 
-const requestCode = async (ctx, email) => {
+const sendCode = async (ctx, email) => {
   try {
-    await otpService.requestCode(email);
+    await otpService.sendCode(email);
   } catch (err) {
     throw new NotificationError({
-      title: 'Verification code was not requested',
-      text: 'Try to request another one',
+      title: i18n.t('errors.verificationCode.title'),
+      text: i18n.t('errors.verificationCode.text'),
       type: 'is-danger',
     });
   }
@@ -207,6 +205,6 @@ export default {
   validateCustomServer,
   updateEmail,
   initIdentityMode,
-  requestCode,
+  sendCode,
   init,
 };

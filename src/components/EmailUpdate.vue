@@ -53,9 +53,9 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import error from '@/mixins/error';
 import form from '@/mixins/form';
-import { mapActions } from 'vuex';
 import modalMixin from '@/mixins/modal';
 import PasswordModal from '@/components/modal/PasswordModal';
 

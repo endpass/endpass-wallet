@@ -28,9 +28,9 @@
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-import { identityAPIUrl } from '@config';
 import { hdv3, hdv3Info, accountsList, v3, v3Info } from '@fixtures/accounts';
 import { successResp, identityServerInfo } from '@fixtures/identity';
+import { identityAPIUrl } from '@config';
 
 // Sets up server and routes to stub logged in user with fixtures.
 

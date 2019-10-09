@@ -1,15 +1,15 @@
 import { createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
-import { wrapShallowMountFactory, wrapMountFactory } from '@/testUtils';
-
-import TokensList from '@/components/TokensList';
-
 import {
   zeroBalancedTokens,
   dustAmountTokens,
   valuableTokens,
   tokensWithBalancesMappedByAddresses,
 } from 'fixtures/tokens';
+import { wrapShallowMountFactory, wrapMountFactory } from '@/testUtils';
+
+import TokensList from '@/components/TokensList';
+
 
 const localVue = createLocalVue();
 

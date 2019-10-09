@@ -1,5 +1,5 @@
-import getters from '@/store/web3/getters';
 import { Network } from '@endpass/class';
+import getters from '@/store/web3/getters';
 
 describe('web3 getters', () => {
   describe('networks', () => {
