@@ -1372,7 +1372,7 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@endpass/class@^0.18.10", "@endpass/class@^0.18.8":
+"@endpass/class@^0.18.10":
   version "0.18.10"
   resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.18.10.tgz#8d78df4150936bf874d882ea070045d0727dadc4"
   integrity sha512-R0Dp9YRSxG266ok1xbdl6jofRaV7yHlDEMnvtHL4zeyRUh8dYek85yomi3Ry1/9WDRL3HlE6cdARgG9iBn9RlA==
@@ -1394,12 +1394,12 @@
     web3-providers-ws "1.0.0-beta.37"
     web3-utils "1.0.0-beta.55"
 
-"@endpass/connect@^0.28.10-beta":
-  version "0.28.10-beta"
-  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.28.10-beta.tgz#70aa8a5b1c89354b56767c55f115412d1f458b3a"
-  integrity sha512-v2tid/ektocSEpbJLKSQgQZ+ydgl4FVpidk5OmBbWCjuPM2RyrM508W/ISkqPxDk0HCqsPkxr6cDyYD9Qv6cFg==
+"@endpass/connect@^0.28.11-beta":
+  version "0.28.11-beta"
+  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.28.11-beta.tgz#cac2efccfc28e6c364bc2773edf7a3feeb2c894a"
+  integrity sha512-B3Pzr/zc2NI4Ip/EW25jmMqA0U4QkAQqrDsI6mC/s05jvEa5rGu2TUFIACJiLdjCwK56tD7SlpI4kqSN5cPB7Q==
   dependencies:
-    "@endpass/class" "^0.18.8"
+    "@endpass/class" "^0.18.10"
     "@endpass/utils" "^1.8.3"
     axios "^0.19.0"
     axios-token-interceptor "^0.1.0"

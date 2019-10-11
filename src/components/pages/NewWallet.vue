@@ -4,8 +4,9 @@
       {{ componentTitle }}
     </template>
     <div
-      v-if="hdKey"
+      v-if="isCreated"
       class="container has-text-centered is-narrow"
+      data-test="create-successful"
     >
       <p class="subtitle">
         {{ $t('components.newWallet.successful') }}
@@ -20,6 +21,7 @@
     <div
       v-else
       class="container has-text-centered is-narrow"
+      data-test="create-in-progress"
     >
       <p class="subtitle">
         {{ $t('components.newWallet.inProgress') }}
@@ -29,24 +31,19 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 import BasePage from '@/components/pages/Base';
 
 export default {
   data() {
     return {
-      password: '',
-      key: null,
+      isCreated: false,
     };
   },
 
   computed: {
-    ...mapState({
-      hdKey: state => state.accounts.hdKey,
-    }),
-
     componentTitle() {
-      return this.hdKey
+      return this.isCreated
         ? this.$t('components.newWallet.walletCreated')
         : this.$t('components.newWallet.createWallet');
     },
@@ -63,6 +60,7 @@ export default {
         eventAction: 'create_wallet',
       });
       await this.createNewWallet();
+      this.isCreated = true;
     } catch (e) {
       this.$notify({
         title: this.$t('components.newWallet.errorCreatingWallet'),
@@ -70,7 +68,6 @@ export default {
         type: 'is-danger',
       });
       /* eslint-disable-next-line no-console */
-      console.error(e);
     }
   },
 

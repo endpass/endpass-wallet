@@ -25,7 +25,6 @@ import {
 } from 'fixtures/identity';
 import keystoreHDWallet from '@endpass/utils/keystoreHDWallet';
 import keystoreWallet from '@endpass/utils/keystoreWallet';
-import walletGen from '@endpass/utils/walletGen';
 import proxies from 'mocks/class/proxies';
 import { Wallet, NotificationError, web3 } from '@/class';
 import actions from '@/store/accounts/actions';
@@ -40,6 +39,7 @@ import {
 } from '@/store/accounts/mutations-types';
 import userService from '@/services/user';
 import localSettingsService from '@/services/localSettings';
+import connect from '@/class/singleton/connect';
 
 import { ENCRYPT_OPTIONS } from '@/constants';
 
@@ -471,32 +471,34 @@ describe('Accounts actions', () => {
     };
 
     beforeEach(() => {
-      walletGen.createComplex = jest.fn().mockReturnValueOnce({
+      connect.generateWallet = jest.fn().mockReturnValueOnce({
         seedKey: mnemonic,
         encryptedSeed: encryptedMessage,
         v3KeystoreHdWallet: hdv3,
         v3KeystoreChildWallet: v3,
+        info: {
+          address: hdv3.address,
+          type: WALLET_TYPES.HD_MAIN,
+          hidden: false,
+        },
       });
     });
 
     it('should create and save wallet', async () => {
-      expect.assertions(5);
+      expect.assertions(4);
 
-      const expectedJson = expect.objectContaining({
-        address: hdv3.address,
-      });
       const expectedInfo = {
         address: hdv3.address,
         type: WALLET_TYPES.HD_MAIN,
         hidden: false,
       };
 
-      const seedKey = await actions.createNewWallet(
-        { dispatch },
-        { password: v3password },
-      );
+      const expectedJson = expect.objectContaining({
+        address: hdv3.address,
+      });
 
-      expect(seedKey).toBe(mnemonic);
+      await actions.createNewWallet({ dispatch });
+
       expect(dispatch).toHaveBeenCalledTimes(2);
       expect(dispatch).toHaveBeenNthCalledWith(1, 'saveWallet', {
         json: expectedJson,
@@ -514,10 +516,7 @@ describe('Accounts actions', () => {
       dispatch.mockRejectedValueOnce(error);
 
       try {
-        await actions.createNewWallet(
-          { dispatch, getters },
-          { password: v3password },
-        );
+        await actions.createNewWallet({ dispatch, getters });
       } catch (e) {
         expect(e).toEqual(new Error("Can't create new wallet"));
       }

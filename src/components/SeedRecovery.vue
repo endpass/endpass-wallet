@@ -68,8 +68,8 @@ export default {
 
         this.recoveredSeed = res;
       } catch (err) {
-        console.error(err);
         this.$emit('lock');
+        console.error(err);
       } finally {
         this.isPasswordModalVisible = false;
         this.isLoading = false;

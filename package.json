@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@endpass/class": "^0.18.10",
-    "@endpass/connect": "^0.28.10-beta",
+    "@endpass/connect": "^0.28.11-beta",
     "@endpass/eslint-plugin-endpass": "^0.2.7",
     "@endpass/faucet": "^0.2.1",
     "@endpass/ui": "^0.15.52",
