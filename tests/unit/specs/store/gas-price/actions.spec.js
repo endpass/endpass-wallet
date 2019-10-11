@@ -2,7 +2,6 @@ import { gasPrice } from 'fixtures/gasPrice';
 import cryptoDataService from '@/services/cryptoData';
 import actions from '@/store/gas-price/actions';
 
-
 describe('gas-price actions', () => {
   const rootGetters = {
     'web3/activeNetwork': 1,

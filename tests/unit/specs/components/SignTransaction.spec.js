@@ -6,7 +6,6 @@ import UIComponents from '@endpass/ui';
 import { ethplorerTransactions } from 'fixtures/transactions';
 import SignTransaction from '@/components/SignTransaction';
 
-
 describe('SignTransaction', () => {
   let wrapper;
 

@@ -3,7 +3,6 @@ import { set } from 'lodash';
 import Vuex from 'vuex';
 import VueRouter from 'vue-router';
 
-
 import ethereumWalletMock from 'fixtures/wallet';
 import ethereumAddressWalletMock from 'fixtures/address';
 import transactions from 'fixtures/transactions';

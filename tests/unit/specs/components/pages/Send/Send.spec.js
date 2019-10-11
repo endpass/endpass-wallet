@@ -9,7 +9,6 @@ import { wrapShallowMountFactory } from '@/testUtils';
 import Send from '@/components/pages/Send/index.vue';
 import { TransactionFactory } from '@/class';
 
-
 const localVue = createLocalVue();
 
 localVue.use(Vuex);

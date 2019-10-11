@@ -45,8 +45,8 @@ export default {
     message() {
       return this.blockNumber
         ? this.$t('components.syncStatus.syncedToBlock', {
-          blockNumber: this.blockNumber,
-        })
+            blockNumber: this.blockNumber,
+          })
         : this.$t('components.syncStatus.awaitingBlockNumber');
     },
   },

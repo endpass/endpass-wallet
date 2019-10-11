@@ -21,10 +21,7 @@
       description="You successfully recovered seed phrase! Do not show it to anyone else!"
       @close="handleSeedClose"
     >
-      <p
-        class="code"
-        data-test="recovered-seed-phrase"
-      >
+      <p class="code" data-test="recovered-seed-phrase">
         {{ recoveredSeed }}
       </p>
     </info-modal>
@@ -71,7 +68,7 @@ export default {
 
         this.recoveredSeed = res;
       } catch (err) {
-        console.log(err);
+        console.error(err);
         this.$emit('lock');
       } finally {
         this.isPasswordModalVisible = false;

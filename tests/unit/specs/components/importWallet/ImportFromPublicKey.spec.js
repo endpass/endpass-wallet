@@ -7,7 +7,6 @@ import { address } from 'fixtures/accounts';
 import validation from '@/validation';
 import setupI18n from '@/locales/i18nSetup';
 
-
 import ImportFromPublicKey from '@/components/importWallet/ImportFromPublicKey';
 
 const localVue = createLocalVue();

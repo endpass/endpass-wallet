@@ -8,7 +8,6 @@ import web3 from '@/class/singleton/web3';
 
 import VerifyMessage from '@/components/VerifyMessage';
 
-
 const localVue = createLocalVue();
 
 localVue.use(Notifications);

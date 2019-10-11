@@ -6,7 +6,6 @@ import { checksumAddress } from 'fixtures/accounts';
 import state from '@/store/transactions';
 import { TransactionFactory } from '@/class';
 
-
 const pendingTransactions = rawPendingTransaction.map(item =>
   TransactionFactory.fromSendForm(item),
 );

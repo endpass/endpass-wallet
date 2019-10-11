@@ -5,7 +5,6 @@ import { v3, v3password, privateKeyString } from 'fixtures/accounts';
 import ExportToPrivateKey from '@/components/ExportToPrivateKey';
 import { Wallet } from '@/class';
 
-
 const localVue = createLocalVue();
 
 localVue.use(Vuex);

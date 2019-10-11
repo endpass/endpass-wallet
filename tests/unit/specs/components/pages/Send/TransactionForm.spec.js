@@ -91,7 +91,7 @@ describe('Send – TransactionForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    store = new Vuex.Store({ ...defaultStore});
+    store = new Vuex.Store({ ...defaultStore });
 
     wrapperFactory = wrapShallowMountFactory(TransactionForm, {
       i18n,
@@ -210,7 +210,7 @@ describe('Send – TransactionForm', () => {
 
         beforeEach(() => {
           store = new Vuex.Store(
-            set({ ...defaultStore}, 'modules.tokens.getters', {
+            set({ ...defaultStore }, 'modules.tokens.getters', {
               ...tokensGetters,
               currentAccountTokenBySymbol: () => tokenBySymbolGetterMock,
             }),
