@@ -51,7 +51,7 @@
     "@endpass/connect": "^0.28.12-beta",
     "@endpass/eslint-plugin-endpass": "^0.2.7",
     "@endpass/faucet": "^0.2.1",
-    "@endpass/ui": "^0.15.52",
+    "@endpass/ui": "^0.15.53",
     "@endpass/utils": "^1.8.3",
     "ajv": "^6.5.5",
     "axios": "^0.19.0",
