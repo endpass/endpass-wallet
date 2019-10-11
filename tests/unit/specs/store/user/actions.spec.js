@@ -300,10 +300,6 @@ describe('user actions', () => {
   });
 
   describe('setOtpSettings', () => {
-    const secret = 'secret';
-    const code = 'code';
-    const otpSettings = { secret, code };
-
     it('should save the otp settings through the user service', async () => {
       expect.assertions(2);
 
@@ -324,8 +320,6 @@ describe('user actions', () => {
   });
 
   describe('deleteOtpSettings', () => {
-    const otpSettings = { code: 'code' };
-
     it('should delete the otp settings through the user service', async () => {
       expect.assertions(2);
 

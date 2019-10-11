@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@endpass/class": "^0.18.10",
-    "@endpass/connect": "^0.28.8-beta",
+    "@endpass/connect": "^0.28.10-beta",
     "@endpass/eslint-plugin-endpass": "^0.2.7",
     "@endpass/faucet": "^0.2.1",
     "@endpass/ui": "^0.15.52",
@@ -79,8 +79,8 @@
     "web3-utils": "1.0.0-beta.33"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.3",
-    "@babel/parser": "^7.6.3",
+    "@babel/core": "^7.6.4",
+    "@babel/parser": "^7.6.4",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/plugin-proposal-decorators": "^7.6.0",
     "@babel/preset-env": "^7.6.3",
@@ -115,7 +115,7 @@
     "sass-loader": "^6.0.7",
     "semver": "^6.3.0",
     "svg-inline-loader": "^0.8.0",
-    "typescript": "^3.6.3",
+    "typescript": "^3.6.4",
     "vue-template-compiler": "2.5.22",
     "webpack": "^4.41.0",
     "webpack-merge": "^4.2.2"
