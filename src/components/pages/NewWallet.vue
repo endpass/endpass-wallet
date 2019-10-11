@@ -31,7 +31,6 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 import BasePage from '@/components/pages/Base';
-import connect from '@/class/singleton/connect';
 
 export default {
   data() {
@@ -54,7 +53,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('accounts', ['init']),
+    ...mapActions('accounts', ['createNewWallet']),
   },
 
   async mounted() {
@@ -63,8 +62,7 @@ export default {
         eventCategory: 'onboarding',
         eventAction: 'create_wallet',
       });
-      await connect.createWallet();
-      await this.init();
+      await this.createNewWallet();
     } catch (e) {
       this.$notify({
         title: this.$t('components.newWallet.errorCreatingWallet'),

@@ -182,7 +182,6 @@
       "faucetEthWait": "Please wait couple of minutes for receive ETH",
       "faucetEthNoTrys": "Next try after 2 mins",
       "inTime": "in time",
-      "manyAttempts": "Too many attempts",
       "walletBanned": "Your wallet address is banned {timeTitle}. Please try later.",
       "manyAttempts": "Too many attempts",
       "getEth": "Get test 1 ETH"
