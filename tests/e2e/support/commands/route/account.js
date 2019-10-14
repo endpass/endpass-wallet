@@ -42,7 +42,7 @@ Cypress.Commands.add('mockAccountsList', (status = 200, response = []) => {
   }).as('keystoreAccountsNotLogin');
 });
 
-Cypress.Commands.add('mockUserSettings', (status = 200) => {
+Cypress.Commands.add('mockAccountSettings', (status = 200) => {
   cy.route({
     url: `${identityAPIUrl}/settings`,
     response: {},
