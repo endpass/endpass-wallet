@@ -39,6 +39,7 @@ exports[`Home page render should render initial state of the component 1`] = `
               >
                 <router-link-stub
                   class="button is-success is-cta"
+                  data-test="create-new-wallet"
                   event="click"
                   tag="a"
                   to="[object Object]"

@@ -69,8 +69,6 @@ export default {
         type: 'is-danger',
       });
       this.$router.push('/');
-      /* eslint-disable-next-line no-console */
-      console.error(e);
     }
   },
 
