@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { uniq, uniqWith } from 'lodash';
 import { toChecksumAddress } from 'web3-utils';
-import { Network } from '@endpass/class';
+import Network from '@endpass/class/Network';
 import { Transaction } from '@/class';
 
 const accountTransactions = (state, getters, rootState) => {

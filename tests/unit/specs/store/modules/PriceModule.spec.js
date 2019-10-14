@@ -1,4 +1,4 @@
-import { Network } from '@endpass/class';
+import Network from '@endpass/class/Network';
 import ModuleRegister from '@/store/class/ModuleRegister';
 import createStore from '@/store/createStore';
 

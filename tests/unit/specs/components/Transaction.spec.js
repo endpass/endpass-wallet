@@ -8,7 +8,6 @@ import validation from '@/validation';
 
 import Transaction from '@/components/Transaction';
 
-
 const localVue = createLocalVue();
 
 localVue.use(Notifications);

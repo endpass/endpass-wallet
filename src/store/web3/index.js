@@ -1,4 +1,4 @@
-import { Network } from '@endpass/class';
+import Network from '@endpass/class/Network';
 import actions from './actions';
 import getters from './getters';
 import mutations from './mutations';

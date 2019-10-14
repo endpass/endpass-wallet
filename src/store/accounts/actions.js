@@ -4,7 +4,6 @@ import { get, mapKeys, isEmpty } from 'lodash';
 import keystoreHDKeyVerify from '@endpass/utils/keystoreHDKeyVerify';
 import keystoreHDWallet from '@endpass/utils/keystoreHDWallet';
 import keystoreWallet from '@endpass/utils/keystoreWallet';
-import walletGen from '@endpass/utils/walletGen';
 import Signer from '@endpass/class/Signer';
 import {
   cryptoDataService,
@@ -22,6 +21,7 @@ import {
   SET_BALANCE,
   SET_HD_CACHE_BY_TYPE,
 } from './mutations-types';
+import connect from '@/class/singleton/connect';
 
 const WALLET_TYPES = Wallet.getTypes();
 const WALLET_PROXY_TYPES = Wallet.getProxyTypes();
@@ -146,28 +146,28 @@ const saveWallet = async ({ dispatch }, { json, info = {} }) => {
   await dispatch('commitWallet', { wallet: json });
 };
 
-const createNewWallet = async ({ dispatch }, { password }) => {
+const generateNewWallet = async () => {
+  const data = await connect.generateWallet();
+  return data;
+};
+
+const createNewWallet = async ({ dispatch }) => {
   try {
+    const generateData = await dispatch('generateNewWallet');
     const {
-      seedKey,
+      info,
       encryptedSeed,
       v3KeystoreHdWallet,
       v3KeystoreChildWallet,
-    } = await walletGen.createComplex(password, ENCRYPT_OPTIONS);
+    } = generateData;
 
     // save data
     await dispatch('saveWallet', {
       json: v3KeystoreHdWallet,
-      info: {
-        address: v3KeystoreHdWallet.address,
-        type: WALLET_TYPES.HD_MAIN,
-        hidden: false,
-      },
+      info,
     });
     await userService.backupSeed(encryptedSeed);
     await dispatch('addWalletAndSelect', v3KeystoreChildWallet);
-
-    return seedKey;
   } catch (e) {
     dispatch('errors/emitError', e, { root: true });
     throw new Error("Can't create new wallet");
@@ -651,6 +651,7 @@ export default {
   saveWallet,
   setUserHdKey,
   setUserWallets,
+  generateNewWallet,
   createNewWallet,
   addHdPublicWallet,
   addNextWalletFromHd,

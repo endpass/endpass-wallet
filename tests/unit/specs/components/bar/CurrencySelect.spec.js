@@ -1,5 +1,5 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils';
-import { Network } from '@endpass/class';
+import Network from '@endpass/class/Network';
 import Vuex from 'vuex';
 import CurrencySelect from '@/components/bar/CurrencySelect';
 import setupI18n from '@/locales/i18nSetup';

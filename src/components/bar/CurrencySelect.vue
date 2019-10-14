@@ -20,7 +20,7 @@
 import VueMultiselect from 'vue-multiselect';
 import { mapActions, mapState } from 'vuex';
 
-import { Network } from '@endpass/class';
+import Network from '@endpass/class/Network';
 
 export default {
   name: 'CurrencySelect',

@@ -34,24 +34,20 @@ import { identityAPIUrl } from '@config';
 
 // Sets up server and routes to stub logged in user with fixtures.
 
-Cypress.Commands.add('mockAccountsDataFailed', () => {
+Cypress.Commands.add('mockAccountsList', (status = 200, response = []) => {
   cy.route({
     url: `${identityAPIUrl}/accounts`,
-    response: {},
-    status: 401,
+    response,
+    status,
   }).as('keystoreAccountsNotLogin');
+});
 
+Cypress.Commands.add('mockAccountSettings', (status = 200) => {
   cy.route({
     url: `${identityAPIUrl}/settings`,
     response: {},
-    status: 401,
-  }).as('userSettingsNotLogin');
-
-  cy.route({
-    url: `${identityAPIUrl}/auth/check`,
-    response: {},
-    status: 401,
-  }).as('authCheckFail');
+    status,
+  });
 });
 
 Cypress.Commands.add('mockAccountKeystores', () => {

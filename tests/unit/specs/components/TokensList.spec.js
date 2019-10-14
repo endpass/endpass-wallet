@@ -10,7 +10,6 @@ import { wrapShallowMountFactory, wrapMountFactory } from '@/testUtils';
 
 import TokensList from '@/components/TokensList';
 
-
 const localVue = createLocalVue();
 
 localVue.use(Vuex);

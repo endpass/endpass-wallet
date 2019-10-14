@@ -126,9 +126,7 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `${
-              ENV.VUE_APP_CRYPTODATA_API_URL
-            }/${network}/transactions/${address}/token`,
+            `${ENV.VUE_APP_CRYPTODATA_API_URL}/${network}/transactions/${address}/token`,
             {
               params: {
                 page: 1,
@@ -158,9 +156,7 @@ const cryptoDataService = {
       throttle(async () => {
         try {
           const res = await http.get(
-            `${
-              ENV.VUE_APP_CRYPTODATA_API_URL
-            }/${network}/transactions/${address}`,
+            `${ENV.VUE_APP_CRYPTODATA_API_URL}/${network}/transactions/${address}`,
             {
               params: {
                 page: 1,

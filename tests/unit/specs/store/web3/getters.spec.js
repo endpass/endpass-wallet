@@ -1,4 +1,4 @@
-import { Network } from '@endpass/class';
+import Network from '@endpass/class/Network';
 import getters from '@/store/web3/getters';
 
 describe('web3 getters', () => {

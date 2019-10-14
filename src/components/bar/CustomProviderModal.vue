@@ -95,7 +95,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import { Network } from '@endpass/class';
+import Network from '@endpass/class/Network';
 import formMixin from '@/mixins/form';
 
 const defaultProvider = {
@@ -116,7 +116,7 @@ export default {
     return {
       providerAdded: false,
       isLoading: false,
-      innerProvider: { ...this.provider},
+      innerProvider: { ...this.provider },
       currencies: Network.CURRENCIES.map(currency => ({
         val: currency.id,
         text: currency.name,

@@ -7,7 +7,6 @@ import ExportToJson from '@/components/ExportToJson';
 import { Wallet } from '@/class';
 import setupI18n from '@/locales/i18nSetup';
 
-
 const localVue = createLocalVue();
 const i18n = setupI18n(localVue);
 

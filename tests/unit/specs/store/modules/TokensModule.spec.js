@@ -1,4 +1,4 @@
-import { Network } from '@endpass/class';
+import Network from '@endpass/class/Network';
 import { address } from 'fixtures/accounts';
 import {
   tokens,

@@ -5,7 +5,6 @@ import UIComponents from '@endpass/ui';
 import { ethplorerTransactions } from 'fixtures/transactions';
 import RecoverTransaction from '@/components/RecoverTransaction';
 
-
 describe('RecoverTransaction', () => {
   let wrapper;
 
