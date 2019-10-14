@@ -140,3 +140,15 @@ export const otpPayload = {
 
 export const seed =
   'pseudomania bedchair withdrawingness squawberry ipseand anacoluthon ungangrened ballet recomplicate pessulus trisome unsuffocative plaintile rosland preperceive soupspoon outback subchela dovefoot beltmaker piaculum dragonhood Pristipomatidae arrowheaded';
+
+export const generatedWalletData = {
+  seedKey: mnemonic,
+  encryptedSeed: encryptedMessage,
+  v3KeystoreHdWallet: hdv3,
+  v3KeystoreChildWallet: v3,
+  info: {
+    address: hdv3.address,
+    type: 'HDMainAccount',
+    hidden: false,
+  },
+};

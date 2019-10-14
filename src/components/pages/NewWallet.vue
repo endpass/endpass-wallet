@@ -14,6 +14,7 @@
       <router-link
         to="/"
         class="button is-success is-cta"
+        data-test="continue-button"
       >
         {{ $t('global.continue') }}
       </router-link>
@@ -67,7 +68,9 @@ export default {
         text: this.$t('components.newWallet.couldNotCreateWallet'),
         type: 'is-danger',
       });
+      this.$router.push('/');
       /* eslint-disable-next-line no-console */
+      console.error(e);
     }
   },
 

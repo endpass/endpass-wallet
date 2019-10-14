@@ -17,6 +17,7 @@ import {
   checksumAddress,
   seed,
   encryptedMessage,
+  generatedWalletData,
 } from 'fixtures/accounts';
 import {
   getPasswordRecoveryIdentifierResponse,
@@ -471,21 +472,21 @@ describe('Accounts actions', () => {
     };
 
     beforeEach(() => {
-      connect.generateWallet = jest.fn().mockReturnValueOnce({
-        seedKey: mnemonic,
-        encryptedSeed: encryptedMessage,
-        v3KeystoreHdWallet: hdv3,
-        v3KeystoreChildWallet: v3,
-        info: {
-          address: hdv3.address,
-          type: WALLET_TYPES.HD_MAIN,
-          hidden: false,
-        },
-      });
+      connect.generateWallet = jest
+        .fn()
+        .mockReturnValueOnce(generatedWalletData);
+    });
+
+    it('should generate wallet', async () => {
+      expect.assertions(1);
+
+      const res = await actions.generateNewWallet({ dispatch });
+
+      expect(res).toEqual(generatedWalletData);
     });
 
     it('should create and save wallet', async () => {
-      expect.assertions(4);
+      expect.assertions(5);
 
       const expectedInfo = {
         address: hdv3.address,
@@ -497,14 +498,17 @@ describe('Accounts actions', () => {
         address: hdv3.address,
       });
 
+      dispatch.mockResolvedValueOnce(generatedWalletData);
+
       await actions.createNewWallet({ dispatch });
 
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenNthCalledWith(1, 'saveWallet', {
+      expect(dispatch).toHaveBeenCalledTimes(3);
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'generateNewWallet');
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'saveWallet', {
         json: expectedJson,
         info: expectedInfo,
       });
-      expect(dispatch).toHaveBeenNthCalledWith(2, 'addWalletAndSelect', v3);
+      expect(dispatch).toHaveBeenNthCalledWith(3, 'addWalletAndSelect', v3);
       expect(userService.backupSeed).toBeCalledWith(encryptedMessage);
     });
 

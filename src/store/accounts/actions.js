@@ -146,14 +146,20 @@ const saveWallet = async ({ dispatch }, { json, info = {} }) => {
   await dispatch('commitWallet', { wallet: json });
 };
 
+const generateNewWallet = async () => {
+  const data = await connect.generateWallet();
+  return data;
+};
+
 const createNewWallet = async ({ dispatch }) => {
   try {
+    const generateData = await dispatch('generateNewWallet');
     const {
       info,
       encryptedSeed,
       v3KeystoreHdWallet,
       v3KeystoreChildWallet,
-    } = await connect.generateWallet();
+    } = generateData;
 
     // save data
     await dispatch('saveWallet', {
@@ -645,6 +651,7 @@ export default {
   saveWallet,
   setUserHdKey,
   setUserWallets,
+  generateNewWallet,
   createNewWallet,
   addHdPublicWallet,
   addNextWalletFromHd,

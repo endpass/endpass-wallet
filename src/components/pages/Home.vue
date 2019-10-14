@@ -39,19 +39,18 @@
                 >
                   <v-faucet-button
                     :address="address"
-                    class="button is-warning"
                     @donate="onDonate"
                     @donate-error="onDonateError"
                   >
-                    <div
+                    <v-button
                       slot-scope="{ sendRequest, isLoading }"
-                      class="button is-warning"
+                      class-name="is-warning"
                       data-test="get-test-eth-button"
                       :disabled="isFaucetDisable || isLoading"
                       @click="sendRequest"
                     >
                       {{ faucetTitle }}
-                    </div>
+                    </v-button>
                   </v-faucet-button>
                 </div>
               </div>
@@ -119,6 +118,7 @@
                   <router-link
                     :to="{ name: 'NewWallet', query: $route.query }"
                     class="button is-success is-cta"
+                    data-test="create-new-wallet"
                   >
                     {{ $t('components.home.createNewWallet') }}
                   </router-link>

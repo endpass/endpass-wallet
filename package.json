@@ -36,19 +36,19 @@
   },
   "lint-staged": {
     "*.{js,json}": [
-      "vue-cli-service lint --fix --quiet",
+      "eslint --fix",
       "prettier --write",
       "git add"
     ],
     "*.vue": [
       "prettier --write",
-      "vue-cli-service lint --fix --quiet",
+      "eslint --fix",
       "git add"
     ]
   },
   "dependencies": {
     "@endpass/class": "^0.18.10",
-    "@endpass/connect": "^0.28.11-beta",
+    "@endpass/connect": "^0.28.12-beta",
     "@endpass/eslint-plugin-endpass": "^0.2.7",
     "@endpass/faucet": "^0.2.1",
     "@endpass/ui": "^0.15.52",

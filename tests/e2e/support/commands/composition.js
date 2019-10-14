@@ -9,6 +9,7 @@ Cypress.Commands.add('login', () => {
   cy.server();
   cy.mockAccountKeystores();
   cy.mockUserSettings();
+  cy.mockAuthCheck();
 });
 
 Cypress.Commands.add('mockPrices', () => {
@@ -23,4 +24,10 @@ Cypress.Commands.add('mockInitialData', () => {
   cy.mockTokensInfo();
   cy.mockEmptyTransactionHistory();
   cy.mockPrices();
+});
+
+Cypress.Commands.add('mockAccountsDataFailed', () => {
+  cy.mockAccountsList(401);
+  cy.mockUserSettings(401);
+  cy.mockAuthCheck(401);
 });

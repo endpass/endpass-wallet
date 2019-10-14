@@ -6,6 +6,7 @@ const connect = new EndpassConnect({
   authUrl: ENV.VUE_APP_CONNECT_URL,
   isIdentityMode: true,
   plugins: [AuthPlugin, WalletPlugin],
+  oauthClientId: 'should_be_here',
 });
 
 export default connect;
