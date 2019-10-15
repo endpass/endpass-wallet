@@ -24,8 +24,9 @@ describe('Settings Page', () => {
     it('should save otp settings', () => {
       // Enable OTP
       cy.get('[data-test=button-two-factor]').click();
-      cy.get('[data-test=input-two-auth-code]').type('123456');
       cy.get('[data-test=input-two-auth-verification-code]').type('123456');
+      cy.get('[data-test=continue-two-auth-modal]').click();
+      cy.get('[data-test=input-two-auth-code]').type('123456');
       cy.get('[data-test=submit-two-auth-modal]').click();
       cy.get('[data-test=button-two-factor]').should('contain', 'Disable');
       cy.get(
@@ -43,13 +44,21 @@ describe('Settings Page', () => {
     });
 
     it('should validate otp settings form', () => {
+      // Verification form
       cy.get('[data-test=button-two-factor]').click();
-      cy.get('[data-test=input-two-auth-code]').type('1234');
-      cy.get('[data-test=input-two-auth-code]')
-        .parentsUntil('form')
-        .should('contain', 'contain 6 digits');
       cy.get('[data-test=input-two-auth-verification-code]').type('1234');
       cy.get('[data-test=input-two-auth-verification-code]')
+        .parentsUntil('form')
+        .should('contain', 'contain 6 digits');
+      cy.get('[data-test=continue-two-auth-modal]').should('be.disabled');
+      cy.get('[data-test=input-two-auth-verification-code]')
+        .clear()
+        .type('123456');
+      cy.get('[data-test=continue-two-auth-modal]').click();
+
+      // Two factor auth form
+      cy.get('[data-test=input-two-auth-code]').type('1234');
+      cy.get('[data-test=input-two-auth-code]')
         .parentsUntil('form')
         .should('contain', 'contain 6 digits');
       cy.get('[data-test=submit-two-auth-modal]').should('be.disabled');

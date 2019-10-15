@@ -2,7 +2,7 @@
   <v-form
     id="twoFactorAuthForm"
     :is-form-valid="isFormValid"
-    @submit="onFormSubmit"
+    @submit.native.prevent="onFormSubmit"
   >
     <div
       v-if="isShowQRCode"
@@ -43,6 +43,7 @@
     <v-button
       :loading="isLoading"
       :disabled="!isFormValid"
+      type="submit"
       class-name="is-primary is-medium"
       data-test="submit-two-auth-modal"
     >

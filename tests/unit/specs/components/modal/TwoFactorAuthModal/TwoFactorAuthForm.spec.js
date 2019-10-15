@@ -1,11 +1,7 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import VeeValidate from 'vee-validate';
 import UIComponents from '@endpass/ui';
-import {
-  otpSecret,
-  verificationCode,
-  authenticatorCode,
-} from 'fixtures/identity';
+import { otpSecret, authenticatorCode } from 'fixtures/identity';
 import setupI18n from '@/locales/i18nSetup';
 import TwoFactorAuthForm from '@/components/modal/TwoFactorAuthModal/TwoFactorAuthForm';
 import validation from '@/validation';
@@ -75,7 +71,7 @@ describe('TwoFactorAuthForm', () => {
     });
   });
 
-  describe.only('behavior', () => {
+  describe('behavior', () => {
     beforeEach(() => {
       wrapper = wrapperFactory({
         propsData: {
@@ -86,27 +82,42 @@ describe('TwoFactorAuthForm', () => {
     });
 
     it('should not submit form if code is not passed in', async () => {
-      wrapper
-        .find('[data-test=input-two-auth-code]')
-        .vm.$emit('input', '');
-      wrapper.find('v-form-stub').vm.$emit('submit');
+      expect.assertions(1);
+
+      wrapper.find('[data-test=input-two-auth-code]').vm.$emit('input', '');
+
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+
+      wrapper.find('v-form-stub').trigger('submit');
 
       expect(wrapper.emitted().submit).toBeFalsy();
     });
 
     it('should not submit form if code is not valid', async () => {
+      expect.assertions(1);
+
       wrapper.find('[data-test=input-two-auth-code]').vm.$emit('input', '1234');
-      wrapper.find('v-form-stub').vm.$emit('submit');
+
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+
+      wrapper.find('v-form-stub').trigger('submit');
 
       expect(wrapper.emitted().submit).toBeFalsy();
     });
 
-    it.only('should submit form if code is valid', async () => {
+    it('should submit form if code is valid', async () => {
+      expect.assertions(1);
+
       wrapper
         .find('[data-test=input-two-auth-code]')
         .vm.$emit('input', authenticatorCode);
 
-      wrapper.find('v-form-stub').vm.$emit('submit');
+      await wrapper.vm.$nextTick();
+      await wrapper.vm.$nextTick();
+
+      wrapper.find('v-form-stub').trigger('submit');
 
       expect(wrapper.emitted().submit).toEqual([[authenticatorCode]]);
     });

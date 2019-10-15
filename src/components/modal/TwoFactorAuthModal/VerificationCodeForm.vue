@@ -2,7 +2,7 @@
   <v-form
     id="verificationCode"
     :is-form-valid="isFormValid"
-    @submit="onFormSubmit"
+    @submit.native.prevent="onFormSubmit"
   >
     <div class="verification-code-form-section">
       <label class="subtitle">
@@ -31,7 +31,8 @@
       :loading="isLoading"
       :disabled="!isFormValid"
       class-name="is-primary is-medium"
-      data-test="submit-two-auth-modal"
+      type="submit"
+      data-test="continue-two-auth-modal"
     >
       {{ $t('global.continue') }}
     </v-button>
@@ -45,10 +46,6 @@ export default {
   name: 'VerificationCodeForm',
 
   props: {
-    email: {
-      type: String,
-      default: '',
-    },
     isLoading: {
       type: Boolean,
       default: false,
