@@ -3,11 +3,10 @@ import Notifications from 'vue-notification';
 import VeeValidate from 'vee-validate';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
+import { checksumAddress } from 'fixtures/accounts';
 import validation from '@/validation';
 
 import Transaction from '@/components/Transaction';
-
-import { checksumAddress } from 'fixtures/accounts';
 
 const localVue = createLocalVue();
 

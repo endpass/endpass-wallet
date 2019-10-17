@@ -1,5 +1,5 @@
-import { identityAPIUrl } from '@config';
 import { successResp, user, otp, seed } from '@fixtures/identity';
+import { identityAPIUrl } from '@config';
 
 Cypress.Commands.add('mockUserSettings', () => {
   cy.route({
@@ -24,7 +24,7 @@ Cypress.Commands.add('mockUserSettings', () => {
   cy.route('POST', `${identityAPIUrl}/settings/otp`, successResp).as(
     'identitySetOtp',
   );
-  cy.route('DELETE', `${identityAPIUrl}/settings/otp`, successResp).as(
+  cy.route('DELETE', `${identityAPIUrl}/settings/otp*`, successResp).as(
     'identityDeleteOtp',
   );
   cy.route('POST', `${identityAPIUrl}/tokens/**`, successResp).as(

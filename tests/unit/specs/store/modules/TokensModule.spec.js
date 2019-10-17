@@ -1,13 +1,4 @@
-import ModuleRegister from '@/store/class/ModuleRegister';
-import createStore from '@/store/createStore';
-
-import ErrorsModule from '@/store/modules/ErrorsModule';
-import TokensModule from '@/store/modules/TokensModule';
-import PriceModule from '@/store/modules/PriceModule';
-import { Network } from '@endpass/class';
-import tokenInfoService from '@/services/tokeninfo';
-import userService from '@/services/user';
-
+import Network from '@endpass/class/Network';
 import { address } from 'fixtures/accounts';
 import {
   tokens,
@@ -18,6 +9,15 @@ import {
   tokensNetBySymbols,
   tokensNetByAddress,
 } from 'fixtures/tokens';
+import ModuleRegister from '@/store/class/ModuleRegister';
+import createStore from '@/store/createStore';
+
+import ErrorsModule from '@/store/modules/ErrorsModule';
+import TokensModule from '@/store/modules/TokensModule';
+import PriceModule from '@/store/modules/PriceModule';
+import tokenInfoService from '@/services/tokeninfo';
+import userService from '@/services/user';
+
 import { Token } from '@/class';
 
 describe('TokensModule', () => {

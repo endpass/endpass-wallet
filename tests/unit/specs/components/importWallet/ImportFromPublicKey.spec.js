@@ -3,10 +3,9 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router';
 import UIComponents from '@endpass/ui';
+import { address } from 'fixtures/accounts';
 import validation from '@/validation';
 import setupI18n from '@/locales/i18nSetup';
-
-import { address } from 'fixtures/accounts';
 
 import ImportFromPublicKey from '@/components/importWallet/ImportFromPublicKey';
 

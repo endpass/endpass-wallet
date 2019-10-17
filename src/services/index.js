@@ -4,3 +4,4 @@ export { default as tokenInfoService } from './tokeninfo';
 export { default as ethplorerService } from './ethplorer';
 export { default as cryptoDataService } from './cryptoData';
 export { default as localSettingsService } from './localSettings';
+export { default as otpService } from './otp';

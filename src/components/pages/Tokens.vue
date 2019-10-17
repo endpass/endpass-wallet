@@ -101,12 +101,12 @@
 import { isEmpty } from 'lodash';
 import { mapState, mapActions, mapGetters } from 'vuex';
 import Multiselect from 'vue-multiselect';
+import { matchString } from '@endpass/utils/strings';
+import Network from '@endpass/class/Network';
 import VToken from '@/components/VToken';
 import TokensList from '@/components/TokensList';
 import SearchInput from '@/components/SearchInput';
 import AddTokenModal from '@/components/modal/AddTokenModal';
-import { matchString } from '@endpass/utils/strings';
-import { Network } from '@endpass/class';
 
 export default {
   name: 'TokensPage',

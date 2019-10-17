@@ -1,7 +1,6 @@
+import { gasPrice } from 'fixtures/gasPrice';
 import cryptoDataService from '@/services/cryptoData';
 import actions from '@/store/gas-price/actions';
-
-import { gasPrice } from 'fixtures/gasPrice';
 
 describe('gas-price actions', () => {
   const rootGetters = {

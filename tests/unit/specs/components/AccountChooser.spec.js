@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { createLocalVue } from '@vue/test-utils';
-import AccountChooser from '@/components/AccountChooser';
 import { addresses } from 'fixtures/accounts';
+import AccountChooser from '@/components/AccountChooser';
 import { wrapMountFactory } from '@/testUtils';
 
 const localVue = createLocalVue();

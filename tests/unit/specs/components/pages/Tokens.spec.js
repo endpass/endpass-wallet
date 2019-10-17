@@ -3,13 +3,13 @@ import Vuex from 'vuex';
 import Notifications from 'vue-notification';
 import VeeValidate from 'vee-validate';
 import UIComponents from '@endpass/ui';
+import { allTokens, tokens, tokensMappedByAddresses } from 'fixtures/tokens';
 import validation from '@/validation';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import TokensPage from '@/components/pages/Tokens.vue';
 
 import setupI18n from '@/locales/i18nSetup';
-import { allTokens, tokens, tokensMappedByAddresses } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
 const i18n = setupI18n(localVue);

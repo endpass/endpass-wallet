@@ -4,7 +4,7 @@
       {{ $t('components.importWallet.header') }}
     </template>
     <p class="subtitle">
-      {{ $t('components.importWallet.paragaph') }}
+      {{ $t('components.importWallet.paragraph') }}
     </p>
     <div class="columns">
       <div class="column is-one-third">

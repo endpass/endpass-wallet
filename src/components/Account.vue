@@ -38,8 +38,8 @@
 
 <script>
 import makeBlockie from 'ethereum-blockies-base64';
-import Balance from '@/components/Balance';
 import { getShortStringWithEllipsis } from '@endpass/utils/strings';
+import Balance from '@/components/Balance';
 
 export default {
   name: 'Account',

@@ -1,9 +1,9 @@
 import MockAdapter from 'axios-mock-adapter';
-import { NotificationError, http } from '@/class';
-import { cryptoDataValidator } from '@/schema';
 import { gasPrice } from 'fixtures/gasPrice';
 import { price, priceMulti } from 'fixtures/price';
 import { address } from 'fixtures/accounts';
+import { cryptoDataValidator } from '@/schema';
+import { NotificationError, http } from '@/class';
 
 const cryptoDataService = require.requireActual('@/services/cryptoData')
   .default;
@@ -17,9 +17,7 @@ describe('Crypto data service', () => {
 
   describe('getGasPrice', () => {
     const networkId = 1;
-    const requestUrl = `${
-      ENV.VUE_APP_CRYPTODATA_API_URL
-    }/${networkId}/gas/price`;
+    const requestUrl = `${ENV.VUE_APP_CRYPTODATA_API_URL}/${networkId}/gas/price`;
     const expectedError = new NotificationError({
       title: 'Failed to get suggested gas price',
       text:
@@ -210,9 +208,7 @@ describe('Crypto data service', () => {
 
   describe('getAccountBalance', () => {
     const networkId = 1;
-    const requestUrl = `${
-      ENV.VUE_APP_CRYPTODATA_API_URL
-    }/${networkId}/balance/${address}`;
+    const requestUrl = `${ENV.VUE_APP_CRYPTODATA_API_URL}/${networkId}/balance/${address}`;
     const tokens = [
       {
         symbol: 'FST',
@@ -312,9 +308,7 @@ describe('Crypto data service', () => {
     const network = 1;
     const address = 'address';
     const filterId = 1;
-    const requestUrl = `${
-      ENV.VUE_APP_CRYPTODATA_API_URL
-    }/${network}/transactions/pending`;
+    const requestUrl = `${ENV.VUE_APP_CRYPTODATA_API_URL}/${network}/transactions/pending`;
     const expectedError = new Error(
       'Failed to get pending transactions. An error occurred while getting pending transactions.',
     );

@@ -1,10 +1,9 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 
+import { v3, v3password, privateKeyString } from 'fixtures/accounts';
 import ExportToPrivateKey from '@/components/ExportToPrivateKey';
 import { Wallet } from '@/class';
-
-import { v3, v3password, privateKeyString } from 'fixtures/accounts';
 
 const localVue = createLocalVue();
 

@@ -1,4 +1,4 @@
-import { Network } from '@endpass/class';
+import Network from '@endpass/class/Network';
 
 const networks = state => {
   const networksList = [

@@ -1,8 +1,8 @@
 import Web3 from 'web3';
 
+import Network from '@endpass/class/Network';
 import { userService } from '@/services';
 import { ProviderFactory, web3 } from '@/class';
-import { Network } from '@endpass/class';
 import {
   CHANGE_NETWORK,
   CHANGE_CURRENCY,
@@ -154,12 +154,11 @@ const handleLastBlock = async (
 
     const blocks = await Promise.all(getBlockPromises);
 
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line
     for (const block of blocks) {
       if (block) {
         handledBlockNumber = block.number;
 
-        // eslint-disable-next-line no-await-in-loop
         await dispatch(
           'transactions/handleBlockTransactions',
           {

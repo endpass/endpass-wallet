@@ -3,12 +3,12 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import Notifications from 'vue-notification';
 import UIComponents from '@endpass/ui';
+import { tokens } from 'fixtures/tokens';
 import validation from '@/validation';
 import { ERC20Token } from '@/class';
 
 import AddTokenModal from '@/components/modal/AddTokenModal';
 import setupI18n from '@/locales/i18nSetup';
-import { tokens } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
 const i18n = setupI18n(localVue);

@@ -39,13 +39,18 @@
                 >
                   <v-faucet-button
                     :address="address"
-                    :disabled="isFaucetDisable"
-                    class="button is-warning"
-                    data-test="get-test-eth-button"
                     @donate="onDonate"
                     @donate-error="onDonateError"
                   >
-                    {{ faucetTitle }}
+                    <v-button
+                      slot-scope="{ sendRequest, isLoading }"
+                      class-name="is-warning"
+                      data-test="get-test-eth-button"
+                      :disabled="isFaucetDisable || isLoading"
+                      @click="sendRequest"
+                    >
+                      {{ faucetTitle }}
+                    </v-button>
                   </v-faucet-button>
                 </div>
               </div>
@@ -113,6 +118,7 @@
                   <router-link
                     :to="{ name: 'NewWallet', query: $route.query }"
                     class="button is-success is-cta"
+                    data-test="create-new-wallet"
                   >
                     {{ $t('components.home.createNewWallet') }}
                   </router-link>
@@ -137,9 +143,9 @@ import VueTimers from 'vue-timers/mixin';
 import get from 'lodash/get';
 import { fromTo } from '@endpass/utils/date';
 import { VFaucetButton } from '@endpass/faucet';
+import Network from '@endpass/class/Network';
 import Account from '@/components/Account';
 import TokensList from '@/components/TokensList';
-import { Network } from '@endpass/class';
 
 const UPDATE_RESEND_TIMEOUT_SEC = 1000 * 60 * 2; // 2 mins
 

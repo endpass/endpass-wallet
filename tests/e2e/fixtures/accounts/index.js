@@ -1,4 +1,8 @@
 // Account address
+
+export const encryptedMessage =
+  'efca4cdd31923b50f4214af5d2ae10e7ac45a5019e9431cc195482d707485378';
+
 export const address = '0xb14ab53e38da1c172f877dbc6d65e4a1b0474c3c';
 export const checksumAddress = '0xB14Ab53E38DA1C172f877DBC6d65e4a1B0474C3c';
 
@@ -120,4 +124,16 @@ export const hdv3Info = {
   type: 'HDMainAccount',
   index: 0,
   label: '',
+};
+
+export const generatedWalletData = {
+  seedKey: mnemonic,
+  encryptedSeed: encryptedMessage,
+  v3KeystoreHdWallet: hdv3,
+  v3KeystoreChildWallet: v3,
+  info: {
+    address: hdv3.address,
+    type: 'HDMainAccount',
+    hidden: false,
+  },
 };

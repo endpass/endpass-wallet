@@ -1,9 +1,9 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import { addresses } from 'fixtures/accounts';
 import { NotificationError } from '@/class';
 import { httpIdentity, proxyRequest } from '@/class/singleton';
 import { IDENTITY_MODE } from '@/constants';
-import { addresses } from 'fixtures/accounts';
 
 const identityModeService = require.requireActual('@/services/identityMode')
   .default;

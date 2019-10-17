@@ -20,8 +20,8 @@ export default {
   data: () => ({
     hardwareType: null,
     hardwareList: {
-      [WALLET_TYPES.LEDGER]: i18n.$t('components.hardwareChooser.ledgerWallet'),
-      [WALLET_TYPES.TREZOR]: i18n.$t('components.hardwareChooser.trezorWallet'),
+      [WALLET_TYPES.LEDGER]: i18n.t('components.hardwareChooser.ledgerWallet'),
+      [WALLET_TYPES.TREZOR]: i18n.t('components.hardwareChooser.trezorWallet'),
     },
   }),
   watch: {

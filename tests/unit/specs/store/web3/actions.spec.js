@@ -1,10 +1,10 @@
 import Web3 from 'web3';
 
+import Network from '@endpass/class/Network';
+import { blockTransactions } from 'fixtures/transactions';
 import actions from '@/store/web3/actions';
 import * as mutationsTypes from '@/store/web3/mutations-types';
 import { userService } from '@/services';
-import { Network } from '@endpass/class';
-import { blockTransactions } from 'fixtures/transactions';
 
 jest.useFakeTimers();
 

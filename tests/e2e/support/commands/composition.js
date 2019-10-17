@@ -2,13 +2,16 @@
 // Usage: cy.preventLogin()
 Cypress.Commands.add('preventLogin', () => {
   cy.server();
-  cy.mockAccountsDataFailed();
+  cy.mockAccountsList(401);
+  cy.mockAccountSettings(401);
+  cy.mockAuthCheck(401);
 });
 
 Cypress.Commands.add('login', () => {
   cy.server();
   cy.mockAccountKeystores();
   cy.mockUserSettings();
+  cy.mockAuthCheck();
 });
 
 Cypress.Commands.add('mockPrices', () => {
@@ -19,6 +22,7 @@ Cypress.Commands.add('mockPrices', () => {
 
 Cypress.Commands.add('mockInitialData', () => {
   cy.login();
+  cy.mockVerificationCode();
   cy.mockTokensInfo();
   cy.mockEmptyTransactionHistory();
   cy.mockPrices();

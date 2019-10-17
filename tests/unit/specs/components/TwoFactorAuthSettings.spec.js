@@ -2,6 +2,7 @@ import { createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Notifications from 'vue-notification';
 import UIComponents from '@endpass/ui';
+import { otpPayload } from 'fixtures/accounts';
 import { wrapShallowMountFactory } from '@/testUtils';
 
 import TwoFactorAuthSettings from '@/components/TwoFactorAuthSettings';
@@ -156,7 +157,7 @@ describe('TwoFactorAuthSettings', () => {
   });
 
   describe('methods', () => {
-    describe('handleFormSubmit', () => {
+    describe('onFormSubmit', () => {
       it('should not call toggleTwoFactorAuthModal', () => {
         wrapper = wrapFactory({
           computed: {
@@ -166,7 +167,7 @@ describe('TwoFactorAuthSettings', () => {
 
         jest.spyOn(wrapper.vm, 'toggleTwoFactorAuthModal');
 
-        wrapper.vm.handleFormSubmit();
+        wrapper.vm.onFormSubmit();
 
         expect(wrapper.vm.toggleTwoFactorAuthModal).toHaveBeenCalledTimes(0);
       });
@@ -179,22 +180,24 @@ describe('TwoFactorAuthSettings', () => {
         });
 
         jest.spyOn(wrapper.vm, 'toggleTwoFactorAuthModal');
-        wrapper.vm.handleFormSubmit();
+        wrapper.vm.onFormSubmit();
 
         expect(wrapper.vm.toggleTwoFactorAuthModal).toHaveBeenCalledTimes(1);
       });
     });
 
-    describe('handleConfirmTwoFactorAuthModal', () => {
+    describe('onConfirmTwoFactorAuthModal', () => {
       const code = '123456';
 
       it('should call deleteOtpSettings', () => {
-        wrapper.vm.handleConfirmTwoFactorAuthModal(code);
+        wrapper.vm.onConfirmTwoFactorAuthModal(otpPayload);
 
         expect(userActions.deleteOtpSettings).toHaveBeenCalledTimes(1);
         expect(userActions.deleteOtpSettings).toHaveBeenCalledWith(
           expect.any(Object),
-          { code },
+          {
+            code: otpPayload.code,
+          },
           undefined,
         );
       });
@@ -204,7 +207,7 @@ describe('TwoFactorAuthSettings', () => {
 
         jest.spyOn(wrapper.vm, '$notify');
 
-        await wrapper.vm.handleConfirmTwoFactorAuthModal(code);
+        await wrapper.vm.onConfirmTwoFactorAuthModal(code);
 
         expect(wrapper.vm.$notify).toHaveBeenCalledWith({
           title: 'Settings Saved',
@@ -218,7 +221,7 @@ describe('TwoFactorAuthSettings', () => {
 
         const error = new Error();
         userActions.deleteOtpSettings.mockRejectedValueOnce(error);
-        await wrapper.vm.handleConfirmTwoFactorAuthModal(code);
+        await wrapper.vm.onConfirmTwoFactorAuthModal(code);
 
         expect(errorsActions.emitError).toHaveBeenCalledTimes(1);
         expect(errorsActions.emitError).toHaveBeenCalledWith(
@@ -229,23 +232,21 @@ describe('TwoFactorAuthSettings', () => {
       });
 
       it('should call setOtpSettings', () => {
-        const secret = 'secret';
-
         wrapper = wrapFactory({
           computed: {
-            otpSettings: { secret },
+            otpSettings: { secret: otpPayload.secret },
           },
         });
 
-        wrapper.vm.handleConfirmTwoFactorAuthModal(code);
+        wrapper.vm.onConfirmTwoFactorAuthModal({
+          code: otpPayload.code,
+          verificationCode: otpPayload.verificationCode,
+        });
 
         expect(userActions.setOtpSettings).toHaveBeenCalledTimes(1);
         expect(userActions.setOtpSettings).toHaveBeenCalledWith(
           expect.any(Object),
-          {
-            code,
-            secret,
-          },
+          otpPayload,
           undefined,
         );
       });

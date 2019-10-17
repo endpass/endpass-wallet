@@ -2,11 +2,11 @@ import VeeValidate from 'vee-validate';
 import { toWei } from 'web3-utils';
 import { createLocalVue } from '@vue/test-utils';
 import UIComponents from '@endpass/ui';
+import { token } from 'fixtures/tokens';
 import validation from '@/validation';
 import { wrapShallowMountFactory } from '@/testUtils';
 import TransactionAmountOptions from '@/components/pages/Send/TransactionAmountOptions.vue';
 import setupI18n from '@/locales/i18nSetup';
-import { token } from 'fixtures/tokens';
 
 const localVue = createLocalVue();
 const i18n = setupI18n(localVue);

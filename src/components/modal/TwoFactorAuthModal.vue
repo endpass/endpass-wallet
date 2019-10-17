@@ -1,6 +1,6 @@
-<template lang="html">
+<template>
   <v-modal
-    class="is-dark"
+    class="is-dark two-factor-auth-modal"
     @close="close"
   >
     <template slot="header">
@@ -8,15 +8,16 @@
     </template>
     <div v-if="secret">
       <p class="lead">
-        {{ $t('components.twoFactorAuthModal.paragaph1') }}
+        {{ $t('components.twoFactorAuthModal.paragraph1') }}
       </p>
-
       <p class="lead">
-        {{ $t('components.twoFactorAuthModal.paragaph2') }}
+        {{ $t('components.twoFactorAuthModal.paragraph2') }}
         <strong>
-          {{ $t('components.twoFactorAuthModal.googleAuthentificator') }}
+          {{ $t('components.twoFactorAuthModal.googleAuthenticator') }}
         </strong>
-        {{ $t('components.twoFactorAuthModal.paragaph3') }}
+      </p>
+      <p class="lead">
+        {{ $t('components.twoFactorAuthModal.paragraph3') }}
       </p>
     </div>
     <v-form
@@ -25,36 +26,67 @@
       @submit="confirm"
     >
       <div
-        v-if="secret && email"
-        class="field"
+        v-if="isShowQRCode"
+        class="two-factor-auth-modal-section"
       >
         <div class="has-text-centered">
           <img :src="qrCodeSrc">
         </div>
-        <p class="subtitle">
+        <label class="subtitle">
           {{ $t('components.twoFactorAuthModal.writeDownCode') }}
-        </p>
+        </label>
         <label class="label">
-          {{ $t('components.twoFactorAuthModal.secret') }}</label>
+          {{ $t('components.twoFactorAuthModal.secret') }}
+        </label>
         <p class="subtitle twofa-secret">
           <strong>{{ secret }}</strong>
         </p>
       </div>
-      <p class="subtitle">
-        {{ $t('components.twoFactorAuthModal.enterCode') }}
-      </p>
-      <v-input
-        v-model="code"
-        v-validate="'required|digits:6'"
-        :error="errors.first('verificationCode')"
-        type="number"
-        size="6"
-        :label="$t('components.twoFactorAuthModal.verificationCode')"
-        name="verificationCode"
-        data-vv-name="verificationCode"
-        data-test="input-two-auth-code"
-        autofocus
-      />
+      <template v-if="secret">
+        <div class="two-factor-auth-modal-section">
+          <label class="subtitle">
+            {{ $t('components.twoFactorAuthModal.enterVerificationCode') }}
+          </label>
+          <v-input
+            v-model="verificationCode"
+            v-validate="'required|digits:6'"
+            :error="errors.first('verificationCode')"
+            type="number"
+            size="6"
+            :label="$t('components.twoFactorAuthModal.verificationCode')"
+            name="verificationCode"
+            data-vv-name="verificationCode"
+            data-test="input-two-auth-verification-code"
+            autofocus
+          />
+        </div>
+      </template>
+      <div class="two-factor-auth-modal-section">
+        <label class="subtitle">
+          {{ $t('components.twoFactorAuthModal.enterCode') }}
+        </label>
+        <v-input
+          v-model="code"
+          v-validate="'required|digits:6'"
+          :error="errors.first('code')"
+          type="number"
+          size="6"
+          :label="$t('components.twoFactorAuthModal.otpCode')"
+          name="code"
+          data-vv-name="code"
+          data-test="input-two-auth-code"
+          autofocus
+        />
+      </div>
+      <div class="two-factor-auth-modal-code-section v-text-center">
+        <span>{{ $t('components.twoFactorAuthModal.didNotGetCode') }}</span>
+        <a
+          class="link"
+          @click="handleCodeRequest"
+        >
+          {{ $t('components.twoFactorAuthModal.resendCode') }}
+        </a>
+      </div>
     </v-form>
     <div
       slot="footer"
@@ -78,6 +110,7 @@ import formMixin from '@/mixins/form';
 
 export default {
   name: 'TwoFactorAuthModal',
+
   props: {
     secret: {
       type: String,
@@ -92,12 +125,17 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      code: null,
-    };
-  },
+
+  data: () => ({
+    code: '',
+    verificationCode: '',
+  }),
+
   computed: {
+    isShowQRCode() {
+      return this.email && this.secret;
+    },
+
     qrCodeSrc() {
       const otpAuthUri = `otpauth://totp/Endpass:${this.email}?issuer=Endpass&secret=${this.secret}`;
 
@@ -106,14 +144,32 @@ export default {
       )}`;
     },
   },
+
   methods: {
-    confirm() {
-      this.$emit('confirm', this.code);
+    handleCodeRequest() {
+      this.$emit('request-code');
     },
+
+    confirm() {
+      const { code, verificationCode } = this;
+
+      this.$emit('confirm', {
+        code,
+        verificationCode,
+      });
+    },
+
     close() {
       this.$emit('close');
     },
   },
+
   mixins: [formMixin],
 };
 </script>
+
+<style lang="scss">
+.two-factor-auth-modal-section {
+  margin-bottom: 30px;
+}
+</style>

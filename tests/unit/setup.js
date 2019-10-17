@@ -3,10 +3,13 @@ import Vue from 'vue';
 import 'jest-localstorage-mock';
 import 'mocks/web3';
 
+import 'mocks/class/singleton/connect';
+
 /**
  * Services mocks
  */
 import 'mocks/services/user';
+import 'mocks/services/otp';
 import 'mocks/services/identityMode';
 import 'mocks/services/ethplorer';
 import 'mocks/services/cryptoData';

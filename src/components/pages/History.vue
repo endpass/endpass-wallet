@@ -37,8 +37,8 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
+import Network from '@endpass/class/Network';
 import appTransaction from '@/components/Transaction';
-import { Network } from '@endpass/class';
 
 export default {
   data: () => ({

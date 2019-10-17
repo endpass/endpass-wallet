@@ -1,9 +1,9 @@
-import { NotificationError, Wallet } from '@/class';
-import { proxyRequest } from '@/class/singleton';
 import keystoreHDKeyVerify from '@endpass/utils/keystoreHDKeyVerify';
 import isV3 from '@endpass/utils/isV3';
-import { identityValidator, v3KeystoreValidator } from '@/schema';
 import get from 'lodash/get';
+import { NotificationError, Wallet } from '@/class';
+import { proxyRequest } from '@/class/singleton';
+import { identityValidator, v3KeystoreValidator } from '@/schema';
 
 const WALLET_TYPES = Wallet.getTypes();
 
@@ -206,69 +206,6 @@ export default {
       ) || hdAccounts.find(acc => isV3(acc));
 
     return v3KeystoreValidator.validateNonEmptyAccountWithInfo(hdAccount);
-  },
-
-  async getOtpSettings() {
-    try {
-      const otpSetting = await proxyRequest.read('/settings/otp');
-      return identityValidator.validateUserOtpSetting(otpSetting);
-    } catch (e) {
-      throw new NotificationError({
-        title: 'Error requesting two-factor authentication settings',
-        text: 'Failed to get OTP settings.',
-        type: 'is-danger',
-      });
-    }
-  },
-
-  async setOtpSettings(secret, code) {
-    try {
-      const { success, message } = await proxyRequest.write('/settings/otp', {
-        payload: { secret, code },
-      });
-
-      if (!success) {
-        throw new Error(
-          `POST ${ENV.VUE_APP_IDENTITY_API_URL}/settings/otp: ${message}`,
-        );
-      }
-
-      return { success };
-    } catch (e) {
-      throw new NotificationError({
-        log: true,
-        message: e.message,
-        title: 'Error saving two-factor authentication settings',
-        text: 'Failed to save OTP settings.',
-        type: 'is-danger',
-      });
-    }
-  },
-
-  async deleteOtpSettings(code) {
-    try {
-      const { success, message } = await proxyRequest.remove('/settings/otp', {
-        payload: {
-          data: { code },
-        },
-      });
-
-      if (!success) {
-        throw new Error(
-          `DELETE ${ENV.VUE_APP_IDENTITY_API_URL}/settings/otp: ${message}`,
-        );
-      }
-
-      return { success };
-    } catch (e) {
-      throw new NotificationError({
-        log: true,
-        message: e.message,
-        title: 'Error removing two-factor authentication settings',
-        text: 'Failed to remove OTP settings.',
-        type: 'is-danger',
-      });
-    }
   },
 
   async getPasswordRecoveryIdentifier() {

@@ -3,8 +3,8 @@ import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
 import Notifications from 'vue-notification';
 import UIComponents from '@endpass/ui';
-import SeedRecovery from '@/components/SeedRecovery';
 import { seed } from 'fixtures/accounts';
+import SeedRecovery from '@/components/SeedRecovery';
 
 const localVue = createLocalVue();
 

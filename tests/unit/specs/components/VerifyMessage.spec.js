@@ -2,12 +2,11 @@ import Vuex from 'vuex';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Notifications from 'vue-notification';
 import UIComponents from '@endpass/ui';
+import ethereumWalletMock from 'fixtures/wallet';
+import { address } from 'fixtures/accounts';
 import web3 from '@/class/singleton/web3';
 
 import VerifyMessage from '@/components/VerifyMessage';
-
-import ethereumWalletMock from 'fixtures/wallet';
-import { address } from 'fixtures/accounts';
 
 const localVue = createLocalVue();
 

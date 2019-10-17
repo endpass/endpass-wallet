@@ -17,12 +17,16 @@ import {
   checksumAddress,
   seed,
   encryptedMessage,
+  generatedWalletData,
 } from 'fixtures/accounts';
 import {
   getPasswordRecoveryIdentifierResponse,
   successResponse,
   errorResponse,
 } from 'fixtures/identity';
+import keystoreHDWallet from '@endpass/utils/keystoreHDWallet';
+import keystoreWallet from '@endpass/utils/keystoreWallet';
+import proxies from 'mocks/class/proxies';
 import { Wallet, NotificationError, web3 } from '@/class';
 import actions from '@/store/accounts/actions';
 import {
@@ -34,13 +38,10 @@ import {
   CHANGE_INIT_STATUS,
   SET_HD_CACHE_BY_TYPE,
 } from '@/store/accounts/mutations-types';
-import keystoreHDWallet from '@endpass/utils/keystoreHDWallet';
-import keystoreWallet from '@endpass/utils/keystoreWallet';
-import walletGen from '@endpass/utils/walletGen';
 import userService from '@/services/user';
 import localSettingsService from '@/services/localSettings';
+import connect from '@/class/singleton/connect';
 
-import proxies from 'mocks/class/proxies';
 import { ENCRYPT_OPTIONS } from '@/constants';
 
 const WALLET_TYPES = Wallet.getTypes();
@@ -471,38 +472,43 @@ describe('Accounts actions', () => {
     };
 
     beforeEach(() => {
-      walletGen.createComplex = jest.fn().mockReturnValueOnce({
-        seedKey: mnemonic,
-        encryptedSeed: encryptedMessage,
-        v3KeystoreHdWallet: hdv3,
-        v3KeystoreChildWallet: v3,
-      });
+      connect.generateWallet = jest
+        .fn()
+        .mockReturnValueOnce(generatedWalletData);
+    });
+
+    it('should generate wallet', async () => {
+      expect.assertions(1);
+
+      const res = await actions.generateNewWallet({ dispatch });
+
+      expect(res).toEqual(generatedWalletData);
     });
 
     it('should create and save wallet', async () => {
       expect.assertions(5);
 
-      const expectedJson = expect.objectContaining({
-        address: hdv3.address,
-      });
       const expectedInfo = {
         address: hdv3.address,
         type: WALLET_TYPES.HD_MAIN,
         hidden: false,
       };
 
-      const seedKey = await actions.createNewWallet(
-        { dispatch },
-        { password: v3password },
-      );
+      const expectedJson = expect.objectContaining({
+        address: hdv3.address,
+      });
 
-      expect(seedKey).toBe(mnemonic);
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenNthCalledWith(1, 'saveWallet', {
+      dispatch.mockResolvedValueOnce(generatedWalletData);
+
+      await actions.createNewWallet({ dispatch });
+
+      expect(dispatch).toHaveBeenCalledTimes(3);
+      expect(dispatch).toHaveBeenNthCalledWith(1, 'generateNewWallet');
+      expect(dispatch).toHaveBeenNthCalledWith(2, 'saveWallet', {
         json: expectedJson,
         info: expectedInfo,
       });
-      expect(dispatch).toHaveBeenNthCalledWith(2, 'addWalletAndSelect', v3);
+      expect(dispatch).toHaveBeenNthCalledWith(3, 'addWalletAndSelect', v3);
       expect(userService.backupSeed).toBeCalledWith(encryptedMessage);
     });
 
@@ -514,10 +520,7 @@ describe('Accounts actions', () => {
       dispatch.mockRejectedValueOnce(error);
 
       try {
-        await actions.createNewWallet(
-          { dispatch, getters },
-          { password: v3password },
-        );
+        await actions.createNewWallet({ dispatch, getters });
       } catch (e) {
         expect(e).toEqual(new Error("Can't create new wallet"));
       }

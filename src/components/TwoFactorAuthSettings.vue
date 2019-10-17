@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-form @submit="handleFormSubmit">
+    <v-form @submit="onFormSubmit">
       <label class="label">Two Factor Authentication</label>
       <v-button
         :disabled="isButtonDisabled"
@@ -15,8 +15,10 @@
       v-if="isTwoFactorAuthModal"
       :secret="otpSettings.secret"
       :email="email"
+      :is-loading="isLoading"
+      @request-code="sendVerificationCode"
       @close="toggleTwoFactorAuthModal"
-      @confirm="handleConfirmTwoFactorAuthModal"
+      @confirm="onConfirmTwoFactorAuthModal"
     />
   </div>
 </template>
@@ -28,30 +30,41 @@ import modalMixin from '@/mixins/modal';
 
 export default {
   name: 'TwoFactorAuthSettings',
+
   data: () => ({
     isLoading: false,
   }),
+
   computed: {
     ...mapState('user', ['email', 'otpSettings']),
+
     isButtonDisabled() {
       return !this.otpSettings.secret && !this.otpSettings.status;
     },
+
+    isOtpEnabled() {
+      return !!this.otpSettings.status;
+    },
   },
+
   methods: {
     ...mapActions('user', [
       'getOtpSettings',
       'setOtpSettings',
       'deleteOtpSettings',
+      'sendCode',
     ]),
     ...mapActions('errors', ['emitError']),
-    async handleConfirmTwoFactorAuthModal(code) {
+
+    async onConfirmTwoFactorAuthModal({ code, verificationCode }) {
       const { secret } = this.otpSettings;
 
       this.toggleTwoFactorAuthModal();
       this.isLoading = true;
+
       try {
         if (secret) {
-          await this.setOtpSettings({ secret, code });
+          await this.setOtpSettings({ secret, code, verificationCode });
         } else {
           await this.deleteOtpSettings({ code });
         }
@@ -67,16 +80,29 @@ export default {
 
       this.isLoading = false;
     },
-    handleFormSubmit() {
+
+    async sendVerificationCode() {
+      this.isLoading = true;
+
+      await this.sendCode(this.email);
+
+      this.isLoading = false;
+    },
+
+    onFormSubmit() {
       if (!this.isButtonDisabled) {
         this.toggleTwoFactorAuthModal();
       }
     },
   },
-  mounted() {
-    this.getOtpSettings();
+
+  async mounted() {
+    await this.getOtpSettings();
+    await this.sendVerificationCode();
   },
+
   mixins: [modalMixin],
+
   components: {
     TwoFactorAuthModal,
   },
