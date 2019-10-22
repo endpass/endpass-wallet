@@ -16,7 +16,6 @@
       :secret="otpSettings.secret"
       :email="email"
       :is-loading="isLoading"
-      @request-code="sendVerificationCode"
       @close="toggleTwoFactorAuthModal"
       @confirm="onConfirmTwoFactorAuthModal"
     />
@@ -52,7 +51,6 @@ export default {
       'getOtpSettings',
       'setOtpSettings',
       'deleteOtpSettings',
-      'sendCode',
     ]),
     ...mapActions('errors', ['emitError']),
 
@@ -81,14 +79,6 @@ export default {
       this.isLoading = false;
     },
 
-    async sendVerificationCode() {
-      this.isLoading = true;
-
-      await this.sendCode(this.email);
-
-      this.isLoading = false;
-    },
-
     onFormSubmit() {
       if (!this.isButtonDisabled) {
         this.toggleTwoFactorAuthModal();
@@ -98,7 +88,6 @@ export default {
 
   async mounted() {
     await this.getOtpSettings();
-    await this.sendVerificationCode();
   },
 
   mixins: [modalMixin],

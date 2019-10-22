@@ -1,7 +1,10 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils';
-import VeeValidate from 'vee-validate';
 import UIComponents from '@endpass/ui';
-import { otpSecret, authenticatorCode } from 'fixtures/identity';
+import {
+  otpSecret,
+  authenticatorCode,
+  verificationCode,
+} from 'fixtures/identity';
 import setupI18n from '@/locales/i18nSetup';
 import TwoFactorAuthForm from '@/components/modal/TwoFactorAuthModal/TwoFactorAuthForm';
 import validation from '@/validation';
@@ -10,7 +13,6 @@ const localVue = createLocalVue();
 const i18n = setupI18n(localVue);
 
 localVue.use(validation);
-localVue.use(VeeValidate);
 localVue.use(UIComponents);
 
 describe('TwoFactorAuthForm', () => {
@@ -35,7 +37,7 @@ describe('TwoFactorAuthForm', () => {
       expect(wrapper.isVueInstance()).toBeTruthy();
     });
 
-    it('should not render QR code if secret or email are not passed in', () => {
+    it('should not render QR code if secret is not passed in', () => {
       wrapper = wrapperFactory({
         propsData: {
           email: 'foo@bar.baz',
@@ -45,7 +47,9 @@ describe('TwoFactorAuthForm', () => {
       expect(
         wrapper.find('[data-test=two-factor-auth-modal-qr-code]').exists(),
       ).toBe(false);
+    });
 
+    it('should not render QR code if email is not passed in', () => {
       wrapper = wrapperFactory({
         propsData: {
           secret: otpSecret,
@@ -84,6 +88,9 @@ describe('TwoFactorAuthForm', () => {
     it('should not submit form if code is not passed in', async () => {
       expect.assertions(1);
 
+      wrapper
+        .find('[data-test=input-two-auth-verification-code]')
+        .vm.$emit('input', verificationCode);
       wrapper.find('[data-test=input-two-auth-code]').vm.$emit('input', '');
 
       await wrapper.vm.$nextTick();
@@ -91,12 +98,15 @@ describe('TwoFactorAuthForm', () => {
 
       wrapper.find('v-form-stub').trigger('submit');
 
-      expect(wrapper.emitted().submit).toBeFalsy();
+      expect(wrapper.emitted().submit).toBeUndefined();
     });
 
     it('should not submit form if code is not valid', async () => {
       expect.assertions(1);
 
+      wrapper
+        .find('[data-test=input-two-auth-verification-code]')
+        .vm.$emit('input', verificationCode);
       wrapper.find('[data-test=input-two-auth-code]').vm.$emit('input', '1234');
 
       await wrapper.vm.$nextTick();
@@ -104,12 +114,15 @@ describe('TwoFactorAuthForm', () => {
 
       wrapper.find('v-form-stub').trigger('submit');
 
-      expect(wrapper.emitted().submit).toBeFalsy();
+      expect(wrapper.emitted().submit).toBeUndefined();
     });
 
     it('should submit form if code is valid', async () => {
       expect.assertions(1);
 
+      wrapper
+        .find('[data-test=input-two-auth-verification-code]')
+        .vm.$emit('input', verificationCode);
       wrapper
         .find('[data-test=input-two-auth-code]')
         .vm.$emit('input', authenticatorCode);
@@ -119,7 +132,14 @@ describe('TwoFactorAuthForm', () => {
 
       wrapper.find('v-form-stub').trigger('submit');
 
-      expect(wrapper.emitted().submit).toEqual([[authenticatorCode]]);
+      expect(wrapper.emitted().submit).toEqual([
+        [
+          {
+            code: authenticatorCode,
+            verificationCode,
+          },
+        ],
+      ]);
     });
   });
 });

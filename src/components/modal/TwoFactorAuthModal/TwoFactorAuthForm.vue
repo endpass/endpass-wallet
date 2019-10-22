@@ -22,6 +22,23 @@
         <strong>{{ secret }}</strong>
       </p>
     </div>
+    <div v-if="secret" class="two-factor-auth-form-section">
+      <label class="subtitle">
+        {{ $t('components.twoFactorAuthModal.enterVerificationCode') }}
+      </label>
+      <v-input
+        v-model="verificationCode"
+        v-validate="'required|digits:6'"
+        :error="errors.first('verificationCode')"
+        type="number"
+        size="6"
+        :label="$t('components.twoFactorAuthModal.verificationCode')"
+        name="verificationCode"
+        data-vv-name="verificationCode"
+        data-test="input-two-auth-verification-code"
+        autofocus
+      />
+    </div>
     <div class="two-factor-auth-form-section">
       <label class="subtitle">
         {{ $t('components.twoFactorAuthModal.enterCode') }}
@@ -30,6 +47,7 @@
         v-model="code"
         v-validate="'required|digits:6'"
         :error="errors.first('code')"
+        :disabled="!isVerificationCodeValid"
         type="number"
         size="6"
         :label="$t('components.twoFactorAuthModal.otpCode')"
@@ -37,9 +55,12 @@
         data-vv-name="code"
         data-test="input-two-auth-code"
         autofocus
-        @input="handleInput"
       />
     </div>
+    <div v-if="secret" class="verification-code-form-section">
+      <code-requester />
+    </div>
+
     <v-button
       :loading="isLoading"
       :disabled="!isFormValid"
@@ -54,6 +75,7 @@
 
 <script>
 import formMixin from '@/mixins/form';
+import CodeRequester from '@/components/CodeRequester'
 
 export default {
   name: 'TwoFactorAuthForm',
@@ -75,11 +97,20 @@ export default {
 
   data: () => ({
     code: '',
+    verificationCode: ''
   }),
 
   computed: {
     isShowQRCode() {
       return this.email && this.secret;
+    },
+
+    isVerificationCodeValid() {
+      if (!this.secret) {
+        return true
+      }
+
+      return this.verificationCode && !this.errors.has('verificationCode')
     },
 
     qrCodeSrc() {
@@ -93,13 +124,22 @@ export default {
 
   methods: {
     onFormSubmit() {
-      if (!this.isFormValid) return;
+      const { code, verificationCode, isFormValid } = this
 
-      this.$emit('submit', this.code);
+      if (!isFormValid) return;
+
+      this.$emit('submit', {
+        code,
+        verificationCode,
+      });
     },
   },
 
   mixins: [formMixin],
+
+  components: {
+    CodeRequester
+  }
 };
 </script>
 
