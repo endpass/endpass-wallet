@@ -15,7 +15,6 @@ exports[`TwoFactorAuthSettings render should render the initial state of the com
       classname="is-primary is-medium"
       data-test="button-two-factor"
       disabled="true"
-      loading="true"
     >
       
       Disable Two Factor Auth
@@ -42,7 +41,6 @@ exports[`TwoFactorAuthSettings render should show modal window for two factor au
       classname="is-primary is-medium"
       data-test="button-two-factor"
       disabled="true"
-      loading="true"
     >
       
       Disable Two Factor Auth
@@ -52,7 +50,6 @@ exports[`TwoFactorAuthSettings render should show modal window for two factor au
    
   <two-factor-auth-modal-stub
     email="email"
-    isloading="true"
   />
 </div>
 `;

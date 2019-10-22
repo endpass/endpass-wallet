@@ -57,6 +57,12 @@ export const getPasswordRecoveryIdentifierResponse = {
   message: '71d45eb3-480b-4034-9278-9a17eed20d49',
 };
 
+export const otpSecret = 'ASDASDASDASD'
+
+export const verificationCode = '123456'
+
+export const authenticatorCode = '654321'
+
 export default {
   successResponse,
   errorResponse,
