@@ -1372,10 +1372,10 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@endpass/class@^0.18.10":
-  version "0.18.10"
-  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.18.10.tgz#8d78df4150936bf874d882ea070045d0727dadc4"
-  integrity sha512-R0Dp9YRSxG266ok1xbdl6jofRaV7yHlDEMnvtHL4zeyRUh8dYek85yomi3Ry1/9WDRL3HlE6cdARgG9iBn9RlA==
+"@endpass/class@^0.18.11", "@endpass/class@^0.18.14":
+  version "0.18.14"
+  resolved "https://registry.yarnpkg.com/@endpass/class/-/class-0.18.14.tgz#4c27f69809cf6cfb911e1232ce369105ea5b3f29"
+  integrity sha512-1tjw9Tx4mREiFw8EMNoZephYp/D+Lq6WGPLSWk94Z4GGi08JDHtRF4+TQyhZGcVp0upo1bCbnkejjN6zMa1b1A==
   dependencies:
     "@endpass/utils" "^1.8.3"
     "@ledgerhq/hw-app-eth" "^4.24.0"
@@ -1394,12 +1394,12 @@
     web3-providers-ws "1.0.0-beta.37"
     web3-utils "1.0.0-beta.55"
 
-"@endpass/connect@^0.28.12-beta":
-  version "0.28.12-beta"
-  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.28.12-beta.tgz#457ab628a0ea1238652fcb9ff6f0b04b4e3f0815"
-  integrity sha512-bvQ3Ffm8AS3JOMg/N0ligfGHp1AAcwqwSjhurcMNQc9f/oNRwMdNAD5p2gzKPKGSwk2NtbmA/YkRCPaiIhgAuQ==
+"@endpass/connect@^0.28.14-beta":
+  version "0.28.14-beta"
+  resolved "https://registry.yarnpkg.com/@endpass/connect/-/connect-0.28.14-beta.tgz#fb728522521fb4d34b8cf1d6d17832afbb9fdd6a"
+  integrity sha512-gZgpczamgOQBwiGFE0JQ2KW63gEE4aXbtEIocf9u6/4TR1LqFvbMefSLTL+CCuGwjIinqoAzsmPYFn04h7Q81g==
   dependencies:
-    "@endpass/class" "^0.18.10"
+    "@endpass/class" "^0.18.11"
     "@endpass/utils" "^1.8.3"
     axios "^0.19.0"
     axios-token-interceptor "^0.1.0"
@@ -1480,12 +1480,12 @@
     node-notifier "^5.4.3"
     secp256k1 "^3.7.1"
 
-"@endpass/vue-i18n-translate-checker@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@endpass/vue-i18n-translate-checker/-/vue-i18n-translate-checker-0.0.4.tgz#bba36b880df445449e2b01a8fdc4f8094f702123"
-  integrity sha512-auYexzaKPyOt6zCyO7DYhmKl2FVIWi78pv5jDz1m65KHrslW9SJc+8cjQEUWdpEBSI754M9yPMwDHyi91jAhPg==
+"@endpass/vue-i18n-translate-checker@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@endpass/vue-i18n-translate-checker/-/vue-i18n-translate-checker-0.0.6.tgz#32d6e7a3202ce6aa6fb1f0c289562fbb52c269ae"
+  integrity sha512-l0RbSSk6NNyJ4DgUbnxvo4hP4HD1ZVmV77BsxauvKK6M3lyS5x2ykemXoQI1y/9UYOrsMWVhKA3pkvipz/2Mww==
   dependencies:
-    fast-glob "^3.0.4"
+    fast-glob "^3.1.0"
 
 "@intervolga/optimize-cssnano-plugin@^1.0.5":
   version "1.0.6"
@@ -1594,14 +1594,6 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nodelib/fs.scandir@2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.2.tgz#1f981cd5b83e85cfdeb386fc693d4baab392fa54"
-  integrity sha512-wrIBsjA5pl13f0RN4Zx4FNWmU71lv03meGKnqRUoCyan17s4V3WL92f3w3AIuWbNnpcrQyFBU5qMavJoB8d27w==
-  dependencies:
-    "@nodelib/fs.stat" "2.0.2"
-    run-parallel "^1.1.9"
-
 "@nodelib/fs.scandir@2.1.3":
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.3.tgz#3a582bdb53804c6ba6d146579c46e52130cf4a3b"
@@ -1609,11 +1601,6 @@
   dependencies:
     "@nodelib/fs.stat" "2.0.3"
     run-parallel "^1.1.9"
-
-"@nodelib/fs.stat@2.0.2", "@nodelib/fs.stat@^2.0.1":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-2.0.2.tgz#2762aea8fe78ea256860182dcb52d61ee4b8fda6"
-  integrity sha512-z8+wGWV2dgUhLqrtRYa03yDx4HWMvXKi1z8g3m2JyxAx8F7xk74asqPk5LAETjqDSGLFML/6CDl0+yFunSYicw==
 
 "@nodelib/fs.stat@2.0.3", "@nodelib/fs.stat@^2.0.2":
   version "2.0.3"
@@ -1624,14 +1611,6 @@
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
-
-"@nodelib/fs.walk@^1.2.1":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@nodelib/fs.walk/-/fs.walk-1.2.3.tgz#a555dc256acaf00c62b0db29529028dd4d4cb141"
-  integrity sha512-l6t8xEhfK9Sa4YO5mIRdau7XSOADfmh3jCr0evNHdY+HNkW6xuQhgMH7D73VV6WpZOagrW0UludvMTiifiwTfA==
-  dependencies:
-    "@nodelib/fs.scandir" "2.1.2"
-    fastq "^1.6.0"
 
 "@nodelib/fs.walk@^1.2.3":
   version "1.2.4"
@@ -6491,7 +6470,7 @@ fast-glob@^2.2.6:
     merge2 "^1.2.3"
     micromatch "^3.1.10"
 
-fast-glob@^3.0.3:
+fast-glob@^3.0.3, fast-glob@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-3.1.0.tgz#77375a7e3e6f6fc9b18f061cddd28b8d1eec75ae"
   integrity sha512-TrUz3THiq2Vy3bjfQUB2wNyPdGBeGmdjbzzBLhfHN4YFurYptCKwGq/TfiRavbGywFRzY6U2CdmQ1zmsY5yYaw==
@@ -6500,18 +6479,6 @@ fast-glob@^3.0.3:
     "@nodelib/fs.walk" "^1.2.3"
     glob-parent "^5.1.0"
     merge2 "^1.3.0"
-    micromatch "^4.0.2"
-
-fast-glob@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-3.0.4.tgz#d484a41005cb6faeb399b951fd1bd70ddaebb602"
-  integrity sha512-wkIbV6qg37xTJwqSsdnIphL1e+LaGz4AIQqr00mIubMaEhv1/HEmJ0uuCGZRNRUkZZmOB5mJKO0ZUTVq+SxMQg==
-  dependencies:
-    "@nodelib/fs.stat" "^2.0.1"
-    "@nodelib/fs.walk" "^1.2.1"
-    glob-parent "^5.0.0"
-    is-glob "^4.0.1"
-    merge2 "^1.2.3"
     micromatch "^4.0.2"
 
 fast-json-stable-stringify@^2.0.0:
