@@ -47,11 +47,11 @@
     ]
   },
   "dependencies": {
-    "@endpass/class": "^0.18.10",
-    "@endpass/connect": "^0.28.12-beta",
+    "@endpass/class": "^0.18.14",
+    "@endpass/connect": "^0.28.14-beta",
     "@endpass/eslint-plugin-endpass": "^0.2.7",
     "@endpass/faucet": "^0.2.1",
-    "@endpass/ui": "^0.15.52",
+    "@endpass/ui": "^0.15.53",
     "@endpass/utils": "^1.8.3",
     "ajv": "^6.5.5",
     "axios": "^0.19.0",
@@ -87,7 +87,7 @@
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
     "@cypress/webpack-preprocessor": "^4.1.0",
-    "@endpass/vue-i18n-translate-checker": "^0.0.4",
+    "@endpass/vue-i18n-translate-checker": "^0.0.6",
     "@vue/cli-plugin-babel": "^3.5.1",
     "@vue/cli-plugin-eslint": "^3.5.1",
     "@vue/cli-plugin-unit-jest": "^3.5.3",
