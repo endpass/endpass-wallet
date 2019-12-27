@@ -1,0 +1,42 @@
+name: pull
+on:
+  pull_request:
+    branches:
+      - master
+      - release
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        test_suite: [unit, e2e]
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v1
+ 
+    - name: Setup node version
+      uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+
+    - name: Install packages
+      run: yarn install --frozen-lockfile
+
+    - name: ${{matrix.test_suite}} tests
+      run: yarn ${{matrix.test_suite}}
+
+    - name: Slack Notification
+      uses: homoluctus/slatify@master
+      if: always()
+      continue-on-error: true
+      with:
+        type: ${{ job.status }}
+        job_name: 'wallet ${{matrix.test_suite}} tests'
+        username: 'GitHub Actions'
+        icon_emoji: ':github:'
+        url: ${{ secrets.SLACK_WEBHOOK }}
