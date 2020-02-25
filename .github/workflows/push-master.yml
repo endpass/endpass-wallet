@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
 
     steps:
 
@@ -26,7 +26,7 @@ jobs:
 
     - name: Build
       run: yarn build:dev
-    
+
     - name: Deploy to S3 bucket
       uses: jakejarvis/s3-sync-action@master
       with:

@@ -1,4 +1,5 @@
 ![](https://github.com/endpass/endpass-wallet/workflows/wallet%20master/badge.svg?branch=master)
+![](https://github.com/endpass/endpass-wallet/workflows/wallet%20release/badge.svg?branch=release)
 
 # endpass-wallet
 
