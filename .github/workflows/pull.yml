@@ -13,7 +13,7 @@ jobs:
       matrix:
         test_suite: [unit, e2e]
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
 
     steps:
     - name: Checkout repo
