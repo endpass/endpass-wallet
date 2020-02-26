@@ -8,7 +8,7 @@ on:
       - '**.md'
 
 jobs:
-  build:
+  tests:
     strategy:
       matrix:
         test_suite: [unit, e2e]
