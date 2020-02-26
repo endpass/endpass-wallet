@@ -44,4 +44,4 @@ jobs:
         job_name: 'wallet ${{matrix.test_suite}} tests'
         username: 'GitHub Actions'
         icon_emoji: ':github:'
-        url: ${{ secrets.SLACK_WEBHOOK }}
+        url: ${{ secrets.SLACK_WEBHOOK_URL }}
