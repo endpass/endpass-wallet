@@ -7,14 +7,11 @@ on:
       - '**.md'
 
 jobs:
-  build:
-
+  build-and-deploy:
     runs-on: ubuntu-16.04
-
     steps:
-
     - name: Checkout repo
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
   
     - name: Setup node version
       uses: actions/setup-node@v1
@@ -46,3 +43,12 @@ jobs:
         username: 'GitHub Actions'
         icon_emoji: ':github:'
         url: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  purge-cache:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Purge cache
+        uses: jakejarvis/cloudflare-purge-action@master
+        env:
+          CLOUDFLARE_ZONE: ${{ secrets.CLOUDFLARE_ZONE }}
+          CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
