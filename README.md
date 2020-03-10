@@ -1,6 +1,7 @@
-# endpass-wallet
+![](https://github.com/endpass/endpass-wallet/workflows/wallet%20master/badge.svg?branch=master)
+![](https://github.com/endpass/endpass-wallet/workflows/wallet%20release/badge.svg?branch=release)
 
-[![Build Status](https://travis-ci.org/endpass/endpass-wallet.svg?branch=master)](https://travis-ci.org/endpass/endpass-wallet)
+# endpass-wallet
 
 The first decentralized cloud wallet for Ethereum and ICO tokens.
 
