@@ -40,7 +40,7 @@ jobs:
       env:
         SHA_SHORT: ${{ steps.vars.outputs.sha_short }}
       run: |
-        zip -r ./dist/ $SHA_SHORT.zip
+        zip -r $SHA_SHORT.zip ./dist/
         aws s3 sync $SHA_SHORT.zip s3://endpass-artifact/wallet/dev/latest.zip
         aws s3 sync $SHA_SHORT.zip s3://endpass-artifact/wallet/dev/ --delete
          
