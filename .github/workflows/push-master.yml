@@ -36,13 +36,13 @@ jobs:
     - name: Build
       run: yarn build:dev
 
-    - name: Store artifact
+    - name: Store artifacts
       env:
         SHA_SHORT: ${{ steps.vars.outputs.sha_short }}
       run: |
         zip -r $SHA_SHORT.zip ./dist/
-        aws s3 sync $SHA_SHORT.zip s3://endpass-artifact/wallet/dev/latest.zip
-        aws s3 sync $SHA_SHORT.zip s3://endpass-artifact/wallet/dev/ --delete
+        aws s3 cp $SHA_SHORT.zip s3://endpass-artifacts/wallet/dev/latest.zip
+        aws s3 cp $SHA_SHORT.zip s3://endpass-artifacts/wallet/dev/ --delete
          
     - name: Deploy static site to S3 bucket
       run: aws s3 sync ./dist/ s3://wallet-dev.endpass.com --delete
