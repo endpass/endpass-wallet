@@ -1,4 +1,5 @@
-name: wallet release
+---
+name: release build and deploy
 on:
   push:
     branches:

@@ -1,4 +1,5 @@
-name: pull
+---
+name: tests after PR
 on:
   pull_request:
 
@@ -23,9 +24,7 @@ jobs:
       run: yarn install --frozen-lockfile
 
     - name: Start dev server
-      run: |
-        yarn dev &
-        sleep 5
+      run: yarn dev & sleep 5
 
     - name: ${{matrix.test_suite}} tests
       run: yarn ${{matrix.test_suite}}
