@@ -1,5 +1,6 @@
-name: wallet master
-on: 
+---
+name: master build and deploy
+on:
   push:
     branches:
       - master
@@ -13,11 +14,6 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v2
 
-    - name: get commit short SHA
-      id: vars
-      run: |
-        echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
-  
     - name: Setup node version
       uses: actions/setup-node@v1
       with:
@@ -36,14 +32,6 @@ jobs:
     - name: Build
       run: yarn build:dev
 
-    - name: Store artifacts
-      env:
-        SHA_SHORT: ${{ steps.vars.outputs.sha_short }}
-      run: |
-        zip -r $SHA_SHORT.zip ./dist/
-        aws s3 cp $SHA_SHORT.zip s3://endpass-artifacts/wallet/dev/latest.zip
-        aws s3 cp $SHA_SHORT.zip s3://endpass-artifacts/wallet/dev/ --delete
-         
     - name: Deploy static site to S3 bucket
       run: aws s3 sync ./dist/ s3://wallet-dev.endpass.com --delete
 
