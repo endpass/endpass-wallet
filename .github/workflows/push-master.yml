@@ -1,5 +1,6 @@
-name: wallet master
-on: 
+---
+name: master build and deploy
+on:
   push:
     branches:
       - master
@@ -12,7 +13,7 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
-  
+
     - name: Setup node version
       uses: actions/setup-node@v1
       with:
