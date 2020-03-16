@@ -33,7 +33,7 @@ jobs:
       run: yarn build:dev
 
     - name: Deploy static site to S3 bucket
-      run: aws s3 sync ./dist/ s3://wallet-dev.endpass.com --delete
+      run: aws s3 sync ./dist/ s3://wallet-dev.endpass.com --exclude ".git*" --delete
 
     - name: Slack Notification
       uses: homoluctus/slatify@master
