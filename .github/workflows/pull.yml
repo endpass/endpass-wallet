@@ -2,6 +2,9 @@
 name: tests after PR
 on:
   pull_request:
+    branches:
+      - master
+      - release
 
 jobs:
   tests:
