@@ -17,18 +17,17 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v2
 
-    - name: Get pull request comment
-      uses: actions/github-script@0.9.0
-      id: pr
+    - name: Find current PR
+      uses: jwalton/gh-find-current-pr@v1
+      id: findPr
       with:
-        github-token: ${{secrets.GITHUB_TOKEN}}
-        script: |
-          const title = context.payload.pull_request.title;
-          const result = await github.request(title);
-          console.log(result);
-
-    - name: get json
-      run: echo ${{steps.pr.outputs.result}}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+      
+    - name: Echo PR title 
+      run: echo "Your PR title is ${PR}"
+        if: success() && steps.findPr.outputs.number
+        env:
+          PR: ${{ steps.findPr.outputs.title }}
  
     - name: Setup node version
       uses: actions/setup-node@v1
