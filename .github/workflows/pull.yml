@@ -25,9 +25,9 @@ jobs:
       
     - name: Echo PR title 
       run: echo "Your PR title is ${PR}"
-        if: success() && steps.findPr.outputs.number
-        env:
-          PR: ${{ steps.findPr.outputs.title }}
+      if: success() && steps.findPr.outputs.number
+      env:
+        PR: ${{ steps.findPr.outputs.title }}
  
     - name: Setup node version
       uses: actions/setup-node@v1
