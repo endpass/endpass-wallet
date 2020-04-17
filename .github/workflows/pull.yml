@@ -17,11 +17,6 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v2
 
-    - name: Echo PR title 
-      run: echo "Your PR title is ${PR}"
-      env:
-        PR: ${{ github.event.pull_request.title }}
- 
     - name: Setup node version
       uses: actions/setup-node@v1
       with:
@@ -42,7 +37,11 @@ jobs:
       continue-on-error: true
       with:
         type: ${{ job.status }}
-        job_name: 'wallet ${{matrix.test_suite}} tests'
+        job_name: *${PR_N}-${PR_T}* -- Wallet ${{matrix.test_suite}} tests
+        commit: true
         username: 'GitHub Actions'
         icon_emoji: ':github:'
         url: ${{ secrets.SLACK_WEBHOOK_URL }}
+      env:
+        PR_N: ${{ github.event.pull_request.number }}
+        PR_T: ${{ github.event.pull_request.title }}
