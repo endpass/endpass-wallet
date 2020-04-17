@@ -23,9 +23,9 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
-          const title = context.payload.pull_request.title
-          const result = await github.request(title)
-          console.log(result)
+          const title = context.payload.pull_request.title;
+          const result = await github.request(title);
+          console.log(result);
 
     - name: get json
       run: echo ${{steps.pr.outputs.result}}
