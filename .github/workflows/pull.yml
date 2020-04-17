@@ -25,7 +25,6 @@ jobs:
       
     - name: Echo PR title 
       run: echo "Your PR title is ${PR}"
-      if: success() && steps.findPr.outputs.number
       env:
         PR: ${{ steps.findPr.outputs.title }}
  
