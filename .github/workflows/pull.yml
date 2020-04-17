@@ -17,8 +17,8 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v2
 
-    
-    - uses: 8BitJonny/gh-get-current-pr@v1
+    - name: get pr   
+      uses: 8BitJonny/gh-get-current-pr@master
       id: PR
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
