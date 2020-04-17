@@ -17,18 +17,17 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v2
 
-    - name: get pr   
-      uses: 8BitJonny/gh-get-current-pr@master
-      id: PR
+    - name: Get pull request comment
+      uses: actions/github-script@master
+      id: pr
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        filterOutClosed: true
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          const title = github.context.payload.pull_request.title
+          console.log(title)
 
-    - run: echo "Your PR is ${prNumber} and its JSON is ${prJSON}"
-      if: success() && steps.PR.outputs.number
-      env:
-        prNumber: ${{ steps.PR.outputs.number }}
-        prJSON: ${{ steps.PR.outputs.pr }}
+    - name: get json
+      run: echo ${{steps.pr.outputs.result}}
  
     - name: Setup node version
       uses: actions/setup-node@v1
