@@ -37,7 +37,7 @@ jobs:
       continue-on-error: true
       with:
         type: ${{ job.status }}
-        job_name: *${PR_N}-${PR_T}* -- Wallet ${{matrix.test_suite}} tests
+        job_name: "*${PR_N}-${PR_T}* -- Wallet ${{ matrix.test_suite }} tests"
         commit: true
         username: 'GitHub Actions'
         icon_emoji: ':github:'
