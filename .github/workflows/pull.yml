@@ -19,7 +19,7 @@ jobs:
 
     - name: Get pull request comment
       uses: actions/github-script@0.9.0
-      id: github_script
+      id: pr
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
@@ -30,8 +30,7 @@ jobs:
           })
 
     - name: get json
-      run: |
-        echo "${{ steps.github_script.outputs.result }}"
+      run: echo ${{ steps.pr.outputs.result }}
  
     - name: Setup node version
       uses: actions/setup-node@v1
