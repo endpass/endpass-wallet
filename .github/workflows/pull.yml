@@ -37,11 +37,8 @@ jobs:
       continue-on-error: true
       with:
         type: ${{ job.status }}
-        job_name: '*${PR_N}-${PR_T}* -- Wallet ${{ matrix.test_suite }} tests'
+        job_name: '*${{ github.event.pull_request.number }}-${{ github.event.pull_request.title }}* -- Wallet ${{ matrix.test_suite }} tests'
         commit: true
         username: 'GitHub Actions'
         icon_emoji: ':github:'
         url: ${{ secrets.SLACK_WEBHOOK_URL }}
-      env:
-        PR_N: ${{ github.event.pull_request.number }}
-        PR_T: ${{ github.event.pull_request.title }}
