@@ -23,10 +23,10 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
-          github.pulls.get({
+          github.repos.listPullRequestsAssociatedWithCommit({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            pull_number: context.pull.number
+            commit_sha: context.sha
           })
 
     - name: get json
