@@ -20,7 +20,7 @@ jobs:
     - name: Echo PR title 
       run: echo "Your PR title is ${PR}"
       env:
-        PR: ${{ github.event.pull_request.number }}
+        PR: ${{ github.event.pull_request.title }}
  
     - name: Setup node version
       uses: actions/setup-node@v1
