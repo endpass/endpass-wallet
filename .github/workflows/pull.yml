@@ -23,7 +23,7 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
-          const title = github.context.payload.pull_request.title
+          const title = context.payload.pull_request.title
           const result = await github.request(title)
           console.log(result)
 
