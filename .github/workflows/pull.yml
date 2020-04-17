@@ -19,7 +19,6 @@ jobs:
 
     - name: Get pull request comment
       uses: actions/github-script@master
-      id: pr
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
