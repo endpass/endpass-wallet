@@ -1,5 +1,4 @@
----
-name: tests after PR
+name: tests
 on:
   pull_request:
     branches:
@@ -17,7 +16,7 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
- 
+
     - name: Setup node version
       uses: actions/setup-node@v1
       with:
@@ -38,7 +37,8 @@ jobs:
       continue-on-error: true
       with:
         type: ${{ job.status }}
-        job_name: 'wallet ${{matrix.test_suite}} tests'
+        job_name: '*${{ github.event.pull_request.number }}-${{ github.event.pull_request.title }}* -- Wallet ${{ matrix.test_suite }} tests'
+        commit: true
         username: 'GitHub Actions'
         icon_emoji: ':github:'
         url: ${{ secrets.SLACK_WEBHOOK_URL }}
