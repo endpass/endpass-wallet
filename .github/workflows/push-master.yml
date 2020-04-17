@@ -40,7 +40,8 @@ jobs:
       if: always()
       with:
         type: ${{ job.status }}
-        job_name: 'wallet build and deploy'
+        job_name: '*${{ github.event.pull_request.number }}-${{ github.event.pull_request.title }}* -- Wallet master build and deploy'
+        commit: true
         username: 'GitHub Actions'
         icon_emoji: ':github:'
         url: ${{ secrets.SLACK_WEBHOOK_URL }}
