@@ -26,7 +26,7 @@ jobs:
           github.pulls.get({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            pull_request: context.repo.pull_request
+            pull_number: context.repo.pull_number
           })
 
     - name: get json
