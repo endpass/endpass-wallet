@@ -17,16 +17,10 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v2
 
-    - name: Find current PR
-      uses: jwalton/gh-find-current-pr@v1
-      id: findPr
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-      
     - name: Echo PR title 
       run: echo "Your PR title is ${PR}"
       env:
-        PR: ${{ steps.findPr.outputs.title }}
+        PR: ${{ github.event.pull_request.number }}
  
     - name: Setup node version
       uses: actions/setup-node@v1
