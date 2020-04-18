@@ -1,4 +1,3 @@
----
 name: release build and deploy
 on:
   push:
@@ -40,7 +39,8 @@ jobs:
       if: always()
       with:
         type: ${{ job.status }}
-        job_name: 'wallet build and deploy'
+        job_name: 'Wallet (release) build and deploy'
+        commit: true
         username: 'GitHub Actions'
         icon_emoji: ':github:'
         url: ${{ secrets.SLACK_WEBHOOK_URL }}
