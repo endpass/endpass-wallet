@@ -1,4 +1,3 @@
----
 name: master build and deploy
 on:
   push:
@@ -40,7 +39,7 @@ jobs:
       if: always()
       with:
         type: ${{ job.status }}
-        job_name: '*${{ github.event.pull_request.number }}-${{ github.event.pull_request.title }}* -- Wallet master build and deploy'
+        job_name: 'Wallet (master) build and deploy'
         commit: true
         username: 'GitHub Actions'
         icon_emoji: ':github:'
