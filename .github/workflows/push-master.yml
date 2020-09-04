@@ -39,7 +39,7 @@ jobs:
         SLACK_USERNAME: GitHub Actions
         SLACK_COLOR: '#2AD624'
         SLACK_ICON_EMOJI: ':github:'
-        SLACK_MESSAGE: Build succeeded :rocket:'
+        SLACK_MESSAGE: 'Build succeeded :rocket:'
         SLACK_TITLE: 'Wallet (master) build'
 
     - name: Slack notification
