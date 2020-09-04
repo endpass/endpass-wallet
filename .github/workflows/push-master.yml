@@ -31,16 +31,24 @@ jobs:
     - name: Build
       run: yarn build:dev
 
-    - name: Deploy static site to S3 bucket
-      run: aws s3 sync ./dist/ s3://wallet-dev.endpass.com --exclude ".git*" --delete
+    - name: Slack notification
+      uses: rtCamp/action-slack-notify@v2.0.2
+      if: success()
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_USERNAME: GitHub Actions
+        SLACK_COLOR: '#2AD624'
+        SLACK_ICON_EMOJI: ':github:'
+        SLACK_MESSAGE: 'Wallet (master) build'
+        SLACK_TITLE: 'Build succeeded :rocket:'
 
-    - name: Slack Notification
-      uses: homoluctus/slatify@master
-      if: always()
-      with:
-        type: ${{ job.status }}
-        job_name: 'Wallet (master) build and deploy'
-        commit: true
-        username: 'GitHub Actions'
-        icon_emoji: ':github:'
-        url: ${{ secrets.SLACK_WEBHOOK_URL }}
+    - name: Slack notification
+      uses: rtCamp/action-slack-notify@v2.0.2
+      if: failure()
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_USERNAME: GitHub Actions
+        SLACK_COLOR: '#EC4926'
+        SLACK_ICON_EMOJI: ':github:'
+        SLACK_MESSAGE: 'Wallet (master) build'
+        SLACK_TITLE: 'Build failed :fire:'

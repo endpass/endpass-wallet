@@ -31,14 +31,24 @@ jobs:
     - name: ${{ matrix.test_suite }} tests
       run: yarn ${{ matrix.test_suite }}
 
-    - name: Slack Notification
-      uses: homoluctus/slatify@master
-      if: always()
-      continue-on-error: true
-      with:
-        type: ${{ job.status }}
-        job_name: '*${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}* - Wallet ${{ matrix.test_suite }} tests'
-        commit: true
-        username: 'GitHub Actions'
-        icon_emoji: ':github:'
-        url: ${{ secrets.SLACK_WEBHOOK_URL }}
+    - name: Slack notification
+      uses: rtCamp/action-slack-notify@v2.0.2
+      if: success()
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_USERNAME: GitHub Actions
+        SLACK_COLOR: '#2AD624'
+        SLACK_ICON_EMOJI: ':github:'
+        SLACK_MESSAGE: '*${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}* - Wallet ${{ matrix.test_suite }} tests'
+        SLACK_TITLE: 'Tests succeeded :rocket:'
+
+    - name: Slack notification
+      uses: rtCamp/action-slack-notify@v2.0.2
+      if: failure()
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_USERNAME: GitHub Actions
+        SLACK_COLOR: '#EC4926'
+        SLACK_ICON_EMOJI: ':github:'
+        SLACK_MESSAGE: '*${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}* - Wallet ${{ matrix.test_suite }} tests'
+        SLACK_TITLE: 'Tests failed :fire:'
